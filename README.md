@@ -1,6 +1,12 @@
 
 # 𐌷𐌴𐌽𐌲𐌹𐍃𐍄
 
+🚧 **NOTE** This is the repo for the next version of [𐌷𐌴𐌽𐌲𐌹𐍃𐍄](https://github.com/loveencounterflow/hengist), a
+NodeJS application to organize testing and benchmarking of NodeJS projects. Nothing that is written herunder
+is necessarily up to date 🚧
+
+🚧 **pending MVP, docs, updates** 🚧
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
@@ -12,12 +18,6 @@
   - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-**NOTE** This is the repo for the next version of [𐌷𐌴𐌽𐌲𐌹𐍃𐍄](https://github.com/loveencounterflow/hengist), a
-NodeJS application to organize testing and benchmarking of NodeJS projects. Nothing that is written herunder
-is necessarily up to date
-
-**pending MVP, docs, updates**
 
 # 𐌷𐌴𐌽𐌲𐌹𐍃𐍄
 
