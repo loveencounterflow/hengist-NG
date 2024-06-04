@@ -1,0 +1,30 @@
+{
+  "name": "hengist-NG",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "guy": "^13.7.2",
+    "guy-test": "^6.0.0",
+    "intertype-10.0.0": "npm:intertype@10.0.0",
+    "intertype-10.1.0": "npm:intertype@10.1.0",
+    "intertype-10.1.2": "npm:intertype@10.1.2",
+    "intertype-10.1.3": "npm:intertype@10.1.3",
+    "intertype-10.1.4": "npm:intertype@10.1.4",
+    "intertype-100.0.0": "npm:intertype@100.0.0",
+    "intertype-100.0.1": "npm:intertype@100.0.1",
+    "intertype-100.0.2": "npm:intertype@100.0.2",
+    "intertype-100.0.3": "npm:intertype@100.0.3",
+    "intertype-100.0.4": "npm:intertype@100.0.4",
+    "intertype-201.0.0": "npm:intertype@201.0.0",
+    "intertype-201.1.0": "npm:intertype@201.1.0",
+    "intertype-202.0.0": "npm:intertype@202.0.0",
+    "intertype-203.0.0": "npm:intertype@203.0.0"
+  }
+}
