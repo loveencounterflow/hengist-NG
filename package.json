@@ -12,6 +12,7 @@
   "dependencies": {
     "guy": "^13.7.2",
     "guy-test": "^6.0.0",
+    "guy-test-6.1.0": "npm:guy-test@6.1.0",
     "intertype-10.0.0": "npm:intertype@10.0.0",
     "intertype-10.1.0": "npm:intertype@10.1.0",
     "intertype-10.1.2": "npm:intertype@10.1.2",
