@@ -145,13 +145,13 @@ demo_exifreader = ->
     for rel_path in ( rel_paths = globSync patterns, cfg )
       count++; whisper count if ( count %% 1000 ) is 0
       abs_path  = PATH.resolve base_path, rel_path
-      exif      = await ExifReader.load abs_path, { async: true, includeUnknown: true, }
+      exif      = await ExifReader.load abs_path # , { async: true, includeUnknown: true, }
       if ( data = exif?.UserComment ? null )?
         data = JSON.parse ( Buffer.from data.value ).toString 'utf-8'
         # debug 'Ω__15', abs_path
         # debug 'Ω__16', Object.keys data
-        # info 'Ω__17', data.prompt
-        # info 'Ω__18', data.creation_date
+        info 'Ω__17', data.prompt
+        info 'Ω__18', data.creation_date
         # info 'Ω__19', new Date data.creation_date
     console.timeEnd 'demo_exifreader'
     debug 'Ω__20', "found #{rel_paths.length} matching files"
