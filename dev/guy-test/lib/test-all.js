@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var FS, GUY, PATH, Test, alert, debug, echo, help, info, inspect, log, my_filename, plain, praise, rpr, tasks, urge, warn, whisper;
+  var FS, GTNG, GUY, PATH, Test, _TMP_test, alert, debug, echo, help, info, inspect, log, my_filename, plain, praise, rpr, tasks, urge, warn, whisper;
 
   //###########################################################################################################
   GUY = require('guy');
@@ -14,9 +14,12 @@
 
   FS = require('fs');
 
-  ({Test} = require('guy-test'));
-
   my_filename = PATH.basename(__filename);
+
+  //...........................................................................................................
+  GTNG = require('../../../apps/guy-test-NG');
+
+  ({_TMP_test, Test} = GTNG);
 
   //###########################################################################################################
   tasks = {};

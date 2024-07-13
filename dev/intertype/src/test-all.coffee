@@ -20,8 +20,9 @@ GUY                       = require 'guy'
 #...........................................................................................................
 PATH                      = require 'path'
 FS                        = require 'fs'
-{ Test }                  = require 'guy-test'
 my_filename               = PATH.basename __filename
+{ Test                  } = GTNG
+GTNG                      = require '../../../apps/guy-test-NG'
 
 
 ############################################################################################################
