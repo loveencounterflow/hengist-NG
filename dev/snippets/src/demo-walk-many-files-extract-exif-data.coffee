@@ -21,7 +21,7 @@ FS                        = require 'node:fs'
 CRYPTO                    = require 'node:crypto'
 { DBay }                  = require '../../../apps/dbay'
 { SQL  }                  = DBay
-
+nosuchprompt              = ""
 
 #-----------------------------------------------------------------------------------------------------------
 id_from_text = ( text, length = 8 ) ->
@@ -158,8 +158,12 @@ demo_exifreader = ->
       FS.readSync fd, my_buffer
       exif        = ExifReader.load my_buffer
       if ( data = exif?.UserComment ? null )?
-        return JSON.parse ( Buffer.from data.value ).toString 'utf-8'
-      return null
+        R = JSON.parse ( Buffer.from data.value ).toString 'utf-8'
+      else
+        R = { prompt: nosuchprompt, date: null, }
+      #.....................................................................................................
+      R.prompt_id = id_from_text R.prompt
+      return R
   #.........................................................................................................
   do =>
     DB.db ->
@@ -179,16 +183,25 @@ demo_exifreader = ->
         if DB.known_path_ids.has path_id
           # help "Ω__18 skipping path ID #{rpr path_id}"
           counts.skipped++
+          ### NOTE we know that in the present run we will not again have to test against the current
+          `path_id`, so we also know we can safely delete it from the pool of known IDs (thereby making it
+          smaller and potentially a tad faster); after having gone through all `path_ids` in the file
+          system, we will then effectively have turned `DB.known_path_ids` into `extraneous_path_ids`, i.e.
+          those that could be deleted from the DB if deemed necessary. ###
           DB.known_path_ids.delete path_id
         else
           # warn "Ω__19 inserting path ID #{rpr path_id}"
           counts.added++
-          ### TAINT use prepared statement ###
-          DB.db SQL"""insert into files ( id, path ) values ( ?, ? );""", [ path_id, abs_path, ]
           #.................................................................................................
           exif = exif_from_path abs_path
           ### TAINT use prepared statement ###
-          DB.db SQL"""insert into prompts ( id, prompt ) values ( ?, ? );""", [ path_id, exif.prompt, ]
+          DB.db SQL"""
+            insert into prompts ( id, prompt ) values ( ?, ? )
+              on conflict ( id ) do nothing;""", [
+            exif.prompt_id, exif.prompt, ]
+          ### TAINT use prepared statement ###
+          DB.db SQL"""insert into files ( id, prompt_id, path ) values ( ?, ?, ? );""", [
+            path_id, exif.prompt_id, abs_path, ]
       #.....................................................................................................
       info "Ω__21 changes to DB at #{DB.path}: #{rpr counts}"
       #.....................................................................................................
@@ -217,15 +230,16 @@ prepare_db = ->
       db SQL"drop table if exists prompts;"
       db SQL"""
         create table files (
-          id      text not null primary key,
-          path    text not null );"""
+            id        text not null primary key,
+            prompt_id text not null,
+            path      text not null,
+          foreign key ( prompt_id ) references prompts ( id ) );"""
       db SQL"""
         create table prompts (
           id      text not null primary key,
           prompt  text not null );"""
-      # db SQL"insert into texts values ( 3, 'third' );"
-      # db SQL"insert into texts values ( 1, 'first' );"
-      # db SQL"insert into texts values ( ?, ? );", [ 2, 'second', ]
+      db SQL"""insert into prompts ( id, prompt ) values ( ?, ? );""", [
+        ( id_from_text nosuchprompt ), nosuchprompt, ]
       return null
     return null
   #.........................................................................................................

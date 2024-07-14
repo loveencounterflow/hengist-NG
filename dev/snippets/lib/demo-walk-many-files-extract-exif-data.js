@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var CRYPTO, DBay, FS, GUY, SQL, alert, debug, demo_exifr, demo_exifreader, demo_exiftool_vendored, demo_fast_glob, demo_node_glob, echo, help, id_from_text, info, inspect, log, plain, praise, prepare_db, reverse, rpr, set_path, urge, warn, whisper,
+  var CRYPTO, DBay, FS, GUY, SQL, alert, debug, demo_exifr, demo_exifreader, demo_exiftool_vendored, demo_fast_glob, demo_node_glob, echo, help, id_from_text, info, inspect, log, nosuchprompt, plain, praise, prepare_db, reverse, rpr, set_path, urge, warn, whisper,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; },
     indexOf = [].indexOf;
 
@@ -17,6 +17,8 @@
   ({DBay} = require('../../../apps/dbay'));
 
   ({SQL} = DBay);
+
+  nosuchprompt = "";
 
   //-----------------------------------------------------------------------------------------------------------
   id_from_text = function(text, length = 8) {
@@ -191,14 +193,21 @@
       var my_buffer;
       my_buffer = new Buffer.alloc(2 * 1024);
       return function(path) {
-        var data, exif, fd, ref;
+        var R, data, exif, fd, ref;
         fd = FS.openSync(path);
         FS.readSync(fd, my_buffer);
         exif = ExifReader.load(my_buffer);
         if ((data = (ref = exif != null ? exif.UserComment : void 0) != null ? ref : null) != null) {
-          return JSON.parse((Buffer.from(data.value)).toString('utf-8'));
+          R = JSON.parse((Buffer.from(data.value)).toString('utf-8'));
+        } else {
+          R = {
+            prompt: nosuchprompt,
+            date: null
+          };
         }
-        return null;
+        //.....................................................................................................
+        R.prompt_id = id_from_text(R.prompt);
+        return R;
       };
     })();
     (() => {      //.........................................................................................................
@@ -227,16 +236,22 @@
           if (DB.known_path_ids.has(path_id)) {
             // help "Ω__18 skipping path ID #{rpr path_id}"
             counts.skipped++;
+            /* NOTE we know that in the present run we will not again have to test against the current
+                     `path_id`, so we also know we can safely delete it from the pool of known IDs (thereby making it
+                     smaller and potentially a tad faster); after having gone through all `path_ids` in the file
+                     system, we will then effectively have turned `DB.known_path_ids` into `extraneous_path_ids`, i.e.
+                     those that could be deleted from the DB if deemed necessary. */
             DB.known_path_ids.delete(path_id);
           } else {
             // warn "Ω__19 inserting path ID #{rpr path_id}"
             counts.added++;
-            /* TAINT use prepared statement */
-            DB.db(SQL`insert into files ( id, path ) values ( ?, ? );`, [path_id, abs_path]);
             //.................................................................................................
             exif = exif_from_path(abs_path);
             /* TAINT use prepared statement */
-            DB.db(SQL`insert into prompts ( id, prompt ) values ( ?, ? );`, [path_id, exif.prompt]);
+            DB.db(SQL`insert into prompts ( id, prompt ) values ( ?, ? )
+  on conflict ( id ) do nothing;`, [exif.prompt_id, exif.prompt]);
+            /* TAINT use prepared statement */
+            DB.db(SQL`insert into files ( id, prompt_id, path ) values ( ?, ?, ? );`, [path_id, exif.prompt_id, abs_path]);
           }
         }
         //.....................................................................................................
@@ -272,14 +287,14 @@
         db(SQL`drop table if exists files;`);
         db(SQL`drop table if exists prompts;`);
         db(SQL`create table files (
-  id      text not null primary key,
-  path    text not null );`);
+    id        text not null primary key,
+    prompt_id text not null,
+    path      text not null,
+  foreign key ( prompt_id ) references prompts ( id ) );`);
         db(SQL`create table prompts (
   id      text not null primary key,
   prompt  text not null );`);
-        // db SQL"insert into texts values ( 3, 'third' );"
-        // db SQL"insert into texts values ( 1, 'first' );"
-        // db SQL"insert into texts values ( ?, ? );", [ 2, 'second', ]
+        db(SQL`insert into prompts ( id, prompt ) values ( ?, ? );`, [id_from_text(nosuchprompt), nosuchprompt]);
         return null;
       });
       return null;
