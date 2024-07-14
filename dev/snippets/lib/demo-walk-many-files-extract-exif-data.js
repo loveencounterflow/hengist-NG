@@ -193,9 +193,7 @@
       return function(path) {
         var data, exif, fd, ref;
         fd = FS.openSync(path);
-        debug('Ω__15', {fd});
         FS.readSync(fd, my_buffer);
-        debug('Ω__16', {my_buffer});
         exif = ExifReader.load(my_buffer);
         if ((data = (ref = exif != null ? exif.UserComment : void 0) != null ? ref : null) != null) {
           return JSON.parse((Buffer.from(data.value)).toString('utf-8'));
@@ -205,7 +203,7 @@
     })();
     (() => {      //.........................................................................................................
       DB.db(function() {
-        var abs_path, counts, i, len, path_id, rel_path, rel_paths;
+        var abs_path, counts, exif, i, len, path_id, rel_path, rel_paths;
         console.time('demo_exifreader');
         counts = {
           skipped: 0,
@@ -235,8 +233,10 @@
             counts.added++;
             /* TAINT use prepared statement */
             DB.db(SQL`insert into files ( id, path ) values ( ?, ? );`, [path_id, abs_path]);
+            //.................................................................................................
+            exif = exif_from_path(abs_path);
             /* TAINT use prepared statement */
-            debug('Ω__20', exif_from_path(abs_path));
+            DB.db(SQL`insert into prompts ( id, prompt ) values ( ?, ? );`, [path_id, exif.prompt]);
           }
         }
         //.....................................................................................................

@@ -154,10 +154,8 @@ demo_exifreader = ->
   exif_from_path  = do =>
     my_buffer = new Buffer.alloc 2 * 1024
     return ( path ) ->
-      fd  = FS.openSync path
-      debug 'Ω__15', { fd, }
+      fd          = FS.openSync path
       FS.readSync fd, my_buffer
-      debug 'Ω__16', { my_buffer, }
       exif        = ExifReader.load my_buffer
       if ( data = exif?.UserComment ? null )?
         return JSON.parse ( Buffer.from data.value ).toString 'utf-8'
@@ -187,8 +185,10 @@ demo_exifreader = ->
           counts.added++
           ### TAINT use prepared statement ###
           DB.db SQL"""insert into files ( id, path ) values ( ?, ? );""", [ path_id, abs_path, ]
+          #.................................................................................................
+          exif = exif_from_path abs_path
           ### TAINT use prepared statement ###
-          debug 'Ω__20', exif_from_path abs_path
+          DB.db SQL"""insert into prompts ( id, prompt ) values ( ?, ? );""", [ path_id, exif.prompt, ]
       #.....................................................................................................
       info "Ω__21 changes to DB at #{DB.path}: #{rpr counts}"
       #.....................................................................................................
