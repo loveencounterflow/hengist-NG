@@ -1,13 +1,30 @@
 (async function() {
   'use strict';
-  var GUY, alert, debug, demo_exifr, demo_exifreader, demo_exiftool_vendored, demo_fast_glob, demo_node_glob, echo, help, info, inspect, log, plain, praise, reverse, rpr, set_path, urge, warn, whisper,
-    modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
+  var CRYPTO, DBay, FS, GUY, SQL, alert, debug, demo_exifr, demo_exifreader, demo_exiftool_vendored, demo_fast_glob, demo_node_glob, echo, help, id_from_text, info, inspect, log, plain, praise, prepare_db, reverse, rpr, set_path, urge, warn, whisper,
+    modulo = function(a, b) { return (+a % (b = +b) + b) % b; },
+    indexOf = [].indexOf;
 
   GUY = require('guy');
 
   ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('intertype/test-basics'));
 
   ({rpr, inspect, echo, reverse, log} = GUY.trm);
+
+  FS = require('node:fs');
+
+  CRYPTO = require('node:crypto');
+
+  ({DBay} = require('../../../apps/dbay'));
+
+  ({SQL} = DBay);
+
+  //-----------------------------------------------------------------------------------------------------------
+  id_from_text = function(text, length = 8) {
+    var hash;
+    hash = CRYPTO.createHash('sha1');
+    hash.update(text);
+    return (hash.digest('hex')).slice(0, length);
+  };
 
   //-----------------------------------------------------------------------------------------------------------
   set_path = function() {
@@ -158,7 +175,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_exifreader = function() {
-    var ExifReader, PATH, base_path, cfg, count, glob, globSync, patterns;
+    var DB, ExifReader, PATH, base_path, cfg, count, exif_from_path, glob, globSync, patterns;
     PATH = require('node:path');
     ({glob, globSync} = require('glob'));
     ExifReader = require('exifreader');
@@ -168,33 +185,125 @@
     };
     base_path = set_path();
     count = 0;
-    (async() => {      //.........................................................................................................
-      var abs_path, data, exif, i, len, ref, ref1, rel_path, rel_paths;
-      console.time('demo_exifreader');
-      ref = (rel_paths = globSync(patterns, cfg));
-      for (i = 0, len = ref.length; i < len; i++) {
-        rel_path = ref[i];
-        count++;
-        if ((modulo(count, 1000)) === 0) {
-          whisper(count);
+    DB = prepare_db();
+    //.........................................................................................................
+    exif_from_path = (() => {
+      var my_buffer;
+      my_buffer = new Buffer.alloc(2 * 1024);
+      return function(path) {
+        var data, exif, fd, ref;
+        fd = FS.openSync(path);
+        debug('Ω__15', {fd});
+        FS.readSync(fd, my_buffer);
+        debug('Ω__16', {my_buffer});
+        exif = ExifReader.load(my_buffer);
+        if ((data = (ref = exif != null ? exif.UserComment : void 0) != null ? ref : null) != null) {
+          return JSON.parse((Buffer.from(data.value)).toString('utf-8'));
         }
-        abs_path = PATH.resolve(base_path, rel_path);
-        exif = (await ExifReader.load(abs_path)); // , { async: true, includeUnknown: true, }
-        if ((data = (ref1 = exif != null ? exif.UserComment : void 0) != null ? ref1 : null) != null) {
-          data = JSON.parse((Buffer.from(data.value)).toString('utf-8'));
-          // debug 'Ω__15', abs_path
-          // debug 'Ω__16', Object.keys data
-          info('Ω__17', data.prompt);
-          info('Ω__18', data.creation_date);
+        return null;
+      };
+    })();
+    (() => {      //.........................................................................................................
+      DB.db(function() {
+        var abs_path, counts, i, len, path_id, rel_path, rel_paths;
+        console.time('demo_exifreader');
+        counts = {
+          skipped: 0,
+          added: 0,
+          deleted: 0
+        };
+        rel_paths = globSync(patterns, cfg);
+        info('Ω__17', `found ${rel_paths.length} matching files`);
+        for (i = 0, len = rel_paths.length; i < len; i++) {
+          rel_path = rel_paths[i];
+          count++;
+          if ((modulo(count, 1000)) === 0) {
+            whisper(count);
+          }
+          if (count > 10000/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */) {
+            break;
+          }
+          abs_path = PATH.resolve(base_path, rel_path);
+          path_id = id_from_text(abs_path);
+          //...................................................................................................
+          if (DB.known_path_ids.has(path_id)) {
+            // help "Ω__18 skipping path ID #{rpr path_id}"
+            counts.skipped++;
+            DB.known_path_ids.delete(path_id);
+          } else {
+            // warn "Ω__19 inserting path ID #{rpr path_id}"
+            counts.added++;
+            /* TAINT use prepared statement */
+            DB.db(SQL`insert into files ( id, path ) values ( ?, ? );`, [path_id, abs_path]);
+            /* TAINT use prepared statement */
+            debug('Ω__20', exif_from_path(abs_path));
+          }
         }
-      }
-      // info 'Ω__19', new Date data.creation_date
+        //.....................................................................................................
+        info(`Ω__21 changes to DB at ${DB.path}: ${rpr(counts)}`);
+        //.....................................................................................................
+        return null;
+      });
       console.timeEnd('demo_exifreader');
-      debug('Ω__20', `found ${rel_paths.length} matching files`);
       return null;
     })();
     //.........................................................................................................
     return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  prepare_db = function() {
+    var db, get_must_initialize, initialize_db, known_path_ids, path;
+    path = '/dev/shm/files-and-prompts.sqlite';
+    db = new DBay({path});
+    //.........................................................................................................
+    get_must_initialize = function(db) {
+      var R, tables;
+      tables = db.first_values(SQL`select name from sqlite_schema where type = 'table' order by name;`);
+      tables = [...tables];
+      R = false;
+      R || (R = indexOf.call(tables, 'files') < 0);
+      R || (R = indexOf.call(tables, 'prompts') < 0);
+      return R;
+    };
+    //.........................................................................................................
+    initialize_db = function(db) {
+      db(function() {
+        db(SQL`drop table if exists files;`);
+        db(SQL`drop table if exists prompts;`);
+        db(SQL`create table files (
+  id      text not null primary key,
+  path    text not null );`);
+        db(SQL`create table prompts (
+  id      text not null primary key,
+  prompt  text not null );`);
+        // db SQL"insert into texts values ( 3, 'third' );"
+        // db SQL"insert into texts values ( 1, 'first' );"
+        // db SQL"insert into texts values ( ?, ? );", [ 2, 'second', ]
+        return null;
+      });
+      return null;
+    };
+    //.........................................................................................................
+    if (get_must_initialize(db)) {
+      warn(`Ω__22 initializing DB at ${path}`);
+      initialize_db(db);
+    } else {
+      help(`Ω__23 re-using DB at ${path}`);
+    }
+    //.........................................................................................................
+    /* TAINT can we use an API call to get a set? */
+    known_path_ids = (() => {
+      var R, id, ref;
+      R = new Set();
+      ref = db.first_values(SQL`select * from files;`);
+      for (id of ref) {
+        R.add(id);
+      }
+      return R;
+    })();
+    //.........................................................................................................
+    return {path, db, known_path_ids};
   };
 
   //===========================================================================================================
@@ -207,6 +316,8 @@
       return (await demo_exifreader());
     })();
   }
+
+  // demo_dbay_with_exifdata()
 
 }).call(this);
 

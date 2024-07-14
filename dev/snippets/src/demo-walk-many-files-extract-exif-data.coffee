@@ -17,7 +17,17 @@ GUY                       = require 'guy'
   echo
   reverse
   log     }               = GUY.trm
+FS                        = require 'node:fs'
+CRYPTO                    = require 'node:crypto'
+{ DBay }                  = require '../../../apps/dbay'
+{ SQL  }                  = DBay
 
+
+#-----------------------------------------------------------------------------------------------------------
+id_from_text = ( text, length = 8 ) ->
+  hash = CRYPTO.createHash 'sha1'
+  hash.update text
+  return ( hash.digest 'hex' )[ ... length ]
 
 #-----------------------------------------------------------------------------------------------------------
 set_path = ->
@@ -131,33 +141,107 @@ demo_exiftool_vendored = ->
 
 #-----------------------------------------------------------------------------------------------------------
 demo_exifreader = ->
-  PATH          = require 'node:path'
+  PATH            = require 'node:path'
   { glob
-    globSync  } = require 'glob'
-  ExifReader    = require 'exifreader'
-  patterns      = [ '**/*.png', '**/*.jpg', ]
-  cfg           = { dot: true }
-  base_path     = set_path()
-  count         = 0
+    globSync  }   = require 'glob'
+  ExifReader      = require 'exifreader'
+  patterns        = [ '**/*.png', '**/*.jpg', ]
+  cfg             = { dot: true }
+  base_path       = set_path()
+  count           = 0
+  DB              = prepare_db()
+  #.........................................................................................................
+  exif_from_path  = do =>
+    my_buffer = new Buffer.alloc 2 * 1024
+    return ( path ) ->
+      fd  = FS.openSync path
+      debug 'Ω__15', { fd, }
+      FS.readSync fd, my_buffer
+      debug 'Ω__16', { my_buffer, }
+      exif        = ExifReader.load my_buffer
+      if ( data = exif?.UserComment ? null )?
+        return JSON.parse ( Buffer.from data.value ).toString 'utf-8'
+      return null
   #.........................................................................................................
   do =>
-    console.time 'demo_exifreader'
-    for rel_path in ( rel_paths = globSync patterns, cfg )
-      count++; whisper count if ( count %% 1000 ) is 0
-      abs_path  = PATH.resolve base_path, rel_path
-      exif      = await ExifReader.load abs_path # , { async: true, includeUnknown: true, }
-      if ( data = exif?.UserComment ? null )?
-        data = JSON.parse ( Buffer.from data.value ).toString 'utf-8'
-        # debug 'Ω__15', abs_path
-        # debug 'Ω__16', Object.keys data
-        info 'Ω__17', data.prompt
-        info 'Ω__18', data.creation_date
-        # info 'Ω__19', new Date data.creation_date
+    DB.db ->
+      console.time 'demo_exifreader'
+      counts    =
+        skipped:  0
+        added:    0
+        deleted:  0
+      rel_paths = globSync patterns, cfg
+      info 'Ω__17', "found #{rel_paths.length} matching files"
+      for rel_path in rel_paths
+        count++; whisper count if ( count %% 1000 ) is 0
+        break if count > 10000 ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+        abs_path  = PATH.resolve base_path, rel_path
+        path_id   = id_from_text abs_path
+        #...................................................................................................
+        if DB.known_path_ids.has path_id
+          # help "Ω__18 skipping path ID #{rpr path_id}"
+          counts.skipped++
+          DB.known_path_ids.delete path_id
+        else
+          # warn "Ω__19 inserting path ID #{rpr path_id}"
+          counts.added++
+          ### TAINT use prepared statement ###
+          DB.db SQL"""insert into files ( id, path ) values ( ?, ? );""", [ path_id, abs_path, ]
+          ### TAINT use prepared statement ###
+          debug 'Ω__20', exif_from_path abs_path
+      #.....................................................................................................
+      info "Ω__21 changes to DB at #{DB.path}: #{rpr counts}"
+      #.....................................................................................................
+      return null
     console.timeEnd 'demo_exifreader'
-    debug 'Ω__20', "found #{rel_paths.length} matching files"
     return null
   #.........................................................................................................
   return null
+
+#-----------------------------------------------------------------------------------------------------------
+prepare_db = ->
+  path                = '/dev/shm/files-and-prompts.sqlite'
+  db                  = new DBay { path, }
+  #.........................................................................................................
+  get_must_initialize = ( db ) ->
+    tables    = db.first_values SQL"select name from sqlite_schema where type = 'table' order by name;"
+    tables    = [ tables..., ]
+    R         = false
+    R       or= 'files'    not in tables
+    R       or= 'prompts'  not in tables
+    return R
+  #.........................................................................................................
+  initialize_db = ( db ) ->
+    db ->
+      db SQL"drop table if exists files;"
+      db SQL"drop table if exists prompts;"
+      db SQL"""
+        create table files (
+          id      text not null primary key,
+          path    text not null );"""
+      db SQL"""
+        create table prompts (
+          id      text not null primary key,
+          prompt  text not null );"""
+      # db SQL"insert into texts values ( 3, 'third' );"
+      # db SQL"insert into texts values ( 1, 'first' );"
+      # db SQL"insert into texts values ( ?, ? );", [ 2, 'second', ]
+      return null
+    return null
+  #.........................................................................................................
+  if get_must_initialize db
+    warn "Ω__22 initializing DB at #{path}"
+    initialize_db db
+  else
+    help "Ω__23 re-using DB at #{path}"
+  #.........................................................................................................
+  ### TAINT can we use an API call to get a set? ###
+  known_path_ids = do =>
+    R = new Set()
+    R.add id for id from db.first_values SQL"select * from files;"
+    return R
+  #.........................................................................................................
+  return { path, db, known_path_ids, }
 
 
 #===========================================================================================================
@@ -167,3 +251,4 @@ if module is require.main then await do =>
   # await demo_exifr()
   # await demo_exiftool_vendored()
   await demo_exifreader()
+  # demo_dbay_with_exifdata()
