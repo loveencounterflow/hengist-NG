@@ -32,6 +32,9 @@ importers:
       guy-test-6.1.0:
         specifier: npm:guy-test@6.1.0
         version: guy-test@6.1.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
+      intertype:
+        specifier: ^203.2.0
+        version: 203.2.0
       intertype-10.0.0:
         specifier: npm:intertype@10.0.0
         version: intertype@10.0.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)
@@ -699,7 +702,7 @@ snapshots:
   guy-test@6.0.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3):
     dependencies:
       guy: 13.7.2(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
-      intertype: 203.0.0
+      intertype: 203.2.0
       to-width: 1.2.0
       webguy: 5.2.1
     transitivePeerDependencies:
