@@ -27,17 +27,18 @@ FS                        = require 'node:fs'
 # test_mode                 = 'throw_failures'
 # test_mode                 = 'throw_errors'
 # test_mode                 = 'failsafe'
-{ type_of }               = require 'intertype'
+{ isa
+  type_of }               = require 'intertype'
 
 
 #===========================================================================================================
 cfg = do ->
   db_folder_path            = PATH.resolve  __dirname,                '/dev/shm'
-  db_file_path              = PATH.join     db_folder_path,           'prompts-and-generations.sqlite'
+  db_file_path              = PATH.join     db_folder_path,           'prompts-and-generations.bd6ef2fc-3d7c-4e3e-9e41-76712e65cede.sqlite'
   assets_folder_path        = PATH.resolve  __dirname,                '../../../assets'
   promptparser_folder_path  = PATH.join     assets_folder_path,       'promptparser'
-  prompts_file_path         = PATH.join     promptparser_folder_path, 'short-prompts.md'
-  { assets_folder_path, promptparser_folder_path, prompts_file_path, db_folder_path, db_file_path, }
+  short_prompts_file_path   = PATH.join     promptparser_folder_path, 'short-prompts.md'
+  { assets_folder_path, promptparser_folder_path, short_prompts_file_path, db_folder_path, db_file_path, }
 
 
 #===========================================================================================================
@@ -95,7 +96,7 @@ promptparser_tasks =
       prepare_task()
       @eq ( assets_folder       = -> H.folder_exists  cfg.assets_folder_path        ), true
       @eq ( promptparser_folder = -> H.folder_exists  cfg.promptparser_folder_path  ), true
-      @eq ( prompts_file        = -> H.file_exists    cfg.prompts_file_path         ), true
+      @eq ( prompts_file        = -> H.file_exists    cfg.short_prompts_file_path   ), true
       @eq ( db_folder           = -> H.folder_exists  cfg.db_folder_path            ), true
       return null
 
@@ -121,11 +122,16 @@ promptparser_tasks =
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    cannot_omit_prompt_file_path: ->
+    can_omit_prompt_file_path: ->
       prepare_task()
       { Prompt_file_reader } = require '../../../apps/promptparser'
-      omit_prompt_file_path = -> new Prompt_file_reader cfg.db_file_path, null
-      @eq ( Ω___4 = -> omit_prompt_file_path() instanceof Prompt_file_reader ), true
+      db = new Prompt_file_reader cfg.db_file_path, null
+      @eq ( Ω___4 = -> db instanceof Prompt_file_reader ), true
+      @eq ( Ω___5 = -> isa.object db.cfg                ), true
+      @eq ( Ω___6 = -> db.cfg.db_path                   ), cfg.db_file_path
+      @eq ( Ω___7 = -> db.cfg.datasource_path           ), null
+      @eq ( Ω___8 = -> db.cfg.has_db_path               ), true
+      @eq ( Ω___9 = -> db.cfg.has_datasource_path       ), false
       return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -135,56 +141,15 @@ promptparser_tasks =
     ööö: ->
       prepare_task()
       { Prompt_file_reader } = require '../../../apps/promptparser'
-      db = new Prompt_file_reader cfg.db_file_path, cfg.prompts_file_path
-      debug 'Ω___5', type_of db
+      db = new Prompt_file_reader cfg.db_file_path, cfg.short_prompts_file_path
+      debug 'Ω__10', type_of db
+      debug 'Ω__11', db.cfg
       return null
 
 
 #===========================================================================================================
-demo = ->
-  { Prompt_file_reader } = require '../../../apps/promptparser'
-  prompts = [
-    "[s324w1 some remark] my prompt"
-    "[A++v 212] other prompt"
-    "[A++v 212 but no cigar] other prompt"
-    "[B 2x3 p#3014] Altbau, Versuchsraum, Institut"
-    "[WORDING p#4420]"
-    "[UNSAFE p#38]"
-    "[+++ + p#41]"
-    "[meh p#53]"
-    "[UU]"
-    "[A+v U1UU]"
-    "[A++v 22 but not following directions] \t foo bar   "
-    "[A++v 22 but not following directions p#7765] \t foo bar.   "
-    ""
-    "[]"
-    "just a prompt"
-    "     just a prompt"
-    "     [324] a prompt."
-    ]
-  parser = new Prompt_file_reader()
-  whisper 'Ω___6', '————————————————————————'
-  for prompt in prompts
-    whisper 'Ω___7', '————————————————————————'
-    for d in parser.parse prompt
-      try
-        switch true
-          when d.$key is 'source' then  urge    'Ω___8', GUY.trm.reverse rpr d.$value
-          when d.$stamped         then  whisper 'Ω___9', "#{d.$key.padEnd 20} #{rpr d.value}"
-          else                          info    'Ω__10', "#{d.$key.padEnd 20} #{rpr d.value}"
-      catch error
-        warn 'Ω__11', error.message
-        whisper 'Ω__12', d
-  return null
-  #.........................................................................................................
-  # p = B.as_pipeline()
-  # debug 'Ω__13', p.run_and_stop()
-  # # T?.eq result, [ [ '*', 'a1', 'a2', 'a3', 'b1', '!b2!', 'b3' ] ]
-  # process.exit 111
-
-#===========================================================================================================
 if module is require.main then await do =>
-  # ( new Test { throw_on_error: true, } ).test { promptparser_tasks, }
-  ( new Test { throw_on_error: false, } ).test { promptparser_tasks, }
-  # demo()
+  t = new Test { throw_on_error: true, }
+  t = new Test { throw_on_error: false, }
+  t.test { promptparser_tasks, }
 
