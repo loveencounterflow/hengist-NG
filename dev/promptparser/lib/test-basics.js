@@ -181,15 +181,467 @@
       }
     },
     //---------------------------------------------------------------------------------------------------------
-    äää: {
+    single_prompt_parsing: {
       //-------------------------------------------------------------------------------------------------------
-      ööö: function() {
-        var Prompt_file_reader, db;
+      interface: function() {
+        var Prompt_file_reader, db, Ω__10, Ω__11, Ω__12, Ω__13, Ω__14, Ω__15, Ω__16, Ω__17;
         prepare_task();
         ({Prompt_file_reader} = require('../../../apps/promptparser'));
         db = new Prompt_file_reader(cfg.db_file_path, cfg.short_prompts_file_path);
-        debug('Ω__10', type_of(db));
-        debug('Ω__11', db.cfg);
+        this.eq((Ω__10 = function() {
+          return db.types.type_of(db.parse_first_tokens);
+        }), 'function');
+        this.eq((Ω__11 = function() {
+          return db.types.type_of(db.parse_all_tokens);
+        }), 'function');
+        this.eq((Ω__12 = function() {
+          return db.types.type_of(db.parse_first_records);
+        }), 'function');
+        this.eq((Ω__13 = function() {
+          return db.types.type_of(db.parse_all_records);
+        }), 'function');
+        this.eq((Ω__14 = function() {
+          return db.types.type_of(db.parse_first_tokens('[s432] helo'));
+        }), 'list');
+        this.eq((Ω__15 = function() {
+          return db.types.type_of(db.parse_all_tokens('[s432] helo'));
+        }), 'list');
+        this.eq((Ω__16 = function() {
+          return db.types.type_of(db.parse_first_records('[s432] helo'));
+        }), 'list');
+        this.eq((Ω__17 = function() {
+          return db.types.type_of(db.parse_all_records('[s432] helo'));
+        }), 'list');
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      parse_all_records: function() {
+        var Prompt_file_reader, db, matcher, result, Ω__18;
+        prepare_task();
+        ({Prompt_file_reader} = require('../../../apps/promptparser'));
+        db = new Prompt_file_reader(cfg.db_file_path, cfg.short_prompts_file_path);
+        //.....................................................................................................
+        result = db.parse_all_records('[s432] helo\n[1] world\n\n');
+        matcher = [
+          [
+            {
+              '$key': 'record',
+              table: 'prompts',
+              fields: {
+                id: 'c6efaf27673db4f7',
+                lnr: 1,
+                prompt: 'helo',
+                comment: null,
+                rejected: false
+              }
+            },
+            {
+              '$key': 'record',
+              table: 'generations',
+              fields: {
+                prompt_id: 'c6efaf27673db4f7',
+                nr: 1,
+                count: 4
+              }
+            },
+            {
+              '$key': 'record',
+              table: 'generations',
+              fields: {
+                prompt_id: 'c6efaf27673db4f7',
+                nr: 2,
+                count: 3
+              }
+            },
+            {
+              '$key': 'record',
+              table: 'generations',
+              fields: {
+                prompt_id: 'c6efaf27673db4f7',
+                nr: 3,
+                count: 2
+              }
+            }
+          ],
+          [
+            {
+              '$key': 'record',
+              table: 'prompts',
+              fields: {
+                id: '7c211433f0207159',
+                lnr: 2,
+                prompt: 'world',
+                comment: null,
+                rejected: false
+              }
+            },
+            {
+              '$key': 'record',
+              table: 'generations',
+              fields: {
+                prompt_id: '7c211433f0207159',
+                nr: 1,
+                count: 1
+              }
+            }
+          ],
+          [
+            {
+              '$key': 'record',
+              table: 'prompts',
+              fields: {
+                id: 'da39a3ee5e6b4b0d',
+                lnr: 2,
+                prompt: '',
+                comment: null,
+                rejected: false
+              }
+            }
+          ],
+          [
+            {
+              '$key': 'record',
+              table: 'prompts',
+              fields: {
+                id: 'da39a3ee5e6b4b0d',
+                lnr: 2,
+                prompt: '',
+                comment: null,
+                rejected: false
+              }
+            }
+          ]
+        ];
+        this.eq((Ω__18 = function() {
+          return result;
+        }), matcher);
+        (() => {          //.....................................................................................................
+          var record, records;
+          for (records of result) {
+            whisper('Ω__19', '————————————————————————————————————————');
+            for (record of records) {
+              whisper('Ω__20', record);
+            }
+          }
+          return whisper('Ω__21', '————————————————————————————————————————');
+        })();
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      parse_first_records: function() {
+        var Prompt_file_reader, db, matcher, result, Ω__23;
+        prepare_task();
+        ({Prompt_file_reader} = require('../../../apps/promptparser'));
+        db = new Prompt_file_reader(cfg.db_file_path, cfg.short_prompts_file_path);
+        //.....................................................................................................
+        result = db.parse_first_records('[s432] helo\n[1] world\n\n');
+        urge('Ω__22', result);
+        matcher = [
+          {
+            '$key': 'record',
+            table: 'prompts',
+            fields: {
+              id: 'c6efaf27673db4f7',
+              lnr: 1,
+              prompt: 'helo',
+              comment: null,
+              rejected: false
+            }
+          },
+          {
+            '$key': 'record',
+            table: 'generations',
+            fields: {
+              prompt_id: 'c6efaf27673db4f7',
+              nr: 1,
+              count: 4
+            }
+          },
+          {
+            '$key': 'record',
+            table: 'generations',
+            fields: {
+              prompt_id: 'c6efaf27673db4f7',
+              nr: 2,
+              count: 3
+            }
+          },
+          {
+            '$key': 'record',
+            table: 'generations',
+            fields: {
+              prompt_id: 'c6efaf27673db4f7',
+              nr: 3,
+              count: 2
+            }
+          }
+        ];
+        this.eq((Ω__23 = function() {
+          return result;
+        }), matcher);
+        (() => {          //.....................................................................................................
+          var record;
+          for (record of result) {
+            whisper('Ω__24', record);
+          }
+          return whisper('Ω__25', '————————————————————————————————————————');
+        })();
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      parse_all_tokens: function() {
+        var Prompt_file_reader, db, matcher, result, Ω__26;
+        prepare_task();
+        ({Prompt_file_reader} = require('../../../apps/promptparser'));
+        db = new Prompt_file_reader(cfg.db_file_path, cfg.short_prompts_file_path);
+        //.....................................................................................................
+        result = db.parse_all_tokens('[s432] helo\n[1] world\n\n');
+        matcher = [
+          [
+            {
+              '$key': 'marks:marksleft',
+              jump: 'marks',
+              value: '[',
+              lnr1: 1,
+              x1: 0,
+              lnr2: 1,
+              x2: 1,
+              data: null,
+              source: '[s432] helo'
+            },
+            {
+              '$key': 'marks:format',
+              jump: null,
+              value: 's',
+              lnr1: 1,
+              x1: 1,
+              lnr2: 1,
+              x2: 2,
+              data: null,
+              source: '[s432] helo'
+            },
+            {
+              '$key': 'marks:generation',
+              jump: null,
+              value: '4',
+              lnr1: 1,
+              x1: 2,
+              lnr2: 1,
+              x2: 3,
+              data: null,
+              source: '[s432] helo'
+            },
+            {
+              '$key': 'marks:generation',
+              jump: null,
+              value: '3',
+              lnr1: 1,
+              x1: 3,
+              lnr2: 1,
+              x2: 4,
+              data: null,
+              source: '[s432] helo'
+            },
+            {
+              '$key': 'marks:generation',
+              jump: null,
+              value: '2',
+              lnr1: 1,
+              x1: 4,
+              lnr2: 1,
+              x2: 5,
+              data: null,
+              source: '[s432] helo'
+            },
+            {
+              '$key': 'marks:marksright',
+              jump: 'plain',
+              value: ']',
+              lnr1: 1,
+              x1: 5,
+              lnr2: 1,
+              x2: 6,
+              data: null,
+              source: '[s432] helo'
+            },
+            {
+              '$key': 'plain:prompt',
+              jump: null,
+              value: ' helo',
+              lnr1: 1,
+              x1: 6,
+              lnr2: 1,
+              x2: 11,
+              data: null,
+              source: '[s432] helo'
+            }
+          ],
+          [
+            {
+              '$key': 'marks:marksleft',
+              jump: 'marks',
+              value: '[',
+              lnr1: 2,
+              x1: 0,
+              lnr2: 2,
+              x2: 1,
+              data: null,
+              source: '[1] world'
+            },
+            {
+              '$key': 'marks:generation',
+              jump: null,
+              value: '1',
+              lnr1: 2,
+              x1: 1,
+              lnr2: 2,
+              x2: 2,
+              data: null,
+              source: '[1] world'
+            },
+            {
+              '$key': 'marks:marksright',
+              jump: 'plain',
+              value: ']',
+              lnr1: 2,
+              x1: 2,
+              lnr2: 2,
+              x2: 3,
+              data: null,
+              source: '[1] world'
+            },
+            {
+              '$key': 'plain:prompt',
+              jump: null,
+              value: ' world',
+              lnr1: 2,
+              x1: 3,
+              lnr2: 2,
+              x2: 9,
+              data: null,
+              source: '[1] world' 
+            }
+          ],
+          [],
+          []
+        ];
+        this.eq((Ω__26 = function() {
+          return result;
+        }), matcher);
+        (() => {          //.....................................................................................................
+          var record, records;
+          for (records of result) {
+            whisper('Ω__27', '————————————————————————————————————————');
+            for (record of records) {
+              whisper('Ω__28', record);
+            }
+          }
+          return whisper('Ω__29', '————————————————————————————————————————');
+        })();
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      parse_first_tokens: function() {
+        var Prompt_file_reader, db, matcher, result, Ω__31;
+        prepare_task();
+        ({Prompt_file_reader} = require('../../../apps/promptparser'));
+        db = new Prompt_file_reader(cfg.db_file_path, cfg.short_prompts_file_path);
+        //.....................................................................................................
+        result = db.parse_first_tokens('[s432] helo\n[1] world\n\n');
+        urge('Ω__30', result);
+        matcher = [
+          {
+            '$key': 'marks:marksleft',
+            jump: 'marks',
+            value: '[',
+            lnr1: 1,
+            x1: 0,
+            lnr2: 1,
+            x2: 1,
+            data: null,
+            source: '[s432] helo'
+          },
+          {
+            '$key': 'marks:format',
+            jump: null,
+            value: 's',
+            lnr1: 1,
+            x1: 1,
+            lnr2: 1,
+            x2: 2,
+            data: null,
+            source: '[s432] helo'
+          },
+          {
+            '$key': 'marks:generation',
+            jump: null,
+            value: '4',
+            lnr1: 1,
+            x1: 2,
+            lnr2: 1,
+            x2: 3,
+            data: null,
+            source: '[s432] helo'
+          },
+          {
+            '$key': 'marks:generation',
+            jump: null,
+            value: '3',
+            lnr1: 1,
+            x1: 3,
+            lnr2: 1,
+            x2: 4,
+            data: null,
+            source: '[s432] helo'
+          },
+          {
+            '$key': 'marks:generation',
+            jump: null,
+            value: '2',
+            lnr1: 1,
+            x1: 4,
+            lnr2: 1,
+            x2: 5,
+            data: null,
+            source: '[s432] helo'
+          },
+          {
+            '$key': 'marks:marksright',
+            jump: 'plain',
+            value: ']',
+            lnr1: 1,
+            x1: 5,
+            lnr2: 1,
+            x2: 6,
+            data: null,
+            source: '[s432] helo'
+          },
+          {
+            '$key': 'plain:prompt',
+            jump: null,
+            value: ' helo',
+            lnr1: 1,
+            x1: 6,
+            lnr2: 1,
+            x2: 11,
+            data: null,
+            source: '[s432] helo'
+          }
+        ];
+        this.eq((Ω__31 = function() {
+          return result;
+        }), matcher);
+        (() => {          //.....................................................................................................
+          var record;
+          for (record of result) {
+            whisper('Ω__32', record);
+          }
+          return whisper('Ω__33', '————————————————————————————————————————');
+        })();
+        //.....................................................................................................
         return null;
       }
     }
@@ -200,10 +652,10 @@
     await (() => {
       var t;
       t = new Test({
-        throw_on_error: true
+        throw_on_error: false
       });
       t = new Test({
-        throw_on_error: false
+        throw_on_error: true
       });
       return t.test({promptparser_tasks});
     })();
