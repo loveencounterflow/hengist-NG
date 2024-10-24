@@ -179,7 +179,7 @@
     //---------------------------------------------------------------------------------------------------------
     lexing_and_parsing_nxn_expressions: {
       //-------------------------------------------------------------------------------------------------------
-      recognize_multiplication: function() {
+      recognize_multiplication_tokens: function() {
         var _Journal_walker_for_testing, jw;
         prepare_task();
         //.....................................................................................................
@@ -386,47 +386,151 @@
         })();
         //.....................................................................................................
         return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      recognize_multiplication_records: function() {
+        var _Journal_walker_for_testing, get_jw, simplify_generation_records;
+        prepare_task();
+        //.....................................................................................................
+        ({_Journal_walker_for_testing} = require('../../../apps/promptparser/lib/_used-for-testing'));
+        get_jw = function() {
+          return new _Journal_walker_for_testing(get_journal_walker_cfg());
+        };
+        //.....................................................................................................
+        simplify_generation_records = function(records) {
+          var R, i, len, record;
+          R = [];
+          for (i = 0, len = records.length; i < len; i++) {
+            record = records[i];
+            if (record.table !== 'jnl_generations') {
+              continue;
+            }
+            R.push(`${record.fields.nr}:${record.fields.count}`);
+          }
+          return R.join(',');
+        };
+        (() => {          //.....................................................................................................
+          var d, probe, ref, results, Ω__64;
+          probe = '[s12w4 w]';
+          this.eq((Ω__64 = function() {
+            return simplify_generation_records(get_jw().parse_all_records(probe));
+          }), '1:1,2:2,3:4');
+          urge('Ω__65', '>>>', rpr(simplify_generation_records(get_jw().parse_all_records(probe))));
+          urge('Ω__66', GUY.trm.reverse(rpr(probe)));
+          ref = get_jw().parse_all_records(probe);
+          results = [];
+          for (d of ref) {
+            results.push(info('Ω__67', d.$key.padEnd(20), rpr(d.table), d.fields));
+          }
+          return results;
+        })();
+        (() => {          //.....................................................................................................
+          var d, probe, ref, results, Ω__68;
+          probe = '[s34w3s1 2x3, 5x4 3x1]';
+          this.eq((Ω__68 = function() {
+            return simplify_generation_records(get_jw().parse_all_records(probe));
+          }), '1:3,2:4,3:3,4:1,5:4,6:1,7:3,8:4,9:4,10:4,11:1,12:1,13:4,14:3');
+          urge('Ω__69', '>>>', rpr(simplify_generation_records(get_jw().parse_all_records(probe))));
+          urge('Ω__70', GUY.trm.reverse(rpr(probe)));
+          ref = get_jw().parse_all_records(probe);
+          results = [];
+          for (d of ref) {
+            results.push(info('Ω__71', d.$key.padEnd(20), rpr(d.table), d.fields));
+          }
+          return results;
+        })();
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[1x3,]'
+        //   @eq ( Ω__72 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:multiplication:1x3,marks:commaws:,,marks:marksright:]'
+        //   urge 'Ω__73', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__74', GUY.trm.reverse rpr probe
+        //   info 'Ω__75', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[ 1x3]'
+        //   @eq ( Ω__76 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:marksright:]'
+        //   urge 'Ω__77', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__78', GUY.trm.reverse rpr probe
+        //   info 'Ω__79', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[ 1x3,]'
+        //   @eq ( Ω__80 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:commaws:,,marks:marksright:]'
+        //   urge 'Ω__81', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__82', GUY.trm.reverse rpr probe
+        //   info 'Ω__83', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[ 1x3, ]'
+        //   @eq ( Ω__84 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:commaws:, ,marks:marksright:]'
+        //   urge 'Ω__85', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__86', GUY.trm.reverse rpr probe
+        //   info 'Ω__87', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[ 1x3, what]'
+        //   @eq ( Ω__88 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:commaws:, ,marks:comment:what,marks:marksright:]'
+        //   urge 'Ω__89', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__90', GUY.trm.reverse rpr probe
+        //   info 'Ω__91', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[5x2, 6x4]'
+        //   @eq ( Ω__92 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:multiplication:5x2,marks:commaws:, ,marks:multiplication:6x4,marks:marksright:]'
+        //   urge 'Ω__93', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__94', GUY.trm.reverse rpr probe
+        //   info 'Ω__95', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        // #.....................................................................................................
+        // do =>
+        //   probe = '[A+ 5x2, 6x4]'
+        //   @eq ( Ω__96 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:grade:A+,marks:ws: ,marks:multiplication:5x2,marks:commaws:, ,marks:multiplication:6x4,marks:marksright:]'
+        //   urge 'Ω__97', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        //   urge 'Ω__98', GUY.trm.reverse rpr probe
+        //   info 'Ω__99', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+        //.....................................................................................................
+        return null;
       }
     },
     //---------------------------------------------------------------------------------------------------------
     single_prompt_parsing: {
       //-------------------------------------------------------------------------------------------------------
       interface: function() {
-        var _Journal_walker_for_testing, jw, Ω__64, Ω__65, Ω__66, Ω__67, Ω__68, Ω__69, Ω__70, Ω__71;
+        var _Journal_walker_for_testing, jw, Ω_100, Ω_101, Ω_102, Ω_103, Ω_104, Ω_105, Ω_106, Ω_107;
         prepare_task();
         //.....................................................................................................
         ({_Journal_walker_for_testing} = require('../../../apps/promptparser/lib/_used-for-testing'));
         jw = new _Journal_walker_for_testing(get_journal_walker_cfg());
         //.....................................................................................................
-        this.eq((Ω__64 = function() {
+        this.eq((Ω_100 = function() {
           return jw.types.type_of(jw.parse_first_tokens);
         }), 'function');
-        this.eq((Ω__65 = function() {
+        this.eq((Ω_101 = function() {
           return jw.types.type_of(jw.parse_all_tokens);
         }), 'function');
-        this.eq((Ω__66 = function() {
+        this.eq((Ω_102 = function() {
           return jw.types.type_of(jw.parse_first_records);
         }), 'function');
-        this.eq((Ω__67 = function() {
+        this.eq((Ω_103 = function() {
           return jw.types.type_of(jw.parse_all_records);
         }), 'function');
-        this.eq((Ω__68 = function() {
+        this.eq((Ω_104 = function() {
           return jw.types.type_of(jw.parse_first_tokens('[s432] helo'));
         }), 'list');
-        this.eq((Ω__69 = function() {
+        this.eq((Ω_105 = function() {
           return jw.types.type_of(jw.parse_all_tokens('[s432] helo'));
         }), 'list');
-        this.eq((Ω__70 = function() {
+        this.eq((Ω_106 = function() {
           return jw.types.type_of(jw.parse_first_records('[s432] helo'));
         }), 'list');
-        this.eq((Ω__71 = function() {
+        this.eq((Ω_107 = function() {
           return jw.types.type_of(jw.parse_all_records('[s432] helo'));
         }), 'list');
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
       parse_all_records: function() {
-        var _Journal_walker_for_testing, jw, matcher, record, result, Ω__72;
+        var _Journal_walker_for_testing, jw, matcher, record, result, Ω_108;
         prepare_task();
         ({_Journal_walker_for_testing} = require('../../../apps/promptparser/lib/_used-for-testing'));
         jw = new _Journal_walker_for_testing(get_journal_walker_cfg());
@@ -545,27 +649,27 @@
             }
           }
         ];
-        this.eq((Ω__72 = function() {
+        this.eq((Ω_108 = function() {
           return result;
         }), matcher);
         //.....................................................................................................
-        whisper('Ω__73', '————————————————————————————————————————');
+        whisper('Ω_109', '————————————————————————————————————————');
         for (record of result) {
-          whisper('Ω__74', record);
+          whisper('Ω_110', record);
         }
-        whisper('Ω__75', '————————————————————————————————————————');
+        whisper('Ω_111', '————————————————————————————————————————');
         //.....................................................................................................
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
       parse_first_records: function() {
-        var _Journal_walker_for_testing, jw, matcher, record, result, Ω__77;
+        var _Journal_walker_for_testing, jw, matcher, record, result, Ω_113;
         prepare_task();
         ({_Journal_walker_for_testing} = require('../../../apps/promptparser/lib/_used-for-testing'));
         jw = new _Journal_walker_for_testing(get_journal_walker_cfg());
         //.....................................................................................................
         result = jw.parse_first_records('[s432] helo\n[1] world\n\n');
-        urge('Ω__76', result);
+        urge('Ω_112', result);
         matcher = [
           {
             '$key': 'record',
@@ -618,21 +722,21 @@
             }
           }
         ];
-        this.eq((Ω__77 = function() {
+        this.eq((Ω_113 = function() {
           return result;
         }), matcher);
         //.....................................................................................................
-        whisper('Ω__78', '————————————————————————————————————————');
+        whisper('Ω_114', '————————————————————————————————————————');
         for (record of result) {
-          whisper('Ω__79', record);
+          whisper('Ω_115', record);
         }
-        whisper('Ω__80', '————————————————————————————————————————');
+        whisper('Ω_116', '————————————————————————————————————————');
         //.....................................................................................................
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
       parse_all_tokens: function() {
-        var _Journal_walker_for_testing, jw, matcher, result, token, Ω__81;
+        var _Journal_walker_for_testing, jw, matcher, result, token, Ω_117;
         prepare_task();
         ({_Journal_walker_for_testing} = require('../../../apps/promptparser/lib/_used-for-testing'));
         jw = new _Journal_walker_for_testing(get_journal_walker_cfg());
@@ -761,28 +865,28 @@
             source: '[1] world'
           }
         ];
-        this.eq((Ω__81 = function() {
+        this.eq((Ω_117 = function() {
           return result;
         }), matcher);
         //.....................................................................................................
-        whisper('Ω__82', '————————————————————————————————————————');
+        whisper('Ω_118', '————————————————————————————————————————');
         for (token of result) {
-          whisper('Ω__83', token);
+          whisper('Ω_119', token);
         }
-        whisper('Ω__84', '————————————————————————————————————————');
+        whisper('Ω_120', '————————————————————————————————————————');
         //.....................................................................................................
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
       parse_first_tokens: function() {
-        var _Journal_walker_for_testing, jw, result, token, Ω__86, Ω__87, Ω__88, Ω__89, Ω__90, Ω__91, Ω__92;
+        var _Journal_walker_for_testing, jw, result, token, Ω_122, Ω_123, Ω_124, Ω_125, Ω_126, Ω_127, Ω_128;
         prepare_task();
         ({_Journal_walker_for_testing} = require('../../../apps/promptparser/lib/_used-for-testing'));
         jw = new _Journal_walker_for_testing(get_journal_walker_cfg());
         //.....................................................................................................
         result = jw.parse_first_tokens('\n[s432] helo\n[1] world\n\n');
-        urge('Ω__85', result);
-        this.eq((Ω__86 = function() {
+        urge('Ω_121', result);
+        this.eq((Ω_122 = function() {
           return result[0];
         }), {
           '$key': 'marks:marksleft',
@@ -795,7 +899,7 @@
           data: null,
           source: '[s432] helo'
         });
-        this.eq((Ω__87 = function() {
+        this.eq((Ω_123 = function() {
           return result[1];
         }), {
           '$key': 'marks:format',
@@ -808,7 +912,7 @@
           data: null,
           source: '[s432] helo'
         });
-        this.eq((Ω__88 = function() {
+        this.eq((Ω_124 = function() {
           return result[2];
         }), {
           '$key': 'marks:generation',
@@ -821,7 +925,7 @@
           data: null,
           source: '[s432] helo'
         });
-        this.eq((Ω__89 = function() {
+        this.eq((Ω_125 = function() {
           return result[3];
         }), {
           '$key': 'marks:generation',
@@ -834,7 +938,7 @@
           data: null,
           source: '[s432] helo'
         });
-        this.eq((Ω__90 = function() {
+        this.eq((Ω_126 = function() {
           return result[4];
         }), {
           '$key': 'marks:generation',
@@ -847,7 +951,7 @@
           data: null,
           source: '[s432] helo'
         });
-        this.eq((Ω__91 = function() {
+        this.eq((Ω_127 = function() {
           return result[5];
         }), {
           '$key': 'marks:marksright',
@@ -860,7 +964,7 @@
           data: null,
           source: '[s432] helo'
         });
-        this.eq((Ω__92 = function() {
+        this.eq((Ω_128 = function() {
           return result[6];
         }), {
           '$key': 'plain:prompt',
@@ -874,11 +978,11 @@
           source: '[s432] helo'
         });
         //.....................................................................................................
-        whisper('Ω__93', '————————————————————————————————————————');
+        whisper('Ω_129', '————————————————————————————————————————');
         for (token of result) {
-          whisper('Ω__94', token);
+          whisper('Ω_130', token);
         }
-        whisper('Ω__95', '————————————————————————————————————————');
+        whisper('Ω_131', '————————————————————————————————————————');
         //.....................................................................................................
         return null;
       }
@@ -893,11 +997,11 @@
   //     prepare_task()
   //     { _Journal_walker_for_testing } = require '../../../apps/promptparser/lib/_used-for-testing'
   //     jw = new _Journal_walker_for_testing get_journal_walker_cfg()
-  //     @eq ( Ω__96 = -> jw.types.type_of jw.insert                             ), 'function'
-  //     # @eq ( Ω__97 = -> db.types.type_of db.insert_first_records                ), 'function'
-  //     # @eq ( Ω__98 = -> db.types.type_of db.insert_all_records                  ), 'function'
-  //     # @eq ( Ω__99 = -> db.types.type_of db.insert_first_records  '[s432] helo' ), 'list'
-  //     # @eq ( Ω_100 = -> db.types.type_of db.insert_all_records    '[s432] helo' ), 'list'
+  //     @eq ( Ω_132 = -> jw.types.type_of jw.insert                             ), 'function'
+  //     # @eq ( Ω_133 = -> db.types.type_of db.insert_first_records                ), 'function'
+  //     # @eq ( Ω_134 = -> db.types.type_of db.insert_all_records                  ), 'function'
+  //     # @eq ( Ω_135 = -> db.types.type_of db.insert_first_records  '[s432] helo' ), 'list'
+  //     # @eq ( Ω_136 = -> db.types.type_of db.insert_all_records    '[s432] helo' ), 'list'
   //     return null
 
   //   #-------------------------------------------------------------------------------------------------------
@@ -908,7 +1012,7 @@
   //     #.....................................................................................................
   //     records = jw.parse_all_records '[s432] helo\n[1] world\n\n'
   //     for record in records
-  //       @eq ( Ω_101 = -> jw.insert record ), 1
+  //       @eq ( Ω_137 = -> jw.insert record ), 1
   //     return null
 
   //   #-------------------------------------------------------------------------------------------------------
@@ -918,7 +1022,7 @@
   //     jw = new _Journal_walker_for_testing get_journal_walker_cfg()
   //     #.....................................................................................................
   //     records = jw.parse_all_records '[s432] helo\n[1] world\n\n'
-  //     @eq ( Ω_102 = -> jw.insert records ), 8
+  //     @eq ( Ω_138 = -> jw.insert records ), 8
   //     return null
 
   //===========================================================================================================

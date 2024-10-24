@@ -154,7 +154,7 @@ promptparser_tasks =
   lexing_and_parsing_nxn_expressions:
 
     #-------------------------------------------------------------------------------------------------------
-    recognize_multiplication: ->
+    recognize_multiplication_tokens: ->
       prepare_task()
       #.....................................................................................................
       { _Journal_walker_for_testing } = require '../../../apps/promptparser/lib/_used-for-testing'
@@ -257,6 +257,85 @@ promptparser_tasks =
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    recognize_multiplication_records: ->
+      prepare_task()
+      #.....................................................................................................
+      { _Journal_walker_for_testing } = require '../../../apps/promptparser/lib/_used-for-testing'
+      get_jw = -> new _Journal_walker_for_testing get_journal_walker_cfg()
+      #.....................................................................................................
+      simplify_generation_records = ( records ) ->
+        R = []
+        for record in records
+          continue unless record.table is 'jnl_generations'
+          R.push "#{record.fields.nr}:#{record.fields.count}"
+        return R.join ','
+      #.....................................................................................................
+      do =>
+        probe = '[s12w4 w]'
+        @eq ( Ω__64 = -> simplify_generation_records get_jw().parse_all_records probe ), '1:1,2:2,3:4'
+        urge 'Ω__65', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        urge 'Ω__66', GUY.trm.reverse rpr probe
+        info 'Ω__67', ( d.$key.padEnd 20 ), ( rpr d.table ), d.fields for d from get_jw().parse_all_records probe
+      #.....................................................................................................
+      do =>
+        probe = '[s34w3s1 2x3, 5x4 3x1]'
+        @eq ( Ω__68 = -> simplify_generation_records get_jw().parse_all_records probe ), '1:3,2:4,3:3,4:1,5:4,6:1,7:3,8:4,9:4,10:4,11:1,12:1,13:4,14:3'
+        urge 'Ω__69', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+        urge 'Ω__70', GUY.trm.reverse rpr probe
+        info 'Ω__71', ( d.$key.padEnd 20 ), ( rpr d.table ), d.fields for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[1x3,]'
+      #   @eq ( Ω__72 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:multiplication:1x3,marks:commaws:,,marks:marksright:]'
+      #   urge 'Ω__73', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__74', GUY.trm.reverse rpr probe
+      #   info 'Ω__75', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[ 1x3]'
+      #   @eq ( Ω__76 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:marksright:]'
+      #   urge 'Ω__77', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__78', GUY.trm.reverse rpr probe
+      #   info 'Ω__79', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[ 1x3,]'
+      #   @eq ( Ω__80 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:commaws:,,marks:marksright:]'
+      #   urge 'Ω__81', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__82', GUY.trm.reverse rpr probe
+      #   info 'Ω__83', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[ 1x3, ]'
+      #   @eq ( Ω__84 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:commaws:, ,marks:marksright:]'
+      #   urge 'Ω__85', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__86', GUY.trm.reverse rpr probe
+      #   info 'Ω__87', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[ 1x3, what]'
+      #   @eq ( Ω__88 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:ws: ,marks:multiplication:1x3,marks:commaws:, ,marks:comment:what,marks:marksright:]'
+      #   urge 'Ω__89', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__90', GUY.trm.reverse rpr probe
+      #   info 'Ω__91', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[5x2, 6x4]'
+      #   @eq ( Ω__92 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:multiplication:5x2,marks:commaws:, ,marks:multiplication:6x4,marks:marksright:]'
+      #   urge 'Ω__93', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__94', GUY.trm.reverse rpr probe
+      #   info 'Ω__95', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      # #.....................................................................................................
+      # do =>
+      #   probe = '[A+ 5x2, 6x4]'
+      #   @eq ( Ω__96 = -> simplify_generation_records get_jw().parse_all_records probe ), 'marks:marksleft:[,marks:grade:A+,marks:ws: ,marks:multiplication:5x2,marks:commaws:, ,marks:multiplication:6x4,marks:marksright:]'
+      #   urge 'Ω__97', '>>>', rpr simplify_generation_records get_jw().parse_all_records probe
+      #   urge 'Ω__98', GUY.trm.reverse rpr probe
+      #   info 'Ω__99', ( d.$key.padEnd 20 ), ( rpr d.value ) for d from get_jw().parse_all_records probe
+      #.....................................................................................................
+      return null
+
   #---------------------------------------------------------------------------------------------------------
   single_prompt_parsing:
 
@@ -267,14 +346,14 @@ promptparser_tasks =
       { _Journal_walker_for_testing } = require '../../../apps/promptparser/lib/_used-for-testing'
       jw = new _Journal_walker_for_testing get_journal_walker_cfg()
       #.....................................................................................................
-      @eq ( Ω__64 = -> jw.types.type_of jw.parse_first_tokens                 ), 'function'
-      @eq ( Ω__65 = -> jw.types.type_of jw.parse_all_tokens                   ), 'function'
-      @eq ( Ω__66 = -> jw.types.type_of jw.parse_first_records                ), 'function'
-      @eq ( Ω__67 = -> jw.types.type_of jw.parse_all_records                  ), 'function'
-      @eq ( Ω__68 = -> jw.types.type_of jw.parse_first_tokens   '[s432] helo' ), 'list'
-      @eq ( Ω__69 = -> jw.types.type_of jw.parse_all_tokens     '[s432] helo' ), 'list'
-      @eq ( Ω__70 = -> jw.types.type_of jw.parse_first_records  '[s432] helo' ), 'list'
-      @eq ( Ω__71 = -> jw.types.type_of jw.parse_all_records    '[s432] helo' ), 'list'
+      @eq ( Ω_100 = -> jw.types.type_of jw.parse_first_tokens                 ), 'function'
+      @eq ( Ω_101 = -> jw.types.type_of jw.parse_all_tokens                   ), 'function'
+      @eq ( Ω_102 = -> jw.types.type_of jw.parse_first_records                ), 'function'
+      @eq ( Ω_103 = -> jw.types.type_of jw.parse_all_records                  ), 'function'
+      @eq ( Ω_104 = -> jw.types.type_of jw.parse_first_tokens   '[s432] helo' ), 'list'
+      @eq ( Ω_105 = -> jw.types.type_of jw.parse_all_tokens     '[s432] helo' ), 'list'
+      @eq ( Ω_106 = -> jw.types.type_of jw.parse_first_records  '[s432] helo' ), 'list'
+      @eq ( Ω_107 = -> jw.types.type_of jw.parse_all_records    '[s432] helo' ), 'list'
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -296,11 +375,11 @@ promptparser_tasks =
         { '$key': 'record', prompt_id: 'da39a3ee5e6b4b0d', table: 'jnl_prompts', fields: { prompt_id: 'da39a3ee5e6b4b0d', lnr: 2, comment: null, rejected: false } },
         { '$key': 'record', prompt_id: 'da39a3ee5e6b4b0d', table: 'all_prompts', fields: { prompt_id: 'da39a3ee5e6b4b0d', prompt: '' } },
         { '$key': 'record', prompt_id: 'da39a3ee5e6b4b0d', table: 'jnl_prompts', fields: { prompt_id: 'da39a3ee5e6b4b0d', lnr: 2, comment: null, rejected: false } } ]
-      @eq ( Ω__72 = -> result ), matcher
+      @eq ( Ω_108 = -> result ), matcher
       #.....................................................................................................
-      whisper 'Ω__73', '————————————————————————————————————————'
-      whisper 'Ω__74', record for record from result
-      whisper 'Ω__75', '————————————————————————————————————————'
+      whisper 'Ω_109', '————————————————————————————————————————'
+      whisper 'Ω_110', record for record from result
+      whisper 'Ω_111', '————————————————————————————————————————'
       #.....................................................................................................
       return null
 
@@ -311,18 +390,18 @@ promptparser_tasks =
       jw = new _Journal_walker_for_testing get_journal_walker_cfg()
       #.....................................................................................................
       result  = jw.parse_first_records '[s432] helo\n[1] world\n\n'
-      urge 'Ω__76', result
+      urge 'Ω_112', result
       matcher = [
         { '$key': 'record', prompt_id: 'c6efaf27673db4f7', table: 'jnl_prompts', fields: { prompt_id: 'c6efaf27673db4f7', lnr: 1, comment: null, rejected: false } },
         { '$key': 'record', prompt_id: 'c6efaf27673db4f7', table: 'all_prompts', fields: { prompt_id: 'c6efaf27673db4f7', prompt: 'helo' } },
         { '$key': 'record', prompt_id: 'c6efaf27673db4f7', table: 'jnl_generations', fields: { prompt_id: 'c6efaf27673db4f7', nr: 1, count: 4 } },
         { '$key': 'record', prompt_id: 'c6efaf27673db4f7', table: 'jnl_generations', fields: { prompt_id: 'c6efaf27673db4f7', nr: 2, count: 3 } },
         { '$key': 'record', prompt_id: 'c6efaf27673db4f7', table: 'jnl_generations', fields: { prompt_id: 'c6efaf27673db4f7', nr: 3, count: 2 } } ]
-      @eq ( Ω__77 = -> result ), matcher
+      @eq ( Ω_113 = -> result ), matcher
       #.....................................................................................................
-      whisper 'Ω__78', '————————————————————————————————————————'
-      whisper 'Ω__79', record for record from result
-      whisper 'Ω__80', '————————————————————————————————————————'
+      whisper 'Ω_114', '————————————————————————————————————————'
+      whisper 'Ω_115', record for record from result
+      whisper 'Ω_116', '————————————————————————————————————————'
       #.....................................................................................................
       return null
 
@@ -346,11 +425,11 @@ promptparser_tasks =
         { '$key': 'marks:marksright', jump: 'plain', value: ']',      lnr1: 3, x1: 2, lnr2: 3, x2: 3,  data: null, source: '[1] world' },
         { '$key': 'plain:prompt',     jump: null,    value: ' world', lnr1: 3, x1: 3, lnr2: 3, x2: 9,  data: null, source: '[1] world' },
         ]
-      @eq ( Ω__81 = -> result ), matcher
+      @eq ( Ω_117 = -> result ), matcher
       #.....................................................................................................
-      whisper 'Ω__82', '————————————————————————————————————————'
-      whisper 'Ω__83', token for token from result
-      whisper 'Ω__84', '————————————————————————————————————————'
+      whisper 'Ω_118', '————————————————————————————————————————'
+      whisper 'Ω_119', token for token from result
+      whisper 'Ω_120', '————————————————————————————————————————'
       #.....................................................................................................
       return null
 
@@ -361,18 +440,18 @@ promptparser_tasks =
       jw = new _Journal_walker_for_testing get_journal_walker_cfg()
       #.....................................................................................................
       result  = jw.parse_first_tokens '\n[s432] helo\n[1] world\n\n'
-      urge 'Ω__85', result
-      @eq ( Ω__86 = -> result[ 0 ] ), { '$key': 'marks:marksleft',  jump: 'marks', value: '[',     lnr1: 2, x1: 0, lnr2: 2, x2: 1,  data: null, source: '[s432] helo' }
-      @eq ( Ω__87 = -> result[ 1 ] ), { '$key': 'marks:format',     jump: null,    value: 's',     lnr1: 2, x1: 1, lnr2: 2, x2: 2,  data: null, source: '[s432] helo' }
-      @eq ( Ω__88 = -> result[ 2 ] ), { '$key': 'marks:generation', jump: null,    value: '4',     lnr1: 2, x1: 2, lnr2: 2, x2: 3,  data: null, source: '[s432] helo' }
-      @eq ( Ω__89 = -> result[ 3 ] ), { '$key': 'marks:generation', jump: null,    value: '3',     lnr1: 2, x1: 3, lnr2: 2, x2: 4,  data: null, source: '[s432] helo' }
-      @eq ( Ω__90 = -> result[ 4 ] ), { '$key': 'marks:generation', jump: null,    value: '2',     lnr1: 2, x1: 4, lnr2: 2, x2: 5,  data: null, source: '[s432] helo' }
-      @eq ( Ω__91 = -> result[ 5 ] ), { '$key': 'marks:marksright', jump: 'plain', value: ']',     lnr1: 2, x1: 5, lnr2: 2, x2: 6,  data: null, source: '[s432] helo' }
-      @eq ( Ω__92 = -> result[ 6 ] ), { '$key': 'plain:prompt',     jump: null,    value: ' helo', lnr1: 2, x1: 6, lnr2: 2, x2: 11, data: null, source: '[s432] helo' }
+      urge 'Ω_121', result
+      @eq ( Ω_122 = -> result[ 0 ] ), { '$key': 'marks:marksleft',  jump: 'marks', value: '[',     lnr1: 2, x1: 0, lnr2: 2, x2: 1,  data: null, source: '[s432] helo' }
+      @eq ( Ω_123 = -> result[ 1 ] ), { '$key': 'marks:format',     jump: null,    value: 's',     lnr1: 2, x1: 1, lnr2: 2, x2: 2,  data: null, source: '[s432] helo' }
+      @eq ( Ω_124 = -> result[ 2 ] ), { '$key': 'marks:generation', jump: null,    value: '4',     lnr1: 2, x1: 2, lnr2: 2, x2: 3,  data: null, source: '[s432] helo' }
+      @eq ( Ω_125 = -> result[ 3 ] ), { '$key': 'marks:generation', jump: null,    value: '3',     lnr1: 2, x1: 3, lnr2: 2, x2: 4,  data: null, source: '[s432] helo' }
+      @eq ( Ω_126 = -> result[ 4 ] ), { '$key': 'marks:generation', jump: null,    value: '2',     lnr1: 2, x1: 4, lnr2: 2, x2: 5,  data: null, source: '[s432] helo' }
+      @eq ( Ω_127 = -> result[ 5 ] ), { '$key': 'marks:marksright', jump: 'plain', value: ']',     lnr1: 2, x1: 5, lnr2: 2, x2: 6,  data: null, source: '[s432] helo' }
+      @eq ( Ω_128 = -> result[ 6 ] ), { '$key': 'plain:prompt',     jump: null,    value: ' helo', lnr1: 2, x1: 6, lnr2: 2, x2: 11, data: null, source: '[s432] helo' }
       #.....................................................................................................
-      whisper 'Ω__93', '————————————————————————————————————————'
-      whisper 'Ω__94', token for token from result
-      whisper 'Ω__95', '————————————————————————————————————————'
+      whisper 'Ω_129', '————————————————————————————————————————'
+      whisper 'Ω_130', token for token from result
+      whisper 'Ω_131', '————————————————————————————————————————'
       #.....................................................................................................
       return null
 
@@ -384,11 +463,11 @@ promptparser_tasks =
   #     prepare_task()
   #     { _Journal_walker_for_testing } = require '../../../apps/promptparser/lib/_used-for-testing'
   #     jw = new _Journal_walker_for_testing get_journal_walker_cfg()
-  #     @eq ( Ω__96 = -> jw.types.type_of jw.insert                             ), 'function'
-  #     # @eq ( Ω__97 = -> db.types.type_of db.insert_first_records                ), 'function'
-  #     # @eq ( Ω__98 = -> db.types.type_of db.insert_all_records                  ), 'function'
-  #     # @eq ( Ω__99 = -> db.types.type_of db.insert_first_records  '[s432] helo' ), 'list'
-  #     # @eq ( Ω_100 = -> db.types.type_of db.insert_all_records    '[s432] helo' ), 'list'
+  #     @eq ( Ω_132 = -> jw.types.type_of jw.insert                             ), 'function'
+  #     # @eq ( Ω_133 = -> db.types.type_of db.insert_first_records                ), 'function'
+  #     # @eq ( Ω_134 = -> db.types.type_of db.insert_all_records                  ), 'function'
+  #     # @eq ( Ω_135 = -> db.types.type_of db.insert_first_records  '[s432] helo' ), 'list'
+  #     # @eq ( Ω_136 = -> db.types.type_of db.insert_all_records    '[s432] helo' ), 'list'
   #     return null
 
   #   #-------------------------------------------------------------------------------------------------------
@@ -399,7 +478,7 @@ promptparser_tasks =
   #     #.....................................................................................................
   #     records = jw.parse_all_records '[s432] helo\n[1] world\n\n'
   #     for record in records
-  #       @eq ( Ω_101 = -> jw.insert record ), 1
+  #       @eq ( Ω_137 = -> jw.insert record ), 1
   #     return null
 
   #   #-------------------------------------------------------------------------------------------------------
@@ -409,7 +488,7 @@ promptparser_tasks =
   #     jw = new _Journal_walker_for_testing get_journal_walker_cfg()
   #     #.....................................................................................................
   #     records = jw.parse_all_records '[s432] helo\n[1] world\n\n'
-  #     @eq ( Ω_102 = -> jw.insert records ), 8
+  #     @eq ( Ω_138 = -> jw.insert records ), 8
   #     return null
 
 

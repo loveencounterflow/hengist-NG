@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clack/prompts": "^0.7.0",
     "@iarna/toml": "^2.2.5",
+    "@inquirer/prompts": "^7.0.0",
+    "execa": "^9.4.0",
     "exifr": "^7.1.3",
     "exifreader": "^4.23.3",
     "exiftool-vendored": "^27.0.0",
@@ -19,6 +22,7 @@
     "guy": "^13.7.2",
     "guy-test": "^6.0.0",
     "guy-test-6.1.0": "npm:guy-test@6.1.0",
+    "inquirer-file-selector": "^0.4.0",
     "intertype": "^203.2.0",
     "intertype-10.0.0": "npm:intertype@10.0.0",
     "intertype-10.1.0": "npm:intertype@10.1.0",
@@ -34,6 +38,8 @@
     "intertype-201.1.0": "npm:intertype@201.1.0",
     "intertype-202.0.0": "npm:intertype@202.0.0",
     "intertype-203.0.0": "npm:intertype@203.0.0",
-    "regex": "^2.1.0"
+    "path-type": "^6.0.0",
+    "regex": "^2.1.0",
+    "zx": "^8.1.9"
   }
 }
