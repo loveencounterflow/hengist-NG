@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var FS, GUY, PATH, _get_short_file_descriptor, alert, debug, dsc, echo, filename, filenames, get_long_file_descriptor, get_short_file_descriptor, help, i, info, inspect, len, log, path, plain, praise, reverse, rpr, types_and_methods, urge, warn, whisper;
+  var FS, GUY, PATH, _get_descriptor, alert, debug, dsc, echo, filename, filenames, get_descriptor, get_long_file_descriptor, help, i, info, inspect, len, log, path, plain, praise, reverse, rpr, types_and_methods, urge, warn, whisper;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -43,7 +43,7 @@
   ];
 
   //-----------------------------------------------------------------------------------------------------------
-  _get_short_file_descriptor = function(path) {
+  _get_descriptor = function(path) {
     var is_loop, link, lstat, stat, type;
     type = null;
     link = false;
@@ -116,15 +116,15 @@
   };
 
   //-----------------------------------------------------------------------------------------------------------
-  get_short_file_descriptor = function(...P) {
-    return _get_short_file_descriptor(...P);
+  get_descriptor = function(...P) {
+    return _get_descriptor(...P);
   };
 
   //-----------------------------------------------------------------------------------------------------------
   get_long_file_descriptor = function(...P) {
     var dsc, stats;
     throw new Error("not implemented");
-    return ({dsc, stats} = _get_short_file_descriptor(...P));
+    return ({dsc, stats} = _get_descriptor(...P));
   };
 
 // dev: 2114n,
@@ -153,7 +153,7 @@
     filename = filenames[i];
     // help()
     path = PATH.resolve(__dirname, PATH.join('../probes', filename));
-    dsc = get_short_file_descriptor(path);
+    dsc = get_descriptor(path);
     help('Ω___4', filename.padEnd(20), dsc);
   }
 

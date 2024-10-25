@@ -40,7 +40,7 @@ types_and_methods = [
 ]
 
 #-----------------------------------------------------------------------------------------------------------
-_get_short_file_descriptor = ( path ) ->
+_get_descriptor = ( path ) ->
   type    = null
   link    = false
   is_loop = false
@@ -71,13 +71,13 @@ _get_short_file_descriptor = ( path ) ->
   return { type, link, is_loop, }
 
 #-----------------------------------------------------------------------------------------------------------
-get_short_file_descriptor = ( P... ) ->
-  _get_short_file_descriptor P...
+get_descriptor = ( P... ) ->
+  _get_descriptor P...
 
 #-----------------------------------------------------------------------------------------------------------
 get_long_file_descriptor = ( P... ) ->
   throw new Error "not implemented"
-  { dsc, stats } = _get_short_file_descriptor P...
+  { dsc, stats } = _get_descriptor P...
 # dev: 2114n,
 # ino: 48064969n,
 # mode: 33188n,
@@ -104,7 +104,7 @@ get_long_file_descriptor = ( P... ) ->
 for filename in filenames
   # help()
   path    = PATH.resolve __dirname, PATH.join '../probes', filename
-  dsc     = get_short_file_descriptor path
+  dsc     = get_descriptor path
   help 'Ω___4', ( filename.padEnd 20 ), dsc
 
 
