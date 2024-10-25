@@ -61,12 +61,13 @@ _get_short_file_descriptor = ( path ) ->
     return [ stat, false, ]
   is_loop  ?= false
   stat      = lstat if is_loop or ( not link )
-  return { type, link, is_loop, } if ( not stat? ) and ( not is_loop )
+  return { type: 'link', link, is_loop, } if ( not stat? ) and ( not is_loop )
   type = do =>
     for { type, method_name, } in types_and_methods
       return type if stat[ method_name ]()
     return null
   #.........................................................................................................
+  type ?= 'link'
   return { type, link, is_loop, }
 
 #-----------------------------------------------------------------------------------------------------------

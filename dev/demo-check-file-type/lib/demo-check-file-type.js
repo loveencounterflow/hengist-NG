@@ -92,7 +92,11 @@
       stat = lstat;
     }
     if ((stat == null) && (!is_loop)) {
-      return {type, link, is_loop};
+      return {
+        type: 'link',
+        link,
+        is_loop
+      };
     }
     type = (() => {
       var i, len, method_name;
@@ -105,6 +109,9 @@
       return null;
     })();
     //.........................................................................................................
+    if (type == null) {
+      type = 'link';
+    }
     return {type, link, is_loop};
   };
 
