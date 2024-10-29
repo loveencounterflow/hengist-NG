@@ -1,133 +1,21 @@
 (async function() {
   'use strict';
-  var CLK, Clack, GUY, Inquirer, PR, alert, clack, debug, echo, fileSelector, help, info, inquirer, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var CLK, Clack, GUY, Interactive_dialog, PATH, Programmatic_dialog, Programmatic_dialog_error, alert, bold, debug, demo_run_interactive, demo_run_programmatic, echo, help, info, inspect, log, mark, plain, praise, reverse, rpr, sample_dialog, urge, warn, whisper;
 
   //===========================================================================================================
   GUY = require('guy');
 
   ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('demo-execa'));
 
-  ({rpr, inspect, echo, reverse, log} = GUY.trm);
+  ({rpr, inspect, echo, reverse, bold, log} = GUY.trm);
 
   //...........................................................................................................
-  PR = require('@inquirer/prompts');
-
-  fileSelector = (require('inquirer-file-selector')).default;
-
   CLK = require('@clack/prompts');
 
-  //===========================================================================================================
-  Inquirer = class Inquirer {
-    //---------------------------------------------------------------------------------------------------------
-    async input() {
-      debug('Ω___1', PR.input);
-      help('Ω___2', rpr((await PR.input({
-        message: "say a number"
-      }))));
-      return null;
-    }
+  PATH = require('node:path');
 
-    //---------------------------------------------------------------------------------------------------------
-    async checkbox() {
-      var cfg;
-      cfg = {
-        message: "Select a package manager",
-        loop: true,
-        pageSize: 10,
-        required: true,
-        // theme:
-        choices: [
-          {
-            // { value, name, description, short, checked, disabled, }
-            name: 'npm',
-            value: 'npm'
-          },
-          {
-            name: 'yarn',
-            value: 'yarn',
-            description: "use Yarn"
-          },
-          new PR.Separator(),
-          {
-            name: 'option 1',
-            value: 'option 1',
-            checked: true
-          },
-          {
-            name: 'option 2',
-            value: 'option 2'
-          },
-          {
-            name: 'option 3',
-            value: 'option 3'
-          },
-          {
-            name: 'option 4',
-            value: 'option 4'
-          },
-          {
-            name: 'option 5',
-            value: 'option 5'
-          },
-          {
-            name: 'option 6',
-            value: 'option 6'
-          },
-          {
-            name: 'option 7',
-            value: 'option 7'
-          },
-          {
-            name: 'option 8',
-            value: 'option 8'
-          },
-          {
-            name: 'option 9',
-            value: 'option 9'
-          },
-          {
-            name: 'option 10',
-            value: 'option 10'
-          },
-          new PR.Separator(),
-          {
-            name: 'pnpm',
-            value: 'pnpm',
-            disabled: true
-          },
-          {
-            name: 'pnpm',
-            value: 'pnpm',
-            disabled: "(pnpm is not available)"
-          }
-        ]
-      };
-      help('Ω___3', rpr((await PR.checkbox(cfg))));
-      return null;
-    }
-
-    //---------------------------------------------------------------------------------------------------------
-    async fileselector() {
-      // message
-      // basePath
-      // pageSize
-      // filter
-      // showExcluded
-      // disabledLabel
-      // allowCancel
-      // cancelText
-      // emptyText
-      // theme
-      // match
-      // hideNonMatch
-      debug('Ω___4', rpr((await fileSelector({
-        message: 'Select a file:',
-        pageSize: 20,
-        allowCancel: true
-      }))));
-      return null;
-    }
-
+  mark = function(ref) {
+    return urge(reverse(bold(` ${ref} `)));
   };
 
   //===========================================================================================================
@@ -156,14 +44,14 @@
         initialValue: "Jim",
         validate: function(value) {
           if (value.length === 0) {
-            // debug 'Ω___5', rpr value
+            // debug 'Ω___1', rpr value
             return "Value is required!";
           }
           return null;
         }
       };
       name = (await CLK.text(cfg));
-      info(`Ω___6 your name is ${rpr(name)}`);
+      info(`Ω___2 your name is ${rpr(name)}`);
       return null;
     }
 
@@ -190,7 +78,7 @@
           ]
         };
         project_type = (await CLK.select(cfg));
-        info(`Ω___7 project type: ${rpr(project_type)}`);
+        info(`Ω___3 project type: ${rpr(project_type)}`);
         return null;
       })();
       await (async() => {
@@ -217,7 +105,7 @@
           required: false
         };
         tools = (await CLK.multiselect(cfg));
-        info(`Ω___8 tools: ${rpr(tools)}`);
+        info(`Ω___4 tools: ${rpr(tools)}`);
         spinner.stop("thanks!");
         return null;
       })();
@@ -226,18 +114,171 @@
 
   };
 
-  //===========================================================================================================
-  inquirer = new Inquirer();
+  // clack = new Clack()
 
-  clack = new Clack();
+    //===========================================================================================================
+  Interactive_dialog = class Interactive_dialog {
+    //---------------------------------------------------------------------------------------------------------
+    ctrlc(value) {
+      // debug 'Ω___5', rpr value
+      if (CLK.isCancel(value)) {
+        CLK.cancel("Operation cancelled.");
+        this.process_exit(0);
+      }
+      return value;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    async intro(cfg) {
+      return this.ctrlc((await CLK.intro(cfg)));
+    }
+
+    async outro(cfg) {
+      return this.ctrlc((await CLK.outro(cfg)));
+    }
+
+    async confirm(cfg) {
+      return this.ctrlc((await CLK.confirm(cfg)));
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    process_exit(code = 0) {
+      return process.exit(code);
+    }
+
+  };
+
+  //===========================================================================================================
+  Programmatic_dialog_error = class Programmatic_dialog_error extends Error {};
+
+  //===========================================================================================================
+  Programmatic_dialog = class Programmatic_dialog {
+    //---------------------------------------------------------------------------------------------------------
+    constructor(steps) {
+      this.exp_steps = steps;
+      this.pc = -1;
+      this.act_steps = [];
+      this.errors = [];
+      return void 0;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    _next() {
+      var R, ref1;
+      this.pc++;
+      if ((R = (ref1 = this.exp_steps[this.pc]) != null ? ref1 : null) == null) {
+        throw new Programmatic_dialog_error(`running out of steps: ${rpr(this)}`);
+      }
+      return R;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    _error(message) {
+      var error;
+      error = {
+        isa: 'error',
+        message
+      };
+      this.act_steps.push(error);
+      this.errors.push(error);
+      return null;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    _step(act_key) {
+      var exp_key, value;
+      [exp_key, value] = this._next();
+      if (act_key === exp_key) {
+        this.act_steps.push(act_key);
+      } else {
+        this._error(`error @ ${this.pc}: act ${rpr(act_key)}, exp ${rpr(exp_key)}`);
+      }
+      return value;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    intro(...P) {
+      return this._step('intro');
+    }
+
+    outro(...P) {
+      return this._step('outro');
+    }
+
+    confirm(...P) {
+      return this._step('confirm');
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    process_exit(code) {
+      // not really exiting the process
+      return code;
+    }
+
+  };
+
+  //===========================================================================================================
+  sample_dialog = async function(dlg = null) {
+    var R;
+    if (dlg == null) {
+      dlg = new Interactive_dialog();
+    }
+    R = {};
+    //.........................................................................................................
+    dlg.intro("create-my-app");
+    while (true) {
+      if ((await dlg.confirm({
+        message: "do you want to loop?"
+      }))) {
+        continue;
+      }
+      break;
+    }
+    dlg.outro("You're all set!");
+    //.........................................................................................................
+    return R;
+  };
+
+  //===========================================================================================================
+  demo_run_interactive = async function() {
+    await sample_dialog(); // or `sample_dialog new Interactive_dialog()`
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  demo_run_programmatic = async function() {
+    var dlg, error, steps;
+    steps = [
+      ['intro',
+      true],
+      ['confirm',
+      true],
+      // [ 'confirm',  false, ]
+      ['outro',
+      true]
+    ];
+    dlg = new Programmatic_dialog(steps);
+    try {
+      await sample_dialog(dlg);
+    } catch (error1) {
+      error = error1;
+      if (!(error instanceof Programmatic_dialog_error)) {
+        throw error;
+      }
+      warn('Ω__14', reverse(bold(error.message)));
+    }
+    if (dlg.errors.length > 0) {
+      warn('Ω__15', dlg.errors);
+    }
+    help('Ω__16', dlg.act_steps);
+    return null;
+  };
 
   //===========================================================================================================
   if (module === require.main) {
     await (async() => {
-      // await inquirer.fileselector()
-      // await clack.intro_outro()
-      // await clack.text()
-      await clack.select();
+      // await demo_run_interactive()
+      await demo_run_programmatic();
       return null;
     })();
   }
