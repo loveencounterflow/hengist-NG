@@ -135,6 +135,7 @@
         unique_refs: true
       });
       this./* TAINT make configurable */_exp_steps = steps;
+      this._exp_keys = Object.keys(this._exp_steps);
       this._pc = -1;
       this._act_steps = {};
       this.results = {};
@@ -161,10 +162,10 @@
 
     //---------------------------------------------------------------------------------------------------------
     _next(ref) {
-      var R, message, ref1;
+      var R, key, message, ref1, ref2;
       this._pc++;
-      if ((R = (ref1 = this._exp_steps[this._pc]) != null ? ref1 : null) == null) {
-        message = `emergency halt, running too long: act ${this._act_steps.length + 1} exp ${this._exp_steps.length}`;
+      if (((key = (ref1 = this._exp_keys[this._pc]) != null ? ref1 : null) == null) || ((R = (ref2 = this._exp_steps[key]) != null ? ref2 : null) == null)) {
+        message = `emergency halt, running too long: act ${this._count_act_steps()} exp ${this._exp_keys.length}`;
         this._fail(ref, new Overrun_failure(message));
         throw new Overrun_error(message);
       }
@@ -203,16 +204,17 @@
     }
 
     //---------------------------------------------------------------------------------------------------------
+    _count_act_steps() {
+      return this._pc + 1;
+    }
+
     _is_finished() {
-      return this._act_steps.length === this._exp_steps.length;
+      return this._count_act_steps() === this._exp_keys.length;
     }
 
-    _is_underrun() {
-      return this._act_steps.length < this._exp_steps.length;
-    }
-
+    // _is_underrun:     -> @_count_act_steps() <  @_exp_keys.length
     _is_overrun() {
-      return this._act_steps.length > this._exp_steps.length;
+      return this._count_act_steps() > this._exp_keys.length;
     }
 
     //---------------------------------------------------------------------------------------------------------
@@ -221,7 +223,7 @@
         //### `dlg.finish()` should be called after the simulated dialog has ben run to issue an  ####
         return true;
       }
-      this._fail('$finish', new Underrun_failure(`finished too early: act ${this._act_steps.length} exp ${this._exp_steps.length}`));
+      this._fail('$finish', new Underrun_failure(`finished too early: act ${this._count_act_steps()} exp ${this._exp_keys.length}`));
       return false;
     }
 
@@ -310,7 +312,6 @@
         ]
       };
       project_type = (await dlg.select(cfg));
-      info(`Ω___6 project type: ${rpr(project_type)}`);
       return null;
     })();
     await (async() => {      //.........................................................................................................
@@ -338,7 +339,6 @@
         required: false
       };
       tools = (await dlg.multiselect(cfg));
-      info(`Ω___7 tools: ${rpr(tools)}`);
       spinner.stop("thanks!");
       return null;
     })();
@@ -357,21 +357,29 @@
   //-----------------------------------------------------------------------------------------------------------
   demo_run_programmatic = async function() {
     var dlg, error, ref, ref1, step, steps;
-    // [ 'confirm',  true, ]
-    steps = [['confirm', false], ['text', "helo"], ['select', 'coffee'], ['multiselect', ['prettier']]];
-    // [ 'outro', ]
+    // steps = [
+    //   # [ 'confirm',  true, ]
+
+    //   # [ 'outro', ]
+    //   ]
+    steps = {
+      q1: ['confirm', false],
+      q2: ['text', "helo"],
+      q3: ['select', 'coffee'],
+      $q4: ['multiselect', ['prettier']],
+      whatever: ['select', 'js']
+    };
     dlg = new Programmatic_dialog(steps);
     try {
       await sample_dialog(dlg);
     } catch (error1) {
       error = error1;
-      if (!(error instanceof Programmatic_dialog_error)) {
+      if (!(error instanceof Dialog_error)) {
         throw error;
       }
       warn('Ω___8', reverse(bold(error.message)));
     }
     dlg.finish();
-    warn('Ω___9', dlg._failures);
     ref1 = dlg._act_steps;
     for (ref in ref1) {
       step = ref1[ref];

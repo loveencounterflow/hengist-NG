@@ -110,6 +110,7 @@ class Programmatic_dialog
   constructor: ( steps ) ->
     @cfg        = GUY.lft.freeze { unique_refs: true, } ### TAINT make configurable ###
     @_exp_steps = steps
+    @_exp_keys  = Object.keys @_exp_steps
     @_pc        = -1
     @_act_steps = {}
     @results    = {}
@@ -124,8 +125,8 @@ class Programmatic_dialog
   #---------------------------------------------------------------------------------------------------------
   _next: ( ref ) ->
     @_pc++
-    unless ( R = @_exp_steps[ @_pc ] ? null )?
-      message = "emergency halt, running too long: act #{@_act_steps.length + 1} exp #{@_exp_steps.length}"
+    if ( not ( key = @_exp_keys[ @_pc ] ? null )? ) or ( not ( R = @_exp_steps[ key ] ? null )? )
+      message = "emergency halt, running too long: act #{@_count_act_steps()} exp #{@_exp_keys.length}"
       @_fail ref, new Overrun_failure message
       throw new Overrun_error message
     return R
@@ -155,15 +156,16 @@ class Programmatic_dialog
     return await GUY.async.defer -> value
 
   #---------------------------------------------------------------------------------------------------------
-  _is_finished: -> @_act_steps.length is @_exp_steps.length
-  _is_underrun: -> @_act_steps.length <  @_exp_steps.length
-  _is_overrun:  -> @_act_steps.length >  @_exp_steps.length
+  _count_act_steps: -> @_pc + 1
+  _is_finished:     -> @_count_act_steps() is @_exp_keys.length
+  # _is_underrun:     -> @_count_act_steps() <  @_exp_keys.length
+  _is_overrun:      -> @_count_act_steps() >  @_exp_keys.length
 
   #---------------------------------------------------------------------------------------------------------
   finish: ( P... ) ->
     #### `dlg.finish()` should be called after the simulated dialog has ben run to issue an  ####
     return true if @_is_finished() or @_is_overrun()
-    @_fail '$finish', new Underrun_failure "finished too early: act #{@_act_steps.length} exp #{@_exp_steps.length}"
+    @_fail '$finish', new Underrun_failure "finished too early: act #{@_count_act_steps()} exp #{@_exp_keys.length}"
     return false
 
   #---------------------------------------------------------------------------------------------------------
@@ -203,7 +205,6 @@ sample_dialog = ( dlg = null ) ->
         { value: 'js',      label: 'JavaScript' },
         { value: 'coffee',  label: 'CoffeeScript', hint: 'yes!' }, ]
     project_type = await dlg.select cfg
-    info "Ω___6 project type: #{rpr project_type}"
     return null
   #.........................................................................................................
   await do =>
@@ -218,7 +219,6 @@ sample_dialog = ( dlg = null ) ->
         { value: 'gh-action', label: 'GitHub Action' }, ]
       required: false
     tools = await dlg.multiselect cfg
-    info "Ω___7 tools: #{rpr tools}"
     spinner.stop "thanks!"
     return null
   #.........................................................................................................
@@ -233,22 +233,27 @@ demo_run_interactive = ->
 
 #-----------------------------------------------------------------------------------------------------------
 demo_run_programmatic = ->
-  steps = [
-    # [ 'confirm',  true, ]
-    [ 'confirm',      false,            ]
-    [ 'text',         "helo",           ]
-    [ 'select',       'coffee',         ]
-    [ 'multiselect',  [ 'prettier', ],  ]
-    # [ 'outro', ]
-    ]
+  # steps = [
+  #   # [ 'confirm',  true, ]
+  #
+  #
+  #
+  #
+  #   # [ 'outro', ]
+  #   ]
+  steps =
+    q1:         [ 'confirm',      false,            ]
+    q2:         [ 'text',         "helo",           ]
+    q3:         [ 'select',       'coffee',         ]
+    $q4:        [ 'multiselect',  [ 'prettier', ],  ]
+    whatever:   [ 'select',       'js',         ]
   dlg = new Programmatic_dialog steps
   try
     await sample_dialog dlg
   catch error
-    throw error unless error instanceof Programmatic_dialog_error
+    throw error unless error instanceof Dialog_error
     warn 'Ω___8', reverse bold error.message
   dlg.finish()
-  warn 'Ω___9', dlg._failures
   for ref, step of dlg._act_steps
     if step instanceof Dialog_failure then  warn ref, step
     else                                    help ref, step
