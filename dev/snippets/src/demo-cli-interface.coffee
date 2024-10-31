@@ -64,21 +64,18 @@ Errors entail failures
 #===========================================================================================================
 ### TAINT Later to be extended so we pass in parameters, not messages ###
 class Dialog_error              extends Error
-class Interactive_dialog_error  extends Dialog_error
-class Programmatic_dialog_error extends Dialog_error
-class Internal_error            extends Programmatic_dialog_error
-class Overrun_error             extends Programmatic_dialog_error
-
+class Overrun_error             extends Dialog_error
+class Dulicate_ref_error        extends Dialog_error
 
 #===========================================================================================================
 ### TAINT Later to be extended so we pass in parameters, not messages ###
 class Dialog_failure
   constructor: ( @message ) -> undefined
 
-class Misstep_failure   extends Dialog_failure
-class Underrun_failure  extends Dialog_failure
-class Overrun_failure   extends Dialog_failure
-class Internal_failure  extends Dialog_failure
+class Misstep_failure       extends Dialog_failure
+class Underrun_failure      extends Dialog_failure
+class Overrun_failure       extends Dialog_failure
+class Duplicate_ref_failure extends Dialog_failure
 
 
 #===========================================================================================================
@@ -86,7 +83,7 @@ class Interactive_dialog
 
   #---------------------------------------------------------------------------------------------------------
   ctrlc: ( value ) ->
-    # debug 'Ω___5', rpr value
+    # debug 'Ω___3', rpr value
     if CLK.isCancel value
       CLK.cancel "Operation cancelled."
       @process_exit 0
@@ -111,10 +108,10 @@ class Programmatic_dialog
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( steps ) ->
+    @cfg        = GUY.lft.freeze { unique_refs: true, } ### TAINT make configurable ###
     @_exp_steps = steps
     @_pc        = -1
-    @_act_steps = []
-    @_skip_keys = [ 'get_spinner', 'intro', 'outro', ]
+    @_act_steps = {}
     @results    = {}
     #.......................................................................................................
     GUY.props.def @, '_failures',
@@ -125,53 +122,53 @@ class Programmatic_dialog
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  _next: ->
+  _next: ( ref ) ->
     @_pc++
     unless ( R = @_exp_steps[ @_pc ] ? null )?
       message = "emergency halt, running too long: act #{@_act_steps.length + 1} exp #{@_exp_steps.length}"
-      @_fail new Overrun_failure message
+      @_fail ref, new Overrun_failure message
       throw new Overrun_error message
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  _fail: ( failure ) ->
-    @_act_steps.push  failure
-    @_failures.push   failure
+  _fail: ( ref, failure ) ->
+    @_act_steps[ ref ] = failure
+    @_failures.push failure
     return null
 
   #---------------------------------------------------------------------------------------------------------
   _step: ( act_key, cfg ) ->
-    [ exp_key, value, ] = @_next()
+    ref = cfg?.ref ? "$q#{@_pc + 2}"
     #.......................................................................................................
-    unless act_key in @_skip_keys
-      ref                 = cfg?.ref ? "$q#{@_pc + 1}"
-      @results[ ref ]     = value
+    if @cfg.unique_refs and Reflect.has @results, ref
+      message = "duplicate ref: #{ref}"
+      @_fail ref, new Duplicate_ref_failure message
+      throw new Dulicate_ref_error message
+    #.......................................................................................................
+    [ exp_key, value, ] = @_next ref
+    @results[ ref ]     = value
     #.......................................................................................................
     if act_key is exp_key
-      @_act_steps.push act_key
+      @_act_steps[ ref ] = act_key
     else
-      @_act_steps.push new Misstep_failure "step##{@_pc}: act #{rpr act_key}, exp #{rpr exp_key}"
+      @_act_steps[ ref ] = new Misstep_failure "step##{@_pc}: act #{rpr act_key}, exp #{rpr exp_key}"
     return await GUY.async.defer -> value
 
   #---------------------------------------------------------------------------------------------------------
   _is_finished: -> @_act_steps.length is @_exp_steps.length
-  _is_underrun: -> @_act_steps.length < @_exp_steps.length
-  _is_overrun:  -> @_act_steps.length > @_exp_steps.length
+  _is_underrun: -> @_act_steps.length <  @_exp_steps.length
+  _is_overrun:  -> @_act_steps.length >  @_exp_steps.length
 
   #---------------------------------------------------------------------------------------------------------
   finish: ( P... ) ->
     #### `dlg.finish()` should be called after the simulated dialog has ben run to issue an  ####
     return true if @_is_finished() or @_is_overrun()
-    # unless @_is_underrun()
-    #   message = "should have recognized overrun"
-    #   @_fail new Internal_failure message
-    #   throw new Internal_error message
-    @_fail new Underrun_failure "finished too early: act #{@_act_steps.length} exp #{@_exp_steps.length}"
+    @_fail '$finish', new Underrun_failure "finished too early: act #{@_act_steps.length} exp #{@_exp_steps.length}"
     return false
 
   #---------------------------------------------------------------------------------------------------------
-  intro:        ( cfg ) -> await @_step 'intro',        cfg
-  outro:        ( cfg ) -> await @_step 'outro',        cfg
+  intro:        ( cfg ) -> null
+  outro:        ( cfg ) -> null
   confirm:      ( cfg ) -> await @_step 'confirm',      cfg
   text:         ( cfg ) -> await @_step 'text',         cfg
   select:       ( cfg ) -> await @_step 'select',       cfg
@@ -192,7 +189,7 @@ sample_dialog = ( dlg = null ) ->
   #.........................................................................................................
   loop
     if value = await dlg.confirm { ref: 'q1', message: "do you want to loop?", }
-      debug 'Ω___6', rpr value
+      debug 'Ω___5', rpr value
       continue
     break
   await dlg.text { ref: 'q2', message: "please enter text", }
@@ -206,14 +203,14 @@ sample_dialog = ( dlg = null ) ->
         { value: 'js',      label: 'JavaScript' },
         { value: 'coffee',  label: 'CoffeeScript', hint: 'yes!' }, ]
     project_type = await dlg.select cfg
-    info "Ω___3 project type: #{rpr project_type}"
+    info "Ω___6 project type: #{rpr project_type}"
     return null
   #.........................................................................................................
   await do =>
     spinner = dlg.get_spinner()
     spinner.start "asking questions"
     cfg =
-      ref:        'q4'
+      ref:        null # intentionally left out
       message:    "Select additional tools."
       options: [
         { value: 'eslint', label: 'ESLint', hint: 'recommended' },
@@ -221,7 +218,7 @@ sample_dialog = ( dlg = null ) ->
         { value: 'gh-action', label: 'GitHub Action' }, ]
       required: false
     tools = await dlg.multiselect cfg
-    info "Ω___4 tools: #{rpr tools}"
+    info "Ω___7 tools: #{rpr tools}"
     spinner.stop "thanks!"
     return null
   #.........................................................................................................
@@ -237,26 +234,24 @@ demo_run_interactive = ->
 #-----------------------------------------------------------------------------------------------------------
 demo_run_programmatic = ->
   steps = [
-    [ 'intro', ]
     # [ 'confirm',  true, ]
     [ 'confirm',      false,            ]
     [ 'text',         "helo",           ]
     [ 'select',       'coffee',         ]
     [ 'multiselect',  [ 'prettier', ],  ]
     # [ 'outro', ]
-    [ 'outro', ]
     ]
   dlg = new Programmatic_dialog steps
   try
     await sample_dialog dlg
   catch error
     throw error unless error instanceof Programmatic_dialog_error
-    warn 'Ω___7', reverse bold error.message
+    warn 'Ω___8', reverse bold error.message
   dlg.finish()
-  warn 'Ω___8', dlg._failures
-  for step in dlg._act_steps
-    if step instanceof Dialog_failure then  warn step
-    else                                    help step
+  warn 'Ω___9', dlg._failures
+  for ref, step of dlg._act_steps
+    if step instanceof Dialog_failure then  warn ref, step
+    else                                    help ref, step
   info dlg.results
   return null
 

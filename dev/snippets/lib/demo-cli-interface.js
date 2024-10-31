@@ -1,7 +1,6 @@
 (async function() {
   'use strict';
-  var CLK, Dialog_error, Dialog_failure, GUY, Interactive_dialog, Interactive_dialog_error, Internal_error, Internal_failure, Misstep_failure, Overrun_error, Overrun_failure, PATH, Programmatic_dialog, Programmatic_dialog_error, Underrun_failure, alert, bold, debug, demo_run_interactive, demo_run_programmatic, echo, help, info, inspect, log, mark, plain, praise, reverse, rpr, sample_dialog, urge, warn, whisper,
-    indexOf = [].indexOf;
+  var CLK, Dialog_error, Dialog_failure, Dulicate_ref_error, Duplicate_ref_failure, GUY, Interactive_dialog, Misstep_failure, Overrun_error, Overrun_failure, PATH, Programmatic_dialog, Underrun_failure, alert, bold, debug, demo_run_interactive, demo_run_programmatic, echo, help, info, inspect, log, mark, plain, praise, reverse, rpr, sample_dialog, urge, warn, whisper;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -54,13 +53,9 @@
   /* TAINT Later to be extended so we pass in parameters, not messages */
   Dialog_error = class Dialog_error extends Error {};
 
-  Interactive_dialog_error = class Interactive_dialog_error extends Dialog_error {};
+  Overrun_error = class Overrun_error extends Dialog_error {};
 
-  Programmatic_dialog_error = class Programmatic_dialog_error extends Dialog_error {};
-
-  Internal_error = class Internal_error extends Programmatic_dialog_error {};
-
-  Overrun_error = class Overrun_error extends Programmatic_dialog_error {};
+  Dulicate_ref_error = class Dulicate_ref_error extends Dialog_error {};
 
   //===========================================================================================================
   /* TAINT Later to be extended so we pass in parameters, not messages */
@@ -78,13 +73,13 @@
 
   Overrun_failure = class Overrun_failure extends Dialog_failure {};
 
-  Internal_failure = class Internal_failure extends Dialog_failure {};
+  Duplicate_ref_failure = class Duplicate_ref_failure extends Dialog_failure {};
 
   //===========================================================================================================
   Interactive_dialog = class Interactive_dialog {
     //---------------------------------------------------------------------------------------------------------
     ctrlc(value) {
-      // debug 'Ω___5', rpr value
+      // debug 'Ω___3', rpr value
       if (CLK.isCancel(value)) {
         CLK.cancel("Operation cancelled.");
         this.process_exit(0);
@@ -136,10 +131,12 @@
   Programmatic_dialog = class Programmatic_dialog {
     //---------------------------------------------------------------------------------------------------------
     constructor(steps) {
-      this._exp_steps = steps;
+      this.cfg = GUY.lft.freeze({
+        unique_refs: true
+      });
+      this./* TAINT make configurable */_exp_steps = steps;
       this._pc = -1;
-      this._act_steps = [];
-      this._skip_keys = ['get_spinner', 'intro', 'outro'];
+      this._act_steps = {};
       this.results = {};
       //.......................................................................................................
       GUY.props.def(this, '_failures', {
@@ -163,38 +160,42 @@
     }
 
     //---------------------------------------------------------------------------------------------------------
-    _next() {
+    _next(ref) {
       var R, message, ref1;
       this._pc++;
       if ((R = (ref1 = this._exp_steps[this._pc]) != null ? ref1 : null) == null) {
         message = `emergency halt, running too long: act ${this._act_steps.length + 1} exp ${this._exp_steps.length}`;
-        this._fail(new Overrun_failure(message));
+        this._fail(ref, new Overrun_failure(message));
         throw new Overrun_error(message);
       }
       return R;
     }
 
     //---------------------------------------------------------------------------------------------------------
-    _fail(failure) {
-      this._act_steps.push(failure);
+    _fail(ref, failure) {
+      this._act_steps[ref] = failure;
       this._failures.push(failure);
       return null;
     }
 
     //---------------------------------------------------------------------------------------------------------
     async _step(act_key, cfg) {
-      var exp_key, ref, ref1, value;
-      [exp_key, value] = this._next();
+      var exp_key, message, ref, ref1, value;
+      ref = (ref1 = cfg != null ? cfg.ref : void 0) != null ? ref1 : `$q${this._pc + 2}`;
       //.......................................................................................................
-      if (indexOf.call(this._skip_keys, act_key) < 0) {
-        ref = (ref1 = cfg != null ? cfg.ref : void 0) != null ? ref1 : `$q${this._pc + 1}`;
-        this.results[ref] = value;
+      if (this.cfg.unique_refs && Reflect.has(this.results, ref)) {
+        message = `duplicate ref: ${ref}`;
+        this._fail(ref, new Duplicate_ref_failure(message));
+        throw new Dulicate_ref_error(message);
       }
       //.......................................................................................................
+      [exp_key, value] = this._next(ref);
+      this.results[ref] = value;
+      //.......................................................................................................
       if (act_key === exp_key) {
-        this._act_steps.push(act_key);
+        this._act_steps[ref] = act_key;
       } else {
-        this._act_steps.push(new Misstep_failure(`step#${this._pc}: act ${rpr(act_key)}, exp ${rpr(exp_key)}`));
+        this._act_steps[ref] = new Misstep_failure(`step#${this._pc}: act ${rpr(act_key)}, exp ${rpr(exp_key)}`);
       }
       return (await GUY.async.defer(function() {
         return value;
@@ -220,21 +221,17 @@
         //### `dlg.finish()` should be called after the simulated dialog has ben run to issue an  ####
         return true;
       }
-      // unless @_is_underrun()
-      //   message = "should have recognized overrun"
-      //   @_fail new Internal_failure message
-      //   throw new Internal_error message
-      this._fail(new Underrun_failure(`finished too early: act ${this._act_steps.length} exp ${this._exp_steps.length}`));
+      this._fail('$finish', new Underrun_failure(`finished too early: act ${this._act_steps.length} exp ${this._exp_steps.length}`));
       return false;
     }
 
     //---------------------------------------------------------------------------------------------------------
-    async intro(cfg) {
-      return (await this._step('intro', cfg));
+    intro(cfg) {
+      return null;
     }
 
-    async outro(cfg) {
-      return (await this._step('outro', cfg));
+    outro(cfg) {
+      return null;
     }
 
     async confirm(cfg) {
@@ -282,7 +279,7 @@
         ref: 'q1',
         message: "do you want to loop?"
       }))) {
-        debug('Ω___6', rpr(value));
+        debug('Ω___5', rpr(value));
         continue;
       }
       break;
@@ -313,7 +310,7 @@
         ]
       };
       project_type = (await dlg.select(cfg));
-      info(`Ω___3 project type: ${rpr(project_type)}`);
+      info(`Ω___6 project type: ${rpr(project_type)}`);
       return null;
     })();
     await (async() => {      //.........................................................................................................
@@ -321,7 +318,7 @@
       spinner = dlg.get_spinner();
       spinner.start("asking questions");
       cfg = {
-        ref: 'q4',
+        ref: null, // intentionally left out
         message: "Select additional tools.",
         options: [
           {
@@ -341,7 +338,7 @@
         required: false
       };
       tools = (await dlg.multiselect(cfg));
-      info(`Ω___4 tools: ${rpr(tools)}`);
+      info(`Ω___7 tools: ${rpr(tools)}`);
       spinner.stop("thanks!");
       return null;
     })();
@@ -359,21 +356,10 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_run_programmatic = async function() {
-    var dlg, error, i, len, ref1, step, steps;
-    steps = [
-      ['intro'],
-      // [ 'confirm',  true, ]
-      ['confirm',
-      false],
-      ['text',
-      "helo"],
-      ['select',
-      'coffee'],
-      ['multiselect',
-      ['prettier']],
-      // [ 'outro', ]
-      ['outro']
-    ];
+    var dlg, error, ref, ref1, step, steps;
+    // [ 'confirm',  true, ]
+    steps = [['confirm', false], ['text', "helo"], ['select', 'coffee'], ['multiselect', ['prettier']]];
+    // [ 'outro', ]
     dlg = new Programmatic_dialog(steps);
     try {
       await sample_dialog(dlg);
@@ -382,17 +368,17 @@
       if (!(error instanceof Programmatic_dialog_error)) {
         throw error;
       }
-      warn('Ω___7', reverse(bold(error.message)));
+      warn('Ω___8', reverse(bold(error.message)));
     }
     dlg.finish();
-    warn('Ω___8', dlg._failures);
+    warn('Ω___9', dlg._failures);
     ref1 = dlg._act_steps;
-    for (i = 0, len = ref1.length; i < len; i++) {
-      step = ref1[i];
+    for (ref in ref1) {
+      step = ref1[ref];
       if (step instanceof Dialog_failure) {
-        warn(step);
+        warn(ref, step);
       } else {
-        help(step);
+        help(ref, step);
       }
     }
     info(dlg.results);
