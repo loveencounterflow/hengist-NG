@@ -53,34 +53,6 @@ mark                      = ( ref ) -> urge reverse bold " #{ref} "
 #     info "Ω___2 your name is #{rpr name}"
 #     return null
 
-#   #---------------------------------------------------------------------------------------------------------
-#   select: ->
-#     await do =>
-#       cfg =
-#         message:    "Pick a project type."
-#         options: [
-#           { value: 'ts',      label: 'TypeScript' },
-#           { value: 'js',      label: 'JavaScript' },
-#           { value: 'coffee',  label: 'CoffeeScript', hint: 'yes!' }, ]
-#       project_type = await CLK.select cfg
-#       info "Ω___3 project type: #{rpr project_type}"
-#       return null
-#     await do =>
-#       spinner = CLK.spinner()
-#       spinner.start "asking questions"
-#       cfg =
-#         message:    "Select additional tools."
-#         options: [
-#           { value: 'eslint', label: 'ESLint', hint: 'recommended' },
-#           { value: 'prettier', label: 'Prettier' },
-#           { value: 'gh-action', label: 'GitHub Action' }, ]
-#         required: false
-#       tools = await CLK.multiselect cfg
-#       info "Ω___4 tools: #{rpr tools}"
-#       spinner.stop "thanks!"
-#       return null
-#     return null
-# # clack = new Clack()
 
 ###
 
@@ -121,10 +93,14 @@ class Interactive_dialog
     return value
 
   #---------------------------------------------------------------------------------------------------------
-  intro:    ( cfg ) -> @ctrlc await CLK.intro cfg
-  outro:    ( cfg ) -> @ctrlc await CLK.outro cfg
-  confirm:  ( cfg ) -> @ctrlc await CLK.confirm cfg
-  finish:           -> null
+  intro:        ( cfg ) -> @ctrlc await CLK.intro       cfg
+  outro:        ( cfg ) -> @ctrlc await CLK.outro       cfg
+  confirm:      ( cfg ) -> @ctrlc await CLK.confirm     cfg
+  text:         ( cfg ) -> @ctrlc await CLK.text        cfg
+  select:       ( cfg ) -> @ctrlc await CLK.select      cfg
+  multiselect:  ( cfg ) -> @ctrlc await CLK.multiselect cfg
+  get_spinner:  ( cfg ) -> CLK.spinner()
+  finish:               -> null
 
   #---------------------------------------------------------------------------------------------------------
   process_exit: ( code = 0 ) -> process.exit code
@@ -138,6 +114,8 @@ class Programmatic_dialog
     @_exp_steps = steps
     @_pc        = -1
     @_act_steps = []
+    @_skip_keys = [ 'get_spinner', 'intro', 'outro', ]
+    @results    = {}
     #.......................................................................................................
     GUY.props.def @, '_failures',
       enumerable:   false
@@ -162,13 +140,18 @@ class Programmatic_dialog
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  _step: ( act_key ) ->
+  _step: ( act_key, cfg ) ->
     [ exp_key, value, ] = @_next()
+    #.......................................................................................................
+    unless act_key in @_skip_keys
+      ref                 = cfg?.ref ? "$q#{@_pc + 1}"
+      @results[ ref ]     = value
+    #.......................................................................................................
     if act_key is exp_key
       @_act_steps.push act_key
     else
       @_act_steps.push new Misstep_failure "step##{@_pc}: act #{rpr act_key}, exp #{rpr exp_key}"
-    return value
+    return await GUY.async.defer -> value
 
   #---------------------------------------------------------------------------------------------------------
   _is_finished: -> @_act_steps.length is @_exp_steps.length
@@ -187,9 +170,13 @@ class Programmatic_dialog
     return false
 
   #---------------------------------------------------------------------------------------------------------
-  intro:    ( P... ) -> @_step 'intro'
-  outro:    ( P... ) -> @_step 'outro'
-  confirm:  ( P... ) -> @_step 'confirm'
+  intro:        ( cfg ) -> await @_step 'intro',        cfg
+  outro:        ( cfg ) -> await @_step 'outro',        cfg
+  confirm:      ( cfg ) -> await @_step 'confirm',      cfg
+  text:         ( cfg ) -> await @_step 'text',         cfg
+  select:       ( cfg ) -> await @_step 'select',       cfg
+  multiselect:  ( cfg ) -> await @_step 'multiselect',  cfg
+  get_spinner:          -> { start: ( -> ), stop: ( -> ), }
 
   #---------------------------------------------------------------------------------------------------------
   process_exit: ( code ) ->
@@ -200,16 +187,47 @@ class Programmatic_dialog
 #===========================================================================================================
 sample_dialog = ( dlg = null ) ->
   dlg  ?= new Interactive_dialog()
-  R     = {}
   #.........................................................................................................
   dlg.intro "create-my-app"
+  #.........................................................................................................
   loop
-    if await dlg.confirm { message: "do you want to loop?", }
+    if value = await dlg.confirm { ref: 'q1', message: "do you want to loop?", }
+      debug 'Ω___6', rpr value
       continue
     break
+  await dlg.text { ref: 'q2', message: "please enter text", }
+  #.........................................................................................................
+  await do =>
+    cfg =
+      ref:        'q3'
+      message:    "Pick a project type."
+      options: [
+        { value: 'ts',      label: 'TypeScript' },
+        { value: 'js',      label: 'JavaScript' },
+        { value: 'coffee',  label: 'CoffeeScript', hint: 'yes!' }, ]
+    project_type = await dlg.select cfg
+    info "Ω___3 project type: #{rpr project_type}"
+    return null
+  #.........................................................................................................
+  await do =>
+    spinner = dlg.get_spinner()
+    spinner.start "asking questions"
+    cfg =
+      ref:        'q4'
+      message:    "Select additional tools."
+      options: [
+        { value: 'eslint', label: 'ESLint', hint: 'recommended' },
+        { value: 'prettier', label: 'Prettier' },
+        { value: 'gh-action', label: 'GitHub Action' }, ]
+      required: false
+    tools = await dlg.multiselect cfg
+    info "Ω___4 tools: #{rpr tools}"
+    spinner.stop "thanks!"
+    return null
+  #.........................................................................................................
   dlg.outro "You're all set!"
   #.........................................................................................................
-  return R
+  return dlg.results
 
 #===========================================================================================================
 demo_run_interactive = ->
@@ -220,9 +238,12 @@ demo_run_interactive = ->
 demo_run_programmatic = ->
   steps = [
     [ 'intro', ]
-    [ 'confirm',  false, ]
     # [ 'confirm',  true, ]
-    [ 'outro', ]
+    [ 'confirm',      false,            ]
+    [ 'text',         "helo",           ]
+    [ 'select',       'coffee',         ]
+    [ 'multiselect',  [ 'prettier', ],  ]
+    # [ 'outro', ]
     [ 'outro', ]
     ]
   dlg = new Programmatic_dialog steps
@@ -232,8 +253,11 @@ demo_run_programmatic = ->
     throw error unless error instanceof Programmatic_dialog_error
     warn 'Ω___7', reverse bold error.message
   dlg.finish()
-  warn 'Ω___9', dlg._failures
-  help 'Ω__10', dlg._act_steps
+  warn 'Ω___8', dlg._failures
+  for step in dlg._act_steps
+    if step instanceof Dialog_failure then  warn step
+    else                                    help step
+  info dlg.results
   return null
 
 

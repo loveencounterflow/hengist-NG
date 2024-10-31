@@ -1,6 +1,7 @@
 (async function() {
   'use strict';
-  var CLK, Dialog_error, Dialog_failure, GUY, Interactive_dialog, Interactive_dialog_error, Internal_error, Internal_failure, Misstep_failure, Overrun_error, Overrun_failure, PATH, Programmatic_dialog, Programmatic_dialog_error, Underrun_failure, alert, bold, debug, demo_run_interactive, demo_run_programmatic, echo, help, info, inspect, log, mark, plain, praise, reverse, rpr, sample_dialog, urge, warn, whisper;
+  var CLK, Dialog_error, Dialog_failure, GUY, Interactive_dialog, Interactive_dialog_error, Internal_error, Internal_failure, Misstep_failure, Overrun_error, Overrun_failure, PATH, Programmatic_dialog, Programmatic_dialog_error, Underrun_failure, alert, bold, debug, demo_run_interactive, demo_run_programmatic, echo, help, info, inspect, log, mark, plain, praise, reverse, rpr, sample_dialog, urge, warn, whisper,
+    indexOf = [].indexOf;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -44,35 +45,6 @@
   //     name = await CLK.text cfg
   //     info "Ω___2 your name is #{rpr name}"
   //     return null
-
-    //   #---------------------------------------------------------------------------------------------------------
-  //   select: ->
-  //     await do =>
-  //       cfg =
-  //         message:    "Pick a project type."
-  //         options: [
-  //           { value: 'ts',      label: 'TypeScript' },
-  //           { value: 'js',      label: 'JavaScript' },
-  //           { value: 'coffee',  label: 'CoffeeScript', hint: 'yes!' }, ]
-  //       project_type = await CLK.select cfg
-  //       info "Ω___3 project type: #{rpr project_type}"
-  //       return null
-  //     await do =>
-  //       spinner = CLK.spinner()
-  //       spinner.start "asking questions"
-  //       cfg =
-  //         message:    "Select additional tools."
-  //         options: [
-  //           { value: 'eslint', label: 'ESLint', hint: 'recommended' },
-  //           { value: 'prettier', label: 'Prettier' },
-  //           { value: 'gh-action', label: 'GitHub Action' }, ]
-  //         required: false
-  //       tools = await CLK.multiselect cfg
-  //       info "Ω___4 tools: #{rpr tools}"
-  //       spinner.stop "thanks!"
-  //       return null
-  //     return null
-  // # clack = new Clack()
   /*
 
   Errors entail failures
@@ -133,6 +105,22 @@
       return this.ctrlc((await CLK.confirm(cfg)));
     }
 
+    async text(cfg) {
+      return this.ctrlc((await CLK.text(cfg)));
+    }
+
+    async select(cfg) {
+      return this.ctrlc((await CLK.select(cfg)));
+    }
+
+    async multiselect(cfg) {
+      return this.ctrlc((await CLK.multiselect(cfg)));
+    }
+
+    get_spinner(cfg) {
+      return CLK.spinner();
+    }
+
     finish() {
       return null;
     }
@@ -151,6 +139,8 @@
       this._exp_steps = steps;
       this._pc = -1;
       this._act_steps = [];
+      this._skip_keys = ['get_spinner', 'intro', 'outro'];
+      this.results = {};
       //.......................................................................................................
       GUY.props.def(this, '_failures', {
         enumerable: false,
@@ -192,15 +182,23 @@
     }
 
     //---------------------------------------------------------------------------------------------------------
-    _step(act_key) {
-      var exp_key, value;
+    async _step(act_key, cfg) {
+      var exp_key, ref, ref1, value;
       [exp_key, value] = this._next();
+      //.......................................................................................................
+      if (indexOf.call(this._skip_keys, act_key) < 0) {
+        ref = (ref1 = cfg != null ? cfg.ref : void 0) != null ? ref1 : `$q${this._pc + 1}`;
+        this.results[ref] = value;
+      }
+      //.......................................................................................................
       if (act_key === exp_key) {
         this._act_steps.push(act_key);
       } else {
         this._act_steps.push(new Misstep_failure(`step#${this._pc}: act ${rpr(act_key)}, exp ${rpr(exp_key)}`));
       }
-      return value;
+      return (await GUY.async.defer(function() {
+        return value;
+      }));
     }
 
     //---------------------------------------------------------------------------------------------------------
@@ -231,16 +229,35 @@
     }
 
     //---------------------------------------------------------------------------------------------------------
-    intro(...P) {
-      return this._step('intro');
+    async intro(cfg) {
+      return (await this._step('intro', cfg));
     }
 
-    outro(...P) {
-      return this._step('outro');
+    async outro(cfg) {
+      return (await this._step('outro', cfg));
     }
 
-    confirm(...P) {
-      return this._step('confirm');
+    async confirm(cfg) {
+      return (await this._step('confirm', cfg));
+    }
+
+    async text(cfg) {
+      return (await this._step('text', cfg));
+    }
+
+    async select(cfg) {
+      return (await this._step('select', cfg));
+    }
+
+    async multiselect(cfg) {
+      return (await this._step('multiselect', cfg));
+    }
+
+    get_spinner() {
+      return {
+        start: (function() {}),
+        stop: (function() {})
+      };
     }
 
     //---------------------------------------------------------------------------------------------------------
@@ -253,24 +270,85 @@
 
   //===========================================================================================================
   sample_dialog = async function(dlg = null) {
-    var R;
+    var value;
     if (dlg == null) {
       dlg = new Interactive_dialog();
     }
-    R = {};
     //.........................................................................................................
     dlg.intro("create-my-app");
     while (true) {
-      if ((await dlg.confirm({
+      //.........................................................................................................
+      if (value = (await dlg.confirm({
+        ref: 'q1',
         message: "do you want to loop?"
       }))) {
+        debug('Ω___6', rpr(value));
         continue;
       }
       break;
     }
+    await dlg.text({
+      ref: 'q2',
+      message: "please enter text"
+    });
+    await (async() => {      //.........................................................................................................
+      var cfg, project_type;
+      cfg = {
+        ref: 'q3',
+        message: "Pick a project type.",
+        options: [
+          {
+            value: 'ts',
+            label: 'TypeScript'
+          },
+          {
+            value: 'js',
+            label: 'JavaScript'
+          },
+          {
+            value: 'coffee',
+            label: 'CoffeeScript',
+            hint: 'yes!'
+          }
+        ]
+      };
+      project_type = (await dlg.select(cfg));
+      info(`Ω___3 project type: ${rpr(project_type)}`);
+      return null;
+    })();
+    await (async() => {      //.........................................................................................................
+      var cfg, spinner, tools;
+      spinner = dlg.get_spinner();
+      spinner.start("asking questions");
+      cfg = {
+        ref: 'q4',
+        message: "Select additional tools.",
+        options: [
+          {
+            value: 'eslint',
+            label: 'ESLint',
+            hint: 'recommended'
+          },
+          {
+            value: 'prettier',
+            label: 'Prettier'
+          },
+          {
+            value: 'gh-action',
+            label: 'GitHub Action'
+          }
+        ],
+        required: false
+      };
+      tools = (await dlg.multiselect(cfg));
+      info(`Ω___4 tools: ${rpr(tools)}`);
+      spinner.stop("thanks!");
+      return null;
+    })();
+    //.........................................................................................................
     dlg.outro("You're all set!");
     //.........................................................................................................
-    return R;
+    return dlg.results;
   };
 
   //===========================================================================================================
@@ -281,13 +359,19 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_run_programmatic = async function() {
-    var dlg, error, steps;
+    var dlg, error, i, len, ref1, step, steps;
     steps = [
       ['intro'],
+      // [ 'confirm',  true, ]
       ['confirm',
       false],
-      // [ 'confirm',  true, ]
-      ['outro'],
+      ['text',
+      "helo"],
+      ['select',
+      'coffee'],
+      ['multiselect',
+      ['prettier']],
+      // [ 'outro', ]
       ['outro']
     ];
     dlg = new Programmatic_dialog(steps);
@@ -301,8 +385,17 @@
       warn('Ω___7', reverse(bold(error.message)));
     }
     dlg.finish();
-    warn('Ω___9', dlg._failures);
-    help('Ω__10', dlg._act_steps);
+    warn('Ω___8', dlg._failures);
+    ref1 = dlg._act_steps;
+    for (i = 0, len = ref1.length; i < len; i++) {
+      step = ref1[i];
+      if (step instanceof Dialog_failure) {
+        warn(step);
+      } else {
+        help(step);
+      }
+    }
+    info(dlg.results);
     return null;
   };
 
