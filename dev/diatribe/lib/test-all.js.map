@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/test-all.coffee"
+  ],
+  "names": [],
+  "mappings": "AAEA;EAAA;AAAA,MAAA,IAAA,EAAA,GAAA,EAAA,IAAA,EAAA,IAAA,EAAA,KAAA,EAAA,KAAA,EAAA,IAAA,EAAA,IAAA,EAAA,IAAA,EAAA,OAAA,EAAA,GAAA,EAAA,KAAA,EAAA,MAAA,EAAA,OAAA,EAAA,GAAA,EAAA,KAAA,EAAA,IAAA,EAAA,IAAA,EAAA;;EAEA,GAAA,GAA4B,OAAA,CAAQ,KAAR;;EAC5B,CAAA,CAAE,KAAF,EACE,KADF,EAEE,IAFF,EAGE,IAHF,EAIE,KAJF,EAKE,MALF,EAME,IANF,EAOE,IAPF,EAQE,OARF,CAAA,GAQ4B,GAAG,CAAC,GAAG,CAAC,WAAR,CAAoB,mBAApB,CAR5B;;EASA,CAAA,CAAE,GAAF,EACE,OADF,EAEE,IAFF,EAGE,OAHF,EAIE,GAJF,CAAA,GAI4B,GAAG,CAAC,GAJhC;;EAKA,IAAA,GAA4B,OAAA,CAAQ,sBAAR;;EAC5B,KAAA,GAA4B,IAAI,CAAE,OAAA,CAAQ,WAAR,CAAF,CAAuB,CAAC,SAA5B,CAAA;;EAC5B,IAAA,GAA4B,OAAA,CAAQ,2BAAR;;EAC5B,CAAA,CAAE,IAAF,CAAA,GAA4B,IAA5B,EApBA;;;;;EA2BA,IAAC,CAAA,cAAD,GAGE,CAAA;;IAAA,SAAA,EAAW,QAAA,CAAA,CAAA;AACb,UAAA,QAAA,EAAA;MAAI,QAAA,GAAe,OAAA,CAAQ,wBAAR;MACf,IAAC,CAAA,EAAD,CAAI,CAAE,OAAA,GAAU,QAAA,CAAA,CAAA;eAAG;MAAH,CAAZ,CAAJ,EAA2B,IAA3B,EADJ;;AAGI,aAAO;IAJE;EAAX,EA9BF;;;EAqCA,IAAG,MAAA,KAAU,OAAO,CAAC,IAArB;IAA+B,MAAS,CAAA,CAAA,CAAA,GAAA;aACtC,CAAE,IAAI,IAAJ,CAAS;QAAE,cAAA,EAAgB;MAAlB,CAAT,CAAF,CAAuC,CAAC,IAAxC,CAA6C,IAAC,CAAA,cAA9C;IADsC,CAAA,IAAxC;;AArCA",
+  "sourcesContent": [
+    "\n\n'use strict'\n\nGUY                       = require 'guy'\n{ alert\n  debug\n  help\n  info\n  plain\n  praise\n  urge\n  warn\n  whisper }               = GUY.trm.get_loggers 'diatrieb/test-all'\n{ rpr\n  inspect\n  echo\n  reverse\n  log     }               = GUY.trm\nWGUY                      = require '../../../apps/webguy'\ntypes                     = new ( require 'intertype' ).Intertype()\nGTNG                      = require '../../../apps/guy-test-NG'\n{ Test                  } = GTNG\n\n\n\n############################################################################################################\n#\n#===========================================================================================================\n@diatribe_tasks =\n\n  #---------------------------------------------------------------------------------------------------------\n  interface: ->\n    DIATRIBE     = require '../../../apps/diatribe'\n    @eq ( Ωit___2 = -> true ), true\n    #.......................................................................................................\n    return null\n\n#===========================================================================================================\nif module is require.main then await do =>\n  ( new Test { throw_on_error: false, } ).test @diatribe_tasks\n\n\n"
+  ]
+}
