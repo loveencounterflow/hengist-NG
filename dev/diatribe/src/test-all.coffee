@@ -23,12 +23,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 
 #===========================================================================================================
-run_dlg1 = ( dlg ) ->
+run_dlg1 = ( dlg = null ) ->
+  dlg ?= new ( require '../../../apps/diatribe' ).Interactive_dialog()
   dlg.intro "create-my-app"
   #.........................................................................................................
   loop
     if value = await dlg.confirm { ref: 'q1', message: "do you want to loop?", }
-      debug 'Ω___5', rpr value
       continue
     break
   await dlg.text { ref: 'q2', message: "please enter text", }
@@ -45,18 +45,18 @@ run_dlg1 = ( dlg ) ->
     return null
   #.........................................................................................................
   await do =>
-    spinner = dlg.get_spinner()
-    spinner.start "asking questions"
+    # spinner = dlg.get_spinner()
+    # spinner.start "asking questions"
     cfg =
       ref:        null # intentionally left out
       message:    "Select additional tools."
       options: [
-        { value: 'eslint', label: 'ESLint', hint: 'recommended' },
-        { value: 'prettier', label: 'Prettier' },
+        { value: 'eslint',    label: 'ESLint', hint: 'recommended' },
+        { value: 'prettier',  label: 'Prettier' },
         { value: 'gh-action', label: 'GitHub Action' }, ]
       required: false
     tools = await dlg.multiselect cfg
-    spinner.stop "thanks!"
+    # spinner.stop "thanks!"
     return null
   #.........................................................................................................
   dlg.outro "You're all set!"
@@ -65,8 +65,8 @@ run_dlg1 = ( dlg ) ->
 
 #===========================================================================================================
 demo_run_dlg1_interactive = ->
-  { Interactive_dialog, } = require '../../../apps/diatribe'
-  await run_dlg1 new Interactive_dialog()
+  settings = await run_dlg1()
+  info 'Ω___1', settings
   return null
 
 #-----------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ demo_run_dlg1_programmatic = ->
     await run_dlg1 dlg
   catch error
     throw error unless error instanceof errors.Dialog_error
-    warn 'Ω___8', reverse bold error.message
+    warn 'Ω___2', reverse bold error.message
   dlg.finish()
   for ref, step of dlg._act_steps
     if step instanceof errors.Dialog_failure then warn ref, step
@@ -101,12 +101,12 @@ demo_run_dlg1_programmatic = ->
   #---------------------------------------------------------------------------------------------------------
   interface: ->
     DIATRIBE     = require '../../../apps/diatribe'
-    @eq ( Ωit___2 = -> true ), true
+    @eq ( Ωit___3 = -> true ), true
     #.......................................................................................................
     return null
 
 #===========================================================================================================
 if module is require.main then await do =>
   ( new Test { throw_on_error: false, } ).test @diatribe_tasks
-  # await demo_run_dlg1_interactive()
+  await demo_run_dlg1_interactive()
   await demo_run_dlg1_programmatic()

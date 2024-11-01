@@ -17,8 +17,11 @@
   ({Test} = GTNG);
 
   //===========================================================================================================
-  run_dlg1 = async function(dlg) {
+  run_dlg1 = async function(dlg = null) {
     var value;
+    if (dlg == null) {
+      dlg = new (require('../../../apps/diatribe')).Interactive_dialog();
+    }
     dlg.intro("create-my-app");
     while (true) {
       //.........................................................................................................
@@ -26,7 +29,6 @@
         ref: 'q1',
         message: "do you want to loop?"
       }))) {
-        debug('Ω___5', rpr(value));
         continue;
       }
       break;
@@ -60,9 +62,9 @@
       return null;
     })();
     await (async() => {      //.........................................................................................................
-      var cfg, spinner, tools;
-      spinner = dlg.get_spinner();
-      spinner.start("asking questions");
+      var cfg, tools;
+      // spinner = dlg.get_spinner()
+      // spinner.start "asking questions"
       cfg = {
         ref: null, // intentionally left out
         message: "Select additional tools.",
@@ -84,7 +86,7 @@
         required: false
       };
       tools = (await dlg.multiselect(cfg));
-      spinner.stop("thanks!");
+      // spinner.stop "thanks!"
       return null;
     })();
     //.........................................................................................................
@@ -95,9 +97,9 @@
 
   //===========================================================================================================
   demo_run_dlg1_interactive = async function() {
-    var Interactive_dialog;
-    ({Interactive_dialog} = require('../../../apps/diatribe'));
-    await run_dlg1(new Interactive_dialog());
+    var settings;
+    settings = (await run_dlg1());
+    info('Ω___1', settings);
     return null;
   };
 
@@ -120,7 +122,7 @@
       if (!(error instanceof errors.Dialog_error)) {
         throw error;
       }
-      warn('Ω___8', reverse(bold(error.message)));
+      warn('Ω___2', reverse(bold(error.message)));
     }
     dlg.finish();
     ref1 = dlg._act_steps;
@@ -142,9 +144,9 @@
   this.diatribe_tasks = {
     //---------------------------------------------------------------------------------------------------------
     interface: function() {
-      var DIATRIBE, Ωit___2;
+      var DIATRIBE, Ωit___3;
       DIATRIBE = require('../../../apps/diatribe');
-      this.eq((Ωit___2 = function() {
+      this.eq((Ωit___3 = function() {
         return true;
       }), true);
       //.......................................................................................................
@@ -158,7 +160,7 @@
       (new Test({
         throw_on_error: false
       })).test(this.diatribe_tasks);
-      // await demo_run_dlg1_interactive()
+      await demo_run_dlg1_interactive();
       return (await demo_run_dlg1_programmatic());
     })();
   }
