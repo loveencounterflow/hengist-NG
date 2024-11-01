@@ -15,6 +15,7 @@ GUY                       = require 'guy'
 { rpr
   inspect
   echo
+  bold
   reverse
   log     }               = GUY.trm
 WGUY                      = require '../../../apps/webguy'
@@ -99,14 +100,78 @@ demo_run_dlg1_programmatic = ->
 @diatribe_tasks =
 
   #---------------------------------------------------------------------------------------------------------
-  interface: ->
-    DIATRIBE     = require '../../../apps/diatribe'
-    @eq ( Ωit___3 = -> true ), true
+  with_underrun_failure: ->
+    #.......................................................................................................
+    { Programmatic_dialog, errors, } = require '../../../apps/diatribe'
+    steps =
+      q1:         [ 'confirm',      false,            ]
+      q2:         [ 'text',         "helo",           ]
+      q3:         [ 'select',       'coffee',         ]
+      $q4:        [ 'multiselect',  [ 'prettier', ],  ]
+      whatever:   [ 'select',       'js',         ]
+    dlg = new Programmatic_dialog steps
+    try
+      await run_dlg1 dlg
+    catch error
+      throw error unless error instanceof errors.Dialog_error
+      warn 'Ω___3', reverse bold error.message
+    dlg.finish()
+    #.......................................................................................................
+    @eq ( Ωit___6 = -> dlg._act_steps                                             ), { q1: 'confirm', q2: 'text', q3: 'select', '$q4': 'multiselect', '$finish': { message: 'finished too early: act 4 exp 5' } }
+    @eq ( Ωit___7 = -> dlg._act_steps.$finish instanceof errors.Underrun_failure  ), true
+    @eq ( Ωit___8 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  with_overrun_failure: ->
+    #.......................................................................................................
+    { Programmatic_dialog, errors, } = require '../../../apps/diatribe'
+    steps =
+      q1:         [ 'confirm',      false,            ]
+      q2:         [ 'text',         "helo",           ]
+      q3:         [ 'select',       'coffee',         ]
+      # $q4:        [ 'multiselect',  [ 'prettier', ],  ]
+      # whatever:   [ 'select',       'js',         ]
+    dlg = new Programmatic_dialog steps
+    try
+      await run_dlg1 dlg
+    catch error
+      throw error unless error instanceof errors.Dialog_error
+      warn 'Ω___9', reverse bold error.message
+    dlg.finish()
+    #.......................................................................................................
+    @eq ( Ωit__10 = -> dlg._act_steps                                             ), { q1: 'confirm', q2: 'text', q3: 'select', '$q4': { message: 'emergency halt, running too long: act 4 exp 3' } }
+    @eq ( Ωit__11 = -> dlg._act_steps.$q4 instanceof errors.Overrun_failure       ), true
+    @eq ( Ωit__12 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', }
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  without_failure: ->
+    #.......................................................................................................
+    { Programmatic_dialog, errors, } = require '../../../apps/diatribe'
+    steps =
+      q1:         [ 'confirm',      false,            ]
+      q2:         [ 'text',         "helo",           ]
+      q3:         [ 'select',       'coffee',         ]
+      $q4:        [ 'multiselect',  [ 'prettier', ],  ]
+      # whatever:   [ 'select',       'js',         ]
+    dlg = new Programmatic_dialog steps
+    try
+      await run_dlg1 dlg
+    catch error
+      throw error unless error instanceof errors.Dialog_error
+      warn 'Ω__13', reverse bold error.message
+    dlg.finish()
+    #.......................................................................................................
+    @eq ( Ωit__14 = -> dlg._act_steps                                             ), { q1: 'confirm', q2: 'text', q3: 'select', '$q4': 'multiselect' }
+    @eq ( Ωit__15 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
     #.......................................................................................................
     return null
 
 #===========================================================================================================
 if module is require.main then await do =>
-  ( new Test { throw_on_error: false, } ).test @diatribe_tasks
-  await demo_run_dlg1_interactive()
-  await demo_run_dlg1_programmatic()
+  await ( new Test { throw_on_error: false, } ).async_test @diatribe_tasks
+  # await demo_run_dlg1_interactive()
+  # await demo_run_dlg1_programmatic()
