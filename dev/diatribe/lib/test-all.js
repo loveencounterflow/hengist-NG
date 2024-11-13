@@ -91,8 +91,9 @@
     })();
     //.........................................................................................................
     dlg.outro("You're all set!");
+    dlg.finish();
     //.........................................................................................................
-    return dlg.results;
+    return dlg;
   };
 
   //===========================================================================================================
@@ -105,16 +106,31 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_run_dlg1_programmatic = async function() {
-    var Programmatic_dialog, dlg, error, errors, ref, ref1, step, steps;
+    var Programmatic_dialog, dlg, error, errors, exp_steps, ref, ref1, step;
     ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
-    steps = {
-      q1: ['confirm', false],
-      q2: ['text', "helo"],
-      q3: ['select', 'coffee'],
-      $q4: ['multiselect', ['prettier']],
-      whatever: ['select', 'js']
+    exp_steps = {
+      q1: {
+        modal: 'confirm',
+        answer: false
+      },
+      q2: {
+        modal: 'text',
+        answer: "helo"
+      },
+      q3: {
+        modal: 'select',
+        answer: 'coffee'
+      },
+      $q4: {
+        modal: 'multiselect',
+        answer: ['prettier']
+      },
+      whatever: {
+        modal: 'select',
+        answer: 'js'
+      }
     };
-    dlg = new Programmatic_dialog(steps);
+    dlg = new Programmatic_dialog(exp_steps);
     try {
       await run_dlg1(dlg);
     } catch (error1) {
@@ -124,8 +140,7 @@
       }
       warn('Ω___2', reverse(bold(error.message)));
     }
-    dlg.finish();
-    ref1 = dlg._act_steps;
+    ref1 = dlg.act_steps;
     for (ref in ref1) {
       step = ref1[ref];
       if (step instanceof errors.Dialog_failure) {
@@ -144,17 +159,37 @@
   this.diatribe_tasks = {
     //---------------------------------------------------------------------------------------------------------
     with_underrun_failure: async function() {
-      var Programmatic_dialog, dlg, error, errors, steps, Ωit___6, Ωit___7, Ωit___8;
+      var Programmatic_dialog, dlg, error, errors, exp_steps, Ωit___4, Ωit___5, Ωit___6;
       //.......................................................................................................
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
-      steps = {
-        q1: ['confirm', false],
-        q2: ['text', "helo"],
-        q3: ['select', 'coffee'],
-        $q4: ['multiselect', ['prettier']],
-        whatever: ['select', 'js']
-      };
-      dlg = new Programmatic_dialog(steps);
+      exp_steps = [
+        {
+          exp_ref: 'q1',
+          exp_modal: 'confirm',
+          answer: false
+        },
+        {
+          exp_ref: 'q2',
+          exp_modal: 'text',
+          answer: "helo"
+        },
+        {
+          exp_ref: 'q3',
+          exp_modal: 'select',
+          answer: 'coffee'
+        },
+        {
+          exp_ref: '$q4',
+          exp_modal: 'multiselect',
+          answer: ['prettier']
+        },
+        {
+          exp_ref: 'whatever',
+          exp_modal: 'select',
+          answer: 'js'
+        }
+      ];
+      dlg = new Programmatic_dialog(exp_steps);
       try {
         await run_dlg1(dlg);
       } catch (error1) {
@@ -164,10 +199,9 @@
         }
         warn('Ω___3', reverse(bold(error.message)));
       }
-      dlg.finish();
       //.......................................................................................................
-      this.eq((Ωit___6 = function() {
-        return dlg._act_steps;
+      this.eq((Ωit___4 = function() {
+        return dlg.act_steps;
       }), {
         q1: 'confirm',
         q2: 'text',
@@ -177,10 +211,10 @@
           message: 'finished too early: act 4 exp 5'
         }
       });
-      this.eq((Ωit___7 = function() {
-        return dlg._act_steps.$finish instanceof errors.Underrun_failure;
+      this.eq((Ωit___5 = function() {
+        return dlg.act_steps.$finish instanceof errors.Underrun_failure;
       }), true);
-      this.eq((Ωit___8 = function() {
+      this.eq((Ωit___6 = function() {
         return dlg.results;
       }), {
         q1: false,
@@ -193,17 +227,27 @@
     },
     //---------------------------------------------------------------------------------------------------------
     with_overrun_failure: async function() {
-      var Programmatic_dialog, dlg, error, errors, steps, Ωit__10, Ωit__11, Ωit__12;
+      var Programmatic_dialog, dlg, error, errors, exp_steps, Ωit__10, Ωit___8, Ωit___9;
       //.......................................................................................................
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
-      steps = {
-        q1: ['confirm', false],
-        q2: ['text', "helo"],
-        q3: ['select', 'coffee']
-      };
-      // $q4:        [ 'multiselect',  [ 'prettier', ],  ]
-      // whatever:   [ 'select',       'js',         ]
-      dlg = new Programmatic_dialog(steps);
+      exp_steps = [
+        {
+          exp_ref: 'q1',
+          exp_modal: 'confirm',
+          answer: false
+        },
+        {
+          exp_ref: 'q2',
+          exp_modal: 'text',
+          answer: "helo"
+        },
+        {
+          exp_ref: 'q3',
+          exp_modal: 'select',
+          answer: 'coffee'
+        }
+      ];
+      dlg = new Programmatic_dialog(exp_steps);
       try {
         await run_dlg1(dlg);
       } catch (error1) {
@@ -211,12 +255,11 @@
         if (!(error instanceof errors.Dialog_error)) {
           throw error;
         }
-        warn('Ω___9', reverse(bold(error.message)));
+        warn('Ω___7', reverse(bold(error.message)));
       }
-      dlg.finish();
       //.......................................................................................................
-      this.eq((Ωit__10 = function() {
-        return dlg._act_steps;
+      this.eq((Ωit___8 = function() {
+        return dlg.act_steps;
       }), {
         q1: 'confirm',
         q2: 'text',
@@ -225,10 +268,10 @@
           message: 'emergency halt, running too long: act 4 exp 3'
         }
       });
-      this.eq((Ωit__11 = function() {
-        return dlg._act_steps.$q4 instanceof errors.Overrun_failure;
+      this.eq((Ωit___9 = function() {
+        return dlg.act_steps.$q4 instanceof errors.Overrun_failure;
       }), true);
-      this.eq((Ωit__12 = function() {
+      this.eq((Ωit__10 = function() {
         return dlg.results;
       }), {
         q1: false,
@@ -240,37 +283,136 @@
     },
     //---------------------------------------------------------------------------------------------------------
     without_failure: async function() {
-      var Programmatic_dialog, dlg, error, errors, steps, Ωit__14, Ωit__15;
+      var Programmatic_dialog, errors, run_dlg;
+      ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
+      //.......................................................................................................
+      run_dlg = async(dlg, act_steps, results) => {
+        var error, Ωit__14, Ωit__15;
+        try {
+          await run_dlg1(dlg);
+        } catch (error1) {
+          error = error1;
+          if (!(error instanceof errors.Dialog_error)) {
+            throw error;
+          }
+          warn('Ω__11', reverse(bold(error.message)));
+        }
+        info('Ω__12', "act_steps:  ", dlg.act_steps);
+        urge('Ω__13', "results:     ", dlg.results);
+        this.eq((Ωit__14 = function() {
+          return dlg.act_steps;
+        }), act_steps);
+        this.eq((Ωit__15 = function() {
+          return dlg.results;
+        }), results);
+        return dlg;
+      };
+      await (async() => {        //.......................................................................................................
+        var dlg, exp_steps;
+        exp_steps = [
+          {
+            exp_ref: 'q1',
+            exp_modal: 'confirm',
+            answer: false
+          },
+          {
+            exp_ref: 'q2',
+            exp_modal: 'text',
+            answer: "helo"
+          },
+          {
+            exp_ref: 'q3',
+            exp_modal: 'select',
+            answer: 'coffee'
+          },
+          {
+            exp_ref: '$q4',
+            exp_modal: 'multiselect',
+            answer: ['prettier']
+          }
+        ];
+        dlg = (await run_dlg(new Programmatic_dialog(exp_steps), {
+          q1: 'confirm',
+          q2: 'text',
+          q3: 'select',
+          '$q4': 'multiselect'
+        }, {
+          q1: false,
+          q2: 'helo',
+          q3: 'coffee',
+          '$q4': ['prettier']
+        }));
+        return null;
+      })();
+      await (async() => {        //.......................................................................................................
+        var dlg, exp_steps, Ωit__17;
+        exp_steps = [
+          {
+            exp_ref: 'q1',
+            exp_modal: 'confirm',
+            answer: false
+          },
+          {
+            exp_ref: 'q2',
+            exp_modal: 'text',
+            answer: "helo"
+          },
+          {
+            exp_ref: 'q_wrong',
+            exp_modal: 'select',
+            answer: 'coffee'
+          },
+          {
+            exp_ref: '$q4',
+            exp_modal: 'multiselect',
+            answer: ['prettier']
+          }
+        ];
+        dlg = (await run_dlg(new Programmatic_dialog(exp_steps), {
+          q1: 'confirm',
+          q2: 'text',
+          q3: {
+            message: "step#2: act 'q3', exp 'q_wrong'"
+          },
+          '$q4': 'multiselect'
+        }, {
+          q1: false,
+          q2: 'helo',
+          q3: 'coffee',
+          '$q4': ['prettier']
+        }));
+        this.eq((Ωit__17 = function() {
+          return dlg.act_steps.q3 instanceof errors.Misstep_failure;
+        }), true);
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    recognize_wrong_step: async function() {
+      var Programmatic_dialog, dlg, errors, exp_steps, Ωit__18, Ωit__19;
       //.......................................................................................................
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
-      steps = {
+      exp_steps = {
         q1: ['confirm', false],
         q2: ['text', "helo"],
         q3: ['select', 'coffee'],
         $q4: ['multiselect', ['prettier']]
       };
       // whatever:   [ 'select',       'js',         ]
-      dlg = new Programmatic_dialog(steps);
-      try {
-        await run_dlg1(dlg);
-      } catch (error1) {
-        error = error1;
-        if (!(error instanceof errors.Dialog_error)) {
-          throw error;
-        }
-        warn('Ω__13', reverse(bold(error.message)));
-      }
-      dlg.finish();
+      dlg = new Programmatic_dialog(exp_steps);
+      await run_dlg1(dlg);
       //.......................................................................................................
-      this.eq((Ωit__14 = function() {
-        return dlg._act_steps;
+      this.eq((Ωit__18 = function() {
+        return dlg.act_steps;
       }), {
         q1: 'confirm',
         q2: 'text',
         q3: 'select',
         '$q4': 'multiselect'
       });
-      this.eq((Ωit__15 = function() {
+      this.eq((Ωit__19 = function() {
         return dlg.results;
       }), {
         q1: false,
@@ -287,8 +429,12 @@
   if (module === require.main) {
     await (async() => {
       return (await (new Test({
-        throw_on_error: false
-      })).async_test(this.diatribe_tasks));
+        throw_on_error: true
+      })).async_test({
+        // with_underrun_failure:  @diatribe_tasks.with_underrun_failure
+        // with_overrun_failure:   @diatribe_tasks.with_overrun_failure
+        without_failure: this.diatribe_tasks.without_failure
+      }));
     })();
   }
 
