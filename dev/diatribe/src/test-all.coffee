@@ -81,14 +81,10 @@ demo_run_dlg1_programmatic = ->
     $q4:        { modal: 'multiselect',  answer: [ 'prettier', ],  }
     whatever:   { modal: 'select',       answer: 'js',             }
   dlg = new Programmatic_dialog exp_steps
-  try
-    await run_dlg1 dlg
-  catch error
-    throw error unless error instanceof errors.Dialog_error
-    warn 'Ω___2', reverse bold error.message
+  await run_dlg1 dlg
   for ref, step of dlg.act_steps
-    if step instanceof errors.Dialog_failure then warn 'Ω___3', ref, step
-    else                                          help 'Ω___4', ref, step
+    if step instanceof errors.Dialog_failure then warn 'Ω___2', ref, step
+    else                                          help 'Ω___3', ref, step
   info dlg.results
   return null
 
@@ -121,47 +117,44 @@ demo_from_docs = ->
     # Return what is most useful to you:
     return dlg
   #---------------------------------------------------------------------------------------------------------
-  # urge 'Ω___5', await run_my_dialog()
+  # urge 'Ω___4', await run_my_dialog()
   await do =>
-    whisper 'Ω___6', '————————————————————————————————————————'
+    whisper 'Ω___5', '————————————————————————————————————————'
     exp_steps = [
       { ref: 'want_pizza', modal: 'confirm', answer: false, } ]
-    info 'Ω___7', "exp_step", step for step in exp_steps
+    info 'Ω___6', "exp_step", step for step in exp_steps
     dlg = await run_my_dialog new Programmatic_dialog exp_steps
-    help 'Ω___8', "act_steps", dlg.act_steps
-    help 'Ω___9', "act_step", step for step in dlg.act_steps
+    help 'Ω___7', "act_steps", dlg.act_steps
+    help 'Ω___8', "act_step", step for step in dlg.act_steps
     return null
   #.........................................................................................................
   await do =>
-    whisper 'Ω__10', '————————————————————————————————————————'
-    try
-      exp_steps = [
-        { ref: 'want_pizza', modal: 'confirm', answer: true, } ]
-      info 'Ω__11', "exp_step", step for step in exp_steps
-      dlg = await run_my_dialog new Programmatic_dialog exp_steps
-    catch error
-      warn 'Ω__12', error.message
+    whisper 'Ω___9', '————————————————————————————————————————'
+    exp_steps = [
+      { ref: 'want_pizza', modal: 'confirm', answer: true, } ]
+    info 'Ω__10', "exp_step", step for step in exp_steps
+    dlg = await run_my_dialog new Programmatic_dialog exp_steps
     return null
   #.........................................................................................................
   await do =>
-    whisper 'Ω__13', '————————————————————————————————————————'
+    whisper 'Ω__11', '————————————————————————————————————————'
     exp_steps = [
       { ref: 'want_pizza',      modal: 'confirm', answer: true, }
       { ref: 'want_pineapple',  modal: 'confirm', answer: false, } ]
-    info 'Ω__14', "exp_step", step for step in exp_steps
+    info 'Ω__12', "exp_step", step for step in exp_steps
     dlg = await run_my_dialog new Programmatic_dialog exp_steps
-    help 'Ω__15', "act_steps", dlg.act_steps
-    help 'Ω__16', "act_step", step for step in dlg.act_steps
+    help 'Ω__13', "act_steps", dlg.act_steps
+    help 'Ω__14', "act_step", step for step in dlg.act_steps
     return null
   #.........................................................................................................
   await do =>
-    whisper 'Ω__17', '————————————————————————————————————————'
+    whisper 'Ω__15', '————————————————————————————————————————'
     exp_steps = [
       { ref: 'want_pizza',      modal: 'confirm', answer: false, }
       { ref: 'want_pineapple',  modal: 'confirm', answer: false, } ]
-    info 'Ω__18', "exp_step", step for step in exp_steps
+    info 'Ω__16', "exp_step", step for step in exp_steps
     dlg = await run_my_dialog new Programmatic_dialog exp_steps
-    help 'Ω__19', "act_step", step for step in dlg.act_steps
+    help 'Ω__17', "act_step", step for step in dlg.act_steps
     return null
   #.........................................................................................................
   return null
@@ -192,15 +185,11 @@ demo_from_docs = ->
       { message: 'finished too early: act 4 exp 5' } ] ### Underrun_failure ###
     #.......................................................................................................
     dlg = new Programmatic_dialog exp_steps
-    try
-      await run_dlg1 dlg
-    catch error
-      throw error unless error instanceof errors.Dialog_error
-      warn 'Ω__20', reverse bold error.message
+    await run_dlg1 dlg
     #.......................................................................................................
-    @eq ( Ω__21 = -> dlg.act_steps                                             ), act_steps
-    @eq ( Ω__22 = -> dlg.act_steps[ 4 ] instanceof errors.Underrun_failure  ), true
-    @eq ( Ω__23 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
+    @eq ( Ω__18 = -> dlg.act_steps                                             ), act_steps
+    @eq ( Ω__19 = -> dlg.act_steps[ 4 ] instanceof errors.Underrun_failure  ), true
+    @eq ( Ω__20 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
     #.......................................................................................................
     return null
 
@@ -219,15 +208,11 @@ demo_from_docs = ->
       { message: 'emergency halt, running too long: act 4 exp 3' } ] ### Overrun_failure ###
     #.......................................................................................................
     dlg = new Programmatic_dialog exp_steps
-    try
-      await run_dlg1 dlg
-    catch error
-      throw error unless error instanceof errors.Dialog_error
-      warn 'Ω__24', reverse bold error.message
+    await run_dlg1 dlg
     #.......................................................................................................
-    @eq ( Ω__25 = -> dlg.act_steps                                             ), act_steps
-    @eq ( Ω__26 = -> dlg.act_steps[ 3 ] instanceof errors.Overrun_failure       ), true
-    @eq ( Ω__27 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', }
+    @eq ( Ω__21 = -> dlg.act_steps                                             ), act_steps
+    @eq ( Ω__22 = -> dlg.act_steps[ 3 ] instanceof errors.Overrun_failure       ), true
+    @eq ( Ω__23 = -> dlg.results                                                ), { q1: false, q2: 'helo', q3: 'coffee', }
     #.......................................................................................................
     return null
 
@@ -236,13 +221,11 @@ demo_from_docs = ->
     { Programmatic_dialog, errors, } = require '../../../apps/diatribe'
     #.......................................................................................................
     run_dlg = ( dlg, act_steps, results ) =>
-      try await run_dlg1 dlg catch error
-        throw error unless error instanceof errors.Dialog_error
-        warn 'Ω__28', reverse bold error.message
-      info 'Ω__29', "act_steps:  ", dlg.act_steps
-      urge 'Ω__30', "results:     ", dlg.results
-      @eq ( Ω__31 = -> dlg.act_steps ), act_steps
-      @eq ( Ω__32 = -> dlg.results    ), results
+      await run_dlg1 dlg
+      info 'Ω__24', "act_steps:  ", dlg.act_steps
+      urge 'Ω__25', "results:     ", dlg.results
+      @eq ( Ω__26 = -> dlg.act_steps ), act_steps
+      @eq ( Ω__27 = -> dlg.results    ), results
       return dlg
     #.......................................................................................................
     await do =>
@@ -274,7 +257,7 @@ demo_from_docs = ->
         ( new Programmatic_dialog exp_steps ),                                  \
         act_steps,  \
         { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
-      @eq ( Ω__33 = -> dlg.act_steps[ 2 ] instanceof errors.Misstep_failure ), true
+      @eq ( Ω__28 = -> dlg.act_steps[ 2 ] instanceof errors.Misstep_failure ), true
       return null
     #.......................................................................................................
     return null
@@ -298,23 +281,74 @@ demo_from_docs = ->
     dlg = new Programmatic_dialog exp_steps
     await run_dlg1 dlg
     #.......................................................................................................
-    @eq ( Ω__34 = -> dlg.act_steps ), act_steps
-    @eq ( Ω__35 = -> dlg.act_steps[ 2 ] instanceof errors.Misstep_failure ), true
-    @eq ( Ω__36 = -> dlg.results    ), { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
+    @eq ( Ω__29 = -> dlg.act_steps ), act_steps
+    @eq ( Ω__30 = -> dlg.act_steps[ 2 ] instanceof errors.Misstep_failure ), true
+    @eq ( Ω__31 = -> dlg.results    ), { q1: false, q2: 'helo', q3: 'coffee', '$q4': [ 'prettier' ] }
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  overrun_failure_return_value: ->
+    { Programmatic_dialog, errors, } = require '../../../apps/diatribe'
+    act_steps = [
+      { ref: 'continue',  modal: 'confirm', answer: true,     }
+      { ref: 'name',      modal: 'text',    answer: "Alice",  } ]
+    #.......................................................................................................
+    await do =>
+      conversation = ( dlg ) =>
+        @eq ( Ω__32 = -> dlg.finish() ), false
+        return dlg
+      dlg = await conversation new Programmatic_dialog exp_steps = act_steps
+      @eq ( Ω__33 = -> dlg.results                                            ), {}
+      @eq ( Ω__34 = -> dlg.act_steps                                          ), [ { message: 'finished too early: act 0 exp 2' } ]
+      @eq ( Ω__35 = -> dlg.act_steps[ 0 ] instanceof errors.Underrun_failure  ), true
+      return null
+    #.......................................................................................................
+    await do =>
+      conversation = ( dlg ) =>
+        cont = await dlg.confirm { ref: 'continue', message: "do you want to continue?", }
+        name = await dlg.text { ref: 'name', message: "what is your name?", }
+        @eq ( Ω__36 = -> cont ), true
+        @eq ( Ω__37 = -> name ), "Alice"
+        @eq ( Ω__38 = -> dlg.finish() ), true
+        return dlg
+      dlg = await conversation new Programmatic_dialog exp_steps = act_steps
+      @eq ( Ω__39 = -> dlg.results                                            ), { continue: true, name: 'Alice' }
+      @eq ( Ω__40 = -> dlg.act_steps                                          ), act_steps
+      return null
+    #.......................................................................................................
+    await do =>
+      conversation = ( dlg ) =>
+        cont = await dlg.confirm { ref: 'continue', message: "do you want to continue?", }
+        name = await dlg.text { ref: 'name', message: "what is your name?", }
+        @eq ( Ω__41 = -> cont ), true
+        @eq ( Ω__42 = -> name ), dlg.invalid
+        @eq ( Ω__43 = -> dlg.finish() ), true
+        return dlg
+      exp_steps = [
+        { ref: 'continue',  modal: 'confirm', answer: true,     }
+        ]
+      dlg = await conversation new Programmatic_dialog exp_steps
+      @eq ( Ω__44 = -> dlg.results                                            ), { continue: true, }
+      @eq ( Ω__45 = -> dlg.act_steps                                          ), [ { ref: 'continue', modal: 'confirm', answer: true }, { message: 'emergency halt, running too long: act 2 exp 1' } ]
+      @eq ( Ω__46 = -> dlg.act_steps[ 1 ] instanceof errors.Overrun_failure   ), true
+      return null
     #.......................................................................................................
     return null
 
 #===========================================================================================================
 if module is require.main then await do =>
-  await ( new Test { throw_on_error: true, } ).async_test {
-    # with_underrun_failure:  @diatribe_tasks.with_underrun_failure
-    # with_overrun_failure:   @diatribe_tasks.with_overrun_failure
-    without_failure:        @diatribe_tasks.without_failure
-    }
+  # await ( new Test { throw_on_error: true, } ).async_test {
+  #   # with_underrun_failure:  @diatribe_tasks.with_underrun_failure
+  #   # with_overrun_failure:   @diatribe_tasks.with_overrun_failure
+  #   without_failure:        @diatribe_tasks.without_failure
+  #   }
   # await demo_run_dlg1_interactive()
-  whisper 'Ω__37', '————————————————————————————————————————'
-  await ( new Test { throw_on_error: true, } ).async_test @diatribe_tasks
-  whisper 'Ω__38', '————————————————————————————————————————'
+  # whisper 'Ω__47', '————————————————————————————————————————'
+  # await ( new Test { throw_on_error: false, } ).async_test @diatribe_tasks
+  whisper 'Ω__48', '————————————————————————————————————————'
+  await ( new Test { throw_on_error: true, } ).async_test { overrun: @diatribe_tasks.overrun_failure_return_value, }
+  whisper 'Ω__49', '————————————————————————————————————————'
   # await demo_run_dlg1_programmatic()
-  await demo_from_docs()
+  # await demo_from_docs()
   return null

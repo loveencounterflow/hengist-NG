@@ -106,7 +106,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_run_dlg1_programmatic = async function() {
-    var Programmatic_dialog, dlg, error, errors, exp_steps, ref, ref1, step;
+    var Programmatic_dialog, dlg, errors, exp_steps, ref, ref1, step;
     ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
     exp_steps = {
       q1: {
@@ -131,22 +131,14 @@
       }
     };
     dlg = new Programmatic_dialog(exp_steps);
-    try {
-      await run_dlg1(dlg);
-    } catch (error1) {
-      error = error1;
-      if (!(error instanceof errors.Dialog_error)) {
-        throw error;
-      }
-      warn('Ω___2', reverse(bold(error.message)));
-    }
+    await run_dlg1(dlg);
     ref1 = dlg.act_steps;
     for (ref in ref1) {
       step = ref1[ref];
       if (step instanceof errors.Dialog_failure) {
-        warn('Ω___3', ref, step);
+        warn('Ω___2', ref, step);
       } else {
-        help('Ω___4', ref, step);
+        help('Ω___3', ref, step);
       }
     }
     info(dlg.results);
@@ -192,9 +184,9 @@
       return dlg;
     };
     await (async() => {      //---------------------------------------------------------------------------------------------------------
-      // urge 'Ω___5', await run_my_dialog()
+      // urge 'Ω___4', await run_my_dialog()
       var dlg, exp_steps, i, j, len, len1, ref1, step;
-      whisper('Ω___6', '————————————————————————————————————————');
+      whisper('Ω___5', '————————————————————————————————————————');
       exp_steps = [
         {
           ref: 'want_pizza',
@@ -204,42 +196,37 @@
       ];
       for (i = 0, len = exp_steps.length; i < len; i++) {
         step = exp_steps[i];
-        info('Ω___7', "exp_step", step);
+        info('Ω___6', "exp_step", step);
       }
       dlg = (await run_my_dialog(new Programmatic_dialog(exp_steps)));
-      help('Ω___8', "act_steps", dlg.act_steps);
+      help('Ω___7', "act_steps", dlg.act_steps);
       ref1 = dlg.act_steps;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         step = ref1[j];
-        help('Ω___9', "act_step", step);
+        help('Ω___8', "act_step", step);
       }
       return null;
     })();
     await (async() => {      //.........................................................................................................
-      var dlg, error, exp_steps, i, len, step;
-      whisper('Ω__10', '————————————————————————————————————————');
-      try {
-        exp_steps = [
-          {
-            ref: 'want_pizza',
-            modal: 'confirm',
-            answer: true
-          }
-        ];
-        for (i = 0, len = exp_steps.length; i < len; i++) {
-          step = exp_steps[i];
-          info('Ω__11', "exp_step", step);
+      var dlg, exp_steps, i, len, step;
+      whisper('Ω___9', '————————————————————————————————————————');
+      exp_steps = [
+        {
+          ref: 'want_pizza',
+          modal: 'confirm',
+          answer: true
         }
-        dlg = (await run_my_dialog(new Programmatic_dialog(exp_steps)));
-      } catch (error1) {
-        error = error1;
-        warn('Ω__12', error.message);
+      ];
+      for (i = 0, len = exp_steps.length; i < len; i++) {
+        step = exp_steps[i];
+        info('Ω__10', "exp_step", step);
       }
+      dlg = (await run_my_dialog(new Programmatic_dialog(exp_steps)));
       return null;
     })();
     await (async() => {      //.........................................................................................................
       var dlg, exp_steps, i, j, len, len1, ref1, step;
-      whisper('Ω__13', '————————————————————————————————————————');
+      whisper('Ω__11', '————————————————————————————————————————');
       exp_steps = [
         {
           ref: 'want_pizza',
@@ -254,20 +241,20 @@
       ];
       for (i = 0, len = exp_steps.length; i < len; i++) {
         step = exp_steps[i];
-        info('Ω__14', "exp_step", step);
+        info('Ω__12', "exp_step", step);
       }
       dlg = (await run_my_dialog(new Programmatic_dialog(exp_steps)));
-      help('Ω__15', "act_steps", dlg.act_steps);
+      help('Ω__13', "act_steps", dlg.act_steps);
       ref1 = dlg.act_steps;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         step = ref1[j];
-        help('Ω__16', "act_step", step);
+        help('Ω__14', "act_step", step);
       }
       return null;
     })();
     await (async() => {      //.........................................................................................................
       var dlg, exp_steps, i, j, len, len1, ref1, step;
-      whisper('Ω__17', '————————————————————————————————————————');
+      whisper('Ω__15', '————————————————————————————————————————');
       exp_steps = [
         {
           ref: 'want_pizza',
@@ -282,13 +269,13 @@
       ];
       for (i = 0, len = exp_steps.length; i < len; i++) {
         step = exp_steps[i];
-        info('Ω__18', "exp_step", step);
+        info('Ω__16', "exp_step", step);
       }
       dlg = (await run_my_dialog(new Programmatic_dialog(exp_steps)));
       ref1 = dlg.act_steps;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         step = ref1[j];
-        help('Ω__19', "act_step", step);
+        help('Ω__17', "act_step", step);
       }
       return null;
     })();
@@ -302,7 +289,7 @@
   this.diatribe_tasks = {
     //---------------------------------------------------------------------------------------------------------
     with_underrun_failure: async function() {
-      var Programmatic_dialog, act_steps, dlg, error, errors, exp_steps, Ω__21, Ω__22, Ω__23;
+      var Programmatic_dialog, act_steps, dlg, errors, exp_steps, Ω__18, Ω__19, Ω__20;
       //.......................................................................................................
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
       exp_steps = [
@@ -359,23 +346,15 @@
       ];
       //.......................................................................................................
       /* Underrun_failure */      dlg = new Programmatic_dialog(exp_steps);
-      try {
-        await run_dlg1(dlg);
-      } catch (error1) {
-        error = error1;
-        if (!(error instanceof errors.Dialog_error)) {
-          throw error;
-        }
-        warn('Ω__20', reverse(bold(error.message)));
-      }
+      await run_dlg1(dlg);
       //.......................................................................................................
-      this.eq((Ω__21 = function() {
+      this.eq((Ω__18 = function() {
         return dlg.act_steps;
       }), act_steps);
-      this.eq((Ω__22 = function() {
+      this.eq((Ω__19 = function() {
         return dlg.act_steps[4] instanceof errors.Underrun_failure;
       }), true);
-      this.eq((Ω__23 = function() {
+      this.eq((Ω__20 = function() {
         return dlg.results;
       }), {
         q1: false,
@@ -388,7 +367,7 @@
     },
     //---------------------------------------------------------------------------------------------------------
     with_overrun_failure: async function() {
-      var Programmatic_dialog, act_steps, dlg, error, errors, exp_steps, Ω__25, Ω__26, Ω__27;
+      var Programmatic_dialog, act_steps, dlg, errors, exp_steps, Ω__21, Ω__22, Ω__23;
       //.......................................................................................................
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
       exp_steps = [
@@ -430,23 +409,15 @@
       ];
       //.......................................................................................................
       /* Overrun_failure */      dlg = new Programmatic_dialog(exp_steps);
-      try {
-        await run_dlg1(dlg);
-      } catch (error1) {
-        error = error1;
-        if (!(error instanceof errors.Dialog_error)) {
-          throw error;
-        }
-        warn('Ω__24', reverse(bold(error.message)));
-      }
+      await run_dlg1(dlg);
       //.......................................................................................................
-      this.eq((Ω__25 = function() {
+      this.eq((Ω__21 = function() {
         return dlg.act_steps;
       }), act_steps);
-      this.eq((Ω__26 = function() {
+      this.eq((Ω__22 = function() {
         return dlg.act_steps[3] instanceof errors.Overrun_failure;
       }), true);
-      this.eq((Ω__27 = function() {
+      this.eq((Ω__23 = function() {
         return dlg.results;
       }), {
         q1: false,
@@ -462,22 +433,14 @@
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
       //.......................................................................................................
       run_dlg = async(dlg, act_steps, results) => {
-        var error, Ω__31, Ω__32;
-        try {
-          await run_dlg1(dlg);
-        } catch (error1) {
-          error = error1;
-          if (!(error instanceof errors.Dialog_error)) {
-            throw error;
-          }
-          warn('Ω__28', reverse(bold(error.message)));
-        }
-        info('Ω__29', "act_steps:  ", dlg.act_steps);
-        urge('Ω__30', "results:     ", dlg.results);
-        this.eq((Ω__31 = function() {
+        var Ω__26, Ω__27;
+        await run_dlg1(dlg);
+        info('Ω__24', "act_steps:  ", dlg.act_steps);
+        urge('Ω__25', "results:     ", dlg.results);
+        this.eq((Ω__26 = function() {
           return dlg.act_steps;
         }), act_steps);
-        this.eq((Ω__32 = function() {
+        this.eq((Ω__27 = function() {
           return dlg.results;
         }), results);
         return dlg;
@@ -516,7 +479,7 @@
         return null;
       })();
       await (async() => {        //.......................................................................................................
-        var act_steps, dlg, exp_steps, Ω__33;
+        var act_steps, dlg, exp_steps, Ω__28;
         exp_steps = [
           {
             ref: 'q1',
@@ -566,7 +529,7 @@
           q3: 'coffee',
           '$q4': ['prettier']
         }));
-        this.eq((Ω__33 = function() {
+        this.eq((Ω__28 = function() {
           return dlg.act_steps[2] instanceof errors.Misstep_failure;
         }), true);
         return null;
@@ -576,7 +539,7 @@
     },
     //---------------------------------------------------------------------------------------------------------
     recognize_wrong_step: async function() {
-      var Programmatic_dialog, act_steps, dlg, errors, exp_steps, Ω__34, Ω__35, Ω__36;
+      var Programmatic_dialog, act_steps, dlg, errors, exp_steps, Ω__29, Ω__30, Ω__31;
       //.......................................................................................................
       ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
       exp_steps = [
@@ -626,13 +589,13 @@
       dlg = new Programmatic_dialog(exp_steps);
       await run_dlg1(dlg);
       //.......................................................................................................
-      this.eq((Ω__34 = function() {
+      this.eq((Ω__29 = function() {
         return dlg.act_steps;
       }), act_steps);
-      this.eq((Ω__35 = function() {
+      this.eq((Ω__30 = function() {
         return dlg.act_steps[2] instanceof errors.Misstep_failure;
       }), true);
-      this.eq((Ω__36 = function() {
+      this.eq((Ω__31 = function() {
         return dlg.results;
       }), {
         q1: false,
@@ -642,27 +605,161 @@
       });
       //.......................................................................................................
       return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    overrun_failure_return_value: async function() {
+      var Programmatic_dialog, act_steps, errors;
+      ({Programmatic_dialog, errors} = require('../../../apps/diatribe'));
+      act_steps = [
+        {
+          ref: 'continue',
+          modal: 'confirm',
+          answer: true
+        },
+        {
+          ref: 'name',
+          modal: 'text',
+          answer: "Alice"
+        }
+      ];
+      await (async() => {        //.......................................................................................................
+        var conversation, dlg, exp_steps, Ω__33, Ω__34, Ω__35;
+        conversation = (dlg) => {
+          var Ω__32;
+          this.eq((Ω__32 = function() {
+            return dlg.finish();
+          }), false);
+          return dlg;
+        };
+        dlg = (await conversation(new Programmatic_dialog(exp_steps = act_steps)));
+        this.eq((Ω__33 = function() {
+          return dlg.results;
+        }), {});
+        this.eq((Ω__34 = function() {
+          return dlg.act_steps;
+        }), [
+          {
+            message: 'finished too early: act 0 exp 2'
+          }
+        ]);
+        this.eq((Ω__35 = function() {
+          return dlg.act_steps[0] instanceof errors.Underrun_failure;
+        }), true);
+        return null;
+      })();
+      await (async() => {        //.......................................................................................................
+        var conversation, dlg, exp_steps, Ω__39, Ω__40;
+        conversation = async(dlg) => {
+          var cont, name, Ω__36, Ω__37, Ω__38;
+          cont = (await dlg.confirm({
+            ref: 'continue',
+            message: "do you want to continue?"
+          }));
+          name = (await dlg.text({
+            ref: 'name',
+            message: "what is your name?"
+          }));
+          this.eq((Ω__36 = function() {
+            return cont;
+          }), true);
+          this.eq((Ω__37 = function() {
+            return name;
+          }), "Alice");
+          this.eq((Ω__38 = function() {
+            return dlg.finish();
+          }), true);
+          return dlg;
+        };
+        dlg = (await conversation(new Programmatic_dialog(exp_steps = act_steps)));
+        this.eq((Ω__39 = function() {
+          return dlg.results;
+        }), {
+          continue: true,
+          name: 'Alice'
+        });
+        this.eq((Ω__40 = function() {
+          return dlg.act_steps;
+        }), act_steps);
+        return null;
+      })();
+      await (async() => {        //.......................................................................................................
+        var conversation, dlg, exp_steps, Ω__44, Ω__45, Ω__46;
+        conversation = async(dlg) => {
+          var cont, name, Ω__41, Ω__42, Ω__43;
+          cont = (await dlg.confirm({
+            ref: 'continue',
+            message: "do you want to continue?"
+          }));
+          name = (await dlg.text({
+            ref: 'name',
+            message: "what is your name?"
+          }));
+          this.eq((Ω__41 = function() {
+            return cont;
+          }), true);
+          this.eq((Ω__42 = function() {
+            return name;
+          }), dlg.invalid);
+          this.eq((Ω__43 = function() {
+            return dlg.finish();
+          }), true);
+          return dlg;
+        };
+        exp_steps = [
+          {
+            ref: 'continue',
+            modal: 'confirm',
+            answer: true
+          }
+        ];
+        dlg = (await conversation(new Programmatic_dialog(exp_steps)));
+        this.eq((Ω__44 = function() {
+          return dlg.results;
+        }), {
+          continue: true
+        });
+        this.eq((Ω__45 = function() {
+          return dlg.act_steps;
+        }), [
+          {
+            ref: 'continue',
+            modal: 'confirm',
+            answer: true
+          },
+          {
+            message: 'emergency halt, running too long: act 2 exp 1'
+          }
+        ]);
+        this.eq((Ω__46 = function() {
+          return dlg.act_steps[1] instanceof errors.Overrun_failure;
+        }), true);
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
     }
   };
 
   //===========================================================================================================
   if (module === require.main) {
     await (async() => {
+      // await ( new Test { throw_on_error: true, } ).async_test {
+      //   # with_underrun_failure:  @diatribe_tasks.with_underrun_failure
+      //   # with_overrun_failure:   @diatribe_tasks.with_overrun_failure
+      //   without_failure:        @diatribe_tasks.without_failure
+      //   }
+      // await demo_run_dlg1_interactive()
+      // whisper 'Ω__47', '————————————————————————————————————————'
+      // await ( new Test { throw_on_error: false, } ).async_test @diatribe_tasks
+      whisper('Ω__48', '————————————————————————————————————————');
       await (new Test({
         throw_on_error: true
       })).async_test({
-        // with_underrun_failure:  @diatribe_tasks.with_underrun_failure
-        // with_overrun_failure:   @diatribe_tasks.with_overrun_failure
-        without_failure: this.diatribe_tasks.without_failure
+        overrun: this.diatribe_tasks.overrun_failure_return_value
       });
-      // await demo_run_dlg1_interactive()
-      whisper('Ω__37', '————————————————————————————————————————');
-      await (new Test({
-        throw_on_error: true
-      })).async_test(this.diatribe_tasks);
-      whisper('Ω__38', '————————————————————————————————————————');
+      whisper('Ω__49', '————————————————————————————————————————');
       // await demo_run_dlg1_programmatic()
-      await demo_from_docs();
+      // await demo_from_docs()
       return null;
     })();
   }
