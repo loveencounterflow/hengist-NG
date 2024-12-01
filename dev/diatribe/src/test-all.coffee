@@ -344,11 +344,11 @@ if module is require.main then await do =>
   #   without_failure:        @diatribe_tasks.without_failure
   #   }
   # await demo_run_dlg1_interactive()
-  # whisper 'Ω__47', '————————————————————————————————————————'
-  # await ( new Test { throw_on_error: false, } ).async_test @diatribe_tasks
+  whisper 'Ω__47', '————————————————————————————————————————'
+  await ( new Test { throw_on_error: false, } ).async_test @diatribe_tasks
   whisper 'Ω__48', '————————————————————————————————————————'
-  await ( new Test { throw_on_error: true, } ).async_test { overrun: @diatribe_tasks.overrun_failure_return_value, }
-  whisper 'Ω__49', '————————————————————————————————————————'
+  # await ( new Test { throw_on_error: true, } ).async_test { overrun: @diatribe_tasks.overrun_failure_return_value, }
+  # whisper 'Ω__49', '————————————————————————————————————————'
   # await demo_run_dlg1_programmatic()
   # await demo_from_docs()
   return null
