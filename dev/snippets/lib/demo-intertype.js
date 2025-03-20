@@ -19,6 +19,10 @@
     constructor(cfg) {
       // @_types = new Map()
       GUY.props.hide(this, 'isa', this.isa.bind(this));
+      GUY.props.hide(this, 'validate', this.validate.bind(this));
+      GUY.props.hide(this, 'parse', this.parse.bind(this));
+      GUY.props.hide(this, 'type_of', this.type_of.bind(this));
+      GUY.props.hide(this, 'memo', new Map());
       return void 0;
     }
 
@@ -41,11 +45,24 @@
     }
 
     //---------------------------------------------------------------------------------------------------------
+    type_of(x) {
+      return 'something';
+    }
+
+    //---------------------------------------------------------------------------------------------------------
     validate(type, x) {
       if (this.isa(type, x)) {
         return x;
       }
-      throw new Error(`Ω___3 expected a , got ${rpr(R)}`);
+      throw new Error(`Ω___3 expected a ${type.name}, got a ${this.type_of(x)}`);
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    parse(type, x) {
+      var method;
+      if ((method = type.parse) == null) {
+        throw new Error(`Ω___4 expected a , got ${rpr(R)}`);
+      }
     }
 
   };
@@ -56,11 +73,12 @@
     constructor(name, declaration) {
       var key, value;
       /* NOTE not doing anything for the time being */
-      debug('Ω___4', declaration);
+      debug('Ω___5', declaration);
+      this.name = name;
+/* TAINT check for accidental overwrites */
       for (key in declaration) {
         value = declaration[key];
-        if (key === 'isa') {
-          // check that value is function?
+        if (key === 'isa') { // check that value is function?
           nameit(name, value);
         }
         this[key] = value;
@@ -75,7 +93,7 @@
     //---------------------------------------------------------------------------------------------------------
     constructor(namespace) {
       var declaration, name;
-      debug('Ω___5', namespace);
+      debug('Ω___6', namespace);
       for (name in namespace) {
         declaration = namespace[name];
         this[name] = new Intertype_type(name, declaration);
@@ -99,12 +117,13 @@
   if (module === require.main) {
     await (() => {
       var types;
-      help('Ω___6', types = new Intertype());
-      help('Ω___7', std.integer);
-      help('Ω___8', std.integer.isa(5));
-      help('Ω___9', types.isa(std.integer, 5.3));
-      help('Ω__10', types);
-      return help('Ω__11', std);
+      help('Ω___7', types = new Intertype());
+      help('Ω___8', std.integer);
+      help('Ω___9', std.integer.isa(5));
+      help('Ω__10', types.isa(std.integer, 5.3));
+      help('Ω__11', types);
+      help('Ω__12', std);
+      return help('Ω__13', types.validate(std.integer, 5.3));
     })();
   }
 

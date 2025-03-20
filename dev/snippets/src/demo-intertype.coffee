@@ -30,7 +30,11 @@ class Intertype
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     # @_types = new Map()
-    GUY.props.hide @, 'isa', @isa.bind @
+    GUY.props.hide @, 'isa',      @isa.bind       @
+    GUY.props.hide @, 'validate', @validate.bind  @
+    GUY.props.hide @, 'parse',    @parse.bind     @
+    GUY.props.hide @, 'type_of',  @type_of.bind   @
+    GUY.props.hide @, 'memo',     new Map()
     return undefined
 
   # #---------------------------------------------------------------------------------------------------------
@@ -49,9 +53,17 @@ class Intertype
     return R
 
   #---------------------------------------------------------------------------------------------------------
+  type_of: ( x ) -> 'something'
+
+  #---------------------------------------------------------------------------------------------------------
   validate: ( type, x ) ->
     return x if @isa type, x
-    throw new Error "Ω___3 expected a , got #{rpr R}"
+    throw new Error "Ω___3 expected a #{type.name}, got a #{@type_of x}"
+
+  #---------------------------------------------------------------------------------------------------------
+  parse: ( type, x ) ->
+    unless ( method = type.parse )?
+      throw new Error "Ω___4 expected a , got #{rpr R}"
 
 
 #===========================================================================================================
@@ -60,11 +72,11 @@ class Intertype_type
   #---------------------------------------------------------------------------------------------------------
   constructor: ( name, declaration ) ->
     ### NOTE not doing anything for the time being ###
-    debug 'Ω___4', declaration
+    debug 'Ω___5', declaration
+    @name = name
+    ### TAINT check for accidental overwrites ###
     for key, value of declaration
-      if key is 'isa'
-        # check that value is function?
-        nameit name, value
+      nameit name, value if key is 'isa' # check that value is function?
       @[ key ] = value
     return undefined
 
@@ -74,7 +86,7 @@ class Intertype_namespace
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( namespace ) ->
-    debug 'Ω___5', namespace
+    debug 'Ω___6', namespace
     for name, declaration of namespace
       @[ name ] = new Intertype_type name, declaration
     return undefined
@@ -89,12 +101,13 @@ std = new Intertype_namespace
 
 #===========================================================================================================
 if module is require.main then await do =>
-  help 'Ω___6', types = new Intertype()
-  help 'Ω___7', std.integer
-  help 'Ω___8', std.integer.isa 5
-  help 'Ω___9', types.isa std.integer, 5.3
-  help 'Ω__10', types
-  help 'Ω__11', std
+  help 'Ω___7', types = new Intertype()
+  help 'Ω___8', std.integer
+  help 'Ω___9', std.integer.isa 5
+  help 'Ω__10', types.isa std.integer, 5.3
+  help 'Ω__11', types
+  help 'Ω__12', std
+  help 'Ω__13', types.validate std.integer, 5.3
 
 
 
