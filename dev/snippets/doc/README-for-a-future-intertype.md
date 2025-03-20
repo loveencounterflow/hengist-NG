@@ -41,8 +41,14 @@
   * `'empty.list'`, `[ 'empty', 'list', ]`
   * containment:
     * `'list.of.integer'`, `[ 'list', 'of', 'integer', ]`
-    * `'map.of.text.to.integer'`, `[ 'map', 'of', 'text', 'to', 'integer', ]`
+    * `'map.from.text.to.integer'`, `[ 'map', 'from', 'text', 'to', 'integer', ]`
 
+## Implementation Notes
+
+* in `Intertype_core`, types are compiled on first use or when `Intertype_core::compile()` is called
+  * `Intertype_core::compile()` should(?) have a way to indicate which recursively derived types should be
+    included to avoid useless multiplication and infinite regress (as in `list of list of list of map of
+    ...`)
 
 ## To Do
 
@@ -97,4 +103,42 @@
   `Intertype_core::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
 
 * **`[—]`** how to express concatenation in a generic way as in `list of ( nonempty list of integer )`?
+  * **`[—]`** one idea is to restrict usage to declared, named types, i.e. one can never call
+    \*`Intertype_core::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
+    declare (and thereby name) a type (say, `intlist`) that is a `list.of.integer` and then call
+    `Intertype_core::isa 'intlist', x`
 
+* **`[—]`** how to express multiple refinements as in `blank nonempty text` or `positive1 even integer`?
+
+* **`[—]`** how to express sum types as in `integer or integerliteral`?
+
+---------------------------------------------------------
+
+```coffee
+declarations:
+  integer:
+    test: ( x ) -> Number.isInteger x # or `Number.isSafeInteger()`
+    refinements:
+      positive0:  ( x ) -> x >= +0
+      positive1:  ( x ) -> x >= +1
+      negative0:  ( x ) -> x <=  0
+      negative1:  ( x ) -> x <= -1
+      odd:        ( x ) -> x %% 2 isnt  0
+      even:       ( x ) -> x %% 2 is    0
+  list:
+    test: ( x ) -> Array.isArray x
+    refinements:
+      empty:      ( x ) -> x.length is  0
+      nonempty:   ( x ) -> x.length >   0
+    containment:
+      ...
+
+  map:
+    test: ( x ) -> x instanceof Map
+    refinements:
+      empty:      ( x ) -> x.size is  0
+      nonempty:   ( x ) -> x.size >   0
+    containment:
+      all:        ( f ) -> d.entries().every ( e ) -> f e
+      any:        ( f ) -> d.entries().some  ( e ) -> f e
+```
