@@ -131,7 +131,7 @@ declarations:
       empty:      ( x ) -> x.length is  0
       nonempty:   ( x ) -> x.length >   0
     containment:
-      ...
+      contains:   ( x, y ) -> y in x
 
   map:
     test: ( x ) -> x instanceof Map
@@ -139,6 +139,14 @@ declarations:
       empty:      ( x ) -> x.size is  0
       nonempty:   ( x ) -> x.size >   0
     containment:
-      all:        ( f ) -> d.entries().every ( e ) -> f e
-      any:        ( f ) -> d.entries().some  ( e ) -> f e
+      all:        ( x, f ) -> x.entries().every  ( e ) -> f e
+      any:        ( x, f ) -> x.entries().some   ( e ) -> f e
+      allkeys:    ( x, f ) -> x.keys().every     ( e ) -> f e
+      anykeys:    ( x, f ) -> x.keys().some      ( e ) -> f e
+      allvalues:  ( x, f ) -> x.values().every   ( e ) -> f e
+      anyvalues:  ( x, f ) -> x.values().some    ( e ) -> f e
+      contains:   ( x, y ) -> x.values().some    ( e ) -> e is y
+
+  quantity.q:     'float'
+  quantity.u:     'text_nonempty'
 ```
