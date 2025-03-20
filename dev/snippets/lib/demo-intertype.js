@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GUY, Intertype, Intertype_namespace, Intertype_type, alert, bold, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, std, urge, warn, whisper;
+  var GUY, Intertype, Intertype_namespace, Intertype_type, WEBGUY, alert, bold, debug, echo, help, info, inspect, log, nameit, plain, praise, reverse, rpr, std, urge, warn, whisper;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -8,6 +8,10 @@
   ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('demo-execa'));
 
   ({rpr, inspect, echo, reverse, bold, log} = GUY.trm);
+
+  WEBGUY = require('../../../apps/webguy');
+
+  ({nameit} = WEBGUY.props);
 
   //===========================================================================================================
   Intertype = class Intertype {
@@ -49,13 +53,17 @@
   //===========================================================================================================
   Intertype_type = class Intertype_type {
     //---------------------------------------------------------------------------------------------------------
-    constructor(declaration) {
-      var k, v;
+    constructor(name, declaration) {
+      var key, value;
       /* NOTE not doing anything for the time being */
       debug('Ω___4', declaration);
-      for (k in declaration) {
-        v = declaration[k];
-        this[k] = v;
+      for (key in declaration) {
+        value = declaration[key];
+        if (key === 'isa') {
+          // check that value is function?
+          nameit(name, value);
+        }
+        this[key] = value;
       }
       return void 0;
     }
@@ -66,11 +74,11 @@
   Intertype_namespace = class Intertype_namespace {
     //---------------------------------------------------------------------------------------------------------
     constructor(namespace) {
-      var declaration, type;
+      var declaration, name;
       debug('Ω___5', namespace);
-      for (type in namespace) {
-        declaration = namespace[type];
-        this[type] = new Intertype_type(declaration);
+      for (name in namespace) {
+        declaration = namespace[name];
+        this[name] = new Intertype_type(name, declaration);
       }
       return void 0;
     }

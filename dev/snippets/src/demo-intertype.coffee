@@ -20,6 +20,8 @@ GUY                       = require 'guy'
   reverse
   bold
   log     }               = GUY.trm
+WEBGUY                    = require '../../../apps/webguy'
+{ nameit }                = WEBGUY.props
 
 
 #===========================================================================================================
@@ -56,10 +58,14 @@ class Intertype
 class Intertype_type
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ( declaration ) ->
+  constructor: ( name, declaration ) ->
     ### NOTE not doing anything for the time being ###
     debug 'Ω___4', declaration
-    @[ k ] = v for k, v of declaration
+    for key, value of declaration
+      if key is 'isa'
+        # check that value is function?
+        nameit name, value
+      @[ key ] = value
     return undefined
 
 
@@ -69,8 +75,8 @@ class Intertype_namespace
   #---------------------------------------------------------------------------------------------------------
   constructor: ( namespace ) ->
     debug 'Ω___5', namespace
-    for type, declaration of namespace
-      @[ type ] = new Intertype_type declaration
+    for name, declaration of namespace
+      @[ name ] = new Intertype_type name, declaration
     return undefined
 
 
