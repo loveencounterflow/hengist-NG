@@ -36,9 +36,9 @@
 
       //---------------------------------------------------------------------------------------------------------
       isa(type, x) {
-        var R, ref;
-        if ((ref = (R = type.isa.call(type.$typespace, x, this))) !== true && ref !== false) {
-          throw new Error(`Ω___2 expected \`true\` or \`false\`, got a ${this.type_of(R)}`);
+        var R, ref1;
+        if ((ref1 = (R = type.isa.call(type.$typespace, x, this))) !== true && ref1 !== false) {
+          throw new Error(`Ω___1 expected \`true\` or \`false\`, got a ${this.type_of(R)}`);
         }
         return R;
       }
@@ -53,7 +53,7 @@
         if (this.isa(type, x)) {
           return x;
         }
-        throw new Error(`Ω___3 expected a ${type.$name}, got a ${this.type_of(x)}`);
+        throw new Error(`Ω___2 expected a ${type.$name}, got a ${this.type_of(x)}`);
       }
 
       //---------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@
 
     };
     // unless ( method = type.parse )?
-    //   throw new Error "Ω___4 expected a , got #{rpr R}"
+    //   throw new Error "Ω___3 expected a , got #{rpr R}"
 
       //---------------------------------------------------------------------------------------------------------
     // evaluate: ( ??? ) ->
@@ -74,7 +74,7 @@
         var key, value;
         /* NOTE not doing anything for the time being */
         /* TAINT should still implement string-valued `isa` */
-        // debug 'Ω___5', rpr declaration
+        // debug 'Ω___4', rpr declaration
         hide(this, '$name', name);
         hide(this, '$typespace', typespace);
 /* TAINT check for accidental overwrites */
@@ -93,15 +93,32 @@
     Typespace = class Typespace {
       //---------------------------------------------------------------------------------------------------------
       constructor(typespace_cfg) {
-        var declaration, i, len, name, names;
+        var declaration, i, len, name, names, ref;
         names = this._sort_names(typespace_cfg);
-// info 'Ω___6', Object.keys typespace_cfg
-// info 'Ω___7', names
+// info 'Ω___5', Object.keys typespace_cfg
+// info 'Ω___6', names
         for (i = 0, len = names.length; i < len; i++) {
           name = names[i];
           if ((declaration = typespace_cfg[name]) == null) {
-            throw new Error(`Ω___8 missing declaration for type ${rpr(name)}`);
+            throw new Error(`Ω___7 missing declaration for type ${rpr(name)}`);
           }
+          //.....................................................................................................
+          /* De-reference named types: */
+          /* TAINT use method `_deref()` */
+          /* TAINT consider to resolve transitive dependencies */
+          if (typeof declaration === 'string') {
+            ref = declaration;
+            declaration = (() => {
+              var R, deref;
+              deref = this[ref];
+              R = {};
+              R.isa = function(x, t) {
+                return t.isa(deref, x);
+              };
+              return R;
+            })();
+          }
+          //.....................................................................................................
           this[name] = new Type(this, name, declaration);
         }
         return void 0;
@@ -169,36 +186,40 @@
     await (() => {
       var Types, e, std, types;
       ({Types, std} = require_intertype());
-      help('Ω___9', types = new Types());
-      help('Ω__10', std);
-      // help 'Ω__11', std.integer
-      // help 'Ω__12', std.integer.isa 5
-      help('Ω__13', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__14', GUY.trm.truth(types.isa(std.strange, 6)));
-      help('Ω__15', GUY.trm.truth(types.isa(std.weird, 6)));
-      help('Ω__16', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__17', GUY.trm.truth(types.isa(std.strange, 5)));
-      help('Ω__18', GUY.trm.truth(types.isa(std.weird, 5)));
-      help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
-      help('Ω__20', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__21', (function() {
+      help('Ω___8', types = new Types());
+      help('Ω___9', std);
+      // help 'Ω__10', std.integer
+      // help 'Ω__11', std.integer.isa 5
+      help('Ω__12', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      help('Ω__13', GUY.trm.truth(types.isa(std.strange, 6)));
+      help('Ω__14', GUY.trm.truth(types.isa(std.weird, 6)));
+      help('Ω__15', GUY.trm.truth(types.isa(std.odd, 6)));
+      help('Ω__16', GUY.trm.truth(types.isa(std.strange, 5)));
+      help('Ω__17', GUY.trm.truth(types.isa(std.weird, 5)));
+      help('Ω__18', GUY.trm.truth(types.isa(std.odd, 5)));
+      help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__20', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__22', e.message);
+          return warn('Ω__21', e.message);
         }
       })());
-      return help('Ω__23', (function() {
+      return help('Ω__22', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__24', e.message);
+          return warn('Ω__23', e.message);
         }
       })());
     })();
   }
+
+  // info 'Ω__24', std.weird
+// info 'Ω__25', std.weird.isa
+// info 'Ω__25', std.weird.isa.toString()
 
 }).call(this);
 

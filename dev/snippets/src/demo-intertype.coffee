@@ -45,7 +45,7 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
       unless ( R = type.isa.call type.$typespace, x, @ ) in [ true, false, ]
-        throw new Error "Ω___2 expected `true` or `false`, got a #{@type_of R}"
+        throw new Error "Ω___1 expected `true` or `false`, got a #{@type_of R}"
       return R
 
     #---------------------------------------------------------------------------------------------------------
@@ -54,12 +54,12 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     validate: ( type, x ) ->
       return x if @isa type, x
-      throw new Error "Ω___3 expected a #{type.$name}, got a #{@type_of x}"
+      throw new Error "Ω___2 expected a #{type.$name}, got a #{@type_of x}"
 
     #---------------------------------------------------------------------------------------------------------
     create: ( type, P... ) ->
       # unless ( method = type.parse )?
-      #   throw new Error "Ω___4 expected a , got #{rpr R}"
+      #   throw new Error "Ω___3 expected a , got #{rpr R}"
 
     #---------------------------------------------------------------------------------------------------------
     # evaluate: ( ??? ) ->
@@ -73,7 +73,7 @@ require_intertype = ->
     constructor: ( typespace, name, declaration ) ->
       ### NOTE not doing anything for the time being ###
       ### TAINT should still implement string-valued `isa` ###
-      # debug 'Ω___5', rpr declaration
+      # debug 'Ω___4', rpr declaration
       hide @, '$name',      name
       hide @, '$typespace', typespace
       ### TAINT check for accidental overwrites ###
@@ -89,11 +89,23 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( typespace_cfg ) ->
       names = @_sort_names typespace_cfg
-      # info 'Ω___6', Object.keys typespace_cfg
-      # info 'Ω___7', names
+      # info 'Ω___5', Object.keys typespace_cfg
+      # info 'Ω___6', names
       for name in names
         unless ( declaration = typespace_cfg[ name ] )?
-          throw new Error "Ω___8 missing declaration for type #{rpr name}"
+          throw new Error "Ω___7 missing declaration for type #{rpr name}"
+        #.....................................................................................................
+        ### De-reference named types: ###
+        ### TAINT use method `_deref()` ###
+        ### TAINT consider to resolve transitive dependencies ###
+        if typeof declaration is 'string'
+          ref         = declaration
+          declaration = do =>
+            deref = @[ ref ]
+            R     = {}
+            R.isa = ( x, t ) -> t.isa deref, x
+            return R
+        #.....................................................................................................
         @[ name ] = new Type @, name, declaration
       return undefined
 
@@ -140,20 +152,23 @@ require_intertype = ->
 if module is require.main then await do =>
   { Types
     std             } = require_intertype()
-  help 'Ω___9', types = new Types()
-  help 'Ω__10', std
-  # help 'Ω__11', std.integer
-  # help 'Ω__12', std.integer.isa 5
-  help 'Ω__13', GUY.trm.truth     types.isa       std.integer,  5.3
-  help 'Ω__14', GUY.trm.truth     types.isa       std.strange,  6
-  help 'Ω__15', GUY.trm.truth     types.isa       std.weird,    6
-  help 'Ω__16', GUY.trm.truth     types.isa       std.odd,      6
-  help 'Ω__17', GUY.trm.truth     types.isa       std.strange,  5
-  help 'Ω__18', GUY.trm.truth     types.isa       std.weird,    5
-  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,      5
-  help 'Ω__20', GUY.trm.truth     types.isa       std.odd,      5.3
-  help 'Ω__21', try               types.validate  std.integer,  5       catch e then warn 'Ω__22', e.message
-  help 'Ω__23', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__24', e.message
+  help 'Ω___8', types = new Types()
+  help 'Ω___9', std
+  # help 'Ω__10', std.integer
+  # help 'Ω__11', std.integer.isa 5
+  help 'Ω__12', GUY.trm.truth     types.isa       std.integer,  5.3
+  help 'Ω__13', GUY.trm.truth     types.isa       std.strange,  6
+  help 'Ω__14', GUY.trm.truth     types.isa       std.weird,    6
+  help 'Ω__15', GUY.trm.truth     types.isa       std.odd,      6
+  help 'Ω__16', GUY.trm.truth     types.isa       std.strange,  5
+  help 'Ω__17', GUY.trm.truth     types.isa       std.weird,    5
+  help 'Ω__18', GUY.trm.truth     types.isa       std.odd,      5
+  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,      5.3
+  help 'Ω__20', try               types.validate  std.integer,  5       catch e then warn 'Ω__21', e.message
+  help 'Ω__22', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__23', e.message
+  # info 'Ω__24', std.weird
+  # info 'Ω__25', std.weird.isa
+  # info 'Ω__25', std.weird.isa.toString()
 
 
 
