@@ -100,9 +100,11 @@ std = new Intertype_namespace
     foo:    4
   odd:
     isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
-  strange: 'odd' # declares another name for `odd`
+  # short form just assigns either a test method or a type name:
+  even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
+  strange:  'odd' # declares another name for `odd`
   quantity:
-    # each field becomes an `Intertype_type` instance
+    # each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
     fields:
       q:    'float'
       u:    'nonempty_text'

@@ -118,9 +118,13 @@
         return (t.isa(this.integer, x)) && (modulo(x, 2) !== 0);
       }
     },
+    // short form just assigns either a test method or a type name:
+    even: function(x, t) {
+      return (t.isa(this.integer, x)) && (modulo(x, 2) === 0);
+    },
     strange: 'odd', // declares another name for `odd`
     quantity: {
-      // each field becomes an `Intertype_type` instance
+      // each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
       fields: {
         q: 'float',
         u: 'nonempty_text'
