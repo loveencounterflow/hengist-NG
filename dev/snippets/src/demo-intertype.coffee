@@ -46,8 +46,8 @@ class Intertype
 
   #---------------------------------------------------------------------------------------------------------
   isa: ( type, x ) ->
-    debug 'Ω___1', type
-    unless ( R = type.isa x ) in [ true, false, ]
+    # debug 'Ω___1', type
+    unless ( R = type.isa.call type.namespace, x, @ ) in [ true, false, ]
     # unless ( R = ( @_compile declaration ).isa x ) in [ true, false, ]
       throw new Error "Ω___2 expected true or false, got #{rpr R}"
     return R
@@ -70,10 +70,11 @@ class Intertype
 class Intertype_type
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ( name, declaration ) ->
+  constructor: ( namespace, name, declaration ) ->
     ### NOTE not doing anything for the time being ###
-    debug 'Ω___5', declaration
+    # debug 'Ω___5', declaration
     @name = name
+    @namespace = namespace
     ### TAINT check for accidental overwrites ###
     for key, value of declaration
       nameit name, value if key is 'isa' # check that value is function?
@@ -86,28 +87,33 @@ class Intertype_namespace
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( namespace ) ->
-    debug 'Ω___6', namespace
+    # debug 'Ω___6', namespace
     for name, declaration of namespace
-      @[ name ] = new Intertype_type name, declaration
+      @[ name ] = new Intertype_type namespace, name, declaration
     return undefined
 
 
 #===========================================================================================================
 std = new Intertype_namespace
   integer:
-    isa:    ( x ) -> Number.isInteger x
+    isa:    ( x, t ) -> Number.isInteger x
     foo:    4
+  odd:
+    isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  help 'Ω___7', types = new Intertype()
-  help 'Ω___8', std.integer
-  help 'Ω___9', std.integer.isa 5
-  help 'Ω__10', types.isa std.integer, 5.3
-  help 'Ω__11', types
-  help 'Ω__12', std
-  help 'Ω__13', types.validate std.integer, 5.3
+  help 'Ω___8', types = new Intertype()
+  help 'Ω___9', std
+  # help 'Ω__10', std.integer
+  # help 'Ω__11', std.integer.isa 5
+  help 'Ω__12', GUY.trm.truth types.isa std.integer, 5.3
+  help 'Ω__13', GUY.trm.truth types.isa std.odd, 6
+  help 'Ω__14', GUY.trm.truth types.isa std.odd, 5
+  help 'Ω__15', GUY.trm.truth types.isa std.odd, 5.3
+  help 'Ω__16', try types.validate std.integer, 5   catch e then warn 'Ω__17', e.message
+  help 'Ω__18', try types.validate std.integer, 5.3 catch e then warn 'Ω__19', e.message
 
 
 
