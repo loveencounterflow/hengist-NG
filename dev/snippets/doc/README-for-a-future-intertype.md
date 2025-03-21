@@ -2,7 +2,9 @@
 
 
 * `InterType test method` (informal type):
-  * a function
+  * a synchronous function `( x, t ) ->` that accepts two values (`x`: the value to be tested, `t`: the
+    `Intertype` instance used for testing) and returns either `true` or `false`; it must never throw an
+    exception and never return anything but a Boolean
   * member of an `Intertype_namespace` type entry
   * will be called in the context of its namespace
 
@@ -43,22 +45,6 @@
     repeat all the lifting done by the former
 
 
-## Simple and Complex Type Names
-
-* `Ic::isa t, x`
-  * `'list'`
-  * `[ 'list', ]`: same as `'list'`
-  * `'empty.list'`, `[ 'empty', 'list', ]`
-  * containment:
-    * `'list.of.integer'`, `[ 'list', 'of', 'integer', ]`
-    * `'map.from.text.to.integer'`, `[ 'map', 'from', 'text', 'to', 'integer', ]`
-
-## Implementation Notes
-
-* in `Intertype_core`, types are compiled on first use or when `Intertype_core::compile()` is called
-  * `Intertype_core::compile()` should(?) have a way to indicate which recursively derived types should be
-    included to avoid useless multiplication and infinite regress (as in `list of list of list of map of
-    ...`)
 
 ## To Do
 

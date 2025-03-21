@@ -104,8 +104,8 @@
     };
     //===========================================================================================================
     std = new Intertype_namespace({
-      weird: 'strange', // declares another name for `odd`
-      strange: 'odd', // declares another name for `odd`
+      // weird:    'strange' # declares another name for `odd`
+      // strange:  'odd'     # declares another name for `odd`
       integer: {
         isa: function(x, t) {
           return Number.isInteger(x);
@@ -143,11 +143,11 @@
       // help 'Ω___9', std.integer
       // help 'Ω__10', std.integer.isa 5
       help('Ω__11', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__12', GUY.trm.truth(types.isa(std.strange, 6)));
-      help('Ω__13', GUY.trm.truth(types.isa(std.weird, 6)));
+      // help 'Ω__12', GUY.trm.truth     types.isa       std.strange,  6
+      // help 'Ω__13', GUY.trm.truth     types.isa       std.weird,    6
       help('Ω__14', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__15', GUY.trm.truth(types.isa(std.strange, 5)));
-      help('Ω__16', GUY.trm.truth(types.isa(std.weird, 5)));
+      // help 'Ω__15', GUY.trm.truth     types.isa       std.strange,  5
+      // help 'Ω__16', GUY.trm.truth     types.isa       std.weird,    5
       help('Ω__17', GUY.trm.truth(types.isa(std.odd, 5)));
       help('Ω__18', GUY.trm.truth(types.isa(std.odd, 5.3)));
       help('Ω__19', (function() {
