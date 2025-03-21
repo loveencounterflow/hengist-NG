@@ -1,6 +1,16 @@
 
 
 
+* `InterType test method` (informal type):
+  * a function
+  * member of an `Intertype_namespace` type entry
+  * will be called in the context of its namespace
+
+* `Intertype_declaration`: one of
+  * a function `( x, t ) ->`
+
+
+
 
 # InterType
 

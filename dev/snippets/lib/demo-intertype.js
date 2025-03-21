@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GUY, Intertype, Intertype_namespace, Intertype_type, WEBGUY, alert, bold, debug, echo, help, info, inspect, log, nameit, plain, praise, reverse, rpr, std, urge, warn, whisper,
+  var GUY, WEBGUY, alert, bold, debug, echo, help, info, inspect, log, nameit, plain, praise, require_intertype, reverse, rpr, urge, warn, whisper,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   //===========================================================================================================
@@ -14,150 +14,156 @@
 
   ({nameit} = WEBGUY.props);
 
-  //===========================================================================================================
-  Intertype = class Intertype {
-    //---------------------------------------------------------------------------------------------------------
-    constructor(cfg) {
-      // @_types = new Map()
-      GUY.props.hide(this, 'isa', this.isa.bind(this));
-      GUY.props.hide(this, 'validate', this.validate.bind(this));
-      GUY.props.hide(this, 'parse', this.parse.bind(this));
-      GUY.props.hide(this, 'type_of', this.type_of.bind(this));
-      GUY.props.hide(this, 'memo', new Map());
-      return void 0;
-    }
-
-    // #---------------------------------------------------------------------------------------------------------
-    // _compile: ( declaration ) ->
-    //   return R if ( R = @_types.get declaration )?
-    //   ### NOTE not doing anything for the time being ###
-    //   @_types.set declaration, R = declaration
-    //   return R
+  //###########################################################################################################
+  require_intertype = function() {
+    var Intertype, Intertype_namespace, Intertype_type, std;
+    //===========================================================================================================
+    Intertype = class Intertype {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(cfg) {
+        // @_types = new Map()
+        GUY.props.hide(this, 'isa', this.isa.bind(this));
+        GUY.props.hide(this, 'validate', this.validate.bind(this));
+        GUY.props.hide(this, 'parse', this.parse.bind(this));
+        GUY.props.hide(this, 'type_of', this.type_of.bind(this));
+        GUY.props.hide(this, 'memo', new Map());
+        return void 0;
+      }
 
       //---------------------------------------------------------------------------------------------------------
-    isa(type, x) {
-      var R, ref;
-      // debug 'Ω___1', type
-      if ((ref = (R = type.isa.call(type.namespace, x, this))) !== true && ref !== false) {
-        // unless ( R = ( @_compile declaration ).isa x ) in [ true, false, ]
-        throw new Error(`Ω___2 expected true or false, got ${rpr(R)}`);
-      }
-      return R;
-    }
-
-    //---------------------------------------------------------------------------------------------------------
-    type_of(x) {
-      return 'something';
-    }
-
-    //---------------------------------------------------------------------------------------------------------
-    validate(type, x) {
-      if (this.isa(type, x)) {
-        return x;
-      }
-      throw new Error(`Ω___3 expected a ${type.name}, got a ${this.type_of(x)}`);
-    }
-
-    //---------------------------------------------------------------------------------------------------------
-    parse(type, x) {
-      var method;
-      if ((method = type.parse) == null) {
-        throw new Error(`Ω___4 expected a , got ${rpr(R)}`);
-      }
-    }
-
-  };
-
-  //===========================================================================================================
-  Intertype_type = class Intertype_type {
-    //---------------------------------------------------------------------------------------------------------
-    constructor(namespace, name, declaration) {
-      var key, value;
-      /* NOTE not doing anything for the time being */
-      // debug 'Ω___5', declaration
-      this.name = name;
-      this.namespace = namespace;
-/* TAINT check for accidental overwrites */
-      for (key in declaration) {
-        value = declaration[key];
-        if (key === 'isa') { // check that value is function?
-          nameit(name, value);
+      isa(type, x) {
+        var R, ref;
+        // debug 'Ω___1', type
+        if ((ref = (R = type.isa.call(type.namespace, x, this))) !== true && ref !== false) {
+          // unless ( R = ( @_compile declaration ).isa x ) in [ true, false, ]
+          throw new Error(`Ω___2 expected true or false, got ${rpr(R)}`);
         }
-        this[key] = value;
+        return R;
       }
-      return void 0;
-    }
 
-  };
+      //---------------------------------------------------------------------------------------------------------
+      type_of(x) {
+        return 'something';
+      }
 
-  //===========================================================================================================
-  Intertype_namespace = class Intertype_namespace {
+      //---------------------------------------------------------------------------------------------------------
+      validate(type, x) {
+        if (this.isa(type, x)) {
+          return x;
+        }
+        throw new Error(`Ω___3 expected a ${type.name}, got a ${this.type_of(x)}`);
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      parse(type, x) {
+        var method;
+        if ((method = type.parse) == null) {
+          throw new Error(`Ω___4 expected a , got ${rpr(R)}`);
+        }
+      }
+
+    };
     //---------------------------------------------------------------------------------------------------------
-    constructor(namespace) {
-      var declaration, name;
+    // evaluate: ( ??? ) ->
+    // create: ( ??? ) ->
+
+      //===========================================================================================================
+    Intertype_type = class Intertype_type {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(namespace, name, declaration) {
+        var key, value;
+        /* NOTE not doing anything for the time being */
+        // debug 'Ω___5', declaration
+        this.name = name;
+        this.namespace = namespace;
+/* TAINT check for accidental overwrites */
+        for (key in declaration) {
+          value = declaration[key];
+          if (key === 'isa') { // check that value is function?
+            nameit(name, value);
+          }
+          this[key] = value;
+        }
+        return void 0;
+      }
+
+    };
+    //===========================================================================================================
+    Intertype_namespace = class Intertype_namespace {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(namespace) {
+        var declaration, name;
 // debug 'Ω___6', namespace
-      for (name in namespace) {
-        declaration = namespace[name];
-        this[name] = new Intertype_type(namespace, name, declaration);
+        for (name in namespace) {
+          declaration = namespace[name];
+          this[name] = new Intertype_type(namespace, name, declaration);
+        }
+        return void 0;
       }
-      return void 0;
-    }
 
-  };
-
-  //===========================================================================================================
-  std = new Intertype_namespace({
-    integer: {
-      isa: function(x, t) {
-        return Number.isInteger(x);
+    };
+    //===========================================================================================================
+    std = new Intertype_namespace({
+      weird: 'strange', // declares another name for `odd`
+      strange: 'odd', // declares another name for `odd`
+      integer: {
+        isa: function(x, t) {
+          return Number.isInteger(x);
+        },
+        foo: 4
       },
-      foo: 4
-    },
-    odd: {
-      isa: function(x, t) {
-        return (t.isa(this.integer, x)) && (modulo(x, 2) !== 0);
+      odd: {
+        isa: function(x, t) {
+          return (t.isa(this.integer, x)) && (modulo(x, 2) !== 0);
+        }
+      },
+      // short form just assigns either a test method or a type name:
+      even: function(x, t) {
+        return (t.isa(this.integer, x)) && (modulo(x, 2) === 0);
+      },
+      quantity: {
+        // each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
+        fields: {
+          q: 'float',
+          u: 'nonempty_text'
+        }
       }
-    },
-    // short form just assigns either a test method or a type name:
-    even: function(x, t) {
-      return (t.isa(this.integer, x)) && (modulo(x, 2) === 0);
-    },
-    strange: 'odd', // declares another name for `odd`
-    quantity: {
-      // each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
-      fields: {
-        q: 'float',
-        u: 'nonempty_text'
-      }
-    }
-  });
+    });
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    return {Intertype, Intertype_type, Intertype_namespace, std};
+  };
 
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var e, types;
-      help('Ω___8', types = new Intertype());
-      help('Ω___9', std);
-      // help 'Ω__10', std.integer
-      // help 'Ω__11', std.integer.isa 5
-      help('Ω__12', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__13', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__14', GUY.trm.truth(types.isa(std.odd, 5)));
-      help('Ω__15', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__16', (function() {
+      var Intertype, e, std, types;
+      ({Intertype, std} = require_intertype());
+      help('Ω___7', types = new Intertype());
+      help('Ω___8', std);
+      // help 'Ω___9', std.integer
+      // help 'Ω__10', std.integer.isa 5
+      help('Ω__11', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      help('Ω__12', GUY.trm.truth(types.isa(std.strange, 6)));
+      help('Ω__13', GUY.trm.truth(types.isa(std.weird, 6)));
+      help('Ω__14', GUY.trm.truth(types.isa(std.odd, 6)));
+      help('Ω__15', GUY.trm.truth(types.isa(std.strange, 5)));
+      help('Ω__16', GUY.trm.truth(types.isa(std.weird, 5)));
+      help('Ω__17', GUY.trm.truth(types.isa(std.odd, 5)));
+      help('Ω__18', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__19', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__17', e.message);
+          return warn('Ω__20', e.message);
         }
       })());
-      return help('Ω__18', (function() {
+      return help('Ω__21', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__19', e.message);
+          return warn('Ω__22', e.message);
         }
       })());
     })();
