@@ -23,6 +23,8 @@ GUY                       = require 'guy'
 WEBGUY                    = require '../../../apps/webguy'
 { hide }                  = GUY.props
 { nameit }                = WEBGUY.props
+{ Ltsort }                = require '../../../apps/ltsort'
+
 
 ############################################################################################################
 require_intertype = ->
@@ -42,10 +44,8 @@ require_intertype = ->
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
-      # debug 'Ω___1', type
-      unless ( R = type.isa.call type.namespace, x, @ ) in [ true, false, ]
-      # unless ( R = ( @_compile declaration ).isa x ) in [ true, false, ]
-        throw new Error "Ω___2 expected true or false, got #{rpr R}"
+      unless ( R = type.isa.call type.$namespace, x, @ ) in [ true, false, ]
+        throw new Error "Ω___2 expected `true` or `false`, got a #{@type_of R}"
       return R
 
     #---------------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     validate: ( type, x ) ->
       return x if @isa type, x
-      throw new Error "Ω___3 expected a #{type.name}, got a #{@type_of x}"
+      throw new Error "Ω___3 expected a #{type.$name}, got a #{@type_of x}"
 
     #---------------------------------------------------------------------------------------------------------
     parse: ( type, x ) ->
@@ -72,9 +72,10 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( namespace, name, declaration ) ->
       ### NOTE not doing anything for the time being ###
-      # debug 'Ω___5', declaration
-      @name = name
-      hide @, 'namespace', namespace
+      ### TAINT should still implement string-valued `isa` ###
+      # debug 'Ω___5', rpr declaration
+      @$name = name
+      hide @, '$namespace', namespace
       ### TAINT check for accidental overwrites ###
       for key, value of declaration
         nameit name, value if key is 'isa' # check that value is function?
@@ -88,21 +89,43 @@ require_intertype = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( namespace_cfg ) ->
-      # debug 'Ω___6', namespace_cfg
-      for name, declaration of namespace_cfg
+      ### Given a `namespace_cfg`, return a list of names such that the declarative dependencies (where the
+      type is defined by the name of another type in the namespace) can be resolved at compile time ###
+      names = @_sort_names namespace_cfg
+      # info 'Ω___6', Object.keys namespace_cfg
+      # info 'Ω___7', names
+      for name in names
+        unless ( declaration = namespace_cfg[ name ] )?
+          throw new Error "Ω___8 missing declaration for type #{rpr name}"
         @[ name ] = new Intertype_type @, name, declaration
       return undefined
+
+    #---------------------------------------------------------------------------------------------------------
+    _sort_names: ( namespace_cfg ) ->
+      ### TAINT check here or in constructor that names can be resolved ###
+      ### TAINT re-throw cycle error ###
+      g = new Ltsort()
+      for name, declaration of namespace_cfg
+        if typeof declaration is 'string'
+          g.add { name, needs: declaration, }
+        else
+          g.add { name, }
+      return g.linearize { groups: false, }
 
 
   #===========================================================================================================
   std = new Intertype_namespace
-    # weird:    'strange' # declares another name for `odd`
-    # strange:  'odd'     # declares another name for `odd`
+    # circle1:  'circle2'
+    # circle2:  'circle3'
+    # circle3:  'circle1'
+    weird:    'strange' # declares another name for `odd`
+    strange:  'odd'     # declares another name for `odd`
     integer:
       isa:    ( x, t ) -> Number.isInteger x
       foo:    4
     odd:
       isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
+    abnormal: 'weird' # declares another name for `odd`
     # short form just assigns either a test method or a type name:
 ###
     even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
