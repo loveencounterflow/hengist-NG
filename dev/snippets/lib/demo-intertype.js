@@ -174,11 +174,11 @@
       // help 'Ω__11', std.integer
       // help 'Ω__12', std.integer.isa 5
       help('Ω__13', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      // help 'Ω__14', GUY.trm.truth     types.isa       std.strange,  6
-      // help 'Ω__15', GUY.trm.truth     types.isa       std.weird,    6
+      help('Ω__14', GUY.trm.truth(types.isa(std.strange, 6)));
+      help('Ω__15', GUY.trm.truth(types.isa(std.weird, 6)));
       help('Ω__16', GUY.trm.truth(types.isa(std.odd, 6)));
-      // help 'Ω__17', GUY.trm.truth     types.isa       std.strange,  5
-      // help 'Ω__18', GUY.trm.truth     types.isa       std.weird,    5
+      help('Ω__17', GUY.trm.truth(types.isa(std.strange, 5)));
+      help('Ω__18', GUY.trm.truth(types.isa(std.weird, 5)));
       help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
       help('Ω__20', GUY.trm.truth(types.isa(std.odd, 5.3)));
       help('Ω__21', (function() {
