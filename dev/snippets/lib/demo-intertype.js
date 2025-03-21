@@ -20,15 +20,15 @@
 
   //###########################################################################################################
   require_intertype = function() {
-    var Intertype, Intertype_namespace, Intertype_type, std;
+    var Type, Types, Typespace, std;
     //===========================================================================================================
-    Intertype = class Intertype {
+    Types = class Types {
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
         // @_types = new Map()
         hide(this, 'isa', this.isa.bind(this));
         hide(this, 'validate', this.validate.bind(this));
-        hide(this, 'parse', this.parse.bind(this));
+        hide(this, 'create', this.create.bind(this));
         hide(this, 'type_of', this.type_of.bind(this));
         hide(this, 'memo', new Map());
         return void 0;
@@ -57,20 +57,18 @@
       }
 
       //---------------------------------------------------------------------------------------------------------
-      parse(type, x) {
-        var method;
-        if ((method = type.parse) == null) {
-          throw new Error(`Ω___4 expected a , got ${rpr(R)}`);
-        }
-      }
+      create(type, ...P) {}
 
     };
-    //---------------------------------------------------------------------------------------------------------
+    // unless ( method = type.parse )?
+    //   throw new Error "Ω___4 expected a , got #{rpr R}"
+
+      //---------------------------------------------------------------------------------------------------------
     // evaluate: ( ??? ) ->
     // create: ( ??? ) ->
 
       //===========================================================================================================
-    Intertype_type = class Intertype_type {
+    Type = class Type {
       //---------------------------------------------------------------------------------------------------------
       constructor(namespace, name, declaration) {
         var key, value;
@@ -92,7 +90,7 @@
 
     };
     //===========================================================================================================
-    Intertype_namespace = class Intertype_namespace {
+    Typespace = class Typespace {
       //---------------------------------------------------------------------------------------------------------
       constructor(namespace_cfg) {
         /* Given a `namespace_cfg`, return a list of names such that the declarative dependencies (where the
@@ -106,7 +104,7 @@
           if ((declaration = namespace_cfg[name]) == null) {
             throw new Error(`Ω___8 missing declaration for type ${rpr(name)}`);
           }
-          this[name] = new Intertype_type(this, name, declaration);
+          this[name] = new Type(this, name, declaration);
         }
         return void 0;
       }
@@ -135,7 +133,7 @@
 
     };
     //===========================================================================================================
-    std = new Intertype_namespace({
+    std = new Typespace({
       // circle1:  'circle2'
       // circle2:  'circle3'
       // circle3:  'circle1'
@@ -158,21 +156,21 @@
     /*
         even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
         quantity:
-     * each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
+     * each field becomes an `Type` instance; strings may refer to names in the same namespace
           fields:
             q:    'float'
             u:    'nonempty_text'
      */
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    return {Intertype, Intertype_type, Intertype_namespace, std};
+    return {Types, Type, Typespace, std};
   };
 
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var Intertype, e, std, types;
-      ({Intertype, std} = require_intertype());
-      help('Ω___9', types = new Intertype());
+      var Types, e, std, types;
+      ({Types, std} = require_intertype());
+      help('Ω___9', types = new Types());
       help('Ω__10', std);
       // help 'Ω__11', std.integer
       // help 'Ω__12', std.integer.isa 5

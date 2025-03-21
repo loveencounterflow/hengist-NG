@@ -30,14 +30,14 @@ WEBGUY                    = require '../../../apps/webguy'
 require_intertype = ->
 
   #===========================================================================================================
-  class Intertype
+  class Types
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
       # @_types = new Map()
       hide @, 'isa',      @isa.bind       @
       hide @, 'validate', @validate.bind  @
-      hide @, 'parse',    @parse.bind     @
+      hide @, 'create',   @create.bind    @
       hide @, 'type_of',  @type_of.bind   @
       hide @, 'memo',     new Map()
       return undefined
@@ -57,9 +57,9 @@ require_intertype = ->
       throw new Error "Ω___3 expected a #{type.$name}, got a #{@type_of x}"
 
     #---------------------------------------------------------------------------------------------------------
-    parse: ( type, x ) ->
-      unless ( method = type.parse )?
-        throw new Error "Ω___4 expected a , got #{rpr R}"
+    create: ( type, P... ) ->
+      # unless ( method = type.parse )?
+      #   throw new Error "Ω___4 expected a , got #{rpr R}"
 
     #---------------------------------------------------------------------------------------------------------
     # evaluate: ( ??? ) ->
@@ -67,7 +67,7 @@ require_intertype = ->
 
 
   #===========================================================================================================
-  class Intertype_type
+  class Type
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( namespace, name, declaration ) ->
@@ -85,7 +85,7 @@ require_intertype = ->
 
 
   #===========================================================================================================
-  class Intertype_namespace
+  class Typespace
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( namespace_cfg ) ->
@@ -97,7 +97,7 @@ require_intertype = ->
       for name in names
         unless ( declaration = namespace_cfg[ name ] )?
           throw new Error "Ω___8 missing declaration for type #{rpr name}"
-        @[ name ] = new Intertype_type @, name, declaration
+        @[ name ] = new Type @, name, declaration
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ require_intertype = ->
 
 
   #===========================================================================================================
-  std = new Intertype_namespace
+  std = new Typespace
     # circle1:  'circle2'
     # circle2:  'circle3'
     # circle3:  'circle1'
@@ -130,21 +130,21 @@ require_intertype = ->
 ###
     even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
     quantity:
-      # each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
+      # each field becomes an `Type` instance; strings may refer to names in the same namespace
       fields:
         q:    'float'
         u:    'nonempty_text'
 ###
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  return { Intertype, Intertype_type, Intertype_namespace, std, }
+  return { Types, Type, Typespace, std, }
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  { Intertype
+  { Types
     std             } = require_intertype()
-  help 'Ω___9', types = new Intertype()
+  help 'Ω___9', types = new Types()
   help 'Ω__10', std
   # help 'Ω__11', std.integer
   # help 'Ω__12', std.integer.isa 5
