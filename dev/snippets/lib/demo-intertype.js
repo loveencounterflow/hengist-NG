@@ -37,7 +37,7 @@
       //---------------------------------------------------------------------------------------------------------
       isa(type, x) {
         var R, ref;
-        if ((ref = (R = type.isa.call(type.$namespace, x, this))) !== true && ref !== false) {
+        if ((ref = (R = type.isa.call(type.$typespace, x, this))) !== true && ref !== false) {
           throw new Error(`Ω___2 expected \`true\` or \`false\`, got a ${this.type_of(R)}`);
         }
         return R;
@@ -70,13 +70,13 @@
       //===========================================================================================================
     Type = class Type {
       //---------------------------------------------------------------------------------------------------------
-      constructor(namespace, name, declaration) {
+      constructor(typespace, name, declaration) {
         var key, value;
         /* NOTE not doing anything for the time being */
         /* TAINT should still implement string-valued `isa` */
         // debug 'Ω___5', rpr declaration
-        this.$name = name;
-        hide(this, '$namespace', namespace);
+        hide(this, '$name', name);
+        hide(this, '$typespace', typespace);
 /* TAINT check for accidental overwrites */
         for (key in declaration) {
           value = declaration[key];
@@ -92,16 +92,14 @@
     //===========================================================================================================
     Typespace = class Typespace {
       //---------------------------------------------------------------------------------------------------------
-      constructor(namespace_cfg) {
-        /* Given a `namespace_cfg`, return a list of names such that the declarative dependencies (where the
-             type is defined by the name of another type in the namespace) can be resolved at compile time */
+      constructor(typespace_cfg) {
         var declaration, i, len, name, names;
-        names = this._sort_names(namespace_cfg);
-// info 'Ω___6', Object.keys namespace_cfg
+        names = this._sort_names(typespace_cfg);
+// info 'Ω___6', Object.keys typespace_cfg
 // info 'Ω___7', names
         for (i = 0, len = names.length; i < len; i++) {
           name = names[i];
-          if ((declaration = namespace_cfg[name]) == null) {
+          if ((declaration = typespace_cfg[name]) == null) {
             throw new Error(`Ω___8 missing declaration for type ${rpr(name)}`);
           }
           this[name] = new Type(this, name, declaration);
@@ -110,13 +108,14 @@
       }
 
       //---------------------------------------------------------------------------------------------------------
-      _sort_names(namespace_cfg) {
-        /* TAINT check here or in constructor that names can be resolved */
+      _sort_names(typespace_cfg) {
+        /* Given a `typespace_cfg`, return a list of names such that the declarative dependencies (where the
+             type is defined by the name of another type in the typespace) can be resolved at compile time */
         /* TAINT re-throw cycle error */
         var declaration, g, name;
         g = new Ltsort();
-        for (name in namespace_cfg) {
-          declaration = namespace_cfg[name];
+        for (name in typespace_cfg) {
+          declaration = typespace_cfg[name];
           if (typeof declaration === 'string') {
             g.add({
               name,
@@ -156,7 +155,7 @@
     /*
         even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
         quantity:
-     * each field becomes an `Type` instance; strings may refer to names in the same namespace
+     * each field becomes an `Type` instance; strings may refer to names in the same typespace
           fields:
             q:    'float'
             u:    'nonempty_text'

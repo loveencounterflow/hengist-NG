@@ -44,7 +44,7 @@ require_intertype = ->
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
-      unless ( R = type.isa.call type.$namespace, x, @ ) in [ true, false, ]
+      unless ( R = type.isa.call type.$typespace, x, @ ) in [ true, false, ]
         throw new Error "Ω___2 expected `true` or `false`, got a #{@type_of R}"
       return R
 
@@ -70,12 +70,12 @@ require_intertype = ->
   class Type
 
     #---------------------------------------------------------------------------------------------------------
-    constructor: ( namespace, name, declaration ) ->
+    constructor: ( typespace, name, declaration ) ->
       ### NOTE not doing anything for the time being ###
       ### TAINT should still implement string-valued `isa` ###
       # debug 'Ω___5', rpr declaration
-      @$name = name
-      hide @, '$namespace', namespace
+      hide @, '$name',      name
+      hide @, '$typespace', typespace
       ### TAINT check for accidental overwrites ###
       for key, value of declaration
         nameit name, value if key is 'isa' # check that value is function?
@@ -83,33 +83,29 @@ require_intertype = ->
       return undefined
 
 
-
   #===========================================================================================================
   class Typespace
 
     #---------------------------------------------------------------------------------------------------------
-    constructor: ( namespace_cfg ) ->
-      ### Given a `namespace_cfg`, return a list of names such that the declarative dependencies (where the
-      type is defined by the name of another type in the namespace) can be resolved at compile time ###
-      names = @_sort_names namespace_cfg
-      # info 'Ω___6', Object.keys namespace_cfg
+    constructor: ( typespace_cfg ) ->
+      names = @_sort_names typespace_cfg
+      # info 'Ω___6', Object.keys typespace_cfg
       # info 'Ω___7', names
       for name in names
-        unless ( declaration = namespace_cfg[ name ] )?
+        unless ( declaration = typespace_cfg[ name ] )?
           throw new Error "Ω___8 missing declaration for type #{rpr name}"
         @[ name ] = new Type @, name, declaration
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
-    _sort_names: ( namespace_cfg ) ->
-      ### TAINT check here or in constructor that names can be resolved ###
+    _sort_names: ( typespace_cfg ) ->
+      ### Given a `typespace_cfg`, return a list of names such that the declarative dependencies (where the
+      type is defined by the name of another type in the typespace) can be resolved at compile time ###
       ### TAINT re-throw cycle error ###
       g = new Ltsort()
-      for name, declaration of namespace_cfg
-        if typeof declaration is 'string'
-          g.add { name, needs: declaration, }
-        else
-          g.add { name, }
+      for name, declaration of typespace_cfg
+        if typeof declaration is 'string' then  g.add { name, needs: declaration, }
+        else                                    g.add { name, }
       return g.linearize { groups: false, }
 
 
@@ -130,7 +126,7 @@ require_intertype = ->
 ###
     even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
     quantity:
-      # each field becomes an `Type` instance; strings may refer to names in the same namespace
+      # each field becomes an `Type` instance; strings may refer to names in the same typespace
       fields:
         q:    'float'
         u:    'nonempty_text'
