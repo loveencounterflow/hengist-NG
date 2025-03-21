@@ -100,6 +100,12 @@ std = new Intertype_namespace
     foo:    4
   odd:
     isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
+  strange: 'odd' # declares another name for `odd`
+  quantity:
+    # each field becomes an `Intertype_type` instance
+    fields:
+      q:    'float'
+      u:    'nonempty_text'
 
 
 #===========================================================================================================

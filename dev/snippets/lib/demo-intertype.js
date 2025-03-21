@@ -117,6 +117,14 @@
       isa: function(x, t) {
         return (t.isa(this.integer, x)) && (modulo(x, 2) !== 0);
       }
+    },
+    strange: 'odd', // declares another name for `odd`
+    quantity: {
+      // each field becomes an `Intertype_type` instance
+      fields: {
+        q: 'float',
+        u: 'nonempty_text'
+      }
     }
   });
 
