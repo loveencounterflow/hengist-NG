@@ -21,6 +21,7 @@ GUY                       = require 'guy'
   bold
   log     }               = GUY.trm
 WEBGUY                    = require '../../../apps/webguy'
+{ hide }                  = GUY.props
 { nameit }                = WEBGUY.props
 
 ############################################################################################################
@@ -32,11 +33,11 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
       # @_types = new Map()
-      GUY.props.hide @, 'isa',      @isa.bind       @
-      GUY.props.hide @, 'validate', @validate.bind  @
-      GUY.props.hide @, 'parse',    @parse.bind     @
-      GUY.props.hide @, 'type_of',  @type_of.bind   @
-      GUY.props.hide @, 'memo',     new Map()
+      hide @, 'isa',      @isa.bind       @
+      hide @, 'validate', @validate.bind  @
+      hide @, 'parse',    @parse.bind     @
+      hide @, 'type_of',  @type_of.bind   @
+      hide @, 'memo',     new Map()
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
@@ -73,11 +74,11 @@ require_intertype = ->
       ### NOTE not doing anything for the time being ###
       # debug 'Ω___5', declaration
       @name = name
-      @namespace = namespace
+      hide @, 'namespace', namespace
       ### TAINT check for accidental overwrites ###
       for key, value of declaration
         nameit name, value if key is 'isa' # check that value is function?
-        @[ key ] = value
+        hide @, key, value
       return undefined
 
 
@@ -86,10 +87,10 @@ require_intertype = ->
   class Intertype_namespace
 
     #---------------------------------------------------------------------------------------------------------
-    constructor: ( namespace ) ->
-      # debug 'Ω___6', namespace
-      for name, declaration of namespace
-        @[ name ] = new Intertype_type namespace, name, declaration
+    constructor: ( namespace_cfg ) ->
+      # debug 'Ω___6', namespace_cfg
+      for name, declaration of namespace_cfg
+        @[ name ] = new Intertype_type @, name, declaration
       return undefined
 
 
@@ -103,12 +104,14 @@ require_intertype = ->
     odd:
       isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
     # short form just assigns either a test method or a type name:
+###
     even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
     quantity:
       # each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
       fields:
         q:    'float'
         u:    'nonempty_text'
+###
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   return { Intertype, Intertype_type, Intertype_namespace, std, }
@@ -118,20 +121,20 @@ require_intertype = ->
 if module is require.main then await do =>
   { Intertype
     std             } = require_intertype()
-  help 'Ω___7', types = new Intertype()
-  help 'Ω___8', std
-  # help 'Ω___9', std.integer
-  # help 'Ω__10', std.integer.isa 5
-  help 'Ω__11', GUY.trm.truth     types.isa       std.integer,  5.3
-  # help 'Ω__12', GUY.trm.truth     types.isa       std.strange,  6
-  # help 'Ω__13', GUY.trm.truth     types.isa       std.weird,    6
-  help 'Ω__14', GUY.trm.truth     types.isa       std.odd,      6
-  # help 'Ω__15', GUY.trm.truth     types.isa       std.strange,  5
-  # help 'Ω__16', GUY.trm.truth     types.isa       std.weird,    5
-  help 'Ω__17', GUY.trm.truth     types.isa       std.odd,      5
-  help 'Ω__18', GUY.trm.truth     types.isa       std.odd,      5.3
-  help 'Ω__19', try               types.validate  std.integer,  5       catch e then warn 'Ω__20', e.message
-  help 'Ω__21', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__22', e.message
+  help 'Ω___9', types = new Intertype()
+  help 'Ω__10', std
+  # help 'Ω__11', std.integer
+  # help 'Ω__12', std.integer.isa 5
+  help 'Ω__13', GUY.trm.truth     types.isa       std.integer,  5.3
+  # help 'Ω__14', GUY.trm.truth     types.isa       std.strange,  6
+  # help 'Ω__15', GUY.trm.truth     types.isa       std.weird,    6
+  help 'Ω__16', GUY.trm.truth     types.isa       std.odd,      6
+  # help 'Ω__17', GUY.trm.truth     types.isa       std.strange,  5
+  # help 'Ω__18', GUY.trm.truth     types.isa       std.weird,    5
+  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,      5
+  help 'Ω__20', GUY.trm.truth     types.isa       std.odd,      5.3
+  help 'Ω__21', try               types.validate  std.integer,  5       catch e then warn 'Ω__22', e.message
+  help 'Ω__23', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__24', e.message
 
 
 

@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GUY, WEBGUY, alert, bold, debug, echo, help, info, inspect, log, nameit, plain, praise, require_intertype, reverse, rpr, urge, warn, whisper,
+  var GUY, WEBGUY, alert, bold, debug, echo, help, hide, info, inspect, log, nameit, plain, praise, require_intertype, reverse, rpr, urge, warn, whisper,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   //===========================================================================================================
@@ -12,6 +12,8 @@
 
   WEBGUY = require('../../../apps/webguy');
 
+  ({hide} = GUY.props);
+
   ({nameit} = WEBGUY.props);
 
   //###########################################################################################################
@@ -22,11 +24,11 @@
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
         // @_types = new Map()
-        GUY.props.hide(this, 'isa', this.isa.bind(this));
-        GUY.props.hide(this, 'validate', this.validate.bind(this));
-        GUY.props.hide(this, 'parse', this.parse.bind(this));
-        GUY.props.hide(this, 'type_of', this.type_of.bind(this));
-        GUY.props.hide(this, 'memo', new Map());
+        hide(this, 'isa', this.isa.bind(this));
+        hide(this, 'validate', this.validate.bind(this));
+        hide(this, 'parse', this.parse.bind(this));
+        hide(this, 'type_of', this.type_of.bind(this));
+        hide(this, 'memo', new Map());
         return void 0;
       }
 
@@ -75,14 +77,14 @@
         /* NOTE not doing anything for the time being */
         // debug 'Ω___5', declaration
         this.name = name;
-        this.namespace = namespace;
+        hide(this, 'namespace', namespace);
 /* TAINT check for accidental overwrites */
         for (key in declaration) {
           value = declaration[key];
           if (key === 'isa') { // check that value is function?
             nameit(name, value);
           }
-          this[key] = value;
+          hide(this, key, value);
         }
         return void 0;
       }
@@ -91,12 +93,12 @@
     //===========================================================================================================
     Intertype_namespace = class Intertype_namespace {
       //---------------------------------------------------------------------------------------------------------
-      constructor(namespace) {
+      constructor(namespace_cfg) {
         var declaration, name;
-// debug 'Ω___6', namespace
-        for (name in namespace) {
-          declaration = namespace[name];
-          this[name] = new Intertype_type(namespace, name, declaration);
+// debug 'Ω___6', namespace_cfg
+        for (name in namespace_cfg) {
+          declaration = namespace_cfg[name];
+          this[name] = new Intertype_type(this, name, declaration);
         }
         return void 0;
       }
@@ -116,19 +118,17 @@
         isa: function(x, t) {
           return (t.isa(this.integer, x)) && (modulo(x, 2) !== 0);
         }
-      },
-      // short form just assigns either a test method or a type name:
-      even: function(x, t) {
-        return (t.isa(this.integer, x)) && (modulo(x, 2) === 0);
-      },
-      quantity: {
-        // each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
-        fields: {
-          q: 'float',
-          u: 'nonempty_text'
-        }
       }
     });
+    // short form just assigns either a test method or a type name:
+    /*
+        even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
+        quantity:
+     * each field becomes an `Intertype_type` instance; strings may refer to names in the same namespace
+          fields:
+            q:    'float'
+            u:    'nonempty_text'
+     */
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     return {Intertype, Intertype_type, Intertype_namespace, std};
   };
@@ -138,32 +138,32 @@
     await (() => {
       var Intertype, e, std, types;
       ({Intertype, std} = require_intertype());
-      help('Ω___7', types = new Intertype());
-      help('Ω___8', std);
-      // help 'Ω___9', std.integer
-      // help 'Ω__10', std.integer.isa 5
-      help('Ω__11', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      // help 'Ω__12', GUY.trm.truth     types.isa       std.strange,  6
-      // help 'Ω__13', GUY.trm.truth     types.isa       std.weird,    6
-      help('Ω__14', GUY.trm.truth(types.isa(std.odd, 6)));
-      // help 'Ω__15', GUY.trm.truth     types.isa       std.strange,  5
-      // help 'Ω__16', GUY.trm.truth     types.isa       std.weird,    5
-      help('Ω__17', GUY.trm.truth(types.isa(std.odd, 5)));
-      help('Ω__18', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__19', (function() {
+      help('Ω___9', types = new Intertype());
+      help('Ω__10', std);
+      // help 'Ω__11', std.integer
+      // help 'Ω__12', std.integer.isa 5
+      help('Ω__13', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      // help 'Ω__14', GUY.trm.truth     types.isa       std.strange,  6
+      // help 'Ω__15', GUY.trm.truth     types.isa       std.weird,    6
+      help('Ω__16', GUY.trm.truth(types.isa(std.odd, 6)));
+      // help 'Ω__17', GUY.trm.truth     types.isa       std.strange,  5
+      // help 'Ω__18', GUY.trm.truth     types.isa       std.weird,    5
+      help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
+      help('Ω__20', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__21', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__20', e.message);
+          return warn('Ω__22', e.message);
         }
       })());
-      return help('Ω__21', (function() {
+      return help('Ω__23', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__22', e.message);
+          return warn('Ω__24', e.message);
         }
       })());
     })();

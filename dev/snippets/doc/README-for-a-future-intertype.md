@@ -8,32 +8,43 @@
   * member of an `Intertype_namespace` type entry
   * will be called in the context of its namespace
 
-* `Intertype_declaration`: one of
-  * a function `( x, t ) ->`
+* `intertype_declaration`: one of
+  * an `InterType test method`
+  * the name of another type in the *same* namespace
+  * an `Intertype_type` instance from any namespace
+  * an `intertype_declaration_cfg` object
+
+* fields of `intertype_declaration_cfg` objects:
+  * `isa`: (optional) `intertype_declaration`; when `isa` is present, `fields` must not be set
+  * `fields`: (optional) `object`; when `fields` is present, `isa` must not be set
+  * `template`: (optional) `object`:
+    * If `create()` is set, it may use the properties of the `template` object to create a new value of the
+      respective type.
+    * If `create()` is generated, the properties of `template` will be used as keys and values to initialize
+      on a new object. No effort will be made to generate new property values from the property values of
+      `template`, so if a value is not a JS primitive but for instance a list `[]`, then *that same `Array`
+      object will be shared by all values created by the `create()` method of that type, **except** when the
+      property is a function, in which case its return value will be used*. Therefore, the common way to
+      have an (always new) empty list as default value for a field `foo`, declare `{ template: { foo: -> []
+      }, }`. This is also the right way to make a function a field's default value.
+  * `create`: (optional) `( P..., t ) ->`
 
 
 
 
 # InterType
 
-## InterType Core and InterType Fancy
+## API
 
-* Core (implemented as `Intertype_core`): core functionality without the syntactic sugar
+* `Intertype::isa: ( t: typename, x: any ) ->`
 
-* Fancy (implemented as `Intertype_fancy`): core functionality made syntactically more friendly with managed
-  properties
+* `Intertype::create: ( t: typename, x: any ) ->`
 
-## Core API
-
-* `Intertype_core::isa: ( t: typename, x: any ) ->`
-
-* `Intertype_core::parse: ( t: typename, x: any ) ->`
-
-* `Intertype_core::validate: ( t: typename, x: any ) ->`: synchronous, (almost) pure function that looks up
+* `Intertype::validate: ( t: typename, x: any ) ->`: synchronous, (almost) pure function that looks up
   the declaration of type `t`, and calls it with `x` as only argument; returns `true` if `x` is considered
   to be a value of type `t` and `false` otherwise; testing functions are forbidden to return anything else
   (no 'truthy' or 'falsey' values); they are allowed to be impure to the degree that they may leave data
-  entries (hints or results) in `Intertype_core::memo`, a `Map`-like object
+  entries (hints or results) in `Intertype::memo`, a `Map`-like object
 
   * The motivation for this piece of memoization is expressed by the slogan ['parse, don't
     validate'](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/): for example, in a given
@@ -66,13 +77,13 @@
     API to cache explicitly in ordinary or custom (for size restriction) `Map` instance—the user is
     responsible for ensuring that cached entries stay relevant
   * **`[—]`** API is just API of `Map`:
-    * `Intertype_core::memo.set: ( k, v ) ->`
-    * `Intertype_core::memo.get: ( k ) ->`
-    * `Intertype_core::memo.delete: ( k ) ->`
-    * `Intertype_core::memo.has: ( k ) ->`
+    * `Intertype::memo.set: ( k, v ) ->`
+    * `Intertype::memo.get: ( k ) ->`
+    * `Intertype::memo.delete: ( k ) ->`
+    * `Intertype::memo.has: ( k ) ->`
     * and so on, can always customize with bespoke class when deemed necessary; by setting
-      `Intertype_core::memo = new Map()`, we already have a well-known, yet sub-classable API for free
-  * **`[—]`** should make configurable whether values stored in `Intertype_core::memo` are the results of
+      `Intertype::memo = new Map()`, we already have a well-known, yet sub-classable API for free
+  * **`[—]`** should make configurable whether values stored in `Intertype::memo` are the results of
     `parse` that should be
     * **`[—]`** **set** automatically whenever `parse()` returns a result
     * **`[—]`** **retrieved** automatically whenever `isa()`, `validate()` or `parse()` is called
@@ -87,8 +98,8 @@
     `fraction_proper`
 
 * **`[—]`** does it make sense to use formal prefixes to two `Intertype` instances?
-  * that could look like `Intertype_core::isa 'foo.quantity', x` where `foo` is a namespace for type names;
-    for simplicity's sake, only allow (or demand? as in `Intertype_core::isa 'std.integer', x`) single
+  * that could look like `Intertype::isa 'foo.quantity', x` where `foo` is a namespace for type names;
+    for simplicity's sake, only allow (or demand? as in `Intertype::isa 'std.integer', x`) single
     prefix
   * Maybe simpler and better to just say `types = { foo: ( new Foo_types() ), bar: ( new Bar_types() ), };
     types.foo.validate 'quux', x`, not clear where merging an advantage *except* where repetition of base
@@ -96,13 +107,13 @@
     prefixes is to be avoided
 
 * **`[—]`** the fancy API should merge type specifiers and method names (or should it?), as in
-  `Intertype_core::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
+  `Intertype::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
 
 * **`[—]`** how to express concatenation in a generic way as in `list of ( nonempty list of integer )`?
   * **`[—]`** one idea is to restrict usage to declared, named types, i.e. one can never call
-    \*`Intertype_core::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
+    \*`Intertype::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
     declare (and thereby name) a type (say, `intlist`) that is a `list.of.integer` and then call
-    `Intertype_core::isa 'intlist', x`
+    `Intertype::isa 'intlist', x`
 
 * **`[—]`** how to express multiple refinements as in `blank nonempty text` or `positive1 even integer`?
 
