@@ -20,7 +20,16 @@
 
   //###########################################################################################################
   require_intertype = function() {
-    var Type, Types, Typespace, std;
+    var $isa, Type, Types, Typespace, std;
+    //===========================================================================================================
+    $isa = {
+      text: function(x) {
+        return typeof x === 'string';
+      },
+      function: function(x) {
+        return (Object.prototype.toString.call(x)) === '[object Function]';
+      }
+    };
     //===========================================================================================================
     Types = class Types {
       //---------------------------------------------------------------------------------------------------------
@@ -71,13 +80,19 @@
     Type = class Type {
       //---------------------------------------------------------------------------------------------------------
       constructor(typespace, name, declaration) {
-        var key, value;
+        var fields, key, value;
         /* NOTE not doing anything for the time being */
         /* TAINT should still implement string-valued `isa` */
         // debug 'Ω___4', rpr declaration
         hide(this, '$name', name);
         hide(this, '$typespace', typespace);
-/* TAINT check for accidental overwrites */
+        /* TAINT check for accidental overwrites */
+        //.......................................................................................................
+        /* Compile fields: */
+        if ((fields = declaration.fields) != null) {
+          debug('Ω___5', name, fields);
+        }
+//.......................................................................................................
         for (key in declaration) {
           value = declaration[key];
           if (key === 'isa') { // check that value is function?
@@ -93,30 +108,38 @@
     Typespace = class Typespace {
       //---------------------------------------------------------------------------------------------------------
       constructor(typespace_cfg) {
+        /* De-reference named types: */
+        /* TAINT use method `_deref()` */
+        /* TAINT consider to resolve transitive dependencies */
         var declaration, i, len, name, names, ref;
         names = this._sort_names(typespace_cfg);
-// info 'Ω___5', Object.keys typespace_cfg
-// info 'Ω___6', names
+// info 'Ω___6', Object.keys typespace_cfg
+// info 'Ω___7', names
         for (i = 0, len = names.length; i < len; i++) {
           name = names[i];
           if ((declaration = typespace_cfg[name]) == null) {
-            throw new Error(`Ω___7 missing declaration for type ${rpr(name)}`);
+            throw new Error(`Ω___8 missing declaration for type ${rpr(name)}`);
           }
           //.....................................................................................................
-          /* De-reference named types: */
-          /* TAINT use method `_deref()` */
-          /* TAINT consider to resolve transitive dependencies */
-          if (typeof declaration === 'string') {
-            ref = declaration;
-            declaration = (() => {
-              var R, deref;
-              deref = this[ref];
-              R = {};
-              R.isa = function(x, t) {
-                return t.isa(deref, x);
+          switch (true) {
+            //...................................................................................................
+            case $isa.text(declaration):
+              ref = declaration;
+              declaration = (() => {
+                var R, deref;
+                deref = this[ref];
+                R = {};
+                R.isa = function(x, t) {
+                  return t.isa(deref, x);
+                };
+                return R;
+              })();
+              break;
+            //...................................................................................................
+            case $isa.function(declaration):
+              declaration = {
+                isa: declaration
               };
-              return R;
-            })();
           }
           //.....................................................................................................
           this[name] = new Type(this, name, declaration);
@@ -133,7 +156,7 @@
         g = new Ltsort();
         for (name in typespace_cfg) {
           declaration = typespace_cfg[name];
-          if (typeof declaration === 'string') {
+          if ($isa.text(declaration)) {
             g.add({
               name,
               needs: declaration
@@ -150,6 +173,9 @@
     };
     //===========================================================================================================
     std = new Typespace({
+      /* TAINT set up policy whether bigints should be considered numbers or not; given the common assumption
+         that JavaScript has 'just numbers' maybe better to reserve `positive0`, `cardinal` to `float`s and
+         treat bigints as just that, bigints */
       // circle1:  'circle2'
       // circle2:  'circle3'
       // circle3:  'circle1'
@@ -166,17 +192,44 @@
           return (t.isa(this.integer, x)) && (modulo(x, 2) !== 0);
         }
       },
-      abnormal: 'weird' // declares another name for `odd`
+      abnormal: 'weird', // declares another name for `odd`
+      // short form just assigns either a test method or a type name:
+      even: function(x, t) {
+        return (t.isa(this.integer, x)) && (modulo(x, 2) === 0);
+      },
+      float: function(x, t) {
+        return Number.isFinite(x);
+      },
+      bigint: function(x, t) {
+        return typeof x === 'bigint';
+      },
+      numerical: function(x, t) {
+        return (t.isa(this.float, x)) || (t.isa(this.bigint, x));
+      },
+      positive0: function(x, t) {
+        return (t.isa(this.float, x)) && (x >= +0);
+      },
+      positive1: function(x, t) {
+        return (t.isa(this.float, x)) && (x >= +1);
+      },
+      negative0: function(x, t) {
+        return (t.isa(this.float, x)) && (x <= 0);
+      },
+      negative1: function(x, t) {
+        return (t.isa(this.float, x)) && (x <= -1);
+      },
+      cardinal: function(x, t) {
+        return (t.isa(this.integer, x)) && (t.isa(this.positive0, x));
+      },
+      // cardinalbigint: ( x, t ) -> ( t.isa @bigint, x    ) and ( x >= +0 )
+      quantity: {
+        // each field becomes an `Type` instance; strings may refer to names in the same typespace
+        fields: {
+          q: 'float',
+          u: 'nonempty_text'
+        }
+      }
     });
-    // short form just assigns either a test method or a type name:
-    /*
-        even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
-        quantity:
-     * each field becomes an `Type` instance; strings may refer to names in the same typespace
-          fields:
-            q:    'float'
-            u:    'nonempty_text'
-     */
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     return {Types, Type, Typespace, std};
   };
@@ -186,40 +239,49 @@
     await (() => {
       var Types, e, std, types;
       ({Types, std} = require_intertype());
-      help('Ω___8', types = new Types());
-      help('Ω___9', std);
-      // help 'Ω__10', std.integer
-      // help 'Ω__11', std.integer.isa 5
-      help('Ω__12', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__13', GUY.trm.truth(types.isa(std.strange, 6)));
-      help('Ω__14', GUY.trm.truth(types.isa(std.weird, 6)));
-      help('Ω__15', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__16', GUY.trm.truth(types.isa(std.strange, 5)));
-      help('Ω__17', GUY.trm.truth(types.isa(std.weird, 5)));
-      help('Ω__18', GUY.trm.truth(types.isa(std.odd, 5)));
-      help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__20', (function() {
+      help('Ω___9', types = new Types());
+      help('Ω__10', std);
+      // help 'Ω__11', std.integer
+      // help 'Ω__12', std.integer.isa 5
+      help('Ω__13', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      help('Ω__14', GUY.trm.truth(types.isa(std.strange, 6)));
+      help('Ω__15', GUY.trm.truth(types.isa(std.weird, 6)));
+      help('Ω__16', GUY.trm.truth(types.isa(std.odd, 6)));
+      help('Ω__17', GUY.trm.truth(types.isa(std.strange, 5)));
+      help('Ω__18', GUY.trm.truth(types.isa(std.weird, 5)));
+      help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
+      help('Ω__20', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__21', GUY.trm.truth(types.isa(std.even, 5)));
+      help('Ω__22', GUY.trm.truth(types.isa(std.even, 6)));
+      help('Ω__23', GUY.trm.truth(types.isa(std.cardinal, 6)));
+      help('Ω__24', GUY.trm.truth(types.isa(std.cardinal, 0)));
+      help('Ω__25', GUY.trm.truth(types.isa(std.cardinal, -1)));
+      // help 'Ω__26', GUY.trm.truth     types.isa       std.cardinalbigint, 6
+      // help 'Ω__27', GUY.trm.truth     types.isa       std.cardinalbigint, 6n
+      // help 'Ω__28', GUY.trm.truth     types.isa       std.cardinalbigint, -6
+      // help 'Ω__29', GUY.trm.truth     types.isa       std.cardinalbigint, -6n
+      help('Ω__30', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__21', e.message);
+          return warn('Ω__31', e.message);
         }
       })());
-      return help('Ω__22', (function() {
+      return help('Ω__32', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__23', e.message);
+          return warn('Ω__33', e.message);
         }
       })());
     })();
   }
 
-  // info 'Ω__24', std.weird
-// info 'Ω__25', std.weird.isa
-// info 'Ω__25', std.weird.isa.toString()
+  // info 'Ω__34', std.weird
+// info 'Ω__35', std.weird.isa
+// info 'Ω__36', std.weird.isa.toString()
 
 }).call(this);
 

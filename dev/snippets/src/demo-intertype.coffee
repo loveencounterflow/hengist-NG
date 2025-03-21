@@ -30,6 +30,11 @@ WEBGUY                    = require '../../../apps/webguy'
 require_intertype = ->
 
   #===========================================================================================================
+  $isa =
+    text:     ( x ) -> typeof x is 'string'
+    function: ( x ) -> ( Object::toString.call x ) is '[object Function]'
+
+  #===========================================================================================================
   class Types
 
     #---------------------------------------------------------------------------------------------------------
@@ -77,6 +82,11 @@ require_intertype = ->
       hide @, '$name',      name
       hide @, '$typespace', typespace
       ### TAINT check for accidental overwrites ###
+      #.......................................................................................................
+      ### Compile fields: ###
+      if ( fields = declaration.fields )?
+        debug 'Ω___5', name, fields
+      #.......................................................................................................
       for key, value of declaration
         nameit name, value if key is 'isa' # check that value is function?
         hide @, key, value
@@ -89,22 +99,27 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( typespace_cfg ) ->
       names = @_sort_names typespace_cfg
-      # info 'Ω___5', Object.keys typespace_cfg
-      # info 'Ω___6', names
+      # info 'Ω___6', Object.keys typespace_cfg
+      # info 'Ω___7', names
       for name in names
         unless ( declaration = typespace_cfg[ name ] )?
-          throw new Error "Ω___7 missing declaration for type #{rpr name}"
+          throw new Error "Ω___8 missing declaration for type #{rpr name}"
         #.....................................................................................................
-        ### De-reference named types: ###
-        ### TAINT use method `_deref()` ###
-        ### TAINT consider to resolve transitive dependencies ###
-        if typeof declaration is 'string'
-          ref         = declaration
-          declaration = do =>
-            deref = @[ ref ]
-            R     = {}
-            R.isa = ( x, t ) -> t.isa deref, x
-            return R
+        switch true
+          #...................................................................................................
+          when $isa.text declaration
+            ### De-reference named types: ###
+            ### TAINT use method `_deref()` ###
+            ### TAINT consider to resolve transitive dependencies ###
+            ref         = declaration
+            declaration = do =>
+              deref = @[ ref ]
+              R     = {}
+              R.isa = ( x, t ) -> t.isa deref, x
+              return R
+          #...................................................................................................
+          when $isa.function declaration
+            declaration = { isa: declaration, }
         #.....................................................................................................
         @[ name ] = new Type @, name, declaration
       return undefined
@@ -116,13 +131,16 @@ require_intertype = ->
       ### TAINT re-throw cycle error ###
       g = new Ltsort()
       for name, declaration of typespace_cfg
-        if typeof declaration is 'string' then  g.add { name, needs: declaration, }
-        else                                    g.add { name, }
+        if $isa.text declaration then g.add { name, needs: declaration, }
+        else                          g.add { name, }
       return g.linearize { groups: false, }
 
 
   #===========================================================================================================
   std = new Typespace
+    ### TAINT set up policy whether bigints should be considered numbers or not; given the common assumption
+    that JavaScript has 'just numbers' maybe better to reserve `positive0`, `cardinal` to `float`s and
+    treat bigints as just that, bigints ###
     # circle1:  'circle2'
     # circle2:  'circle3'
     # circle3:  'circle1'
@@ -135,14 +153,21 @@ require_intertype = ->
       isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
     abnormal: 'weird' # declares another name for `odd`
     # short form just assigns either a test method or a type name:
-###
-    even:     ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
+    even:           ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
+    float:          ( x, t ) -> Number.isFinite x
+    bigint:         ( x, t ) -> typeof x is 'bigint'
+    numerical:      ( x, t ) -> ( t.isa @float, x   ) or ( t.isa @bigint, x )
+    positive0:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +0  )
+    positive1:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +1  )
+    negative0:      ( x, t ) -> ( t.isa @float, x   ) and ( x <=  0  )
+    negative1:      ( x, t ) -> ( t.isa @float, x   ) and ( x <= -1  )
+    cardinal:       ( x, t ) -> ( t.isa @integer, x ) and ( t.isa @positive0, x )
+    # cardinalbigint: ( x, t ) -> ( t.isa @bigint, x    ) and ( x >= +0 )
     quantity:
       # each field becomes an `Type` instance; strings may refer to names in the same typespace
       fields:
         q:    'float'
         u:    'nonempty_text'
-###
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   return { Types, Type, Typespace, std, }
@@ -152,23 +177,32 @@ require_intertype = ->
 if module is require.main then await do =>
   { Types
     std             } = require_intertype()
-  help 'Ω___8', types = new Types()
-  help 'Ω___9', std
-  # help 'Ω__10', std.integer
-  # help 'Ω__11', std.integer.isa 5
-  help 'Ω__12', GUY.trm.truth     types.isa       std.integer,  5.3
-  help 'Ω__13', GUY.trm.truth     types.isa       std.strange,  6
-  help 'Ω__14', GUY.trm.truth     types.isa       std.weird,    6
-  help 'Ω__15', GUY.trm.truth     types.isa       std.odd,      6
-  help 'Ω__16', GUY.trm.truth     types.isa       std.strange,  5
-  help 'Ω__17', GUY.trm.truth     types.isa       std.weird,    5
-  help 'Ω__18', GUY.trm.truth     types.isa       std.odd,      5
-  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,      5.3
-  help 'Ω__20', try               types.validate  std.integer,  5       catch e then warn 'Ω__21', e.message
-  help 'Ω__22', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__23', e.message
-  # info 'Ω__24', std.weird
-  # info 'Ω__25', std.weird.isa
-  # info 'Ω__25', std.weird.isa.toString()
+  help 'Ω___9', types = new Types()
+  help 'Ω__10', std
+  # help 'Ω__11', std.integer
+  # help 'Ω__12', std.integer.isa 5
+  help 'Ω__13', GUY.trm.truth     types.isa       std.integer,  5.3
+  help 'Ω__14', GUY.trm.truth     types.isa       std.strange,  6
+  help 'Ω__15', GUY.trm.truth     types.isa       std.weird,    6
+  help 'Ω__16', GUY.trm.truth     types.isa       std.odd,      6
+  help 'Ω__17', GUY.trm.truth     types.isa       std.strange,  5
+  help 'Ω__18', GUY.trm.truth     types.isa       std.weird,    5
+  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,      5
+  help 'Ω__20', GUY.trm.truth     types.isa       std.odd,      5.3
+  help 'Ω__21', GUY.trm.truth     types.isa       std.even,     5
+  help 'Ω__22', GUY.trm.truth     types.isa       std.even,     6
+  help 'Ω__23', GUY.trm.truth     types.isa       std.cardinal, 6
+  help 'Ω__24', GUY.trm.truth     types.isa       std.cardinal, 0
+  help 'Ω__25', GUY.trm.truth     types.isa       std.cardinal, -1
+  # help 'Ω__26', GUY.trm.truth     types.isa       std.cardinalbigint, 6
+  # help 'Ω__27', GUY.trm.truth     types.isa       std.cardinalbigint, 6n
+  # help 'Ω__28', GUY.trm.truth     types.isa       std.cardinalbigint, -6
+  # help 'Ω__29', GUY.trm.truth     types.isa       std.cardinalbigint, -6n
+  help 'Ω__30', try               types.validate  std.integer,  5       catch e then warn 'Ω__31', e.message
+  help 'Ω__32', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__33', e.message
+  # info 'Ω__34', std.weird
+  # info 'Ω__35', std.weird.isa
+  # info 'Ω__36', std.weird.isa.toString()
 
 
 
