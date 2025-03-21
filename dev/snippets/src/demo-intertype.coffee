@@ -84,8 +84,15 @@ require_intertype = ->
       ### TAINT check for accidental overwrites ###
       #.......................................................................................................
       ### Compile fields: ###
-      if ( fields = declaration.fields )?
-        debug 'Ω___5', name, fields
+      if declaration.fields?
+        do =>
+          ### TAINT try to move this check to validation step ###
+          if declaration.isa?
+            throw new Error "Ω___5 must have exactly one of `isa` or `fields`, not both"
+          # for field_name, field_declaration of declaration.fields
+          #   field = new Type typespace, field_name, field_declaration
+          #   debug 'Ω___6', { name, field_name, field_declaration, }, field.$name, field.isa
+          debug 'Ω___7', new Typespace declaration.fields
       #.......................................................................................................
       for key, value of declaration
         nameit name, value if key is 'isa' # check that value is function?
@@ -97,13 +104,14 @@ require_intertype = ->
   class Typespace
 
     #---------------------------------------------------------------------------------------------------------
-    constructor: ( typespace_cfg ) ->
+    constructor: ( parents..., typespace_cfg ) ->
+      debug 'Ω___8', { parent, } for parent in parents
       names = @_sort_names typespace_cfg
-      # info 'Ω___6', Object.keys typespace_cfg
-      # info 'Ω___7', names
+      info 'Ω___9', Object.keys typespace_cfg
+      info 'Ω__10', names
       for name in names
         unless ( declaration = typespace_cfg[ name ] )?
-          throw new Error "Ω___8 missing declaration for type #{rpr name}"
+          throw new Error "Ω__11 missing declaration for type #{rpr name}"
         #.....................................................................................................
         switch true
           #...................................................................................................
@@ -114,9 +122,7 @@ require_intertype = ->
             ref         = declaration
             declaration = do =>
               deref = @[ ref ]
-              R     = {}
-              R.isa = ( x, t ) -> t.isa deref, x
-              return R
+              return { isa: ( ( x, t ) -> t.isa deref, x ), }
           #...................................................................................................
           when $isa.function declaration
             declaration = { isa: declaration, }
@@ -163,46 +169,64 @@ require_intertype = ->
     negative1:      ( x, t ) -> ( t.isa @float, x   ) and ( x <= -1  )
     cardinal:       ( x, t ) -> ( t.isa @integer, x ) and ( t.isa @positive0, x )
     # cardinalbigint: ( x, t ) -> ( t.isa @bigint, x    ) and ( x >= +0 )
-    quantity:
-      # each field becomes an `Type` instance; strings may refer to names in the same typespace
-      fields:
-        q:    'float'
-        u:    'nonempty_text'
+    text:           ( x, t ) -> typeof x is 'string'
+    nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
+    # quantity:
+    #   # isa: ->
+    #   # each field becomes an `Type` instance; strings may refer to names in the same typespace
+    #   fields:
+    #     q:    'float'
+    #     u:    'nonemptytext'
+    #   template:
+    #     q:    0
+    #     u:    'u'
+
+  quantity = new Typespace std,
+    q:    'float'
+    u:    'nonemptytext'
+    # template:
+    #   q:    0
+    #   u:    'u'
+
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  return { Types, Type, Typespace, std, }
+  return { Types, Type, Typespace, std, types: ( new Types() ), }
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  { Types
+  # f = ( P..., x ) -> info 'Ω__12', { P, x, }
+  # f 7
+  # f 7, 8, 9
+  # return null
+  { types
     std             } = require_intertype()
-  help 'Ω___9', types = new Types()
-  help 'Ω__10', std
-  # help 'Ω__11', std.integer
-  # help 'Ω__12', std.integer.isa 5
-  help 'Ω__13', GUY.trm.truth     types.isa       std.integer,  5.3
-  help 'Ω__14', GUY.trm.truth     types.isa       std.strange,  6
-  help 'Ω__15', GUY.trm.truth     types.isa       std.weird,    6
-  help 'Ω__16', GUY.trm.truth     types.isa       std.odd,      6
-  help 'Ω__17', GUY.trm.truth     types.isa       std.strange,  5
-  help 'Ω__18', GUY.trm.truth     types.isa       std.weird,    5
-  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,      5
-  help 'Ω__20', GUY.trm.truth     types.isa       std.odd,      5.3
-  help 'Ω__21', GUY.trm.truth     types.isa       std.even,     5
-  help 'Ω__22', GUY.trm.truth     types.isa       std.even,     6
-  help 'Ω__23', GUY.trm.truth     types.isa       std.cardinal, 6
-  help 'Ω__24', GUY.trm.truth     types.isa       std.cardinal, 0
-  help 'Ω__25', GUY.trm.truth     types.isa       std.cardinal, -1
-  # help 'Ω__26', GUY.trm.truth     types.isa       std.cardinalbigint, 6
-  # help 'Ω__27', GUY.trm.truth     types.isa       std.cardinalbigint, 6n
-  # help 'Ω__28', GUY.trm.truth     types.isa       std.cardinalbigint, -6
-  # help 'Ω__29', GUY.trm.truth     types.isa       std.cardinalbigint, -6n
-  help 'Ω__30', try               types.validate  std.integer,  5       catch e then warn 'Ω__31', e.message
-  help 'Ω__32', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__33', e.message
-  # info 'Ω__34', std.weird
-  # info 'Ω__35', std.weird.isa
-  # info 'Ω__36', std.weird.isa.toString()
+  # help 'Ω__13', types = new Types()
+  help 'Ω__14', std
+  # help 'Ω__15', std.integer
+  # help 'Ω__16', std.integer.isa 5
+  help 'Ω__17', GUY.trm.truth     types.isa       std.integer,  5.3
+  help 'Ω__18', GUY.trm.truth     types.isa       std.strange,  6
+  help 'Ω__19', GUY.trm.truth     types.isa       std.weird,    6
+  help 'Ω__20', GUY.trm.truth     types.isa       std.odd,      6
+  help 'Ω__21', GUY.trm.truth     types.isa       std.strange,  5
+  help 'Ω__22', GUY.trm.truth     types.isa       std.weird,    5
+  help 'Ω__23', GUY.trm.truth     types.isa       std.odd,      5
+  help 'Ω__24', GUY.trm.truth     types.isa       std.odd,      5.3
+  help 'Ω__25', GUY.trm.truth     types.isa       std.even,     5
+  help 'Ω__26', GUY.trm.truth     types.isa       std.even,     6
+  help 'Ω__27', GUY.trm.truth     types.isa       std.cardinal, 6
+  help 'Ω__28', GUY.trm.truth     types.isa       std.cardinal, 0
+  help 'Ω__29', GUY.trm.truth     types.isa       std.cardinal, -1
+  # help 'Ω__30', GUY.trm.truth     types.isa       std.cardinalbigint, 6
+  # help 'Ω__31', GUY.trm.truth     types.isa       std.cardinalbigint, 6n
+  # help 'Ω__32', GUY.trm.truth     types.isa       std.cardinalbigint, -6
+  # help 'Ω__33', GUY.trm.truth     types.isa       std.cardinalbigint, -6n
+  help 'Ω__34', try               types.validate  std.integer,  5       catch e then warn 'Ω__35', e.message
+  help 'Ω__36', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__37', e.message
+  # info 'Ω__38', std.weird
+  # info 'Ω__39', std.weird.isa
+  # info 'Ω__40', std.weird.isa.toString()
 
 
 
