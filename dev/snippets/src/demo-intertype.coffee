@@ -190,9 +190,9 @@ require_intertype = ->
     # circle2:  'circle3'
     # circle3:  'circle1'
     #.........................................................................................................
-    # weird:    'strange' # declares another name for `odd`
+    weird:    'strange' # declares another name for `odd`
     strange:  'odd'     # declares another name for `odd`
-    # abnormal: 'weird' # declares another name for `odd`
+    abnormal: 'weird' # declares another name for `odd`
     #.........................................................................................................
     # quantity:
     #   # isa: ->
@@ -232,24 +232,26 @@ if module is require.main then await do =>
   help 'Ω__21', GUY.trm.truth     types.isa       std.odd,      5
   help 'Ω__22', GUY.trm.truth     types.isa       std.even,     6
   help 'Ω__23', GUY.trm.truth     types.isa       std.strange,  5
+  help 'Ω__24', GUY.trm.truth     types.isa       std.weird,    5
+  help 'Ω__25', GUY.trm.truth     types.isa       std.abnormal, 5
   # #.........................................................................................................
-  help 'Ω__24', GUY.trm.truth     types.isa       std.integer,  5.3
-  help 'Ω__25', GUY.trm.truth     types.isa       std.odd,      6
-  help 'Ω__26', GUY.trm.truth     types.isa       std.odd,      5.3
-  help 'Ω__27', GUY.trm.truth     types.isa       std.even,     5
-  help 'Ω__28', GUY.trm.truth     types.isa       std.strange,  6
+  help 'Ω__26', GUY.trm.truth     types.isa       std.integer,  5.3
+  help 'Ω__27', GUY.trm.truth     types.isa       std.odd,      6
+  help 'Ω__28', GUY.trm.truth     types.isa       std.odd,      5.3
+  help 'Ω__29', GUY.trm.truth     types.isa       std.even,     5
+  help 'Ω__30', GUY.trm.truth     types.isa       std.strange,  6
+  help 'Ω__31', GUY.trm.truth     types.isa       std.weird,    6
+  help 'Ω__32', GUY.trm.truth     types.isa       std.abnormal, 6
   #.........................................................................................................
-  # help 'Ω__29', GUY.trm.truth     types.isa       std.weird,    6
-  # help 'Ω__30', GUY.trm.truth     types.isa       std.weird,    5
-  # help 'Ω__31', GUY.trm.truth     types.isa       std.cardinal, 6
-  # help 'Ω__32', GUY.trm.truth     types.isa       std.cardinal, 0
-  # help 'Ω__33', GUY.trm.truth     types.isa       std.cardinal, -1
+  # help 'Ω__33', GUY.trm.truth     types.isa       std.cardinal, 6
+  # help 'Ω__34', GUY.trm.truth     types.isa       std.cardinal, 0
+  # help 'Ω__35', GUY.trm.truth     types.isa       std.cardinal, -1
   # #.........................................................................................................
-  help 'Ω__34', try               types.validate  std.integer,  5       catch e then warn 'Ω__35', e.message
-  help 'Ω__36', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__37', e.message
-  # info 'Ω__38', std.weird
-  # info 'Ω__39', std.weird.isa
-  # info 'Ω__40', std.weird.isa.toString()
+  help 'Ω__36', try               types.validate  std.integer,  5       catch e then warn 'Ω__37', e.message
+  help 'Ω__38', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__39', e.message
+  # info 'Ω__40', std.weird
+  # info 'Ω__41', std.weird.isa
+  # info 'Ω__42', std.weird.isa.toString()
 
 
 
