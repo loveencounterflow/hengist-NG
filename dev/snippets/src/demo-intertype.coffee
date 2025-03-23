@@ -57,8 +57,11 @@ require_intertype = ->
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
+      ### TAINT use proper validation ###
+      unless type instanceof Type
+        throw new Error "Ω___2 expected an instance of `Type`, got a #{@type_of R}"
       unless ( R = type.isa.call type.$typespace, x, @ ) in [ true, false, ]
-        throw new Error "Ω___2 expected `true` or `false`, got a #{@type_of R}"
+        throw new Error "Ω___3 expected `true` or `false`, got a #{@type_of R}"
       return R
 
     #---------------------------------------------------------------------------------------------------------
@@ -67,12 +70,12 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     validate: ( type, x ) ->
       return x if @isa type, x
-      throw new Error "Ω___3 expected a #{type.$name}, got a #{@type_of x}"
+      throw new Error "Ω___4 expected a #{type.$name}, got a #{@type_of x}"
 
     #---------------------------------------------------------------------------------------------------------
     create: ( type, P... ) ->
       # unless ( method = type.parse )?
-      #   throw new Error "Ω___4 expected a , got #{rpr R}"
+      #   throw new Error "Ω___5 expected a , got #{rpr R}"
 
     #---------------------------------------------------------------------------------------------------------
     # evaluate: ( ??? ) ->
@@ -86,7 +89,7 @@ require_intertype = ->
     constructor: ( typespace, name, declaration ) ->
       ### NOTE not doing anything for the time being ###
       ### TAINT should still implement string-valued `isa` ###
-      # debug 'Ω___5', rpr declaration
+      # debug 'Ω___6', rpr declaration
       hide @, '$name',      name
       hide @, '$typespace', typespace
       ### TAINT check for accidental overwrites ###
@@ -96,11 +99,11 @@ require_intertype = ->
         do =>
           ### TAINT try to move this check to validation step ###
           if declaration.isa?
-            throw new Error "Ω___6 must have exactly one of `isa` or `fields`, not both"
+            throw new Error "Ω___7 must have exactly one of `isa` or `fields`, not both"
           # for field_name, field_declaration of declaration.fields
           #   field = new Type typespace, field_name, field_declaration
-          #   debug 'Ω___7', { name, field_name, field_declaration, }, field.$name, field.isa
-          debug 'Ω___8', new Typespace declaration.fields
+          #   debug 'Ω___8', { name, field_name, field_declaration, }, field.$name, field.isa
+          debug 'Ω___9', new Typespace declaration.fields
       #.......................................................................................................
       for key, value of declaration
         nameit name, value if key is 'isa' # check that value is function?
@@ -114,17 +117,18 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( parents..., typespace_cfg ) ->
       refs = @_derefence_typenames parents, typespace_cfg
-      info 'Ω___9', Object.keys refs
+      info 'Ω__10', Object.keys refs
       for typename, owner of refs
-        urge 'Ω__10', typename, owner.constructor.name
-        debug 'Ω__11', declaration
+        help 'Ω__11', typename, GUY.trm.truth owner is typespace_cfg
+      for typename, owner of refs
         declaration = typespace_cfg[ typename ]
+        urge 'Ω__12', typename, owner.constructor.name, rpr declaration
         switch true
           when $isa.text declaration
             owner = @ if owner is typespace_cfg
             unless ( deref = owner[ typename ] ) instanceof Type
               ### TAINT should this error occur, its message is probably not meaningful to user ###
-              throw new Error "Ω__12 expected typename #{rpr typename} to dereference to a `Type`, got #{rpr deref} instead"
+              throw new Error "Ω__13 expected typename #{rpr typename} to dereference to a `Type`, got #{rpr deref} instead"
             declaration = do ( deref ) => { isa: ( ( x, t ) -> t.isa deref, x ), }
           when $isa.function declaration
             declaration = { isa: declaration, }
@@ -152,40 +156,43 @@ require_intertype = ->
       owners        = [ parents..., typespace_cfg, ].reverse()
       for typename in typenames
         unless ( owner = find_owner owners, typename, null )?
-          throw new Error "Ω__13 unable to dereference typename #{rpr typename}"
+          throw new Error "Ω__14 unable to dereference typename #{rpr typename}"
         R[ typename ] = owner
       return R
 
 
   #===========================================================================================================
   std = new Typespace
-    ### TAINT set up policy whether bigints should be considered numbers or not; given the common assumption
-    that JavaScript has 'just numbers' maybe better to reserve `positive0`, `cardinal` to `float`s and
-    treat bigints as just that, bigints ###
-    # circle1:  'circle2'
-    # circle2:  'circle3'
-    # circle3:  'circle1'
-    weird:    'strange' # declares another name for `odd`
-    strange:  'odd'     # declares another name for `odd`
+    #.........................................................................................................
     integer:
       isa:    ( x, t ) -> Number.isInteger x
       foo:    4
     odd:
       isa:    ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 isnt 0 )
-    abnormal: 'weird' # declares another name for `odd`
     # short form just assigns either a test method or a type name:
     even:           ( x, t ) -> ( t.isa @integer, x ) and ( x %% 2 is 0 )
     float:          ( x, t ) -> Number.isFinite x
     bigint:         ( x, t ) -> typeof x is 'bigint'
-    numerical:      ( x, t ) -> ( t.isa @float, x   ) or ( t.isa @bigint, x )
-    positive0:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +0  )
-    positive1:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +1  )
-    negative0:      ( x, t ) -> ( t.isa @float, x   ) and ( x <=  0  )
-    negative1:      ( x, t ) -> ( t.isa @float, x   ) and ( x <= -1  )
-    cardinal:       ( x, t ) -> ( t.isa @integer, x ) and ( t.isa @positive0, x )
-    # cardinalbigint: ( x, t ) -> ( t.isa @bigint, x    ) and ( x >= +0 )
     text:           ( x, t ) -> typeof x is 'string'
-    nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
+    #.........................................................................................................
+    # numerical:      ( x, t ) -> ( t.isa @float, x   ) or ( t.isa @bigint, x )
+    # positive0:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +0  )
+    # positive1:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +1  )
+    # negative0:      ( x, t ) -> ( t.isa @float, x   ) and ( x <=  0  )
+    # negative1:      ( x, t ) -> ( t.isa @float, x   ) and ( x <= -1  )
+    # cardinal:       ( x, t ) -> ( t.isa @integer, x ) and ( t.isa @positive0, x )
+    #.........................................................................................................
+    # cardinalbigint: ( x, t ) -> ( t.isa @bigint, x    ) and ( x >= +0 )
+    # nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
+    #.........................................................................................................
+    # circle1:  'circle2'
+    # circle2:  'circle3'
+    # circle3:  'circle1'
+    #.........................................................................................................
+    # weird:    'strange' # declares another name for `odd`
+    # strange:  'odd'     # declares another name for `odd`
+    # abnormal: 'weird' # declares another name for `odd`
+    #.........................................................................................................
     # quantity:
     #   # isa: ->
     #   # each field becomes an `Type` instance; strings may refer to names in the same typespace
@@ -196,12 +203,12 @@ require_intertype = ->
     #     q:    0
     #     u:    'u'
 
-  quantity = new Typespace std,
-    q:    'float'
-    u:    'nonemptytext'
-    # template:
-    #   q:    0
-    #   u:    'u'
+  # quantity = new Typespace std,
+  #   q:    'float'
+  #   u:    'nonemptytext'
+  #   # template:
+  #   #   q:    0
+  #   #   u:    'u'
 
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,38 +217,38 @@ require_intertype = ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  # f = ( P..., x ) -> info 'Ω__14', { P, x, }
+  # f = ( P..., x ) -> info 'Ω__15', { P, x, }
   # f 7
   # f 7, 8, 9
   # return null
   { types
     std             } = require_intertype()
-  # help 'Ω__15', types = new Types()
-  help 'Ω__16', std
-  # help 'Ω__17', std.integer
-  # help 'Ω__18', std.integer.isa 5
-  help 'Ω__19', GUY.trm.truth     types.isa       std.integer,  5.3
-  help 'Ω__20', GUY.trm.truth     types.isa       std.strange,  6
-  help 'Ω__21', GUY.trm.truth     types.isa       std.weird,    6
-  help 'Ω__22', GUY.trm.truth     types.isa       std.odd,      6
-  help 'Ω__23', GUY.trm.truth     types.isa       std.strange,  5
-  help 'Ω__24', GUY.trm.truth     types.isa       std.weird,    5
-  help 'Ω__25', GUY.trm.truth     types.isa       std.odd,      5
-  help 'Ω__26', GUY.trm.truth     types.isa       std.odd,      5.3
-  help 'Ω__27', GUY.trm.truth     types.isa       std.even,     5
-  help 'Ω__28', GUY.trm.truth     types.isa       std.even,     6
-  help 'Ω__29', GUY.trm.truth     types.isa       std.cardinal, 6
-  help 'Ω__30', GUY.trm.truth     types.isa       std.cardinal, 0
-  help 'Ω__31', GUY.trm.truth     types.isa       std.cardinal, -1
-  # help 'Ω__32', GUY.trm.truth     types.isa       std.cardinalbigint, 6
-  # help 'Ω__33', GUY.trm.truth     types.isa       std.cardinalbigint, 6n
-  # help 'Ω__34', GUY.trm.truth     types.isa       std.cardinalbigint, -6
-  # help 'Ω__35', GUY.trm.truth     types.isa       std.cardinalbigint, -6n
-  help 'Ω__36', try               types.validate  std.integer,  5       catch e then warn 'Ω__37', e.message
-  help 'Ω__38', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__39', e.message
-  # info 'Ω__40', std.weird
-  # info 'Ω__41', std.weird.isa
-  # info 'Ω__42', std.weird.isa.toString()
+  # help 'Ω__16', types = new Types()
+  help 'Ω__17', std
+  # help 'Ω__18', std.integer
+  # help 'Ω__19', std.integer.isa 5
+  help 'Ω__20', GUY.trm.truth     types.isa       std.integer,  5
+  help 'Ω__21', GUY.trm.truth     types.isa       std.odd,      5
+  help 'Ω__22', GUY.trm.truth     types.isa       std.even,     6
+  # #.........................................................................................................
+  help 'Ω__23', GUY.trm.truth     types.isa       std.integer,  5.3
+  help 'Ω__24', GUY.trm.truth     types.isa       std.odd,      6
+  help 'Ω__25', GUY.trm.truth     types.isa       std.odd,      5.3
+  help 'Ω__26', GUY.trm.truth     types.isa       std.even,     5
+  # #.........................................................................................................
+  # help 'Ω__27', GUY.trm.truth     types.isa       std.strange,  6
+  # help 'Ω__28', GUY.trm.truth     types.isa       std.weird,    6
+  # help 'Ω__29', GUY.trm.truth     types.isa       std.strange,  5
+  # help 'Ω__30', GUY.trm.truth     types.isa       std.weird,    5
+  # help 'Ω__31', GUY.trm.truth     types.isa       std.cardinal, 6
+  # help 'Ω__32', GUY.trm.truth     types.isa       std.cardinal, 0
+  # help 'Ω__33', GUY.trm.truth     types.isa       std.cardinal, -1
+  # #.........................................................................................................
+  help 'Ω__34', try               types.validate  std.integer,  5       catch e then warn 'Ω__35', e.message
+  help 'Ω__36', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__37', e.message
+  # info 'Ω__38', std.weird
+  # info 'Ω__39', std.weird.isa
+  # info 'Ω__40', std.weird.isa.toString()
 
 
 
