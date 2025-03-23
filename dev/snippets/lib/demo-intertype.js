@@ -138,7 +138,7 @@
     Typespace = class Typespace {
       //---------------------------------------------------------------------------------------------------------
       constructor(...parents) {
-        var declaration, deref, owner, ref, refs, typename, typespace_cfg;
+        var declaration, deref, owner, ref, refs, typename, typeref, typespace_cfg;
         ref = parents, [...parents] = ref, [typespace_cfg] = splice.call(parents, -1);
         refs = this._derefence_typenames(parents, typespace_cfg);
         info('Ω__10', Object.keys(refs));
@@ -152,12 +152,13 @@
           urge('Ω__12', typename, owner.constructor.name, rpr(declaration));
           switch (true) {
             case $isa.text(declaration):
+              typeref = declaration;
               if (owner === typespace_cfg) {
                 owner = this;
               }
-              if (!((deref = owner[typename]) instanceof Type)) {
+              if (!((deref = owner[typeref]) instanceof Type)) {
                 /* TAINT should this error occur, its message is probably not meaningful to user */
-                throw new Error(`Ω__13 expected typename ${rpr(typename)} to dereference to a \`Type\`, got ${rpr(deref)} instead`);
+                throw new Error(`Ω__13 expected type reference ${rpr(typename)} → ${rpr(typeref)} to dereference to a \`Type\`, got ${rpr(deref)} instead`);
               }
               declaration = ((deref) => {
                 return {
@@ -246,9 +247,7 @@
       },
       text: function(x, t) {
         return typeof x === 'string';
-      }
-    });
-    return {
+      },
       //.........................................................................................................
       // numerical:      ( x, t ) -> ( t.isa @float, x   ) or ( t.isa @bigint, x )
       // positive0:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +0  )
@@ -265,7 +264,9 @@
       // circle3:  'circle1'
       //.........................................................................................................
       // weird:    'strange' # declares another name for `odd`
-      // strange:  'odd'     # declares another name for `odd`
+      strange: 'odd' // declares another name for `odd`
+    });
+    return {
       // abnormal: 'weird' # declares another name for `odd`
       //.........................................................................................................
       // quantity:
@@ -310,15 +311,15 @@
       help('Ω__20', GUY.trm.truth(types.isa(std.integer, 5)));
       help('Ω__21', GUY.trm.truth(types.isa(std.odd, 5)));
       help('Ω__22', GUY.trm.truth(types.isa(std.even, 6)));
+      help('Ω__23', GUY.trm.truth(types.isa(std.strange, 5)));
       // #.........................................................................................................
-      help('Ω__23', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__24', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__25', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__26', GUY.trm.truth(types.isa(std.even, 5)));
-      // #.........................................................................................................
-      // help 'Ω__27', GUY.trm.truth     types.isa       std.strange,  6
-      // help 'Ω__28', GUY.trm.truth     types.isa       std.weird,    6
-      // help 'Ω__29', GUY.trm.truth     types.isa       std.strange,  5
+      help('Ω__24', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      help('Ω__25', GUY.trm.truth(types.isa(std.odd, 6)));
+      help('Ω__26', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__27', GUY.trm.truth(types.isa(std.even, 5)));
+      help('Ω__28', GUY.trm.truth(types.isa(std.strange, 6)));
+      //.........................................................................................................
+      // help 'Ω__29', GUY.trm.truth     types.isa       std.weird,    6
       // help 'Ω__30', GUY.trm.truth     types.isa       std.weird,    5
       // help 'Ω__31', GUY.trm.truth     types.isa       std.cardinal, 6
       // help 'Ω__32', GUY.trm.truth     types.isa       std.cardinal, 0
