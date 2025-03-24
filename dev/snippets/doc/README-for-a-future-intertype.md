@@ -1,17 +1,24 @@
 
+* **Intertype Types**
+  * are instances of class `Type`
+  * **ISA method**:
+    * When testing a value with, say, `types.isa std.integer, x`, `types.isa()` will internally call
+      `std.integer.isa()`, where
+      * `types` is a `Types` instance,
+      * `std` is a `Typespace`,
+      * `integer` is a `Type` declared in that typespace, and
+      * `integer.isa()` is the type's ISA method.
+    * An ISA method is a synchronous function `( x: any, t: Types ): boolean ->` that accepts two values:
+      `x`, the value to be tested, and `t`, the `Types` instance used for testing.
+    * Valid ISA methods must only return either `true` or `false` and must never throw an exception.
+    * When used via `Types::isa()`, ISA methods will be called in the context of their respective typespace
+      which means that inside an ISA method `@`&nbsp;/&nbsp;`this` can be used to refer to other types
+      accessible from that typespace
 
-
-* `InterType test method` (informal type):
-  * a synchronous function `( x, t ) ->` that accepts two values (`x`: the value to be tested, `t`: the
-    `Intertype` instance used for testing) and returns either `true` or `false`; it must never throw an
-    exception and never return anything but a Boolean
-  * member of an `Intertype_namespace` type entry
-  * will be called in the context of its namespace
-
-* `intertype_declaration`: one of
-  * an `InterType test method`
-  * the name of another type in the *same* namespace
-  * an `Intertype_type` instance from any namespace
+* **Type declarations**: one of
+  * an ISA method
+  * the name of another type in the same or a parent typespace
+  * an `Type` instance (from any typespace)
   * an `intertype_declaration_cfg` object
 
 * fields of `intertype_declaration_cfg` objects:
@@ -29,22 +36,27 @@
       }, }`. This is also the right way to make a function a field's default value.
   * `create`: (optional) `( P..., t ) ->`
 
+## Declaring `Typespace`s
 
-
+* The enumeration of parent typespaces in the declaration of given `Typespace` does not amount to anything
+  like inheritance—parent typespaces are *only* used to de-reference shortcut typenames in individual type
+  declarations at compilation time.
+  * For example, in the type declarations of a typespace announced as `zing = new Typespace std, { ... }`, one
+    can refer to
 
 # InterType
 
 ## API
 
-* `Intertype::isa: ( t: typename, x: any ) ->`
+* `Types::isa: ( t: type, x: any ) ->`
 
-* `Intertype::create: ( t: typename, x: any ) ->`
+* `Types::create: ( t: type, x: any ) ->`
 
-* `Intertype::validate: ( t: typename, x: any ) ->`: synchronous, (almost) pure function that looks up
+* `Types::validate: ( t: type, x: any ) ->`: synchronous, (almost) pure function that looks up
   the declaration of type `t`, and calls it with `x` as only argument; returns `true` if `x` is considered
   to be a value of type `t` and `false` otherwise; testing functions are forbidden to return anything else
   (no 'truthy' or 'falsey' values); they are allowed to be impure to the degree that they may leave data
-  entries (hints or results) in `Intertype::memo`, a `Map`-like object
+  entries (hints or results) in `Types::memo`, a `Map`-like object
 
   * The motivation for this piece of memoization is expressed by the slogan ['parse, don't
     validate'](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/): for example, in a given
@@ -77,13 +89,13 @@
     API to cache explicitly in ordinary or custom (for size restriction) `Map` instance—the user is
     responsible for ensuring that cached entries stay relevant
   * **`[—]`** API is just API of `Map`:
-    * `Intertype::memo.set: ( k, v ) ->`
-    * `Intertype::memo.get: ( k ) ->`
-    * `Intertype::memo.delete: ( k ) ->`
-    * `Intertype::memo.has: ( k ) ->`
+    * `Types::memo.set: ( k, v ) ->`
+    * `Types::memo.get: ( k ) ->`
+    * `Types::memo.delete: ( k ) ->`
+    * `Types::memo.has: ( k ) ->`
     * and so on, can always customize with bespoke class when deemed necessary; by setting
-      `Intertype::memo = new Map()`, we already have a well-known, yet sub-classable API for free
-  * **`[—]`** should make configurable whether values stored in `Intertype::memo` are the results of
+      `Types::memo = new Map()`, we already have a well-known, yet sub-classable API for free
+  * **`[—]`** should make configurable whether values stored in `Types::memo` are the results of
     `parse` that should be
     * **`[—]`** **set** automatically whenever `parse()` returns a result
     * **`[—]`** **retrieved** automatically whenever `isa()`, `validate()` or `parse()` is called
@@ -98,8 +110,8 @@
     `fraction_proper`
 
 * **`[—]`** does it make sense to use formal prefixes to two `Intertype` instances?
-  * that could look like `Intertype::isa 'foo.quantity', x` where `foo` is a namespace for type names;
-    for simplicity's sake, only allow (or demand? as in `Intertype::isa 'std.integer', x`) single
+  * that could look like `Types::isa 'foo.quantity', x` where `foo` is a namespace for type names;
+    for simplicity's sake, only allow (or demand? as in `Types::isa 'std.integer', x`) single
     prefix
   * Maybe simpler and better to just say `types = { foo: ( new Foo_types() ), bar: ( new Bar_types() ), };
     types.foo.validate 'quux', x`, not clear where merging an advantage *except* where repetition of base
@@ -107,13 +119,13 @@
     prefixes is to be avoided
 
 * **`[—]`** the fancy API should merge type specifiers and method names (or should it?), as in
-  `Intertype::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
+  `Types::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
 
 * **`[—]`** how to express concatenation in a generic way as in `list of ( nonempty list of integer )`?
   * **`[—]`** one idea is to restrict usage to declared, named types, i.e. one can never call
-    \*`Intertype::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
+    \*`Types::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
     declare (and thereby name) a type (say, `intlist`) that is a `list.of.integer` and then call
-    `Intertype::isa 'intlist', x`
+    `Types::isa 'intlist', x`
 
 * **`[—]`** how to express multiple refinements as in `blank nonempty text` or `positive1 even integer`?
 
