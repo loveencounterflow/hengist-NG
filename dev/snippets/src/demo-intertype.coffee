@@ -23,8 +23,6 @@ GUY                       = require 'guy'
 { hide }                  = GUY.props
 { props: {
     nameit } }            = require '../../../apps/webguy'
-{ Ltsort }                = require '../../../apps/ltsort'
-misfit                    = Symbol 'misfit'
 
 
 ############################################################################################################
@@ -36,7 +34,16 @@ require_intertype = ->
     function: ( x ) -> ( Object::toString.call x ) is '[object Function]'
 
   #-----------------------------------------------------------------------------------------------------------
-  $type_of = ( x ) -> 'something'
+  $type_of = ( x ) ->
+    return 'null'         if x is null
+    return 'undefined'    if x is undefined
+    return 'infinity'     if x is +Infinity
+    return 'infinity'     if x is -Infinity
+    return 'boolean'      if x is true
+    return 'boolean'      if x is false
+    return 'text'         if $isa.text      x
+    return 'function'     if $isa.function  x
+    return 'something'
 
   #===========================================================================================================
   class Types
@@ -81,17 +88,7 @@ require_intertype = ->
     constructor: ( typespace, typename, declaration ) ->
       @$typename = typename # hide @, '$typename',  typename
       hide @, '$typespace', typespace
-      #.......................................................................................................
-      # ### Compile fields: ###
-      # if declaration.fields?
-      #   do =>
-      #     ### TAINT try to move this check to validation step ###
-      #     if declaration.isa?
-      #       throw new Error "Ω___5 must have exactly one of `isa` or `fields`, not both"
-      #     # for field_name, field_declaration of declaration.fields
-      #     #   field = new Type typespace, field_name, field_declaration
-      #     #   debug 'Ω___6', { typename, field_name, field_declaration, }, field.$typename, field.isa
-      #     debug 'Ω___7', new Typespace declaration.fields
+      @_compile_fields typespace, typename, declaration if declaration.fields?
       #.......................................................................................................
       ### TAINT this is defective w/out proper validation ###
       for key, value of declaration
@@ -99,24 +96,30 @@ require_intertype = ->
         hide @, key, value
       return undefined
 
+    #---------------------------------------------------------------------------------------------------------
+    _compile_fields: ( typespace, typename, declaration ) ->
+      debug 'Ω___5', { typename, declaration, }
+      # #.......................................................................................................
+      # ### TAINT try to move this check to validation step ###
+      # if declaration.isa?
+      #   throw new Error "Ω___6 must have exactly one of `isa` or `fields`, not both"
+      # # for field_name, field_declaration of declaration.fields
+      # #   field = new Type typespace, field_name, field_declaration
+      # #   debug 'Ω___7', { typename, field_name, field_declaration, }, field.$typename, field.isa
+      # debug 'Ω___8', new Typespace declaration.fields
+      return null
+
   #===========================================================================================================
   class Typespace
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( typespace_cfg ) ->
-      typenames     = @_amend_and_sort_typenames typespace_cfg
-      for typename in typenames
-        unless ( declaration = typespace_cfg[ typename ] )?
-          throw new Error "Ω___8 unknown typename #{rpr typename}"
+      for typename, declaration of typespace_cfg
         #.....................................................................................................
         switch true
           #...................................................................................................
           when $isa.text declaration
-            typeref = declaration
-            unless ( deref = @[ typeref ] ) instanceof Type
-              ### TAINT should this error occur, its message is probably not meaningful to user ###
-              throw new Error "Ω___9 expected type reference #{rpr typename} → #{rpr typeref} to dereference to a `Type`, got #{rpr deref} instead"
-            declaration = do ( deref ) => { isa: ( ( x, t ) -> t.isa deref, x ), }
+            declaration = do ( typeref = declaration ) => { isa: ( ( x, t ) -> t.isa @[ typeref ], x ), }
           #...................................................................................................
           when $isa.function declaration
             declaration = { isa: declaration, }
@@ -125,25 +128,24 @@ require_intertype = ->
           when declaration instanceof Object  then null
           #...................................................................................................
           else
-            throw new Error "Ω__10 expected a typename, a function or a type as declaration, got a #{$type_of declaration}"
+            throw new Error "Ω___9 expected a typename, a function or a type as declaration, got a #{$type_of declaration}"
         #.....................................................................................................
         declaration   = new Type @, typename, declaration unless declaration instanceof Type
         @[ typename ] = declaration
       return undefined
 
-    #---------------------------------------------------------------------------------------------------------
-    _amend_and_sort_typenames: ( typespace_cfg ) ->
-      ### Given a `typespace_cfg`, return a list of names such that the declarative dependencies (where the
-      type is defined by the name of another type in the typespace) can be resolved at compile time ###
-      ### TAINT re-throw cycle error ###
-      g = new Ltsort()
-      for name, declaration of typespace_cfg
-        if $isa.text declaration then g.add { name, needs: declaration, }
-        else                          g.add { name, }
-      return g.linearize { groups: false, }
 
   #===========================================================================================================
   std = new Typespace
+    #.........................................................................................................
+    quantity:
+      fields:
+        # each field becomes a `Type` instance; strings may refer to names in the same typespace
+        q:    'float'
+        u:    'nonempty_text'
+      template:
+        q:    0
+        u:    'u'
     #.........................................................................................................
     integer:
       isa:    ( x, t ) -> Number.isInteger x
@@ -155,6 +157,7 @@ require_intertype = ->
     float:          ( x, t ) -> Number.isFinite x
     bigint:         ( x, t ) -> typeof x is 'bigint'
     text:           ( x, t ) -> typeof x is 'string'
+    nonempty_text:  ( x, t ) -> ( t.isa @text, x ) and ( x.length > 0 )
     #.........................................................................................................
     # numerical:      ( x, t ) -> ( t.isa @float, x   ) or ( t.isa @bigint, x )
     # positive0:      ( x, t ) -> ( t.isa @float, x   ) and ( x >= +0  )
@@ -172,16 +175,7 @@ require_intertype = ->
     weird:    'strange' # declares another name for `odd`
     strange:  'odd'     # declares another name for `odd`
     abnormal: 'weird'   # declares another name for `odd`
-    #.........................................................................................................
-    # quantity:
-    #   # isa: ->
-    #   # each field becomes an `Type` instance; strings may refer to names in the same typespace
-    #   fields:
-    #     q:    'float'
-    #     u:    'nonemptytext'
-    #   template:
-    #     q:    0
-    #     u:    'u'
+
 
   #===========================================================================================================
   flatly_1 = new Typespace
@@ -196,21 +190,13 @@ require_intertype = ->
     flat:         std.even
     plain:        'evenly'
 
-  # extras = new Typespace std,
-  #   nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
-
-  # quantity = new Typespace std,
-  #   nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
-  #   fields: new Typespace std,
-  #   q:              'float'
-  #   u:              'nonemptytext'
-  #   # template:
-  #   #   q:    0
-  #   #   u:    'u'
 
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  return { Types, Type, Typespace, std, flatly_1, flatly_2, types: ( new Types() ), }
+  return { Types, Type, Typespace, \
+    std, \
+    flatly_1, flatly_2, \
+    types: ( new Types() ), }
 
 
 #===========================================================================================================
@@ -219,11 +205,12 @@ if module is require.main then await do =>
     flatly_1
     flatly_2
     std             } = require_intertype()
-  info 'Ω__11', std
-  info 'Ω__12', flatly_1
-  info 'Ω__13', flatly_2
-  info 'Ω__14', flatly_1.flat
-  info 'Ω__15', flatly_2.flat
+  info 'Ω__10', std
+  info 'Ω__11', flatly_1
+  info 'Ω__12', flatly_2
+  info 'Ω__13', flatly_1.flat
+  info 'Ω__14', flatly_2.flat
+  info 'Ω__15', std.text.nonempty
   #.........................................................................................................
   echo()
   help 'Ω__16', GUY.trm.truth     types.isa       std.integer,      5
@@ -238,32 +225,41 @@ if module is require.main then await do =>
   help 'Ω__25', GUY.trm.truth     types.isa       flatly_2.flat,    8
   help 'Ω__26', GUY.trm.truth     types.isa       flatly_2.evenly,  8
   help 'Ω__27', GUY.trm.truth     types.isa       flatly_2.plain,   8
+  help 'Ω__28', GUY.trm.truth     types.isa       std.nonempty_text, 'abc'
+  # help 'Ω__29', GUY.trm.truth     types.isa       std.quantity.fields.q,   123.456
+  # help 'Ω__30', GUY.trm.truth     types.isa       std.quantity.fields.u,   'm'
+  # help 'Ω__31', GUY.trm.truth     types.isa       std.quantity,     { q: 123.456, u: 'm', }
   #.........................................................................................................
   echo()
-  help 'Ω__28', GUY.trm.truth     types.isa       std.integer,      5.3
-  help 'Ω__29', GUY.trm.truth     types.isa       std.odd,          6
-  help 'Ω__30', GUY.trm.truth     types.isa       std.odd,          5.3
-  help 'Ω__31', GUY.trm.truth     types.isa       std.even,         5
-  help 'Ω__32', GUY.trm.truth     types.isa       std.strange,      6
-  help 'Ω__33', GUY.trm.truth     types.isa       std.weird,        6
-  help 'Ω__34', GUY.trm.truth     types.isa       std.abnormal,     6
-  help 'Ω__35', GUY.trm.truth     types.isa       flatly_1.evenly,  5
-  help 'Ω__36', GUY.trm.truth     types.isa       flatly_1.flat,    5
-  help 'Ω__37', GUY.trm.truth     types.isa       flatly_1.plain,   5
-  help 'Ω__38', GUY.trm.truth     types.isa       flatly_2.flat,    5
-  help 'Ω__39', GUY.trm.truth     types.isa       flatly_2.evenly,  5
-  help 'Ω__40', GUY.trm.truth     types.isa       flatly_2.plain,   5
+  help 'Ω__32', GUY.trm.truth     types.isa       std.integer,      5.3
+  help 'Ω__33', GUY.trm.truth     types.isa       std.odd,          6
+  help 'Ω__34', GUY.trm.truth     types.isa       std.odd,          5.3
+  help 'Ω__35', GUY.trm.truth     types.isa       std.even,         5
+  help 'Ω__36', GUY.trm.truth     types.isa       std.strange,      6
+  help 'Ω__37', GUY.trm.truth     types.isa       std.weird,        6
+  help 'Ω__38', GUY.trm.truth     types.isa       std.abnormal,     6
+  help 'Ω__39', GUY.trm.truth     types.isa       flatly_1.evenly,  5
+  help 'Ω__40', GUY.trm.truth     types.isa       flatly_1.flat,    5
+  help 'Ω__41', GUY.trm.truth     types.isa       flatly_1.plain,   5
+  help 'Ω__42', GUY.trm.truth     types.isa       flatly_2.flat,    5
+  help 'Ω__43', GUY.trm.truth     types.isa       flatly_2.evenly,  5
+  help 'Ω__44', GUY.trm.truth     types.isa       flatly_2.plain,   5
+  help 'Ω__45', GUY.trm.truth     types.isa       std.nonempty_text, ''
+  # help 'Ω__46', GUY.trm.truth     types.isa       std.quantity.fields.q,   '123.456'
+  # help 'Ω__47', GUY.trm.truth     types.isa       std.quantity.fields.u,   ''
+  # help 'Ω__48', GUY.trm.truth     types.isa       std.quantity,     { q: 123.456, u: '', }
+  # help 'Ω__49', GUY.trm.truth     types.isa       std.quantity,     { q: null, u: 'm', }
   #.........................................................................................................
   echo()
-  # help 'Ω__41', GUY.trm.truth     types.isa       std.cardinal, 6
-  # help 'Ω__42', GUY.trm.truth     types.isa       std.cardinal, 0
-  # help 'Ω__43', GUY.trm.truth     types.isa       std.cardinal, -1
+  # help 'Ω__50', GUY.trm.truth     types.isa       std.cardinal, 6
+  # help 'Ω__51', GUY.trm.truth     types.isa       std.cardinal, 0
+  # help 'Ω__52', GUY.trm.truth     types.isa       std.cardinal, -1
   # #.........................................................................................................
-  help 'Ω__44', try               types.validate  std.integer,  5       catch e then warn 'Ω__45', e.message
-  help 'Ω__46', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__47', e.message
-  # info 'Ω__48', std.weird
-  # info 'Ω__49', std.weird.isa
-  # info 'Ω__50', std.weird.isa.toString()
+  help 'Ω__53', try               types.validate  std.integer,  5       catch e then warn 'Ω__54', e.message
+  help 'Ω__55', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__56', e.message
+  # info 'Ω__57', std.weird
+  # info 'Ω__58', std.weird.isa
+  # info 'Ω__59', std.weird.isa.toString()
 
 
 
