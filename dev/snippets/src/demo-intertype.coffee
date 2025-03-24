@@ -109,22 +109,27 @@ require_intertype = ->
       for typename in typenames
         unless ( declaration = typespace_cfg[ typename ] )?
           throw new Error "Ω___8 unknown typename #{rpr typename}"
+        #.....................................................................................................
         switch true
+          #...................................................................................................
           when $isa.text declaration
             typeref = declaration
             unless ( deref = @[ typeref ] ) instanceof Type
               ### TAINT should this error occur, its message is probably not meaningful to user ###
               throw new Error "Ω___9 expected type reference #{rpr typename} → #{rpr typeref} to dereference to a `Type`, got #{rpr deref} instead"
             declaration = do ( deref ) => { isa: ( ( x, t ) -> t.isa deref, x ), }
+          #...................................................................................................
           when $isa.function declaration
             declaration = { isa: declaration, }
-          # else
-          # ### TAINT should validate remaining possible values for typespace_cfg[ typename ] ###
+          #...................................................................................................
+          when declaration instanceof Type    then null
+          when declaration instanceof Object  then null
+          #...................................................................................................
+          else
+            throw new Error "Ω__10 expected a typename, a function or a type as declaration, got a #{$type_of declaration}"
         #.....................................................................................................
-        if declaration instanceof Type
-          @[ typename ] = declaration
-        else
-          @[ typename ] = new Type @, typename, declaration
+        declaration   = new Type @, typename, declaration unless declaration instanceof Type
+        @[ typename ] = declaration
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
@@ -214,51 +219,51 @@ if module is require.main then await do =>
     flatly_1
     flatly_2
     std             } = require_intertype()
-  info 'Ω__10', std
-  info 'Ω__11', flatly_1
-  info 'Ω__12', flatly_2
-  info 'Ω__13', flatly_1.flat
-  info 'Ω__14', flatly_2.flat
+  info 'Ω__11', std
+  info 'Ω__12', flatly_1
+  info 'Ω__13', flatly_2
+  info 'Ω__14', flatly_1.flat
+  info 'Ω__15', flatly_2.flat
   #.........................................................................................................
   echo()
-  help 'Ω__15', GUY.trm.truth     types.isa       std.integer,      5
-  help 'Ω__16', GUY.trm.truth     types.isa       std.odd,          5
-  help 'Ω__17', GUY.trm.truth     types.isa       std.even,         6
-  help 'Ω__18', GUY.trm.truth     types.isa       std.strange,      5
-  help 'Ω__19', GUY.trm.truth     types.isa       std.weird,        5
-  help 'Ω__20', GUY.trm.truth     types.isa       std.abnormal,     5
-  help 'Ω__21', GUY.trm.truth     types.isa       flatly_1.flat,    8
-  help 'Ω__22', GUY.trm.truth     types.isa       flatly_1.evenly,  8
-  help 'Ω__23', GUY.trm.truth     types.isa       flatly_1.plain,   8
-  help 'Ω__24', GUY.trm.truth     types.isa       flatly_2.flat,    8
-  help 'Ω__25', GUY.trm.truth     types.isa       flatly_2.evenly,  8
-  help 'Ω__26', GUY.trm.truth     types.isa       flatly_2.plain,   8
+  help 'Ω__16', GUY.trm.truth     types.isa       std.integer,      5
+  help 'Ω__17', GUY.trm.truth     types.isa       std.odd,          5
+  help 'Ω__18', GUY.trm.truth     types.isa       std.even,         6
+  help 'Ω__19', GUY.trm.truth     types.isa       std.strange,      5
+  help 'Ω__20', GUY.trm.truth     types.isa       std.weird,        5
+  help 'Ω__21', GUY.trm.truth     types.isa       std.abnormal,     5
+  help 'Ω__22', GUY.trm.truth     types.isa       flatly_1.flat,    8
+  help 'Ω__23', GUY.trm.truth     types.isa       flatly_1.evenly,  8
+  help 'Ω__24', GUY.trm.truth     types.isa       flatly_1.plain,   8
+  help 'Ω__25', GUY.trm.truth     types.isa       flatly_2.flat,    8
+  help 'Ω__26', GUY.trm.truth     types.isa       flatly_2.evenly,  8
+  help 'Ω__27', GUY.trm.truth     types.isa       flatly_2.plain,   8
   #.........................................................................................................
   echo()
-  help 'Ω__27', GUY.trm.truth     types.isa       std.integer,      5.3
-  help 'Ω__28', GUY.trm.truth     types.isa       std.odd,          6
-  help 'Ω__29', GUY.trm.truth     types.isa       std.odd,          5.3
-  help 'Ω__30', GUY.trm.truth     types.isa       std.even,         5
-  help 'Ω__31', GUY.trm.truth     types.isa       std.strange,      6
-  help 'Ω__32', GUY.trm.truth     types.isa       std.weird,        6
-  help 'Ω__33', GUY.trm.truth     types.isa       std.abnormal,     6
-  help 'Ω__34', GUY.trm.truth     types.isa       flatly_1.evenly,  5
-  help 'Ω__35', GUY.trm.truth     types.isa       flatly_1.flat,    5
-  help 'Ω__36', GUY.trm.truth     types.isa       flatly_1.plain,   5
-  help 'Ω__37', GUY.trm.truth     types.isa       flatly_2.flat,    5
-  help 'Ω__38', GUY.trm.truth     types.isa       flatly_2.evenly,  5
-  help 'Ω__39', GUY.trm.truth     types.isa       flatly_2.plain,   5
+  help 'Ω__28', GUY.trm.truth     types.isa       std.integer,      5.3
+  help 'Ω__29', GUY.trm.truth     types.isa       std.odd,          6
+  help 'Ω__30', GUY.trm.truth     types.isa       std.odd,          5.3
+  help 'Ω__31', GUY.trm.truth     types.isa       std.even,         5
+  help 'Ω__32', GUY.trm.truth     types.isa       std.strange,      6
+  help 'Ω__33', GUY.trm.truth     types.isa       std.weird,        6
+  help 'Ω__34', GUY.trm.truth     types.isa       std.abnormal,     6
+  help 'Ω__35', GUY.trm.truth     types.isa       flatly_1.evenly,  5
+  help 'Ω__36', GUY.trm.truth     types.isa       flatly_1.flat,    5
+  help 'Ω__37', GUY.trm.truth     types.isa       flatly_1.plain,   5
+  help 'Ω__38', GUY.trm.truth     types.isa       flatly_2.flat,    5
+  help 'Ω__39', GUY.trm.truth     types.isa       flatly_2.evenly,  5
+  help 'Ω__40', GUY.trm.truth     types.isa       flatly_2.plain,   5
   #.........................................................................................................
   echo()
-  # help 'Ω__40', GUY.trm.truth     types.isa       std.cardinal, 6
-  # help 'Ω__41', GUY.trm.truth     types.isa       std.cardinal, 0
-  # help 'Ω__42', GUY.trm.truth     types.isa       std.cardinal, -1
+  # help 'Ω__41', GUY.trm.truth     types.isa       std.cardinal, 6
+  # help 'Ω__42', GUY.trm.truth     types.isa       std.cardinal, 0
+  # help 'Ω__43', GUY.trm.truth     types.isa       std.cardinal, -1
   # #.........................................................................................................
-  help 'Ω__43', try               types.validate  std.integer,  5       catch e then warn 'Ω__44', e.message
-  help 'Ω__45', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__46', e.message
-  # info 'Ω__47', std.weird
-  # info 'Ω__48', std.weird.isa
-  # info 'Ω__49', std.weird.isa.toString()
+  help 'Ω__44', try               types.validate  std.integer,  5       catch e then warn 'Ω__45', e.message
+  help 'Ω__46', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__47', e.message
+  # info 'Ω__48', std.weird
+  # info 'Ω__49', std.weird.isa
+  # info 'Ω__50', std.weird.isa.toString()
 
 
 
