@@ -192,6 +192,7 @@ require_intertype = ->
     flat:         ( x, t ) -> t.isa std.even, x
     plain:        'evenly'
 
+  #-----------------------------------------------------------------------------------------------------------
   flatly_2 = new Typespace
     evenly:       'flat'
     flat:         std.even

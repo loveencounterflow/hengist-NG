@@ -38,11 +38,6 @@
 
 ## Declaring `Typespace`s
 
-* The enumeration of parent typespaces in the declaration of given `Typespace` does not amount to anything
-  like inheritance—parent typespaces are *only* used to de-reference shortcut typenames in individual type
-  declarations at compilation time.
-  * For example, in the type declarations of a typespace announced as `zing = new Typespace std, { ... }`, one
-    can refer to
 
 # InterType
 
