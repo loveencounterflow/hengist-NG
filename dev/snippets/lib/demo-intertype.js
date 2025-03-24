@@ -22,7 +22,7 @@
 
   //###########################################################################################################
   require_intertype = function() {
-    var $isa, Type, Types, Typespace, flatly_1, flatly_2, std;
+    var $isa, $type_of, Type, Types, Typespace, flatly_1, flatly_2, std;
     //===========================================================================================================
     $isa = {
       text: function(x) {
@@ -31,6 +31,10 @@
       function: function(x) {
         return (Object.prototype.toString.call(x)) === '[object Function]';
       }
+    };
+    //-----------------------------------------------------------------------------------------------------------
+    $type_of = function(x) {
+      return 'something';
     };
     //===========================================================================================================
     Types = class Types {
@@ -49,10 +53,10 @@
         var R, ref;
         /* TAINT use proper validation */
         if (!(type instanceof Type)) {
-          throw new Error(`Ω___1 expected an instance of \`Type\`, got a ${this.type_of(R)}`);
+          throw new Error(`Ω___1 expected an instance of \`Type\`, got a ${$type_of(R)}`);
         }
         if ((ref = (R = type.isa.call(type.$typespace, x, this))) !== true && ref !== false) {
-          throw new Error(`Ω___2 expected \`true\` or \`false\`, got a ${this.type_of(R)}`);
+          throw new Error(`Ω___2 expected \`true\` or \`false\`, got a ${$type_of(R)}`);
         }
         return R;
       }
@@ -67,7 +71,7 @@
         if (this.isa(type, x)) {
           return x;
         }
-        throw new Error(`Ω___3 expected a ${type.$typename}, got a ${this.type_of(x)}`);
+        throw new Error(`Ω___3 expected a ${type.$typename}, got a ${$type_of(x)}`);
       }
 
       //---------------------------------------------------------------------------------------------------------

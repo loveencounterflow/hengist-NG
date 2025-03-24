@@ -35,6 +35,9 @@ require_intertype = ->
     text:     ( x ) -> typeof x is 'string'
     function: ( x ) -> ( Object::toString.call x ) is '[object Function]'
 
+  #-----------------------------------------------------------------------------------------------------------
+  $type_of = ( x ) -> 'something'
+
   #===========================================================================================================
   class Types
 
@@ -51,9 +54,9 @@ require_intertype = ->
     isa: ( type, x ) ->
       ### TAINT use proper validation ###
       unless type instanceof Type
-        throw new Error "Ω___1 expected an instance of `Type`, got a #{@type_of R}"
+        throw new Error "Ω___1 expected an instance of `Type`, got a #{$type_of R}"
       unless ( R = type.isa.call type.$typespace, x, @ ) in [ true, false, ]
-        throw new Error "Ω___2 expected `true` or `false`, got a #{@type_of R}"
+        throw new Error "Ω___2 expected `true` or `false`, got a #{$type_of R}"
       return R
 
     #---------------------------------------------------------------------------------------------------------
@@ -62,7 +65,7 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     validate: ( type, x ) ->
       return x if @isa type, x
-      throw new Error "Ω___3 expected a #{type.$typename}, got a #{@type_of x}"
+      throw new Error "Ω___3 expected a #{type.$typename}, got a #{$type_of x}"
 
     #---------------------------------------------------------------------------------------------------------
     create: ( type, P... ) ->
