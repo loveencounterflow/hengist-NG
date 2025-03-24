@@ -89,9 +89,9 @@
         var key, value;
         /* NOTE not doing anything for the time being */
         /* TAINT should still implement string-valued `isa` */
-        debug('Ω___5', rpr(typespace));
-        debug('Ω___6', rpr(typename));
-        debug('Ω___7', rpr(declaration));
+        // debug 'Ω___5', rpr typespace
+        // debug 'Ω___6', rpr typename
+        // debug 'Ω___7', rpr declaration
         this.$typename = typename;
         // hide @, '$typename',  typename
         hide(this, '$typespace', typespace);
@@ -111,6 +111,7 @@
           })();
         }
 //.......................................................................................................
+/* TAINT this is defective w/out proper validation */
         for (key in declaration) {
           value = declaration[key];
           if (key === 'isa') { // check that value is function?
@@ -134,7 +135,7 @@
           if ((declaration = typespace_cfg[typename]) == null) {
             throw new Error(`Ω__12 unknown typename ${rpr(typename)}`);
           }
-          urge('Ω__13', {typename, declaration});
+          // urge 'Ω__13', { typename, declaration, isa_type: ( declaration instanceof Type ), isa_function: ( $isa.function declaration ), }
           switch (true) {
             case $isa.text(declaration):
               typeref = declaration;
@@ -142,7 +143,7 @@
                 /* TAINT should this error occur, its message is probably not meaningful to user */
                 throw new Error(`Ω__14 expected type reference ${rpr(typename)} → ${rpr(typeref)} to dereference to a \`Type\`, got ${rpr(deref)} instead`);
               }
-              debug('Ω__15', {typename, typeref, deref});
+              // debug 'Ω__15', { typename, typeref, deref}
               declaration = ((deref) => {
                 return {
                   isa: (function(x, t) {
@@ -159,7 +160,11 @@
           // else
           // ### TAINT should validate remaining possible values for typespace_cfg[ typename ] ###
           //.....................................................................................................
-          this[typename] = new Type(this, typename, declaration);
+          if (declaration instanceof Type) {
+            this[typename] = declaration;
+          } else {
+            this[typename] = new Type(this, typename, declaration);
+          }
         }
         return void 0;
       }
@@ -277,6 +282,7 @@
       Typespace,
       std,
       flatly_1,
+      flatly_2,
       types: new Types()
     };
   };
@@ -284,58 +290,67 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var e, flatly_1, std, types;
-      ({types, flatly_1, std} = require_intertype());
-      help('Ω__16', std);
-      help('Ω__17', flatly_1);
+      var e, flatly_1, flatly_2, std, types;
+      ({types, flatly_1, flatly_2, std} = require_intertype());
+      info('Ω__16', std);
+      info('Ω__17', flatly_1);
+      info('Ω__18', flatly_2);
+      info('Ω__19', flatly_1.flat);
+      info('Ω__20', flatly_2.flat);
       //.........................................................................................................
-      help('Ω__18', GUY.trm.truth(types.isa(std.integer, 5)));
-      help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
-      help('Ω__20', GUY.trm.truth(types.isa(std.even, 6)));
-      help('Ω__21', GUY.trm.truth(types.isa(std.strange, 5)));
-      help('Ω__22', GUY.trm.truth(types.isa(std.weird, 5)));
-      help('Ω__23', GUY.trm.truth(types.isa(std.abnormal, 5)));
-      help('Ω__24', GUY.trm.truth(types.isa(flatly_1.flat, 8)));
-      help('Ω__25', GUY.trm.truth(types.isa(flatly_1.evenly, 8)));
-      help('Ω__26', GUY.trm.truth(types.isa(flatly_1.plain, 8)));
+      help('Ω__21', GUY.trm.truth(types.isa(std.integer, 5)));
+      help('Ω__22', GUY.trm.truth(types.isa(std.odd, 5)));
+      help('Ω__23', GUY.trm.truth(types.isa(std.even, 6)));
+      help('Ω__24', GUY.trm.truth(types.isa(std.strange, 5)));
+      help('Ω__25', GUY.trm.truth(types.isa(std.weird, 5)));
+      help('Ω__26', GUY.trm.truth(types.isa(std.abnormal, 5)));
+      help('Ω__27', GUY.trm.truth(types.isa(flatly_1.flat, 8)));
+      help('Ω__28', GUY.trm.truth(types.isa(flatly_1.evenly, 8)));
+      help('Ω__29', GUY.trm.truth(types.isa(flatly_1.plain, 8)));
+      help('Ω__30', GUY.trm.truth(types.isa(flatly_2.flat, 8)));
+      help('Ω__31', GUY.trm.truth(types.isa(flatly_2.evenly, 8)));
+      help('Ω__32', GUY.trm.truth(types.isa(flatly_2.plain, 8)));
       //.........................................................................................................
-      help('Ω__27', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__28', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__29', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__30', GUY.trm.truth(types.isa(std.even, 5)));
-      help('Ω__31', GUY.trm.truth(types.isa(std.strange, 6)));
-      help('Ω__32', GUY.trm.truth(types.isa(std.weird, 6)));
-      help('Ω__33', GUY.trm.truth(types.isa(std.abnormal, 6)));
-      help('Ω__34', GUY.trm.truth(types.isa(flatly_1.evenly, 5)));
-      help('Ω__35', GUY.trm.truth(types.isa(flatly_1.flat, 5)));
-      help('Ω__36', GUY.trm.truth(types.isa(flatly_1.plain, 5)));
+      help('Ω__33', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      help('Ω__34', GUY.trm.truth(types.isa(std.odd, 6)));
+      help('Ω__35', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__36', GUY.trm.truth(types.isa(std.even, 5)));
+      help('Ω__37', GUY.trm.truth(types.isa(std.strange, 6)));
+      help('Ω__38', GUY.trm.truth(types.isa(std.weird, 6)));
+      help('Ω__39', GUY.trm.truth(types.isa(std.abnormal, 6)));
+      help('Ω__40', GUY.trm.truth(types.isa(flatly_1.evenly, 5)));
+      help('Ω__41', GUY.trm.truth(types.isa(flatly_1.flat, 5)));
+      help('Ω__42', GUY.trm.truth(types.isa(flatly_1.plain, 5)));
+      help('Ω__43', GUY.trm.truth(types.isa(flatly_2.flat, 5)));
+      help('Ω__44', GUY.trm.truth(types.isa(flatly_2.evenly, 5)));
+      help('Ω__45', GUY.trm.truth(types.isa(flatly_2.plain, 5)));
       //.........................................................................................................
-      // help 'Ω__37', GUY.trm.truth     types.isa       std.cardinal, 6
-      // help 'Ω__38', GUY.trm.truth     types.isa       std.cardinal, 0
-      // help 'Ω__39', GUY.trm.truth     types.isa       std.cardinal, -1
+      // help 'Ω__46', GUY.trm.truth     types.isa       std.cardinal, 6
+      // help 'Ω__47', GUY.trm.truth     types.isa       std.cardinal, 0
+      // help 'Ω__48', GUY.trm.truth     types.isa       std.cardinal, -1
       // #.........................................................................................................
-      help('Ω__40', (function() {
+      help('Ω__49', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__41', e.message);
+          return warn('Ω__50', e.message);
         }
       })());
-      return help('Ω__42', (function() {
+      return help('Ω__51', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__43', e.message);
+          return warn('Ω__52', e.message);
         }
       })());
     })();
   }
 
-  // info 'Ω__44', std.weird
-// info 'Ω__45', std.weird.isa
-// info 'Ω__46', std.weird.isa.toString()
+  // info 'Ω__53', std.weird
+// info 'Ω__54', std.weird.isa
+// info 'Ω__55', std.weird.isa.toString()
 
 }).call(this);
 
