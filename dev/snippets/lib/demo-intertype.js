@@ -22,7 +22,7 @@
 
   //###########################################################################################################
   require_intertype = function() {
-    var $isa, Type, Types, Typespace, flatly, std;
+    var $isa, Type, Types, Typespace, flatly_1, flatly_2, std;
     //===========================================================================================================
     $isa = {
       text: function(x) {
@@ -243,7 +243,16 @@
     //   template:
     //     q:    0
     //     u:    'u'
-    flatly = new Typespace({
+
+    //===========================================================================================================
+    flatly_1 = new Typespace({
+      evenly: 'flat',
+      flat: function(x, t) {
+        return t.isa(std.even, x);
+      },
+      plain: 'evenly'
+    });
+    flatly_2 = new Typespace({
       evenly: 'flat',
       flat: std.even,
       plain: 'evenly'
@@ -266,7 +275,7 @@
       Type,
       Typespace,
       std,
-      flatly,
+      flatly_1,
       types: new Types()
     };
   };
@@ -274,10 +283,10 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var e, flatly, std, types;
-      ({types, flatly, std} = require_intertype());
+      var e, flatly_1, std, types;
+      ({types, flatly_1, std} = require_intertype());
       help('Ω__16', std);
-      help('Ω__17', flatly);
+      help('Ω__17', flatly_1);
       //.........................................................................................................
       help('Ω__18', GUY.trm.truth(types.isa(std.integer, 5)));
       help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
@@ -285,9 +294,9 @@
       help('Ω__21', GUY.trm.truth(types.isa(std.strange, 5)));
       help('Ω__22', GUY.trm.truth(types.isa(std.weird, 5)));
       help('Ω__23', GUY.trm.truth(types.isa(std.abnormal, 5)));
-      // help 'Ω__24', GUY.trm.truth     types.isa       flatly.flat,    8
-      // help 'Ω__25', GUY.trm.truth     types.isa       flatly.evenly,  8
-      // help 'Ω__26', GUY.trm.truth     types.isa       flatly.plain,   8
+      help('Ω__24', GUY.trm.truth(types.isa(flatly_1.flat, 8)));
+      help('Ω__25', GUY.trm.truth(types.isa(flatly_1.evenly, 8)));
+      help('Ω__26', GUY.trm.truth(types.isa(flatly_1.plain, 8)));
       //.........................................................................................................
       help('Ω__27', GUY.trm.truth(types.isa(std.integer, 5.3)));
       help('Ω__28', GUY.trm.truth(types.isa(std.odd, 6)));
@@ -296,9 +305,9 @@
       help('Ω__31', GUY.trm.truth(types.isa(std.strange, 6)));
       help('Ω__32', GUY.trm.truth(types.isa(std.weird, 6)));
       help('Ω__33', GUY.trm.truth(types.isa(std.abnormal, 6)));
-      // help 'Ω__34', GUY.trm.truth     types.isa       flatly.evenly,  5
-      // help 'Ω__35', GUY.trm.truth     types.isa       flatly.flat,    5
-      // help 'Ω__36', GUY.trm.truth     types.isa       flatly.plain,   5
+      help('Ω__34', GUY.trm.truth(types.isa(flatly_1.evenly, 5)));
+      help('Ω__35', GUY.trm.truth(types.isa(flatly_1.flat, 5)));
+      help('Ω__36', GUY.trm.truth(types.isa(flatly_1.plain, 5)));
       //.........................................................................................................
       // help 'Ω__37', GUY.trm.truth     types.isa       std.cardinal, 6
       // help 'Ω__38', GUY.trm.truth     types.isa       std.cardinal, 0

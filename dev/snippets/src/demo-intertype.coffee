@@ -186,7 +186,13 @@ require_intertype = ->
     #     q:    0
     #     u:    'u'
 
-  flatly = new Typespace
+  #===========================================================================================================
+  flatly_1 = new Typespace
+    evenly:       'flat'
+    flat:         ( x, t ) -> t.isa std.even, x
+    plain:        'evenly'
+
+  flatly_2 = new Typespace
     evenly:       'flat'
     flat:         std.even
     plain:        'evenly'
@@ -205,37 +211,37 @@ require_intertype = ->
 
 
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  return { Types, Type, Typespace, std, flatly, types: ( new Types() ), }
+  return { Types, Type, Typespace, std, flatly_1, types: ( new Types() ), }
 
 
 #===========================================================================================================
 if module is require.main then await do =>
   { types
-    flatly
+    flatly_1
     std             } = require_intertype()
   help 'Ω__16', std
-  help 'Ω__17', flatly
+  help 'Ω__17', flatly_1
   #.........................................................................................................
-  help 'Ω__18', GUY.trm.truth     types.isa       std.integer,    5
-  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,        5
-  help 'Ω__20', GUY.trm.truth     types.isa       std.even,       6
-  help 'Ω__21', GUY.trm.truth     types.isa       std.strange,    5
-  help 'Ω__22', GUY.trm.truth     types.isa       std.weird,      5
-  help 'Ω__23', GUY.trm.truth     types.isa       std.abnormal,   5
-  # help 'Ω__24', GUY.trm.truth     types.isa       flatly.flat,    8
-  # help 'Ω__25', GUY.trm.truth     types.isa       flatly.evenly,  8
-  # help 'Ω__26', GUY.trm.truth     types.isa       flatly.plain,   8
+  help 'Ω__18', GUY.trm.truth     types.isa       std.integer,      5
+  help 'Ω__19', GUY.trm.truth     types.isa       std.odd,          5
+  help 'Ω__20', GUY.trm.truth     types.isa       std.even,         6
+  help 'Ω__21', GUY.trm.truth     types.isa       std.strange,      5
+  help 'Ω__22', GUY.trm.truth     types.isa       std.weird,        5
+  help 'Ω__23', GUY.trm.truth     types.isa       std.abnormal,     5
+  help 'Ω__24', GUY.trm.truth     types.isa       flatly_1.flat,    8
+  help 'Ω__25', GUY.trm.truth     types.isa       flatly_1.evenly,  8
+  help 'Ω__26', GUY.trm.truth     types.isa       flatly_1.plain,   8
   #.........................................................................................................
-  help 'Ω__27', GUY.trm.truth     types.isa       std.integer,    5.3
-  help 'Ω__28', GUY.trm.truth     types.isa       std.odd,        6
-  help 'Ω__29', GUY.trm.truth     types.isa       std.odd,        5.3
-  help 'Ω__30', GUY.trm.truth     types.isa       std.even,       5
-  help 'Ω__31', GUY.trm.truth     types.isa       std.strange,    6
-  help 'Ω__32', GUY.trm.truth     types.isa       std.weird,      6
-  help 'Ω__33', GUY.trm.truth     types.isa       std.abnormal,   6
-  # help 'Ω__34', GUY.trm.truth     types.isa       flatly.evenly,  5
-  # help 'Ω__35', GUY.trm.truth     types.isa       flatly.flat,    5
-  # help 'Ω__36', GUY.trm.truth     types.isa       flatly.plain,   5
+  help 'Ω__27', GUY.trm.truth     types.isa       std.integer,      5.3
+  help 'Ω__28', GUY.trm.truth     types.isa       std.odd,          6
+  help 'Ω__29', GUY.trm.truth     types.isa       std.odd,          5.3
+  help 'Ω__30', GUY.trm.truth     types.isa       std.even,         5
+  help 'Ω__31', GUY.trm.truth     types.isa       std.strange,      6
+  help 'Ω__32', GUY.trm.truth     types.isa       std.weird,        6
+  help 'Ω__33', GUY.trm.truth     types.isa       std.abnormal,     6
+  help 'Ω__34', GUY.trm.truth     types.isa       flatly_1.evenly,  5
+  help 'Ω__35', GUY.trm.truth     types.isa       flatly_1.flat,    5
+  help 'Ω__36', GUY.trm.truth     types.isa       flatly_1.plain,   5
   #.........................................................................................................
   # help 'Ω__37', GUY.trm.truth     types.isa       std.cardinal, 6
   # help 'Ω__38', GUY.trm.truth     types.isa       std.cardinal, 0
