@@ -1,7 +1,6 @@
 (async function() {
   'use strict';
   var GUY, Ltsort, WEBGUY, alert, bold, debug, echo, help, hide, info, inspect, log, misfit, nameit, plain, praise, require_intertype, reverse, rpr, urge, warn, whisper,
-    splice = [].splice,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   //===========================================================================================================
@@ -23,7 +22,7 @@
 
   //###########################################################################################################
   require_intertype = function() {
-    var $isa, Type, Types, Typespace, find_nonuniques, find_owner, flatly_1, flatly_2, std;
+    var $isa, Type, Types, Typespace, flatly, std;
     //===========================================================================================================
     $isa = {
       text: function(x) {
@@ -33,22 +32,6 @@
         return (Object.prototype.toString.call(x)) === '[object Function]';
       }
     };
-    //===========================================================================================================
-    find_owner = function(owners, name, fallback = misfit) {
-      var i, len, owner;
-      for (i = 0, len = owners.length; i < len; i++) {
-        owner = owners[i];
-        if (Reflect.has(owner, name)) {
-          return owner;
-        }
-      }
-      if (fallback !== misfit) {
-        return fallback;
-      }
-      throw new Error(`Ω___1 unable to find owner of ${rpr(name)}`);
-    };
-    //-----------------------------------------------------------------------------------------------------------
-    find_nonuniques = function(values) {};
     //===========================================================================================================
     Types = class Types {
       //---------------------------------------------------------------------------------------------------------
@@ -67,10 +50,10 @@
         var R, ref;
         /* TAINT use proper validation */
         if (!(type instanceof Type)) {
-          throw new Error(`Ω___2 expected an instance of \`Type\`, got a ${this.type_of(R)}`);
+          throw new Error(`Ω___1 expected an instance of \`Type\`, got a ${this.type_of(R)}`);
         }
         if ((ref = (R = type.isa.call(type.$typespace, x, this))) !== true && ref !== false) {
-          throw new Error(`Ω___3 expected \`true\` or \`false\`, got a ${this.type_of(R)}`);
+          throw new Error(`Ω___2 expected \`true\` or \`false\`, got a ${this.type_of(R)}`);
         }
         return R;
       }
@@ -85,7 +68,7 @@
         if (this.isa(type, x)) {
           return x;
         }
-        throw new Error(`Ω___4 expected a ${type.$typename}, got a ${this.type_of(x)}`);
+        throw new Error(`Ω___3 expected a ${type.$typename}, got a ${this.type_of(x)}`);
       }
 
       //---------------------------------------------------------------------------------------------------------
@@ -93,7 +76,7 @@
 
     };
     // unless ( method = type.parse )?
-    //   throw new Error "Ω___5 expected a , got #{rpr R}"
+    //   throw new Error "Ω___4 expected a , got #{rpr R}"
 
       //---------------------------------------------------------------------------------------------------------
     // evaluate: ( ??? ) ->
@@ -106,10 +89,11 @@
         var key, value;
         /* NOTE not doing anything for the time being */
         /* TAINT should still implement string-valued `isa` */
-        debug('Ω___6', rpr(typespace));
-        debug('Ω___7', rpr(typename));
-        debug('Ω___8', rpr(declaration));
-        hide(this, '$typename', typename);
+        debug('Ω___5', rpr(typespace));
+        debug('Ω___6', rpr(typename));
+        debug('Ω___7', rpr(declaration));
+        this.$typename = typename;
+        // hide @, '$typename',  typename
         hide(this, '$typespace', typespace);
         /* TAINT check for accidental overwrites */
         //.......................................................................................................
@@ -118,12 +102,12 @@
           (() => {
             /* TAINT try to move this check to validation step */
             if (declaration.isa != null) {
-              throw new Error("Ω___9 must have exactly one of `isa` or `fields`, not both");
+              throw new Error("Ω___8 must have exactly one of `isa` or `fields`, not both");
             }
             // for field_name, field_declaration of declaration.fields
             //   field = new Type typespace, field_name, field_declaration
-            //   debug 'Ω__10', { typename, field_name, field_declaration, }, field.$typename, field.isa
-            return debug('Ω__11', new Typespace(declaration.fields));
+            //   debug 'Ω___9', { typename, field_name, field_declaration, }, field.$typename, field.isa
+            return debug('Ω__10', new Typespace(declaration.fields));
           })();
         }
 //.......................................................................................................
@@ -141,29 +125,24 @@
     //===========================================================================================================
     Typespace = class Typespace {
       //---------------------------------------------------------------------------------------------------------
-      constructor(...parents) {
-        var declaration, deref, owner, ref, refs, typename, typeref, typespace_cfg;
-        ref = parents, [...parents] = ref, [typespace_cfg] = splice.call(parents, -1);
-        refs = this._derefence_typenames(parents, typespace_cfg);
-        info('Ω__12', Object.keys(refs));
-        for (typename in refs) {
-          owner = refs[typename];
-          help('Ω__13', typename, GUY.trm.truth(owner === typespace_cfg));
-        }
-        for (typename in refs) {
-          owner = refs[typename];
-          declaration = typespace_cfg[typename];
-          urge('Ω__14', typename, owner.constructor.name, rpr(declaration));
+      constructor(typespace_cfg) {
+        var declaration, deref, i, len, typename, typenames, typeref;
+        typenames = this._amend_and_sort_typenames(typespace_cfg);
+        info('Ω__11', typenames);
+        for (i = 0, len = typenames.length; i < len; i++) {
+          typename = typenames[i];
+          if ((declaration = typespace_cfg[typename]) == null) {
+            throw new Error(`Ω__12 unknown typename ${rpr(typename)}`);
+          }
+          urge('Ω__13', {typename, declaration});
           switch (true) {
             case $isa.text(declaration):
               typeref = declaration;
-              if (owner === typespace_cfg) {
-                owner = this;
-              }
-              if (!((deref = owner[typeref]) instanceof Type)) {
+              if (!((deref = this[typeref]) instanceof Type)) {
                 /* TAINT should this error occur, its message is probably not meaningful to user */
-                throw new Error(`Ω__15 expected type reference ${rpr(typename)} → ${rpr(typeref)} to dereference to a \`Type\`, got ${rpr(deref)} instead`);
+                throw new Error(`Ω__14 expected type reference ${rpr(typename)} → ${rpr(typeref)} to dereference to a \`Type\`, got ${rpr(deref)} instead`);
               }
+              debug('Ω__15', {typename, typeref, deref});
               declaration = ((deref) => {
                 return {
                   isa: (function(x, t) {
@@ -206,22 +185,6 @@
         return g.linearize({
           groups: false
         });
-      }
-
-      //---------------------------------------------------------------------------------------------------------
-      _derefence_typenames(parents, typespace_cfg) {
-        var R, i, len, owner, owners, typename, typenames;
-        typenames = this._amend_and_sort_typenames(typespace_cfg);
-        R = {};
-        owners = [...parents, typespace_cfg].reverse();
-        for (i = 0, len = typenames.length; i < len; i++) {
-          typename = typenames[i];
-          if ((owner = find_owner(owners, typename, null)) == null) {
-            throw new Error(`Ω__16 unable to dereference typename ${rpr(typename)}`);
-          }
-          R[typename] = owner;
-        }
-        return R;
       }
 
     };
@@ -280,29 +243,14 @@
     //   template:
     //     q:    0
     //     u:    'u'
-    flatly_1 = new Typespace(std, { // std,
+    flatly = new Typespace({
       evenly: 'flat',
       flat: std.even,
-      plain: 'evenly'
-    });
-    flatly_2 = new Typespace({
-      evenly: 'flat',
-      flat: function(x, t) {
-        return t.isa(std.even, x);
-      },
       plain: 'evenly'
     });
     return {
       // extras = new Typespace std,
       //   nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
-
-      // # quantity = new Typespace std, # extras,
-      // quantity = new Typespace extras,
-      //   q:              'float'
-      //   u:              'nonemptytext'
-      //   # template:
-      //   #   q:    0
-      //   #   u:    'u'
 
       // quantity = new Typespace std,
       //   nonemptytext:   ( x, t ) -> ( t.isa @text, x ) and x.length > 0
@@ -318,6 +266,7 @@
       Type,
       Typespace,
       std,
+      flatly,
       types: new Types()
     };
   };
@@ -325,9 +274,10 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var e, std, types;
-      ({types, std} = require_intertype());
-      help('Ω__17', std);
+      var e, flatly, std, types;
+      ({types, flatly, std} = require_intertype());
+      help('Ω__16', std);
+      help('Ω__17', flatly);
       //.........................................................................................................
       help('Ω__18', GUY.trm.truth(types.isa(std.integer, 5)));
       help('Ω__19', GUY.trm.truth(types.isa(std.odd, 5)));
@@ -335,41 +285,47 @@
       help('Ω__21', GUY.trm.truth(types.isa(std.strange, 5)));
       help('Ω__22', GUY.trm.truth(types.isa(std.weird, 5)));
       help('Ω__23', GUY.trm.truth(types.isa(std.abnormal, 5)));
+      // help 'Ω__24', GUY.trm.truth     types.isa       flatly.flat,    8
+      // help 'Ω__25', GUY.trm.truth     types.isa       flatly.evenly,  8
+      // help 'Ω__26', GUY.trm.truth     types.isa       flatly.plain,   8
       //.........................................................................................................
-      help('Ω__24', GUY.trm.truth(types.isa(std.integer, 5.3)));
-      help('Ω__25', GUY.trm.truth(types.isa(std.odd, 6)));
-      help('Ω__26', GUY.trm.truth(types.isa(std.odd, 5.3)));
-      help('Ω__27', GUY.trm.truth(types.isa(std.even, 5)));
-      help('Ω__28', GUY.trm.truth(types.isa(std.strange, 6)));
-      help('Ω__29', GUY.trm.truth(types.isa(std.weird, 6)));
-      help('Ω__30', GUY.trm.truth(types.isa(std.abnormal, 6)));
+      help('Ω__27', GUY.trm.truth(types.isa(std.integer, 5.3)));
+      help('Ω__28', GUY.trm.truth(types.isa(std.odd, 6)));
+      help('Ω__29', GUY.trm.truth(types.isa(std.odd, 5.3)));
+      help('Ω__30', GUY.trm.truth(types.isa(std.even, 5)));
+      help('Ω__31', GUY.trm.truth(types.isa(std.strange, 6)));
+      help('Ω__32', GUY.trm.truth(types.isa(std.weird, 6)));
+      help('Ω__33', GUY.trm.truth(types.isa(std.abnormal, 6)));
+      // help 'Ω__34', GUY.trm.truth     types.isa       flatly.evenly,  5
+      // help 'Ω__35', GUY.trm.truth     types.isa       flatly.flat,    5
+      // help 'Ω__36', GUY.trm.truth     types.isa       flatly.plain,   5
       //.........................................................................................................
-      // help 'Ω__31', GUY.trm.truth     types.isa       std.cardinal, 6
-      // help 'Ω__32', GUY.trm.truth     types.isa       std.cardinal, 0
-      // help 'Ω__33', GUY.trm.truth     types.isa       std.cardinal, -1
+      // help 'Ω__37', GUY.trm.truth     types.isa       std.cardinal, 6
+      // help 'Ω__38', GUY.trm.truth     types.isa       std.cardinal, 0
+      // help 'Ω__39', GUY.trm.truth     types.isa       std.cardinal, -1
       // #.........................................................................................................
-      help('Ω__34', (function() {
+      help('Ω__40', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__35', e.message);
+          return warn('Ω__41', e.message);
         }
       })());
-      return help('Ω__36', (function() {
+      return help('Ω__42', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__37', e.message);
+          return warn('Ω__43', e.message);
         }
       })());
     })();
   }
 
-  // info 'Ω__38', std.weird
-// info 'Ω__39', std.weird.isa
-// info 'Ω__40', std.weird.isa.toString()
+  // info 'Ω__44', std.weird
+// info 'Ω__45', std.weird.isa
+// info 'Ω__46', std.weird.isa.toString()
 
 }).call(this);
 
