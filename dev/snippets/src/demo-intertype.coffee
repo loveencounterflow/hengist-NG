@@ -1,5 +1,5 @@
 
-
+throw new Error "moved to InterType proper"
 
 'use strict'
 

@@ -1,7 +1,10 @@
 (async function() {
-  'use strict';
   var GUY, alert, bold, debug, echo, help, hide, info, inspect, log, nameit, plain, praise, require_intertype, reverse, rpr, urge, warn, whisper,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
+
+  throw new Error("moved to InterType proper");
+
+  'use strict';
 
   //===========================================================================================================
   GUY = require('guy');
