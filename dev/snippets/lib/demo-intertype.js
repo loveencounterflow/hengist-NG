@@ -474,6 +474,34 @@
             }
           ],
           null
+        ],
+        [
+          [
+            std.employee,
+            {
+              address: {
+                postcode: 'SE36',
+                city: 'London'
+              },
+              name: {}
+            }
+          ],
+          null
+        ],
+        [
+          [
+            std.employee,
+            {
+              address: {
+                postcode: 'SE36',
+                city: 'London'
+              },
+              name: {
+                firstname: 'Bob'
+              }
+            }
+          ],
+          null
         ]
       ];
       for (i = 0, len = probes_and_matchers.length; i < len; i++) {
@@ -482,7 +510,7 @@
         records = types.evaluate(type, value);
         for (j = 0, len1 = records.length; j < len1; j++) {
           record = records[j];
-          urge('', 'Ω__54', record.stack.padEnd(45), (rpr(record.value)).padEnd(30), GUY.trm.truth(record.verdict));
+          urge('', 'Ω__54', record.stack.padEnd(55), (rpr(record.value)).padEnd(35), GUY.trm.truth(record.verdict));
         }
       }
       //.........................................................................................................

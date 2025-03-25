@@ -310,12 +310,14 @@ if module is require.main then await do =>
     [ [ std.quantity,     { q: 123.456, u: null, }  ], null, ]
     [ [ std.quantity,     { q: 'nan', u: 'm', }     ], null, ]
     [ [ std.employee,     { address: { postcode: 'SE36', city: 'London', }, name: null, }     ], null, ]
+    [ [ std.employee,     { address: { postcode: 'SE36', city: 'London', }, name: {}, }     ], null, ]
+    [ [ std.employee,     { address: { postcode: 'SE36', city: 'London', }, name: { firstname: 'Bob', }, }     ], null, ]
     ]
   for [ [ type, value, ], matcher, ] in probes_and_matchers
     info 'Ω__53', type.$typename, rpr value
     records = types.evaluate type, value
     for record in records
-      urge '', 'Ω__54', ( record.stack.padEnd 45 ), ( ( rpr record.value ).padEnd 30 ), GUY.trm.truth record.verdict
+      urge '', 'Ω__54', ( record.stack.padEnd 55 ), ( ( rpr record.value ).padEnd 35 ), GUY.trm.truth record.verdict
   #.........................................................................................................
   echo()
   # help 'Ω__55', GUY.trm.truth     types.isa       std.cardinal, 6
