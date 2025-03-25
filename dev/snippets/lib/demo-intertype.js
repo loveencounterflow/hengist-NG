@@ -65,8 +65,9 @@
         hide(this, 'create', this.create.bind(this));
         hide(this, 'type_of', this.type_of.bind(this));
         hide(this, 'memo', new Map());
-        hide(this, 'journal', null);
-        hide(this, 'stack', null);
+        hide(this, '_recording', false);
+        hide(this, '_journal', null);
+        hide(this, '_stack', null);
         return void 0;
       }
 
@@ -74,23 +75,22 @@
       isa(type, x) {
         var R, entry, ref, stack;
         /* TAINT use proper validation */
-        // debug 'Ω___1', ( type.$typename.padEnd 20 ), rpr x
         if (!(type instanceof Type)) {
           throw new Error(`Ω___2 expected an instance of \`Type\`, got a ${$type_of(R)}`);
         }
         //.......................................................................................................
-        if (this.journal != null) {
-          this.stack.push(type.$typename);
-          this.journal.push(entry = {});
+        if (this._recording) {
+          this._stack.push(type.$typename);
+          this._journal.push(entry = {});
         }
         //.......................................................................................................
         if ((ref = (R = type.isa.call(type, x, this))) !== true && ref !== false) {
           throw new Error(`Ω___3 expected \`true\` or \`false\`, got a ${$type_of(R)}`);
         }
         //.......................................................................................................
-        if (this.journal != null) {
-          stack = this.stack.join('.');
-          this.stack.pop();
+        if (this._recording) {
+          stack = this._stack.join('.');
+          this._stack.pop();
           Object.assign(entry, {
             type: type.$typename,
             stack,
@@ -123,16 +123,16 @@
       //---------------------------------------------------------------------------------------------------------
       evaluate(type, x) {
         var R;
-        // unless @journal?
-        this.journal = [];
-        this.stack = [];
+        this._recording = true;
+        this._journal = [];
+        this._stack = [];
         //.......................................................................................................
         this.isa(type, x);
         //.......................................................................................................
-        // R         = @journal.reverse()
-        R = this.journal;
-        this.journal = null;
-        this.stack = null;
+        R = this._journal;
+        this._recording = false;
+        this._journal = null;
+        this._stack = null;
         return R;
       }
 
@@ -443,7 +443,6 @@
         [[type, value], matcher] = probes_and_matchers[i];
         info('Ω__53', type.$typename, rpr(value));
         records = types.evaluate(type, value);
-// .toReversed()
         for (j = 0, len1 = records.length; j < len1; j++) {
           record = records[j];
           urge('', 'Ω__54', record.stack.padEnd(45), (rpr(record.value)).padEnd(30), GUY.trm.truth(record.verdict));

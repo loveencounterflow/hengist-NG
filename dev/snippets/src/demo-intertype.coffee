@@ -50,32 +50,32 @@ require_intertype = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
-      hide @, 'isa',      @isa.bind       @
-      hide @, 'validate', @validate.bind  @
-      hide @, 'create',   @create.bind    @
-      hide @, 'type_of',  @type_of.bind   @
-      hide @, 'memo',     new Map()
-      hide @, 'journal',  null
-      hide @, 'stack',    null
+      hide @, 'isa',        @isa.bind       @
+      hide @, 'validate',   @validate.bind  @
+      hide @, 'create',     @create.bind    @
+      hide @, 'type_of',    @type_of.bind   @
+      hide @, 'memo',       new Map()
+      hide @, '_recording', false
+      hide @, '_journal',   null
+      hide @, '_stack',     null
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
       ### TAINT use proper validation ###
-      # debug 'Ω___1', ( type.$typename.padEnd 20 ), rpr x
       unless type instanceof Type
         throw new Error "Ω___2 expected an instance of `Type`, got a #{$type_of R}"
       #.......................................................................................................
-      if @journal?
-        @stack.push type.$typename
-        @journal.push entry = {}
+      if @_recording
+        @_stack.push type.$typename
+        @_journal.push entry = {}
       #.......................................................................................................
       unless ( R = type.isa.call type, x, @ ) in [ true, false, ]
         throw new Error "Ω___3 expected `true` or `false`, got a #{$type_of R}"
       #.......................................................................................................
-      if @journal?
-        stack = @stack.join '.'
-        @stack.pop()
+      if @_recording
+        stack = @_stack.join '.'
+        @_stack.pop()
         Object.assign entry, { type: type.$typename, stack, value: x, verdict: R, }
       #.......................................................................................................
       return R
@@ -94,16 +94,16 @@ require_intertype = ->
 
     #---------------------------------------------------------------------------------------------------------
     evaluate: ( type, x ) ->
-      # unless @journal?
-      @journal  = []
-      @stack    = []
+      @_recording = true
+      @_journal   = []
+      @_stack     = []
       #.......................................................................................................
       @isa type, x
       #.......................................................................................................
-      # R         = @journal.reverse()
-      R         = @journal
-      @journal  = null
-      @stack    = null
+      R           = @_journal
+      @_recording = false
+      @_journal   = null
+      @_stack     = null
       return R
 
   #===========================================================================================================
@@ -298,7 +298,7 @@ if module is require.main then await do =>
   for [ [ type, value, ], matcher, ] in probes_and_matchers
     info 'Ω__53', type.$typename, rpr value
     records = types.evaluate type, value
-    for record in records # .toReversed()
+    for record in records
       urge '', 'Ω__54', ( record.stack.padEnd 45 ), ( ( rpr record.value ).padEnd 30 ), GUY.trm.truth record.verdict
   #.........................................................................................................
   echo()
