@@ -118,11 +118,40 @@
         if (declaration.fields != null) {
           this._compile_fields(typespace, typename, declaration);
         }
+        //.......................................................................................................
+        switch (true) {
+          //.....................................................................................................
+          case $isa.text(declaration):
+            declaration = ((typeref) => {
+              return {
+                isa: (function(x, t) {
+                  return t.isa(this.$typespace[typeref], x);
+                })
+              };
+            })(declaration);
+            break;
+          //.....................................................................................................
+          case $isa.function(declaration):
+            declaration = {
+              isa: declaration
+            };
+            break;
+          //.....................................................................................................
+          case declaration instanceof Type:
+            null;
+            break;
+          case declaration instanceof Object:
+            null;
+            break;
+          default:
+            //.....................................................................................................
+            throw new Error(`Ω___5 expected a typename, a function or a type as declaration, got a ${$type_of(declaration)}`);
+        }
 //.......................................................................................................
 /* TAINT this is defective w/out proper validation */
         for (key in declaration) {
           value = declaration[key];
-          debug('Ω___5', `${typename}.${key}: ${rpr(value)}`);
+          debug('Ω___6', `${typename}.${key}: ${rpr(value)}`);
           if (key === 'isa') { // check that value is function?
             nameit(typename, value);
           }
@@ -134,20 +163,20 @@
       //---------------------------------------------------------------------------------------------------------
       _compile_fields(typespace, typename, declaration) {
         var field_declaration, field_name, ref;
-        debug('Ω___6', {typename, declaration});
+        debug('Ω___7', {typename, declaration});
         //.......................................................................................................
         /* TAINT try to move this check to validation step */
         if (declaration.isa != null) {
-          throw new Error("Ω___7 must have exactly one of `isa` or `fields`, not both");
+          throw new Error("Ω___8 must have exactly one of `isa` or `fields`, not both");
         }
         ref = declaration.fields;
         for (field_name in ref) {
           field_declaration = ref[field_name];
           declaration.fields[field_name] = new Type(typespace, field_name, field_declaration);
         }
-        // debug 'Ω___8', { field_name, field_declaration, field, }
-        // #   debug 'Ω___9', { typename, field_name, field_declaration, }, field.$typename, field.isa
-        // debug 'Ω__10', new Typespace declaration.fields
+        // debug 'Ω___9', { field_name, field_declaration, field, }
+        // #   debug 'Ω__10', { typename, field_name, field_declaration, }, field.$typename, field.isa
+        // debug 'Ω__11', new Typespace declaration.fields
         //.......................................................................................................
         declaration.isa = this._get_fields_isa(typespace, typename, declaration);
         return null;
@@ -160,7 +189,7 @@
           ref = this.fields;
           for (field_name in ref) {
             field = ref[field_name];
-            debug('Ω__11', `${typename}.${field_name}`, field);
+            debug('Ω__12', `${typename}.${field_name}`, field);
             if (!t.isa(field, x)) {
               return false;
             }
@@ -177,37 +206,7 @@
         var declaration, typename;
         for (typename in typespace_cfg) {
           declaration = typespace_cfg[typename];
-          //.....................................................................................................
-          switch (true) {
-            //...................................................................................................
-            case $isa.text(declaration):
-              declaration = ((typeref) => {
-                return {
-                  isa: (function(x, t) {
-                    return t.isa(this.$typespace[typeref], x);
-                  })
-                };
-              })(declaration);
-              break;
-            //...................................................................................................
-            case $isa.function(declaration):
-              declaration = {
-                isa: declaration
-              };
-              break;
-            //...................................................................................................
-            case declaration instanceof Type:
-              null;
-              break;
-            case declaration instanceof Object:
-              null;
-              break;
-            default:
-              //...................................................................................................
-              throw new Error(`Ω__12 expected a typename, a function or a type as declaration, got a ${$type_of(declaration)}`);
-          }
           if (!(declaration instanceof Type)) {
-            //.....................................................................................................
             declaration = new Type(this, typename, declaration);
           }
           this[typename] = declaration;
@@ -336,9 +335,12 @@
       help('Ω__34', GUY.trm.truth(types.isa(flatly_2.evenly, 8)));
       help('Ω__35', GUY.trm.truth(types.isa(flatly_2.plain, 8)));
       help('Ω__36', GUY.trm.truth(types.isa(std.nonempty_text, 'abc')));
-      // help 'Ω__37', GUY.trm.truth     types.isa       std.quantity.fields.q,   123.456
-      // help 'Ω__38', GUY.trm.truth     types.isa       std.quantity.fields.u,   'm'
-      // help 'Ω__39', GUY.trm.truth     types.isa       std.quantity,     { q: 123.456, u: 'm', }
+      help('Ω__37', GUY.trm.truth(types.isa(std.quantity.fields.q, 123.456)));
+      help('Ω__38', GUY.trm.truth(types.isa(std.quantity.fields.u, 'm')));
+      help('Ω__39', GUY.trm.truth(types.isa(std.quantity, {
+        q: 123.456,
+        u: 'm'
+      })));
       //.........................................................................................................
       echo();
       help('Ω__40', GUY.trm.truth(types.isa(std.integer, 5.3)));
@@ -355,10 +357,16 @@
       help('Ω__51', GUY.trm.truth(types.isa(flatly_2.evenly, 5)));
       help('Ω__52', GUY.trm.truth(types.isa(flatly_2.plain, 5)));
       help('Ω__53', GUY.trm.truth(types.isa(std.nonempty_text, '')));
-      // help 'Ω__54', GUY.trm.truth     types.isa       std.quantity.fields.q,   '123.456'
-      // help 'Ω__55', GUY.trm.truth     types.isa       std.quantity.fields.u,   ''
-      // help 'Ω__56', GUY.trm.truth     types.isa       std.quantity,     { q: 123.456, u: '', }
-      // help 'Ω__57', GUY.trm.truth     types.isa       std.quantity,     { q: null, u: 'm', }
+      help('Ω__54', GUY.trm.truth(types.isa(std.quantity.fields.q, '123.456')));
+      help('Ω__55', GUY.trm.truth(types.isa(std.quantity.fields.u, '')));
+      help('Ω__56', GUY.trm.truth(types.isa(std.quantity, {
+        q: 123.456,
+        u: ''
+      })));
+      help('Ω__57', GUY.trm.truth(types.isa(std.quantity, {
+        q: null,
+        u: 'm'
+      })));
       //.........................................................................................................
       echo();
       // help 'Ω__58', GUY.trm.truth     types.isa       std.cardinal, 6

@@ -95,25 +95,39 @@ require_intertype = ->
       hide @, '$typespace', typespace
       @_compile_fields typespace, typename, declaration if declaration.fields?
       #.......................................................................................................
+      switch true
+        #.....................................................................................................
+        when $isa.text declaration
+          declaration = do ( typeref = declaration ) => { isa: ( ( x, t ) -> t.isa @$typespace[ typeref ], x ), }
+        #.....................................................................................................
+        when $isa.function declaration
+          declaration = { isa: declaration, }
+        #.....................................................................................................
+        when declaration instanceof Type    then null
+        when declaration instanceof Object  then null
+        #.....................................................................................................
+        else
+          throw new Error "Ω___5 expected a typename, a function or a type as declaration, got a #{$type_of declaration}"
+      #.......................................................................................................
       ### TAINT this is defective w/out proper validation ###
       for key, value of declaration
-        debug 'Ω___5', "#{typename}.#{key}: #{rpr value}"
+        debug 'Ω___6', "#{typename}.#{key}: #{rpr value}"
         nameit typename, value if key is 'isa' # check that value is function?
         hide @, key, value
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
     _compile_fields: ( typespace, typename, declaration ) ->
-      debug 'Ω___6', { typename, declaration, }
+      debug 'Ω___7', { typename, declaration, }
       #.......................................................................................................
       ### TAINT try to move this check to validation step ###
       if declaration.isa?
-        throw new Error "Ω___7 must have exactly one of `isa` or `fields`, not both"
+        throw new Error "Ω___8 must have exactly one of `isa` or `fields`, not both"
       for field_name, field_declaration of declaration.fields
         declaration.fields[ field_name ] = new Type typespace, field_name, field_declaration
-        # debug 'Ω___8', { field_name, field_declaration, field, }
-      # #   debug 'Ω___9', { typename, field_name, field_declaration, }, field.$typename, field.isa
-      # debug 'Ω__10', new Typespace declaration.fields
+        # debug 'Ω___9', { field_name, field_declaration, field, }
+      # #   debug 'Ω__10', { typename, field_name, field_declaration, }, field.$typename, field.isa
+      # debug 'Ω__11', new Typespace declaration.fields
       #.......................................................................................................
       declaration.isa = @_get_fields_isa typespace, typename, declaration
       return null
@@ -121,7 +135,7 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     _get_fields_isa: ( typespace, typename, declaration ) -> ( x, t ) ->
       for field_name, field of @fields
-        debug 'Ω__11', "#{typename}.#{field_name}", field
+        debug 'Ω__12', "#{typename}.#{field_name}", field
         return false unless t.isa field, x
       return true
 
@@ -131,21 +145,6 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( typespace_cfg ) ->
       for typename, declaration of typespace_cfg
-        #.....................................................................................................
-        switch true
-          #...................................................................................................
-          when $isa.text declaration
-            declaration = do ( typeref = declaration ) => { isa: ( ( x, t ) -> t.isa @$typespace[ typeref ], x ), }
-          #...................................................................................................
-          when $isa.function declaration
-            declaration = { isa: declaration, }
-          #...................................................................................................
-          when declaration instanceof Type    then null
-          when declaration instanceof Object  then null
-          #...................................................................................................
-          else
-            throw new Error "Ω__12 expected a typename, a function or a type as declaration, got a #{$type_of declaration}"
-        #.....................................................................................................
         declaration   = new Type @, typename, declaration unless declaration instanceof Type
         @[ typename ] = declaration
       return undefined
@@ -234,42 +233,42 @@ if module is require.main then await do =>
   info 'Ω__23', 'std.quantity.fields.q.isa: ', rpr std.quantity.fields.q.isa
   #.........................................................................................................
   echo()
-  help 'Ω__24', GUY.trm.truth     types.isa       std.integer,      5
-  help 'Ω__25', GUY.trm.truth     types.isa       std.odd,          5
-  help 'Ω__26', GUY.trm.truth     types.isa       std.even,         6
-  help 'Ω__27', GUY.trm.truth     types.isa       std.strange,      5
-  help 'Ω__28', GUY.trm.truth     types.isa       std.weird,        5
-  help 'Ω__29', GUY.trm.truth     types.isa       std.abnormal,     5
-  help 'Ω__30', GUY.trm.truth     types.isa       flatly_1.flat,    8
-  help 'Ω__31', GUY.trm.truth     types.isa       flatly_1.evenly,  8
-  help 'Ω__32', GUY.trm.truth     types.isa       flatly_1.plain,   8
-  help 'Ω__33', GUY.trm.truth     types.isa       flatly_2.flat,    8
-  help 'Ω__34', GUY.trm.truth     types.isa       flatly_2.evenly,  8
-  help 'Ω__35', GUY.trm.truth     types.isa       flatly_2.plain,   8
-  help 'Ω__36', GUY.trm.truth     types.isa       std.nonempty_text, 'abc'
-  # help 'Ω__37', GUY.trm.truth     types.isa       std.quantity.fields.q,   123.456
-  # help 'Ω__38', GUY.trm.truth     types.isa       std.quantity.fields.u,   'm'
-  # help 'Ω__39', GUY.trm.truth     types.isa       std.quantity,     { q: 123.456, u: 'm', }
+  help 'Ω__24', GUY.trm.truth     types.isa       std.integer,              5
+  help 'Ω__25', GUY.trm.truth     types.isa       std.odd,                  5
+  help 'Ω__26', GUY.trm.truth     types.isa       std.even,                 6
+  help 'Ω__27', GUY.trm.truth     types.isa       std.strange,              5
+  help 'Ω__28', GUY.trm.truth     types.isa       std.weird,                5
+  help 'Ω__29', GUY.trm.truth     types.isa       std.abnormal,             5
+  help 'Ω__30', GUY.trm.truth     types.isa       flatly_1.flat,            8
+  help 'Ω__31', GUY.trm.truth     types.isa       flatly_1.evenly,          8
+  help 'Ω__32', GUY.trm.truth     types.isa       flatly_1.plain,           8
+  help 'Ω__33', GUY.trm.truth     types.isa       flatly_2.flat,            8
+  help 'Ω__34', GUY.trm.truth     types.isa       flatly_2.evenly,          8
+  help 'Ω__35', GUY.trm.truth     types.isa       flatly_2.plain,           8
+  help 'Ω__36', GUY.trm.truth     types.isa       std.nonempty_text,        'abc'
+  help 'Ω__37', GUY.trm.truth     types.isa       std.quantity.fields.q,    123.456
+  help 'Ω__38', GUY.trm.truth     types.isa       std.quantity.fields.u,    'm'
+  help 'Ω__39', GUY.trm.truth     types.isa       std.quantity,             { q: 123.456, u: 'm', }
   #.........................................................................................................
   echo()
-  help 'Ω__40', GUY.trm.truth     types.isa       std.integer,      5.3
-  help 'Ω__41', GUY.trm.truth     types.isa       std.odd,          6
-  help 'Ω__42', GUY.trm.truth     types.isa       std.odd,          5.3
-  help 'Ω__43', GUY.trm.truth     types.isa       std.even,         5
-  help 'Ω__44', GUY.trm.truth     types.isa       std.strange,      6
-  help 'Ω__45', GUY.trm.truth     types.isa       std.weird,        6
-  help 'Ω__46', GUY.trm.truth     types.isa       std.abnormal,     6
-  help 'Ω__47', GUY.trm.truth     types.isa       flatly_1.evenly,  5
-  help 'Ω__48', GUY.trm.truth     types.isa       flatly_1.flat,    5
-  help 'Ω__49', GUY.trm.truth     types.isa       flatly_1.plain,   5
-  help 'Ω__50', GUY.trm.truth     types.isa       flatly_2.flat,    5
-  help 'Ω__51', GUY.trm.truth     types.isa       flatly_2.evenly,  5
-  help 'Ω__52', GUY.trm.truth     types.isa       flatly_2.plain,   5
-  help 'Ω__53', GUY.trm.truth     types.isa       std.nonempty_text, ''
-  # help 'Ω__54', GUY.trm.truth     types.isa       std.quantity.fields.q,   '123.456'
-  # help 'Ω__55', GUY.trm.truth     types.isa       std.quantity.fields.u,   ''
-  # help 'Ω__56', GUY.trm.truth     types.isa       std.quantity,     { q: 123.456, u: '', }
-  # help 'Ω__57', GUY.trm.truth     types.isa       std.quantity,     { q: null, u: 'm', }
+  help 'Ω__40', GUY.trm.truth     types.isa       std.integer,              5.3
+  help 'Ω__41', GUY.trm.truth     types.isa       std.odd,                  6
+  help 'Ω__42', GUY.trm.truth     types.isa       std.odd,                  5.3
+  help 'Ω__43', GUY.trm.truth     types.isa       std.even,                 5
+  help 'Ω__44', GUY.trm.truth     types.isa       std.strange,              6
+  help 'Ω__45', GUY.trm.truth     types.isa       std.weird,                6
+  help 'Ω__46', GUY.trm.truth     types.isa       std.abnormal,             6
+  help 'Ω__47', GUY.trm.truth     types.isa       flatly_1.evenly,          5
+  help 'Ω__48', GUY.trm.truth     types.isa       flatly_1.flat,            5
+  help 'Ω__49', GUY.trm.truth     types.isa       flatly_1.plain,           5
+  help 'Ω__50', GUY.trm.truth     types.isa       flatly_2.flat,            5
+  help 'Ω__51', GUY.trm.truth     types.isa       flatly_2.evenly,          5
+  help 'Ω__52', GUY.trm.truth     types.isa       flatly_2.plain,           5
+  help 'Ω__53', GUY.trm.truth     types.isa       std.nonempty_text,        ''
+  help 'Ω__54', GUY.trm.truth     types.isa       std.quantity.fields.q,    '123.456'
+  help 'Ω__55', GUY.trm.truth     types.isa       std.quantity.fields.u,    ''
+  help 'Ω__56', GUY.trm.truth     types.isa       std.quantity,             { q: 123.456, u: '', }
+  help 'Ω__57', GUY.trm.truth     types.isa       std.quantity,             { q: null, u: 'm', }
   #.........................................................................................................
   echo()
   # help 'Ω__58', GUY.trm.truth     types.isa       std.cardinal, 6
