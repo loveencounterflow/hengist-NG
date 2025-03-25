@@ -62,6 +62,30 @@
     re-implement all the work that is expected of `parse 'quantityliteral', x`, or if the latter had to
     repeat all the lifting done by the former
 
+* `Types::evaluate: ( t: type, x: any ) ->`: returns a flat object whose keys are typenames and whose values
+  are either `true` or `false` depending on whether `x` satisfied the corresponding ISA method or not
+
+<!--
+  * when using `isa` and `validate` methods, it can be difficult to see exactly what went wrong when a test
+    fails
+  * this is all the more true with nesting types that have complex fields as properties of complex fields;
+    when `isa.employee_record x` fails you only know that either `x` was not an object or that any nested
+    field such as `person.address.city.postcode` was not satisfied
+  * prior versions of this library attempted to solve the problem by tracing the execution of all the test
+    triggered by calling an `isa` or a `validate` method; however, this was cumbersome and wasteful as
+    collecting the traces needs time and RAM for each single `isa` and `validate` method call, whether the
+    traces are used afterwards or, most of the time, silently discarded
+  * another problem with tracing is that, in the interest of performance, tests are shortcut, meaning that the
+    first failed test in a series of tests will cause a negative result, without the subsequent tests being
+    performed; this means that traces can only ever report the *first* failure of a complex type check, not
+    *all* of the failures
+  * `evaluate` methods let users obtain a succinct catalog of all the transitive fields of a given type
+    declaration and how they fared
+  * `evaluate[type] x` will always return a flat object whose keys are fully qualified type names (like
+    `person.address.city`); they will appear in order of their declaration with `type` coming first, so the
+    object returned by `evaluate.person x` will always have `person` as its first key, and the one returned by
+    `evaluate.person.address x` will always have `person.address` as its first key
+-->
 
 
 ## To Do
