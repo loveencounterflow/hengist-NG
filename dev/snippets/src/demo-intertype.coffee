@@ -55,22 +55,28 @@ require_intertype = ->
       hide @, 'create',   @create.bind    @
       hide @, 'type_of',  @type_of.bind   @
       hide @, 'memo',     new Map()
-      hide @, 'journal',     null
+      hide @, 'journal',  null
+      hide @, 'stack',    null
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
       ### TAINT use proper validation ###
-      debug 'Ω___1', { type, x, }
+      debug 'Ω___1', ( type.$typename.padEnd 20 ), rpr x
       unless type instanceof Type
         throw new Error "Ω___2 expected an instance of `Type`, got a #{$type_of R}"
       #.......................................................................................................
-      R = type.isa.call type, x, @
       if @journal?
-        @journal.push { type: type.$typename, x, verdict: R, }
+        @stack.push type.$typename
+        @journal.push entry = {}
       #.......................................................................................................
-      unless R in [ true, false, ]
+      unless ( R = type.isa.call type, x, @ ) in [ true, false, ]
         throw new Error "Ω___3 expected `true` or `false`, got a #{$type_of R}"
+      #.......................................................................................................
+      if @journal?
+        stack = @stack.join ' ‣ '
+        @stack.pop()
+        Object.assign entry, { type: type.$typename, stack, value: x, verdict: R, }
       #.......................................................................................................
       return R
 
@@ -89,12 +95,15 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     evaluate: ( type, x ) ->
       # unless @journal?
-      @journal = []
+      @journal  = []
+      @stack    = []
       #.......................................................................................................
       @isa type, x
       #.......................................................................................................
+      # R         = @journal.reverse()
       R         = @journal
       @journal  = null
+      @stack    = null
       return R
 
   #===========================================================================================================
@@ -276,20 +285,31 @@ if module is require.main then await do =>
   help 'Ω__52', GUY.trm.truth     types.isa       std.quantity,             { q: null, u: 'm', }
   #.........................................................................................................
   echo()
-  info 'Ω__53', types.evaluate  std.even,                 5
-  info 'Ω__54', types.evaluate  flatly_2.evenly,          5
-  info 'Ω__55', types.evaluate  std.quantity,             { q: 123.456, u: '', }
+  probes_and_matchers = [
+    [ [ std.even,         5                         ], null, ]
+    [ [ flatly_1.evenly,  5                         ], null, ]
+    [ [ flatly_1.evenly,  6                         ], null, ]
+    [ [ flatly_2.evenly,  5                         ], null, ]
+    [ [ flatly_2.evenly,  6                         ], null, ]
+    [ [ std.quantity,     { q: 123.456, u: '', }    ], null, ]
+    [ [ std.quantity,     { q: 123.456, u: null, }  ], null, ]
+    [ [ std.quantity,     { q: 'nan', u: 'm', }     ], null, ]
+    ]
+  for [ [ type, value, ], matcher, ] in probes_and_matchers
+    info 'Ω__53', type.$typename, rpr value
+    for record in types.evaluate type, value
+      urge '', 'Ω__54', ( record.stack.padEnd 45 ), ( ( rpr record.value ).padEnd 30 ), GUY.trm.truth record.verdict
   #.........................................................................................................
   echo()
-  # help 'Ω__56', GUY.trm.truth     types.isa       std.cardinal, 6
-  # help 'Ω__57', GUY.trm.truth     types.isa       std.cardinal, 0
-  # help 'Ω__58', GUY.trm.truth     types.isa       std.cardinal, -1
+  # help 'Ω__55', GUY.trm.truth     types.isa       std.cardinal, 6
+  # help 'Ω__56', GUY.trm.truth     types.isa       std.cardinal, 0
+  # help 'Ω__57', GUY.trm.truth     types.isa       std.cardinal, -1
   # #.........................................................................................................
-  help 'Ω__59', try               types.validate  std.integer,  5       catch e then warn 'Ω__60', e.message
-  help 'Ω__61', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__62', e.message
-  # info 'Ω__63', std.weird
-  # info 'Ω__64', std.weird.isa
-  # info 'Ω__65', std.weird.isa.toString()
+  help 'Ω__58', try               types.validate  std.integer,  5       catch e then warn 'Ω__59', e.message
+  help 'Ω__60', try               types.validate  std.integer,  5.3     catch e then warn 'Ω__61', e.message
+  # info 'Ω__62', std.weird
+  # info 'Ω__63', std.weird.isa
+  # info 'Ω__64', std.weird.isa.toString()
 
 
 

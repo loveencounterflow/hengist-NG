@@ -66,29 +66,37 @@
         hide(this, 'type_of', this.type_of.bind(this));
         hide(this, 'memo', new Map());
         hide(this, 'journal', null);
+        hide(this, 'stack', null);
         return void 0;
       }
 
       //---------------------------------------------------------------------------------------------------------
       isa(type, x) {
-        var R;
+        var R, entry, ref, stack;
         /* TAINT use proper validation */
-        debug('Ω___1', {type, x});
+        debug('Ω___1', type.$typename.padEnd(20), rpr(x));
         if (!(type instanceof Type)) {
           throw new Error(`Ω___2 expected an instance of \`Type\`, got a ${$type_of(R)}`);
         }
         //.......................................................................................................
-        R = type.isa.call(type, x, this);
         if (this.journal != null) {
-          this.journal.push({
-            type: type.$typename,
-            x,
-            verdict: R
-          });
+          this.stack.push(type.$typename);
+          this.journal.push(entry = {});
         }
         //.......................................................................................................
-        if (R !== true && R !== false) {
+        if ((ref = (R = type.isa.call(type, x, this))) !== true && ref !== false) {
           throw new Error(`Ω___3 expected \`true\` or \`false\`, got a ${$type_of(R)}`);
+        }
+        //.......................................................................................................
+        if (this.journal != null) {
+          stack = this.stack.join(' ‣ ');
+          this.stack.pop();
+          Object.assign(entry, {
+            type: type.$typename,
+            stack,
+            value: x,
+            verdict: R
+          });
         }
         //.......................................................................................................
         return R;
@@ -117,11 +125,14 @@
         var R;
         // unless @journal?
         this.journal = [];
+        this.stack = [];
         //.......................................................................................................
         this.isa(type, x);
         //.......................................................................................................
+        // R         = @journal.reverse()
         R = this.journal;
         this.journal = null;
+        this.stack = null;
         return R;
       }
 
@@ -319,7 +330,7 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var e, flatly_1, flatly_2, std, types;
+      var e, flatly_1, flatly_2, i, j, len, len1, matcher, probes_and_matchers, record, ref, std, type, types, value;
       ({types, flatly_1, flatly_2, std} = require_intertype());
       info('Ω___8', std);
       info('Ω___9', flatly_1);
@@ -381,40 +392,90 @@
       })));
       //.........................................................................................................
       echo();
-      info('Ω__53', types.evaluate(std.even, 5));
-      info('Ω__54', types.evaluate(flatly_2.evenly, 5));
-      info('Ω__55', types.evaluate(std.quantity, {
-        q: 123.456,
-        u: ''
-      }));
+      probes_and_matchers = [
+        [[std.even,
+        5],
+        null],
+        [[flatly_1.evenly,
+        5],
+        null],
+        [[flatly_1.evenly,
+        6],
+        null],
+        [[flatly_2.evenly,
+        5],
+        null],
+        [[flatly_2.evenly,
+        6],
+        null],
+        [
+          [
+            std.quantity,
+            {
+              q: 123.456,
+              u: ''
+            }
+          ],
+          null
+        ],
+        [
+          [
+            std.quantity,
+            {
+              q: 123.456,
+              u: null
+            }
+          ],
+          null
+        ],
+        [
+          [
+            std.quantity,
+            {
+              q: 'nan',
+              u: 'm'
+            }
+          ],
+          null
+        ]
+      ];
+      for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+        [[type, value], matcher] = probes_and_matchers[i];
+        info('Ω__53', type.$typename, rpr(value));
+        ref = types.evaluate(type, value);
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          record = ref[j];
+          urge('', 'Ω__54', record.stack.padEnd(45), (rpr(record.value)).padEnd(30), GUY.trm.truth(record.verdict));
+        }
+      }
       //.........................................................................................................
       echo();
-      // help 'Ω__56', GUY.trm.truth     types.isa       std.cardinal, 6
-      // help 'Ω__57', GUY.trm.truth     types.isa       std.cardinal, 0
-      // help 'Ω__58', GUY.trm.truth     types.isa       std.cardinal, -1
+      // help 'Ω__55', GUY.trm.truth     types.isa       std.cardinal, 6
+      // help 'Ω__56', GUY.trm.truth     types.isa       std.cardinal, 0
+      // help 'Ω__57', GUY.trm.truth     types.isa       std.cardinal, -1
       // #.........................................................................................................
-      help('Ω__59', (function() {
+      help('Ω__58', (function() {
         try {
           return types.validate(std.integer, 5);
         } catch (error) {
           e = error;
-          return warn('Ω__60', e.message);
+          return warn('Ω__59', e.message);
         }
       })());
-      return help('Ω__61', (function() {
+      return help('Ω__60', (function() {
         try {
           return types.validate(std.integer, 5.3);
         } catch (error) {
           e = error;
-          return warn('Ω__62', e.message);
+          return warn('Ω__61', e.message);
         }
       })());
     })();
   }
 
-  // info 'Ω__63', std.weird
-// info 'Ω__64', std.weird.isa
-// info 'Ω__65', std.weird.isa.toString()
+  // info 'Ω__62', std.weird
+// info 'Ω__63', std.weird.isa
+// info 'Ω__64', std.weird.isa.toString()
 
 }).call(this);
 
