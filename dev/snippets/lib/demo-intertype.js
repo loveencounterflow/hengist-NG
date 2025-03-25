@@ -76,7 +76,6 @@
           throw new Error(`Ω___1 expected an instance of \`Type\`, got a ${$type_of(R)}`);
         }
         //.......................................................................................................
-        // R = type.isa.call type.$typespace, x, @
         R = type.isa.call(type, x, this);
         //.......................................................................................................
         if (R !== true && R !== false) {
@@ -174,9 +173,6 @@
           field_declaration = ref[field_name];
           declaration.fields[field_name] = new Type(typespace, field_name, field_declaration);
         }
-        // debug 'Ω___9', { field_name, field_declaration, field, }
-        // #   debug 'Ω__10', { typename, field_name, field_declaration, }, field.$typename, field.isa
-        // debug 'Ω__11', new Typespace declaration.fields
         //.......................................................................................................
         declaration.isa = this._get_fields_isa(typespace, typename, declaration);
         return null;
