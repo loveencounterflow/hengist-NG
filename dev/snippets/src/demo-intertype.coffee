@@ -62,7 +62,7 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     isa: ( type, x ) ->
       ### TAINT use proper validation ###
-      debug 'Ω___1', ( type.$typename.padEnd 20 ), rpr x
+      # debug 'Ω___1', ( type.$typename.padEnd 20 ), rpr x
       unless type instanceof Type
         throw new Error "Ω___2 expected an instance of `Type`, got a #{$type_of R}"
       #.......................................................................................................
@@ -74,7 +74,7 @@ require_intertype = ->
         throw new Error "Ω___3 expected `true` or `false`, got a #{$type_of R}"
       #.......................................................................................................
       if @journal?
-        stack = @stack.join ' ‣ '
+        stack = @stack.join '.'
         @stack.pop()
         Object.assign entry, { type: type.$typename, stack, value: x, verdict: R, }
       #.......................................................................................................
@@ -297,7 +297,8 @@ if module is require.main then await do =>
     ]
   for [ [ type, value, ], matcher, ] in probes_and_matchers
     info 'Ω__53', type.$typename, rpr value
-    for record in types.evaluate type, value
+    records = types.evaluate type, value
+    for record in records # .toReversed()
       urge '', 'Ω__54', ( record.stack.padEnd 45 ), ( ( rpr record.value ).padEnd 30 ), GUY.trm.truth record.verdict
   #.........................................................................................................
   echo()

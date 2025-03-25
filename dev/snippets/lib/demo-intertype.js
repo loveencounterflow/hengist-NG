@@ -74,7 +74,7 @@
       isa(type, x) {
         var R, entry, ref, stack;
         /* TAINT use proper validation */
-        debug('Ω___1', type.$typename.padEnd(20), rpr(x));
+        // debug 'Ω___1', ( type.$typename.padEnd 20 ), rpr x
         if (!(type instanceof Type)) {
           throw new Error(`Ω___2 expected an instance of \`Type\`, got a ${$type_of(R)}`);
         }
@@ -89,7 +89,7 @@
         }
         //.......................................................................................................
         if (this.journal != null) {
-          stack = this.stack.join(' ‣ ');
+          stack = this.stack.join('.');
           this.stack.pop();
           Object.assign(entry, {
             type: type.$typename,
@@ -330,7 +330,7 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var e, flatly_1, flatly_2, i, j, len, len1, matcher, probes_and_matchers, record, ref, std, type, types, value;
+      var e, flatly_1, flatly_2, i, j, len, len1, matcher, probes_and_matchers, record, records, std, type, types, value;
       ({types, flatly_1, flatly_2, std} = require_intertype());
       info('Ω___8', std);
       info('Ω___9', flatly_1);
@@ -442,9 +442,10 @@
       for (i = 0, len = probes_and_matchers.length; i < len; i++) {
         [[type, value], matcher] = probes_and_matchers[i];
         info('Ω__53', type.$typename, rpr(value));
-        ref = types.evaluate(type, value);
-        for (j = 0, len1 = ref.length; j < len1; j++) {
-          record = ref[j];
+        records = types.evaluate(type, value);
+// .toReversed()
+        for (j = 0, len1 = records.length; j < len1; j++) {
+          record = records[j];
           urge('', 'Ω__54', record.stack.padEnd(45), (rpr(record.value)).padEnd(30), GUY.trm.truth(record.verdict));
         }
       }
