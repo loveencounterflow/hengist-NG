@@ -213,7 +213,7 @@
           ref = this.fields;
           for (field_name in ref) {
             field = ref[field_name];
-            if (!t.isa(field, x[field_name])) {
+            if (!((x != null) && t.isa(field, x[field_name]))) {
               return false;
             }
           }
@@ -240,18 +240,6 @@
     };
     //===========================================================================================================
     std = new Typespace({
-      //.........................................................................................................
-      quantity: {
-        fields: {
-          // each field becomes a `Type` instance; strings may refer to names in the same typespace
-          q: 'float',
-          u: 'nonempty_text'
-        },
-        template: {
-          q: 0,
-          u: 'u'
-        }
-      },
       //.........................................................................................................
       integer: {
         isa: function(x, t) {
@@ -296,9 +284,39 @@
       //.........................................................................................................
       weird: 'strange', // declares another name for `odd`
       strange: 'odd', // declares another name for `odd`
-      abnormal: 'weird' // declares another name for `odd`
+      abnormal: 'weird', // declares another name for `odd`
+      //.........................................................................................................
+      quantity: {
+        fields: {
+          // each field becomes a `Type` instance; strings may refer to names in the same typespace
+          q: 'float',
+          u: 'nonempty_text'
+        },
+        template: {
+          q: 0,
+          u: 'u'
+        }
+      },
+      //.........................................................................................................
+      address: {
+        fields: {
+          postcode: 'nonempty_text',
+          city: 'nonempty_text'
+        }
+      },
+      //.........................................................................................................
+      employee: {
+        fields: {
+          address: 'address',
+          name: {
+            fields: {
+              firstname: 'nonempty_text',
+              lastname: 'nonempty_text'
+            }
+          }
+        }
+      }
     });
-    
     //===========================================================================================================
     flatly_1 = new Typespace({
       evenly: 'flat',
@@ -393,6 +411,12 @@
       //.........................................................................................................
       echo();
       probes_and_matchers = [
+        [[std.integer,
+        5],
+        null],
+        [[std.integer,
+        5.3],
+        null],
         [[std.even,
         5],
         null],
@@ -434,6 +458,19 @@
             {
               q: 'nan',
               u: 'm'
+            }
+          ],
+          null
+        ],
+        [
+          [
+            std.employee,
+            {
+              address: {
+                postcode: 'SE36',
+                city: 'London'
+              },
+              name: null
             }
           ],
           null

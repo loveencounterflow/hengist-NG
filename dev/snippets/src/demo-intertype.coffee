@@ -150,7 +150,7 @@ require_intertype = ->
     #---------------------------------------------------------------------------------------------------------
     _get_default_isa_for_fields: ( typespace, typename, declaration ) -> ( x, t ) ->
       for field_name, field of @fields
-        return false unless t.isa field, x[ field_name ]
+        return false unless x? and t.isa field, x[ field_name ]
       return true
 
   #===========================================================================================================
@@ -166,15 +166,6 @@ require_intertype = ->
 
   #===========================================================================================================
   std = new Typespace
-    #.........................................................................................................
-    quantity:
-      fields:
-        # each field becomes a `Type` instance; strings may refer to names in the same typespace
-        q:    'float'
-        u:    'nonempty_text'
-      template:
-        q:    0
-        u:    'u'
     #.........................................................................................................
     integer:
       isa:    ( x, t ) -> Number.isInteger x
@@ -204,6 +195,28 @@ require_intertype = ->
     weird:    'strange' # declares another name for `odd`
     strange:  'odd'     # declares another name for `odd`
     abnormal: 'weird'   # declares another name for `odd`
+    #.........................................................................................................
+    quantity:
+      fields:
+        # each field becomes a `Type` instance; strings may refer to names in the same typespace
+        q:    'float'
+        u:    'nonempty_text'
+      template:
+        q:    0
+        u:    'u'
+    #.........................................................................................................
+    address:
+      fields:
+        postcode:   'nonempty_text'
+        city:       'nonempty_text'
+    #.........................................................................................................
+    employee:
+      fields:
+        address:    'address'
+        name:
+          fields:
+            firstname:  'nonempty_text'
+            lastname:   'nonempty_text'
 
 
   #===========================================================================================================
@@ -286,6 +299,8 @@ if module is require.main then await do =>
   #.........................................................................................................
   echo()
   probes_and_matchers = [
+    [ [ std.integer,      5                         ], null, ]
+    [ [ std.integer,      5.3                       ], null, ]
     [ [ std.even,         5                         ], null, ]
     [ [ flatly_1.evenly,  5                         ], null, ]
     [ [ flatly_1.evenly,  6                         ], null, ]
@@ -294,6 +309,7 @@ if module is require.main then await do =>
     [ [ std.quantity,     { q: 123.456, u: '', }    ], null, ]
     [ [ std.quantity,     { q: 123.456, u: null, }  ], null, ]
     [ [ std.quantity,     { q: 'nan', u: 'm', }     ], null, ]
+    [ [ std.employee,     { address: { postcode: 'SE36', city: 'London', }, name: null, }     ], null, ]
     ]
   for [ [ type, value, ], matcher, ] in probes_and_matchers
     info 'Ω__53', type.$typename, rpr value
