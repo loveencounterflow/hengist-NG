@@ -269,499 +269,488 @@
 
   //===========================================================================================================
   this.intertype_tasks = {
-    //-----------------------------------------------------------------------------------------------------------
-    MVP_isa: function() {
-      var $isa, Type, Types, Typespace, flatly_1, flatly_2, std, types, Ωit_100, Ωit_101, Ωit__58, Ωit__59, Ωit__60, Ωit__61, Ωit__62, Ωit__63, Ωit__64, Ωit__65, Ωit__66, Ωit__67, Ωit__68, Ωit__69, Ωit__70, Ωit__71, Ωit__72, Ωit__73, Ωit__74, Ωit__75, Ωit__76, Ωit__77, Ωit__78, Ωit__79, Ωit__80, Ωit__81, Ωit__82, Ωit__83, Ωit__84, Ωit__85, Ωit__86, Ωit__87, Ωit__88, Ωit__89, Ωit__90, Ωit__91, Ωit__92, Ωit__93, Ωit__94, Ωit__95, Ωit__96, Ωit__97, Ωit__98, Ωit__99;
-      // INTERTYPE     = require '../../../apps/intertype'
-      ({Types, Type, Typespace, types, flatly_1, flatly_2, std} = require('../../../apps/intertype'));
-      $isa = sample_declarations;
-      //.......................................................................................................
-      this.eq((Ωit__58 = function() {
-        return std instanceof Typespace;
-      }), true);
-      this.eq((Ωit__59 = function() {
-        return flatly_1 instanceof Typespace;
-      }), true);
-      this.eq((Ωit__60 = function() {
-        return flatly_2 instanceof Typespace;
-      }), true);
-      this.eq((Ωit__61 = function() {
-        return flatly_1.flat instanceof Type;
-      }), true);
-      this.eq((Ωit__62 = function() {
-        return flatly_2.flat instanceof Type;
-      }), true);
-      this.eq((Ωit__63 = function() {
-        return std.quantity instanceof Type;
-      }), true);
-      this.eq((Ωit__64 = function() {
-        return $isa.function(std.quantity.isa);
-      }), true);
-      this.eq((Ωit__65 = function() {
-        return $isa.object(std.quantity.fields);
-      }), true);
-      this.eq((Ωit__66 = function() {
-        return std.quantity.fields.q instanceof Type;
-      }), true);
-      this.eq((Ωit__67 = function() {
-        return $isa.function(std.quantity.fields.q.isa);
-      }), true);
-      //.......................................................................................................
-      echo();
-      this.eq((Ωit__68 = function() {
-        return types.isa(std.integer, 5);
-      }), true);
-      this.eq((Ωit__69 = function() {
-        return types.isa(std.odd, 5);
-      }), true);
-      this.eq((Ωit__70 = function() {
-        return types.isa(std.even, 6);
-      }), true);
-      this.eq((Ωit__71 = function() {
-        return types.isa(std.strange, 5);
-      }), true);
-      this.eq((Ωit__72 = function() {
-        return types.isa(std.weird, 5);
-      }), true);
-      this.eq((Ωit__73 = function() {
-        return types.isa(std.abnormal, 5);
-      }), true);
-      this.eq((Ωit__74 = function() {
-        return types.isa(flatly_1.flat, 8);
-      }), true);
-      this.eq((Ωit__75 = function() {
-        return types.isa(flatly_1.evenly, 8);
-      }), true);
-      this.eq((Ωit__76 = function() {
-        return types.isa(flatly_1.plain, 8);
-      }), true);
-      this.eq((Ωit__77 = function() {
-        return types.isa(flatly_2.flat, 8);
-      }), true);
-      this.eq((Ωit__78 = function() {
-        return types.isa(flatly_2.evenly, 8);
-      }), true);
-      this.eq((Ωit__79 = function() {
-        return types.isa(flatly_2.plain, 8);
-      }), true);
-      this.eq((Ωit__80 = function() {
-        return types.isa(std.nonempty_text, 'abc');
-      }), true);
-      this.eq((Ωit__81 = function() {
-        return types.isa(std.quantity.fields.q, 123.456);
-      }), true);
-      this.eq((Ωit__82 = function() {
-        return types.isa(std.quantity.fields.u, 'm');
-      }), true);
-      this.eq((Ωit__83 = function() {
-        return types.isa(std.quantity, {
-          q: 123.456,
-          u: 'm'
-        });
-      }), true);
-      //.......................................................................................................
-      echo();
-      this.eq((Ωit__84 = function() {
-        return types.isa(std.integer, 5.3);
-      }), false);
-      this.eq((Ωit__85 = function() {
-        return types.isa(std.odd, 6);
-      }), false);
-      this.eq((Ωit__86 = function() {
-        return types.isa(std.odd, 5.3);
-      }), false);
-      this.eq((Ωit__87 = function() {
-        return types.isa(std.even, 5);
-      }), false);
-      this.eq((Ωit__88 = function() {
-        return types.isa(std.strange, 6);
-      }), false);
-      this.eq((Ωit__89 = function() {
-        return types.isa(std.weird, 6);
-      }), false);
-      this.eq((Ωit__90 = function() {
-        return types.isa(std.abnormal, 6);
-      }), false);
-      this.eq((Ωit__91 = function() {
-        return types.isa(flatly_1.evenly, 5);
-      }), false);
-      this.eq((Ωit__92 = function() {
-        return types.isa(flatly_1.flat, 5);
-      }), false);
-      this.eq((Ωit__93 = function() {
-        return types.isa(flatly_1.plain, 5);
-      }), false);
-      this.eq((Ωit__94 = function() {
-        return types.isa(flatly_2.flat, 5);
-      }), false);
-      this.eq((Ωit__95 = function() {
-        return types.isa(flatly_2.evenly, 5);
-      }), false);
-      this.eq((Ωit__96 = function() {
-        return types.isa(flatly_2.plain, 5);
-      }), false);
-      this.eq((Ωit__97 = function() {
-        return types.isa(std.nonempty_text, '');
-      }), false);
-      this.eq((Ωit__98 = function() {
-        return types.isa(std.quantity.fields.q, '123.456');
-      }), false);
-      this.eq((Ωit__99 = function() {
-        return types.isa(std.quantity.fields.u, '');
-      }), false);
-      this.eq((Ωit_100 = function() {
-        return types.isa(std.quantity, {
-          q: 123.456,
-          u: ''
-        });
-      }), false);
-      this.eq((Ωit_101 = function() {
-        return types.isa(std.quantity, {
-          q: null,
-          u: 'm'
-        });
-      }), false);
-      //.......................................................................................................
-      return null;
-    },
-    //-----------------------------------------------------------------------------------------------------------
-    MVP_validate: function() {
-      var $isa, Type, Types, Typespace, flatly_1, flatly_2, std, types, Ωit_102, Ωit_103, Ωit_104;
-      // INTERTYPE     = require '../../../apps/intertype'
-      ({Types, Type, Typespace, types, flatly_1, flatly_2, std} = require('../../../apps/intertype'));
-      $isa = sample_declarations;
-      //.......................................................................................................
-      this.eq((Ωit_102 = function() {
-        return types.validate(std.integer, -5);
-      }), -5);
-      this.eq((Ωit_103 = function() {
-        return types.validate(std.integer, 5);
-      }), 5);
-      this.throws((Ωit_104 = function() {
-        return types.validate(std.integer, 5.3);
-      }), /expected a integer/);
-      //.......................................................................................................
-      return null;
-    },
-    //-----------------------------------------------------------------------------------------------------------
-    MVP_evaluate: function() {
-      var $isa, Type, Types, Typespace, flatly_1, flatly_2, i, idx, j, len, len1, matcher, probe_type, probe_value, probes_and_matchers, record, records, std, types, Ωit_105;
-      // INTERTYPE     = require '../../../apps/intertype'
-      ({Types, Type, Typespace, types, flatly_1, flatly_2, std} = require('../../../apps/intertype'));
-      $isa = sample_declarations;
-      //.......................................................................................................
-      echo();
-      probes_and_matchers = [
-        [[std.integer,
-        5],
-        [['integer',
-        5,
-        true]]],
-        [[std.integer,
-        5.3],
-        [['integer',
-        5.3,
-        false]]],
-        [[std.even,
-        5],
-        [['even',
-        5,
-        false],
-        ['even.integer',
-        5,
-        true]]],
-        [[flatly_1.evenly,
-        5],
-        [['evenly',
-        5,
-        false],
-        ['evenly.flat',
-        5,
-        false],
-        ['evenly.flat.even',
-        5,
-        false],
-        ['evenly.flat.even.integer',
-        5,
-        true]]],
-        [[flatly_1.evenly,
-        6],
-        [['evenly',
-        6,
-        true],
-        ['evenly.flat',
-        6,
-        true],
-        ['evenly.flat.even',
-        6,
-        true],
-        ['evenly.flat.even.integer',
-        6,
-        true]]],
-        [[flatly_2.evenly,
-        5],
-        [['evenly',
-        5,
-        false],
-        ['evenly.even',
-        5,
-        false],
-        ['evenly.even.integer',
-        5,
-        true]]],
-        [[flatly_2.evenly,
-        6],
-        [['evenly',
-        6,
-        true],
-        ['evenly.even',
-        6,
-        true],
-        ['evenly.even.integer',
-        6,
-        true]]],
-        [
-          [
-            std.quantity,
-            {
-              q: 123.456,
-              u: ''
-            }
-          ],
+    //=========================================================================================================
+    MVP: {
+      //-------------------------------------------------------------------------------------------------------
+      isa: function() {
+        var $isa, Type, Types, Typespace, flatly_1, flatly_2, std, types, Ωit_100, Ωit_101, Ωit__58, Ωit__59, Ωit__60, Ωit__61, Ωit__62, Ωit__63, Ωit__64, Ωit__65, Ωit__66, Ωit__67, Ωit__68, Ωit__69, Ωit__70, Ωit__71, Ωit__72, Ωit__73, Ωit__74, Ωit__75, Ωit__76, Ωit__77, Ωit__78, Ωit__79, Ωit__80, Ωit__81, Ωit__82, Ωit__83, Ωit__84, Ωit__85, Ωit__86, Ωit__87, Ωit__88, Ωit__89, Ωit__90, Ωit__91, Ωit__92, Ωit__93, Ωit__94, Ωit__95, Ωit__96, Ωit__97, Ωit__98, Ωit__99;
+        // INTERTYPE     = require '../../../apps/intertype'
+        ({Types, Type, Typespace, types, flatly_1, flatly_2, std} = require('../../../apps/intertype'));
+        $isa = sample_declarations;
+        //.....................................................................................................
+        this.eq((Ωit__58 = function() {
+          return std instanceof Typespace;
+        }), true);
+        this.eq((Ωit__59 = function() {
+          return flatly_1 instanceof Typespace;
+        }), true);
+        this.eq((Ωit__60 = function() {
+          return flatly_2 instanceof Typespace;
+        }), true);
+        this.eq((Ωit__61 = function() {
+          return flatly_1.flat instanceof Type;
+        }), true);
+        this.eq((Ωit__62 = function() {
+          return flatly_2.flat instanceof Type;
+        }), true);
+        this.eq((Ωit__63 = function() {
+          return std.quantity instanceof Type;
+        }), true);
+        this.eq((Ωit__64 = function() {
+          return $isa.function(std.quantity.isa);
+        }), true);
+        this.eq((Ωit__65 = function() {
+          return $isa.object(std.quantity.fields);
+        }), true);
+        this.eq((Ωit__66 = function() {
+          return std.quantity.fields.q instanceof Type;
+        }), true);
+        this.eq((Ωit__67 = function() {
+          return $isa.function(std.quantity.fields.q.isa);
+        }), true);
+        //.....................................................................................................
+        echo();
+        this.eq((Ωit__68 = function() {
+          return types.isa(std.integer, 5);
+        }), true);
+        this.eq((Ωit__69 = function() {
+          return types.isa(std.odd, 5);
+        }), true);
+        this.eq((Ωit__70 = function() {
+          return types.isa(std.even, 6);
+        }), true);
+        this.eq((Ωit__71 = function() {
+          return types.isa(std.strange, 5);
+        }), true);
+        this.eq((Ωit__72 = function() {
+          return types.isa(std.weird, 5);
+        }), true);
+        this.eq((Ωit__73 = function() {
+          return types.isa(std.abnormal, 5);
+        }), true);
+        this.eq((Ωit__74 = function() {
+          return types.isa(flatly_1.flat, 8);
+        }), true);
+        this.eq((Ωit__75 = function() {
+          return types.isa(flatly_1.evenly, 8);
+        }), true);
+        this.eq((Ωit__76 = function() {
+          return types.isa(flatly_1.plain, 8);
+        }), true);
+        this.eq((Ωit__77 = function() {
+          return types.isa(flatly_2.flat, 8);
+        }), true);
+        this.eq((Ωit__78 = function() {
+          return types.isa(flatly_2.evenly, 8);
+        }), true);
+        this.eq((Ωit__79 = function() {
+          return types.isa(flatly_2.plain, 8);
+        }), true);
+        this.eq((Ωit__80 = function() {
+          return types.isa(std.nonempty_text, 'abc');
+        }), true);
+        this.eq((Ωit__81 = function() {
+          return types.isa(std.quantity.fields.q, 123.456);
+        }), true);
+        this.eq((Ωit__82 = function() {
+          return types.isa(std.quantity.fields.u, 'm');
+        }), true);
+        this.eq((Ωit__83 = function() {
+          return types.isa(std.quantity, {
+            q: 123.456,
+            u: 'm'
+          });
+        }), true);
+        //.....................................................................................................
+        echo();
+        this.eq((Ωit__84 = function() {
+          return types.isa(std.integer, 5.3);
+        }), false);
+        this.eq((Ωit__85 = function() {
+          return types.isa(std.odd, 6);
+        }), false);
+        this.eq((Ωit__86 = function() {
+          return types.isa(std.odd, 5.3);
+        }), false);
+        this.eq((Ωit__87 = function() {
+          return types.isa(std.even, 5);
+        }), false);
+        this.eq((Ωit__88 = function() {
+          return types.isa(std.strange, 6);
+        }), false);
+        this.eq((Ωit__89 = function() {
+          return types.isa(std.weird, 6);
+        }), false);
+        this.eq((Ωit__90 = function() {
+          return types.isa(std.abnormal, 6);
+        }), false);
+        this.eq((Ωit__91 = function() {
+          return types.isa(flatly_1.evenly, 5);
+        }), false);
+        this.eq((Ωit__92 = function() {
+          return types.isa(flatly_1.flat, 5);
+        }), false);
+        this.eq((Ωit__93 = function() {
+          return types.isa(flatly_1.plain, 5);
+        }), false);
+        this.eq((Ωit__94 = function() {
+          return types.isa(flatly_2.flat, 5);
+        }), false);
+        this.eq((Ωit__95 = function() {
+          return types.isa(flatly_2.evenly, 5);
+        }), false);
+        this.eq((Ωit__96 = function() {
+          return types.isa(flatly_2.plain, 5);
+        }), false);
+        this.eq((Ωit__97 = function() {
+          return types.isa(std.nonempty_text, '');
+        }), false);
+        this.eq((Ωit__98 = function() {
+          return types.isa(std.quantity.fields.q, '123.456');
+        }), false);
+        this.eq((Ωit__99 = function() {
+          return types.isa(std.quantity.fields.u, '');
+        }), false);
+        this.eq((Ωit_100 = function() {
+          return types.isa(std.quantity, {
+            q: 123.456,
+            u: ''
+          });
+        }), false);
+        this.eq((Ωit_101 = function() {
+          return types.isa(std.quantity, {
+            q: null,
+            u: 'm'
+          });
+        }), false);
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      validate: function() {
+        var $isa, Type, Types, Typespace, flatly_1, flatly_2, std, types, Ωit_102, Ωit_103, Ωit_104;
+        // INTERTYPE     = require '../../../apps/intertype'
+        ({Types, Type, Typespace, types, flatly_1, flatly_2, std} = require('../../../apps/intertype'));
+        $isa = sample_declarations;
+        //.....................................................................................................
+        this.eq((Ωit_102 = function() {
+          return types.validate(std.integer, -5);
+        }), -5);
+        this.eq((Ωit_103 = function() {
+          return types.validate(std.integer, 5);
+        }), 5);
+        this.throws((Ωit_104 = function() {
+          return types.validate(std.integer, 5.3);
+        }), /expected a integer/);
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      evaluate: function() {
+        var $isa, Type, Types, Typespace, flatly_1, flatly_2, i, idx, j, len, len1, matcher, probe_type, probe_value, probes_and_matchers, record, records, std, types, Ωit_105;
+        // INTERTYPE     = require '../../../apps/intertype'
+        ({Types, Type, Typespace, types, flatly_1, flatly_2, std} = require('../../../apps/intertype'));
+        $isa = sample_declarations;
+        //.....................................................................................................
+        echo();
+        probes_and_matchers = [
+          [[std.integer,
+          5],
+          [['integer',
+          5,
+          true]]],
+          [[std.integer,
+          5.3],
+          [['integer',
+          5.3,
+          false]]],
+          [[std.even,
+          5],
+          [['even',
+          5,
+          false],
+          ['even.integer',
+          5,
+          true]]],
+          [[flatly_1.evenly,
+          5],
+          [['evenly',
+          5,
+          false],
+          ['evenly.flat',
+          5,
+          false],
+          ['evenly.flat.even',
+          5,
+          false],
+          ['evenly.flat.even.integer',
+          5,
+          true]]],
+          [[flatly_1.evenly,
+          6],
+          [['evenly',
+          6,
+          true],
+          ['evenly.flat',
+          6,
+          true],
+          ['evenly.flat.even',
+          6,
+          true],
+          ['evenly.flat.even.integer',
+          6,
+          true]]],
+          [[flatly_2.evenly,
+          5],
+          [['evenly',
+          5,
+          false],
+          ['evenly.even',
+          5,
+          false],
+          ['evenly.even.integer',
+          5,
+          true]]],
+          [[flatly_2.evenly,
+          6],
+          [['evenly',
+          6,
+          true],
+          ['evenly.even',
+          6,
+          true],
+          ['evenly.even.integer',
+          6,
+          true]]],
           [
             [
-              'quantity',
+              std.quantity,
               {
                 q: 123.456,
                 u: ''
-              },
-              false
+              }
             ],
-            ['quantity.q',
-            123.456,
-            true],
-            ['quantity.q.float',
-            123.456,
-            true],
-            ['quantity.u',
-            '',
-            false],
-            ['quantity.u.nonempty_text',
-            '',
-            false],
-            ['quantity.u.nonempty_text.text',
-            '',
-            true]
-          ]
-        ],
-        [
-          [
-            std.quantity,
-            {
-              q: 123.456,
-              u: null
-            }
+            [
+              [
+                'quantity',
+                {
+                  q: 123.456,
+                  u: ''
+                },
+                false
+              ],
+              ['quantity.q',
+              123.456,
+              true],
+              ['quantity.q.float',
+              123.456,
+              true],
+              ['quantity.u',
+              '',
+              false],
+              ['quantity.u.nonempty_text',
+              '',
+              false],
+              ['quantity.u.nonempty_text.text',
+              '',
+              true]
+            ]
           ],
           [
             [
-              'quantity',
+              std.quantity,
               {
                 q: 123.456,
                 u: null
-              },
-              false
+              }
             ],
-            ['quantity.q',
-            123.456,
-            true],
-            ['quantity.q.float',
-            123.456,
-            true],
-            ['quantity.u',
-            null,
-            false],
-            ['quantity.u.nonempty_text',
-            null,
-            false],
-            ['quantity.u.nonempty_text.text',
-            null,
-            false]
-          ]
-        ],
-        [
-          [
-            std.quantity,
-            {
-              q: 'nan',
-              u: 'm'
-            }
+            [
+              [
+                'quantity',
+                {
+                  q: 123.456,
+                  u: null
+                },
+                false
+              ],
+              ['quantity.q',
+              123.456,
+              true],
+              ['quantity.q.float',
+              123.456,
+              true],
+              ['quantity.u',
+              null,
+              false],
+              ['quantity.u.nonempty_text',
+              null,
+              false],
+              ['quantity.u.nonempty_text.text',
+              null,
+              false]
+            ]
           ],
           [
             [
-              'quantity',
+              std.quantity,
               {
                 q: 'nan',
                 u: 'm'
-              },
-              false
+              }
             ],
-            ['quantity.q',
-            'nan',
-            false],
-            ['quantity.q.float',
-            'nan',
-            false]
-          ]
-        ],
-        [
-          [
-            std.employee,
-            {
-              address: {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              name: null
-            }
+            [
+              [
+                'quantity',
+                {
+                  q: 'nan',
+                  u: 'm'
+                },
+                false
+              ],
+              ['quantity.q',
+              'nan',
+              false],
+              ['quantity.q.float',
+              'nan',
+              false]
+            ]
           ],
           [
             [
-              'employee',
+              std.employee,
               {
                 address: {
                   postcode: 'SE36',
                   city: 'London'
                 },
                 name: null
-              },
-              false
+              }
             ],
             [
-              'employee.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            [
-              'employee.address.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            ['employee.address.address.postcode',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text.text',
-            'SE36',
-            true],
-            ['employee.address.address.city',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text.text',
-            'London',
-            true],
-            ['employee.name',
-            null,
-            false]
-          ]
-        ],
-        [
-          [
-            std.employee,
-            {
-              address: {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              name: {}
-            }
+              [
+                'employee',
+                {
+                  address: {
+                    postcode: 'SE36',
+                    city: 'London'
+                  },
+                  name: null
+                },
+                false
+              ],
+              [
+                'employee.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              [
+                'employee.address.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              ['employee.address.address.postcode',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text.text',
+              'SE36',
+              true],
+              ['employee.address.address.city',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text.text',
+              'London',
+              true],
+              ['employee.name',
+              null,
+              false]
+            ]
           ],
           [
             [
-              'employee',
+              std.employee,
               {
                 address: {
                   postcode: 'SE36',
                   city: 'London'
                 },
                 name: {}
-              },
-              false
-            ],
-            [
-              'employee.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            [
-              'employee.address.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            ['employee.address.address.postcode',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text.text',
-            'SE36',
-            true],
-            ['employee.address.address.city',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text.text',
-            'London',
-            true],
-            ['employee.name',
-            {},
-            false],
-            ['employee.name.firstname',
-            void 0,
-            false],
-            ['employee.name.firstname.nonempty_text',
-            void 0,
-            false],
-            ['employee.name.firstname.nonempty_text.text',
-            void 0,
-            false]
-          ]
-        ],
-        [
-          [
-            std.employee,
-            {
-              address: {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              name: {
-                firstname: 'Bob'
               }
-            }
+            ],
+            [
+              [
+                'employee',
+                {
+                  address: {
+                    postcode: 'SE36',
+                    city: 'London'
+                  },
+                  name: {}
+                },
+                false
+              ],
+              [
+                'employee.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              [
+                'employee.address.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              ['employee.address.address.postcode',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text.text',
+              'SE36',
+              true],
+              ['employee.address.address.city',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text.text',
+              'London',
+              true],
+              ['employee.name',
+              {},
+              false],
+              ['employee.name.firstname',
+              void 0,
+              false],
+              ['employee.name.firstname.nonempty_text',
+              void 0,
+              false],
+              ['employee.name.firstname.nonempty_text.text',
+              void 0,
+              false]
+            ]
           ],
           [
             [
-              'employee',
+              std.employee,
               {
                 address: {
                   postcode: 'SE36',
@@ -770,87 +759,86 @@
                 name: {
                   firstname: 'Bob'
                 }
-              },
-              false
-            ],
-            [
-              'employee.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            [
-              'employee.address.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            ['employee.address.address.postcode',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text.text',
-            'SE36',
-            true],
-            ['employee.address.address.city',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text.text',
-            'London',
-            true],
-            [
-              'employee.name',
-              {
-                firstname: 'Bob'
-              },
-              false
-            ],
-            ['employee.name.firstname',
-            'Bob',
-            true],
-            ['employee.name.firstname.nonempty_text',
-            'Bob',
-            true],
-            ['employee.name.firstname.nonempty_text.text',
-            'Bob',
-            true],
-            ['employee.name.lastname',
-            void 0,
-            false],
-            ['employee.name.lastname.nonempty_text',
-            void 0,
-            false],
-            ['employee.name.lastname.nonempty_text.text',
-            void 0,
-            false]
-          ]
-        ],
-        [
-          [
-            std.employee,
-            {
-              address: {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              name: {
-                firstname: 'Bob',
-                lastname: 'Miller'
               }
-            }
+            ],
+            [
+              [
+                'employee',
+                {
+                  address: {
+                    postcode: 'SE36',
+                    city: 'London'
+                  },
+                  name: {
+                    firstname: 'Bob'
+                  }
+                },
+                false
+              ],
+              [
+                'employee.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              [
+                'employee.address.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              ['employee.address.address.postcode',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text.text',
+              'SE36',
+              true],
+              ['employee.address.address.city',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text.text',
+              'London',
+              true],
+              [
+                'employee.name',
+                {
+                  firstname: 'Bob'
+                },
+                false
+              ],
+              ['employee.name.firstname',
+              'Bob',
+              true],
+              ['employee.name.firstname.nonempty_text',
+              'Bob',
+              true],
+              ['employee.name.firstname.nonempty_text.text',
+              'Bob',
+              true],
+              ['employee.name.lastname',
+              void 0,
+              false],
+              ['employee.name.lastname.nonempty_text',
+              void 0,
+              false],
+              ['employee.name.lastname.nonempty_text.text',
+              void 0,
+              false]
+            ]
           ],
           [
             [
-              'employee',
+              std.employee,
               {
                 address: {
                   postcode: 'SE36',
@@ -860,89 +848,104 @@
                   firstname: 'Bob',
                   lastname: 'Miller'
                 }
-              },
-              true
+              }
             ],
             [
-              'employee.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            [
-              'employee.address.address',
-              {
-                postcode: 'SE36',
-                city: 'London'
-              },
-              true
-            ],
-            ['employee.address.address.postcode',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text',
-            'SE36',
-            true],
-            ['employee.address.address.postcode.nonempty_text.text',
-            'SE36',
-            true],
-            ['employee.address.address.city',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text',
-            'London',
-            true],
-            ['employee.address.address.city.nonempty_text.text',
-            'London',
-            true],
-            [
-              'employee.name',
-              {
-                firstname: 'Bob',
-                lastname: 'Miller'
-              },
-              true
-            ],
-            ['employee.name.firstname',
-            'Bob',
-            true],
-            ['employee.name.firstname.nonempty_text',
-            'Bob',
-            true],
-            ['employee.name.firstname.nonempty_text.text',
-            'Bob',
-            true],
-            ['employee.name.lastname',
-            'Miller',
-            true],
-            ['employee.name.lastname.nonempty_text',
-            'Miller',
-            true],
-            ['employee.name.lastname.nonempty_text.text',
-            'Miller',
-            true]
+              [
+                'employee',
+                {
+                  address: {
+                    postcode: 'SE36',
+                    city: 'London'
+                  },
+                  name: {
+                    firstname: 'Bob',
+                    lastname: 'Miller'
+                  }
+                },
+                true
+              ],
+              [
+                'employee.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              [
+                'employee.address.address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              ['employee.address.address.postcode',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text',
+              'SE36',
+              true],
+              ['employee.address.address.postcode.nonempty_text.text',
+              'SE36',
+              true],
+              ['employee.address.address.city',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text',
+              'London',
+              true],
+              ['employee.address.address.city.nonempty_text.text',
+              'London',
+              true],
+              [
+                'employee.name',
+                {
+                  firstname: 'Bob',
+                  lastname: 'Miller'
+                },
+                true
+              ],
+              ['employee.name.firstname',
+              'Bob',
+              true],
+              ['employee.name.firstname.nonempty_text',
+              'Bob',
+              true],
+              ['employee.name.firstname.nonempty_text.text',
+              'Bob',
+              true],
+              ['employee.name.lastname',
+              'Miller',
+              true],
+              ['employee.name.lastname.nonempty_text',
+              'Miller',
+              true],
+              ['employee.name.lastname.nonempty_text.text',
+              'Miller',
+              true]
+            ]
           ]
-        ]
-      ];
-//.......................................................................................................
+        ];
+//.....................................................................................................
 // fm = ( x, width = 0 ) -> ( ( rpr x ) + ',' ).padEnd width
-      for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-        [[probe_type, probe_value], matcher] = probes_and_matchers[i];
-        // echo '[', ( fm probe_type ), ( fm rpr probe_value ), '], ['
-        records = types.evaluate(probe_type, probe_value);
-        for (idx = j = 0, len1 = records.length; j < len1; idx = ++j) {
-          record = records[idx];
-          this.eq((Ωit_105 = function() {
-            return [record.stack, record.value, record.verdict];
-          }), matcher[idx]);
+        for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+          [[probe_type, probe_value], matcher] = probes_and_matchers[i];
+          // echo '[', ( fm probe_type ), ( fm rpr probe_value ), '], ['
+          records = types.evaluate(probe_type, probe_value);
+          for (idx = j = 0, len1 = records.length; j < len1; idx = ++j) {
+            record = records[idx];
+            this.eq((Ωit_105 = function() {
+              return [record.stack, record.value, record.verdict];
+            }), matcher[idx]);
+          }
         }
+        //   echo '  [', ( fm record.stack, 55 ), ( fm record.value, 45 ), ( fm record.verdict, 7 ), ']'
+        // echo '  ]'
+        //.....................................................................................................
+        return null;
       }
-      //   echo '  [', ( fm record.stack, 55 ), ( fm record.value, 45 ), ( fm record.verdict, 7 ), ']'
-      // echo '  ]'
-      //.......................................................................................................
-      return null;
     }
   };
 

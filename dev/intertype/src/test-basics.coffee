@@ -145,230 +145,233 @@ sample_declarations =
 #===========================================================================================================
 @intertype_tasks =
 
-  #-----------------------------------------------------------------------------------------------------------
-  MVP_isa: ->
-    # INTERTYPE     = require '../../../apps/intertype'
-    { Types
-      Type
-      Typespace
-      types
-      flatly_1
-      flatly_2
-      std             } = require '../../../apps/intertype'
-    $isa = sample_declarations
-    #.......................................................................................................
-    @eq ( Ωit__58 = -> std            instanceof Typespace          ), true
-    @eq ( Ωit__59 = -> flatly_1       instanceof Typespace          ), true
-    @eq ( Ωit__60 = -> flatly_2       instanceof Typespace          ), true
-    @eq ( Ωit__61 = -> flatly_1.flat  instanceof Type               ), true
-    @eq ( Ωit__62 = -> flatly_2.flat  instanceof Type               ), true
-    @eq ( Ωit__63 = -> std.quantity   instanceof Type               ), true
-    @eq ( Ωit__64 = -> $isa.function  std.quantity.isa              ), true
-    @eq ( Ωit__65 = -> $isa.object    std.quantity.fields           ), true
-    @eq ( Ωit__66 = -> std.quantity.fields.q instanceof Type        ), true
-    @eq ( Ωit__67 = -> $isa.function  std.quantity.fields.q.isa     ), true
-    #.......................................................................................................
-    echo()
-    @eq ( Ωit__68 = -> types.isa std.integer,              5                          ), true
-    @eq ( Ωit__69 = -> types.isa std.odd,                  5                          ), true
-    @eq ( Ωit__70 = -> types.isa std.even,                 6                          ), true
-    @eq ( Ωit__71 = -> types.isa std.strange,              5                          ), true
-    @eq ( Ωit__72 = -> types.isa std.weird,                5                          ), true
-    @eq ( Ωit__73 = -> types.isa std.abnormal,             5                          ), true
-    @eq ( Ωit__74 = -> types.isa flatly_1.flat,            8                          ), true
-    @eq ( Ωit__75 = -> types.isa flatly_1.evenly,          8                          ), true
-    @eq ( Ωit__76 = -> types.isa flatly_1.plain,           8                          ), true
-    @eq ( Ωit__77 = -> types.isa flatly_2.flat,            8                          ), true
-    @eq ( Ωit__78 = -> types.isa flatly_2.evenly,          8                          ), true
-    @eq ( Ωit__79 = -> types.isa flatly_2.plain,           8                          ), true
-    @eq ( Ωit__80 = -> types.isa std.nonempty_text,        'abc'                      ), true
-    @eq ( Ωit__81 = -> types.isa std.quantity.fields.q,    123.456                    ), true
-    @eq ( Ωit__82 = -> types.isa std.quantity.fields.u,    'm'                        ), true
-    @eq ( Ωit__83 = -> types.isa std.quantity,             { q: 123.456, u: 'm', }    ), true
-    #.......................................................................................................
-    echo()
-    @eq ( Ωit__84 = -> types.isa std.integer,              5.3                        ), false
-    @eq ( Ωit__85 = -> types.isa std.odd,                  6                          ), false
-    @eq ( Ωit__86 = -> types.isa std.odd,                  5.3                        ), false
-    @eq ( Ωit__87 = -> types.isa std.even,                 5                          ), false
-    @eq ( Ωit__88 = -> types.isa std.strange,              6                          ), false
-    @eq ( Ωit__89 = -> types.isa std.weird,                6                          ), false
-    @eq ( Ωit__90 = -> types.isa std.abnormal,             6                          ), false
-    @eq ( Ωit__91 = -> types.isa flatly_1.evenly,          5                          ), false
-    @eq ( Ωit__92 = -> types.isa flatly_1.flat,            5                          ), false
-    @eq ( Ωit__93 = -> types.isa flatly_1.plain,           5                          ), false
-    @eq ( Ωit__94 = -> types.isa flatly_2.flat,            5                          ), false
-    @eq ( Ωit__95 = -> types.isa flatly_2.evenly,          5                          ), false
-    @eq ( Ωit__96 = -> types.isa flatly_2.plain,           5                          ), false
-    @eq ( Ωit__97 = -> types.isa std.nonempty_text,        ''                         ), false
-    @eq ( Ωit__98 = -> types.isa std.quantity.fields.q,    '123.456'                  ), false
-    @eq ( Ωit__99 = -> types.isa std.quantity.fields.u,    ''                         ), false
-    @eq ( Ωit_100 = -> types.isa std.quantity,             { q: 123.456, u: '', }     ), false
-    @eq ( Ωit_101 = -> types.isa std.quantity,             { q: null, u: 'm', }       ), false
-    #.......................................................................................................
-    return null
+  #=========================================================================================================
+  MVP:
+
+    #-------------------------------------------------------------------------------------------------------
+    isa: ->
+      # INTERTYPE     = require '../../../apps/intertype'
+      { Types
+        Type
+        Typespace
+        types
+        flatly_1
+        flatly_2
+        std             } = require '../../../apps/intertype'
+      $isa = sample_declarations
+      #.....................................................................................................
+      @eq ( Ωit__58 = -> std            instanceof Typespace          ), true
+      @eq ( Ωit__59 = -> flatly_1       instanceof Typespace          ), true
+      @eq ( Ωit__60 = -> flatly_2       instanceof Typespace          ), true
+      @eq ( Ωit__61 = -> flatly_1.flat  instanceof Type               ), true
+      @eq ( Ωit__62 = -> flatly_2.flat  instanceof Type               ), true
+      @eq ( Ωit__63 = -> std.quantity   instanceof Type               ), true
+      @eq ( Ωit__64 = -> $isa.function  std.quantity.isa              ), true
+      @eq ( Ωit__65 = -> $isa.object    std.quantity.fields           ), true
+      @eq ( Ωit__66 = -> std.quantity.fields.q instanceof Type        ), true
+      @eq ( Ωit__67 = -> $isa.function  std.quantity.fields.q.isa     ), true
+      #.....................................................................................................
+      echo()
+      @eq ( Ωit__68 = -> types.isa std.integer,              5                          ), true
+      @eq ( Ωit__69 = -> types.isa std.odd,                  5                          ), true
+      @eq ( Ωit__70 = -> types.isa std.even,                 6                          ), true
+      @eq ( Ωit__71 = -> types.isa std.strange,              5                          ), true
+      @eq ( Ωit__72 = -> types.isa std.weird,                5                          ), true
+      @eq ( Ωit__73 = -> types.isa std.abnormal,             5                          ), true
+      @eq ( Ωit__74 = -> types.isa flatly_1.flat,            8                          ), true
+      @eq ( Ωit__75 = -> types.isa flatly_1.evenly,          8                          ), true
+      @eq ( Ωit__76 = -> types.isa flatly_1.plain,           8                          ), true
+      @eq ( Ωit__77 = -> types.isa flatly_2.flat,            8                          ), true
+      @eq ( Ωit__78 = -> types.isa flatly_2.evenly,          8                          ), true
+      @eq ( Ωit__79 = -> types.isa flatly_2.plain,           8                          ), true
+      @eq ( Ωit__80 = -> types.isa std.nonempty_text,        'abc'                      ), true
+      @eq ( Ωit__81 = -> types.isa std.quantity.fields.q,    123.456                    ), true
+      @eq ( Ωit__82 = -> types.isa std.quantity.fields.u,    'm'                        ), true
+      @eq ( Ωit__83 = -> types.isa std.quantity,             { q: 123.456, u: 'm', }    ), true
+      #.....................................................................................................
+      echo()
+      @eq ( Ωit__84 = -> types.isa std.integer,              5.3                        ), false
+      @eq ( Ωit__85 = -> types.isa std.odd,                  6                          ), false
+      @eq ( Ωit__86 = -> types.isa std.odd,                  5.3                        ), false
+      @eq ( Ωit__87 = -> types.isa std.even,                 5                          ), false
+      @eq ( Ωit__88 = -> types.isa std.strange,              6                          ), false
+      @eq ( Ωit__89 = -> types.isa std.weird,                6                          ), false
+      @eq ( Ωit__90 = -> types.isa std.abnormal,             6                          ), false
+      @eq ( Ωit__91 = -> types.isa flatly_1.evenly,          5                          ), false
+      @eq ( Ωit__92 = -> types.isa flatly_1.flat,            5                          ), false
+      @eq ( Ωit__93 = -> types.isa flatly_1.plain,           5                          ), false
+      @eq ( Ωit__94 = -> types.isa flatly_2.flat,            5                          ), false
+      @eq ( Ωit__95 = -> types.isa flatly_2.evenly,          5                          ), false
+      @eq ( Ωit__96 = -> types.isa flatly_2.plain,           5                          ), false
+      @eq ( Ωit__97 = -> types.isa std.nonempty_text,        ''                         ), false
+      @eq ( Ωit__98 = -> types.isa std.quantity.fields.q,    '123.456'                  ), false
+      @eq ( Ωit__99 = -> types.isa std.quantity.fields.u,    ''                         ), false
+      @eq ( Ωit_100 = -> types.isa std.quantity,             { q: 123.456, u: '', }     ), false
+      @eq ( Ωit_101 = -> types.isa std.quantity,             { q: null, u: 'm', }       ), false
+      #.....................................................................................................
+      return null
 
 
-  #-----------------------------------------------------------------------------------------------------------
-  MVP_validate: ->
-    # INTERTYPE     = require '../../../apps/intertype'
-    { Types
-      Type
-      Typespace
-      types
-      flatly_1
-      flatly_2
-      std             } = require '../../../apps/intertype'
-    $isa = sample_declarations
-    #.......................................................................................................
-    @eq     ( Ωit_102 = -> types.validate  std.integer,  -5   ), -5
-    @eq     ( Ωit_103 = -> types.validate  std.integer,  5    ), 5
-    @throws ( Ωit_104 = -> types.validate  std.integer,  5.3  ), /expected a integer/
-    #.......................................................................................................
-    return null
+    #-------------------------------------------------------------------------------------------------------
+    validate: ->
+      # INTERTYPE     = require '../../../apps/intertype'
+      { Types
+        Type
+        Typespace
+        types
+        flatly_1
+        flatly_2
+        std             } = require '../../../apps/intertype'
+      $isa = sample_declarations
+      #.....................................................................................................
+      @eq     ( Ωit_102 = -> types.validate  std.integer,  -5   ), -5
+      @eq     ( Ωit_103 = -> types.validate  std.integer,  5    ), 5
+      @throws ( Ωit_104 = -> types.validate  std.integer,  5.3  ), /expected a integer/
+      #.....................................................................................................
+      return null
 
-  #-----------------------------------------------------------------------------------------------------------
-  MVP_evaluate: ->
-    # INTERTYPE     = require '../../../apps/intertype'
-    { Types
-      Type
-      Typespace
-      types
-      flatly_1
-      flatly_2
-      std             } = require '../../../apps/intertype'
-    $isa = sample_declarations
-    #.......................................................................................................
-    echo()
-    probes_and_matchers = [
-      [[ std.integer, 5, ], [
-        [ 'integer',                                              5,                                            true,   ]
-        ]]
-      [[ std.integer, 5.3, ], [
-        [ 'integer',                                              5.3,                                          false,  ]
-        ]]
-      [[ std.even, 5, ], [
-        [ 'even',                                                 5,                                            false,  ]
-        [ 'even.integer',                                         5,                                            true,   ]
-        ]]
-      [[ flatly_1.evenly, 5, ], [
-        [ 'evenly',                                               5,                                            false,  ]
-        [ 'evenly.flat',                                          5,                                            false,  ]
-        [ 'evenly.flat.even',                                     5,                                            false,  ]
-        [ 'evenly.flat.even.integer',                             5,                                            true,   ]
-        ]]
-      [[ flatly_1.evenly, 6, ], [
-        [ 'evenly',                                               6,                                            true,   ]
-        [ 'evenly.flat',                                          6,                                            true,   ]
-        [ 'evenly.flat.even',                                     6,                                            true,   ]
-        [ 'evenly.flat.even.integer',                             6,                                            true,   ]
-        ]]
-      [[ flatly_2.evenly, 5, ], [
-        [ 'evenly',                                               5,                                            false,  ]
-        [ 'evenly.even',                                          5,                                            false,  ]
-        [ 'evenly.even.integer',                                  5,                                            true,   ]
-        ]]
-      [[ flatly_2.evenly, 6, ], [
-        [ 'evenly',                                               6,                                            true,   ]
-        [ 'evenly.even',                                          6,                                            true,   ]
-        [ 'evenly.even.integer',                                  6,                                            true,   ]
-        ]]
-      [[ std.quantity, { q: 123.456, u: '' }, ], [
-        [ 'quantity',                                             { q: 123.456, u: '' },                        false,  ]
-        [ 'quantity.q',                                           123.456,                                      true,   ]
-        [ 'quantity.q.float',                                     123.456,                                      true,   ]
-        [ 'quantity.u',                                           '',                                           false,  ]
-        [ 'quantity.u.nonempty_text',                             '',                                           false,  ]
-        [ 'quantity.u.nonempty_text.text',                        '',                                           true,   ]
-        ]]
-      [[ std.quantity, { q: 123.456, u: null }, ], [
-        [ 'quantity',                                             { q: 123.456, u: null },                      false,  ]
-        [ 'quantity.q',                                           123.456,                                      true,   ]
-        [ 'quantity.q.float',                                     123.456,                                      true,   ]
-        [ 'quantity.u',                                           null,                                         false,  ]
-        [ 'quantity.u.nonempty_text',                             null,                                         false,  ]
-        [ 'quantity.u.nonempty_text.text',                        null,                                         false,  ]
-        ]]
-      [[ std.quantity, { q: 'nan', u: 'm' }, ], [
-        [ 'quantity',                                             { q: 'nan', u: 'm' },                         false,  ]
-        [ 'quantity.q',                                           'nan',                                        false,  ]
-        [ 'quantity.q.float',                                     'nan',                                        false,  ]
-        ]]
-      [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: null }, ], [
-        [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: null }, false,  ]
-        [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
-        [ 'employee.address.address.city',                        'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
-        [ 'employee.name',                                        null,                                         false,  ]
-        ]]
-      [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: {} }, ], [
-        [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: {} }, false,  ]
-        [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
-        [ 'employee.address.address.city',                        'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
-        [ 'employee.name',                                        {},                                           false,  ]
-        [ 'employee.name.firstname',                              undefined,                                    false,  ]
-        [ 'employee.name.firstname.nonempty_text',                undefined,                                    false,  ]
-        [ 'employee.name.firstname.nonempty_text.text',           undefined,                                    false,  ]
-        ]]
-      [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob' } }, ], [
-        [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob' } }, false,  ]
-        [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
-        [ 'employee.address.address.city',                        'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
-        [ 'employee.name',                                        { firstname: 'Bob' },                         false,  ]
-        [ 'employee.name.firstname',                              'Bob',                                        true,   ]
-        [ 'employee.name.firstname.nonempty_text',                'Bob',                                        true,   ]
-        [ 'employee.name.firstname.nonempty_text.text',           'Bob',                                        true,   ]
-        [ 'employee.name.lastname',                               undefined,                                    false,  ]
-        [ 'employee.name.lastname.nonempty_text',                 undefined,                                    false,  ]
-        [ 'employee.name.lastname.nonempty_text.text',            undefined,                                    false,  ]
-        ]]
-      [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob', lastname: 'Miller' } }, ], [
-        [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob', lastname: 'Miller' } }, true,   ]
-        [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
-        [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
-        [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
-        [ 'employee.address.address.city',                        'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
-        [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
-        [ 'employee.name',                                        { firstname: 'Bob', lastname: 'Miller' },     true,   ]
-        [ 'employee.name.firstname',                              'Bob',                                        true,   ]
-        [ 'employee.name.firstname.nonempty_text',                'Bob',                                        true,   ]
-        [ 'employee.name.firstname.nonempty_text.text',           'Bob',                                        true,   ]
-        [ 'employee.name.lastname',                               'Miller',                                     true,   ]
-        [ 'employee.name.lastname.nonempty_text',                 'Miller',                                     true,   ]
-        [ 'employee.name.lastname.nonempty_text.text',            'Miller',                                     true,   ]
-        ]]
-      ]
-    #.......................................................................................................
-    # fm = ( x, width = 0 ) -> ( ( rpr x ) + ',' ).padEnd width
-    for [ [ probe_type, probe_value, ], matcher, ] in probes_and_matchers
-      # echo '[', ( fm probe_type ), ( fm rpr probe_value ), '], ['
-      records = types.evaluate probe_type, probe_value
-      for record, idx in records
-        @eq ( Ωit_105 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
-      #   echo '  [', ( fm record.stack, 55 ), ( fm record.value, 45 ), ( fm record.verdict, 7 ), ']'
-      # echo '  ]'
-    #.......................................................................................................
-    return null
+    #-------------------------------------------------------------------------------------------------------
+    evaluate: ->
+      # INTERTYPE     = require '../../../apps/intertype'
+      { Types
+        Type
+        Typespace
+        types
+        flatly_1
+        flatly_2
+        std             } = require '../../../apps/intertype'
+      $isa = sample_declarations
+      #.....................................................................................................
+      echo()
+      probes_and_matchers = [
+        [[ std.integer, 5, ], [
+          [ 'integer',                                              5,                                            true,   ]
+          ]]
+        [[ std.integer, 5.3, ], [
+          [ 'integer',                                              5.3,                                          false,  ]
+          ]]
+        [[ std.even, 5, ], [
+          [ 'even',                                                 5,                                            false,  ]
+          [ 'even.integer',                                         5,                                            true,   ]
+          ]]
+        [[ flatly_1.evenly, 5, ], [
+          [ 'evenly',                                               5,                                            false,  ]
+          [ 'evenly.flat',                                          5,                                            false,  ]
+          [ 'evenly.flat.even',                                     5,                                            false,  ]
+          [ 'evenly.flat.even.integer',                             5,                                            true,   ]
+          ]]
+        [[ flatly_1.evenly, 6, ], [
+          [ 'evenly',                                               6,                                            true,   ]
+          [ 'evenly.flat',                                          6,                                            true,   ]
+          [ 'evenly.flat.even',                                     6,                                            true,   ]
+          [ 'evenly.flat.even.integer',                             6,                                            true,   ]
+          ]]
+        [[ flatly_2.evenly, 5, ], [
+          [ 'evenly',                                               5,                                            false,  ]
+          [ 'evenly.even',                                          5,                                            false,  ]
+          [ 'evenly.even.integer',                                  5,                                            true,   ]
+          ]]
+        [[ flatly_2.evenly, 6, ], [
+          [ 'evenly',                                               6,                                            true,   ]
+          [ 'evenly.even',                                          6,                                            true,   ]
+          [ 'evenly.even.integer',                                  6,                                            true,   ]
+          ]]
+        [[ std.quantity, { q: 123.456, u: '' }, ], [
+          [ 'quantity',                                             { q: 123.456, u: '' },                        false,  ]
+          [ 'quantity.q',                                           123.456,                                      true,   ]
+          [ 'quantity.q.float',                                     123.456,                                      true,   ]
+          [ 'quantity.u',                                           '',                                           false,  ]
+          [ 'quantity.u.nonempty_text',                             '',                                           false,  ]
+          [ 'quantity.u.nonempty_text.text',                        '',                                           true,   ]
+          ]]
+        [[ std.quantity, { q: 123.456, u: null }, ], [
+          [ 'quantity',                                             { q: 123.456, u: null },                      false,  ]
+          [ 'quantity.q',                                           123.456,                                      true,   ]
+          [ 'quantity.q.float',                                     123.456,                                      true,   ]
+          [ 'quantity.u',                                           null,                                         false,  ]
+          [ 'quantity.u.nonempty_text',                             null,                                         false,  ]
+          [ 'quantity.u.nonempty_text.text',                        null,                                         false,  ]
+          ]]
+        [[ std.quantity, { q: 'nan', u: 'm' }, ], [
+          [ 'quantity',                                             { q: 'nan', u: 'm' },                         false,  ]
+          [ 'quantity.q',                                           'nan',                                        false,  ]
+          [ 'quantity.q.float',                                     'nan',                                        false,  ]
+          ]]
+        [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: null }, ], [
+          [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: null }, false,  ]
+          [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
+          [ 'employee.address.address.city',                        'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
+          [ 'employee.name',                                        null,                                         false,  ]
+          ]]
+        [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: {} }, ], [
+          [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: {} }, false,  ]
+          [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
+          [ 'employee.address.address.city',                        'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
+          [ 'employee.name',                                        {},                                           false,  ]
+          [ 'employee.name.firstname',                              undefined,                                    false,  ]
+          [ 'employee.name.firstname.nonempty_text',                undefined,                                    false,  ]
+          [ 'employee.name.firstname.nonempty_text.text',           undefined,                                    false,  ]
+          ]]
+        [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob' } }, ], [
+          [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob' } }, false,  ]
+          [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
+          [ 'employee.address.address.city',                        'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
+          [ 'employee.name',                                        { firstname: 'Bob' },                         false,  ]
+          [ 'employee.name.firstname',                              'Bob',                                        true,   ]
+          [ 'employee.name.firstname.nonempty_text',                'Bob',                                        true,   ]
+          [ 'employee.name.firstname.nonempty_text.text',           'Bob',                                        true,   ]
+          [ 'employee.name.lastname',                               undefined,                                    false,  ]
+          [ 'employee.name.lastname.nonempty_text',                 undefined,                                    false,  ]
+          [ 'employee.name.lastname.nonempty_text.text',            undefined,                                    false,  ]
+          ]]
+        [[ std.employee, { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob', lastname: 'Miller' } }, ], [
+          [ 'employee',                                             { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob', lastname: 'Miller' } }, true,   ]
+          [ 'employee.address',                                     { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address',                             { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'employee.address.address.postcode',                    'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text',      'SE36',                                       true,   ]
+          [ 'employee.address.address.postcode.nonempty_text.text', 'SE36',                                       true,   ]
+          [ 'employee.address.address.city',                        'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text',          'London',                                     true,   ]
+          [ 'employee.address.address.city.nonempty_text.text',     'London',                                     true,   ]
+          [ 'employee.name',                                        { firstname: 'Bob', lastname: 'Miller' },     true,   ]
+          [ 'employee.name.firstname',                              'Bob',                                        true,   ]
+          [ 'employee.name.firstname.nonempty_text',                'Bob',                                        true,   ]
+          [ 'employee.name.firstname.nonempty_text.text',           'Bob',                                        true,   ]
+          [ 'employee.name.lastname',                               'Miller',                                     true,   ]
+          [ 'employee.name.lastname.nonempty_text',                 'Miller',                                     true,   ]
+          [ 'employee.name.lastname.nonempty_text.text',            'Miller',                                     true,   ]
+          ]]
+        ]
+      #.....................................................................................................
+      # fm = ( x, width = 0 ) -> ( ( rpr x ) + ',' ).padEnd width
+      for [ [ probe_type, probe_value, ], matcher, ] in probes_and_matchers
+        # echo '[', ( fm probe_type ), ( fm rpr probe_value ), '], ['
+        records = types.evaluate probe_type, probe_value
+        for record, idx in records
+          @eq ( Ωit_105 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
+        #   echo '  [', ( fm record.stack, 55 ), ( fm record.value, 45 ), ( fm record.verdict, 7 ), ']'
+        # echo '  ]'
+      #.....................................................................................................
+      return null
 
 ############################################################################################################
 #
