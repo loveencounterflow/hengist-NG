@@ -1029,6 +1029,9 @@
         this.eq((Ωit__80 = function() {
           return types.types_of(std, 6e78);
         }), ['something', 'primitive', 'integer', 'even', 'float']);
+        this.eq((Ωit__80 = function() {
+          return types.types_of(std, 3);
+        }), ['something', 'primitive', 'integer', 'odd', 'float', 'weird', 'strange', 'abnormal']);
         this.eq((Ωit__81 = function() {
           return types.types_of(std, 'wat');
         }), ['something', 'primitive', 'text', 'nonempty_text']);

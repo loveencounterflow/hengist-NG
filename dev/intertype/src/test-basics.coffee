@@ -438,6 +438,7 @@ sample_declarations =
       @eq ( Ωit__78 = -> types.types_of std, false              ), [ 'something', 'primitive', 'boolean', ]
       @eq ( Ωit__79 = -> types.types_of std, NaN                ), [ 'something', 'primitive', 'nan', ]
       @eq ( Ωit__80 = -> types.types_of std, 6e78               ), [ 'something', 'primitive', 'integer', 'even', 'float', ]
+      @eq ( Ωit__80 = -> types.types_of std, 3                  ), [ 'something', 'primitive', 'integer', 'odd', 'float', 'weird', 'strange', 'abnormal', ]
       @eq ( Ωit__81 = -> types.types_of std, 'wat'              ), [ 'something', 'primitive', 'text', 'nonempty_text', ]
       @eq ( Ωit__82 = -> types.types_of std, []                 ), [ 'something', 'object', 'list', ]
       @eq ( Ωit__83 = -> types.types_of std, ( -> null )        ), [ 'something', 'object', 'function', ]
