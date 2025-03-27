@@ -11,7 +11,7 @@
     * An ISA method is a synchronous function `( x: any, t: Types ): boolean ->` that accepts two values:
       `x`, the value to be tested, and `t`, the `Types` instance used for testing.
     * Valid ISA methods must only return either `true` or `false` and must never throw an exception.
-    * When used via `Types::isa()`, ISA methods will be called in the context of their respective typespace
+    * When used via `Intertype::isa()`, ISA methods will be called in the context of their respective typespace
       which means that inside an ISA method `@`&nbsp;/&nbsp;`this` can be used to refer to other types
       accessible from that typespace
 
@@ -43,15 +43,43 @@
 
 ## API
 
-* `Types::isa: ( t: type, x: any ) ->`
+* `Intertype::isa: ( t: type, x: any ) ->`
 
-* `Types::create: ( t: type, x: any ) ->`
+* `Intertype::create: ( t: type, P...: [any] ) ->`
 
-* `Types::validate: ( t: type, x: any ) ->`: synchronous, (almost) pure function that looks up
+`Intertype::create()`
+
+----------------------------------------
+
+Types declarations may include a `create` and a `template` entry:
+
+* Types that have neither a `create` nor a `template` entry are not 'creatable'; trying to call
+  `types.create.〈type〉()` will fail with an error.
+* If given, a `create` entry must be a (synchronous) function that may accept any number of arguments; if it
+  can make sense out of the values given, if any, it must return a value that passes its own `test()`
+  method; otherwise, it should return any non-validating value (maybe `null` for all types except for
+  `null`) to indicate failure. In the latter case, an `Intertype_wrong_arguments_for_create` will be thrown,
+  assuming that the input arguments (not the create method) was at fault. Errors other than
+  `Intertype_wrong_arguments_for_create` that are raised during calls to the create method should be
+  considered bugs.
+* a type declaration with a `template` but no `create` entry will become 'creatable' by being assigned an
+  auto-generated create method.
+* The auto-generated create method will accept no arguments and either
+  * return the value stored under `template`, or
+  * call the template method, if it is a synchronous function; this is not only how one can have a function
+    being returned by an auto-generated create method, this is also a way to produce new copies instead of
+    always returning the identical same object, and, furthermore, a way to return random (`random_integer`)
+    or time-dependent (`date`) values.
+  * anything else but a synchronous function (primitive values, but also asynchronous functions) will just
+    be returned as-is from the auto-generated create method
+    * but this behavior may be slightly modified in the future, especially `object`s as template values
+      should be copied (shallow or deep, as the case may be)
+
+* `Intertype::validate: ( t: type, x: any ) ->`: synchronous, (almost) pure function that looks up
   the declaration of type `t`, and calls it with `x` as only argument; returns `true` if `x` is considered
   to be a value of type `t` and `false` otherwise; testing functions are forbidden to return anything else
   (no 'truthy' or 'falsey' values); they are allowed to be impure to the degree that they may leave data
-  entries (hints or results) in `Types::memo`, a `Map`-like object
+  entries (hints or results) in `Intertype::memo`, a `Map`-like object
 
   * The motivation for this piece of memoization is expressed by the slogan ['parse, don't
     validate'](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/): for example, in a given
@@ -62,7 +90,7 @@
     re-implement all the work that is expected of `parse 'quantityliteral', x`, or if the latter had to
     repeat all the lifting done by the former
 
-* `Types::evaluate: ( t: type, x: any ) ->`: returns a flat object whose keys are typenames and whose values
+* `Intertype::evaluate: ( t: type, x: any ) ->`: returns a flat object whose keys are typenames and whose values
   are either `true` or `false` depending on whether `x` satisfied the corresponding ISA method or not
 
 <!--
@@ -108,13 +136,13 @@
     API to cache explicitly in ordinary or custom (for size restriction) `Map` instance—the user is
     responsible for ensuring that cached entries stay relevant
   * **`[—]`** API is just API of `Map`:
-    * `Types::memo.set: ( k, v ) ->`
-    * `Types::memo.get: ( k ) ->`
-    * `Types::memo.delete: ( k ) ->`
-    * `Types::memo.has: ( k ) ->`
+    * `Intertype::memo.set: ( k, v ) ->`
+    * `Intertype::memo.get: ( k ) ->`
+    * `Intertype::memo.delete: ( k ) ->`
+    * `Intertype::memo.has: ( k ) ->`
     * and so on, can always customize with bespoke class when deemed necessary; by setting
-      `Types::memo = new Map()`, we already have a well-known, yet sub-classable API for free
-  * **`[—]`** should make configurable whether values stored in `Types::memo` are the results of
+      `Intertype::memo = new Map()`, we already have a well-known, yet sub-classable API for free
+  * **`[—]`** should make configurable whether values stored in `Intertype::memo` are the results of
     `parse` that should be
     * **`[—]`** **set** automatically whenever `parse()` returns a result
     * **`[—]`** **retrieved** automatically whenever `isa()`, `validate()` or `parse()` is called
@@ -129,8 +157,8 @@
     `fraction_proper`
 
 * **`[—]`** does it make sense to use formal prefixes to two `Intertype` instances?
-  * that could look like `Types::isa 'foo.quantity', x` where `foo` is a namespace for type names;
-    for simplicity's sake, only allow (or demand? as in `Types::isa 'std.integer', x`) single
+  * that could look like `Intertype::isa 'foo.quantity', x` where `foo` is a namespace for type names;
+    for simplicity's sake, only allow (or demand? as in `Intertype::isa 'std.integer', x`) single
     prefix
   * Maybe simpler and better to just say `types = { foo: ( new Foo_types() ), bar: ( new Bar_types() ), };
     types.foo.validate 'quux', x`, not clear where merging an advantage *except* where repetition of base
@@ -138,13 +166,13 @@
     prefixes is to be avoided
 
 * **`[—]`** the fancy API should merge type specifiers and method names (or should it?), as in
-  `Types::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
+  `Intertype::isa 'std.integer', x` becoming `Intertype_fancy::isa.std.integer x`
 
 * **`[—]`** how to express concatenation in a generic way as in `list of ( nonempty list of integer )`?
   * **`[—]`** one idea is to restrict usage to declared, named types, i.e. one can never call
-    \*`Types::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
+    \*`Intertype::isa 'list.of.integer', x` (using whatever syntax we settle on), one can only
     declare (and thereby name) a type (say, `intlist`) that is a `list.of.integer` and then call
-    `Types::isa 'intlist', x`
+    `Intertype::isa 'intlist', x`
 
 * **`[—]`** how to express multiple refinements as in `blank nonempty text` or `positive1 even integer`?
 
