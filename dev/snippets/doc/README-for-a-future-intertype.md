@@ -47,7 +47,10 @@
 
 * `Intertype::create: ( t: type, P...: [any] ) ->`
 
-`Intertype::create()`
+A call to `Intertype::create t, P...` will either:
+
+* call the type `t`'s declared `create()` method, if present, or
+* return a shallow copy
 
 ----------------------------------------
 
@@ -74,6 +77,8 @@ Types declarations may include a `create` and a `template` entry:
     be returned as-is from the auto-generated create method
     * but this behavior may be slightly modified in the future, especially `object`s as template values
       should be copied (shallow or deep, as the case may be)
+
+
 
 * `Intertype::validate: ( t: type, x: any ) ->`: synchronous, (almost) pure function that looks up
   the declaration of type `t`, and calls it with `x` as only argument; returns `true` if `x` is considered
@@ -115,6 +120,55 @@ Types declarations may include a `create` and a `template` entry:
     `evaluate.person.address x` will always have `person.address` as its first key
 -->
 
+## Value Creation
+
+In a type declaration, three properties—`create`, `fields` and `template`—determine whether and how a new
+value of the declared type can be produces by `Intertype::create()`.
+
+In case none of `create`, `fields` and `template` are set for a given type `T`'s `declaration` object, then
+`Intertype::create T, P...` will fail with an error.
+
+| `create`   | `fields`   | `template`   | behavior               |
+| :--------- | ---------- | ------------ | ---------------------- |
+| —          | —          | —            | fails                  |
+| 1          | —          | —            | call `D.create P...`   |
+| 1          | —          | 1            | call `D.create P...`   |
+| 1          | 1          | —            | call `D.create P...`   |
+| 1          | 1          | 1            | call `D.create P...`   |
+| —          | —          | —            |                        |
+| —          | —          | 1            |                        |
+| —          | 1          | —            |                        |
+| —          | 1          | 1            |                        |
+
+`declaration.create` is an optional synchronous function; if it exists, it will be called with the
+extraneous arguments `P` that are present in the call to `z = Intertype::create T, P...`, (where `T` is a
+type) if any; its return value `z` will be validated using `Intertype::validate T, z`. The declaration's
+`create()` method is free to use `declaration.fields` and `declaration.template` as it sees fit.
+
+`declaration.fields`
+`declaration.template`
+
+CF?T?
+
+F
+
+T
+
+FT
+
+
+In order to produce a new instance of a given type whose declaration has a `fields` object but no `create()`
+method, the `Intertype::create()` method will look at the `template` property of the type declaration. In
+case `Reflect.has declaration, 'template'` returns `false`, `Intertype::create()` will try to produce an
+object `R = {}` by recursively iterating over the enumerable properties of `fields` and try to perform `R[
+field_name ] = Intertype::create field_type` for each `field_name, field_type` pair. This may fail if any
+`field_type` cannot be created.
+
+### Template Copying Procedure
+
+`Intertype::create()` will return either this value
+(if it is a primitive value, including `undefined` and `null`), call it and use its return value (if
+`declaration.template` is a synchronous function), or try to make a copy of it.
 
 ## To Do
 
