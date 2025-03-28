@@ -1,4 +1,7 @@
 
+**Moved to `intertype`**
+
+
 * **Intertype Types**
   * are instances of class `Type`
   * **ISA method**:
