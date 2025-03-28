@@ -128,17 +128,17 @@ value of the declared type can be produces by `Intertype::create()`.
 In case none of `create`, `fields` and `template` are set for a given type `T`'s `declaration` object, then
 `Intertype::create T, P...` will fail with an error.
 
-| `create`   | `fields`   | `template`   | behavior               |
-| :--------- | ---------- | ------------ | ---------------------- |
-| —          | —          | —            | fails                  |
-| 1          | —          | —            | call `D.create P...`   |
-| 1          | —          | 1            | call `D.create P...`   |
-| 1          | 1          | —            | call `D.create P...`   |
-| 1          | 1          | 1            | call `D.create P...`   |
-| —          | —          | —            |                        |
-| —          | —          | 1            |                        |
-| —          | 1          | —            |                        |
-| —          | 1          | 1            |                        |
+| `create`   | `fields`    | `template`   | behavior               |
+| :--------- | ----------  | ------------ | ---------------------- |
+| —          | —           | —            | fails                  |
+| `function` | —           | —            | call `D.create P...`   |
+| `function` | —           | `something`  | call `D.create P...`   |
+| `function` | `something` | —            | call `D.create P...`   |
+| `function` | `something` | `something`  | call `D.create P...`   |
+| —          | —           | —            |                        |
+| —          | —           | 1            |                        |
+| —          | 1           | —            |                        |
+| —          | 1           | 1            |                        |
 
 `declaration.create` is an optional synchronous function; if it exists, it will be called with the
 extraneous arguments `P` that are present in the call to `z = Intertype::create T, P...`, (where `T` is a
