@@ -113,7 +113,7 @@ get_MVP_typespaces = ->
             firstname:  'nonempty_text'
             lastname:   'nonempty_text'
   #.........................................................................................................
-  qqq = new Typespace
+  ts1 = new Typespace
     #.......................................................................................................
     quantity_typs:
       fields:
@@ -122,6 +122,16 @@ get_MVP_typespaces = ->
       template:
         q:    0
         u:    'u'
+    #.......................................................................................................
+    name:
+      fields:
+        firstname:  mvp.nonempty_text
+        lastname:   mvp.nonempty_text
+    #.......................................................................................................
+    person:
+      fields:
+        address:    mvp.address
+        name:       'name'
   #.........................................................................................................
   flatly_1 = new Typespace
     evenly:       'flat'
@@ -134,7 +144,7 @@ get_MVP_typespaces = ->
     flat:         mvp.even
     plain:        'evenly'
   #.........................................................................................................
-  return { mvp, qqq, flatly_1, flatly_2, }
+  return { mvp, ts1, flatly_1, flatly_2, }
 
 #===========================================================================================================
 get_create_typespaces = ->
@@ -184,7 +194,7 @@ sample_declarations =
         types           } = require '../../../apps/intertype'
       { flatly_1
         flatly_2
-        qqq
+        ts1
         mvp         } = get_MVP_typespaces()
       $isa = sample_declarations
       #.....................................................................................................
@@ -195,19 +205,19 @@ sample_declarations =
       @eq ( Ωit___5 = -> flatly_2.flat  instanceof Type               ), true
       @eq ( Ωit___6 = -> mvp.quantity_refs   instanceof Type               ), true
       @eq ( Ωit___7 = -> mvp.quantity_funs   instanceof Type               ), true
-      @eq ( Ωit___8 = -> qqq.quantity_typs   instanceof Type               ), true
+      @eq ( Ωit___8 = -> ts1.quantity_typs   instanceof Type               ), true
       @eq ( Ωit___9 = -> $isa.function  mvp.quantity_refs.isa              ), true
       @eq ( Ωit__10 = -> $isa.function  mvp.quantity_funs.isa              ), true
-      @eq ( Ωit__11 = -> $isa.function  qqq.quantity_typs.isa              ), true
+      @eq ( Ωit__11 = -> $isa.function  ts1.quantity_typs.isa              ), true
       @eq ( Ωit__12 = -> $isa.object    mvp.quantity_refs.fields           ), true
       @eq ( Ωit__13 = -> $isa.object    mvp.quantity_funs.fields           ), true
-      @eq ( Ωit__14 = -> $isa.object    qqq.quantity_typs.fields           ), true
+      @eq ( Ωit__14 = -> $isa.object    ts1.quantity_typs.fields           ), true
       @eq ( Ωit__15 = -> mvp.quantity_refs.fields.q instanceof Type        ), true
       @eq ( Ωit__16 = -> mvp.quantity_funs.fields.q instanceof Type        ), true
-      @eq ( Ωit__17 = -> qqq.quantity_typs.fields.q instanceof Type        ), true
+      @eq ( Ωit__17 = -> ts1.quantity_typs.fields.q instanceof Type        ), true
       @eq ( Ωit__18 = -> $isa.function  mvp.quantity_refs.fields.q.isa     ), true
       @eq ( Ωit__19 = -> $isa.function  mvp.quantity_funs.fields.q.isa     ), true
-      @eq ( Ωit__20 = -> $isa.function  qqq.quantity_typs.fields.q.isa     ), true
+      @eq ( Ωit__20 = -> $isa.function  ts1.quantity_typs.fields.q.isa     ), true
       #.....................................................................................................
       echo()
       @eq ( Ωit__21 = -> types.isa mvp.integer,              5                          ), true
@@ -225,13 +235,13 @@ sample_declarations =
       @eq ( Ωit__33 = -> types.isa mvp.nonempty_text,        'abc'                      ), true
       @eq ( Ωit__34 = -> types.isa mvp.quantity_refs.fields.q,    123.456                    ), true
       @eq ( Ωit__35 = -> types.isa mvp.quantity_funs.fields.q,    123.456                    ), true
-      @eq ( Ωit__36 = -> types.isa qqq.quantity_typs.fields.q,    123.456                    ), true
+      @eq ( Ωit__36 = -> types.isa ts1.quantity_typs.fields.q,    123.456                    ), true
       @eq ( Ωit__37 = -> types.isa mvp.quantity_refs.fields.u,    'm'                        ), true
       @eq ( Ωit__38 = -> types.isa mvp.quantity_funs.fields.u,    'm'                        ), true
-      @eq ( Ωit__39 = -> types.isa qqq.quantity_typs.fields.u,    'm'                        ), true
+      @eq ( Ωit__39 = -> types.isa ts1.quantity_typs.fields.u,    'm'                        ), true
       @eq ( Ωit__40 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: 'm', }    ), true
       @eq ( Ωit__41 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: 'm', }    ), true
-      @eq ( Ωit__42 = -> types.isa qqq.quantity_typs,             { q: 123.456, u: 'm', }    ), true
+      @eq ( Ωit__42 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: 'm', }    ), true
       #.....................................................................................................
       echo()
       @eq ( Ωit__43 = -> types.isa mvp.integer,              5.3                        ), false
@@ -250,16 +260,16 @@ sample_declarations =
       @eq ( Ωit__56 = -> types.isa mvp.nonempty_text,        ''                         ), false
       @eq ( Ωit__57 = -> types.isa mvp.quantity_refs.fields.q,    '123.456'                  ), false
       @eq ( Ωit__58 = -> types.isa mvp.quantity_funs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__59 = -> types.isa qqq.quantity_typs.fields.q,    '123.456'                  ), false
+      @eq ( Ωit__59 = -> types.isa ts1.quantity_typs.fields.q,    '123.456'                  ), false
       @eq ( Ωit__60 = -> types.isa mvp.quantity_refs.fields.u,    ''                         ), false
       @eq ( Ωit__61 = -> types.isa mvp.quantity_funs.fields.u,    ''                         ), false
-      @eq ( Ωit__62 = -> types.isa qqq.quantity_typs.fields.u,    ''                         ), false
+      @eq ( Ωit__62 = -> types.isa ts1.quantity_typs.fields.u,    ''                         ), false
       @eq ( Ωit__63 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: '', }     ), false
       @eq ( Ωit__64 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: '', }     ), false
-      @eq ( Ωit__65 = -> types.isa qqq.quantity_typs,             { q: 123.456, u: '', }     ), false
+      @eq ( Ωit__65 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: '', }     ), false
       @eq ( Ωit__66 = -> types.isa mvp.quantity_refs,             { q: null, u: 'm', }       ), false
       @eq ( Ωit__67 = -> types.isa mvp.quantity_funs,             { q: null, u: 'm', }       ), false
-      @eq ( Ωit__68 = -> types.isa qqq.quantity_typs,             { q: null, u: 'm', }       ), false
+      @eq ( Ωit__68 = -> types.isa ts1.quantity_typs,             { q: null, u: 'm', }       ), false
       #.....................................................................................................
       return null
 
@@ -272,7 +282,7 @@ sample_declarations =
         types           } = require '../../../apps/intertype'
       { flatly_1
         flatly_2
-        qqq
+        ts1
         mvp         } = get_MVP_typespaces()
       $isa = sample_declarations
       #.....................................................................................................
@@ -281,10 +291,10 @@ sample_declarations =
       @throws ( Ωit__71 = -> types.validate mvp.integer,  5.3                     ), /expected a integer/
       @throws ( Ωit__72 = -> types.validate mvp.quantity_refs,  5                      ), /expected a quantity/
       @throws ( Ωit__73 = -> types.validate mvp.quantity_funs,  5                      ), /expected a quantity/
-      @throws ( Ωit__74 = -> types.validate qqq.quantity_typs,  5                      ), /expected a quantity/
+      @throws ( Ωit__74 = -> types.validate ts1.quantity_typs,  5                      ), /expected a quantity/
       @eq     ( Ωit__75 = -> types.validate mvp.quantity_refs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
       @eq     ( Ωit__76 = -> types.validate mvp.quantity_funs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
-      @eq     ( Ωit__77 = -> types.validate qqq.quantity_typs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
+      @eq     ( Ωit__77 = -> types.validate ts1.quantity_typs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
       #.....................................................................................................
       return null
 
@@ -296,7 +306,7 @@ sample_declarations =
         types           } = require '../../../apps/intertype'
       { flatly_1
         flatly_2
-        qqq
+        ts1
         mvp         } = get_MVP_typespaces()
       $isa = sample_declarations
       #.....................................................................................................
@@ -350,7 +360,7 @@ sample_declarations =
           [ 'quantity_funs/quantity_funs_$u/nonempty_text',                                  '',                                           false,  ]
           [ 'quantity_funs/quantity_funs_$u/nonempty_text/text',                             '',                                           true,   ]
           ]]
-        [[ qqq.quantity_typs, { q: 123.456, u: '' } ], [
+        [[ ts1.quantity_typs, { q: 123.456, u: '' } ], [
           [ 'quantity_typs',                                                                 { q: 123.456, u: '' },                        false,  ]
           [ 'quantity_typs/quantity_typs_$q',                                                123.456,                                      true,   ]
           [ 'quantity_typs/quantity_typs_$q/float',                                          123.456,                                      true,   ]
@@ -374,7 +384,7 @@ sample_declarations =
           [ 'quantity_funs/quantity_funs_$u/nonempty_text',                                  null,                                         false,  ]
           [ 'quantity_funs/quantity_funs_$u/nonempty_text/text',                             null,                                         false,  ]
           ]]
-        [[ qqq.quantity_typs, { q: 123.456, u: null } ], [
+        [[ ts1.quantity_typs, { q: 123.456, u: null } ], [
           [ 'quantity_typs',                                                                 { q: 123.456, u: null },                      false,  ]
           [ 'quantity_typs/quantity_typs_$q',                                                123.456,                                      true,   ]
           [ 'quantity_typs/quantity_typs_$q/float',                                          123.456,                                      true,   ]
@@ -392,7 +402,7 @@ sample_declarations =
           [ 'quantity_funs/quantity_funs_$q',                                                'nan',                                        false,  ]
           [ 'quantity_funs/quantity_funs_$q/float',                                          'nan',                                        false,  ]
           ]]
-        [[ qqq.quantity_typs, { q: 'nan', u: 'm' } ], [
+        [[ ts1.quantity_typs, { q: 'nan', u: 'm' } ], [
           [ 'quantity_typs',                                                                 { q: 'nan', u: 'm' },                         false,  ]
           [ 'quantity_typs/quantity_typs_$q',                                                'nan',                                        false,  ]
           [ 'quantity_typs/quantity_typs_$q/float',                                          'nan',                                        false,  ]
@@ -460,6 +470,25 @@ sample_declarations =
           [ 'employee/employee_$name/employee_$name_$lastname/nonempty_text',                'Miller',                                     true,   ]
           [ 'employee/employee_$name/employee_$name_$lastname/nonempty_text/text',           'Miller',                                     true,   ]
           ]]
+        [[ ts1.person, { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob', lastname: 'Miller' } } ], [
+          [ 'person',                                                                        { address: { postcode: 'SE36', city: 'London' }, name: { firstname: 'Bob', lastname: 'Miller' } }, true,   ]
+          [ 'person/person_$address',                                                        { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'person/person_$address/address',                                                { postcode: 'SE36', city: 'London' },         true,   ]
+          [ 'person/person_$address/address/address_$postcode',                              'SE36',                                       true,   ]
+          [ 'person/person_$address/address/address_$postcode/nonempty_text',                'SE36',                                       true,   ]
+          [ 'person/person_$address/address/address_$postcode/nonempty_text/text',           'SE36',                                       true,   ]
+          [ 'person/person_$address/address/address_$city',                                  'London',                                     true,   ]
+          [ 'person/person_$address/address/address_$city/nonempty_text',                    'London',                                     true,   ]
+          [ 'person/person_$address/address/address_$city/nonempty_text/text',               'London',                                     true,   ]
+          [ 'person/person_$name',                                                           { firstname: 'Bob', lastname: 'Miller' },     true,   ]
+          [ 'person/person_$name/name',                                                      { firstname: 'Bob', lastname: 'Miller' },     true,   ]
+          [ 'person/person_$name/name/name_$firstname',                                      'Bob',                                        true,   ]
+          [ 'person/person_$name/name/name_$firstname/nonempty_text',                        'Bob',                                        true,   ]
+          [ 'person/person_$name/name/name_$firstname/nonempty_text/text',                   'Bob',                                        true,   ]
+          [ 'person/person_$name/name/name_$lastname',                                       'Miller',                                     true,   ]
+          [ 'person/person_$name/name/name_$lastname/nonempty_text',                         'Miller',                                     true,   ]
+          [ 'person/person_$name/name/name_$lastname/nonempty_text/text',                    'Miller',                                     true,   ]
+          ]]
         ]
       #.....................................................................................................
       fm = ( x, width = 0 ) -> ( ( rpr x ) + ',' ).padEnd width
@@ -467,7 +496,7 @@ sample_declarations =
         echo '[[', ( 'mvp.' + probe_type.$typename + ',' ), ( probe_value ), '], ['
         records = types.evaluate probe_type, probe_value
         for record, idx in records
-          # @eq ( Ωit__78 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
+          @eq ( Ωit__78 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
           echo '  [', ( fm record.stack, 80 ), ( fm record.value, 45 ), ( fm record.verdict, 7 ), ']'
         echo '  ]]'
       #.....................................................................................................
@@ -481,12 +510,12 @@ sample_declarations =
         types           } = require '../../../apps/intertype'
       { flatly_1
         flatly_2
-        qqq
+        ts1
         mvp         } = get_MVP_typespaces()
       #.....................................................................................................
       urge 'Ωit__79', type for type of mvp
-      debug 'Ωit__80', type for type of qqq
-      debug 'Ωit__81', qqq.quantity_typs
+      debug 'Ωit__80', type for type of ts1
+      debug 'Ωit__81', ts1.quantity_typs
       # debug 'Ωit__82', types.create std.integer, 7
       # debug 'Ωit__83', types.create std.integer, 7.8
       # debug 'Ωit__84', types.create std.integer, '7'

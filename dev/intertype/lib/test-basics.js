@@ -23,7 +23,7 @@
 
   //===========================================================================================================
   get_MVP_typespaces = function() {
-    var Typespace, flatly_1, flatly_2, mvp, qqq;
+    var Typespace, flatly_1, flatly_2, mvp, ts1;
     ({Typespace} = require('../../../apps/intertype'));
     //.........................................................................................................
     mvp = new Typespace({
@@ -180,7 +180,7 @@
       }
     });
     //.........................................................................................................
-    qqq = new Typespace({
+    ts1 = new Typespace({
       //.......................................................................................................
       quantity_typs: {
         fields: {
@@ -190,6 +190,20 @@
         template: {
           q: 0,
           u: 'u'
+        }
+      },
+      //.......................................................................................................
+      name: {
+        fields: {
+          firstname: mvp.nonempty_text,
+          lastname: mvp.nonempty_text
+        }
+      },
+      //.......................................................................................................
+      person: {
+        fields: {
+          address: mvp.address,
+          name: 'name'
         }
       }
     });
@@ -209,7 +223,7 @@
       plain: 'evenly'
     });
     //.........................................................................................................
-    return {mvp, qqq, flatly_1, flatly_2};
+    return {mvp, ts1, flatly_1, flatly_2};
   };
 
   //===========================================================================================================
@@ -287,9 +301,9 @@
     MVP: {
       //-------------------------------------------------------------------------------------------------------
       isa: function() {
-        var $isa, Intertype, Type, Typespace, flatly_1, flatly_2, mvp, qqq, types, Ωit__10, Ωit__11, Ωit__12, Ωit__13, Ωit__14, Ωit__15, Ωit__16, Ωit__17, Ωit__18, Ωit__19, Ωit__20, Ωit__21, Ωit__22, Ωit__23, Ωit__24, Ωit__25, Ωit__26, Ωit__27, Ωit__28, Ωit__29, Ωit__30, Ωit__31, Ωit__32, Ωit__33, Ωit__34, Ωit__35, Ωit__36, Ωit__37, Ωit__38, Ωit__39, Ωit__40, Ωit__41, Ωit__42, Ωit__43, Ωit__44, Ωit__45, Ωit__46, Ωit__47, Ωit__48, Ωit__49, Ωit__50, Ωit__51, Ωit__52, Ωit__53, Ωit__54, Ωit__55, Ωit__56, Ωit__57, Ωit__58, Ωit__59, Ωit__60, Ωit__61, Ωit__62, Ωit__63, Ωit__64, Ωit__65, Ωit__66, Ωit__67, Ωit__68, Ωit___1, Ωit___2, Ωit___3, Ωit___4, Ωit___5, Ωit___6, Ωit___7, Ωit___8, Ωit___9;
+        var $isa, Intertype, Type, Typespace, flatly_1, flatly_2, mvp, ts1, types, Ωit__10, Ωit__11, Ωit__12, Ωit__13, Ωit__14, Ωit__15, Ωit__16, Ωit__17, Ωit__18, Ωit__19, Ωit__20, Ωit__21, Ωit__22, Ωit__23, Ωit__24, Ωit__25, Ωit__26, Ωit__27, Ωit__28, Ωit__29, Ωit__30, Ωit__31, Ωit__32, Ωit__33, Ωit__34, Ωit__35, Ωit__36, Ωit__37, Ωit__38, Ωit__39, Ωit__40, Ωit__41, Ωit__42, Ωit__43, Ωit__44, Ωit__45, Ωit__46, Ωit__47, Ωit__48, Ωit__49, Ωit__50, Ωit__51, Ωit__52, Ωit__53, Ωit__54, Ωit__55, Ωit__56, Ωit__57, Ωit__58, Ωit__59, Ωit__60, Ωit__61, Ωit__62, Ωit__63, Ωit__64, Ωit__65, Ωit__66, Ωit__67, Ωit__68, Ωit___1, Ωit___2, Ωit___3, Ωit___4, Ωit___5, Ωit___6, Ωit___7, Ωit___8, Ωit___9;
         ({Intertype, Type, Typespace, types} = require('../../../apps/intertype'));
-        ({flatly_1, flatly_2, qqq, mvp} = get_MVP_typespaces());
+        ({flatly_1, flatly_2, ts1, mvp} = get_MVP_typespaces());
         $isa = sample_declarations;
         //.....................................................................................................
         this.eq((Ωit___1 = function() {
@@ -314,7 +328,7 @@
           return mvp.quantity_funs instanceof Type;
         }), true);
         this.eq((Ωit___8 = function() {
-          return qqq.quantity_typs instanceof Type;
+          return ts1.quantity_typs instanceof Type;
         }), true);
         this.eq((Ωit___9 = function() {
           return $isa.function(mvp.quantity_refs.isa);
@@ -323,7 +337,7 @@
           return $isa.function(mvp.quantity_funs.isa);
         }), true);
         this.eq((Ωit__11 = function() {
-          return $isa.function(qqq.quantity_typs.isa);
+          return $isa.function(ts1.quantity_typs.isa);
         }), true);
         this.eq((Ωit__12 = function() {
           return $isa.object(mvp.quantity_refs.fields);
@@ -332,7 +346,7 @@
           return $isa.object(mvp.quantity_funs.fields);
         }), true);
         this.eq((Ωit__14 = function() {
-          return $isa.object(qqq.quantity_typs.fields);
+          return $isa.object(ts1.quantity_typs.fields);
         }), true);
         this.eq((Ωit__15 = function() {
           return mvp.quantity_refs.fields.q instanceof Type;
@@ -341,7 +355,7 @@
           return mvp.quantity_funs.fields.q instanceof Type;
         }), true);
         this.eq((Ωit__17 = function() {
-          return qqq.quantity_typs.fields.q instanceof Type;
+          return ts1.quantity_typs.fields.q instanceof Type;
         }), true);
         this.eq((Ωit__18 = function() {
           return $isa.function(mvp.quantity_refs.fields.q.isa);
@@ -350,7 +364,7 @@
           return $isa.function(mvp.quantity_funs.fields.q.isa);
         }), true);
         this.eq((Ωit__20 = function() {
-          return $isa.function(qqq.quantity_typs.fields.q.isa);
+          return $isa.function(ts1.quantity_typs.fields.q.isa);
         }), true);
         //.....................................................................................................
         echo();
@@ -400,7 +414,7 @@
           return types.isa(mvp.quantity_funs.fields.q, 123.456);
         }), true);
         this.eq((Ωit__36 = function() {
-          return types.isa(qqq.quantity_typs.fields.q, 123.456);
+          return types.isa(ts1.quantity_typs.fields.q, 123.456);
         }), true);
         this.eq((Ωit__37 = function() {
           return types.isa(mvp.quantity_refs.fields.u, 'm');
@@ -409,7 +423,7 @@
           return types.isa(mvp.quantity_funs.fields.u, 'm');
         }), true);
         this.eq((Ωit__39 = function() {
-          return types.isa(qqq.quantity_typs.fields.u, 'm');
+          return types.isa(ts1.quantity_typs.fields.u, 'm');
         }), true);
         this.eq((Ωit__40 = function() {
           return types.isa(mvp.quantity_refs, {
@@ -424,7 +438,7 @@
           });
         }), true);
         this.eq((Ωit__42 = function() {
-          return types.isa(qqq.quantity_typs, {
+          return types.isa(ts1.quantity_typs, {
             q: 123.456,
             u: 'm'
           });
@@ -480,7 +494,7 @@
           return types.isa(mvp.quantity_funs.fields.q, '123.456');
         }), false);
         this.eq((Ωit__59 = function() {
-          return types.isa(qqq.quantity_typs.fields.q, '123.456');
+          return types.isa(ts1.quantity_typs.fields.q, '123.456');
         }), false);
         this.eq((Ωit__60 = function() {
           return types.isa(mvp.quantity_refs.fields.u, '');
@@ -489,7 +503,7 @@
           return types.isa(mvp.quantity_funs.fields.u, '');
         }), false);
         this.eq((Ωit__62 = function() {
-          return types.isa(qqq.quantity_typs.fields.u, '');
+          return types.isa(ts1.quantity_typs.fields.u, '');
         }), false);
         this.eq((Ωit__63 = function() {
           return types.isa(mvp.quantity_refs, {
@@ -504,7 +518,7 @@
           });
         }), false);
         this.eq((Ωit__65 = function() {
-          return types.isa(qqq.quantity_typs, {
+          return types.isa(ts1.quantity_typs, {
             q: 123.456,
             u: ''
           });
@@ -522,7 +536,7 @@
           });
         }), false);
         this.eq((Ωit__68 = function() {
-          return types.isa(qqq.quantity_typs, {
+          return types.isa(ts1.quantity_typs, {
             q: null,
             u: 'm'
           });
@@ -532,9 +546,9 @@
       },
       //-------------------------------------------------------------------------------------------------------
       validate: function() {
-        var $isa, Intertype, Type, Typespace, flatly_1, flatly_2, mvp, qqq, types, Ωit__69, Ωit__70, Ωit__71, Ωit__72, Ωit__73, Ωit__74, Ωit__75, Ωit__76, Ωit__77;
+        var $isa, Intertype, Type, Typespace, flatly_1, flatly_2, mvp, ts1, types, Ωit__69, Ωit__70, Ωit__71, Ωit__72, Ωit__73, Ωit__74, Ωit__75, Ωit__76, Ωit__77;
         ({Intertype, Type, Typespace, types} = require('../../../apps/intertype'));
-        ({flatly_1, flatly_2, qqq, mvp} = get_MVP_typespaces());
+        ({flatly_1, flatly_2, ts1, mvp} = get_MVP_typespaces());
         $isa = sample_declarations;
         //.....................................................................................................
         this.eq((Ωit__69 = function() {
@@ -553,7 +567,7 @@
           return types.validate(mvp.quantity_funs, 5);
         }), /expected a quantity/);
         this.throws((Ωit__74 = function() {
-          return types.validate(qqq.quantity_typs, 5);
+          return types.validate(ts1.quantity_typs, 5);
         }), /expected a quantity/);
         this.eq((Ωit__75 = function() {
           return types.validate(mvp.quantity_refs, {
@@ -574,7 +588,7 @@
           u: 'km'
         });
         this.eq((Ωit__77 = function() {
-          return types.validate(qqq.quantity_typs, {
+          return types.validate(ts1.quantity_typs, {
             q: 123.4,
             u: 'km'
           });
@@ -587,9 +601,9 @@
       },
       //-------------------------------------------------------------------------------------------------------
       evaluate: function() {
-        var $isa, Intertype, Type, Typespace, flatly_1, flatly_2, fm, i, idx, j, len, len1, matcher, mvp, probe_type, probe_value, probes_and_matchers, qqq, record, records, types;
+        var $isa, Intertype, Type, Typespace, flatly_1, flatly_2, fm, i, idx, j, len, len1, matcher, mvp, probe_type, probe_value, probes_and_matchers, record, records, ts1, types, Ωit__78;
         ({Intertype, Type, Typespace, types} = require('../../../apps/intertype'));
-        ({flatly_1, flatly_2, qqq, mvp} = get_MVP_typespaces());
+        ({flatly_1, flatly_2, ts1, mvp} = get_MVP_typespaces());
         $isa = sample_declarations;
         //.....................................................................................................
         echo();
@@ -732,7 +746,7 @@
           ],
           [
             [
-              qqq.quantity_typs,
+              ts1.quantity_typs,
               {
                 q: 123.456,
                 u: ''
@@ -834,7 +848,7 @@
           ],
           [
             [
-              qqq.quantity_typs,
+              ts1.quantity_typs,
               {
                 q: 123.456,
                 u: null
@@ -918,7 +932,7 @@
           ],
           [
             [
-              qqq.quantity_typs,
+              ts1.quantity_typs,
               {
                 q: 'nan',
                 u: 'm'
@@ -1252,6 +1266,105 @@
               'Miller',
               true]
             ]
+          ],
+          [
+            [
+              ts1.person,
+              {
+                address: {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                name: {
+                  firstname: 'Bob',
+                  lastname: 'Miller'
+                }
+              }
+            ],
+            [
+              [
+                'person',
+                {
+                  address: {
+                    postcode: 'SE36',
+                    city: 'London'
+                  },
+                  name: {
+                    firstname: 'Bob',
+                    lastname: 'Miller'
+                  }
+                },
+                true
+              ],
+              [
+                'person/person_$address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              [
+                'person/person_$address/address',
+                {
+                  postcode: 'SE36',
+                  city: 'London'
+                },
+                true
+              ],
+              ['person/person_$address/address/address_$postcode',
+              'SE36',
+              true],
+              ['person/person_$address/address/address_$postcode/nonempty_text',
+              'SE36',
+              true],
+              ['person/person_$address/address/address_$postcode/nonempty_text/text',
+              'SE36',
+              true],
+              ['person/person_$address/address/address_$city',
+              'London',
+              true],
+              ['person/person_$address/address/address_$city/nonempty_text',
+              'London',
+              true],
+              ['person/person_$address/address/address_$city/nonempty_text/text',
+              'London',
+              true],
+              [
+                'person/person_$name',
+                {
+                  firstname: 'Bob',
+                  lastname: 'Miller'
+                },
+                true
+              ],
+              [
+                'person/person_$name/name',
+                {
+                  firstname: 'Bob',
+                  lastname: 'Miller'
+                },
+                true
+              ],
+              ['person/person_$name/name/name_$firstname',
+              'Bob',
+              true],
+              ['person/person_$name/name/name_$firstname/nonempty_text',
+              'Bob',
+              true],
+              ['person/person_$name/name/name_$firstname/nonempty_text/text',
+              'Bob',
+              true],
+              ['person/person_$name/name/name_$lastname',
+              'Miller',
+              true],
+              ['person/person_$name/name/name_$lastname/nonempty_text',
+              'Miller',
+              true],
+              ['person/person_$name/name/name_$lastname/nonempty_text/text',
+              'Miller',
+              true]
+            ]
           ]
         ];
         //.....................................................................................................
@@ -1264,7 +1377,9 @@
           records = types.evaluate(probe_type, probe_value);
           for (idx = j = 0, len1 = records.length; j < len1; idx = ++j) {
             record = records[idx];
-            // @eq ( Ωit__78 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
+            this.eq((Ωit__78 = function() {
+              return [record.stack, record.value, record.verdict];
+            }), matcher[idx]);
             echo('  [', fm(record.stack, 80), fm(record.value, 45), fm(record.verdict, 7), ']');
           }
           echo('  ]]');
@@ -1274,17 +1389,17 @@
       },
       //-------------------------------------------------------------------------------------------------------
       typenames: function() {
-        var Intertype, Type, Typespace, flatly_1, flatly_2, mvp, qqq, type, types;
+        var Intertype, Type, Typespace, flatly_1, flatly_2, mvp, ts1, type, types;
         ({Intertype, Type, Typespace, types} = require('../../../apps/intertype'));
-        ({flatly_1, flatly_2, qqq, mvp} = get_MVP_typespaces());
+        ({flatly_1, flatly_2, ts1, mvp} = get_MVP_typespaces());
         for (type in mvp) {
           //.....................................................................................................
           urge('Ωit__79', type);
         }
-        for (type in qqq) {
+        for (type in ts1) {
           debug('Ωit__80', type);
         }
-        debug('Ωit__81', qqq.quantity_typs);
+        debug('Ωit__81', ts1.quantity_typs);
         // debug 'Ωit__82', types.create std.integer, 7
         // debug 'Ωit__83', types.create std.integer, 7.8
         // debug 'Ωit__84', types.create std.integer, '7'
