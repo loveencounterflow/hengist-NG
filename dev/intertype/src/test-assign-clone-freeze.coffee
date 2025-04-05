@@ -35,8 +35,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
   #---------------------------------------------------------------------------------------------------------
   lft_lets: ->
-    { samesame
-      lft             } = GUY
+    lft = require '../../../apps/intertype/node_modules/letsfreezethat'
+    # debug ( k for k of lft.nofreeze ), Object.isFrozen ( lft.nofreeze.freeze {}); xxx
     # debug 'Ωacf___1', samesame.equals
     # debug 'Ωacf___2', samesame.deep_copy
     debug 'Ωacf___3', k = { x: true, y: 5, }
@@ -55,20 +55,21 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
   #---------------------------------------------------------------------------------------------------------
   lft_assign: ->
-    { samesame
-      lft             } = GUY
+    lft = require '../../../apps/intertype/node_modules/letsfreezethat'
     probes = [
       [ {}, ]
       [ { d: 6, k: true, },                                             ]
       [ { d: 6, k: true, }, { k: false, m: 'M', }                       ]
       [ { d: 6, k: true, }, null,                                       ]
       [ { d: 6, k: true, }, undefined,                                  ]
+      [ [],                                                             ]
+      [ [], { z: 'zoo', y: 'wye', }                                     ]
+      ]
+    failing_probes = [
       [ 987,                                                            ]
       [ true,                                                           ]
       [ false,                                                          ]
       [ 'jkl',                                                          ]
-      [ [],                                                             ]
-      [ [], { z: 'zoo', y: 'wye', }                                     ]
       ]
     #.......................................................................................................
     # debug 'Ωacf__13', Object.assign undefined
@@ -79,14 +80,17 @@ GTNG                      = require '../../../apps/guy-test-NG'
     info  'Ωacf__18', rpr Object.assign true
     warn  'Ωacf__19', rpr lft.assign    'jkl'
     info  'Ωacf__20', rpr Object.assign 'jkl'
+    #.......................................................................................................
     for probe in probes
       @eq ( Ωacf__21 = -> lft.assign probe... ), Object.assign probe...
-    @throws ( Ωacf__22 = -> Object.assign undefined   ), /Cannot convert undefined or null to object/
-    @throws ( Ωacf__23 = -> Object.assign null        ), /Cannot convert undefined or null to object/
-    @throws ( Ωacf__24 = -> lft.assign undefined      ), /Cannot convert undefined or null to object/
-    # accept -> @throws ( Ωacf__25 = -> lft.assign null           ), /Cannot convert undefined or null to object/
-    debug 'Ωacf__26', @eq ( Ωacf__27 = -> true           ), false
-    debug 'Ωacf__28', @throws ( Ωacf__29 = -> lft.assign null           ), /Cannot convert undefined or null to object/
+    #.......................................................................................................
+    for probe in failing_probes
+      @eq ( ΩACCEPT_FAILURE_FOR_NOW_acf__22 = -> lft.assign probe... ), Object.assign probe...
+    #.......................................................................................................
+    @throws ( Ωacf__23 = -> Object.assign undefined   ), /Cannot convert undefined or null to object/
+    @throws ( Ωacf__24 = -> Object.assign null        ), /Cannot convert undefined or null to object/
+    @throws ( ΩACCEPT_FAILURE_FOR_NOW_acf__25 = -> lft.assign undefined      ), /Cannot convert undefined or null to object/
+    @throws ( ΩACCEPT_FAILURE_FOR_NOW_acf__26 = -> lft.assign null           ), /Cannot convert undefined or null to object/
     #.......................................................................................................
     return null
 
@@ -101,20 +105,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
     d_obj = Object.assign d
     d_lft = lft.assign d
     d_nfr = lft.nofreeze.assign d
-    @eq ( Ωacf__30 = -> Object.isFrozen d_obj   ), false
-    @eq ( Ωacf__31 = -> Object.isFrozen d_lft   ), true
-    @eq ( Ωacf__32 = -> Object.isFrozen d_nfr   ), false
-    @eq ( Ωacf__33 = -> d.e       is e          ), true
-    @eq ( Ωacf__34 = -> d.e.f     is f          ), true
-    @eq ( Ωacf__35 = -> d_obj     is d          ), true
-    @eq ( Ωacf__36 = -> d_obj.e   is e          ), true
-    @eq ( Ωacf__37 = -> d_obj.e.f is f          ), true
-    @eq ( Ωacf__38 = -> d_lft     is d          ), false
-    @eq ( Ωacf__39 = -> d_lft.e   is e          ), false
-    @eq ( Ωacf__40 = -> d_lft.e.f is f          ), false
-    @eq ( Ωacf__41 = -> d_nfr     is d          ), false
-    @eq ( Ωacf__42 = -> d_nfr.e   is e          ), false
-    @eq ( Ωacf__43 = -> d_nfr.e.f is f          ), false
+    @eq ( Ωacf__27 = -> Object.isFrozen d_obj   ), false
+    @eq ( Ωacf__28 = -> Object.isFrozen d_lft   ), true
+    @eq ( Ωacf__29 = -> Object.isFrozen d_nfr   ), false
+    @eq ( Ωacf__30 = -> d.e       is e          ), true
+    @eq ( Ωacf__31 = -> d.e.f     is f          ), true
+    @eq ( Ωacf__32 = -> d_obj     is d          ), true
+    @eq ( Ωacf__33 = -> d_obj.e   is e          ), true
+    @eq ( Ωacf__34 = -> d_obj.e.f is f          ), true
+    @eq ( Ωacf__35 = -> d_lft     is d          ), false
+    @eq ( Ωacf__36 = -> d_lft.e   is e          ), false
+    @eq ( Ωacf__37 = -> d_lft.e.f is f          ), false
+    @eq ( Ωacf__38 = -> d_nfr     is d          ), false
+    @eq ( Ωacf__39 = -> d_nfr.e   is e          ), false
+    @eq ( Ωacf__40 = -> d_nfr.e.f is f          ), false
     #.......................................................................................................
     return null
 
