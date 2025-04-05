@@ -1,7 +1,7 @@
 (async function() {
   //===========================================================================================================
   'use strict';
-  var GTNG, GUY, Test, _TMP_test, after, alert, debug, echo, help, info, inspect, isa, log, plain, praise, reverse, rpr, type_of, types, urge, validate, warn, whisper;
+  var GTNG, GUY, Test, _TMP_test, after, alert, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, type_of, types, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -28,7 +28,13 @@
   //-----------------------------------------------------------------------------------------------------------
   types = require('../../../apps/intertype');
 
-  ({isa, type_of, validate} = types);
+  ({
+    $type_of: type_of
+  } = types);
+
+  // isa
+  // type_of
+  // $isa
 
   //===========================================================================================================
   this.TT = {
