@@ -16,9 +16,9 @@
 
   my_filename = PATH.basename(__filename);
 
-  ({Test} = GTNG);
-
   GTNG = require('../../../apps/guy-test-NG');
+
+  ({Test} = GTNG);
 
   //###########################################################################################################
   tasks = {};
