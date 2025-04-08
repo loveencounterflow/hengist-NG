@@ -51,7 +51,9 @@ get_typespaces = ->
       isa:    ( x, t ) -> ( t.isa @$typespace.integer, x ) and ( x %% 2 isnt 0 )
     # short form just assigns either a test method or a type name:
     even:           ( x, t ) -> ( t.isa @$typespace.integer, x ) and ( x %% 2 is 0 )
-    float:          ( x, t ) -> Number.isFinite x
+    float:
+      isa:            ( x, t ) -> Number.isFinite x
+      template:       0
     bigint:         ( x, t ) -> typeof x is 'bigint'
     text:           ( x, t ) -> typeof x is 'string'
     empty_text:     ( x, t ) -> x is ''
@@ -122,6 +124,24 @@ get_typespaces = ->
       template:
         q:    0
         u:    'u'
+    #.......................................................................................................
+    quantity_typs_float_fb:
+      fields:
+        q:    mvp.float
+        u:    mvp.nonempty_text
+      template:
+        u:    'u'
+    #.......................................................................................................
+    quantity_typs_float_fb:
+      fields:
+        q:    mvp.float
+        u:
+          isa:      mvp.nonempty_text
+          template: 'u'
+    #.......................................................................................................
+    float_one:
+      isa:          mvp.float
+      template:     1
     #.......................................................................................................
     name:
       fields:
@@ -200,6 +220,40 @@ sample_declarations =
   MVP:
 
     #-------------------------------------------------------------------------------------------------------
+    disallow_forward_refs: ->
+      { Intertype
+        Type
+        Typespace
+        types           } = require '../../../apps/intertype'
+      #.....................................................................................................
+      do =>
+        create_typespace = ->
+          ts1 = new Typespace
+            integer:            ( x, t ) -> Number.isInteger x
+            wholenumber:        'integer'
+        @eq ( Ωit___3 = -> create_typespace()             instanceof Typespace  ), true
+        @eq ( Ωit___4 = -> create_typespace().integer     instanceof Type       ), true
+        @eq ( Ωit___5 = -> create_typespace().wholenumber instanceof Type       ), true
+      #.....................................................................................................
+      do =>
+        create_typespace = ->
+          ts1 = new Typespace
+            wholenumber:        'integer'
+            integer:            ( x, t ) -> Number.isInteger x
+        @throws ( Ωit___6 = -> create_typespace() ), /declaration for type 'wholenumber' contains forward reference to type 'integer'/
+      #.....................................................................................................
+      do =>
+        create_typespace = ->
+          ts1 = new Typespace
+            wholenumber:
+              isa:                'integer'
+              fields:             {}
+            integer:            ( x, t ) -> Number.isInteger x
+        @throws ( Ωit___7 = -> create_typespace() ), /declaration for type 'wholenumber' contains forward reference to type 'integer'/
+      #.....................................................................................................
+      return null
+
+    #-------------------------------------------------------------------------------------------------------
     isa: ->
       { Intertype
         Type
@@ -211,78 +265,78 @@ sample_declarations =
         mvp         } = get_typespaces()
       $isa = sample_declarations
       #.....................................................................................................
-      @eq ( Ωit___3 = -> mvp            instanceof Typespace          ), true
-      @eq ( Ωit___4 = -> flatly_1       instanceof Typespace          ), true
-      @eq ( Ωit___5 = -> flatly_2       instanceof Typespace          ), true
-      @eq ( Ωit___6 = -> flatly_1.flat  instanceof Type               ), true
-      @eq ( Ωit___7 = -> flatly_2.flat  instanceof Type               ), true
-      @eq ( Ωit___8 = -> mvp.quantity_refs   instanceof Type               ), true
-      @eq ( Ωit___9 = -> mvp.quantity_funs   instanceof Type               ), true
-      @eq ( Ωit__10 = -> ts1.quantity_typs   instanceof Type               ), true
-      @eq ( Ωit__11 = -> $isa.function  mvp.quantity_refs.isa              ), true
-      @eq ( Ωit__12 = -> $isa.function  mvp.quantity_funs.isa              ), true
-      @eq ( Ωit__13 = -> $isa.function  ts1.quantity_typs.isa              ), true
-      @eq ( Ωit__14 = -> $isa.object    mvp.quantity_refs.fields           ), true
-      @eq ( Ωit__15 = -> $isa.object    mvp.quantity_funs.fields           ), true
-      @eq ( Ωit__16 = -> $isa.object    ts1.quantity_typs.fields           ), true
-      @eq ( Ωit__17 = -> mvp.quantity_refs.fields.q instanceof Type        ), true
-      @eq ( Ωit__18 = -> mvp.quantity_funs.fields.q instanceof Type        ), true
-      @eq ( Ωit__19 = -> ts1.quantity_typs.fields.q instanceof Type        ), true
-      @eq ( Ωit__20 = -> $isa.function  mvp.quantity_refs.fields.q.isa     ), true
-      @eq ( Ωit__21 = -> $isa.function  mvp.quantity_funs.fields.q.isa     ), true
-      @eq ( Ωit__22 = -> $isa.function  ts1.quantity_typs.fields.q.isa     ), true
+      @eq ( Ωit___8 = -> mvp            instanceof Typespace          ), true
+      @eq ( Ωit___9 = -> flatly_1       instanceof Typespace          ), true
+      @eq ( Ωit__10 = -> flatly_2       instanceof Typespace          ), true
+      @eq ( Ωit__11 = -> flatly_1.flat  instanceof Type               ), true
+      @eq ( Ωit__12 = -> flatly_2.flat  instanceof Type               ), true
+      @eq ( Ωit__13 = -> mvp.quantity_refs   instanceof Type               ), true
+      @eq ( Ωit__14 = -> mvp.quantity_funs   instanceof Type               ), true
+      @eq ( Ωit__15 = -> ts1.quantity_typs   instanceof Type               ), true
+      @eq ( Ωit__16 = -> $isa.function  mvp.quantity_refs.isa              ), true
+      @eq ( Ωit__17 = -> $isa.function  mvp.quantity_funs.isa              ), true
+      @eq ( Ωit__18 = -> $isa.function  ts1.quantity_typs.isa              ), true
+      @eq ( Ωit__19 = -> $isa.object    mvp.quantity_refs.fields           ), true
+      @eq ( Ωit__20 = -> $isa.object    mvp.quantity_funs.fields           ), true
+      @eq ( Ωit__21 = -> $isa.object    ts1.quantity_typs.fields           ), true
+      @eq ( Ωit__22 = -> mvp.quantity_refs.fields.q instanceof Type        ), true
+      @eq ( Ωit__23 = -> mvp.quantity_funs.fields.q instanceof Type        ), true
+      @eq ( Ωit__24 = -> ts1.quantity_typs.fields.q instanceof Type        ), true
+      @eq ( Ωit__25 = -> $isa.function  mvp.quantity_refs.fields.q.isa     ), true
+      @eq ( Ωit__26 = -> $isa.function  mvp.quantity_funs.fields.q.isa     ), true
+      @eq ( Ωit__27 = -> $isa.function  ts1.quantity_typs.fields.q.isa     ), true
       #.....................................................................................................
       echo()
-      @eq ( Ωit__23 = -> types.isa mvp.integer,              5                          ), true
-      @eq ( Ωit__24 = -> types.isa mvp.odd,                  5                          ), true
-      @eq ( Ωit__25 = -> types.isa mvp.even,                 6                          ), true
-      @eq ( Ωit__26 = -> types.isa mvp.strange,              5                          ), true
-      @eq ( Ωit__27 = -> types.isa mvp.weird,                5                          ), true
-      @eq ( Ωit__28 = -> types.isa mvp.abnormal,             5                          ), true
-      @eq ( Ωit__29 = -> types.isa flatly_1.flat,            8                          ), true
-      @eq ( Ωit__30 = -> types.isa flatly_1.evenly,          8                          ), true
-      @eq ( Ωit__31 = -> types.isa flatly_1.plain,           8                          ), true
-      @eq ( Ωit__32 = -> types.isa flatly_2.flat,            8                          ), true
-      @eq ( Ωit__33 = -> types.isa flatly_2.evenly,          8                          ), true
-      @eq ( Ωit__34 = -> types.isa flatly_2.plain,           8                          ), true
-      @eq ( Ωit__35 = -> types.isa mvp.nonempty_text,        'abc'                      ), true
-      @eq ( Ωit__36 = -> types.isa mvp.quantity_refs.fields.q,    123.456                    ), true
-      @eq ( Ωit__37 = -> types.isa mvp.quantity_funs.fields.q,    123.456                    ), true
-      @eq ( Ωit__38 = -> types.isa ts1.quantity_typs.fields.q,    123.456                    ), true
-      @eq ( Ωit__39 = -> types.isa mvp.quantity_refs.fields.u,    'm'                        ), true
-      @eq ( Ωit__40 = -> types.isa mvp.quantity_funs.fields.u,    'm'                        ), true
-      @eq ( Ωit__41 = -> types.isa ts1.quantity_typs.fields.u,    'm'                        ), true
-      @eq ( Ωit__42 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: 'm', }    ), true
-      @eq ( Ωit__43 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: 'm', }    ), true
-      @eq ( Ωit__44 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: 'm', }    ), true
+      @eq ( Ωit__28 = -> types.isa mvp.integer,              5                          ), true
+      @eq ( Ωit__29 = -> types.isa mvp.odd,                  5                          ), true
+      @eq ( Ωit__30 = -> types.isa mvp.even,                 6                          ), true
+      @eq ( Ωit__31 = -> types.isa mvp.strange,              5                          ), true
+      @eq ( Ωit__32 = -> types.isa mvp.weird,                5                          ), true
+      @eq ( Ωit__33 = -> types.isa mvp.abnormal,             5                          ), true
+      @eq ( Ωit__34 = -> types.isa flatly_1.flat,            8                          ), true
+      @eq ( Ωit__35 = -> types.isa flatly_1.evenly,          8                          ), true
+      @eq ( Ωit__36 = -> types.isa flatly_1.plain,           8                          ), true
+      @eq ( Ωit__37 = -> types.isa flatly_2.flat,            8                          ), true
+      @eq ( Ωit__38 = -> types.isa flatly_2.evenly,          8                          ), true
+      @eq ( Ωit__39 = -> types.isa flatly_2.plain,           8                          ), true
+      @eq ( Ωit__40 = -> types.isa mvp.nonempty_text,        'abc'                      ), true
+      @eq ( Ωit__41 = -> types.isa mvp.quantity_refs.fields.q,    123.456                    ), true
+      @eq ( Ωit__42 = -> types.isa mvp.quantity_funs.fields.q,    123.456                    ), true
+      @eq ( Ωit__43 = -> types.isa ts1.quantity_typs.fields.q,    123.456                    ), true
+      @eq ( Ωit__44 = -> types.isa mvp.quantity_refs.fields.u,    'm'                        ), true
+      @eq ( Ωit__45 = -> types.isa mvp.quantity_funs.fields.u,    'm'                        ), true
+      @eq ( Ωit__46 = -> types.isa ts1.quantity_typs.fields.u,    'm'                        ), true
+      @eq ( Ωit__47 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: 'm', }    ), true
+      @eq ( Ωit__48 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: 'm', }    ), true
+      @eq ( Ωit__49 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: 'm', }    ), true
       #.....................................................................................................
       echo()
-      @eq ( Ωit__45 = -> types.isa mvp.integer,              5.3                        ), false
-      @eq ( Ωit__46 = -> types.isa mvp.odd,                  6                          ), false
-      @eq ( Ωit__47 = -> types.isa mvp.odd,                  5.3                        ), false
-      @eq ( Ωit__48 = -> types.isa mvp.even,                 5                          ), false
-      @eq ( Ωit__49 = -> types.isa mvp.strange,              6                          ), false
-      @eq ( Ωit__50 = -> types.isa mvp.weird,                6                          ), false
-      @eq ( Ωit__51 = -> types.isa mvp.abnormal,             6                          ), false
-      @eq ( Ωit__52 = -> types.isa flatly_1.evenly,          5                          ), false
-      @eq ( Ωit__53 = -> types.isa flatly_1.flat,            5                          ), false
-      @eq ( Ωit__54 = -> types.isa flatly_1.plain,           5                          ), false
-      @eq ( Ωit__55 = -> types.isa flatly_2.flat,            5                          ), false
-      @eq ( Ωit__56 = -> types.isa flatly_2.evenly,          5                          ), false
-      @eq ( Ωit__57 = -> types.isa flatly_2.plain,           5                          ), false
-      @eq ( Ωit__58 = -> types.isa mvp.nonempty_text,        ''                         ), false
-      @eq ( Ωit__59 = -> types.isa mvp.quantity_refs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__60 = -> types.isa mvp.quantity_funs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__61 = -> types.isa ts1.quantity_typs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__62 = -> types.isa mvp.quantity_refs.fields.u,    ''                         ), false
-      @eq ( Ωit__63 = -> types.isa mvp.quantity_funs.fields.u,    ''                         ), false
-      @eq ( Ωit__64 = -> types.isa ts1.quantity_typs.fields.u,    ''                         ), false
-      @eq ( Ωit__65 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: '', }     ), false
-      @eq ( Ωit__66 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: '', }     ), false
-      @eq ( Ωit__67 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: '', }     ), false
-      @eq ( Ωit__68 = -> types.isa mvp.quantity_refs,             { q: null, u: 'm', }       ), false
-      @eq ( Ωit__69 = -> types.isa mvp.quantity_funs,             { q: null, u: 'm', }       ), false
-      @eq ( Ωit__70 = -> types.isa ts1.quantity_typs,             { q: null, u: 'm', }       ), false
+      @eq ( Ωit__50 = -> types.isa mvp.integer,              5.3                        ), false
+      @eq ( Ωit__51 = -> types.isa mvp.odd,                  6                          ), false
+      @eq ( Ωit__52 = -> types.isa mvp.odd,                  5.3                        ), false
+      @eq ( Ωit__53 = -> types.isa mvp.even,                 5                          ), false
+      @eq ( Ωit__54 = -> types.isa mvp.strange,              6                          ), false
+      @eq ( Ωit__55 = -> types.isa mvp.weird,                6                          ), false
+      @eq ( Ωit__56 = -> types.isa mvp.abnormal,             6                          ), false
+      @eq ( Ωit__57 = -> types.isa flatly_1.evenly,          5                          ), false
+      @eq ( Ωit__58 = -> types.isa flatly_1.flat,            5                          ), false
+      @eq ( Ωit__59 = -> types.isa flatly_1.plain,           5                          ), false
+      @eq ( Ωit__60 = -> types.isa flatly_2.flat,            5                          ), false
+      @eq ( Ωit__61 = -> types.isa flatly_2.evenly,          5                          ), false
+      @eq ( Ωit__62 = -> types.isa flatly_2.plain,           5                          ), false
+      @eq ( Ωit__63 = -> types.isa mvp.nonempty_text,        ''                         ), false
+      @eq ( Ωit__64 = -> types.isa mvp.quantity_refs.fields.q,    '123.456'                  ), false
+      @eq ( Ωit__65 = -> types.isa mvp.quantity_funs.fields.q,    '123.456'                  ), false
+      @eq ( Ωit__66 = -> types.isa ts1.quantity_typs.fields.q,    '123.456'                  ), false
+      @eq ( Ωit__67 = -> types.isa mvp.quantity_refs.fields.u,    ''                         ), false
+      @eq ( Ωit__68 = -> types.isa mvp.quantity_funs.fields.u,    ''                         ), false
+      @eq ( Ωit__69 = -> types.isa ts1.quantity_typs.fields.u,    ''                         ), false
+      @eq ( Ωit__70 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: '', }     ), false
+      @eq ( Ωit__71 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: '', }     ), false
+      @eq ( Ωit__72 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: '', }     ), false
+      @eq ( Ωit__73 = -> types.isa mvp.quantity_refs,             { q: null, u: 'm', }       ), false
+      @eq ( Ωit__74 = -> types.isa mvp.quantity_funs,             { q: null, u: 'm', }       ), false
+      @eq ( Ωit__75 = -> types.isa ts1.quantity_typs,             { q: null, u: 'm', }       ), false
       #.....................................................................................................
       return null
 
@@ -299,15 +353,15 @@ sample_declarations =
         mvp         } = get_typespaces()
       $isa = sample_declarations
       #.....................................................................................................
-      @eq     ( Ωit__71 = -> types.validate mvp.integer,  -5                      ), -5
-      @eq     ( Ωit__72 = -> types.validate mvp.integer,  5                       ), 5
-      @throws ( Ωit__73 = -> types.validate mvp.integer,  5.3                     ), /expected a integer/
-      @throws ( Ωit__74 = -> types.validate mvp.quantity_refs,  5                      ), /expected a quantity/
-      @throws ( Ωit__75 = -> types.validate mvp.quantity_funs,  5                      ), /expected a quantity/
-      @throws ( Ωit__76 = -> types.validate ts1.quantity_typs,  5                      ), /expected a quantity/
-      @eq     ( Ωit__77 = -> types.validate mvp.quantity_refs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
-      @eq     ( Ωit__78 = -> types.validate mvp.quantity_funs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
-      @eq     ( Ωit__79 = -> types.validate ts1.quantity_typs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
+      @eq     ( Ωit__76 = -> types.validate mvp.integer,  -5                      ), -5
+      @eq     ( Ωit__77 = -> types.validate mvp.integer,  5                       ), 5
+      @throws ( Ωit__78 = -> types.validate mvp.integer,  5.3                     ), /expected a integer/
+      @throws ( Ωit__79 = -> types.validate mvp.quantity_refs,  5                      ), /expected a quantity/
+      @throws ( Ωit__80 = -> types.validate mvp.quantity_funs,  5                      ), /expected a quantity/
+      @throws ( Ωit__81 = -> types.validate ts1.quantity_typs,  5                      ), /expected a quantity/
+      @eq     ( Ωit__82 = -> types.validate mvp.quantity_refs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
+      @eq     ( Ωit__83 = -> types.validate mvp.quantity_funs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
+      @eq     ( Ωit__84 = -> types.validate ts1.quantity_typs, { q: 123.4, u: 'km', }  ), { q: 123.4, u: 'km', }
       #.....................................................................................................
       return null
 
@@ -509,7 +563,7 @@ sample_declarations =
         echo '[[', ( 'mvp.' + probe_type.$typename + ',' ), ( probe_value ), '], ['
         records = types.evaluate probe_type, probe_value
         for record, idx in records
-          @eq ( Ωit__80 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
+          @eq ( Ωit__85 = -> [ record.stack, record.value, record.verdict, ] ), matcher[ idx ]
           echo '  [', ( fm record.stack, 80 ), ( fm record.value, 45 ), ( fm record.verdict, 7 ), ']'
         echo '  ]]'
       #.....................................................................................................
@@ -526,13 +580,13 @@ sample_declarations =
         ts1
         mvp         } = get_typespaces()
       #.....................................................................................................
-      urge 'Ωit__81', type for type of mvp
-      debug 'Ωit__82', type for type of ts1
-      debug 'Ωit__83', ts1.quantity_typs
-      # debug 'Ωit__84', types.create std.integer, 7
-      # debug 'Ωit__85', types.create std.integer, 7.8
-      # debug 'Ωit__86', types.create std.integer, '7'
-      # debug 'Ωit__87', types.create std.integer, '7.8'
+      urge 'Ωit__86', type for type of mvp
+      debug 'Ωit__87', type for type of ts1
+      debug 'Ωit__88', ts1.quantity_typs
+      # debug 'Ωit__89', types.create std.integer, 7
+      # debug 'Ωit__90', types.create std.integer, 7.8
+      # debug 'Ωit__91', types.create std.integer, '7'
+      # debug 'Ωit__92', types.create std.integer, '7.8'
       #.....................................................................................................
       return null
 
@@ -550,26 +604,26 @@ sample_declarations =
       # { mvp         } = get_typespaces()
       $isa = sample_declarations
       #.....................................................................................................
-      @eq ( Ωit__88 = -> $isa.list Intertype.primitive_types        ), true
-      @eq ( Ωit__89 = -> Object.isFrozen Intertype.primitive_types  ), true
+      @eq ( Ωit__93 = -> $isa.list Intertype.primitive_types        ), true
+      @eq ( Ωit__94 = -> Object.isFrozen Intertype.primitive_types  ), true
       #.....................................................................................................
-      @eq ( Ωit__90 = -> Intertype.type_of null               ), 'null'
-      @eq ( Ωit__91 = -> Intertype.type_of undefined          ), 'undefined'
-      @eq ( Ωit__92 = -> Intertype.type_of +Infinity          ), 'infinity'
-      @eq ( Ωit__93 = -> Intertype.type_of -Infinity          ), 'infinity'
-      @eq ( Ωit__94 = -> Intertype.type_of true               ), 'boolean'
-      @eq ( Ωit__95 = -> Intertype.type_of false              ), 'boolean'
-      @eq ( Ωit__96 = -> Intertype.type_of NaN                ), 'nan'
-      @eq ( Ωit__97 = -> Intertype.type_of 6e78               ), 'float'
-      @eq ( Ωit__98 = -> Intertype.type_of 'wat'              ), 'text'
-      @eq ( Ωit__99 = -> Intertype.type_of []                 ), 'list'
-      @eq ( Ωit_100 = -> Intertype.type_of ( -> null )        ), 'function'
-      @eq ( Ωit_101 = -> Intertype.type_of ( -> await null )  ), 'asyncfunction'
-      @eq ( Ωit_102 = -> Intertype.type_of ( -> yield null )  ), 'generatorfunction'
-      @eq ( Ωit_103 = -> Intertype.type_of {}                 ), 'object'
-      @eq ( Ωit_104 = -> Intertype.type_of new Set()          ), 'set'
-      @eq ( Ωit_105 = -> Intertype.type_of new Map()          ), 'map'
-      @eq ( Ωit_106 = -> Intertype.type_of new WeakMap()      ), 'weakmap'
+      @eq ( Ωit__95 = -> Intertype.type_of null               ), 'null'
+      @eq ( Ωit__96 = -> Intertype.type_of undefined          ), 'undefined'
+      @eq ( Ωit__97 = -> Intertype.type_of +Infinity          ), 'infinity'
+      @eq ( Ωit__98 = -> Intertype.type_of -Infinity          ), 'infinity'
+      @eq ( Ωit__99 = -> Intertype.type_of true               ), 'boolean'
+      @eq ( Ωit_100 = -> Intertype.type_of false              ), 'boolean'
+      @eq ( Ωit_101 = -> Intertype.type_of NaN                ), 'nan'
+      @eq ( Ωit_102 = -> Intertype.type_of 6e78               ), 'float'
+      @eq ( Ωit_103 = -> Intertype.type_of 'wat'              ), 'text'
+      @eq ( Ωit_104 = -> Intertype.type_of []                 ), 'list'
+      @eq ( Ωit_105 = -> Intertype.type_of ( -> null )        ), 'function'
+      @eq ( Ωit_106 = -> Intertype.type_of ( -> await null )  ), 'asyncfunction'
+      @eq ( Ωit_107 = -> Intertype.type_of ( -> yield null )  ), 'generatorfunction'
+      @eq ( Ωit_108 = -> Intertype.type_of {}                 ), 'object'
+      @eq ( Ωit_109 = -> Intertype.type_of new Set()          ), 'set'
+      @eq ( Ωit_110 = -> Intertype.type_of new Map()          ), 'map'
+      @eq ( Ωit_111 = -> Intertype.type_of new WeakMap()      ), 'weakmap'
       #.....................................................................................................
       return null
 
@@ -583,27 +637,27 @@ sample_declarations =
       $isa = sample_declarations
       class Myclass
       #.....................................................................................................
-      @eq ( Ωit_107 = -> types.types_of mvp, null               ), [ 'nothing', 'primitive', 'null', ]
-      @eq ( Ωit_108 = -> types.types_of mvp, undefined          ), [ 'nothing', 'primitive', 'undefined', ]
-      @eq ( Ωit_109 = -> types.types_of mvp, +Infinity          ), [ 'something', 'primitive', 'infinity', ]
-      @eq ( Ωit_110 = -> types.types_of mvp, -Infinity          ), [ 'something', 'primitive', 'infinity', ]
-      @eq ( Ωit_111 = -> types.types_of mvp, true               ), [ 'something', 'primitive', 'boolean', ]
-      @eq ( Ωit_112 = -> types.types_of mvp, false              ), [ 'something', 'primitive', 'boolean', ]
-      @eq ( Ωit_113 = -> types.types_of mvp, NaN                ), [ 'something', 'primitive', 'nan', ]
-      @eq ( Ωit_114 = -> types.types_of mvp, 6e78               ), [ 'something', 'primitive', 'integer', 'even', 'float', 'quantity_refs_$q', 'quantity_funs_$q' ]
-      @eq ( Ωit_115 = -> types.types_of mvp, 3                  ), [ 'something', 'primitive', 'integer', 'odd', 'float', 'weird', 'strange', 'abnormal', 'quantity_refs_$q', 'quantity_funs_$q' ]
-      @eq ( Ωit_116 = -> types.types_of mvp, 'wat'              ), [ 'something', 'primitive', 'text', 'nonempty_text', 'quantity_refs_$u', 'quantity_funs_$u', 'address_$postcode', 'address_$city', 'employee_$name_$firstname', 'employee_$name_$lastname' ]
-      @eq ( Ωit_117 = -> types.types_of mvp, ''                 ), [ 'something', 'primitive', 'text', 'empty_text', ]
-      @eq ( Ωit_118 = -> types.types_of mvp, []                 ), [ 'something', 'object', 'list', ]
-      @eq ( Ωit_119 = -> types.types_of mvp, ( -> null )        ), [ 'something', 'object', 'function', ]
-      @eq ( Ωit_120 = -> types.types_of mvp, ( -> await null )  ), [ 'something', 'object', 'asyncfunction', ]
-      @eq ( Ωit_121 = -> types.types_of mvp, ( -> yield null )  ), [ 'something', 'object', 'generatorfunction', ]
-      @eq ( Ωit_122 = -> types.types_of mvp, {}                 ), [ 'something', 'object', 'pod', ]
-      @eq ( Ωit_123 = -> types.types_of mvp, Object.create null ), [ 'something', 'object', 'pod', ]
-      @eq ( Ωit_124 = -> types.types_of mvp, new Myclass()      ), [ 'something', 'object', ]
-      @eq ( Ωit_125 = -> types.types_of mvp, new Set()          ), [ 'something', 'object', 'set', ]
-      @eq ( Ωit_126 = -> types.types_of mvp, new Map()          ), [ 'something', 'object', 'map', ]
-      @eq ( Ωit_127 = -> types.types_of mvp, new WeakMap()      ), [ 'something', 'object', 'weakmap', ]
+      @eq ( Ωit_112 = -> types.types_of mvp, null               ), [ 'nothing', 'primitive', 'null', ]
+      @eq ( Ωit_113 = -> types.types_of mvp, undefined          ), [ 'nothing', 'primitive', 'undefined', ]
+      @eq ( Ωit_114 = -> types.types_of mvp, +Infinity          ), [ 'something', 'primitive', 'infinity', ]
+      @eq ( Ωit_115 = -> types.types_of mvp, -Infinity          ), [ 'something', 'primitive', 'infinity', ]
+      @eq ( Ωit_116 = -> types.types_of mvp, true               ), [ 'something', 'primitive', 'boolean', ]
+      @eq ( Ωit_117 = -> types.types_of mvp, false              ), [ 'something', 'primitive', 'boolean', ]
+      @eq ( Ωit_118 = -> types.types_of mvp, NaN                ), [ 'something', 'primitive', 'nan', ]
+      @eq ( Ωit_119 = -> types.types_of mvp, 6e78               ), [ 'something', 'primitive', 'integer', 'even', 'float', 'quantity_refs_$q', 'quantity_funs_$q' ]
+      @eq ( Ωit_120 = -> types.types_of mvp, 3                  ), [ 'something', 'primitive', 'integer', 'odd', 'float', 'weird', 'strange', 'abnormal', 'quantity_refs_$q', 'quantity_funs_$q' ]
+      @eq ( Ωit_121 = -> types.types_of mvp, 'wat'              ), [ 'something', 'primitive', 'text', 'nonempty_text', 'quantity_refs_$u', 'quantity_funs_$u', 'address_$postcode', 'address_$city', 'employee_$name_$firstname', 'employee_$name_$lastname' ]
+      @eq ( Ωit_122 = -> types.types_of mvp, ''                 ), [ 'something', 'primitive', 'text', 'empty_text', ]
+      @eq ( Ωit_123 = -> types.types_of mvp, []                 ), [ 'something', 'object', 'list', ]
+      @eq ( Ωit_124 = -> types.types_of mvp, ( -> null )        ), [ 'something', 'object', 'function', ]
+      @eq ( Ωit_125 = -> types.types_of mvp, ( -> await null )  ), [ 'something', 'object', 'asyncfunction', ]
+      @eq ( Ωit_126 = -> types.types_of mvp, ( -> yield null )  ), [ 'something', 'object', 'generatorfunction', ]
+      @eq ( Ωit_127 = -> types.types_of mvp, {}                 ), [ 'something', 'object', 'pod', ]
+      @eq ( Ωit_128 = -> types.types_of mvp, Object.create null ), [ 'something', 'object', 'pod', ]
+      @eq ( Ωit_129 = -> types.types_of mvp, new Myclass()      ), [ 'something', 'object', ]
+      @eq ( Ωit_130 = -> types.types_of mvp, new Set()          ), [ 'something', 'object', 'set', ]
+      @eq ( Ωit_131 = -> types.types_of mvp, new Map()          ), [ 'something', 'object', 'map', ]
+      @eq ( Ωit_132 = -> types.types_of mvp, new WeakMap()      ), [ 'something', 'object', 'weakmap', ]
       #.....................................................................................................
       return null
 
@@ -614,24 +668,24 @@ sample_declarations =
         $type_of        } = require '../../../apps/intertype'
       class A extends Object
       #.....................................................................................................
-      @eq ( Ωit_128 = -> $type_of 'abc'                         ), 'text'
-      @eq ( Ωit_129 = -> $type_of ( -> )                        ), 'function'
-      @eq ( Ωit_130 = -> $type_of {}                            ), 'object'
-      @eq ( Ωit_131 = -> $isa.object {}                         ), true
-      @eq ( Ωit_132 = -> $isa.pod {}                            ), true
-      @eq ( Ωit_133 = -> $isa.pod ( Object.create null )        ), true
-      @eq ( Ωit_134 = -> $isa.function ( -> )                   ), true
-      @eq ( Ωit_135 = -> $isa.text 'abc'                        ), true
-      @eq ( Ωit_136 = -> $isa.nonempty_text 'abc'               ), true
-      @eq ( Ωit_137 = -> $type_of std.integer                   ), 'object'
-      @eq ( Ωit_138 = -> $isa.type std.integer                  ), true
-      @eq ( Ωit_139 = -> $isa.object new A()                    ), true
+      @eq ( Ωit_133 = -> $type_of 'abc'                         ), 'text'
+      @eq ( Ωit_134 = -> $type_of ( -> )                        ), 'function'
+      @eq ( Ωit_135 = -> $type_of {}                            ), 'object'
+      @eq ( Ωit_136 = -> $isa.object {}                         ), true
+      @eq ( Ωit_137 = -> $isa.pod {}                            ), true
+      @eq ( Ωit_138 = -> $isa.pod ( Object.create null )        ), true
+      @eq ( Ωit_139 = -> $isa.function ( -> )                   ), true
+      @eq ( Ωit_140 = -> $isa.text 'abc'                        ), true
+      @eq ( Ωit_141 = -> $isa.nonempty_text 'abc'               ), true
+      @eq ( Ωit_142 = -> $type_of std.integer                   ), 'object'
+      @eq ( Ωit_143 = -> $isa.type std.integer                  ), true
+      @eq ( Ωit_144 = -> $isa.object new A()                    ), true
       #.....................................................................................................
-      @eq ( Ωit_140 = -> $isa.nonempty_text ''                  ), false
-      @eq ( Ωit_141 = -> $isa.pod new A()                       ), false
-      @eq ( Ωit_142 = -> $isa.function ( -> yield 5 )           ), false
-      @eq ( Ωit_143 = -> $isa.function ( -> yield 5 )()         ), false
-      @eq ( Ωit_144 = -> $isa.function ( -> await 5 )           ), false
+      @eq ( Ωit_145 = -> $isa.nonempty_text ''                  ), false
+      @eq ( Ωit_146 = -> $isa.pod new A()                       ), false
+      @eq ( Ωit_147 = -> $isa.function ( -> yield 5 )           ), false
+      @eq ( Ωit_148 = -> $isa.function ( -> yield 5 )()         ), false
+      @eq ( Ωit_149 = -> $isa.function ( -> await 5 )           ), false
       #.....................................................................................................
       return null
 
@@ -644,45 +698,53 @@ sample_declarations =
         Type
         Typespace
         types           } = require '../../../apps/intertype'
-      { ts1
+      { mvp
+        ts1
         cr1
         crt             } = get_typespaces()
       #.....................................................................................................
-      # debug 'Ωit_145', ts1
-      # debug 'Ωit_146', ( k for k of ts1 )
+      # debug 'Ωit_150', ts1
+      # debug 'Ωit_151', ( k for k of ts1 )
       # echo()
-      # debug 'Ωit_147', ts1.quantity_typs_$q.fields
-      # debug 'Ωit_148', ts1.quantity_typs_$u.fields
-      # debug 'Ωit_149', ts1.quantity_typs.fields
-      # debug 'Ωit_150', ts1.name.fields
-      # debug 'Ωit_151', ts1.name_$firstname.fields
-      # debug 'Ωit_152', ts1.name_$lastname.fields
+      # debug 'Ωit_152', ts1.quantity_typs_$q.fields
+      # debug 'Ωit_153', ts1.quantity_typs_$u.fields
+      # debug 'Ωit_154', ts1.quantity_typs.fields
+      # debug 'Ωit_155', ts1.name.fields
+      # debug 'Ωit_156', ts1.name_$firstname.fields
+      # debug 'Ωit_157', ts1.name_$lastname.fields
       # echo()
-      # debug 'Ωit_153', ts1.quantity_typs_$q.template
-      # debug 'Ωit_154', ts1.quantity_typs_$u.template
-      # debug 'Ωit_155', ts1.quantity_typs.template
-      # debug 'Ωit_156', ts1.name.template
-      # debug 'Ωit_157', ts1.name_$firstname.template
-      # debug 'Ωit_158', ts1.name_$lastname.template
+      # debug 'Ωit_158', ts1.quantity_typs_$q.template
+      # debug 'Ωit_159', ts1.quantity_typs_$u.template
+      # debug 'Ωit_160', ts1.quantity_typs.template
+      # debug 'Ωit_161', ts1.name.template
+      # debug 'Ωit_162', ts1.name_$firstname.template
+      # debug 'Ωit_163', ts1.name_$lastname.template
       # process.exit 111
       #.....................................................................................................
-      @eq     ( Ωit_159 = -> types.create cr1.int_create_zero                         ), 0
-      @eq     ( Ωit_160 = -> types.create cr1.int_create_zero_fn                      ), 0
-      @eq     ( Ωit_161 = -> types.create cr1.int_create_fn                           ), 0
-      @eq     ( Ωit_162 = -> types.create cr1.int_create_fn, 4                        ), 4
-      @eq     ( Ωit_163 = -> types.create cr1.int_create_fn, 4.9                      ), 4
-      @eq     ( Ωit_164 = -> types.create cr1.int_create_fn, '4'                      ), 4
-      @eq     ( Ωit_165 = -> types.create ts1.quantity_typs                           ), { q: 0, u: 'u' }
-      @eq     ( Ωit_166 = -> types.create ts1.quantity_typs, { u: 's', }              ), { q: 0, u: 's' }
-      @eq     ( Ωit_167 = -> types.create ts1.quantity_typs, { q: 3214, u: 'mm', }    ), { q: 3214, u: 'mm' }
-      @eq     ( Ωit_168 = -> types.create ts1.quantity_typs, { q: 32.4, u: 'mm', }    ), { q: 32, u: 'mm' }
-      @eq     ( Ωit_169 = -> types.create ts1.quantity_typs, { q: '3214', u: 'mm', }  ), { q: 3214, u: 'mm' }
+      @eq     ( Ωit_164 = -> types.create cr1.int_create_zero                         ), 0
+      @eq     ( Ωit_165 = -> types.create cr1.int_create_zero_fn                      ), 0
+      @eq     ( Ωit_166 = -> types.create cr1.int_create_fn                           ), 0
+      @eq     ( Ωit_167 = -> types.create cr1.int_create_fn, 4                        ), 4
+      @eq     ( Ωit_168 = -> types.create cr1.int_create_fn, 4.9                      ), 4
+      @eq     ( Ωit_169 = -> types.create cr1.int_create_fn, '4'                      ), 4
+      @eq     ( Ωit_170 = -> types.create ts1.quantity_typs                           ), { q: 0, u: 'u' }
+      # @eq     ( Ωit_171 = -> types.create ts1.quantity_typs, { u: 's', }              ), { q: 0, u: 's' }
+      # @eq     ( Ωit_172 = -> types.create ts1.quantity_typs, { q: 3214, u: 'mm', }    ), { q: 3214, u: 'mm' }
+      # @eq     ( Ωit_173 = -> types.create ts1.quantity_typs, { q: 32.4, u: 'mm', }    ), { q: 32, u: 'mm' }
+      # @eq     ( Ωit_174 = -> types.create ts1.quantity_typs, { q: '3214', u: 'mm', }  ), { q: 3214, u: 'mm' }
+      @eq     ( Ωit_175 = -> types.create mvp.float                                   ), 0
+      @eq     ( Ωit_176 = -> types.create ts1.float_one                               ), 1
+      @eq     ( Ωit_177 = -> types.create ts1.quantity_typs_float_fb                  ), { q: 0, u: 'u' }
+      # @eq     ( Ωit_178 = -> types.create ts1.quantity_typs_float_fb, { u: 's', }              ), { q: 0, u: 's' }
+      # @eq     ( Ωit_179 = -> types.create ts1.quantity_typs_float_fb, { q: 3214, u: 'mm', }    ), { q: 3214, u: 'mm' }
+      # @eq     ( Ωit_180 = -> types.create ts1.quantity_typs_float_fb, { q: 32.4, u: 'mm', }    ), { q: 32, u: 'mm' }
+      # @eq     ( Ωit_181 = -> types.create ts1.quantity_typs_float_fb, { q: '3214', u: 'mm', }  ), { q: 3214, u: 'mm' }
       #.....................................................................................................
-      @throws ( Ωit_170 = -> types.create cr1.unknown                       ), /expected an instance of Type, got a undefined/
-      @throws ( Ωit_171 = -> types.create cr1.int_no_create                 ), /condition cI/
-      @throws ( Ωit_172 = -> types.create cr1.int_create_zero, 4            ), /condition cH/
-      @throws ( Ωit_173 = -> types.create cr1.int_create_fn, '4.9'          ), /unable to create/
-      @throws ( Ωit_174 = -> types.create cr1.int_create_fn, 4, 6           ), /doesn't accept more than one argument/
+      @throws ( Ωit_182 = -> types.create cr1.unknown                       ), /expected an instance of Type, got a undefined/
+      @throws ( Ωit_183 = -> types.create cr1.int_no_create                 ), /condition cI/
+      @throws ( Ωit_184 = -> types.create cr1.int_create_zero, 4            ), /condition cH/
+      @throws ( Ωit_185 = -> types.create cr1.int_create_fn, '4.9'          ), /unable to create/
+      @throws ( Ωit_186 = -> types.create cr1.int_create_fn, 4, 6           ), /doesn't accept more than one argument/
       #.....................................................................................................
       return null
 
@@ -730,39 +792,39 @@ sample_declarations =
         a:
           [Symbol.for 'e']: { z: 'Z', }
           b: [ 'B', ]
-          c: ( P, t ) -> debug 'Ωit_175', P; [ 'C', ( P ? [] )..., ]
+          c: ( P, t ) -> debug 'Ωit_187', P; [ 'C', ( P ? [] )..., ]
           d: 9
       typespace.t =
         A: typespace.a
         B: -> [ 'ä', 'ö', 'ü', 'ß', ]
       #.....................................................................................................
-      help 'Ωit_176', qq.get_create typespace.a
-      help 'Ωit_177', ( qq.get_create typespace.a )()
-      help 'Ωit_178', t1 = ( qq.get_create typespace.t )()
-      help 'Ωit_179', t2 = ( qq.get_create typespace.t ) [ 1, 2, 3, ]
-      info 'Ωit_180', GUY.trm.truth Object.isFrozen ( qq.get_create typespace.a )().b
-      info 'Ωit_181', GUY.trm.truth Object.isFrozen t1
-      info 'Ωit_182', GUY.trm.truth Object.isFrozen t1.A
-      info 'Ωit_183', GUY.trm.truth Object.isFrozen t1.B
-      try t1.B.push 't1' catch e then warn 'Ωit_184', e.message
-      try t2.B.push 't2' catch e then warn 'Ωit_185', e.message
-      help 'Ωit_186', t1.B
-      help 'Ωit_187', t2.B
-      help 'Ωit_188', GUY.trm.truth t1.B is t2.B
-      help 'Ωit_189', GUY.trm.truth Object.isFrozen t1.B
-      help 'Ωit_190', GUY.trm.truth Object.isFrozen t2.B
-      try t1.A.b.push 't1' catch e then warn 'Ωit_191', e.message
-      try t2.A.b.push 't2' catch e then warn 'Ωit_192', e.message
-      help 'Ωit_193', t1.A.b
-      help 'Ωit_194', t2.A.b
-      help 'Ωit_195', GUY.trm.truth t1.A.b is t2.A.b
-      help 'Ωit_196', GUY.trm.truth Object.isFrozen t1.A.b
-      help 'Ωit_197', t1.A[ Symbol.for 'e' ]
-      help 'Ωit_198', t2.A[ Symbol.for 'e' ]
-      help 'Ωit_199', GUY.trm.truth t1.A[ Symbol.for 'e' ] is t2.A[ Symbol.for 'e' ]
-      help 'Ωit_200', typespace.a
-      help 'Ωit_201', Object.assign {}, typespace.a, typespace.t
-      help 'Ωit_202', ( qq.get_create Object.assign {}, typespace.a, typespace.t )()
+      help 'Ωit_188', qq.get_create typespace.a
+      help 'Ωit_189', ( qq.get_create typespace.a )()
+      help 'Ωit_190', t1 = ( qq.get_create typespace.t )()
+      help 'Ωit_191', t2 = ( qq.get_create typespace.t ) [ 1, 2, 3, ]
+      info 'Ωit_192', GUY.trm.truth Object.isFrozen ( qq.get_create typespace.a )().b
+      info 'Ωit_193', GUY.trm.truth Object.isFrozen t1
+      info 'Ωit_194', GUY.trm.truth Object.isFrozen t1.A
+      info 'Ωit_195', GUY.trm.truth Object.isFrozen t1.B
+      try t1.B.push 't1' catch e then warn 'Ωit_196', e.message
+      try t2.B.push 't2' catch e then warn 'Ωit_197', e.message
+      help 'Ωit_198', t1.B
+      help 'Ωit_199', t2.B
+      help 'Ωit_200', GUY.trm.truth t1.B is t2.B
+      help 'Ωit_201', GUY.trm.truth Object.isFrozen t1.B
+      help 'Ωit_202', GUY.trm.truth Object.isFrozen t2.B
+      try t1.A.b.push 't1' catch e then warn 'Ωit_203', e.message
+      try t2.A.b.push 't2' catch e then warn 'Ωit_204', e.message
+      help 'Ωit_205', t1.A.b
+      help 'Ωit_206', t2.A.b
+      help 'Ωit_207', GUY.trm.truth t1.A.b is t2.A.b
+      help 'Ωit_208', GUY.trm.truth Object.isFrozen t1.A.b
+      help 'Ωit_209', t1.A[ Symbol.for 'e' ]
+      help 'Ωit_210', t2.A[ Symbol.for 'e' ]
+      help 'Ωit_211', GUY.trm.truth t1.A[ Symbol.for 'e' ] is t2.A[ Symbol.for 'e' ]
+      help 'Ωit_212', typespace.a
+      help 'Ωit_213', Object.assign {}, typespace.a, typespace.t
+      help 'Ωit_214', ( qq.get_create Object.assign {}, typespace.a, typespace.t )()
       #.....................................................................................................
       return null
 
@@ -774,9 +836,9 @@ sample_declarations =
     #     types           } = require '../../../apps/intertype'
     #   { crt             } = get_typespaces()
     #   #.....................................................................................................
-    #   @throws ( Ωit_203 = -> types.create crt.cNfNtN                ), /MEH-create-/
-    #   @throws ( Ωit_204 = -> types.create crt.cNfNtV                ), /expected `fields` to be a POD/
-    #   @throws ( Ωit_205 = -> types.create crt.cNfNAPtV              ), /MEH-create-/
+    #   @throws ( Ωit_215 = -> types.create crt.cNfNtN                ), /MEH-create-/
+    #   @throws ( Ωit_216 = -> types.create crt.cNfNtV                ), /expected `fields` to be a POD/
+    #   @throws ( Ωit_217 = -> types.create crt.cNfNAPtV              ), /MEH-create-/
     #   #.....................................................................................................
     #   return null
 
@@ -789,41 +851,41 @@ OLD_intertype_tasks =
   #-----------------------------------------------------------------------------------------------------------
   interface: ->
     INTERTYPE     = require '../../../apps/intertype'
-    @eq ( Ωit_206 = -> debug '2312312'; TMP_types.isa.object    INTERTYPE.types                               ), true
-    @eq ( Ωit_207 = -> TMP_types.isa.undefined INTERTYPE.types.get_isa                       ), true
-    @eq ( Ωit_208 = -> TMP_types.isa.undefined INTERTYPE.types.get_isa_optional              ), true
-    @eq ( Ωit_209 = -> TMP_types.isa.undefined INTERTYPE.types.get_validate                  ), true
-    @eq ( Ωit_210 = -> TMP_types.isa.undefined INTERTYPE.types.get_validate_optional         ), true
-    @eq ( Ωit_211 = -> TMP_types.isa.function  INTERTYPE.types._get_isa                      ), true
-    @eq ( Ωit_212 = -> TMP_types.isa.function  INTERTYPE.types._get_isa_optional             ), true
-    @eq ( Ωit_213 = -> TMP_types.isa.function  INTERTYPE.types._get_validate                 ), true
-    @eq ( Ωit_214 = -> TMP_types.isa.function  INTERTYPE.types._get_validate_optional        ), true
-    @eq ( Ωit_215 = -> TMP_types.isa.object    INTERTYPE.types                               ), true
-    @eq ( Ωit_216 = -> TMP_types.isa.object    INTERTYPE.types.isa                           ), true
-    # @eq ( Ωit_217 = -> TMP_types.isa.function  INTERTYPE.types.isa.optional                  ), true
-    @eq ( Ωit_218 = -> TMP_types.isa.object    INTERTYPE.types.validate                      ), true
-    # @eq ( Ωit_219 = -> TMP_types.isa.function  INTERTYPE.types.validate.optional             ), true
-    @eq ( Ωit_220 = -> TMP_types.isa.function  INTERTYPE.types.isa.boolean                   ), true
-    @eq ( Ωit_221 = -> TMP_types.isa.function  INTERTYPE.types.isa.optional.boolean          ), true
-    @eq ( Ωit_222 = -> TMP_types.isa.function  INTERTYPE.types.validate.boolean              ), true
-    @eq ( Ωit_223 = -> TMP_types.isa.function  INTERTYPE.types.validate.optional.boolean     ), true
-    @eq ( Ωit_224 = -> TMP_types.isa.object    INTERTYPE.types.create                        ), true
-    @eq ( Ωit_225 = -> TMP_types.isa.function  INTERTYPE.types.isa.text                      ), true
-    @eq ( Ωit_226 = -> TMP_types.isa.function  INTERTYPE.types.create.text                   ), true
-    @eq ( Ωit_227 = -> TMP_types.isa.object    INTERTYPE.types.declarations                  ), true
-    @eq ( Ωit_228 = -> TMP_types.isa.object    INTERTYPE.types.declarations.text             ), true
+    @eq ( Ωit_218 = -> debug '2312312'; TMP_types.isa.object    INTERTYPE.types                               ), true
+    @eq ( Ωit_219 = -> TMP_types.isa.undefined INTERTYPE.types.get_isa                       ), true
+    @eq ( Ωit_220 = -> TMP_types.isa.undefined INTERTYPE.types.get_isa_optional              ), true
+    @eq ( Ωit_221 = -> TMP_types.isa.undefined INTERTYPE.types.get_validate                  ), true
+    @eq ( Ωit_222 = -> TMP_types.isa.undefined INTERTYPE.types.get_validate_optional         ), true
+    @eq ( Ωit_223 = -> TMP_types.isa.function  INTERTYPE.types._get_isa                      ), true
+    @eq ( Ωit_224 = -> TMP_types.isa.function  INTERTYPE.types._get_isa_optional             ), true
+    @eq ( Ωit_225 = -> TMP_types.isa.function  INTERTYPE.types._get_validate                 ), true
+    @eq ( Ωit_226 = -> TMP_types.isa.function  INTERTYPE.types._get_validate_optional        ), true
+    @eq ( Ωit_227 = -> TMP_types.isa.object    INTERTYPE.types                               ), true
+    @eq ( Ωit_228 = -> TMP_types.isa.object    INTERTYPE.types.isa                           ), true
+    # @eq ( Ωit_229 = -> TMP_types.isa.function  INTERTYPE.types.isa.optional                  ), true
+    @eq ( Ωit_230 = -> TMP_types.isa.object    INTERTYPE.types.validate                      ), true
+    # @eq ( Ωit_231 = -> TMP_types.isa.function  INTERTYPE.types.validate.optional             ), true
+    @eq ( Ωit_232 = -> TMP_types.isa.function  INTERTYPE.types.isa.boolean                   ), true
+    @eq ( Ωit_233 = -> TMP_types.isa.function  INTERTYPE.types.isa.optional.boolean          ), true
+    @eq ( Ωit_234 = -> TMP_types.isa.function  INTERTYPE.types.validate.boolean              ), true
+    @eq ( Ωit_235 = -> TMP_types.isa.function  INTERTYPE.types.validate.optional.boolean     ), true
+    @eq ( Ωit_236 = -> TMP_types.isa.object    INTERTYPE.types.create                        ), true
+    @eq ( Ωit_237 = -> TMP_types.isa.function  INTERTYPE.types.isa.text                      ), true
+    @eq ( Ωit_238 = -> TMP_types.isa.function  INTERTYPE.types.create.text                   ), true
+    @eq ( Ωit_239 = -> TMP_types.isa.object    INTERTYPE.types.declarations                  ), true
+    @eq ( Ωit_240 = -> TMP_types.isa.object    INTERTYPE.types.declarations.text             ), true
     #.........................................................................................................
-    # @eq ( Ωit_229 = -> INTERTYPE.types.isa.name           ), 'isa'
-    # @eq ( Ωit_230 = -> INTERTYPE.types.evaluate.name      ), 'evaluate'
-    # @eq ( Ωit_231 = -> INTERTYPE.types.validate.name      ), 'validate'
-    # @eq ( Ωit_232 = -> INTERTYPE.types.create.name        ), 'create'
-    @eq ( Ωit_233 = -> INTERTYPE.types.declare.name       ), 'declare'
-    @eq ( Ωit_234 = -> INTERTYPE.types.type_of.name       ), 'type_of'
+    # @eq ( Ωit_241 = -> INTERTYPE.types.isa.name           ), 'isa'
+    # @eq ( Ωit_242 = -> INTERTYPE.types.evaluate.name      ), 'evaluate'
+    # @eq ( Ωit_243 = -> INTERTYPE.types.validate.name      ), 'validate'
+    # @eq ( Ωit_244 = -> INTERTYPE.types.create.name        ), 'create'
+    @eq ( Ωit_245 = -> INTERTYPE.types.declare.name       ), 'declare'
+    @eq ( Ωit_246 = -> INTERTYPE.types.type_of.name       ), 'type_of'
     #.........................................................................................................
     do =>
       for type of INTERTYPE.testing._isa
         continue if Reflect.has INTERTYPE.declarations, type
-        @fail 'Ωit_235', "type known from `INTERTYPE.testing._isa` but missing from `INTERTYPE.default_declarations`: #{rpr type}"
+        @fail 'Ωit_247', "type known from `INTERTYPE.testing._isa` but missing from `INTERTYPE.default_declarations`: #{rpr type}"
     #.........................................................................................................
     return null
 
@@ -831,32 +893,32 @@ OLD_intertype_tasks =
   basic_functionality_using_types_object: ->
     INTERTYPE     = require '../../../apps/intertype'
     types         = new INTERTYPE.Intertype_minimal sample_declarations
-    @eq ( Ωit_236 = -> types.isa.boolean           false               ), true
-    @eq ( Ωit_237 = -> types.isa.boolean           true                ), true
-    @eq ( Ωit_238 = -> types.isa.boolean           null                ), false
-    @eq ( Ωit_239 = -> types.isa.boolean           1                   ), false
-    @eq ( Ωit_240 = -> types.isa.optional.boolean  false               ), true
-    @eq ( Ωit_241 = -> types.isa.optional.boolean  true                ), true
-    @eq ( Ωit_242 = -> types.isa.optional.boolean  null                ), true
-    @eq ( Ωit_243 = -> types.isa.optional.boolean  1                   ), false
+    @eq ( Ωit_248 = -> types.isa.boolean           false               ), true
+    @eq ( Ωit_249 = -> types.isa.boolean           true                ), true
+    @eq ( Ωit_250 = -> types.isa.boolean           null                ), false
+    @eq ( Ωit_251 = -> types.isa.boolean           1                   ), false
+    @eq ( Ωit_252 = -> types.isa.optional.boolean  false               ), true
+    @eq ( Ωit_253 = -> types.isa.optional.boolean  true                ), true
+    @eq ( Ωit_254 = -> types.isa.optional.boolean  null                ), true
+    @eq ( Ωit_255 = -> types.isa.optional.boolean  1                   ), false
     #.........................................................................................................
-    @eq ( Ωit_244 = -> types.validate.boolean               false      ), false
-    @eq ( Ωit_245 = -> types.validate.boolean               true       ), true
-    @eq ( Ωit_246 = -> types.validate.optional.boolean      true       ), true
-    @eq ( Ωit_247 = -> types.validate.optional.boolean      false      ), false
-    @eq ( Ωit_248 = -> types.validate.optional.boolean      undefined  ), undefined
-    @eq ( Ωit_249 = -> types.validate.optional.boolean      null       ), null
-    @throws ( Ωit_250 = -> types.validate.boolean           1 ), /expected a boolean/
-    @throws ( Ωit_251 = -> types.validate.optional.boolean  1 ), /expected an optional boolean/
+    @eq ( Ωit_256 = -> types.validate.boolean               false      ), false
+    @eq ( Ωit_257 = -> types.validate.boolean               true       ), true
+    @eq ( Ωit_258 = -> types.validate.optional.boolean      true       ), true
+    @eq ( Ωit_259 = -> types.validate.optional.boolean      false      ), false
+    @eq ( Ωit_260 = -> types.validate.optional.boolean      undefined  ), undefined
+    @eq ( Ωit_261 = -> types.validate.optional.boolean      null       ), null
+    @throws ( Ωit_262 = -> types.validate.boolean           1 ), /expected a boolean/
+    @throws ( Ωit_263 = -> types.validate.optional.boolean  1 ), /expected an optional boolean/
     #.........................................................................................................
-    @eq ( Ωit_252 = -> types.type_of null            ), 'null'
-    @eq ( Ωit_253 = -> types.type_of undefined       ), 'undefined'
-    @eq ( Ωit_254 = -> types.type_of false           ), 'boolean'
-    @eq ( Ωit_255 = -> types.type_of Symbol 'p'      ), 'symbol'
-    @eq ( Ωit_256 = -> types.type_of {}              ), 'object'
-    @eq ( Ωit_257 = -> types.type_of NaN             ), 'unknown'
-    @eq ( Ωit_258 = -> types.type_of +Infinity       ), 'unknown'
-    @eq ( Ωit_259 = -> types.type_of -Infinity       ), 'unknown'
+    @eq ( Ωit_264 = -> types.type_of null            ), 'null'
+    @eq ( Ωit_265 = -> types.type_of undefined       ), 'undefined'
+    @eq ( Ωit_266 = -> types.type_of false           ), 'boolean'
+    @eq ( Ωit_267 = -> types.type_of Symbol 'p'      ), 'symbol'
+    @eq ( Ωit_268 = -> types.type_of {}              ), 'object'
+    @eq ( Ωit_269 = -> types.type_of NaN             ), 'unknown'
+    @eq ( Ωit_270 = -> types.type_of +Infinity       ), 'unknown'
+    @eq ( Ωit_271 = -> types.type_of -Infinity       ), 'unknown'
     #.........................................................................................................
     debug '^4324^', 'null           ', types.declarations.null
     debug '^4324^', 'function       ', types.declarations.function
@@ -890,46 +952,46 @@ OLD_intertype_tasks =
     { isa
       validate
       type_of   } = new INTERTYPE.Intertype_minimal sample_declarations
-    @eq ( Ωit_260 = -> isa.boolean           false               ), true
-    @eq ( Ωit_261 = -> isa.boolean           true                ), true
-    @eq ( Ωit_262 = -> isa.boolean           null                ), false
-    @eq ( Ωit_263 = -> isa.boolean           1                   ), false
-    @eq ( Ωit_264 = -> isa.unknown           1                   ), false
-    @eq ( Ωit_265 = -> isa.unknown           Infinity            ), true
-    @eq ( Ωit_266 = -> isa.optional.boolean  false               ), true
-    @eq ( Ωit_267 = -> isa.optional.boolean  true                ), true
-    @eq ( Ωit_268 = -> isa.optional.boolean  null                ), true
-    @eq ( Ωit_269 = -> isa.optional.boolean  1                   ), false
-    @eq ( Ωit_270 = -> isa.optional.unknown  1                   ), false
-    @eq ( Ωit_271 = -> isa.optional.unknown  Infinity            ), true
-    @eq ( Ωit_272 = -> isa.optional.unknown  undefined           ), true
-    @eq ( Ωit_273 = -> isa.optional.unknown  undefined           ), true
+    @eq ( Ωit_272 = -> isa.boolean           false               ), true
+    @eq ( Ωit_273 = -> isa.boolean           true                ), true
+    @eq ( Ωit_274 = -> isa.boolean           null                ), false
+    @eq ( Ωit_275 = -> isa.boolean           1                   ), false
+    @eq ( Ωit_276 = -> isa.unknown           1                   ), false
+    @eq ( Ωit_277 = -> isa.unknown           Infinity            ), true
+    @eq ( Ωit_278 = -> isa.optional.boolean  false               ), true
+    @eq ( Ωit_279 = -> isa.optional.boolean  true                ), true
+    @eq ( Ωit_280 = -> isa.optional.boolean  null                ), true
+    @eq ( Ωit_281 = -> isa.optional.boolean  1                   ), false
+    @eq ( Ωit_282 = -> isa.optional.unknown  1                   ), false
+    @eq ( Ωit_283 = -> isa.optional.unknown  Infinity            ), true
+    @eq ( Ωit_284 = -> isa.optional.unknown  undefined           ), true
+    @eq ( Ωit_285 = -> isa.optional.unknown  undefined           ), true
     #.........................................................................................................
-    @eq ( Ωit_274 = -> validate.boolean               false      ), false
-    @eq ( Ωit_275 = -> validate.boolean               true       ), true
-    @eq ( Ωit_276 = -> validate.optional.boolean      true       ), true
-    @eq ( Ωit_277 = -> validate.optional.boolean      false      ), false
-    @eq ( Ωit_278 = -> validate.optional.boolean      undefined  ), undefined
-    @eq ( Ωit_279 = -> validate.optional.boolean      null       ), null
-    @throws ( Ωit_280 = -> validate.boolean           1  ), /expected a boolean/
-    @throws ( Ωit_281 = -> validate.optional.boolean  1  ), /expected an optional boolean/
+    @eq ( Ωit_286 = -> validate.boolean               false      ), false
+    @eq ( Ωit_287 = -> validate.boolean               true       ), true
+    @eq ( Ωit_288 = -> validate.optional.boolean      true       ), true
+    @eq ( Ωit_289 = -> validate.optional.boolean      false      ), false
+    @eq ( Ωit_290 = -> validate.optional.boolean      undefined  ), undefined
+    @eq ( Ωit_291 = -> validate.optional.boolean      null       ), null
+    @throws ( Ωit_292 = -> validate.boolean           1  ), /expected a boolean/
+    @throws ( Ωit_293 = -> validate.optional.boolean  1  ), /expected an optional boolean/
     #.........................................................................................................
-    @eq ( Ωit_282 = -> type_of null            ), 'null'
-    @eq ( Ωit_283 = -> type_of undefined       ), 'undefined'
-    @eq ( Ωit_284 = -> type_of false           ), 'boolean'
-    @eq ( Ωit_285 = -> type_of Symbol 'p'      ), 'symbol'
-    @eq ( Ωit_286 = -> type_of {}              ), 'object'
-    @eq ( Ωit_287 = -> type_of NaN             ), 'unknown'
-    @eq ( Ωit_288 = -> type_of +Infinity       ), 'unknown'
-    @eq ( Ωit_289 = -> type_of -Infinity       ), 'unknown'
+    @eq ( Ωit_294 = -> type_of null            ), 'null'
+    @eq ( Ωit_295 = -> type_of undefined       ), 'undefined'
+    @eq ( Ωit_296 = -> type_of false           ), 'boolean'
+    @eq ( Ωit_297 = -> type_of Symbol 'p'      ), 'symbol'
+    @eq ( Ωit_298 = -> type_of {}              ), 'object'
+    @eq ( Ωit_299 = -> type_of NaN             ), 'unknown'
+    @eq ( Ωit_300 = -> type_of +Infinity       ), 'unknown'
+    @eq ( Ωit_301 = -> type_of -Infinity       ), 'unknown'
     #.........................................................................................................
-    @eq ( Ωit_290 = -> isa.asyncfunction.name               ), 'isa.asyncfunction'
-    @eq ( Ωit_291 = -> isa.optional.asyncfunction.name      ), 'isa.optional.asyncfunction'
-    @eq ( Ωit_292 = -> validate.asyncfunction.name          ), 'validate.asyncfunction'
-    @eq ( Ωit_293 = -> validate.optional.asyncfunction.name ), 'validate.optional.asyncfunction'
+    @eq ( Ωit_302 = -> isa.asyncfunction.name               ), 'isa.asyncfunction'
+    @eq ( Ωit_303 = -> isa.optional.asyncfunction.name      ), 'isa.optional.asyncfunction'
+    @eq ( Ωit_304 = -> validate.asyncfunction.name          ), 'validate.asyncfunction'
+    @eq ( Ωit_305 = -> validate.optional.asyncfunction.name ), 'validate.optional.asyncfunction'
     #.........................................................................................................
-    @throws ( Ωit_294 = -> isa.float 3, 4 ), /method 'isa.float' expects 1 arguments, got 2/
-    @throws ( Ωit_295 = -> isa.float()    ), /method 'isa.float' expects 1 arguments, got 0/
+    @throws ( Ωit_306 = -> isa.float 3, 4 ), /method 'isa.float' expects 1 arguments, got 2/
+    @throws ( Ωit_307 = -> isa.float()    ), /method 'isa.float' expects 1 arguments, got 0/
     return null
 
   #-----------------------------------------------------------------------------------------------------------
@@ -939,16 +1001,16 @@ OLD_intertype_tasks =
       validate
       type_of   } = new INTERTYPE.Intertype_minimal sample_declarations
     #.........................................................................................................
-    @throws ( Ωit_296 = -> isa.float 3, 4               ), /method 'isa.float' expects 1 arguments, got 2/
-    @throws ( Ωit_297 = -> isa.float()                  ), /method 'isa.float' expects 1 arguments, got 0/
-    @throws ( Ωit_298 = -> isa.optional.float 3, 4      ), /method 'isa.optional.float' expects 1 arguments, got 2/
-    @throws ( Ωit_299 = -> isa.optional.float()         ), /method 'isa.optional.float' expects 1 arguments, got 0/
-    @throws ( Ωit_300 = -> validate.float 3, 4          ), /method 'validate.float' expects 1 arguments, got 2/
-    @throws ( Ωit_301 = -> validate.float()             ), /method 'validate.float' expects 1 arguments, got 0/
-    @throws ( Ωit_302 = -> validate.optional.float 3, 4 ), /method 'validate.optional.float' expects 1 arguments, got 2/
-    @throws ( Ωit_303 = -> validate.optional.float()    ), /method 'validate.optional.float' expects 1 arguments, got 0/
-    @throws ( Ωit_304 = -> type_of 3, 4                 ), /expected 1 arguments, got 2/
-    @throws ( Ωit_305 = -> type_of()                    ), /expected 1 arguments, got 0/
+    @throws ( Ωit_308 = -> isa.float 3, 4               ), /method 'isa.float' expects 1 arguments, got 2/
+    @throws ( Ωit_309 = -> isa.float()                  ), /method 'isa.float' expects 1 arguments, got 0/
+    @throws ( Ωit_310 = -> isa.optional.float 3, 4      ), /method 'isa.optional.float' expects 1 arguments, got 2/
+    @throws ( Ωit_311 = -> isa.optional.float()         ), /method 'isa.optional.float' expects 1 arguments, got 0/
+    @throws ( Ωit_312 = -> validate.float 3, 4          ), /method 'validate.float' expects 1 arguments, got 2/
+    @throws ( Ωit_313 = -> validate.float()             ), /method 'validate.float' expects 1 arguments, got 0/
+    @throws ( Ωit_314 = -> validate.optional.float 3, 4 ), /method 'validate.optional.float' expects 1 arguments, got 2/
+    @throws ( Ωit_315 = -> validate.optional.float()    ), /method 'validate.optional.float' expects 1 arguments, got 0/
+    @throws ( Ωit_316 = -> type_of 3, 4                 ), /expected 1 arguments, got 2/
+    @throws ( Ωit_317 = -> type_of()                    ), /expected 1 arguments, got 0/
     #.........................................................................................................
     return null
 
@@ -967,32 +1029,32 @@ OLD_intertype_tasks =
     asyncgenerator          = ( -> yield await null )()
     symbol                  = Symbol 'what'
     #.........................................................................................................
-    @eq ( Ωit_306 = -> isa.boolean                     boolean                 ), true
-    @eq ( Ωit_307 = -> isa.function                    $function               ), true
-    @eq ( Ωit_308 = -> isa.asyncfunction               asyncfunction           ), true
-    @eq ( Ωit_309 = -> isa.generatorfunction           generatorfunction       ), true
-    @eq ( Ωit_310 = -> isa.asyncgeneratorfunction      asyncgeneratorfunction  ), true
-    @eq ( Ωit_311 = -> isa.asyncgenerator              asyncgenerator          ), true
-    @eq ( Ωit_312 = -> isa.generator                   generator               ), true
-    @eq ( Ωit_313 = -> isa.symbol                      symbol                  ), true
+    @eq ( Ωit_318 = -> isa.boolean                     boolean                 ), true
+    @eq ( Ωit_319 = -> isa.function                    $function               ), true
+    @eq ( Ωit_320 = -> isa.asyncfunction               asyncfunction           ), true
+    @eq ( Ωit_321 = -> isa.generatorfunction           generatorfunction       ), true
+    @eq ( Ωit_322 = -> isa.asyncgeneratorfunction      asyncgeneratorfunction  ), true
+    @eq ( Ωit_323 = -> isa.asyncgenerator              asyncgenerator          ), true
+    @eq ( Ωit_324 = -> isa.generator                   generator               ), true
+    @eq ( Ωit_325 = -> isa.symbol                      symbol                  ), true
     #.........................................................................................................
-    @eq ( Ωit_314 = -> validate.boolean                boolean                 ), boolean
-    @eq ( Ωit_315 = -> validate.function               $function               ), $function
-    @eq ( Ωit_316 = -> validate.asyncfunction          asyncfunction           ), asyncfunction
-    @eq ( Ωit_317 = -> validate.generatorfunction      generatorfunction       ), generatorfunction
-    @eq ( Ωit_318 = -> validate.asyncgeneratorfunction asyncgeneratorfunction  ), asyncgeneratorfunction
-    @eq ( Ωit_319 = -> validate.asyncgenerator         asyncgenerator          ), asyncgenerator
-    @eq ( Ωit_320 = -> validate.generator              generator               ), generator
-    @eq ( Ωit_321 = -> validate.symbol                 symbol                  ), symbol
+    @eq ( Ωit_326 = -> validate.boolean                boolean                 ), boolean
+    @eq ( Ωit_327 = -> validate.function               $function               ), $function
+    @eq ( Ωit_328 = -> validate.asyncfunction          asyncfunction           ), asyncfunction
+    @eq ( Ωit_329 = -> validate.generatorfunction      generatorfunction       ), generatorfunction
+    @eq ( Ωit_330 = -> validate.asyncgeneratorfunction asyncgeneratorfunction  ), asyncgeneratorfunction
+    @eq ( Ωit_331 = -> validate.asyncgenerator         asyncgenerator          ), asyncgenerator
+    @eq ( Ωit_332 = -> validate.generator              generator               ), generator
+    @eq ( Ωit_333 = -> validate.symbol                 symbol                  ), symbol
     #.........................................................................................................
-    @eq ( Ωit_322 = -> type_of boolean                                         ), 'boolean'
-    @eq ( Ωit_323 = -> type_of $function                                       ), 'function'
-    @eq ( Ωit_324 = -> type_of asyncfunction                                   ), 'asyncfunction'
-    @eq ( Ωit_325 = -> type_of generatorfunction                               ), 'generatorfunction'
-    @eq ( Ωit_326 = -> type_of asyncgeneratorfunction                          ), 'asyncgeneratorfunction'
-    @eq ( Ωit_327 = -> type_of asyncgenerator                                  ), 'asyncgenerator'
-    @eq ( Ωit_328 = -> type_of generator                                       ), 'generator'
-    @eq ( Ωit_329 = -> type_of symbol                                          ), 'symbol'
+    @eq ( Ωit_334 = -> type_of boolean                                         ), 'boolean'
+    @eq ( Ωit_335 = -> type_of $function                                       ), 'function'
+    @eq ( Ωit_336 = -> type_of asyncfunction                                   ), 'asyncfunction'
+    @eq ( Ωit_337 = -> type_of generatorfunction                               ), 'generatorfunction'
+    @eq ( Ωit_338 = -> type_of asyncgeneratorfunction                          ), 'asyncgeneratorfunction'
+    @eq ( Ωit_339 = -> type_of asyncgenerator                                  ), 'asyncgenerator'
+    @eq ( Ωit_340 = -> type_of generator                                       ), 'generator'
+    @eq ( Ωit_341 = -> type_of symbol                                          ), 'symbol'
     #.........................................................................................................
     return null
 
@@ -1003,29 +1065,29 @@ OLD_intertype_tasks =
       validate
       type_of   } = new INTERTYPE.Intertype()
     #.........................................................................................................
-    @throws ( Ωit_330 = -> isa.quux                    ), /unknown type 'quux'/
-    @throws ( Ωit_331 = -> isa.quux()                  ), /unknown type 'quux'/
-    @throws ( Ωit_332 = -> isa.quux 3                  ), /unknown type 'quux'/
-    @throws ( Ωit_333 = -> isa.quux 3, 4               ), /unknown type 'quux'/
-    @throws ( Ωit_334 = -> isa.optional.quux           ), /unknown type 'quux'/
-    @throws ( Ωit_335 = -> isa.optional.quux()         ), /unknown type 'quux'/
-    @throws ( Ωit_336 = -> isa.optional.quux 3         ), /unknown type 'quux'/
-    @throws ( Ωit_337 = -> isa.optional.quux 3, 4      ), /unknown type 'quux'/
-    @throws ( Ωit_338 = -> validate.quux               ), /unknown type 'quux'/
-    @throws ( Ωit_339 = -> validate.quux()             ), /unknown type 'quux'/
-    @throws ( Ωit_340 = -> validate.quux 3             ), /unknown type 'quux'/
-    @throws ( Ωit_341 = -> validate.quux 3, 4          ), /unknown type 'quux'/
-    @throws ( Ωit_342 = -> validate.optional.quux      ), /unknown type 'quux'/
-    @throws ( Ωit_343 = -> validate.optional.quux()    ), /unknown type 'quux'/
-    @throws ( Ωit_344 = -> validate.optional.quux 3    ), /unknown type 'quux'/
-    @throws ( Ωit_345 = -> validate.optional.quux 3, 4 ), /unknown type 'quux'/
+    @throws ( Ωit_342 = -> isa.quux                    ), /unknown type 'quux'/
+    @throws ( Ωit_343 = -> isa.quux()                  ), /unknown type 'quux'/
+    @throws ( Ωit_344 = -> isa.quux 3                  ), /unknown type 'quux'/
+    @throws ( Ωit_345 = -> isa.quux 3, 4               ), /unknown type 'quux'/
+    @throws ( Ωit_346 = -> isa.optional.quux           ), /unknown type 'quux'/
+    @throws ( Ωit_347 = -> isa.optional.quux()         ), /unknown type 'quux'/
+    @throws ( Ωit_348 = -> isa.optional.quux 3         ), /unknown type 'quux'/
+    @throws ( Ωit_349 = -> isa.optional.quux 3, 4      ), /unknown type 'quux'/
+    @throws ( Ωit_350 = -> validate.quux               ), /unknown type 'quux'/
+    @throws ( Ωit_351 = -> validate.quux()             ), /unknown type 'quux'/
+    @throws ( Ωit_352 = -> validate.quux 3             ), /unknown type 'quux'/
+    @throws ( Ωit_353 = -> validate.quux 3, 4          ), /unknown type 'quux'/
+    @throws ( Ωit_354 = -> validate.optional.quux      ), /unknown type 'quux'/
+    @throws ( Ωit_355 = -> validate.optional.quux()    ), /unknown type 'quux'/
+    @throws ( Ωit_356 = -> validate.optional.quux 3    ), /unknown type 'quux'/
+    @throws ( Ωit_357 = -> validate.optional.quux 3, 4 ), /unknown type 'quux'/
     #.........................................................................................................
     return null
 
   #-----------------------------------------------------------------------------------------------------------
   throw_instructive_error_when_optional_is_declared: ->
     INTERTYPE     = require '../../../apps/intertype'
-    @throws ( Ωit_346 = -> new INTERTYPE.Intertype_minimal { optional: ( ( x ) -> true ), } ), /not allowed to re-declare type 'optional'/
+    @throws ( Ωit_358 = -> new INTERTYPE.Intertype_minimal { optional: ( ( x ) -> true ), } ), /not allowed to re-declare type 'optional'/
     #.........................................................................................................
     return null
 
@@ -1033,16 +1095,16 @@ OLD_intertype_tasks =
   throw_instructive_error_when_wrong_type_of_isa_test_declared: ->
     { Intertype } = require '../../../apps/intertype'
     #.........................................................................................................
-    @throws ( Ωit_347 = -> new Intertype { foo: ( -> ), }                      ), /expected function with 1 parameters, got one with 0/
-    @throws ( Ωit_348 = -> new Intertype { foo: ( ( a, b ) -> ), }             ), /expected function with 1 parameters, got one with 2/
-    @throws ( Ωit_349 = -> new Intertype { foo: true, }                        ), /expected type name, method, or object to indicate test method, got a boolean/
-    @throws ( Ωit_350 = -> new Intertype { foo: undefined, }                   ), /expected type name, method, or object to indicate test method, got a undefined/
-    @throws ( Ωit_351 = -> new Intertype { foo: null, }                        ), /expected type name, method, or object to indicate test method, got a null/
-    @throws ( Ωit_352 = -> new Intertype { foo: {}, }                          ), /expected type name, method, or object to indicate test method, got a undefined/
-    @throws ( Ωit_353 = -> new Intertype { foo: { test: null, }, }             ), /expected type name, method, or object to indicate test method, got a null/
-    @throws ( Ωit_354 = -> new Intertype { foo: { test: false, }, }            ), /expected type name, method, or object to indicate test method, got a boolean/
-    @throws ( Ωit_355 = -> new Intertype { foo: { test: ( ( a, b ) -> ), }, }  ), /expected function with 1 parameters, got one with 2/
-    @throws ( Ωit_356 = -> new Intertype { foo: 'quux', }                      ), /unknown type 'quux'/
+    @throws ( Ωit_359 = -> new Intertype { foo: ( -> ), }                      ), /expected function with 1 parameters, got one with 0/
+    @throws ( Ωit_360 = -> new Intertype { foo: ( ( a, b ) -> ), }             ), /expected function with 1 parameters, got one with 2/
+    @throws ( Ωit_361 = -> new Intertype { foo: true, }                        ), /expected type name, method, or object to indicate test method, got a boolean/
+    @throws ( Ωit_362 = -> new Intertype { foo: undefined, }                   ), /expected type name, method, or object to indicate test method, got a undefined/
+    @throws ( Ωit_363 = -> new Intertype { foo: null, }                        ), /expected type name, method, or object to indicate test method, got a null/
+    @throws ( Ωit_364 = -> new Intertype { foo: {}, }                          ), /expected type name, method, or object to indicate test method, got a undefined/
+    @throws ( Ωit_365 = -> new Intertype { foo: { test: null, }, }             ), /expected type name, method, or object to indicate test method, got a null/
+    @throws ( Ωit_366 = -> new Intertype { foo: { test: false, }, }            ), /expected type name, method, or object to indicate test method, got a boolean/
+    @throws ( Ωit_367 = -> new Intertype { foo: { test: ( ( a, b ) -> ), }, }  ), /expected function with 1 parameters, got one with 2/
+    @throws ( Ωit_368 = -> new Intertype { foo: 'quux', }                      ), /unknown type 'quux'/
     #.........................................................................................................
     return null
 
@@ -1056,10 +1118,10 @@ OLD_intertype_tasks =
         test:     ( x ) -> Number.isInteger x
         template: 0
       types = new Intertype_minimal declarations
-      @eq ( Ωit_357 = -> TMP_types.isa.function types.isa.integer  ), true
-      @eq ( Ωit_358 = -> types.isa.integer.length                  ), 1
-      @eq ( Ωit_359 = -> types.isa.integer 123                     ), true
-      @eq ( Ωit_360 = -> types.isa.integer 123.456                 ), false
+      @eq ( Ωit_369 = -> TMP_types.isa.function types.isa.integer  ), true
+      @eq ( Ωit_370 = -> types.isa.integer.length                  ), 1
+      @eq ( Ωit_371 = -> types.isa.integer 123                     ), true
+      @eq ( Ωit_372 = -> types.isa.integer 123.456                 ), false
       return null
     #.........................................................................................................
     return null
@@ -1073,7 +1135,7 @@ OLD_intertype_tasks =
       declarations.integer =
         test:     ( x ) -> Number.isInteger x
         create:   -> await 0
-      @throws ( Ωit_361 = -> new Intertype_minimal declarations ), /expected a function for `create` entry of type 'integer', got a asyncfunction/
+      @throws ( Ωit_373 = -> new Intertype_minimal declarations ), /expected a function for `create` entry of type 'integer', got a asyncfunction/
       return null
     #.........................................................................................................
     return null
@@ -1087,7 +1149,7 @@ OLD_intertype_tasks =
       declarations.foolist =
         test:     ( x ) -> true
         template: ( n ) -> [ n, ]
-      @throws ( Ωit_362 = -> new Intertype_minimal declarations ), /template method for type 'foolist' has arity 1 but must be nullary/
+      @throws ( Ωit_374 = -> new Intertype_minimal declarations ), /template method for type 'foolist' has arity 1 but must be nullary/
       return null
     #.........................................................................................................
     return null
@@ -1096,21 +1158,21 @@ OLD_intertype_tasks =
   intertype_knows_its_base_types: ->
     { isa } = require '../../../apps/intertype'
     #.........................................................................................................
-    @eq ( Ωit_363 = -> isa.basetype 'optional'   ), false
-    @eq ( Ωit_364 = -> isa.basetype 'anything'   ), true
-    @eq ( Ωit_365 = -> isa.basetype 'nothing'    ), true
-    @eq ( Ωit_366 = -> isa.basetype 'something'  ), true
-    @eq ( Ωit_367 = -> isa.basetype 'null'       ), true
-    @eq ( Ωit_368 = -> isa.basetype 'undefined'  ), true
-    @eq ( Ωit_369 = -> isa.basetype 'unknown'    ), true
-    @eq ( Ωit_370 = -> isa.basetype 'integer'    ), false
-    @eq ( Ωit_371 = -> isa.basetype 'float'      ), false
-    @eq ( Ωit_372 = -> isa.basetype 'basetype'   ), false
-    @eq ( Ωit_373 = -> isa.basetype 'quux'       ), false
-    @eq ( Ωit_374 = -> isa.basetype 'toString'   ), false
-    @eq ( Ωit_375 = -> isa.basetype null         ), false
-    @eq ( Ωit_376 = -> isa.basetype undefined    ), false
-    @eq ( Ωit_377 = -> isa.basetype 4            ), false
+    @eq ( Ωit_375 = -> isa.basetype 'optional'   ), false
+    @eq ( Ωit_376 = -> isa.basetype 'anything'   ), true
+    @eq ( Ωit_377 = -> isa.basetype 'nothing'    ), true
+    @eq ( Ωit_378 = -> isa.basetype 'something'  ), true
+    @eq ( Ωit_379 = -> isa.basetype 'null'       ), true
+    @eq ( Ωit_380 = -> isa.basetype 'undefined'  ), true
+    @eq ( Ωit_381 = -> isa.basetype 'unknown'    ), true
+    @eq ( Ωit_382 = -> isa.basetype 'integer'    ), false
+    @eq ( Ωit_383 = -> isa.basetype 'float'      ), false
+    @eq ( Ωit_384 = -> isa.basetype 'basetype'   ), false
+    @eq ( Ωit_385 = -> isa.basetype 'quux'       ), false
+    @eq ( Ωit_386 = -> isa.basetype 'toString'   ), false
+    @eq ( Ωit_387 = -> isa.basetype null         ), false
+    @eq ( Ωit_388 = -> isa.basetype undefined    ), false
+    @eq ( Ωit_389 = -> isa.basetype 4            ), false
     #.........................................................................................................
     return null
 
@@ -1120,42 +1182,42 @@ OLD_intertype_tasks =
     #.........................................................................................................
     do =>
       types         = new Intertype()
-      @eq ( Ωit_378 = -> types.isa.float 4 ), true
+      @eq ( Ωit_390 = -> types.isa.float 4 ), true
       #.......................................................................................................
       overrides     =
         float:
           test:       ( x ) -> x is 'float'
-      @throws ( Ωit_379 = -> types.declare overrides ), /not allowed to re-declare type 'float'/
+      @throws ( Ωit_391 = -> types.declare overrides ), /not allowed to re-declare type 'float'/
       #.......................................................................................................
       ### pre-existing declaration remains valid: ###
-      @eq ( Ωit_380 = -> types.isa.float 4       ), true
-      @eq ( Ωit_381 = -> types.isa.float 'float' ), false
+      @eq ( Ωit_392 = -> types.isa.float 4       ), true
+      @eq ( Ωit_393 = -> types.isa.float 'float' ), false
       return null
     #.........................................................................................................
     do =>
       types         = new Intertype()
-      @eq ( Ωit_382 = -> types.isa.float 4 ), true
+      @eq ( Ωit_394 = -> types.isa.float 4 ), true
       #.......................................................................................................
       overrides     =
         float:
           override:   true
           test:       ( x ) -> x is 'float'
-      @throws ( Ωit_383 = -> types.declare overrides ), /not allowed to re-declare type 'float'/
+      @throws ( Ωit_395 = -> types.declare overrides ), /not allowed to re-declare type 'float'/
       return null
     #.........................................................................................................
     do =>
       types         = new Intertype()
-      @eq ( Ωit_384 = -> types.isa.float 4 ), true
+      @eq ( Ωit_396 = -> types.isa.float 4 ), true
       #.......................................................................................................
       overrides     =
         anything:
           override:   true
           test:       ( x ) -> true
-      @throws ( Ωit_385 = -> types.declare overrides ), /not allowed to re-declare basetype 'anything'/
+      @throws ( Ωit_397 = -> types.declare overrides ), /not allowed to re-declare basetype 'anything'/
       #.......................................................................................................
       ### pre-existing declaration remains valid: ###
-      @eq ( Ωit_386 = -> types.isa.anything 4       ), true
-      @eq ( Ωit_387 = -> types.isa.anything 'float' ), true
+      @eq ( Ωit_398 = -> types.isa.anything 4       ), true
+      @eq ( Ωit_399 = -> types.isa.anything 'float' ), true
       return null
     #.........................................................................................................
     return null
@@ -1178,18 +1240,18 @@ OLD_intertype_tasks =
       declarations.nan = ( x ) -> Number.isNaN x
       #.......................................................................................................
       types = new Intertype_minimal declarations
-      @eq ( Ωit_388 = -> TMP_types.isa.object types.declarations       ), true
-      @eq ( Ωit_389 = -> TMP_types.isa.object types.declarations.float ), true
-      @eq ( Ωit_390 = -> TMP_types.isa.object types.declarations.text  ), true
+      @eq ( Ωit_400 = -> TMP_types.isa.object types.declarations       ), true
+      @eq ( Ωit_401 = -> TMP_types.isa.object types.declarations.float ), true
+      @eq ( Ωit_402 = -> TMP_types.isa.object types.declarations.text  ), true
       #.......................................................................................................
-      @throws ( Ωit_391 = -> types.create.boolean() ), /type declaration of 'boolean' has no `create` and no `template` entries, cannot be created/
-      @throws ( Ωit_392 = -> types.create.text 'foo' ), /expected 0 arguments, got 1/
+      @throws ( Ωit_403 = -> types.create.boolean() ), /type declaration of 'boolean' has no `create` and no `template` entries, cannot be created/
+      @throws ( Ωit_404 = -> types.create.text 'foo' ), /expected 0 arguments, got 1/
       #.......................................................................................................
-      @eq ( Ωit_393 = -> types.create.text()         ), ''
-      @eq ( Ωit_394 = -> types.create.integer()      ), 0
-      @eq ( Ωit_395 = -> types.create.float()        ), 0
-      @eq ( Ωit_396 = -> types.create.float '123.45' ), 123.45
-      @throws ( Ωit_397 = -> types.create.float '***' ), /these arguments are not suitable for `create.float\(\)`: '\*\*\*'/
+      @eq ( Ωit_405 = -> types.create.text()         ), ''
+      @eq ( Ωit_406 = -> types.create.integer()      ), 0
+      @eq ( Ωit_407 = -> types.create.float()        ), 0
+      @eq ( Ωit_408 = -> types.create.float '123.45' ), 123.45
+      @throws ( Ωit_409 = -> types.create.float '***' ), /these arguments are not suitable for `create.float\(\)`: '\*\*\*'/
       #.......................................................................................................
       return null
     #.........................................................................................................
@@ -1205,7 +1267,7 @@ OLD_intertype_tasks =
       { isa
         validate
         create    } = new Intertype declarations
-      @eq ( Ωit_398 = -> create.quantity()    ), { q: 0, u: 'u', }
+      @eq ( Ωit_410 = -> create.quantity()    ), { q: 0, u: 'u', }
       return null
     #.........................................................................................................
     do =>
@@ -1221,10 +1283,10 @@ OLD_intertype_tasks =
       { isa
         validate
         create    } = new Intertype declarations
-      @eq ( Ωit_399 = -> create.quantity()                         ), { q: 0, u: 'u', }
-      @eq ( Ωit_400 = -> create.quantity { q: 123, }               ), { q: 123, u: 'u', }
-      @eq ( Ωit_401 = -> create.quantity { u: 'kg', }              ), { q: 0, u: 'kg', }
-      @eq ( Ωit_402 = -> create.quantity { u: 'kg', foo: 'bar', }  ), { q: 0, u: 'kg', foo: 'bar', }
+      @eq ( Ωit_411 = -> create.quantity()                         ), { q: 0, u: 'u', }
+      @eq ( Ωit_412 = -> create.quantity { q: 123, }               ), { q: 123, u: 'u', }
+      @eq ( Ωit_413 = -> create.quantity { u: 'kg', }              ), { q: 0, u: 'kg', }
+      @eq ( Ωit_414 = -> create.quantity { u: 'kg', foo: 'bar', }  ), { q: 0, u: 'kg', foo: 'bar', }
       return null
     #.........................................................................................................
     return null
@@ -1237,18 +1299,18 @@ OLD_intertype_tasks =
       types       = new Intertype()
       { create
         type_of } = types
-      @eq ( Ωit_403 = -> create.float()         ), 0
-      @eq ( Ωit_404 = -> create.boolean()       ), false
-      @eq ( Ωit_405 = -> create.object()        ), {}
-      @eq ( Ωit_406 = -> create.float()         ), 0
-      @eq ( Ωit_407 = -> create.infinity()      ), Infinity
-      @eq ( Ωit_408 = -> create.text()          ), ''
-      @eq ( Ωit_409 = -> create.list()          ), []
-      @eq ( Ωit_410 = -> create.regex()         ), new RegExp()
-      @eq ( Ωit_411 = -> type_of create.function()      ), 'function'
-      @eq ( Ωit_412 = -> type_of create.asyncfunction() ), 'asyncfunction'
-      @eq ( Ωit_413 = -> type_of create.symbol()        ), 'symbol'
-      @throws ( Ωit_414 = -> create.basetype() ), /type declaration of 'basetype' has no `create` and no `template` entries, cannot be created/
+      @eq ( Ωit_415 = -> create.float()         ), 0
+      @eq ( Ωit_416 = -> create.boolean()       ), false
+      @eq ( Ωit_417 = -> create.object()        ), {}
+      @eq ( Ωit_418 = -> create.float()         ), 0
+      @eq ( Ωit_419 = -> create.infinity()      ), Infinity
+      @eq ( Ωit_420 = -> create.text()          ), ''
+      @eq ( Ωit_421 = -> create.list()          ), []
+      @eq ( Ωit_422 = -> create.regex()         ), new RegExp()
+      @eq ( Ωit_423 = -> type_of create.function()      ), 'function'
+      @eq ( Ωit_424 = -> type_of create.asyncfunction() ), 'asyncfunction'
+      @eq ( Ωit_425 = -> type_of create.symbol()        ), 'symbol'
+      @throws ( Ωit_426 = -> create.basetype() ), /type declaration of 'basetype' has no `create` and no `template` entries, cannot be created/
       return null
     #.........................................................................................................
     return null
@@ -1274,10 +1336,10 @@ OLD_intertype_tasks =
           u:      -> 'u'
       debug '^3234^', create.quantity()
       debug '^3234^', declarations.quantity
-      @eq ( Ωit_415 = -> create.quantity()                          ), { q: 0, u: 'u', }
-      @eq ( Ωit_416 = -> isa.quantity { q: 9, }                     ), false
-      @eq ( Ωit_417 = -> type_of declarations.quantity.sub_tests.q  ), 'function'
-      @eq ( Ωit_418 = -> type_of declarations.quantity.sub_tests.u  ), 'function'
+      @eq ( Ωit_427 = -> create.quantity()                          ), { q: 0, u: 'u', }
+      @eq ( Ωit_428 = -> isa.quantity { q: 9, }                     ), false
+      @eq ( Ωit_429 = -> type_of declarations.quantity.sub_tests.q  ), 'function'
+      @eq ( Ωit_430 = -> type_of declarations.quantity.sub_tests.u  ), 'function'
       return null
     #.........................................................................................................
     do =>
@@ -1297,7 +1359,7 @@ OLD_intertype_tasks =
           foo:
             bar: 123
       debug '^3234^', create.foo()
-      @eq ( Ωit_419 = -> create.foo() ), { foo: { bar: 123, } }
+      @eq ( Ωit_431 = -> create.foo() ), { foo: { bar: 123, } }
       return null
     #.........................................................................................................
     return null
@@ -1318,12 +1380,12 @@ OLD_intertype_tasks =
         fields:
           q:      'float'
           u:      'text'
-      @eq ( Ωit_420 = -> type_of declarations.quantity.test ), 'function'
+      @eq ( Ωit_432 = -> type_of declarations.quantity.test ), 'function'
       debug '^342342^', declarations.quantity
-      @eq ( Ωit_421 = -> type_of declarations.quantity.sub_tests.q ), 'function'
-      @eq ( Ωit_422 = -> type_of declarations.quantity.sub_tests.u ), 'function'
-      @eq ( Ωit_423 = -> isa.quantity { q: 987, u: 's', } ), true
-      @eq ( Ωit_424 = -> isa.quantity { q: 987, } ), false
+      @eq ( Ωit_433 = -> type_of declarations.quantity.sub_tests.q ), 'function'
+      @eq ( Ωit_434 = -> type_of declarations.quantity.sub_tests.u ), 'function'
+      @eq ( Ωit_435 = -> isa.quantity { q: 987, u: 's', } ), true
+      @eq ( Ωit_436 = -> isa.quantity { q: 987, } ), false
       return null
     #.........................................................................................................
     return null
@@ -1332,9 +1394,9 @@ OLD_intertype_tasks =
   intertype_minimal_has_only_base_types: ->
     { Intertype_minimal } = require '../../../apps/intertype'
     types = new Intertype_minimal()
-    @eq ( Ωit_425 = -> ( Object.keys types.declarations ).sort() ), [ 'anything', 'nothing', 'null', 'optional', 'something', 'undefined', 'unknown' ]
+    @eq ( Ωit_437 = -> ( Object.keys types.declarations ).sort() ), [ 'anything', 'nothing', 'null', 'optional', 'something', 'undefined', 'unknown' ]
     types.declare { z: ( ( x ) -> ), }
-    @eq ( Ωit_426 = -> ( Object.keys types.declarations ).sort() ), [ 'anything', 'nothing', 'null', 'optional', 'something', 'undefined', 'unknown', 'z' ]
+    @eq ( Ωit_438 = -> ( Object.keys types.declarations ).sort() ), [ 'anything', 'nothing', 'null', 'optional', 'something', 'undefined', 'unknown', 'z' ]
     #.........................................................................................................
     return null
 
@@ -1344,27 +1406,27 @@ OLD_intertype_tasks =
     #.........................................................................................................
     do =>
       types = new Intertype()
-      @throws ( Ωit_427 = -> types.declare { z: 'quux', } ), /unknown type 'quux'/
+      @throws ( Ωit_439 = -> types.declare { z: 'quux', } ), /unknown type 'quux'/
       types.declare { z: 'float', }
-      @eq ( Ωit_428 = -> types.isa.z 12 ), true
-      @eq ( Ωit_429 = -> types.isa.float.name                ), 'isa.float'
-      @eq ( Ωit_430 = -> types.declarations.float.type       ), 'float'
-      @eq ( Ωit_431 = -> types.declarations.float.test.name  ), 'float'
-      @eq ( Ωit_432 = -> types.isa.z.name                    ), 'isa.z'
-      @eq ( Ωit_433 = -> types.declarations.z.type           ), 'z'
-      @eq ( Ωit_434 = -> types.declarations.z.test.name      ), 'z' # ?
+      @eq ( Ωit_440 = -> types.isa.z 12 ), true
+      @eq ( Ωit_441 = -> types.isa.float.name                ), 'isa.float'
+      @eq ( Ωit_442 = -> types.declarations.float.type       ), 'float'
+      @eq ( Ωit_443 = -> types.declarations.float.test.name  ), 'float'
+      @eq ( Ωit_444 = -> types.isa.z.name                    ), 'isa.z'
+      @eq ( Ωit_445 = -> types.declarations.z.type           ), 'z'
+      @eq ( Ωit_446 = -> types.declarations.z.test.name      ), 'z' # ?
     #.........................................................................................................
     do =>
       types = new Intertype()
-      @throws ( Ωit_435 = -> types.declare { z: { test: 'quux', }, } ), /unknown type 'quux'/
+      @throws ( Ωit_447 = -> types.declare { z: { test: 'quux', }, } ), /unknown type 'quux'/
       types.declare { z: { test: 'float', }, }
-      @eq ( Ωit_436 = -> types.isa.z 12 ), true
-      @eq ( Ωit_437 = -> types.isa.float.name                ), 'isa.float'
-      @eq ( Ωit_438 = -> types.declarations.float.type       ), 'float'
-      @eq ( Ωit_439 = -> types.declarations.float.test.name  ), 'float'
-      @eq ( Ωit_440 = -> types.isa.z.name                    ), 'isa.z'
-      @eq ( Ωit_441 = -> types.declarations.z.type           ), 'z'
-      @eq ( Ωit_442 = -> types.declarations.z.test.name      ), 'z'
+      @eq ( Ωit_448 = -> types.isa.z 12 ), true
+      @eq ( Ωit_449 = -> types.isa.float.name                ), 'isa.float'
+      @eq ( Ωit_450 = -> types.declarations.float.type       ), 'float'
+      @eq ( Ωit_451 = -> types.declarations.float.test.name  ), 'float'
+      @eq ( Ωit_452 = -> types.isa.z.name                    ), 'isa.z'
+      @eq ( Ωit_453 = -> types.declarations.z.type           ), 'z'
+      @eq ( Ωit_454 = -> types.declarations.z.test.name      ), 'z'
     #.........................................................................................................
     return null
 
@@ -1374,18 +1436,18 @@ OLD_intertype_tasks =
     #.........................................................................................................
     do =>
       types = new Intertype()
-      @eq ( Ωit_443 = -> Reflect.has types.declarations, 'foo'           ), false
+      @eq ( Ωit_455 = -> Reflect.has types.declarations, 'foo'           ), false
       types.declare { foo: 'object', }
-      @eq ( Ωit_444 = -> Reflect.has types.declarations, 'foo'           ), true
-      @eq ( Ωit_445 = -> Reflect.has types.declarations, 'foo.bar'       ), false
+      @eq ( Ωit_456 = -> Reflect.has types.declarations, 'foo'           ), true
+      @eq ( Ωit_457 = -> Reflect.has types.declarations, 'foo.bar'       ), false
       types.declare { 'foo.bar': 'object', }
-      @eq ( Ωit_446 = -> Reflect.has types.declarations, 'foo.bar'       ), true
-      @eq ( Ωit_447 = -> Reflect.has types.declarations, 'foo.bar.baz'   ), false
+      @eq ( Ωit_458 = -> Reflect.has types.declarations, 'foo.bar'       ), true
+      @eq ( Ωit_459 = -> Reflect.has types.declarations, 'foo.bar.baz'   ), false
       types.declare { 'foo.bar.baz': 'float', }
-      @eq ( Ωit_448 = -> Reflect.has types.declarations, 'foo.bar.baz'   ), true
-      @eq ( Ωit_449 = -> types.isa.foo.bar.baz null                      ), false
-      @eq ( Ωit_450 = -> types.isa.foo.bar.baz 4                         ), true
-      @eq ( Ωit_451 = -> types.isa.foo.bar.baz +Infinity                 ), false
+      @eq ( Ωit_460 = -> Reflect.has types.declarations, 'foo.bar.baz'   ), true
+      @eq ( Ωit_461 = -> types.isa.foo.bar.baz null                      ), false
+      @eq ( Ωit_462 = -> types.isa.foo.bar.baz 4                         ), true
+      @eq ( Ωit_463 = -> types.isa.foo.bar.baz +Infinity                 ), false
       # T?.eq types.declarations[ 'foo.bar.baz' ].test, types.declarations.float.test
       # types.declare { 'foo.bar.baz.quux.dax.dux': 'float', }
       return null
@@ -1401,19 +1463,19 @@ OLD_intertype_tasks =
       types.declare { quantity: 'object', }
       types.declare { 'quantity.q': 'float', }
       types.declare { 'quantity.u': 'text', }
-      @eq ( Ωit_452 = -> types.isa[ 'quantity.q' ] ), types.declarations[ 'quantity' ].sub_tests[ 'q' ]
-      @eq ( Ωit_453 = -> types.isa[ 'quantity.q' ] ), types.isa.quantity.q
+      @eq ( Ωit_464 = -> types.isa[ 'quantity.q' ] ), types.declarations[ 'quantity' ].sub_tests[ 'q' ]
+      @eq ( Ωit_465 = -> types.isa[ 'quantity.q' ] ), types.isa.quantity.q
       # debug '^409-1^', types.declarations
-      @eq ( Ωit_454 = -> types.isa.quantity {}                 ), false
-      @eq ( Ωit_455 = -> types.isa.quantity { q: {}, }         ), false
-      @eq ( Ωit_456 = -> types.isa.quantity { q: 3, }          ), false
-      @eq ( Ωit_457 = -> types.isa.quantity { q: 3, u: 'm', }  ), true
-      @eq ( Ωit_458 = -> types.isa.quantity.q 3                ), true
-      @eq ( Ωit_459 = -> types.isa.quantity.q 3.1              ), true
-      @eq ( Ωit_460 = -> types.isa.quantity.q '3.1'            ), false
-      @eq ( Ωit_461 = -> types.isa.quantity.u 'm'              ), true
-      @eq ( Ωit_462 = -> types.isa.quantity.u null             ), false
-      @eq ( Ωit_463 = -> types.isa.quantity.u 3                ), false
+      @eq ( Ωit_466 = -> types.isa.quantity {}                 ), false
+      @eq ( Ωit_467 = -> types.isa.quantity { q: {}, }         ), false
+      @eq ( Ωit_468 = -> types.isa.quantity { q: 3, }          ), false
+      @eq ( Ωit_469 = -> types.isa.quantity { q: 3, u: 'm', }  ), true
+      @eq ( Ωit_470 = -> types.isa.quantity.q 3                ), true
+      @eq ( Ωit_471 = -> types.isa.quantity.q 3.1              ), true
+      @eq ( Ωit_472 = -> types.isa.quantity.q '3.1'            ), false
+      @eq ( Ωit_473 = -> types.isa.quantity.u 'm'              ), true
+      @eq ( Ωit_474 = -> types.isa.quantity.u null             ), false
+      @eq ( Ωit_475 = -> types.isa.quantity.u 3                ), false
       debug '^433-1^', types.declarations[ 'quantity' ]
       debug '^433-1^', types.declarations[ 'quantity.q' ]
       debug '^433-1^', types.declarations[ 'quantity.u' ]
@@ -1429,26 +1491,26 @@ OLD_intertype_tasks =
       types.declare { 'person.address.city.postcode': 'text',   }
       # T?.eq types.isa[ 'quantity.q' ], types.declarations[ 'quantity' ].sub_tests[ 'q' ]
       # T?.eq types.isa[ 'quantity.q' ], types.isa.quantity.q
-      @eq ( Ωit_464 = -> types.isa.person.address.city.name 'P'  ), true
-      @eq ( Ωit_465 = -> types.isa.person.address.city.name 1234 ), false
-      @eq ( Ωit_466 = -> types.isa.person 1234 ), false
-      @eq ( Ωit_467 = -> types.isa.person { name: 'Bob', } ), false
-      @eq ( Ωit_468 = -> types.isa.person { name: 'Bob', address: {}, } ), false
-      @eq ( Ωit_469 = -> types.isa.person { name: 'Bob', address: { city: {}, }, } ), false
-      @eq ( Ωit_470 = -> types.isa.person { name: 'Bob', address: { city: { name: 'P', }, }, } ), false
-      @eq ( Ωit_471 = -> types.isa.person { name: 'Bob', address: { city: { name: 'P', postcode: 'SO36', }, }, } ), true
-      @eq ( Ωit_472 = -> types.isa.person.address.city.name     'P'                                ), true
-      @eq ( Ωit_473 = -> types.isa.person.address.city.postcode 'SO36'                             ), true
-      @eq ( Ωit_474 = -> types.isa.person.address.city {         name: 'P', postcode: 'SO36', }    ), true
-      @eq ( Ωit_475 = -> types.isa.person.address      { city: { name: 'P', postcode: 'SO36', }, } ), true
+      @eq ( Ωit_476 = -> types.isa.person.address.city.name 'P'  ), true
+      @eq ( Ωit_477 = -> types.isa.person.address.city.name 1234 ), false
+      @eq ( Ωit_478 = -> types.isa.person 1234 ), false
+      @eq ( Ωit_479 = -> types.isa.person { name: 'Bob', } ), false
+      @eq ( Ωit_480 = -> types.isa.person { name: 'Bob', address: {}, } ), false
+      @eq ( Ωit_481 = -> types.isa.person { name: 'Bob', address: { city: {}, }, } ), false
+      @eq ( Ωit_482 = -> types.isa.person { name: 'Bob', address: { city: { name: 'P', }, }, } ), false
+      @eq ( Ωit_483 = -> types.isa.person { name: 'Bob', address: { city: { name: 'P', postcode: 'SO36', }, }, } ), true
+      @eq ( Ωit_484 = -> types.isa.person.address.city.name     'P'                                ), true
+      @eq ( Ωit_485 = -> types.isa.person.address.city.postcode 'SO36'                             ), true
+      @eq ( Ωit_486 = -> types.isa.person.address.city {         name: 'P', postcode: 'SO36', }    ), true
+      @eq ( Ωit_487 = -> types.isa.person.address      { city: { name: 'P', postcode: 'SO36', }, } ), true
       help '^322-1^', ( { "#{k}": f.name } for k, f of types.declarations[ 'person'               ].sub_tests )
       help '^322-2^', ( { "#{k}": f.name } for k, f of types.declarations[ 'person.address'       ].sub_tests )
       help '^322-3^', ( { "#{k}": f.name } for k, f of types.declarations[ 'person.address.city'  ].sub_tests )
-      @eq ( Ωit_476 = -> Object.keys types.declarations[ 'person'               ].sub_tests ), [ 'name', 'address', ]
-      @eq ( Ωit_477 = -> Object.keys types.declarations[ 'person.address'       ].sub_tests ), [ 'city', ]
-      @eq ( Ωit_478 = -> Object.keys types.declarations[ 'person.address.city'  ].sub_tests ), [ 'name', 'postcode', ]
-      @eq ( Ωit_479 = -> types.declarations[ 'person' ].sub_tests isnt types.declarations[ 'person.address'      ].sub_tests ), true
-      @eq ( Ωit_480 = -> types.declarations[ 'person' ].sub_tests isnt types.declarations[ 'person.address.city' ].sub_tests ), true
+      @eq ( Ωit_488 = -> Object.keys types.declarations[ 'person'               ].sub_tests ), [ 'name', 'address', ]
+      @eq ( Ωit_489 = -> Object.keys types.declarations[ 'person.address'       ].sub_tests ), [ 'city', ]
+      @eq ( Ωit_490 = -> Object.keys types.declarations[ 'person.address.city'  ].sub_tests ), [ 'name', 'postcode', ]
+      @eq ( Ωit_491 = -> types.declarations[ 'person' ].sub_tests isnt types.declarations[ 'person.address'      ].sub_tests ), true
+      @eq ( Ωit_492 = -> types.declarations[ 'person' ].sub_tests isnt types.declarations[ 'person.address.city' ].sub_tests ), true
       return null
     #.........................................................................................................
     do =>
@@ -1458,14 +1520,14 @@ OLD_intertype_tasks =
       do =>
         d = 3
         # d.bar = '?' # Cannot create property in strict mode, so can never satisfy test
-        @eq ( Ωit_481 = -> types.isa.foo d ), false
+        @eq ( Ωit_493 = -> types.isa.foo d ), false
         return null
       do =>
         d = new Number 3
         d.bar = '?'
-        @eq ( Ωit_482 = -> d.bar ), '?'
+        @eq ( Ωit_494 = -> d.bar ), '?'
         # still won't work b/c `float` doesn't accept objects (which is a good thing):
-        @eq ( Ωit_483 = -> types.isa.foo d ), false
+        @eq ( Ωit_495 = -> types.isa.foo d ), false
         return null
       return null
     #.........................................................................................................
@@ -1477,8 +1539,8 @@ OLD_intertype_tasks =
       types.declare { 'foo.call':   'float',   }
       types.declare { 'foo.name':   'float',   }
       types.declare { 'foo.length': 'float',   }
-      @eq ( Ωit_484 = -> types.isa.foo {} ), false
-      @eq ( Ωit_485 = -> types.isa.foo { bind: 1, apply: 2, call: 3, name: 4, length: 5, } ), true
+      @eq ( Ωit_496 = -> types.isa.foo {} ), false
+      @eq ( Ωit_497 = -> types.isa.foo { bind: 1, apply: 2, call: 3, name: 4, length: 5, } ), true
       return null
     #.........................................................................................................
     do =>
@@ -1486,8 +1548,8 @@ OLD_intertype_tasks =
       types.declare { 'foo':        'object',           }
       types.declare { 'foo.text':   ( ( x ) -> x is 1 ) }
       types.declare { 'foo.float':  ( ( x ) -> x is 2 ) }
-      @eq ( Ωit_486 = -> types.isa.foo {} ), false
-      @eq ( Ωit_487 = -> types.isa.foo { text: 1, float: 2, } ), true
+      @eq ( Ωit_498 = -> types.isa.foo {} ), false
+      @eq ( Ωit_499 = -> types.isa.foo { text: 1, float: 2, } ), true
       return null
     #.........................................................................................................
     return null
@@ -1508,12 +1570,12 @@ OLD_intertype_tasks =
       # debug '^434-1^', types.declarations[ 'person.address.city' ]
       # debug '^434-2^', types.declarations.mycity
       urge '^342-1^', ( types.declarations.mycity )
-      @eq ( Ωit_488 = -> types.isa.person.address.city {} ), false
-      @eq ( Ωit_489 = -> types.isa.person.address.city null ), false
-      @eq ( Ωit_490 = -> types.isa.person.address.city { name: 'P', postcode: 'SO36', } ), true
-      @eq ( Ωit_491 = -> types.isa.mycity {} ), false
-      @eq ( Ωit_492 = -> types.isa.mycity null ), false
-      @eq ( Ωit_493 = -> types.isa.mycity { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_500 = -> types.isa.person.address.city {} ), false
+      @eq ( Ωit_501 = -> types.isa.person.address.city null ), false
+      @eq ( Ωit_502 = -> types.isa.person.address.city { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_503 = -> types.isa.mycity {} ), false
+      @eq ( Ωit_504 = -> types.isa.mycity null ), false
+      @eq ( Ωit_505 = -> types.isa.mycity { name: 'P', postcode: 'SO36', } ), true
       return null
     #.........................................................................................................
     do =>
@@ -1528,12 +1590,12 @@ OLD_intertype_tasks =
       # debug '^434-3^', types.declarations[ 'person.address.city' ]
       # debug '^434-4^', types.declarations.mycity
       urge '^342-2^', ( types.declarations.mycity )
-      @eq ( Ωit_494 = -> types.isa.person.address.city {} ), false
-      @eq ( Ωit_495 = -> types.isa.person.address.city null ), false
-      @eq ( Ωit_496 = -> types.isa.person.address.city { name: 'P', postcode: 'SO36', } ), true
-      @eq ( Ωit_497 = -> types.isa.mycity {} ), false
-      @eq ( Ωit_498 = -> types.isa.mycity null ), false
-      @eq ( Ωit_499 = -> types.isa.mycity { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_506 = -> types.isa.person.address.city {} ), false
+      @eq ( Ωit_507 = -> types.isa.person.address.city null ), false
+      @eq ( Ωit_508 = -> types.isa.person.address.city { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_509 = -> types.isa.mycity {} ), false
+      @eq ( Ωit_510 = -> types.isa.mycity null ), false
+      @eq ( Ωit_511 = -> types.isa.mycity { name: 'P', postcode: 'SO36', } ), true
       return null
     #.........................................................................................................
     do =>
@@ -1548,15 +1610,15 @@ OLD_intertype_tasks =
       # debug '^434-5^', types.declarations[ 'person.address.city' ]
       # debug '^434-6^', types.declarations.mycity
       urge '^342-3^', ( types.declarations.mycity )
-      @eq ( Ωit_500 = -> types.isa.person.address.city {} ), false
-      @eq ( Ωit_501 = -> types.isa.person.address.city null ), false
-      @eq ( Ωit_502 = -> types.isa.person.address.city { name: 'P', postcode: 'SO36', } ), true
-      @eq ( Ωit_503 = -> types.isa.optional.person.address.city {} ), false
-      @eq ( Ωit_504 = -> types.isa.optional.person.address.city null ), true
-      @eq ( Ωit_505 = -> types.isa.optional.person.address.city { name: 'P', postcode: 'SO36', } ), true
-      @eq ( Ωit_506 = -> types.isa.mycity {} ), false
-      @eq ( Ωit_507 = -> types.isa.mycity null ), true
-      @eq ( Ωit_508 = -> types.isa.mycity { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_512 = -> types.isa.person.address.city {} ), false
+      @eq ( Ωit_513 = -> types.isa.person.address.city null ), false
+      @eq ( Ωit_514 = -> types.isa.person.address.city { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_515 = -> types.isa.optional.person.address.city {} ), false
+      @eq ( Ωit_516 = -> types.isa.optional.person.address.city null ), true
+      @eq ( Ωit_517 = -> types.isa.optional.person.address.city { name: 'P', postcode: 'SO36', } ), true
+      @eq ( Ωit_518 = -> types.isa.mycity {} ), false
+      @eq ( Ωit_519 = -> types.isa.mycity null ), true
+      @eq ( Ωit_520 = -> types.isa.mycity { name: 'P', postcode: 'SO36', } ), true
       return null
     #.........................................................................................................
     return null
@@ -1571,13 +1633,13 @@ OLD_intertype_tasks =
       { declare
         validate
         isa } = types
-      @throws ( Ωit_509 = -> types.declare { 'optional.d':    ( ( x ) -> ), } ), /illegal use of 'optional' in declaration of type 'optional.d'/
-      @throws ( Ωit_510 = -> types.declare { 'anything.d':    ( ( x ) -> ), } ), /illegal use of basetype 'anything' in declaration of type 'anything.d'/
-      @throws ( Ωit_511 = -> types.declare { 'nothing.d':     ( ( x ) -> ), } ), /illegal use of basetype 'nothing' in declaration of type 'nothing.d'/
-      @throws ( Ωit_512 = -> types.declare { 'something.d':   ( ( x ) -> ), } ), /illegal use of basetype 'something' in declaration of type 'something.d'/
-      @throws ( Ωit_513 = -> types.declare { 'null.d':        ( ( x ) -> ), } ), /illegal use of basetype 'null' in declaration of type 'null.d'/
-      @throws ( Ωit_514 = -> types.declare { 'undefined.d':   ( ( x ) -> ), } ), /illegal use of basetype 'undefined' in declaration of type 'undefined.d'/
-      @throws ( Ωit_515 = -> types.declare { 'unknown.d':     ( ( x ) -> ), } ), /illegal use of basetype 'unknown' in declaration of type 'unknown.d'/
+      @throws ( Ωit_521 = -> types.declare { 'optional.d':    ( ( x ) -> ), } ), /illegal use of 'optional' in declaration of type 'optional.d'/
+      @throws ( Ωit_522 = -> types.declare { 'anything.d':    ( ( x ) -> ), } ), /illegal use of basetype 'anything' in declaration of type 'anything.d'/
+      @throws ( Ωit_523 = -> types.declare { 'nothing.d':     ( ( x ) -> ), } ), /illegal use of basetype 'nothing' in declaration of type 'nothing.d'/
+      @throws ( Ωit_524 = -> types.declare { 'something.d':   ( ( x ) -> ), } ), /illegal use of basetype 'something' in declaration of type 'something.d'/
+      @throws ( Ωit_525 = -> types.declare { 'null.d':        ( ( x ) -> ), } ), /illegal use of basetype 'null' in declaration of type 'null.d'/
+      @throws ( Ωit_526 = -> types.declare { 'undefined.d':   ( ( x ) -> ), } ), /illegal use of basetype 'undefined' in declaration of type 'undefined.d'/
+      @throws ( Ωit_527 = -> types.declare { 'unknown.d':     ( ( x ) -> ), } ), /illegal use of basetype 'unknown' in declaration of type 'unknown.d'/
       return null
     #.........................................................................................................
     return null
@@ -1592,15 +1654,15 @@ OLD_intertype_tasks =
     #.........................................................................................................
     do =>
       types         = new Intertype()
-      @eq ( Ωit_516 = -> __type_of null, _isa, null          ), 'null'
-      @eq ( Ωit_517 = -> __type_of null, _isa, undefined     ), 'undefined'
-      @eq ( Ωit_518 = -> __type_of null, _isa, 4             ), 'float'
-      @eq ( Ωit_519 = -> __type_of null, _isa, ->            ), 'function'
-      @eq ( Ωit_520 = -> __type_of null, _isa, -> await null ), 'asyncfunction'
-      @eq ( Ωit_521 = -> __type_of null, _isa, {}            ), 'object'
-      @eq ( Ωit_522 = -> __type_of null, _isa, []            ), 'list'
-      @eq ( Ωit_523 = -> __type_of null, _isa, +Infinity     ), 'infinity'
-      @eq ( Ωit_524 = -> __type_of null, _isa, -Infinity     ), 'infinity'
+      @eq ( Ωit_528 = -> __type_of null, _isa, null          ), 'null'
+      @eq ( Ωit_529 = -> __type_of null, _isa, undefined     ), 'undefined'
+      @eq ( Ωit_530 = -> __type_of null, _isa, 4             ), 'float'
+      @eq ( Ωit_531 = -> __type_of null, _isa, ->            ), 'function'
+      @eq ( Ωit_532 = -> __type_of null, _isa, -> await null ), 'asyncfunction'
+      @eq ( Ωit_533 = -> __type_of null, _isa, {}            ), 'object'
+      @eq ( Ωit_534 = -> __type_of null, _isa, []            ), 'list'
+      @eq ( Ωit_535 = -> __type_of null, _isa, +Infinity     ), 'infinity'
+      @eq ( Ωit_536 = -> __type_of null, _isa, -Infinity     ), 'infinity'
       return null
     #.........................................................................................................
     return null
@@ -1619,12 +1681,12 @@ OLD_intertype_tasks =
             sub: sub
         gnu: 4
       result = deepmerge probe
-      @eq ( Ωit_525 = -> result                                   ), probe
-      @eq ( Ωit_526 = -> result.bar         is probe.bar          ), false
-      @eq ( Ωit_527 = -> result.bar.baz     is probe.bar.baz      ), false
-      @eq ( Ωit_528 = -> result.bar.baz.sub is probe.bar.baz.sub  ), false
-      @eq ( Ωit_529 = -> result.bar.baz.sub is sub                ), false
-      @eq ( Ωit_530 = -> probe.bar.baz.sub  is sub                ), true
+      @eq ( Ωit_537 = -> result                                   ), probe
+      @eq ( Ωit_538 = -> result.bar         is probe.bar          ), false
+      @eq ( Ωit_539 = -> result.bar.baz     is probe.bar.baz      ), false
+      @eq ( Ωit_540 = -> result.bar.baz.sub is probe.bar.baz.sub  ), false
+      @eq ( Ωit_541 = -> result.bar.baz.sub is sub                ), false
+      @eq ( Ωit_542 = -> probe.bar.baz.sub  is sub                ), true
       return null
     #.........................................................................................................
     do =>
@@ -1636,12 +1698,12 @@ OLD_intertype_tasks =
         gnu: 4
       types = new Intertype { q: { test: 'object', template: probe, }, }
       result = types.create.q()
-      @eq ( Ωit_531 = -> result                                   ), probe
-      @eq ( Ωit_532 = -> result.bar         is probe.bar          ), false
-      @eq ( Ωit_533 = -> result.bar.baz     is probe.bar.baz      ), false
-      @eq ( Ωit_534 = -> result.bar.baz.sub is probe.bar.baz.sub  ), false
-      @eq ( Ωit_535 = -> result.bar.baz.sub is sub                ), false
-      @eq ( Ωit_536 = -> probe.bar.baz.sub  is sub                ), true
+      @eq ( Ωit_543 = -> result                                   ), probe
+      @eq ( Ωit_544 = -> result.bar         is probe.bar          ), false
+      @eq ( Ωit_545 = -> result.bar.baz     is probe.bar.baz      ), false
+      @eq ( Ωit_546 = -> result.bar.baz.sub is probe.bar.baz.sub  ), false
+      @eq ( Ωit_547 = -> result.bar.baz.sub is sub                ), false
+      @eq ( Ωit_548 = -> probe.bar.baz.sub  is sub                ), true
       return null
     #.........................................................................................................
     do =>
@@ -1663,25 +1725,25 @@ OLD_intertype_tasks =
       types.declare { 'person.address.city.name':     'text',   }
       types.declare { 'person.address.city.postcode': 'text',   }
       #.......................................................................................................
-      @throws ( Ωit_537 = -> validate.person null                        ), /expected a person, got a null/
-      @throws ( Ωit_538 = -> validate.person.address null                ), /expected a person.address, got a null/
-      @throws ( Ωit_539 = -> validate.person.address.city null           ), /expected a person.address.city, got a null/
-      @throws ( Ωit_540 = -> validate.person.address.city.postcode null  ), /expected a person.address.city.postcode, got a null/
+      @throws ( Ωit_549 = -> validate.person null                        ), /expected a person, got a null/
+      @throws ( Ωit_550 = -> validate.person.address null                ), /expected a person.address, got a null/
+      @throws ( Ωit_551 = -> validate.person.address.city null           ), /expected a person.address.city, got a null/
+      @throws ( Ωit_552 = -> validate.person.address.city.postcode null  ), /expected a person.address.city.postcode, got a null/
       #.......................................................................................................
-      @eq ( Ωit_541 = -> types.isa.person.address.city.postcode 3 ), false
-      @throws ( Ωit_542 = -> validate.person.address.city.postcode 3             ), /expected a person.address.city.postcode/
+      @eq ( Ωit_553 = -> types.isa.person.address.city.postcode 3 ), false
+      @throws ( Ωit_554 = -> validate.person.address.city.postcode 3             ), /expected a person.address.city.postcode/
       #.......................................................................................................
-      @eq ( Ωit_543 = -> types.isa.person.address.city { name: 'P', } ), false
-      @throws ( Ωit_544 = -> validate.person.address.city { name: 'P', }         ), /expected a person.address.city/
+      @eq ( Ωit_555 = -> types.isa.person.address.city { name: 'P', } ), false
+      @throws ( Ωit_556 = -> validate.person.address.city { name: 'P', }         ), /expected a person.address.city/
       # #.......................................................................................................
-      @eq ( Ωit_545 = -> types.isa.person.address.city { postcode: '3421', } ), false
-      @throws ( Ωit_546 = -> validate.person.address.city()                      ), /method 'validate.person.address.city' expects 1 arguments, got 0/
-      @throws ( Ωit_547 = -> validate.person.address.city null                   ), /expected a person.address.city/
-      @throws ( Ωit_548 = -> validate.person.address.city '3421'                 ), /expected a person.address.city/
-      @throws ( Ωit_549 = -> validate.person.address.city { postcode: '3421', }  ), /expected a person.address.city/
+      @eq ( Ωit_557 = -> types.isa.person.address.city { postcode: '3421', } ), false
+      @throws ( Ωit_558 = -> validate.person.address.city()                      ), /method 'validate.person.address.city' expects 1 arguments, got 0/
+      @throws ( Ωit_559 = -> validate.person.address.city null                   ), /expected a person.address.city/
+      @throws ( Ωit_560 = -> validate.person.address.city '3421'                 ), /expected a person.address.city/
+      @throws ( Ωit_561 = -> validate.person.address.city { postcode: '3421', }  ), /expected a person.address.city/
       #.......................................................................................................
-      @eq ( Ωit_550 = -> types.isa.person.address.city { name: 'P', postcode: '3421', } ), true
-      @eq ( Ωit_551 = -> validate.person.address.city { name: 'P', postcode: '3421', } ), { name: 'P', postcode: '3421', }
+      @eq ( Ωit_562 = -> types.isa.person.address.city { name: 'P', postcode: '3421', } ), true
+      @eq ( Ωit_563 = -> validate.person.address.city { name: 'P', postcode: '3421', } ), { name: 'P', postcode: '3421', }
       return null
     #.........................................................................................................
     return null
@@ -1702,26 +1764,26 @@ OLD_intertype_tasks =
       types.declare { 'person.address.city.name':     'text',   }
       types.declare { 'person.address.city.postcode': 'text',   }
       #.......................................................................................................
-      @throws ( Ωit_552 = -> evaluate.optional 1         ), /`optional` is not a legal type for `evaluate` methods/
-      @throws ( Ωit_553 = -> evaluate.optional.person 1  ), /`optional` is not a legal type for `evaluate` methods/
+      @throws ( Ωit_564 = -> evaluate.optional 1         ), /`optional` is not a legal type for `evaluate` methods/
+      @throws ( Ωit_565 = -> evaluate.optional.person 1  ), /`optional` is not a legal type for `evaluate` methods/
       #.......................................................................................................
-      @eq ( Ωit_554 = -> isa.person       { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), true
-      @eq ( Ωit_555 = -> evaluate.person  { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: true,  'person.name': true, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
+      @eq ( Ωit_566 = -> isa.person       { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), true
+      @eq ( Ωit_567 = -> evaluate.person  { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: true,  'person.name': true, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
       #.......................................................................................................
-      @eq ( Ωit_556 = -> isa.person       { name: 'Alice', address: { city: { name: 'Atown', postcode: 12345678 } } } ), false
-      @eq ( Ωit_557 = -> evaluate.person  { name: 'Alice', address: { city: { name: 'Atown', postcode: 12345678 } } } ), { person: false,  'person.name': true, 'person.address': false, 'person.address.city': false, 'person.address.city.name': true, 'person.address.city.postcode': false, }
+      @eq ( Ωit_568 = -> isa.person       { name: 'Alice', address: { city: { name: 'Atown', postcode: 12345678 } } } ), false
+      @eq ( Ωit_569 = -> evaluate.person  { name: 'Alice', address: { city: { name: 'Atown', postcode: 12345678 } } } ), { person: false,  'person.name': true, 'person.address': false, 'person.address.city': false, 'person.address.city.name': true, 'person.address.city.postcode': false, }
       #.......................................................................................................
-      @eq ( Ωit_558 = -> isa.person       {                address: { city: { name: 'Atown', postcode: 12345678 } } } ), false
-      @eq ( Ωit_559 = -> evaluate.person  {                address: { city: { name: 'Atown', postcode: 12345678 } } } ), { person: false,  'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': true, 'person.address.city.postcode': false, }
+      @eq ( Ωit_570 = -> isa.person       {                address: { city: { name: 'Atown', postcode: 12345678 } } } ), false
+      @eq ( Ωit_571 = -> evaluate.person  {                address: { city: { name: 'Atown', postcode: 12345678 } } } ), { person: false,  'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': true, 'person.address.city.postcode': false, }
       #.......................................................................................................
-      @eq ( Ωit_560 = -> isa.person       {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), false
-      @eq ( Ωit_561 = -> evaluate.person  {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: false, 'person.name': false, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
+      @eq ( Ωit_572 = -> isa.person       {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), false
+      @eq ( Ωit_573 = -> evaluate.person  {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: false, 'person.name': false, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
       #.......................................................................................................
-      @eq ( Ωit_562 = -> isa.person       null  ), false
-      @eq ( Ωit_563 = -> evaluate.person  null  ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
+      @eq ( Ωit_574 = -> isa.person       null  ), false
+      @eq ( Ωit_575 = -> evaluate.person  null  ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
       #.......................................................................................................
-      @eq ( Ωit_564 = -> isa.person       {}    ), false
-      @eq ( Ωit_565 = -> evaluate.person  {}    ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
+      @eq ( Ωit_576 = -> isa.person       {}    ), false
+      @eq ( Ωit_577 = -> evaluate.person  {}    ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
       return null
     #.........................................................................................................
     do =>
@@ -1736,25 +1798,25 @@ OLD_intertype_tasks =
       types.declare { 'person.address.city.name':     'text',   }
       types.declare { 'person.name':                  'text',   }
       #.......................................................................................................
-      @eq ( Ωit_566 = -> isa.person                   { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), true
-      @eq ( Ωit_567 = -> evaluate.person              { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: true,  'person.name': true, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
-      @eq ( Ωit_568 = -> Object.keys evaluate.person  { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
+      @eq ( Ωit_578 = -> isa.person                   { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), true
+      @eq ( Ωit_579 = -> evaluate.person              { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: true,  'person.name': true, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
+      @eq ( Ωit_580 = -> Object.keys evaluate.person  { name: 'Alice', address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
       #.......................................................................................................
-      @eq ( Ωit_569 = -> isa.person                   {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), false
-      @eq ( Ωit_570 = -> evaluate.person              {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: false, 'person.name': false, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
-      @eq ( Ωit_571 = -> Object.keys evaluate.person  {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
+      @eq ( Ωit_581 = -> isa.person                   {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), false
+      @eq ( Ωit_582 = -> evaluate.person              {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), { person: false, 'person.name': false, 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
+      @eq ( Ωit_583 = -> Object.keys evaluate.person  {                address: { city: { name: 'Atown', postcode: 'VA1234' } } } ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
       #.......................................................................................................
-      @eq ( Ωit_572 = -> isa.person                   null  ), false
-      @eq ( Ωit_573 = -> evaluate.person              null  ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
-      @eq ( Ωit_574 = -> Object.keys evaluate.person  null  ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
+      @eq ( Ωit_584 = -> isa.person                   null  ), false
+      @eq ( Ωit_585 = -> evaluate.person              null  ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
+      @eq ( Ωit_586 = -> Object.keys evaluate.person  null  ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
       #.......................................................................................................
-      @eq ( Ωit_575 = -> isa.person                   {}  ), false
-      @eq ( Ωit_576 = -> evaluate.person              {}  ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
-      @eq ( Ωit_577 = -> Object.keys evaluate.person  {}  ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
+      @eq ( Ωit_587 = -> isa.person                   {}  ), false
+      @eq ( Ωit_588 = -> evaluate.person              {}  ), { person: false, 'person.name': false, 'person.address': false, 'person.address.city': false, 'person.address.city.name': false, 'person.address.city.postcode': false, }
+      @eq ( Ωit_589 = -> Object.keys evaluate.person  {}  ), [ 'person', 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name', 'person.name' ]
       #.......................................................................................................
-      @eq ( Ωit_578 = -> isa.person.address                   { city: { name: 'Atown', postcode: 'VA1234' } } ), true
-      @eq ( Ωit_579 = -> evaluate.person.address              { city: { name: 'Atown', postcode: 'VA1234' } } ), { 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
-      @eq ( Ωit_580 = -> Object.keys evaluate.person.address  { city: { name: 'Atown', postcode: 'VA1234' } } ), [ 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name' ]
+      @eq ( Ωit_590 = -> isa.person.address                   { city: { name: 'Atown', postcode: 'VA1234' } } ), true
+      @eq ( Ωit_591 = -> evaluate.person.address              { city: { name: 'Atown', postcode: 'VA1234' } } ), { 'person.address': true, 'person.address.city': true, 'person.address.city.name': true, 'person.address.city.postcode': true, }
+      @eq ( Ωit_592 = -> Object.keys evaluate.person.address  { city: { name: 'Atown', postcode: 'VA1234' } } ), [ 'person.address', 'person.address.city', 'person.address.city.postcode', 'person.address.city.name' ]
       return null
     #.........................................................................................................
     return null
@@ -1766,13 +1828,13 @@ OLD_intertype_tasks =
       type_of                     } = require '../../../apps/intertype'
     #.........................................................................................................
     do =>
-      @eq ( Ωit_581 = -> isa.generatorfunction walk_prefixes             ), true
-      @eq ( Ωit_582 = -> [ ( walk_prefixes 'one'                )..., ]  ), []
-      @eq ( Ωit_583 = -> [ ( walk_prefixes 'one.two'            )..., ]  ), [ 'one' ]
-      @eq ( Ωit_584 = -> [ ( walk_prefixes 'one.two.three'      )..., ]  ), [ 'one', 'one.two', ]
-      @eq ( Ωit_585 = -> [ ( walk_prefixes 'one.two.three.four' )..., ]  ), [ 'one', 'one.two', 'one.two.three', ]
+      @eq ( Ωit_593 = -> isa.generatorfunction walk_prefixes             ), true
+      @eq ( Ωit_594 = -> [ ( walk_prefixes 'one'                )..., ]  ), []
+      @eq ( Ωit_595 = -> [ ( walk_prefixes 'one.two'            )..., ]  ), [ 'one' ]
+      @eq ( Ωit_596 = -> [ ( walk_prefixes 'one.two.three'      )..., ]  ), [ 'one', 'one.two', ]
+      @eq ( Ωit_597 = -> [ ( walk_prefixes 'one.two.three.four' )..., ]  ), [ 'one', 'one.two', 'one.two.three', ]
       ### TAINT should not allow empty namers: ###
-      @eq ( Ωit_586 = -> [ ( walk_prefixes '.one.two.three'     )..., ]  ), [ '', '.one', '.one.two', ]
+      @eq ( Ωit_598 = -> [ ( walk_prefixes '.one.two.three'     )..., ]  ), [ '', '.one', '.one.two', ]
       return null
     #.........................................................................................................
     return null
@@ -1785,7 +1847,7 @@ OLD_intertype_tasks =
       declarations =
         'foo.bar':      ( x ) -> x is 'foo.bar'
         'foo.bar.baz':  ( x ) -> x is 'foo.bar.baz'
-      @throws ( Ωit_587 = -> types = new Intertype declarations ), /unknown partial type 'foo'/
+      @throws ( Ωit_599 = -> types = new Intertype declarations ), /unknown partial type 'foo'/
       return null
     #.........................................................................................................
     do =>
@@ -1794,12 +1856,12 @@ OLD_intertype_tasks =
         'quantity.q':       'float'
         'quantity.u':       'text'
       types = new Intertype declarations
-      @eq ( Ωit_588 = -> types.isa.quantity {}                   ), false
-      @eq ( Ωit_589 = -> types.isa.quantity { q: 12, u: 'kg', }  ), true
-      @eq ( Ωit_590 = -> types.isa[ 'quantity.q' ] 12            ), true
-      @eq ( Ωit_591 = -> types.isa[ 'quantity.u' ] 'kg'          ), true
-      @eq ( Ωit_592 = -> types.isa.quantity.q 12                 ), true
-      @eq ( Ωit_593 = -> types.isa.quantity.u 'kg'               ), true
+      @eq ( Ωit_600 = -> types.isa.quantity {}                   ), false
+      @eq ( Ωit_601 = -> types.isa.quantity { q: 12, u: 'kg', }  ), true
+      @eq ( Ωit_602 = -> types.isa[ 'quantity.q' ] 12            ), true
+      @eq ( Ωit_603 = -> types.isa[ 'quantity.u' ] 'kg'          ), true
+      @eq ( Ωit_604 = -> types.isa.quantity.q 12                 ), true
+      @eq ( Ωit_605 = -> types.isa.quantity.u 'kg'               ), true
       return null
     #.........................................................................................................
     return null
@@ -1820,20 +1882,20 @@ OLD_intertype_tasks =
         'nonempty.set':     ( x ) -> ( @isa.set   x ) and ( x.size    >   0 )
       types   = new Intertype_minimal sample_declarations, declarations
       { isa } = types
-      @eq ( Ωit_594 = -> isa.empty.list    []          ), true
-      @eq ( Ωit_595 = -> isa.empty.list    [ 'A', ]    ), false
-      @eq ( Ωit_596 = -> isa.empty.list    4           ), false
-      @eq ( Ωit_597 = -> isa.nonempty.list []          ), false
-      @eq ( Ωit_598 = -> isa.nonempty.list [ 'A', ]    ), true
-      @eq ( Ωit_599 = -> isa.nonempty.list 4           ), false
-      @eq ( Ωit_600 = -> isa.empty.text    ''          ), true
-      @eq ( Ωit_601 = -> isa.empty.text    'A'         ), false
-      @eq ( Ωit_602 = -> isa.empty.text    4           ), false
-      @eq ( Ωit_603 = -> isa.nonempty.text ''          ), false
-      @eq ( Ωit_604 = -> isa.nonempty.text 'A'         ), true
-      @eq ( Ωit_605 = -> isa.nonempty.text 4           ), false
+      @eq ( Ωit_606 = -> isa.empty.list    []          ), true
+      @eq ( Ωit_607 = -> isa.empty.list    [ 'A', ]    ), false
+      @eq ( Ωit_608 = -> isa.empty.list    4           ), false
+      @eq ( Ωit_609 = -> isa.nonempty.list []          ), false
+      @eq ( Ωit_610 = -> isa.nonempty.list [ 'A', ]    ), true
+      @eq ( Ωit_611 = -> isa.nonempty.list 4           ), false
+      @eq ( Ωit_612 = -> isa.empty.text    ''          ), true
+      @eq ( Ωit_613 = -> isa.empty.text    'A'         ), false
+      @eq ( Ωit_614 = -> isa.empty.text    4           ), false
+      @eq ( Ωit_615 = -> isa.nonempty.text ''          ), false
+      @eq ( Ωit_616 = -> isa.nonempty.text 'A'         ), true
+      @eq ( Ωit_617 = -> isa.nonempty.text 4           ), false
       ### this doesn't make a terrible lot of sense: ###
-      @eq ( Ωit_606 = -> isa.empty { list: [], text: '', set: new Set() } ), false
+      @eq ( Ωit_618 = -> isa.empty { list: [], text: '', set: new Set() } ), false
       return null
     #.........................................................................................................
     do =>
@@ -1849,32 +1911,32 @@ OLD_intertype_tasks =
       types         = new Intertype_minimal sample_declarations, declarations
       { isa
         validate  } = types
-      @eq ( Ωit_607 = -> isa.empty.list    []          ), true
-      @eq ( Ωit_608 = -> isa.empty.list    [ 'A', ]    ), false
-      @eq ( Ωit_609 = -> isa.empty.list    4           ), false
-      @eq ( Ωit_610 = -> isa.nonempty.list []          ), false
-      @eq ( Ωit_611 = -> isa.nonempty.list [ 'A', ]    ), true
-      @eq ( Ωit_612 = -> isa.nonempty.list 4           ), false
-      @eq ( Ωit_613 = -> isa.empty.text    ''          ), true
-      @eq ( Ωit_614 = -> isa.empty.text    'A'         ), false
-      @eq ( Ωit_615 = -> isa.empty.text    4           ), false
-      @eq ( Ωit_616 = -> isa.nonempty.text ''          ), false
-      @eq ( Ωit_617 = -> isa.nonempty.text 'A'         ), true
-      @eq ( Ωit_618 = -> isa.nonempty.text 4           ), false
+      @eq ( Ωit_619 = -> isa.empty.list    []          ), true
+      @eq ( Ωit_620 = -> isa.empty.list    [ 'A', ]    ), false
+      @eq ( Ωit_621 = -> isa.empty.list    4           ), false
+      @eq ( Ωit_622 = -> isa.nonempty.list []          ), false
+      @eq ( Ωit_623 = -> isa.nonempty.list [ 'A', ]    ), true
+      @eq ( Ωit_624 = -> isa.nonempty.list 4           ), false
+      @eq ( Ωit_625 = -> isa.empty.text    ''          ), true
+      @eq ( Ωit_626 = -> isa.empty.text    'A'         ), false
+      @eq ( Ωit_627 = -> isa.empty.text    4           ), false
+      @eq ( Ωit_628 = -> isa.nonempty.text ''          ), false
+      @eq ( Ωit_629 = -> isa.nonempty.text 'A'         ), true
+      @eq ( Ωit_630 = -> isa.nonempty.text 4           ), false
       #.......................................................................................................
-      @eq ( Ωit_619 = -> isa.empty []                  ), true
-      @eq ( Ωit_620 = -> isa.empty ''                  ), true
-      @eq ( Ωit_621 = -> isa.empty new Set()           ), true
-      @eq ( Ωit_622 = -> isa.empty [ 1, ]              ), false
-      @eq ( Ωit_623 = -> isa.empty 'A'                 ), false
-      @eq ( Ωit_624 = -> isa.empty new Set 'abc'       ), false
+      @eq ( Ωit_631 = -> isa.empty []                  ), true
+      @eq ( Ωit_632 = -> isa.empty ''                  ), true
+      @eq ( Ωit_633 = -> isa.empty new Set()           ), true
+      @eq ( Ωit_634 = -> isa.empty [ 1, ]              ), false
+      @eq ( Ωit_635 = -> isa.empty 'A'                 ), false
+      @eq ( Ωit_636 = -> isa.empty new Set 'abc'       ), false
       #.......................................................................................................
-      @eq ( Ωit_625 = -> validate.empty []                  ), []
-      @eq ( Ωit_626 = -> validate.empty ''                  ), ''
-      @eq ( Ωit_627 = -> validate.empty new Set()           ), new Set()
-      @throws ( Ωit_628 = -> validate.empty [ 1, ]              ), /expected a empty, got a list/
-      @throws ( Ωit_629 = -> validate.empty 'A'                 ), /expected a empty, got a text/
-      @throws ( Ωit_630 = -> validate.empty new Set 'abc'       ), /expected a empty, got a set/
+      @eq ( Ωit_637 = -> validate.empty []                  ), []
+      @eq ( Ωit_638 = -> validate.empty ''                  ), ''
+      @eq ( Ωit_639 = -> validate.empty new Set()           ), new Set()
+      @throws ( Ωit_640 = -> validate.empty [ 1, ]              ), /expected a empty, got a list/
+      @throws ( Ωit_641 = -> validate.empty 'A'                 ), /expected a empty, got a text/
+      @throws ( Ωit_642 = -> validate.empty new Set 'abc'       ), /expected a empty, got a set/
       return null
     #.........................................................................................................
     return null
@@ -1896,46 +1958,46 @@ OLD_intertype_tasks =
       types         = new Intertype_minimal sample_declarations, declarations
       { isa
         validate  } = types
-      @eq ( Ωit_631 = -> isa.optional.empty.list    []          ), true
-      @eq ( Ωit_632 = -> isa.optional.empty.list    [ 'A', ]    ), false
-      @eq ( Ωit_633 = -> isa.optional.empty.list    4           ), false
-      @eq ( Ωit_634 = -> isa.optional.nonempty.list []          ), false
-      @eq ( Ωit_635 = -> isa.optional.nonempty.list [ 'A', ]    ), true
-      @eq ( Ωit_636 = -> isa.optional.nonempty.list 4           ), false
-      @eq ( Ωit_637 = -> isa.optional.empty.text    ''          ), true
-      @eq ( Ωit_638 = -> isa.optional.empty.text    'A'         ), false
-      @eq ( Ωit_639 = -> isa.optional.empty.text    4           ), false
-      @eq ( Ωit_640 = -> isa.optional.nonempty.text ''          ), false
-      @eq ( Ωit_641 = -> isa.optional.nonempty.text 'A'         ), true
-      @eq ( Ωit_642 = -> isa.optional.nonempty.text 4           ), false
+      @eq ( Ωit_643 = -> isa.optional.empty.list    []          ), true
+      @eq ( Ωit_644 = -> isa.optional.empty.list    [ 'A', ]    ), false
+      @eq ( Ωit_645 = -> isa.optional.empty.list    4           ), false
+      @eq ( Ωit_646 = -> isa.optional.nonempty.list []          ), false
+      @eq ( Ωit_647 = -> isa.optional.nonempty.list [ 'A', ]    ), true
+      @eq ( Ωit_648 = -> isa.optional.nonempty.list 4           ), false
+      @eq ( Ωit_649 = -> isa.optional.empty.text    ''          ), true
+      @eq ( Ωit_650 = -> isa.optional.empty.text    'A'         ), false
+      @eq ( Ωit_651 = -> isa.optional.empty.text    4           ), false
+      @eq ( Ωit_652 = -> isa.optional.nonempty.text ''          ), false
+      @eq ( Ωit_653 = -> isa.optional.nonempty.text 'A'         ), true
+      @eq ( Ωit_654 = -> isa.optional.nonempty.text 4           ), false
       #.......................................................................................................
-      @eq ( Ωit_643 = -> isa.optional.empty []                  ), true
-      @eq ( Ωit_644 = -> isa.optional.empty ''                  ), true
-      @eq ( Ωit_645 = -> isa.optional.empty new Set()           ), true
-      @eq ( Ωit_646 = -> isa.optional.empty [ 1, ]              ), false
-      @eq ( Ωit_647 = -> isa.optional.empty 'A'                 ), false
-      @eq ( Ωit_648 = -> isa.optional.empty new Set 'abc'       ), false
+      @eq ( Ωit_655 = -> isa.optional.empty []                  ), true
+      @eq ( Ωit_656 = -> isa.optional.empty ''                  ), true
+      @eq ( Ωit_657 = -> isa.optional.empty new Set()           ), true
+      @eq ( Ωit_658 = -> isa.optional.empty [ 1, ]              ), false
+      @eq ( Ωit_659 = -> isa.optional.empty 'A'                 ), false
+      @eq ( Ωit_660 = -> isa.optional.empty new Set 'abc'       ), false
       #.......................................................................................................
-      @eq ( Ωit_649 = -> validate.optional.empty []                   ), []
-      @eq ( Ωit_650 = -> validate.optional.empty ''                   ), ''
-      @eq ( Ωit_651 = -> validate.optional.empty new Set()            ), new Set()
-      @eq ( Ωit_652 = -> validate.optional.empty.list  []             ), []
-      @eq ( Ωit_653 = -> validate.optional.empty.text  ''             ), ''
-      @eq ( Ωit_654 = -> validate.optional.empty.set   new Set()      ), new Set()
-      @throws ( Ωit_655 = -> validate.optional.empty [ 1, ]           ), /expected an optional empty, got a list/
-      @throws ( Ωit_656 = -> validate.optional.empty 'A'              ), /expected an optional empty, got a text/
-      @throws ( Ωit_657 = -> validate.optional.empty new Set 'abc'    ), /expected an optional empty, got a set/
+      @eq ( Ωit_661 = -> validate.optional.empty []                   ), []
+      @eq ( Ωit_662 = -> validate.optional.empty ''                   ), ''
+      @eq ( Ωit_663 = -> validate.optional.empty new Set()            ), new Set()
+      @eq ( Ωit_664 = -> validate.optional.empty.list  []             ), []
+      @eq ( Ωit_665 = -> validate.optional.empty.text  ''             ), ''
+      @eq ( Ωit_666 = -> validate.optional.empty.set   new Set()      ), new Set()
+      @throws ( Ωit_667 = -> validate.optional.empty [ 1, ]           ), /expected an optional empty, got a list/
+      @throws ( Ωit_668 = -> validate.optional.empty 'A'              ), /expected an optional empty, got a text/
+      @throws ( Ωit_669 = -> validate.optional.empty new Set 'abc'    ), /expected an optional empty, got a set/
       #.......................................................................................................
-      @eq ( Ωit_658 = -> isa.optional.empty []                        ), true
-      @eq ( Ωit_659 = -> isa.optional.empty ''                        ), true
-      @eq ( Ωit_660 = -> isa.optional.empty new Set()                 ), true
-      @eq ( Ωit_661 = -> isa.optional.empty [ 1, ]                    ), false
-      @eq ( Ωit_662 = -> isa.optional.empty 'A'                       ), false
-      @eq ( Ωit_663 = -> isa.optional.empty new Set 'abc'             ), false
-      @eq ( Ωit_664 = -> validate.optional.empty       null           ), null
-      @eq ( Ωit_665 = -> validate.optional.empty.list  null           ), null
-      @eq ( Ωit_666 = -> validate.optional.empty.text  null           ), null
-      @eq ( Ωit_667 = -> validate.optional.empty.set   null           ), null
+      @eq ( Ωit_670 = -> isa.optional.empty []                        ), true
+      @eq ( Ωit_671 = -> isa.optional.empty ''                        ), true
+      @eq ( Ωit_672 = -> isa.optional.empty new Set()                 ), true
+      @eq ( Ωit_673 = -> isa.optional.empty [ 1, ]                    ), false
+      @eq ( Ωit_674 = -> isa.optional.empty 'A'                       ), false
+      @eq ( Ωit_675 = -> isa.optional.empty new Set 'abc'             ), false
+      @eq ( Ωit_676 = -> validate.optional.empty       null           ), null
+      @eq ( Ωit_677 = -> validate.optional.empty.list  null           ), null
+      @eq ( Ωit_678 = -> validate.optional.empty.text  null           ), null
+      @eq ( Ωit_679 = -> validate.optional.empty.set   null           ), null
       return null
     #.........................................................................................................
     return null
@@ -1963,87 +2025,87 @@ OLD_intertype_tasks =
       { isa
         validate  } = types
       #.......................................................................................................
-      @eq ( Ωit_668 = -> isa.empty.list    []          ), true
-      @eq ( Ωit_669 = -> isa.empty.list    [ 'A', ]    ), false
-      @eq ( Ωit_670 = -> isa.empty.list    4           ), false
-      @eq ( Ωit_671 = -> isa.nonempty.list []          ), false
-      @eq ( Ωit_672 = -> isa.nonempty.list [ 'A', ]    ), true
-      @eq ( Ωit_673 = -> isa.nonempty.list 4           ), false
-      @eq ( Ωit_674 = -> isa.empty.text    ''          ), true
-      @eq ( Ωit_675 = -> isa.empty.text    'A'         ), false
-      @eq ( Ωit_676 = -> isa.empty.text    4           ), false
-      @eq ( Ωit_677 = -> isa.nonempty.text ''          ), false
-      @eq ( Ωit_678 = -> isa.nonempty.text 'A'         ), true
-      @eq ( Ωit_679 = -> isa.nonempty.text 4           ), false
+      @eq ( Ωit_680 = -> isa.empty.list    []          ), true
+      @eq ( Ωit_681 = -> isa.empty.list    [ 'A', ]    ), false
+      @eq ( Ωit_682 = -> isa.empty.list    4           ), false
+      @eq ( Ωit_683 = -> isa.nonempty.list []          ), false
+      @eq ( Ωit_684 = -> isa.nonempty.list [ 'A', ]    ), true
+      @eq ( Ωit_685 = -> isa.nonempty.list 4           ), false
+      @eq ( Ωit_686 = -> isa.empty.text    ''          ), true
+      @eq ( Ωit_687 = -> isa.empty.text    'A'         ), false
+      @eq ( Ωit_688 = -> isa.empty.text    4           ), false
+      @eq ( Ωit_689 = -> isa.nonempty.text ''          ), false
+      @eq ( Ωit_690 = -> isa.nonempty.text 'A'         ), true
+      @eq ( Ωit_691 = -> isa.nonempty.text 4           ), false
       #.......................................................................................................
-      @eq ( Ωit_680 = -> isa.empty []                  ), true
-      @eq ( Ωit_681 = -> isa.empty ''                  ), true
-      @eq ( Ωit_682 = -> isa.empty new Set()           ), true
-      @eq ( Ωit_683 = -> isa.empty [ 1, ]              ), false
-      @eq ( Ωit_684 = -> isa.empty 'A'                 ), false
-      @eq ( Ωit_685 = -> isa.empty new Set 'abc'       ), false
+      @eq ( Ωit_692 = -> isa.empty []                  ), true
+      @eq ( Ωit_693 = -> isa.empty ''                  ), true
+      @eq ( Ωit_694 = -> isa.empty new Set()           ), true
+      @eq ( Ωit_695 = -> isa.empty [ 1, ]              ), false
+      @eq ( Ωit_696 = -> isa.empty 'A'                 ), false
+      @eq ( Ωit_697 = -> isa.empty new Set 'abc'       ), false
       #.......................................................................................................
-      @eq ( Ωit_686 = -> validate.empty []                   ), []
-      @eq ( Ωit_687 = -> validate.empty ''                   ), ''
-      @eq ( Ωit_688 = -> validate.empty new Set()            ), new Set()
-      @eq ( Ωit_689 = -> validate.empty.list  []             ), []
-      @eq ( Ωit_690 = -> validate.empty.text  ''             ), ''
-      @eq ( Ωit_691 = -> validate.empty.set   new Set()      ), new Set()
-      @throws ( Ωit_692 = -> validate.empty [ 1, ]           ), /expected a empty, got a list/
-      @throws ( Ωit_693 = -> validate.empty 'A'              ), /expected a empty, got a text/
-      @throws ( Ωit_694 = -> validate.empty new Set 'abc'    ), /expected a empty, got a set/
+      @eq ( Ωit_698 = -> validate.empty []                   ), []
+      @eq ( Ωit_699 = -> validate.empty ''                   ), ''
+      @eq ( Ωit_700 = -> validate.empty new Set()            ), new Set()
+      @eq ( Ωit_701 = -> validate.empty.list  []             ), []
+      @eq ( Ωit_702 = -> validate.empty.text  ''             ), ''
+      @eq ( Ωit_703 = -> validate.empty.set   new Set()      ), new Set()
+      @throws ( Ωit_704 = -> validate.empty [ 1, ]           ), /expected a empty, got a list/
+      @throws ( Ωit_705 = -> validate.empty 'A'              ), /expected a empty, got a text/
+      @throws ( Ωit_706 = -> validate.empty new Set 'abc'    ), /expected a empty, got a set/
       #.......................................................................................................
-      @eq ( Ωit_695 = -> isa.empty []                        ), true
-      @eq ( Ωit_696 = -> isa.empty ''                        ), true
-      @eq ( Ωit_697 = -> isa.empty new Set()                 ), true
-      @eq ( Ωit_698 = -> isa.empty [ 1, ]                    ), false
-      @eq ( Ωit_699 = -> isa.empty 'A'                       ), false
-      @eq ( Ωit_700 = -> isa.empty new Set 'abc'             ), false
-      @throws ( Ωit_701 = -> validate.empty       null           ), /expected a empty, got a null/
-      @throws ( Ωit_702 = -> validate.empty.list  null           ), /expected a empty.list, got a null/
-      @throws ( Ωit_703 = -> validate.empty.text  null           ), /expected a empty.text, got a null/
-      @throws ( Ωit_704 = -> validate.empty.set   null           ), /expected a empty.set, got a null/
+      @eq ( Ωit_707 = -> isa.empty []                        ), true
+      @eq ( Ωit_708 = -> isa.empty ''                        ), true
+      @eq ( Ωit_709 = -> isa.empty new Set()                 ), true
+      @eq ( Ωit_710 = -> isa.empty [ 1, ]                    ), false
+      @eq ( Ωit_711 = -> isa.empty 'A'                       ), false
+      @eq ( Ωit_712 = -> isa.empty new Set 'abc'             ), false
+      @throws ( Ωit_713 = -> validate.empty       null           ), /expected a empty, got a null/
+      @throws ( Ωit_714 = -> validate.empty.list  null           ), /expected a empty.list, got a null/
+      @throws ( Ωit_715 = -> validate.empty.text  null           ), /expected a empty.text, got a null/
+      @throws ( Ωit_716 = -> validate.empty.set   null           ), /expected a empty.set, got a null/
       #.......................................................................................................
-      @eq ( Ωit_705 = -> isa.optional.empty.list    []          ), true
-      @eq ( Ωit_706 = -> isa.optional.empty.list    [ 'A', ]    ), false
-      @eq ( Ωit_707 = -> isa.optional.empty.list    4           ), false
-      @eq ( Ωit_708 = -> isa.optional.nonempty.list []          ), false
-      @eq ( Ωit_709 = -> isa.optional.nonempty.list [ 'A', ]    ), true
-      @eq ( Ωit_710 = -> isa.optional.nonempty.list 4           ), false
-      @eq ( Ωit_711 = -> isa.optional.empty.text    ''          ), true
-      @eq ( Ωit_712 = -> isa.optional.empty.text    'A'         ), false
-      @eq ( Ωit_713 = -> isa.optional.empty.text    4           ), false
-      @eq ( Ωit_714 = -> isa.optional.nonempty.text ''          ), false
-      @eq ( Ωit_715 = -> isa.optional.nonempty.text 'A'         ), true
-      @eq ( Ωit_716 = -> isa.optional.nonempty.text 4           ), false
+      @eq ( Ωit_717 = -> isa.optional.empty.list    []          ), true
+      @eq ( Ωit_718 = -> isa.optional.empty.list    [ 'A', ]    ), false
+      @eq ( Ωit_719 = -> isa.optional.empty.list    4           ), false
+      @eq ( Ωit_720 = -> isa.optional.nonempty.list []          ), false
+      @eq ( Ωit_721 = -> isa.optional.nonempty.list [ 'A', ]    ), true
+      @eq ( Ωit_722 = -> isa.optional.nonempty.list 4           ), false
+      @eq ( Ωit_723 = -> isa.optional.empty.text    ''          ), true
+      @eq ( Ωit_724 = -> isa.optional.empty.text    'A'         ), false
+      @eq ( Ωit_725 = -> isa.optional.empty.text    4           ), false
+      @eq ( Ωit_726 = -> isa.optional.nonempty.text ''          ), false
+      @eq ( Ωit_727 = -> isa.optional.nonempty.text 'A'         ), true
+      @eq ( Ωit_728 = -> isa.optional.nonempty.text 4           ), false
       #.......................................................................................................
-      @eq ( Ωit_717 = -> isa.optional.empty []                  ), true
-      @eq ( Ωit_718 = -> isa.optional.empty ''                  ), true
-      @eq ( Ωit_719 = -> isa.optional.empty new Set()           ), true
-      @eq ( Ωit_720 = -> isa.optional.empty [ 1, ]              ), false
-      @eq ( Ωit_721 = -> isa.optional.empty 'A'                 ), false
-      @eq ( Ωit_722 = -> isa.optional.empty new Set 'abc'       ), false
+      @eq ( Ωit_729 = -> isa.optional.empty []                  ), true
+      @eq ( Ωit_730 = -> isa.optional.empty ''                  ), true
+      @eq ( Ωit_731 = -> isa.optional.empty new Set()           ), true
+      @eq ( Ωit_732 = -> isa.optional.empty [ 1, ]              ), false
+      @eq ( Ωit_733 = -> isa.optional.empty 'A'                 ), false
+      @eq ( Ωit_734 = -> isa.optional.empty new Set 'abc'       ), false
       #.......................................................................................................
-      @eq ( Ωit_723 = -> validate.optional.empty []                   ), []
-      @eq ( Ωit_724 = -> validate.optional.empty ''                   ), ''
-      @eq ( Ωit_725 = -> validate.optional.empty new Set()            ), new Set()
-      @eq ( Ωit_726 = -> validate.optional.empty.list  []             ), []
-      @eq ( Ωit_727 = -> validate.optional.empty.text  ''             ), ''
-      @eq ( Ωit_728 = -> validate.optional.empty.set   new Set()      ), new Set()
-      @throws ( Ωit_729 = -> validate.optional.empty [ 1, ]           ), /expected an optional empty, got a list/
-      @throws ( Ωit_730 = -> validate.optional.empty 'A'              ), /expected an optional empty, got a text/
-      @throws ( Ωit_731 = -> validate.optional.empty new Set 'abc'    ), /expected an optional empty, got a set/
+      @eq ( Ωit_735 = -> validate.optional.empty []                   ), []
+      @eq ( Ωit_736 = -> validate.optional.empty ''                   ), ''
+      @eq ( Ωit_737 = -> validate.optional.empty new Set()            ), new Set()
+      @eq ( Ωit_738 = -> validate.optional.empty.list  []             ), []
+      @eq ( Ωit_739 = -> validate.optional.empty.text  ''             ), ''
+      @eq ( Ωit_740 = -> validate.optional.empty.set   new Set()      ), new Set()
+      @throws ( Ωit_741 = -> validate.optional.empty [ 1, ]           ), /expected an optional empty, got a list/
+      @throws ( Ωit_742 = -> validate.optional.empty 'A'              ), /expected an optional empty, got a text/
+      @throws ( Ωit_743 = -> validate.optional.empty new Set 'abc'    ), /expected an optional empty, got a set/
       #.......................................................................................................
-      @eq ( Ωit_732 = -> isa.optional.empty []                        ), true
-      @eq ( Ωit_733 = -> isa.optional.empty ''                        ), true
-      @eq ( Ωit_734 = -> isa.optional.empty new Set()                 ), true
-      @eq ( Ωit_735 = -> isa.optional.empty [ 1, ]                    ), false
-      @eq ( Ωit_736 = -> isa.optional.empty 'A'                       ), false
-      @eq ( Ωit_737 = -> isa.optional.empty new Set 'abc'             ), false
-      @eq ( Ωit_738 = -> validate.optional.empty       null           ), null
-      @eq ( Ωit_739 = -> validate.optional.empty.list  null           ), null
-      @eq ( Ωit_740 = -> validate.optional.empty.text  null           ), null
-      @eq ( Ωit_741 = -> validate.optional.empty.set   null           ), null
+      @eq ( Ωit_744 = -> isa.optional.empty []                        ), true
+      @eq ( Ωit_745 = -> isa.optional.empty ''                        ), true
+      @eq ( Ωit_746 = -> isa.optional.empty new Set()                 ), true
+      @eq ( Ωit_747 = -> isa.optional.empty [ 1, ]                    ), false
+      @eq ( Ωit_748 = -> isa.optional.empty 'A'                       ), false
+      @eq ( Ωit_749 = -> isa.optional.empty new Set 'abc'             ), false
+      @eq ( Ωit_750 = -> validate.optional.empty       null           ), null
+      @eq ( Ωit_751 = -> validate.optional.empty.list  null           ), null
+      @eq ( Ωit_752 = -> validate.optional.empty.text  null           ), null
+      @eq ( Ωit_753 = -> validate.optional.empty.set   null           ), null
       return null
     #.........................................................................................................
     return null
@@ -2059,167 +2121,167 @@ OLD_intertype_tasks =
         evaluate
         type_of   } = types
       #.......................................................................................................
-      @eq ( Ωit_742 = -> isa.empty.list    []                             ), true
-      @eq ( Ωit_743 = -> isa.empty.list    [ 'A', ]                       ), false
-      @eq ( Ωit_744 = -> isa.empty.list    4                              ), false
-      @eq ( Ωit_745 = -> isa.nonempty.list []                             ), false
-      @eq ( Ωit_746 = -> isa.nonempty.list [ 'A', ]                       ), true
-      @eq ( Ωit_747 = -> isa.nonempty.list 4                              ), false
-      @eq ( Ωit_748 = -> isa.empty.text    ''                             ), true
-      @eq ( Ωit_749 = -> isa.empty.text    'A'                            ), false
-      @eq ( Ωit_750 = -> isa.empty.text    4                              ), false
-      @eq ( Ωit_751 = -> isa.nonempty.text ''                             ), false
-      @eq ( Ωit_752 = -> isa.nonempty.text 'A'                            ), true
-      @eq ( Ωit_753 = -> isa.nonempty.text 4                              ), false
-      @eq ( Ωit_754 = -> isa.empty { list: [], text: '', set: new Set() } ), false
+      @eq ( Ωit_754 = -> isa.empty.list    []                             ), true
+      @eq ( Ωit_755 = -> isa.empty.list    [ 'A', ]                       ), false
+      @eq ( Ωit_756 = -> isa.empty.list    4                              ), false
+      @eq ( Ωit_757 = -> isa.nonempty.list []                             ), false
+      @eq ( Ωit_758 = -> isa.nonempty.list [ 'A', ]                       ), true
+      @eq ( Ωit_759 = -> isa.nonempty.list 4                              ), false
+      @eq ( Ωit_760 = -> isa.empty.text    ''                             ), true
+      @eq ( Ωit_761 = -> isa.empty.text    'A'                            ), false
+      @eq ( Ωit_762 = -> isa.empty.text    4                              ), false
+      @eq ( Ωit_763 = -> isa.nonempty.text ''                             ), false
+      @eq ( Ωit_764 = -> isa.nonempty.text 'A'                            ), true
+      @eq ( Ωit_765 = -> isa.nonempty.text 4                              ), false
+      @eq ( Ωit_766 = -> isa.empty { list: [], text: '', set: new Set() } ), false
       #.......................................................................................................
-      @eq ( Ωit_755 = -> isa.empty []                                     ), true
-      @eq ( Ωit_756 = -> isa.empty ''                                     ), true
-      @eq ( Ωit_757 = -> isa.empty new Set()                              ), true
-      @eq ( Ωit_758 = -> isa.empty /d/                                    ), false
-      @eq ( Ωit_759 = -> isa.empty [ 1, ]                                 ), false
-      @eq ( Ωit_760 = -> isa.empty 'A'                                    ), false
-      @eq ( Ωit_761 = -> isa.empty new Set 'abc'                          ), false
+      @eq ( Ωit_767 = -> isa.empty []                                     ), true
+      @eq ( Ωit_768 = -> isa.empty ''                                     ), true
+      @eq ( Ωit_769 = -> isa.empty new Set()                              ), true
+      @eq ( Ωit_770 = -> isa.empty /d/                                    ), false
+      @eq ( Ωit_771 = -> isa.empty [ 1, ]                                 ), false
+      @eq ( Ωit_772 = -> isa.empty 'A'                                    ), false
+      @eq ( Ωit_773 = -> isa.empty new Set 'abc'                          ), false
       #.......................................................................................................
-      @eq ( Ωit_762 = -> validate.empty []                                ), []
-      @eq ( Ωit_763 = -> validate.empty ''                                ), ''
-      @eq ( Ωit_764 = -> validate.empty new Set()                         ), new Set()
-      @throws ( Ωit_765 = -> validate.empty [ 1, ]                        ), /expected a empty, got a list/
-      @throws ( Ωit_766 = -> validate.empty 'A'                           ), /expected a empty, got a text/
-      @throws ( Ωit_767 = -> validate.empty new Set 'abc'                 ), /expected a empty, got a set/
+      @eq ( Ωit_774 = -> validate.empty []                                ), []
+      @eq ( Ωit_775 = -> validate.empty ''                                ), ''
+      @eq ( Ωit_776 = -> validate.empty new Set()                         ), new Set()
+      @throws ( Ωit_777 = -> validate.empty [ 1, ]                        ), /expected a empty, got a list/
+      @throws ( Ωit_778 = -> validate.empty 'A'                           ), /expected a empty, got a text/
+      @throws ( Ωit_779 = -> validate.empty new Set 'abc'                 ), /expected a empty, got a set/
       #.......................................................................................................
-      @eq ( Ωit_768 = -> type_of []                                       ), 'list'
-      @eq ( Ωit_769 = -> type_of ''                                       ), 'text'
-      @eq ( Ωit_770 = -> type_of new Set()                                ), 'set'
-      @eq ( Ωit_771 = -> type_of [ 'a', ]                                 ), 'list'
-      @eq ( Ωit_772 = -> type_of 'a'                                      ), 'text'
-      @eq ( Ωit_773 = -> type_of new Set 'a'                              ), 'set'
+      @eq ( Ωit_780 = -> type_of []                                       ), 'list'
+      @eq ( Ωit_781 = -> type_of ''                                       ), 'text'
+      @eq ( Ωit_782 = -> type_of new Set()                                ), 'set'
+      @eq ( Ωit_783 = -> type_of [ 'a', ]                                 ), 'list'
+      @eq ( Ωit_784 = -> type_of 'a'                                      ), 'text'
+      @eq ( Ωit_785 = -> type_of new Set 'a'                              ), 'set'
       #.......................................................................................................
-      @eq ( Ωit_774 = -> type_of 1234                                     ), 'float'
-      @eq ( Ωit_775 = -> isa.integer 1234                                 ), true
-      @eq ( Ωit_776 = -> isa.positive.integer 1234                        ), true
-      @eq ( Ωit_777 = -> isa.negative.integer 1234                        ), false
-      @eq ( Ωit_778 = -> isa.negative.integer -1234                       ), true
-      @eq ( Ωit_779 = -> isa.negative.integer -Infinity                   ), false
-      @eq ( Ωit_780 = -> isa.negative.integer -12.34                      ), false
+      @eq ( Ωit_786 = -> type_of 1234                                     ), 'float'
+      @eq ( Ωit_787 = -> isa.integer 1234                                 ), true
+      @eq ( Ωit_788 = -> isa.positive.integer 1234                        ), true
+      @eq ( Ωit_789 = -> isa.negative.integer 1234                        ), false
+      @eq ( Ωit_790 = -> isa.negative.integer -1234                       ), true
+      @eq ( Ωit_791 = -> isa.negative.integer -Infinity                   ), false
+      @eq ( Ωit_792 = -> isa.negative.integer -12.34                      ), false
       #.......................................................................................................
-      @eq ( Ωit_781 = -> isa.positive.float     +4                        ), true
-      @eq ( Ωit_782 = -> isa.positive.integer   +4                        ), true
-      @eq ( Ωit_783 = -> isa.positive.infinity  +4                        ), false
-      @eq ( Ωit_784 = -> isa.negative.float     +4                        ), false
-      @eq ( Ωit_785 = -> isa.negative.integer   +4                        ), false
-      @eq ( Ωit_786 = -> isa.negative.infinity  +4                        ), false
-      @eq ( Ωit_787 = -> isa.posnaught.float    +4                        ), true
-      @eq ( Ωit_788 = -> isa.posnaught.integer  +4                        ), true
-      @eq ( Ωit_789 = -> isa.posnaught.infinity +4                        ), false
-      @eq ( Ωit_790 = -> isa.negnaught.float    +4                        ), false
-      @eq ( Ωit_791 = -> isa.negnaught.integer  +4                        ), false
-      @eq ( Ωit_792 = -> isa.negnaught.infinity +4                        ), false
+      @eq ( Ωit_793 = -> isa.positive.float     +4                        ), true
+      @eq ( Ωit_794 = -> isa.positive.integer   +4                        ), true
+      @eq ( Ωit_795 = -> isa.positive.infinity  +4                        ), false
+      @eq ( Ωit_796 = -> isa.negative.float     +4                        ), false
+      @eq ( Ωit_797 = -> isa.negative.integer   +4                        ), false
+      @eq ( Ωit_798 = -> isa.negative.infinity  +4                        ), false
+      @eq ( Ωit_799 = -> isa.posnaught.float    +4                        ), true
+      @eq ( Ωit_800 = -> isa.posnaught.integer  +4                        ), true
+      @eq ( Ωit_801 = -> isa.posnaught.infinity +4                        ), false
+      @eq ( Ωit_802 = -> isa.negnaught.float    +4                        ), false
+      @eq ( Ωit_803 = -> isa.negnaught.integer  +4                        ), false
+      @eq ( Ωit_804 = -> isa.negnaught.infinity +4                        ), false
       #.......................................................................................................
-      @eq ( Ωit_793 = -> isa.positive.float      0                        ), false
-      @eq ( Ωit_794 = -> isa.positive.integer    0                        ), false
-      @eq ( Ωit_795 = -> isa.positive.infinity   0                        ), false
-      @eq ( Ωit_796 = -> isa.negative.float      0                        ), false
-      @eq ( Ωit_797 = -> isa.negative.integer    0                        ), false
-      @eq ( Ωit_798 = -> isa.negative.infinity   0                        ), false
-      @eq ( Ωit_799 = -> isa.posnaught.float     0                        ), true
-      @eq ( Ωit_800 = -> isa.posnaught.integer   0                        ), true
-      @eq ( Ωit_801 = -> isa.posnaught.infinity  0                        ), false
-      @eq ( Ωit_802 = -> isa.negnaught.float     0                        ), true
-      @eq ( Ωit_803 = -> isa.negnaught.integer   0                        ), true
-      @eq ( Ωit_804 = -> isa.negnaught.infinity  0                        ), false
+      @eq ( Ωit_805 = -> isa.positive.float      0                        ), false
+      @eq ( Ωit_806 = -> isa.positive.integer    0                        ), false
+      @eq ( Ωit_807 = -> isa.positive.infinity   0                        ), false
+      @eq ( Ωit_808 = -> isa.negative.float      0                        ), false
+      @eq ( Ωit_809 = -> isa.negative.integer    0                        ), false
+      @eq ( Ωit_810 = -> isa.negative.infinity   0                        ), false
+      @eq ( Ωit_811 = -> isa.posnaught.float     0                        ), true
+      @eq ( Ωit_812 = -> isa.posnaught.integer   0                        ), true
+      @eq ( Ωit_813 = -> isa.posnaught.infinity  0                        ), false
+      @eq ( Ωit_814 = -> isa.negnaught.float     0                        ), true
+      @eq ( Ωit_815 = -> isa.negnaught.integer   0                        ), true
+      @eq ( Ωit_816 = -> isa.negnaught.infinity  0                        ), false
       #.......................................................................................................
-      @eq ( Ωit_805 = -> isa.positive.float      Infinity                 ), false
-      @eq ( Ωit_806 = -> isa.positive.integer    Infinity                 ), false
-      @eq ( Ωit_807 = -> isa.positive.infinity   Infinity                 ), true
-      @eq ( Ωit_808 = -> isa.negative.float      Infinity                 ), false
-      @eq ( Ωit_809 = -> isa.negative.integer    Infinity                 ), false
-      @eq ( Ωit_810 = -> isa.negative.infinity   Infinity                 ), false
-      @eq ( Ωit_811 = -> isa.posnaught.float     Infinity                 ), false
-      @eq ( Ωit_812 = -> isa.posnaught.integer   Infinity                 ), false
-      @eq ( Ωit_813 = -> isa.posnaught.infinity  Infinity                 ), true
-      @eq ( Ωit_814 = -> isa.negnaught.float     Infinity                 ), false
-      @eq ( Ωit_815 = -> isa.negnaught.integer   Infinity                 ), false
-      @eq ( Ωit_816 = -> isa.negnaught.infinity  Infinity                 ), false
+      @eq ( Ωit_817 = -> isa.positive.float      Infinity                 ), false
+      @eq ( Ωit_818 = -> isa.positive.integer    Infinity                 ), false
+      @eq ( Ωit_819 = -> isa.positive.infinity   Infinity                 ), true
+      @eq ( Ωit_820 = -> isa.negative.float      Infinity                 ), false
+      @eq ( Ωit_821 = -> isa.negative.integer    Infinity                 ), false
+      @eq ( Ωit_822 = -> isa.negative.infinity   Infinity                 ), false
+      @eq ( Ωit_823 = -> isa.posnaught.float     Infinity                 ), false
+      @eq ( Ωit_824 = -> isa.posnaught.integer   Infinity                 ), false
+      @eq ( Ωit_825 = -> isa.posnaught.infinity  Infinity                 ), true
+      @eq ( Ωit_826 = -> isa.negnaught.float     Infinity                 ), false
+      @eq ( Ωit_827 = -> isa.negnaught.integer   Infinity                 ), false
+      @eq ( Ωit_828 = -> isa.negnaught.infinity  Infinity                 ), false
       #.......................................................................................................
-      @eq ( Ωit_817 = -> isa.positive.float      +4.3                     ), true
-      @eq ( Ωit_818 = -> isa.positive.integer    +4.3                     ), false
-      @eq ( Ωit_819 = -> isa.positive.infinity   +4.3                     ), false
-      @eq ( Ωit_820 = -> isa.negative.float      +4.3                     ), false
-      @eq ( Ωit_821 = -> isa.negative.integer    +4.3                     ), false
-      @eq ( Ωit_822 = -> isa.negative.infinity   +4.3                     ), false
-      @eq ( Ωit_823 = -> isa.posnaught.float     +4.3                     ), true
-      @eq ( Ωit_824 = -> isa.posnaught.integer   +4.3                     ), false
-      @eq ( Ωit_825 = -> isa.posnaught.infinity  +4.3                     ), false
-      @eq ( Ωit_826 = -> isa.negnaught.float     +4.3                     ), false
-      @eq ( Ωit_827 = -> isa.negnaught.integer   +4.3                     ), false
-      @eq ( Ωit_828 = -> isa.negnaught.infinity  +4.3                     ), false
+      @eq ( Ωit_829 = -> isa.positive.float      +4.3                     ), true
+      @eq ( Ωit_830 = -> isa.positive.integer    +4.3                     ), false
+      @eq ( Ωit_831 = -> isa.positive.infinity   +4.3                     ), false
+      @eq ( Ωit_832 = -> isa.negative.float      +4.3                     ), false
+      @eq ( Ωit_833 = -> isa.negative.integer    +4.3                     ), false
+      @eq ( Ωit_834 = -> isa.negative.infinity   +4.3                     ), false
+      @eq ( Ωit_835 = -> isa.posnaught.float     +4.3                     ), true
+      @eq ( Ωit_836 = -> isa.posnaught.integer   +4.3                     ), false
+      @eq ( Ωit_837 = -> isa.posnaught.infinity  +4.3                     ), false
+      @eq ( Ωit_838 = -> isa.negnaught.float     +4.3                     ), false
+      @eq ( Ωit_839 = -> isa.negnaught.integer   +4.3                     ), false
+      @eq ( Ωit_840 = -> isa.negnaught.infinity  +4.3                     ), false
       #.......................................................................................................
-      @eq ( Ωit_829 = -> isa.positive.float      -4.3                     ), false
-      @eq ( Ωit_830 = -> isa.positive.integer    -4.3                     ), false
-      @eq ( Ωit_831 = -> isa.positive.infinity   -4.3                     ), false
-      @eq ( Ωit_832 = -> isa.negative.float      -4.3                     ), true
-      @eq ( Ωit_833 = -> isa.negative.integer    -4.3                     ), false
-      @eq ( Ωit_834 = -> isa.negative.infinity   -4.3                     ), false
-      @eq ( Ωit_835 = -> isa.posnaught.float     -4.3                     ), false
-      @eq ( Ωit_836 = -> isa.posnaught.integer   -4.3                     ), false
-      @eq ( Ωit_837 = -> isa.posnaught.infinity  -4.3                     ), false
-      @eq ( Ωit_838 = -> isa.negnaught.float     -4.3                     ), true
-      @eq ( Ωit_839 = -> isa.negnaught.integer   -4.3                     ), false
-      @eq ( Ωit_840 = -> isa.negnaught.infinity  -4.3                     ), false
+      @eq ( Ωit_841 = -> isa.positive.float      -4.3                     ), false
+      @eq ( Ωit_842 = -> isa.positive.integer    -4.3                     ), false
+      @eq ( Ωit_843 = -> isa.positive.infinity   -4.3                     ), false
+      @eq ( Ωit_844 = -> isa.negative.float      -4.3                     ), true
+      @eq ( Ωit_845 = -> isa.negative.integer    -4.3                     ), false
+      @eq ( Ωit_846 = -> isa.negative.infinity   -4.3                     ), false
+      @eq ( Ωit_847 = -> isa.posnaught.float     -4.3                     ), false
+      @eq ( Ωit_848 = -> isa.posnaught.integer   -4.3                     ), false
+      @eq ( Ωit_849 = -> isa.posnaught.infinity  -4.3                     ), false
+      @eq ( Ωit_850 = -> isa.negnaught.float     -4.3                     ), true
+      @eq ( Ωit_851 = -> isa.negnaught.integer   -4.3                     ), false
+      @eq ( Ωit_852 = -> isa.negnaught.infinity  -4.3                     ), false
       #.......................................................................................................
-      @eq ( Ωit_841 = -> isa.posnaught           +Infinity                ), true
-      @eq ( Ωit_842 = -> isa.negnaught           +Infinity                ), false
-      @eq ( Ωit_843 = -> isa.posnaught           -Infinity                ), false
-      @eq ( Ωit_844 = -> isa.negnaught           -Infinity                ), true
-      @eq ( Ωit_845 = -> isa.posnaught           0                        ), true
-      @eq ( Ωit_846 = -> isa.negnaught           0                        ), true
-      @eq ( Ωit_847 = -> isa.posnaught           0                        ), true
-      @eq ( Ωit_848 = -> isa.negnaught           0                        ), true
+      @eq ( Ωit_853 = -> isa.posnaught           +Infinity                ), true
+      @eq ( Ωit_854 = -> isa.negnaught           +Infinity                ), false
+      @eq ( Ωit_855 = -> isa.posnaught           -Infinity                ), false
+      @eq ( Ωit_856 = -> isa.negnaught           -Infinity                ), true
+      @eq ( Ωit_857 = -> isa.posnaught           0                        ), true
+      @eq ( Ωit_858 = -> isa.negnaught           0                        ), true
+      @eq ( Ωit_859 = -> isa.posnaught           0                        ), true
+      @eq ( Ωit_860 = -> isa.negnaught           0                        ), true
       #.......................................................................................................
-      @eq ( Ωit_849 = -> isa.frozen         Object.freeze {}              ), true
-      @eq ( Ωit_850 = -> isa.frozen         Object.freeze []              ), true
-      @eq ( Ωit_851 = -> isa.frozen                       {}              ), false
-      @eq ( Ωit_852 = -> isa.frozen                       []              ), false
-      @eq ( Ωit_853 = -> isa.frozen.object  Object.freeze {}              ), true
-      @eq ( Ωit_854 = -> isa.frozen.list    Object.freeze []              ), true
-      @eq ( Ωit_855 = -> isa.frozen.object                {}              ), false
-      @eq ( Ωit_856 = -> isa.frozen.list                  []              ), false
+      @eq ( Ωit_861 = -> isa.frozen         Object.freeze {}              ), true
+      @eq ( Ωit_862 = -> isa.frozen         Object.freeze []              ), true
+      @eq ( Ωit_863 = -> isa.frozen                       {}              ), false
+      @eq ( Ωit_864 = -> isa.frozen                       []              ), false
+      @eq ( Ωit_865 = -> isa.frozen.object  Object.freeze {}              ), true
+      @eq ( Ωit_866 = -> isa.frozen.list    Object.freeze []              ), true
+      @eq ( Ωit_867 = -> isa.frozen.object                {}              ), false
+      @eq ( Ωit_868 = -> isa.frozen.list                  []              ), false
       #.......................................................................................................
-      @eq ( Ωit_857 = -> isa.odd.integer                  []              ), false
-      @eq ( Ωit_858 = -> isa.odd.integer                  102.4           ), false
-      @eq ( Ωit_859 = -> isa.odd.integer                  9997            ), true
-      @eq ( Ωit_860 = -> isa.odd.integer                  '1024'          ), false
-      @eq ( Ωit_861 = -> isa.odd.integer                  0               ), false
-      @eq ( Ωit_862 = -> isa.odd.integer                  1024            ), false
-      @eq ( Ωit_863 = -> isa.odd.positive.integer         1024            ), false
-      @eq ( Ωit_864 = -> isa.odd.positive.integer         102.4           ), false
-      @eq ( Ωit_865 = -> isa.odd.positive.integer         1023            ), true
-      @eq ( Ωit_866 = -> isa.odd.positive.integer         -1023           ), false
-      @eq ( Ωit_867 = -> isa.odd.positive.integer         103.4           ), false
-      @eq ( Ωit_868 = -> isa.even.integer                 []              ), false
-      @eq ( Ωit_869 = -> isa.even.integer                 102.4           ), false
-      @eq ( Ωit_870 = -> isa.even.integer                 9997            ), false
-      @eq ( Ωit_871 = -> isa.even.integer                 '1024'          ), false
-      @eq ( Ωit_872 = -> isa.even.integer                 0               ), true
-      @eq ( Ωit_873 = -> isa.even.integer                 1024            ), true
-      @eq ( Ωit_874 = -> isa.even.positive.integer        1024            ), true
-      @eq ( Ωit_875 = -> isa.even.positive.integer        0               ), false
-      @eq ( Ωit_876 = -> isa.even.posnaught.integer       1024            ), true
-      @eq ( Ωit_877 = -> isa.even.posnaught.integer       0               ), true
+      @eq ( Ωit_869 = -> isa.odd.integer                  []              ), false
+      @eq ( Ωit_870 = -> isa.odd.integer                  102.4           ), false
+      @eq ( Ωit_871 = -> isa.odd.integer                  9997            ), true
+      @eq ( Ωit_872 = -> isa.odd.integer                  '1024'          ), false
+      @eq ( Ωit_873 = -> isa.odd.integer                  0               ), false
+      @eq ( Ωit_874 = -> isa.odd.integer                  1024            ), false
+      @eq ( Ωit_875 = -> isa.odd.positive.integer         1024            ), false
+      @eq ( Ωit_876 = -> isa.odd.positive.integer         102.4           ), false
+      @eq ( Ωit_877 = -> isa.odd.positive.integer         1023            ), true
+      @eq ( Ωit_878 = -> isa.odd.positive.integer         -1023           ), false
+      @eq ( Ωit_879 = -> isa.odd.positive.integer         103.4           ), false
+      @eq ( Ωit_880 = -> isa.even.integer                 []              ), false
+      @eq ( Ωit_881 = -> isa.even.integer                 102.4           ), false
+      @eq ( Ωit_882 = -> isa.even.integer                 9997            ), false
+      @eq ( Ωit_883 = -> isa.even.integer                 '1024'          ), false
+      @eq ( Ωit_884 = -> isa.even.integer                 0               ), true
+      @eq ( Ωit_885 = -> isa.even.integer                 1024            ), true
+      @eq ( Ωit_886 = -> isa.even.positive.integer        1024            ), true
+      @eq ( Ωit_887 = -> isa.even.positive.integer        0               ), false
+      @eq ( Ωit_888 = -> isa.even.posnaught.integer       1024            ), true
+      @eq ( Ωit_889 = -> isa.even.posnaught.integer       0               ), true
       #.......................................................................................................
-      @eq ( Ωit_878 = -> isa.even.posnaught               0               ), true
-      @eq ( Ωit_879 = -> isa.even.posnaught               1               ), false
-      @eq ( Ωit_880 = -> isa.even.posnaught               2               ), true
+      @eq ( Ωit_890 = -> isa.even.posnaught               0               ), true
+      @eq ( Ωit_891 = -> isa.even.posnaught               1               ), false
+      @eq ( Ωit_892 = -> isa.even.posnaught               2               ), true
       #.......................................................................................................
-      @eq ( Ωit_881 = -> isa.cardinal                     -1024           ), false
-      @eq ( Ωit_882 = -> isa.cardinal                     10              ), true
-      @eq ( Ωit_883 = -> isa.cardinal                     123.7           ), false
-      @eq ( Ωit_884 = -> isa.cardinal                     0               ), true
-      @eq ( Ωit_885 = -> isa.cardinal                     1               ), true
-      @eq ( Ωit_886 = -> isa.cardinal                     Infinity        ), false
-      @eq ( Ωit_887 = -> evaluate.cardinal                Infinity        ), { cardinal: false }
-      @eq ( Ωit_888 = -> evaluate.posnaught.integer       Infinity        ), { 'posnaught.integer': false }
+      @eq ( Ωit_893 = -> isa.cardinal                     -1024           ), false
+      @eq ( Ωit_894 = -> isa.cardinal                     10              ), true
+      @eq ( Ωit_895 = -> isa.cardinal                     123.7           ), false
+      @eq ( Ωit_896 = -> isa.cardinal                     0               ), true
+      @eq ( Ωit_897 = -> isa.cardinal                     1               ), true
+      @eq ( Ωit_898 = -> isa.cardinal                     Infinity        ), false
+      @eq ( Ωit_899 = -> evaluate.cardinal                Infinity        ), { cardinal: false }
+      @eq ( Ωit_900 = -> evaluate.posnaught.integer       Infinity        ), { 'posnaught.integer': false }
       #.......................................................................................................
       return null
     #.........................................................................................................
@@ -2231,13 +2293,13 @@ OLD_intertype_tasks =
     #.........................................................................................................
     do =>
       ### TAINT observe the out-comment messages would perhaps make more sense as they are more specific ###
-      @eq ( Ωit_889 = -> ( new Intertype() ).declare { foo: 'float', } ), null
-      @eq ( Ωit_890 = -> ( new Intertype() ).declare { foo: 'text',  } ), null
+      @eq ( Ωit_901 = -> ( new Intertype() ).declare { foo: 'float', } ), null
+      @eq ( Ωit_902 = -> ( new Intertype() ).declare { foo: 'text',  } ), null
       # ( new Intertype() ).declare { foo: 'optional', }
-      @throws ( Ωit_891 = -> ( new Intertype() ).declare { foo: 'optional', }        ), /illegal use of 'optional' in declaration of type 'foo'/
-      @throws ( Ωit_892 = -> ( new Intertype() ).declare { foo: 'qqq', }             ), /unknown type 'qqq'/
-      @throws ( Ωit_893 = -> ( new Intertype() ).declare { foo: 'optional.float', }  ), /illegal use of 'optional' in declaration of type 'foo'/
-      @throws ( Ωit_894 = -> ( new Intertype() ).declare { foo: 'anything.float', }  ), /illegal use of basetype 'anything' in declaration of type 'foo'/
+      @throws ( Ωit_903 = -> ( new Intertype() ).declare { foo: 'optional', }        ), /illegal use of 'optional' in declaration of type 'foo'/
+      @throws ( Ωit_904 = -> ( new Intertype() ).declare { foo: 'qqq', }             ), /unknown type 'qqq'/
+      @throws ( Ωit_905 = -> ( new Intertype() ).declare { foo: 'optional.float', }  ), /illegal use of 'optional' in declaration of type 'foo'/
+      @throws ( Ωit_906 = -> ( new Intertype() ).declare { foo: 'anything.float', }  ), /illegal use of basetype 'anything' in declaration of type 'foo'/
       return null
     #.........................................................................................................
     return null
@@ -2250,22 +2312,22 @@ OLD_intertype_tasks =
       { isa
         validate  } = new Intertype
           normalfloat: ( ( x ) -> ( @isa.float x ) and ( 0 <= x <= 1 ) )
-      @eq ( Ωit_895 = -> isa.normalfloat                     0     ), true
-      @eq ( Ωit_896 = -> isa.normalfloat                     null  ), false
-      @eq ( Ωit_897 = -> isa.normalfloat                     -1    ), false
-      @eq ( Ωit_898 = -> isa.normalfloat                     '?'   ), false
-      @eq ( Ωit_899 = -> isa.optional.normalfloat            0     ), true
-      @eq ( Ωit_900 = -> isa.optional.normalfloat            null  ), true
-      @eq ( Ωit_901 = -> isa.optional.normalfloat            -1    ), false
-      @eq ( Ωit_902 = -> isa.optional.normalfloat            '?'   ), false
-      @eq ( Ωit_903 = -> validate.normalfloat                0     ), 0
-      @eq ( Ωit_904 = -> validate.optional.normalfloat       0     ), 0
-      @eq ( Ωit_905 = -> validate.optional.normalfloat       null  ), null
-      @throws ( Ωit_906 = -> validate.normalfloat           null ), /expected a normalfloat, got a null/
-      @throws ( Ωit_907 = -> validate.normalfloat           -1   ), /expected a normalfloat, got a float/
-      @throws ( Ωit_908 = -> validate.normalfloat           '?'  ), /expected a normalfloat, got a text/
-      @throws ( Ωit_909 = -> validate.optional.normalfloat  -1   ), /expected an optional normalfloat, got a float/
-      @throws ( Ωit_910 = -> validate.optional.normalfloat  '?'  ), /expected an optional normalfloat, got a text/
+      @eq ( Ωit_907 = -> isa.normalfloat                     0     ), true
+      @eq ( Ωit_908 = -> isa.normalfloat                     null  ), false
+      @eq ( Ωit_909 = -> isa.normalfloat                     -1    ), false
+      @eq ( Ωit_910 = -> isa.normalfloat                     '?'   ), false
+      @eq ( Ωit_911 = -> isa.optional.normalfloat            0     ), true
+      @eq ( Ωit_912 = -> isa.optional.normalfloat            null  ), true
+      @eq ( Ωit_913 = -> isa.optional.normalfloat            -1    ), false
+      @eq ( Ωit_914 = -> isa.optional.normalfloat            '?'   ), false
+      @eq ( Ωit_915 = -> validate.normalfloat                0     ), 0
+      @eq ( Ωit_916 = -> validate.optional.normalfloat       0     ), 0
+      @eq ( Ωit_917 = -> validate.optional.normalfloat       null  ), null
+      @throws ( Ωit_918 = -> validate.normalfloat           null ), /expected a normalfloat, got a null/
+      @throws ( Ωit_919 = -> validate.normalfloat           -1   ), /expected a normalfloat, got a float/
+      @throws ( Ωit_920 = -> validate.normalfloat           '?'  ), /expected a normalfloat, got a text/
+      @throws ( Ωit_921 = -> validate.optional.normalfloat  -1   ), /expected an optional normalfloat, got a float/
+      @throws ( Ωit_922 = -> validate.optional.normalfloat  '?'  ), /expected an optional normalfloat, got a text/
       return null
     #.........................................................................................................
     do =>
@@ -2278,37 +2340,37 @@ OLD_intertype_tasks =
         'foo.bar.baz':  'float'
       { isa
         validate  } = types = new Intertype my_types
-      @eq ( Ωit_911 = -> isa.quantity            { q: 1, u: 'm', }   ), true
-      @eq ( Ωit_912 = -> isa.quantity            null                ), false
-      @eq ( Ωit_913 = -> isa.optional.quantity   { q: 2, u: 'm', }   ), true
-      @eq ( Ωit_914 = -> isa.optional.quantity   null                ), true
-      @eq ( Ωit_915 = -> validate.quantity               { q: 3, u: 'm', } ), { q: 3, u: 'm', }
-      @eq ( Ωit_916 = -> validate.optional.quantity      { q: 4, u: 'm', } ), { q: 4, u: 'm', }
-      @eq ( Ωit_917 = -> validate.optional.quantity.q    null  ), null
-      @eq ( Ωit_918 = -> validate.optional.quantity.q    111   ), 111
-      @eq ( Ωit_919 = -> isa.quantity                     null               ), false
-      @eq ( Ωit_920 = -> isa.quantity                     -1                 ), false
-      @eq ( Ωit_921 = -> isa.quantity                     '?'                ), false
-      @eq ( Ωit_922 = -> isa.quantity.q                   '?'                ), false
-      @eq ( Ωit_923 = -> isa.quantity.q                   3                  ), true
-      @eq ( Ωit_924 = -> isa.optional.quantity            { q: 1, u: 'm', }  ), true
-      @eq ( Ωit_925 = -> isa.optional.quantity            null               ), true
-      @eq ( Ωit_926 = -> isa.optional.quantity            -1                 ), false
-      @eq ( Ωit_927 = -> isa.optional.quantity            '?'                ), false
-      @eq ( Ωit_928 = -> isa.optional.quantity.q          '?'                ), false
-      @eq ( Ωit_929 = -> isa.optional.quantity.q          3                  ), true
-      @eq ( Ωit_930 = -> validate.quantity                { q: 1, u: 'm', }  ), { q: 1, u: 'm', }
-      @eq ( Ωit_931 = -> validate.optional.quantity       { q: 1, u: 'm', }  ), { q: 1, u: 'm', }
-      @eq ( Ωit_932 = -> validate.optional.quantity       null               ), null
-      @throws ( Ωit_933 = -> validate.quantity           { q: 5, }  ), /expected a quantity, got a object/ ### TAINT message should be more specific ###
-      @throws ( Ωit_934 = -> validate.quantity            null      ), /expected a quantity, got a null/
-      @throws ( Ωit_935 = -> validate.quantity            -1        ), /expected a quantity, got a float/
-      @throws ( Ωit_936 = -> validate.quantity            '?'       ), /expected a quantity, got a text/
-      @throws ( Ωit_937 = -> validate.quantity            { q: 1, } ), /expected a quantity, got a object/ ### TAINT message should be more specific ###
-      @throws ( Ωit_938 = -> validate.optional.quantity   -1        ), /expected an optional quantity, got a float/
-      @throws ( Ωit_939 = -> validate.optional.quantity   { q: 1, } ), /expected an optional quantity, got a object/ ### TAINT message should be more specific ###
-      @throws ( Ωit_940 = -> validate.optional.quantity.q { q: 1, } ), /expected an optional quantity.q, got a object/
-      @throws ( Ωit_941 = -> validate.optional.quantity.q 3, 4, 5   ), /method 'validate.optional.quantity.q' expects 1 arguments, got 3/
+      @eq ( Ωit_923 = -> isa.quantity            { q: 1, u: 'm', }   ), true
+      @eq ( Ωit_924 = -> isa.quantity            null                ), false
+      @eq ( Ωit_925 = -> isa.optional.quantity   { q: 2, u: 'm', }   ), true
+      @eq ( Ωit_926 = -> isa.optional.quantity   null                ), true
+      @eq ( Ωit_927 = -> validate.quantity               { q: 3, u: 'm', } ), { q: 3, u: 'm', }
+      @eq ( Ωit_928 = -> validate.optional.quantity      { q: 4, u: 'm', } ), { q: 4, u: 'm', }
+      @eq ( Ωit_929 = -> validate.optional.quantity.q    null  ), null
+      @eq ( Ωit_930 = -> validate.optional.quantity.q    111   ), 111
+      @eq ( Ωit_931 = -> isa.quantity                     null               ), false
+      @eq ( Ωit_932 = -> isa.quantity                     -1                 ), false
+      @eq ( Ωit_933 = -> isa.quantity                     '?'                ), false
+      @eq ( Ωit_934 = -> isa.quantity.q                   '?'                ), false
+      @eq ( Ωit_935 = -> isa.quantity.q                   3                  ), true
+      @eq ( Ωit_936 = -> isa.optional.quantity            { q: 1, u: 'm', }  ), true
+      @eq ( Ωit_937 = -> isa.optional.quantity            null               ), true
+      @eq ( Ωit_938 = -> isa.optional.quantity            -1                 ), false
+      @eq ( Ωit_939 = -> isa.optional.quantity            '?'                ), false
+      @eq ( Ωit_940 = -> isa.optional.quantity.q          '?'                ), false
+      @eq ( Ωit_941 = -> isa.optional.quantity.q          3                  ), true
+      @eq ( Ωit_942 = -> validate.quantity                { q: 1, u: 'm', }  ), { q: 1, u: 'm', }
+      @eq ( Ωit_943 = -> validate.optional.quantity       { q: 1, u: 'm', }  ), { q: 1, u: 'm', }
+      @eq ( Ωit_944 = -> validate.optional.quantity       null               ), null
+      @throws ( Ωit_945 = -> validate.quantity           { q: 5, }  ), /expected a quantity, got a object/ ### TAINT message should be more specific ###
+      @throws ( Ωit_946 = -> validate.quantity            null      ), /expected a quantity, got a null/
+      @throws ( Ωit_947 = -> validate.quantity            -1        ), /expected a quantity, got a float/
+      @throws ( Ωit_948 = -> validate.quantity            '?'       ), /expected a quantity, got a text/
+      @throws ( Ωit_949 = -> validate.quantity            { q: 1, } ), /expected a quantity, got a object/ ### TAINT message should be more specific ###
+      @throws ( Ωit_950 = -> validate.optional.quantity   -1        ), /expected an optional quantity, got a float/
+      @throws ( Ωit_951 = -> validate.optional.quantity   { q: 1, } ), /expected an optional quantity, got a object/ ### TAINT message should be more specific ###
+      @throws ( Ωit_952 = -> validate.optional.quantity.q { q: 1, } ), /expected an optional quantity.q, got a object/
+      @throws ( Ωit_953 = -> validate.optional.quantity.q 3, 4, 5   ), /method 'validate.optional.quantity.q' expects 1 arguments, got 3/
       return null
     #.........................................................................................................
     return null
@@ -2319,11 +2381,11 @@ OLD_intertype_tasks =
     #.........................................................................................................
     do =>
       { declarations  } = new Intertype()
-      @eq ( Ωit_942 = -> declarations.float.role     ), 'usertype'
-      @eq ( Ωit_943 = -> declarations.null.role      ), 'basetype'
-      @eq ( Ωit_944 = -> declarations.anything.role  ), 'basetype'
-      @eq ( Ωit_945 = -> declarations.unknown.role   ), 'basetype'
-      @eq ( Ωit_946 = -> declarations.optional.role  ), 'optional'
+      @eq ( Ωit_954 = -> declarations.float.role     ), 'usertype'
+      @eq ( Ωit_955 = -> declarations.null.role      ), 'basetype'
+      @eq ( Ωit_956 = -> declarations.anything.role  ), 'basetype'
+      @eq ( Ωit_957 = -> declarations.unknown.role   ), 'basetype'
+      @eq ( Ωit_958 = -> declarations.optional.role  ), 'optional'
       # @throws T, /expected a normalfloat, got a null/,             -> validate.normalfloat           null
       return null
     #.........................................................................................................
@@ -2339,37 +2401,37 @@ OLD_intertype_tasks =
       type_of           } = new Intertype_minimal()
     #.........................................................................................................
     do =>
-      @eq ( Ωit_947 = -> type_of null              ), 'null'
-      @eq ( Ωit_948 = -> type_of undefined         ), 'undefined'
-      @eq ( Ωit_949 = -> type_of +Infinity         ), 'unknown'
-      @eq ( Ωit_950 = -> type_of 4                 ), 'unknown'
+      @eq ( Ωit_959 = -> type_of null              ), 'null'
+      @eq ( Ωit_960 = -> type_of undefined         ), 'undefined'
+      @eq ( Ωit_961 = -> type_of +Infinity         ), 'unknown'
+      @eq ( Ωit_962 = -> type_of 4                 ), 'unknown'
       return null
     #.........................................................................................................
     do =>
-      @eq ( Ωit_951 = -> isa.anything   1          ), true
-      @eq ( Ωit_952 = -> isa.nothing    1          ), false
-      @eq ( Ωit_953 = -> isa.something  1          ), true
-      @eq ( Ωit_954 = -> isa.unknown    1          ), true
+      @eq ( Ωit_963 = -> isa.anything   1          ), true
+      @eq ( Ωit_964 = -> isa.nothing    1          ), false
+      @eq ( Ωit_965 = -> isa.something  1          ), true
+      @eq ( Ωit_966 = -> isa.unknown    1          ), true
       return null
     #.........................................................................................................
     do =>
-      @eq ( Ωit_955 = -> isa.anything   null       ), true
-      @eq ( Ωit_956 = -> isa.nothing    null       ), true
-      @eq ( Ωit_957 = -> isa.something  null       ), false
-      @eq ( Ωit_958 = -> isa.unknown    null       ), false
+      @eq ( Ωit_967 = -> isa.anything   null       ), true
+      @eq ( Ωit_968 = -> isa.nothing    null       ), true
+      @eq ( Ωit_969 = -> isa.something  null       ), false
+      @eq ( Ωit_970 = -> isa.unknown    null       ), false
       return null
     #.........................................................................................................
     do =>
-      @eq ( Ωit_959 = -> isa.anything   undefined  ), true
-      @eq ( Ωit_960 = -> isa.nothing    undefined  ), true
-      @eq ( Ωit_961 = -> isa.something  undefined  ), false
-      @eq ( Ωit_962 = -> isa.unknown    undefined  ), false
+      @eq ( Ωit_971 = -> isa.anything   undefined  ), true
+      @eq ( Ωit_972 = -> isa.nothing    undefined  ), true
+      @eq ( Ωit_973 = -> isa.something  undefined  ), false
+      @eq ( Ωit_974 = -> isa.unknown    undefined  ), false
       return null
     #.........................................................................................................
     do =>
-      @throws ( Ωit_963 = -> isa.optional 1      ), /`optional` is not a legal type for `isa` methods/
-      @throws ( Ωit_964 = -> validate.optional 1 ), /`optional` is not a legal type for `validate` methods/
-      @throws ( Ωit_965 = -> create.optional 1   ), /`optional` is not a legal type for `create` methods/
+      @throws ( Ωit_975 = -> isa.optional 1      ), /`optional` is not a legal type for `isa` methods/
+      @throws ( Ωit_976 = -> validate.optional 1 ), /`optional` is not a legal type for `validate` methods/
+      @throws ( Ωit_977 = -> create.optional 1   ), /`optional` is not a legal type for `create` methods/
       return null
     #.........................................................................................................
     return null
@@ -2386,12 +2448,12 @@ OLD_intertype_tasks =
         template:
           foo:    4
           bar:    5
-    @eq ( Ωit_966 = -> types.create.foobar { foo: 8, bar: 9, } ), { foo: 8, bar: 9, }
-    @eq ( Ωit_967 = -> types.create.foobar { foo: 8,         } ), { foo: 8, bar: 5, }
-    @eq ( Ωit_968 = -> types.create.foobar { foo: 4, bar: 5, } ), { foo: 4, bar: 5, }
-    @eq ( Ωit_969 = -> types.create.foobar {                 } ), { foo: 4, bar: 5, }
-    @eq ( Ωit_970 = -> types.create.foobar undefined           ), { foo: 4, bar: 5, }
-    @eq ( Ωit_971 = -> types.create.foobar null                ), { foo: 4, bar: 5, }
+    @eq ( Ωit_978 = -> types.create.foobar { foo: 8, bar: 9, } ), { foo: 8, bar: 9, }
+    @eq ( Ωit_979 = -> types.create.foobar { foo: 8,         } ), { foo: 8, bar: 5, }
+    @eq ( Ωit_980 = -> types.create.foobar { foo: 4, bar: 5, } ), { foo: 4, bar: 5, }
+    @eq ( Ωit_981 = -> types.create.foobar {                 } ), { foo: 4, bar: 5, }
+    @eq ( Ωit_982 = -> types.create.foobar undefined           ), { foo: 4, bar: 5, }
+    @eq ( Ωit_983 = -> types.create.foobar null                ), { foo: 4, bar: 5, }
     return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -2400,11 +2462,11 @@ OLD_intertype_tasks =
       { Intertype_minimal, } = require '../../../apps/intertype'
       types = new Intertype_minimal()
       types.declare thirtyone: ( x ) -> x is 31
-      @eq ( Ωit_972 = -> types.type_of 31        ), 'thirtyone'
-      @eq ( Ωit_973 = -> types.type_of 32        ), 'unknown'
-      @eq ( Ωit_974 = -> types.isa.thirtyone 31  ), true
-      @eq ( Ωit_975 = -> types.isa.thirtyone 32  ), false
-      @eq ( Ωit_976 = -> types.type_of new Map() ), 'unknown'
+      @eq ( Ωit_984 = -> types.type_of 31        ), 'thirtyone'
+      @eq ( Ωit_985 = -> types.type_of 32        ), 'unknown'
+      @eq ( Ωit_986 = -> types.isa.thirtyone 31  ), true
+      @eq ( Ωit_987 = -> types.isa.thirtyone 32  ), false
+      @eq ( Ωit_988 = -> types.type_of new Map() ), 'unknown'
       return null
     #.......................................................................................................
     do =>
@@ -2413,11 +2475,11 @@ OLD_intertype_tasks =
       types.declare thirtyone:  ( x ) -> ( @isa.float x ) and ( x is 31 )
       ### this used to be a problem        ^^^^ ###
       types.declare float:      ( x ) -> Number.isFinite x
-      @eq ( Ωit_977 = -> types.type_of 31        ), 'thirtyone'
-      @eq ( Ωit_978 = -> types.type_of 32        ), 'float'
-      @eq ( Ωit_979 = -> types.isa.thirtyone 31  ), true
-      @eq ( Ωit_980 = -> types.isa.thirtyone 32  ), false
-      @eq ( Ωit_981 = -> types.type_of new Map() ), 'unknown'
+      @eq ( Ωit_989 = -> types.type_of 31        ), 'thirtyone'
+      @eq ( Ωit_990 = -> types.type_of 32        ), 'float'
+      @eq ( Ωit_991 = -> types.isa.thirtyone 31  ), true
+      @eq ( Ωit_992 = -> types.isa.thirtyone 32  ), false
+      @eq ( Ωit_993 = -> types.type_of new Map() ), 'unknown'
       return null
     #.......................................................................................................
     return null
@@ -2426,8 +2488,8 @@ OLD_intertype_tasks =
   advanced_types: ->
     { Intertype, } = require '../../../apps/intertype'
     types = new Intertype()
-    @eq ( Ωit_982 = -> types.type_of new Set() ), 'set'
-    @eq ( Ωit_983 = -> types.type_of new Map() ), 'map'
+    @eq ( Ωit_994 = -> types.type_of new Set() ), 'set'
+    @eq ( Ωit_995 = -> types.type_of new Map() ), 'map'
     return null
 
   #-----------------------------------------------------------------------------------------------------------
@@ -2440,13 +2502,13 @@ OLD_intertype_tasks =
           d:      'integer'
           e:      'float'
       bar:        'foo'
-    @eq ( Ωit_984 = -> types.declarations.integer.kind  ), 'float'
-    @eq ( Ωit_985 = -> types.declarations.foo.type      ), 'foo'
-    @eq ( Ωit_986 = -> types.declarations.foo.kind      ), 'object'
-    @eq ( Ωit_987 = -> types.declarations.foo.role      ), 'usertype'
-    @eq ( Ωit_988 = -> types.declarations.bar.type      ), 'bar'
-    @eq ( Ωit_989 = -> types.declarations.bar.kind      ), 'foo'
-    @eq ( Ωit_990 = -> types.declarations.bar.role      ), 'usertype'
+    @eq ( Ωit_996 = -> types.declarations.integer.kind  ), 'float'
+    @eq ( Ωit_997 = -> types.declarations.foo.type      ), 'foo'
+    @eq ( Ωit_998 = -> types.declarations.foo.kind      ), 'object'
+    @eq ( Ωit_999 = -> types.declarations.foo.role      ), 'usertype'
+    @eq ( Ωit1000 = -> types.declarations.bar.type      ), 'bar'
+    @eq ( Ωit1001 = -> types.declarations.bar.kind      ), 'foo'
+    @eq ( Ωit1002 = -> types.declarations.bar.role      ), 'usertype'
     return null
 
   #=========================================================================================================
@@ -2457,36 +2519,36 @@ OLD_intertype_tasks =
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
       for type, declaration of t2.declarations
-        @eq ( Ωit_991 = -> declaration.type is type ), true
+        @eq ( Ωit1003 = -> declaration.type is type ), true
       return null
 
     #-------------------------------------------------------------------------------------------------------
     validate_methods: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq ( Ωit_992 = -> t2.validate.asyncfunction.name          ), 'validate.asyncfunction'
-      @eq ( Ωit_993 = -> t2.validate.optional.asyncfunction.name ), 'validate.optional.asyncfunction'
+      @eq ( Ωit1004 = -> t2.validate.asyncfunction.name          ), 'validate.asyncfunction'
+      @eq ( Ωit1005 = -> t2.validate.optional.asyncfunction.name ), 'validate.optional.asyncfunction'
       return null
 
     #-------------------------------------------------------------------------------------------------------
     isa_methods: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq ( Ωit_994 = -> t2.isa.asyncfunction.name               ), 'isa.asyncfunction'
-      @eq ( Ωit_995 = -> t2.isa.optional.asyncfunction.name      ), 'isa.optional.asyncfunction'
-      @eq ( Ωit_996 = -> t2.isa.null?.name                       ), 'isa.null'
-      @eq ( Ωit_997 = -> t2.isa.function?.name                   ), 'isa.function'
-      @eq ( Ωit_998 = -> t2.isa.boolean?.name                    ), 'isa.boolean'
-      @eq ( Ωit_999 = -> t2.isa.text?.name                       ), 'isa.text'
-      @eq ( Ωit1000 = -> t2.isa.asyncfunction?.name              ), 'isa.asyncfunction'
+      @eq ( Ωit1006 = -> t2.isa.asyncfunction.name               ), 'isa.asyncfunction'
+      @eq ( Ωit1007 = -> t2.isa.optional.asyncfunction.name      ), 'isa.optional.asyncfunction'
+      @eq ( Ωit1008 = -> t2.isa.null?.name                       ), 'isa.null'
+      @eq ( Ωit1009 = -> t2.isa.function?.name                   ), 'isa.function'
+      @eq ( Ωit1010 = -> t2.isa.boolean?.name                    ), 'isa.boolean'
+      @eq ( Ωit1011 = -> t2.isa.text?.name                       ), 'isa.text'
+      @eq ( Ωit1012 = -> t2.isa.asyncfunction?.name              ), 'isa.asyncfunction'
       return null
 
     #-------------------------------------------------------------------------------------------------------
     create_methods: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq ( Ωit1001 = -> t2.create.function.name               ), 'create.function'
-      @eq ( Ωit1002 = -> t2.create.float.name                  ), 'create.float'
+      @eq ( Ωit1013 = -> t2.create.function.name               ), 'create.function'
+      @eq ( Ωit1014 = -> t2.create.float.name                  ), 'create.float'
       return null
 
   #=========================================================================================================
@@ -2496,80 +2558,80 @@ OLD_intertype_tasks =
     floats: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq     ( Ωit1003 = -> t2.create.float()              ), 0
-      @eq     ( Ωit1004 = -> t2.create.float +0             ), 0
-      @eq     ( Ωit1005 = -> t2.create.float -0             ), 0
-      @eq     ( Ωit1006 = -> t2.create.float false          ), 0
-      @eq     ( Ωit1007 = -> t2.create.float true           ), 1
-      @eq     ( Ωit1008 = -> t2.create.float 12.34          ), 12.34
-      @eq     ( Ωit1009 = -> t2.create.float '12.34'        ), 12.34
-      @eq     ( Ωit1010 = -> t2.create.float +12.34         ), 12.34
-      @eq     ( Ωit1011 = -> t2.create.float '+12.34'       ), 12.34
-      @eq     ( Ωit1012 = -> t2.create.float -12.34         ), -12.34
-      @eq     ( Ωit1013 = -> t2.create.float '-12.34'       ), -12.34
-      @eq     ( Ωit1014 = -> t2.create.float null           ), 0
-      @eq     ( Ωit1015 = -> t2.create.float undefined      ), 0
-      @throws ( Ωit1016 = -> t2.create.float ''             ), /these arguments are not suitable for `create.float\(\)`: ''/
+      @eq     ( Ωit1015 = -> t2.create.float()              ), 0
+      @eq     ( Ωit1016 = -> t2.create.float +0             ), 0
+      @eq     ( Ωit1017 = -> t2.create.float -0             ), 0
+      @eq     ( Ωit1018 = -> t2.create.float false          ), 0
+      @eq     ( Ωit1019 = -> t2.create.float true           ), 1
+      @eq     ( Ωit1020 = -> t2.create.float 12.34          ), 12.34
+      @eq     ( Ωit1021 = -> t2.create.float '12.34'        ), 12.34
+      @eq     ( Ωit1022 = -> t2.create.float +12.34         ), 12.34
+      @eq     ( Ωit1023 = -> t2.create.float '+12.34'       ), 12.34
+      @eq     ( Ωit1024 = -> t2.create.float -12.34         ), -12.34
+      @eq     ( Ωit1025 = -> t2.create.float '-12.34'       ), -12.34
+      @eq     ( Ωit1026 = -> t2.create.float null           ), 0
+      @eq     ( Ωit1027 = -> t2.create.float undefined      ), 0
+      @throws ( Ωit1028 = -> t2.create.float ''             ), /these arguments are not suitable for `create.float\(\)`: ''/
       return null
 
     #-------------------------------------------------------------------------------------------------------
     integers: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq     ( Ωit1017 = -> t2.create.integer()              ), 0
-      @eq     ( Ωit1018 = -> t2.create.integer +0             ), 0
-      @eq     ( Ωit1019 = -> t2.create.integer -0             ), 0
-      @eq     ( Ωit1020 = -> t2.create.integer false          ), 0
-      @eq     ( Ωit1021 = -> t2.create.integer true           ), 1
-      @eq     ( Ωit1022 = -> t2.create.integer 12.34          ), 12
-      @eq     ( Ωit1023 = -> t2.create.integer '12'           ), 12
-      @eq     ( Ωit1024 = -> t2.create.integer +12            ), 12
-      @eq     ( Ωit1025 = -> t2.create.integer '+12'          ), 12
-      @eq     ( Ωit1026 = -> t2.create.integer -12            ), -12
-      @eq     ( Ωit1027 = -> t2.create.integer '-12'          ), -12
-      @eq     ( Ωit1028 = -> t2.create.integer null           ), 0
-      @eq     ( Ωit1029 = -> t2.create.integer undefined      ), 0
-      @throws ( Ωit1030 = -> t2.create.integer ''             ), /these arguments are not suitable for `create.integer\(\)`: ''/
+      @eq     ( Ωit1029 = -> t2.create.integer()              ), 0
+      @eq     ( Ωit1030 = -> t2.create.integer +0             ), 0
+      @eq     ( Ωit1031 = -> t2.create.integer -0             ), 0
+      @eq     ( Ωit1032 = -> t2.create.integer false          ), 0
+      @eq     ( Ωit1033 = -> t2.create.integer true           ), 1
+      @eq     ( Ωit1034 = -> t2.create.integer 12.34          ), 12
+      @eq     ( Ωit1035 = -> t2.create.integer '12'           ), 12
+      @eq     ( Ωit1036 = -> t2.create.integer +12            ), 12
+      @eq     ( Ωit1037 = -> t2.create.integer '+12'          ), 12
+      @eq     ( Ωit1038 = -> t2.create.integer -12            ), -12
+      @eq     ( Ωit1039 = -> t2.create.integer '-12'          ), -12
+      @eq     ( Ωit1040 = -> t2.create.integer null           ), 0
+      @eq     ( Ωit1041 = -> t2.create.integer undefined      ), 0
+      @throws ( Ωit1042 = -> t2.create.integer ''             ), /these arguments are not suitable for `create.integer\(\)`: ''/
       return null
 
     #-------------------------------------------------------------------------------------------------------
     cardinals: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq     ( Ωit1031 = -> t2.create.cardinal()              ), 0
-      @eq     ( Ωit1032 = -> t2.create.cardinal +0             ), +0
-      @eq     ( Ωit1033 = -> t2.create.cardinal -0             ), -0
-      @eq     ( Ωit1034 = -> t2.create.cardinal false          ), 0
-      @eq     ( Ωit1035 = -> t2.create.cardinal true           ), 1
-      @eq     ( Ωit1036 = -> t2.create.cardinal 12.34          ), 12
-      @eq     ( Ωit1037 = -> t2.create.cardinal '12'           ), 12
-      @eq     ( Ωit1038 = -> t2.create.cardinal +12            ), 12
-      @eq     ( Ωit1039 = -> t2.create.cardinal '+12'          ), 12
-      @throws ( Ωit1040 = -> t2.create.cardinal -12            ), /these arguments are not suitable for `create.cardinal\(\)`: -12/
-      @throws ( Ωit1041 = -> t2.create.cardinal '-12'          ), /these arguments are not suitable for `create.cardinal\(\)`: '-12'/
-      @eq     ( Ωit1042 = -> t2.create.cardinal null           ), 0
-      @eq     ( Ωit1043 = -> t2.create.cardinal undefined      ), 0
-      @throws ( Ωit1044 = -> t2.create.cardinal ''             ), /these arguments are not suitable for `create.cardinal\(\)`: ''/
+      @eq     ( Ωit1043 = -> t2.create.cardinal()              ), 0
+      @eq     ( Ωit1044 = -> t2.create.cardinal +0             ), +0
+      @eq     ( Ωit1045 = -> t2.create.cardinal -0             ), -0
+      @eq     ( Ωit1046 = -> t2.create.cardinal false          ), 0
+      @eq     ( Ωit1047 = -> t2.create.cardinal true           ), 1
+      @eq     ( Ωit1048 = -> t2.create.cardinal 12.34          ), 12
+      @eq     ( Ωit1049 = -> t2.create.cardinal '12'           ), 12
+      @eq     ( Ωit1050 = -> t2.create.cardinal +12            ), 12
+      @eq     ( Ωit1051 = -> t2.create.cardinal '+12'          ), 12
+      @throws ( Ωit1052 = -> t2.create.cardinal -12            ), /these arguments are not suitable for `create.cardinal\(\)`: -12/
+      @throws ( Ωit1053 = -> t2.create.cardinal '-12'          ), /these arguments are not suitable for `create.cardinal\(\)`: '-12'/
+      @eq     ( Ωit1054 = -> t2.create.cardinal null           ), 0
+      @eq     ( Ωit1055 = -> t2.create.cardinal undefined      ), 0
+      @throws ( Ωit1056 = -> t2.create.cardinal ''             ), /these arguments are not suitable for `create.cardinal\(\)`: ''/
       return null
 
     #-------------------------------------------------------------------------------------------------------
     texts: ->
       { Intertype, } = require '../../../apps/intertype'
       t2 = new Intertype()
-      @eq     ( Ωit1045 = -> t2.create.text()              ), ''
-      @eq     ( Ωit1046 = -> t2.create.text +0             ), '0'
-      @eq     ( Ωit1047 = -> t2.create.text -0             ), '-0'
-      @eq     ( Ωit1048 = -> t2.create.text false          ), 'false'
-      @eq     ( Ωit1049 = -> t2.create.text true           ), 'true'
-      @eq     ( Ωit1050 = -> t2.create.text 12.34          ), '12.34'
-      @eq     ( Ωit1051 = -> t2.create.text '12'           ), '12'
-      @eq     ( Ωit1052 = -> t2.create.text +12            ), '12'
-      @eq     ( Ωit1053 = -> t2.create.text '+12'          ), '+12'
-      @eq     ( Ωit1054 = -> t2.create.text -12            ), '-12'
-      @eq     ( Ωit1055 = -> t2.create.text '-12'          ), '-12'
-      @eq     ( Ωit1056 = -> t2.create.text null           ), ''
-      @eq     ( Ωit1057 = -> t2.create.text undefined      ), ''
-      @eq     ( Ωit1058 = -> t2.create.text ''             ), ''
+      @eq     ( Ωit1057 = -> t2.create.text()              ), ''
+      @eq     ( Ωit1058 = -> t2.create.text +0             ), '0'
+      @eq     ( Ωit1059 = -> t2.create.text -0             ), '-0'
+      @eq     ( Ωit1060 = -> t2.create.text false          ), 'false'
+      @eq     ( Ωit1061 = -> t2.create.text true           ), 'true'
+      @eq     ( Ωit1062 = -> t2.create.text 12.34          ), '12.34'
+      @eq     ( Ωit1063 = -> t2.create.text '12'           ), '12'
+      @eq     ( Ωit1064 = -> t2.create.text +12            ), '12'
+      @eq     ( Ωit1065 = -> t2.create.text '+12'          ), '+12'
+      @eq     ( Ωit1066 = -> t2.create.text -12            ), '-12'
+      @eq     ( Ωit1067 = -> t2.create.text '-12'          ), '-12'
+      @eq     ( Ωit1068 = -> t2.create.text null           ), ''
+      @eq     ( Ωit1069 = -> t2.create.text undefined      ), ''
+      @eq     ( Ωit1070 = -> t2.create.text ''             ), ''
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -2602,15 +2664,15 @@ OLD_intertype_tasks =
               debug 'Ω1006', "create.quantity.u( #{rpr x} )"
               return 'u'
         t2 = new Intertype declarations
-        @eq     ( Ωit1059 = -> t2.create.quantity()               ), { q: 0, u: 'u', }
-        @eq     ( Ωit1060 = -> has_been_called.create_quantity    ), 1
-        @eq     ( Ωit1061 = -> has_been_called.create_quantity_q  ), 1
-        @eq     ( Ωit1062 = -> has_been_called.create_quantity_u  ), 1
-        @eq     ( Ωit1063 = -> t2.create.quantity '12.5m'         ), { q: 12.5, u: 'm', }
-        @eq     ( Ωit1064 = -> t2.create.quantity.q()             ), 0
-        @eq     ( Ωit1065 = -> t2.create.quantity.u()             ), 'u'
-        @eq     ( Ωit1066 = -> t2.create[ 'quantity.q' ]()        ), 0
-        @eq     ( Ωit1067 = -> t2.create[ 'quantity.u' ]()        ), 'u'
+        @eq     ( Ωit1071 = -> t2.create.quantity()               ), { q: 0, u: 'u', }
+        @eq     ( Ωit1072 = -> has_been_called.create_quantity    ), 1
+        @eq     ( Ωit1073 = -> has_been_called.create_quantity_q  ), 1
+        @eq     ( Ωit1074 = -> has_been_called.create_quantity_u  ), 1
+        @eq     ( Ωit1075 = -> t2.create.quantity '12.5m'         ), { q: 12.5, u: 'm', }
+        @eq     ( Ωit1076 = -> t2.create.quantity.q()             ), 0
+        @eq     ( Ωit1077 = -> t2.create.quantity.u()             ), 'u'
+        @eq     ( Ωit1078 = -> t2.create[ 'quantity.q' ]()        ), 0
+        @eq     ( Ωit1079 = -> t2.create[ 'quantity.u' ]()        ), 'u'
         return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -2635,12 +2697,12 @@ OLD_intertype_tasks =
             create: ( x ) ->
               { q: 0, u: 'u', }
         t2 = new Intertype declarations
-        @eq     ( Ωit1068 = -> t2.create.quantity()               ), { q: 0, u: 'u', }
-        @eq     ( Ωit1069 = -> t2.create.quantity '12.5m'         ), { q: 12.5, u: 'm', }
-        @eq     ( Ωit1070 = -> t2.create.quantity.q()             ), 0
-        @eq     ( Ωit1071 = -> t2.create.quantity.u()             ), 'u'
-        @eq     ( Ωit1072 = -> t2.create[ 'quantity.q' ]()        ), 0
-        @eq     ( Ωit1073 = -> t2.create[ 'quantity.u' ]()        ), 'u'
+        @eq     ( Ωit1080 = -> t2.create.quantity()               ), { q: 0, u: 'u', }
+        @eq     ( Ωit1081 = -> t2.create.quantity '12.5m'         ), { q: 12.5, u: 'm', }
+        @eq     ( Ωit1082 = -> t2.create.quantity.q()             ), 0
+        @eq     ( Ωit1083 = -> t2.create.quantity.u()             ), 'u'
+        @eq     ( Ωit1084 = -> t2.create[ 'quantity.q' ]()        ), 0
+        @eq     ( Ωit1085 = -> t2.create[ 'quantity.u' ]()        ), 'u'
         return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -2660,8 +2722,8 @@ OLD_intertype_tasks =
                 test:     'integer'
                 create:   ( x ) -> parseInt x, 10
         t2 = new Intertype declarations
-        debug 'Ωit1074', t2.declarations[ 'literal.float'   ].create '123.456e4'
-        debug 'Ωit1075', t2.declarations[ 'literal.integer' ].create '123.456'
+        debug 'Ωit1086', t2.declarations[ 'literal.float'   ].create '123.456e4'
+        debug 'Ωit1087', t2.declarations[ 'literal.integer' ].create '123.456'
         return null
       #.....................................................................................................
       return null
@@ -2688,28 +2750,28 @@ OLD_intertype_tasks =
               { q: 0, u: 'u', x..., }
         #...................................................................................................
         t2 = new Intertype declarations
-        @eq     ( Ωit1076 = -> t2.create.float()                  ), 0
-        @eq     ( Ωit1077 = -> t2.create.float1()                 ), 0
-        @eq     ( Ωit1078 = -> t2.create.float2()                 ), 0
-        @eq     ( Ωit1079 = -> t2.create.float3()                 ), 0
-        @eq     ( Ωit1080 = -> t2.create.float4()                 ), 0
-        @eq     ( Ωit1081 = -> t2.create.quantity()               ), { q: 0, u: 'u', }
-        @eq     ( Ωit1082 = -> t2.create.quantity { q: 1, }       ), { q: 1, u: 'u', }
-        @eq     ( Ωit1083 = -> t2.create.quantity { u: 'm', }     ), { q: 0, u: 'm', }
-        @eq     ( Ωit1084 = -> has_been_called.create_quantity    ), 3
-        # @eq     ( Ωit1085 = -> t2.declarations.mass.kind          ), 'quantity'
-        # @eq     ( Ωit1086 = -> t2.create[ 'quantity.q' ]()        ), 0
-        # @eq     ( Ωit1087 = -> t2.create[ 'quantity.u' ]()        ), 'u'
+        @eq     ( Ωit1088 = -> t2.create.float()                  ), 0
+        @eq     ( Ωit1089 = -> t2.create.float1()                 ), 0
+        @eq     ( Ωit1090 = -> t2.create.float2()                 ), 0
+        @eq     ( Ωit1091 = -> t2.create.float3()                 ), 0
+        @eq     ( Ωit1092 = -> t2.create.float4()                 ), 0
+        @eq     ( Ωit1093 = -> t2.create.quantity()               ), { q: 0, u: 'u', }
+        @eq     ( Ωit1094 = -> t2.create.quantity { q: 1, }       ), { q: 1, u: 'u', }
+        @eq     ( Ωit1095 = -> t2.create.quantity { u: 'm', }     ), { q: 0, u: 'm', }
+        @eq     ( Ωit1096 = -> has_been_called.create_quantity    ), 3
+        # @eq     ( Ωit1097 = -> t2.declarations.mass.kind          ), 'quantity'
+        # @eq     ( Ωit1098 = -> t2.create[ 'quantity.q' ]()        ), 0
+        # @eq     ( Ωit1099 = -> t2.create[ 'quantity.u' ]()        ), 'u'
         # #...................................................................................................
-        # @eq     ( Ωit1088 = -> t2.create.mass()                   ), { q: 0, u: 'u', }
-        # @eq     ( Ωit1089 = -> t2.create[ 'foo.bar.baz' ]()       ), { q: 0, u: 'u', }
-        # @eq     ( Ωit1090 = -> t2.create.quantity.q()             ), 0
-        # @eq     ( Ωit1091 = -> t2.create.quantity.u()             ), 'u'
-        # @eq     ( Ωit1092 = -> t2.create.foo.bar.baz()            ), { q: 0, u: 'u', }
-        # debug 'Ωit1093', t2.create.float
-        # debug 'Ωit1094', t2.create.quantity
-        debug 'Ωit1095', has_been_called
-        debug 'Ωit1096', has_been_called.create_quantity
+        # @eq     ( Ωit1100 = -> t2.create.mass()                   ), { q: 0, u: 'u', }
+        # @eq     ( Ωit1101 = -> t2.create[ 'foo.bar.baz' ]()       ), { q: 0, u: 'u', }
+        # @eq     ( Ωit1102 = -> t2.create.quantity.q()             ), 0
+        # @eq     ( Ωit1103 = -> t2.create.quantity.u()             ), 'u'
+        # @eq     ( Ωit1104 = -> t2.create.foo.bar.baz()            ), { q: 0, u: 'u', }
+        # debug 'Ωit1105', t2.create.float
+        # debug 'Ωit1106', t2.create.quantity
+        debug 'Ωit1107', has_been_called
+        debug 'Ωit1108', has_been_called.create_quantity
         return null
       #.....................................................................................................
       return null
@@ -2718,20 +2780,20 @@ OLD_intertype_tasks =
     # posnaught_integers: ->
     #   { Intertype, } = require '../../../apps/intertype'
     #   t2 = new Intertype()
-    #   @eq     ( Ωit1097 = -> t2.create.posnaught.integer()              ), 0
-    #   @eq     ( Ωit1098 = -> t2.create.posnaught.integer +0             ), 0
-    #   @eq     ( Ωit1099 = -> t2.create.posnaught.integer -0             ), 0
-    #   @eq     ( Ωit1100 = -> t2.create.posnaught.integer false          ), 0
-    #   @eq     ( Ωit1101 = -> t2.create.posnaught.integer true           ), 1
-    #   @eq     ( Ωit1102 = -> t2.create.posnaught.integer 12.34          ), 12
-    #   @eq     ( Ωit1103 = -> t2.create.posnaught.integer '12'           ), 12
-    #   @eq     ( Ωit1104 = -> t2.create.posnaught.integer +12            ), 12
-    #   @eq     ( Ωit1105 = -> t2.create.posnaught.integer '+12'          ), 12
-    #   @eq     ( Ωit1106 = -> t2.create.posnaught.integer -12            ), -12
-    #   @eq     ( Ωit1107 = -> t2.create.posnaught.integer '-12'          ), -12
-    #   @eq     ( Ωit1108 = -> t2.create.posnaught.integer null           ), 0
-    #   @eq     ( Ωit1109 = -> t2.create.posnaught.integer undefined      ), 0
-    #   @throws ( Ωit1110 = -> t2.create.posnaught.integer ''             ), /these arguments are not suitable for `create.posnaught.integer\(\)`: \[ '' \]/
+    #   @eq     ( Ωit1109 = -> t2.create.posnaught.integer()              ), 0
+    #   @eq     ( Ωit1110 = -> t2.create.posnaught.integer +0             ), 0
+    #   @eq     ( Ωit1111 = -> t2.create.posnaught.integer -0             ), 0
+    #   @eq     ( Ωit1112 = -> t2.create.posnaught.integer false          ), 0
+    #   @eq     ( Ωit1113 = -> t2.create.posnaught.integer true           ), 1
+    #   @eq     ( Ωit1114 = -> t2.create.posnaught.integer 12.34          ), 12
+    #   @eq     ( Ωit1115 = -> t2.create.posnaught.integer '12'           ), 12
+    #   @eq     ( Ωit1116 = -> t2.create.posnaught.integer +12            ), 12
+    #   @eq     ( Ωit1117 = -> t2.create.posnaught.integer '+12'          ), 12
+    #   @eq     ( Ωit1118 = -> t2.create.posnaught.integer -12            ), -12
+    #   @eq     ( Ωit1119 = -> t2.create.posnaught.integer '-12'          ), -12
+    #   @eq     ( Ωit1120 = -> t2.create.posnaught.integer null           ), 0
+    #   @eq     ( Ωit1121 = -> t2.create.posnaught.integer undefined      ), 0
+    #   @throws ( Ωit1122 = -> t2.create.posnaught.integer ''             ), /these arguments are not suitable for `create.posnaught.integer\(\)`: \[ '' \]/
     #   return null
 
   Regexes:
@@ -2883,7 +2945,7 @@ OLD_intertype_tasks =
 #     try
 #       types.create.mass()
 #     catch error
-#       debug 'Ωit1111', format_error_stack error.stack
+#       debug 'Ωit1123', format_error_stack error.stack
 #     #.......................................................................................................
 #     return null
 
@@ -2909,7 +2971,7 @@ OLD_intertype_tasks =
 #     try
 #       @eq ( Ω1039 = -> types.create.mass() ), { q: 0, u: 'u', }
 #     catch error
-#       debug 'Ωit1112', format_error_stack error.stack
+#       debug 'Ωit1124', format_error_stack error.stack
 #     #.......................................................................................................
 #     return null
 
@@ -2941,7 +3003,9 @@ if module is require.main then await do =>
   # await ( new Test { throw_on_error: true, } ).async_test { tasks: @tasks, }
   # await ( new Test { throw_on_error: true, } ).async_test { can_use_values_of_unknown_type: @tasks.can_use_values_of_unknown_type, }
   # demo_1()
-  # ( new Test { throw_on_error: true, } ).test @intertype_tasks
+  # ( new Test { throw_on_error: false, } ).test @intertype_tasks
+  ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
   # ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }
-  ( new Test { throw_on_error: false, } ).test { clone_fields_and_template: @intertype_tasks.create.clone_fields_and_template, }
+  # ( new Test { throw_on_error: false, } ).test { clone_fields_and_template: @intertype_tasks.create.clone_fields_and_template, }
+  # ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }
 
