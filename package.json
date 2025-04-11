@@ -36,6 +36,7 @@
     "intertype-201.1.0": "npm:intertype@201.1.0",
     "intertype-202.0.0": "npm:intertype@202.0.0",
     "intertype-203.0.0": "npm:intertype@203.0.0",
+    "lodash": "^4.17.21",
     "mock-stdin": "^1.0.0",
     "path-type": "^6.0.0",
     "regex": "^2.1.0",

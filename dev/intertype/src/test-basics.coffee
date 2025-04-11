@@ -828,6 +828,18 @@ sample_declarations =
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    recursive_merge: ->
+      { $isa
+        Intertype
+        Type
+        Typespace
+        types           } = require '../../../apps/intertype'
+      { props: {
+          nameit } }      = require '../../../apps/intertype/node_modules/webguy'
+      #.....................................................................................................
+      return null
+
     # #-------------------------------------------------------------------------------------------------------
     # create: ->
     #   { Intertype
@@ -3003,8 +3015,8 @@ if module is require.main then await do =>
   # await ( new Test { throw_on_error: true, } ).async_test { tasks: @tasks, }
   # await ( new Test { throw_on_error: true, } ).async_test { can_use_values_of_unknown_type: @tasks.can_use_values_of_unknown_type, }
   # demo_1()
-  # ( new Test { throw_on_error: false, } ).test @intertype_tasks
-  ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
+  ( new Test { throw_on_error: false, } ).test @intertype_tasks
+  # ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
   # ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }
   # ( new Test { throw_on_error: false, } ).test { clone_fields_and_template: @intertype_tasks.create.clone_fields_and_template, }
   # ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }

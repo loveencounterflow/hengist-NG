@@ -86,6 +86,9 @@ importers:
       intertype-203.0.0:
         specifier: npm:intertype@203.0.0
         version: intertype@203.0.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       mock-stdin:
         specifier: ^1.0.0
         version: 1.0.0
@@ -474,6 +477,9 @@ packages:
 
   letsfreezethat@3.1.0:
     resolution: {integrity: sha512-jJ1nvvQi6unW0WifjNPMIb64Byom0EXzSKWFYA++EpyjK3qv1J2pqeSoEJ61tGJoNG0GoNjPoeLYhxW16riZaA==}
+
+  lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   lru-cache@11.0.0:
     resolution: {integrity: sha512-Qv32eSV1RSCfhY3fpPE2GNZ8jgM9X7rdAfemLWqTUxwiyIC4jJ6Sy0fZ8H+oLWevO6i4/bizg7c8d8i6bxrzbA==}
@@ -1184,6 +1190,8 @@ snapshots:
       intertype: 7.6.5
 
   letsfreezethat@3.1.0: {}
+
+  lodash@4.17.21: {}
 
   lru-cache@11.0.0: {}
 
