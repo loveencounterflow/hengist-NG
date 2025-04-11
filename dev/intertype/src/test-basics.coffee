@@ -81,8 +81,8 @@ get_typespaces = ->
     # circle2:  'circle3'
     # circle3:  'circle1'
     #.......................................................................................................
-    weird:    'strange' # declares another name for `odd`
     strange:  'odd'     # declares another name for `odd`
+    weird:    'strange' # declares another name for `odd`
     abnormal: 'weird'   # declares another name for `odd`
     #.......................................................................................................
     quantity_refs:
@@ -154,14 +154,14 @@ get_typespaces = ->
         name:       'name'
   #.........................................................................................................
   flatly_1 = new Typespace
-    evenly:       'flat'
     flat:         ( x, t ) -> t.isa mvp.even, x
+    evenly:       'flat'
     plain:        'evenly'
     # foo:          'bar'
   #.........................................................................................................
   flatly_2 = new Typespace
-    evenly:       'flat'
     flat:         mvp.even
+    evenly:       'flat'
     plain:        'evenly'
   #.........................................................................................................
   cr1 = new Typespace

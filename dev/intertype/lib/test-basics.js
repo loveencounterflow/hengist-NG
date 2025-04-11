@@ -132,8 +132,8 @@
       // circle2:  'circle3'
       // circle3:  'circle1'
       //.......................................................................................................
-      weird: 'strange', // declares another name for `odd`
       strange: 'odd', // declares another name for `odd`
+      weird: 'strange', // declares another name for `odd`
       abnormal: 'weird', // declares another name for `odd`
       //.......................................................................................................
       quantity_refs: {
@@ -237,17 +237,17 @@
     });
     //.........................................................................................................
     flatly_1 = new Typespace({
-      evenly: 'flat',
       flat: function(x, t) {
         return t.isa(mvp.even, x);
       },
+      evenly: 'flat',
       plain: 'evenly'
     });
     // foo:          'bar'
     //.........................................................................................................
     flatly_2 = new Typespace({
-      evenly: 'flat',
       flat: mvp.even,
+      evenly: 'flat',
       plain: 'evenly'
     });
     //.........................................................................................................
