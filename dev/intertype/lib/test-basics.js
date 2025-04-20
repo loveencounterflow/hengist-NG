@@ -23,7 +23,7 @@
 
   //===========================================================================================================
   get_typespaces = function() {
-    var Typespace, cr1, crt, flatly_1, flatly_2, mvp, ts1;
+    var Typespace, cr1, flatly_1, flatly_2, mvp, ts1;
     ({Typespace} = require('../../../apps/intertype'));
     //.........................................................................................................
     mvp = new Typespace({
@@ -63,13 +63,13 @@
       },
       //.......................................................................................................
       integer: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return Number.isInteger(x);
         },
         foo: 4
       },
       odd: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return (t.isa(this.$typespace.integer, x)) && (modulo(x, 2) !== 0);
         }
       },
@@ -78,10 +78,10 @@
         return (t.isa(this.$typespace.integer, x)) && (modulo(x, 2) === 0);
       },
       float: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return Number.isFinite(x);
         },
-        template: 0
+        $template: 0
       },
       bigint: function(x, t) {
         return typeof x === 'bigint';
@@ -137,48 +137,44 @@
       abnormal: 'weird', // declares another name for `odd`
       //.......................................................................................................
       quantity_refs: {
-        fields: {
-          // each field becomes a `Type` instance; strings may refer to names in the same typespace
-          q: 'float',
-          u: 'nonempty_text'
+        $kind: '$record',
+        q: {
+          $isa: 'float',
+          $template: 0
         },
-        template: {
-          q: 0,
-          u: 'u'
+        u: {
+          $isa: 'nonempty_text',
+          $template: 'u'
         }
       },
       //.......................................................................................................
       quantity_funs: {
-        fields: {
-          q: function(x, t) {
+        q: {
+          $isa: function(x, t) {
             return t.isa(mvp.float, x);
           },
-          u: function(x, t) {
-            return t.isa(mvp.nonempty_text, x);
-          }
+          $template: 0
         },
-        template: {
-          q: 0,
-          u: 'u'
+        u: {
+          $isa: function(x, t) {
+            return t.isa(mvp.nonempty_text, x);
+          },
+          $template: 'u'
         }
       },
       //.......................................................................................................
-      address: {
-        fields: {
-          postcode: 'nonempty_text',
-          city: 'nonempty_text'
-        }
+      street_address: {
+        $kind: '$record',
+        postcode: 'nonempty_text',
+        city: 'nonempty_text'
       },
       //.......................................................................................................
       employee: {
-        fields: {
-          address: 'address',
-          name: {
-            fields: {
-              firstname: 'nonempty_text',
-              lastname: 'nonempty_text'
-            }
-          }
+        $kind: '$record',
+        address: 'street_address',
+        name: {
+          firstname: 'nonempty_text',
+          lastname: 'nonempty_text'
         }
       }
     });
@@ -186,53 +182,45 @@
     ts1 = new Typespace({
       //.......................................................................................................
       quantity_typs: {
-        fields: {
-          q: mvp.float,
-          u: mvp.nonempty_text
+        q: {
+          $isa: mvp.float,
+          $template: 0
         },
-        template: {
-          q: 0,
-          u: 'u'
+        u: {
+          $isa: mvp.nonempty_text,
+          $template: 'u'
         }
       },
       //.......................................................................................................
       quantity_typs_float_fb: {
-        fields: {
-          q: mvp.float,
-          u: mvp.nonempty_text
-        },
-        template: {
-          u: 'u'
+        q: mvp.float,
+        u: {
+          $isa: mvp.nonempty_text,
+          $template: 'u'
         }
       },
       //.......................................................................................................
       quantity_typs_float_fb: {
-        fields: {
-          q: mvp.float,
-          u: {
-            isa: mvp.nonempty_text,
-            template: 'u'
-          }
+        q: mvp.float,
+        u: {
+          $isa: mvp.nonempty_text,
+          $template: 'u'
         }
       },
       //.......................................................................................................
       float_one: {
-        isa: mvp.float,
-        template: 1
+        $isa: mvp.float,
+        $template: 1
       },
       //.......................................................................................................
       name: {
-        fields: {
-          firstname: mvp.nonempty_text,
-          lastname: mvp.nonempty_text
-        }
+        firstname: mvp.nonempty_text,
+        lastname: mvp.nonempty_text
       },
       //.......................................................................................................
       person: {
-        fields: {
-          address: mvp.address,
-          name: 'name'
-        }
+        address: mvp.address,
+        name: 'name'
       }
     });
     //.........................................................................................................
@@ -253,29 +241,29 @@
     //.........................................................................................................
     cr1 = new Typespace({
       int_no_create: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return Number.isInteger(x);
         }
       },
       int_create_zero: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return Number.isInteger(x);
         },
-        template: 0
+        $template: 0
       },
       int_create_zero_fn: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return Number.isInteger(x);
         },
-        template: function() {
+        $template: function() {
           return 0;
         }
       },
       int_create_fn: {
-        isa: function(x, t) {
+        $isa: function(x, t) {
           return Number.isInteger(x);
         },
-        create: function([numeric, ...P], t) {
+        $create: function([numeric, ...P], t) {
           if (P.length !== 0) {
             throw new Error(`Ωit___1 create method for ${this.$typename} doesn't accept more than one argument`);
           }
@@ -293,13 +281,12 @@
       }
     });
     //.........................................................................................................
-    crt = new Typespace({
-      cNfNtN: {}
-    });
-    // cNfNtV:   { template: {}, }
+    // crt = new Typespace
+    //   cNfNtN:   {}
+    // cNfNtV:   { $template:{}, }
     // cNfNAPtV: { fields: 89, }
     //.........................................................................................................
-    return {mvp, ts1, flatly_1, flatly_2, crt, cr1};
+    return {mvp, ts1, flatly_1, flatly_2, cr1};
   };
 
   //===========================================================================================================
@@ -403,7 +390,7 @@
             var ts1;
             return ts1 = new Typespace({
               wholenumber: {
-                isa: 'integer',
+                $isa: 'integer',
                 fields: {}
               },
               integer: function(x, t) {

@@ -45,15 +45,15 @@ get_typespaces = ->
     nan:            ( x, t ) -> Number.isNaN x
     #.......................................................................................................
     integer:
-      isa:    ( x, t ) -> Number.isInteger x
+      $isa:   ( x, t ) -> Number.isInteger x
       foo:    4
     odd:
-      isa:    ( x, t ) -> ( t.isa @$typespace.integer, x ) and ( x %% 2 isnt 0 )
+      $isa:   ( x, t ) -> ( t.isa @$typespace.integer, x ) and ( x %% 2 isnt 0 )
     # short form just assigns either a test method or a type name:
     even:           ( x, t ) -> ( t.isa @$typespace.integer, x ) and ( x %% 2 is 0 )
     float:
-      isa:            ( x, t ) -> Number.isFinite x
-      template:       0
+      $isa:           ( x, t ) -> Number.isFinite x
+      $template:      0
     bigint:         ( x, t ) -> typeof x is 'bigint'
     text:           ( x, t ) -> typeof x is 'string'
     empty_text:     ( x, t ) -> x is ''
@@ -86,72 +86,67 @@ get_typespaces = ->
     abnormal: 'weird'   # declares another name for `odd`
     #.......................................................................................................
     quantity_refs:
-      fields:
-        # each field becomes a `Type` instance; strings may refer to names in the same typespace
-        q:    'float'
-        u:    'nonempty_text'
-      template:
-        q:    0
-        u:    'u'
+      $kind:  '$record'
+      q:
+        $isa:       'float'
+        $template:  0
+      u:
+        $isa:       'nonempty_text'
+        $template:  'u'
     #.......................................................................................................
     quantity_funs:
-      fields:
-        q:    ( x, t ) -> t.isa mvp.float,          x
-        u:    ( x, t ) -> t.isa mvp.nonempty_text,  x
-      template:
-        q:    0
-        u:    'u'
+      q:
+        $isa:       ( x, t ) -> t.isa mvp.float,          x
+        $template:  0
+      u:
+        $isa:       ( x, t ) -> t.isa mvp.nonempty_text,  x
+        $template:  'u'
     #.......................................................................................................
-    address:
-      fields:
-        postcode:   'nonempty_text'
-        city:       'nonempty_text'
+    street_address:
+      $kind:      '$record'
+      postcode:   'nonempty_text'
+      city:       'nonempty_text'
     #.......................................................................................................
     employee:
-      fields:
-        address:    'address'
-        name:
-          fields:
-            firstname:  'nonempty_text'
-            lastname:   'nonempty_text'
+      $kind:      '$record'
+      address:    'street_address'
+      name:
+        firstname:  'nonempty_text'
+        lastname:   'nonempty_text'
   #.........................................................................................................
   ts1 = new Typespace
     #.......................................................................................................
     quantity_typs:
-      fields:
-        q:    mvp.float
-        u:    mvp.nonempty_text
-      template:
-        q:    0
-        u:    'u'
+      q:
+        $isa:       mvp.float
+        $template:  0
+      u:
+        $isa:       mvp.nonempty_text
+        $template:  'u'
     #.......................................................................................................
     quantity_typs_float_fb:
-      fields:
-        q:    mvp.float
-        u:    mvp.nonempty_text
-      template:
-        u:    'u'
+      q:          mvp.float
+      u:
+        $isa:       mvp.nonempty_text
+        $template:  'u'
     #.......................................................................................................
     quantity_typs_float_fb:
-      fields:
-        q:    mvp.float
-        u:
-          isa:      mvp.nonempty_text
-          template: 'u'
+      q:            mvp.float
+      u:
+        $isa:       mvp.nonempty_text
+        $template:  'u'
     #.......................................................................................................
     float_one:
-      isa:          mvp.float
-      template:     1
+      $isa:         mvp.float
+      $template:    1
     #.......................................................................................................
     name:
-      fields:
-        firstname:  mvp.nonempty_text
-        lastname:   mvp.nonempty_text
+      firstname:  mvp.nonempty_text
+      lastname:   mvp.nonempty_text
     #.......................................................................................................
     person:
-      fields:
-        address:    mvp.address
-        name:       'name'
+      address:    mvp.address
+      name:       'name'
   #.........................................................................................................
   flatly_1 = new Typespace
     flat:         ( x, t ) -> t.isa mvp.even, x
@@ -166,16 +161,16 @@ get_typespaces = ->
   #.........................................................................................................
   cr1 = new Typespace
     int_no_create:
-      isa:      ( x, t ) -> Number.isInteger x
+      $isa:           ( x, t ) -> Number.isInteger x
     int_create_zero:
-      isa:      ( x, t ) -> Number.isInteger x
-      template: 0
+      $isa:           ( x, t ) -> Number.isInteger x
+      $template:0
     int_create_zero_fn:
-      isa:      ( x, t ) -> Number.isInteger x
-      template: -> 0
+      $isa:           ( x, t ) -> Number.isInteger x
+      $template:      -> 0
     int_create_fn:
-      isa:      ( x, t ) -> Number.isInteger x
-      create:   ( [ numeric, P..., ], t ) ->
+      $isa:           ( x, t ) -> Number.isInteger x
+      $create:        ( [ numeric, P..., ], t ) ->
         unless P.length is 0
           throw new Error "Ωit___1 create method for #{@$typename} doesn't accept more than one argument"
         return 0 unless numeric?
@@ -183,12 +178,12 @@ get_typespaces = ->
         return parseInt numeric if ( t.isa mvp.text, numeric ) and ( /^(0|[1-9][0-9]*)$/.test numeric )
         throw new Error "Ωit___2 unable to create a #{@$typename} from value #{rpr numeric}"
   #.........................................................................................................
-  crt = new Typespace
-    cNfNtN:   {}
-    # cNfNtV:   { template: {}, }
+  # crt = new Typespace
+  #   cNfNtN:   {}
+    # cNfNtV:   { $template:{}, }
     # cNfNAPtV: { fields: 89, }
   #.........................................................................................................
-  return { mvp, ts1, flatly_1, flatly_2, crt, cr1, }
+  return { mvp, ts1, flatly_1, flatly_2, cr1, }
 
 
 #===========================================================================================================
@@ -246,7 +241,7 @@ sample_declarations =
         create_typespace = ->
           ts1 = new Typespace
             wholenumber:
-              isa:                'integer'
+              $isa:               'integer'
               fields:             {}
             integer:            ( x, t ) -> Number.isInteger x
         @throws ( Ωit___7 = -> create_typespace() ), /declaration for type 'wholenumber' contains forward reference to type 'integer'/
