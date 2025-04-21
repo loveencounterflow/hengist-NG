@@ -1852,6 +1852,213 @@
         //.....................................................................................................
         return null;
       }
+    },
+    //---------------------------------------------------------------------------------------------------------
+    type_instantiation: {
+      //-------------------------------------------------------------------------------------------------------
+      $kind_and_members: function() {
+        var Intertype, Type, Typespace, keys, show_ts, types;
+        ({Intertype, Type, Typespace, types} = require('../../../apps/intertype'));
+        //.....................................................................................................
+        keys = ['$typespace', '$members', '$fields', '$variants', '$member_names', '$field_names', '$variant_names', '$has_members', '$has_fields', '$has_variants', '$kind', '$isa'];
+        //.....................................................................................................
+        show_ts = function(ts, typename) {
+          var i, key, len;
+          debug('Ωit_188', "t:".padEnd(20), ts[typename]);
+          for (i = 0, len = keys.length; i < len; i++) {
+            key = keys[i];
+            debug('Ωit_189', `t.${key}:`.padEnd(20), ts[typename][key]);
+          }
+          return null;
+        };
+        (() => {          //.....................................................................................................
+          var declaration, ts, Ωit_190, Ωit_191, Ωit_192, Ωit_193, Ωit_194, Ωit_195, Ωit_196;
+          declaration = {
+            t: function(x) {
+              return true;
+            }
+          };
+          ts = new Typespace(declaration);
+          this.eq((Ωit_190 = function() {
+            return ts.t.$kind;
+          }), '$unspecified');
+          this.eq((Ωit_191 = function() {
+            return ts.t.$members;
+          }), {});
+          this.eq((Ωit_192 = function() {
+            return ts.t.$fields;
+          }), {});
+          this.eq((Ωit_193 = function() {
+            return ts.t.$variants;
+          }), {});
+          this.eq((Ωit_194 = function() {
+            return ts.t.$member_names;
+          }), []);
+          this.eq((Ωit_195 = function() {
+            return ts.t.$field_names;
+          }), []);
+          return this.eq((Ωit_196 = function() {
+            return ts.t.$variant_names;
+          }), []);
+        })();
+        (() => {          // show_ts ts, 't'
+          //.....................................................................................................
+          var declaration, ts, Ωit_197, Ωit_198, Ωit_199, Ωit_200, Ωit_201, Ωit_202;
+          declaration = {
+            t: [1, 3, 5]
+          };
+          ts = new Typespace(declaration);
+          this.eq((Ωit_197 = function() {
+            return ts.t.$kind;
+          }), '$enumeration');
+          this.eq((Ωit_198 = function() {
+            return ts.t.$fields;
+          }), {});
+          this.eq((Ωit_199 = function() {
+            return ts.t.$variants;
+          }), {});
+          this.eq((Ωit_200 = function() {
+            return ts.t.$member_names;
+          }), []);
+          this.eq((Ωit_201 = function() {
+            return ts.t.$field_names;
+          }), []);
+          return this.eq((Ωit_202 = function() {
+            return ts.t.$variant_names;
+          }), []);
+        })();
+        (() => {          // show_ts ts, 't'
+          //.....................................................................................................
+          var declaration, Ωit_203;
+          declaration = {
+            t: {
+              $isa: [1, 3, 5],
+              $kind: '$record'
+            }
+          };
+          return this.throws((Ωit_203 = function() {
+            return new Typespace(declaration);
+          }), /expected \$kind to be '\$enumeration', got '\$record'/);
+        })();
+        (() => {          //.....................................................................................................
+          var declaration, ts, Ωit_204, Ωit_205, Ωit_206, Ωit_207, Ωit_208, Ωit_209, Ωit_210, Ωit_211, Ωit_212;
+          declaration = {
+            t: {
+              field1: function(x) {},
+              field2: function(x) {}
+            }
+          };
+          ts = new Typespace(declaration);
+          this.eq((Ωit_204 = function() {
+            return ts.t.$kind;
+          }), '$record');
+          this.eq((Ωit_205 = function() {
+            return ts.t.$has_members;
+          }), true);
+          this.eq((Ωit_206 = function() {
+            return ts.t.$has_fields;
+          }), true);
+          this.eq((Ωit_207 = function() {
+            return ts.t.$has_variants;
+          }), false);
+          this.eq((Ωit_208 = function() {
+            return Object.keys(ts.t.$fields);
+          }), ['field1', 'field2']);
+          this.eq((Ωit_209 = function() {
+            return ts.t.$variants;
+          }), {});
+          this.eq((Ωit_210 = function() {
+            return ts.t.$member_names;
+          }), ['field1', 'field2']);
+          this.eq((Ωit_211 = function() {
+            return ts.t.$field_names;
+          }), ['field1', 'field2']);
+          return this.eq((Ωit_212 = function() {
+            return ts.t.$variant_names;
+          }), []);
+        })();
+        (() => {          // show_ts ts, 't'
+          //.....................................................................................................
+          var declaration, ts, Ωit_213, Ωit_214, Ωit_215, Ωit_216, Ωit_217, Ωit_218, Ωit_219, Ωit_220, Ωit_221;
+          declaration = {
+            t: {
+              field1: function(x) {},
+              field2: function(x) {},
+              $kind: '$record'
+            }
+          };
+          ts = new Typespace(declaration);
+          this.eq((Ωit_213 = function() {
+            return ts.t.$kind;
+          }), '$record');
+          this.eq((Ωit_214 = function() {
+            return ts.t.$has_members;
+          }), true);
+          this.eq((Ωit_215 = function() {
+            return ts.t.$has_fields;
+          }), true);
+          this.eq((Ωit_216 = function() {
+            return ts.t.$has_variants;
+          }), false);
+          this.eq((Ωit_217 = function() {
+            return Object.keys(ts.t.$fields);
+          }), ['field1', 'field2']);
+          this.eq((Ωit_218 = function() {
+            return ts.t.$variants;
+          }), {});
+          this.eq((Ωit_219 = function() {
+            return ts.t.$member_names;
+          }), ['field1', 'field2']);
+          this.eq((Ωit_220 = function() {
+            return ts.t.$field_names;
+          }), ['field1', 'field2']);
+          return this.eq((Ωit_221 = function() {
+            return ts.t.$variant_names;
+          }), []);
+        })();
+        (() => {          // show_ts ts, 't'
+          //.....................................................................................................
+          var declaration, ts, Ωit_222, Ωit_223, Ωit_224, Ωit_225, Ωit_226, Ωit_227, Ωit_228, Ωit_229, Ωit_230;
+          declaration = {
+            t: {
+              $kind: '$variant',
+              t1: function(x) {},
+              t2: function(x) {}
+            }
+          };
+          ts = new Typespace(declaration);
+          this.eq((Ωit_222 = function() {
+            return ts.t.$kind;
+          }), '$variant');
+          this.eq((Ωit_223 = function() {
+            return ts.t.$has_members;
+          }), true);
+          this.eq((Ωit_224 = function() {
+            return ts.t.$has_fields;
+          }), false);
+          this.eq((Ωit_225 = function() {
+            return ts.t.$has_variants;
+          }), true);
+          this.eq((Ωit_226 = function() {
+            return Object.keys(ts.t.$variants);
+          }), ['t1', 't2']);
+          this.eq((Ωit_227 = function() {
+            return ts.t.$fields;
+          }), {});
+          this.eq((Ωit_228 = function() {
+            return ts.t.$member_names;
+          }), ['t1', 't2']);
+          this.eq((Ωit_229 = function() {
+            return ts.t.$variant_names;
+          }), ['t1', 't2']);
+          this.eq((Ωit_230 = function() {
+            return ts.t.$field_names;
+          }), []);
+          return show_ts(ts, 't');
+        })();
+        //.....................................................................................................
+        return null;
+      }
     }
   };
 
@@ -1878,9 +2085,12 @@
       // await ( new Test { throw_on_error: true, } ).async_test { tasks: @tasks, }
       // await ( new Test { throw_on_error: true, } ).async_test { can_use_values_of_unknown_type: @tasks.can_use_values_of_unknown_type, }
       // demo_1()
+      // ( new Test { throw_on_error: false, } ).test @intertype_tasks
       return (new Test({
-        throw_on_error: false
-      })).test(this.intertype_tasks);
+        throw_on_error: true
+      })).test({
+        type_instantiation: this.intertype_tasks.type_instantiation
+      });
     })();
   }
 

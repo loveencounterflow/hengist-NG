@@ -766,6 +766,124 @@ sample_declarations =
       #.....................................................................................................
       return null
 
+  #---------------------------------------------------------------------------------------------------------
+  type_instantiation:
+
+    #-------------------------------------------------------------------------------------------------------
+    $kind_and_members: ->
+      { Intertype
+        Type
+        Typespace
+        types           } = require '../../../apps/intertype'
+      #.....................................................................................................
+      keys = [
+        '$typespace',
+        '$members',
+        '$fields',
+        '$variants',
+        '$member_names',
+        '$field_names',
+        '$variant_names',
+        '$has_members',
+        '$has_fields',
+        '$has_variants',
+        '$kind',
+        '$isa',
+        ]
+      #.....................................................................................................
+      show_ts = ( ts, typename ) ->
+        debug 'Ωit_188', ( "t:".padEnd 20 ), ts[ typename ]
+        for key in keys
+          debug 'Ωit_189', ( "t.#{key}:".padEnd 20 ), ts[ typename ][ key ]
+        return null
+      #.....................................................................................................
+      do =>
+        declaration =
+          t: ( x ) -> true
+        ts          = new Typespace declaration
+        @eq ( Ωit_190 = -> ts.t.$kind           ), '$unspecified'
+        @eq ( Ωit_191 = -> ts.t.$members        ), {}
+        @eq ( Ωit_192 = -> ts.t.$fields         ), {}
+        @eq ( Ωit_193 = -> ts.t.$variants       ), {}
+        @eq ( Ωit_194 = -> ts.t.$member_names   ), []
+        @eq ( Ωit_195 = -> ts.t.$field_names    ), []
+        @eq ( Ωit_196 = -> ts.t.$variant_names  ), []
+        # show_ts ts, 't'
+      #.....................................................................................................
+      do =>
+        declaration =
+          t: [ 1, 3, 5, ]
+        ts          = new Typespace declaration
+        @eq ( Ωit_197 = -> ts.t.$kind           ), '$enumeration'
+        @eq ( Ωit_198 = -> ts.t.$fields         ), {}
+        @eq ( Ωit_199 = -> ts.t.$variants       ), {}
+        @eq ( Ωit_200 = -> ts.t.$member_names   ), []
+        @eq ( Ωit_201 = -> ts.t.$field_names    ), []
+        @eq ( Ωit_202 = -> ts.t.$variant_names  ), []
+        # show_ts ts, 't'
+      #.....................................................................................................
+      do =>
+        declaration =
+          t:
+            $isa:   [ 1, 3, 5, ]
+            $kind:  '$record'
+        @throws ( Ωit_203 = -> new Typespace declaration ), /expected \$kind to be '\$enumeration', got '\$record'/
+      #.....................................................................................................
+      do =>
+        declaration =
+          t:
+            field1:   ( x ) ->
+            field2:   ( x ) ->
+        ts          = new Typespace declaration
+        @eq ( Ωit_204 = -> ts.t.$kind           ), '$record'
+        @eq ( Ωit_205 = -> ts.t.$has_members    ), true
+        @eq ( Ωit_206 = -> ts.t.$has_fields     ), true
+        @eq ( Ωit_207 = -> ts.t.$has_variants   ), false
+        @eq ( Ωit_208 = -> Object.keys ts.t.$fields ), [ 'field1', 'field2', ]
+        @eq ( Ωit_209 = -> ts.t.$variants       ), {}
+        @eq ( Ωit_210 = -> ts.t.$member_names   ), [ 'field1', 'field2', ]
+        @eq ( Ωit_211 = -> ts.t.$field_names    ), [ 'field1', 'field2', ]
+        @eq ( Ωit_212 = -> ts.t.$variant_names  ), []
+        # show_ts ts, 't'
+      #.....................................................................................................
+      do =>
+        declaration =
+          t:
+            field1:   ( x ) ->
+            field2:   ( x ) ->
+            $kind:    '$record'
+        ts          = new Typespace declaration
+        @eq ( Ωit_213 = -> ts.t.$kind               ), '$record'
+        @eq ( Ωit_214 = -> ts.t.$has_members        ), true
+        @eq ( Ωit_215 = -> ts.t.$has_fields         ), true
+        @eq ( Ωit_216 = -> ts.t.$has_variants       ), false
+        @eq ( Ωit_217 = -> Object.keys ts.t.$fields ), [ 'field1', 'field2', ]
+        @eq ( Ωit_218 = -> ts.t.$variants           ), {}
+        @eq ( Ωit_219 = -> ts.t.$member_names       ), [ 'field1', 'field2', ]
+        @eq ( Ωit_220 = -> ts.t.$field_names        ), [ 'field1', 'field2', ]
+        @eq ( Ωit_221 = -> ts.t.$variant_names      ), []
+        # show_ts ts, 't'
+      #.....................................................................................................
+      do =>
+        declaration =
+          t:
+            $kind:    '$variant'
+            t1:       ( x ) ->
+            t2:       ( x ) ->
+        ts          = new Typespace declaration
+        @eq ( Ωit_222 = -> ts.t.$kind                 ), '$variant'
+        @eq ( Ωit_223 = -> ts.t.$has_members          ), true
+        @eq ( Ωit_224 = -> ts.t.$has_fields           ), false
+        @eq ( Ωit_225 = -> ts.t.$has_variants         ), true
+        @eq ( Ωit_226 = -> Object.keys ts.t.$variants ), [ 't1', 't2', ]
+        @eq ( Ωit_227 = -> ts.t.$fields               ), {}
+        @eq ( Ωit_228 = -> ts.t.$member_names         ), [ 't1', 't2', ]
+        @eq ( Ωit_229 = -> ts.t.$variant_names        ), [ 't1', 't2', ]
+        @eq ( Ωit_230 = -> ts.t.$field_names          ), []
+        show_ts ts, 't'
+      #.....................................................................................................
+      return null
+
 #===========================================================================================================
 if module is require.main then await do =>
   # @use_fields_to_declare_qualifiers()
@@ -788,7 +906,8 @@ if module is require.main then await do =>
   # await ( new Test { throw_on_error: true, } ).async_test { tasks: @tasks, }
   # await ( new Test { throw_on_error: true, } ).async_test { can_use_values_of_unknown_type: @tasks.can_use_values_of_unknown_type, }
   # demo_1()
-  ( new Test { throw_on_error: false, } ).test @intertype_tasks
+  # ( new Test { throw_on_error: false, } ).test @intertype_tasks
+  ( new Test { throw_on_error: true, } ).test { type_instantiation: @intertype_tasks.type_instantiation, }
   # ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
   # ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }
   # ( new Test { throw_on_error: false, } ).test { clone_fields_and_template: @intertype_tasks.create.clone_fields_and_template, }
