@@ -19,7 +19,7 @@
     "fast-glob": "^3.3.2",
     "fstring": "^0.0.3",
     "glob": "^11.0.0",
-    "guy": "^13.7.2",
+    "guy": "^14.2.0",
     "guy-test": "^6.0.0",
     "guy-test-6.1.0": "npm:guy-test@6.1.0",
     "intertype": "^203.2.0",

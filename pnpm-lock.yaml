@@ -36,8 +36,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       guy:
-        specifier: ^13.7.2
-        version: 13.7.2(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
+        specifier: ^14.2.0
+        version: 14.2.0
       guy-test:
         specifier: ^6.0.0
         version: 6.0.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
@@ -362,6 +362,9 @@ packages:
       chokidar: ^3.5.3
       dayjs: ^1.11.7
       tmp: ^0.2.1
+
+  guy@14.2.0:
+    resolution: {integrity: sha512-3b3TgmxfspcLULdJ4oOw8uD6hNnVJ4aFJnzoWSHigil+y1UGb3/otrrZcPDQaiL5LRzaJsRi/6AorNOf/F4VtA==}
 
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
@@ -976,6 +979,10 @@ snapshots:
       intertype-legacy: 7.7.1
       letsfreezethat: 3.1.0
       tmp: 0.2.3
+
+  guy@14.2.0:
+    dependencies:
+      intertype-legacy: 7.7.1
 
   he@1.2.0: {}
 
