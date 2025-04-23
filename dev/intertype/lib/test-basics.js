@@ -1867,7 +1867,7 @@
           debug('Ωit_188', "t:".padEnd(20), ts[typename]);
           for (i = 0, len = keys.length; i < len; i++) {
             key = keys[i];
-            debug('Ωit_189', `t.${key}:`.padEnd(20), ts[typename][key]);
+            debug('Ωit_189', GUY.fmt.format('>20s', `t.${key}:`), ts[typename][key]);
           }
           return null;
         };

@@ -794,7 +794,7 @@ sample_declarations =
       show_ts = ( ts, typename ) ->
         debug 'Ωit_188', ( "t:".padEnd 20 ), ts[ typename ]
         for key in keys
-          debug 'Ωit_189', ( "t.#{key}:".padEnd 20 ), ts[ typename ][ key ]
+          debug 'Ωit_189', ( GUY.fmt.format '>20s', "t.#{key}:" ), ts[ typename ][ key ]
         return null
       #.....................................................................................................
       do =>
