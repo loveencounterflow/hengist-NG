@@ -14,6 +14,9 @@ importers:
       '@iarna/toml':
         specifier: ^2.2.5
         version: 2.2.5
+      d3-format:
+        specifier: ^3.1.0
+        version: 3.1.0
       execa:
         specifier: ^9.4.0
         version: 9.4.0
@@ -29,9 +32,6 @@ importers:
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
-      fstring:
-        specifier: ^0.0.3
-        version: 0.0.3
       glob:
         specifier: ^11.0.0
         version: 11.0.0
@@ -237,6 +237,10 @@ packages:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
 
+  d3-format@3.1.0:
+    resolution: {integrity: sha512-YyUI6AEuY/Wpt8KWLgZHsIU86atmikuoOmCfommt0LYHiQSPjvX2AcFc38PX0CBpr2RCyZhjex+NS/LPOv6YqA==}
+    engines: {node: '>=12'}
+
   dayjs@1.11.11:
     resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
 
@@ -293,9 +297,6 @@ packages:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
-
-  fstring@0.0.3:
-    resolution: {integrity: sha512-kS6JaotR8Frd3mJTMj18/B9gBdQ5n6Lfdg8v17GTXdUrqGuEnZx0JlYyHeeduPhWkqB6o7saOQqspz9W1HVy9w==}
 
   get-stream@9.0.1:
     resolution: {integrity: sha512-kVCxPF3vQM/N0B1PmoqVUqgHP+EeVjmZSQn+1oCRPxd2P21P2F19lIgbR3HBosbB1PUhOAoctJnfEn2GbN2eZA==}
@@ -804,6 +805,8 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
+  d3-format@3.1.0: {}
+
   dayjs@1.11.11: {}
 
   eastasianwidth@0.2.0: {}
@@ -877,8 +880,6 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
-
-  fstring@0.0.3: {}
 
   get-stream@9.0.1:
     dependencies:
