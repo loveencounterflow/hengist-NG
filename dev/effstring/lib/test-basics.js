@@ -26,14 +26,14 @@
   this.intertype_tasks = {
     //---------------------------------------------------------------------------------------------------------
     module_exports: function() {
-      var EFFSTRING, Ω___2, Ω___3;
+      var EFFSTRING, Ωfstr___2, Ωfstr___3;
       EFFSTRING = require('../../../apps/effstring');
       //.....................................................................................................
-      // @throws ( Ω___1 = -> create_typespace() ), /declaration for type 'wholenumber' contains forward reference to type 'integer'/
-      this.eq((Ω___2 = function() {
+      // @throws ( Ωfstr___1 = -> create_typespace() ), /declaration for type 'wholenumber' contains forward reference to type 'integer'/
+      this.eq((Ωfstr___2 = function() {
         return typeof EFFSTRING;
       }), 'object');
-      this.eq((Ω___3 = function() {
+      this.eq((Ωfstr___3 = function() {
         return typeof EFFSTRING.f;
       }), 'function');
       //.......................................................................................................
@@ -41,66 +41,66 @@
     },
     //---------------------------------------------------------------------------------------------------------
     re_matches: function() {
-      var _format_re, Ω__10, Ω__11, Ω__12, Ω___4, Ω___5, Ω___6, Ω___7, Ω___8, Ω___9;
+      var _format_re, Ωfstr__10, Ωfstr__11, Ωfstr__12, Ωfstr___4, Ωfstr___5, Ωfstr___6, Ωfstr___7, Ωfstr___8, Ωfstr___9;
       ({_format_re} = require('../../../apps/effstring'));
       //.....................................................................................................
-      this.eq((Ω___4 = function() {
+      this.eq((Ωfstr___4 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '5',
         tail: ')'
       });
-      this.eq((Ω___5 = function() {
+      this.eq((Ωfstr___5 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":>5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '>5',
         tail: ')'
       });
-      this.eq((Ω___6 = function() {
+      this.eq((Ωfstr___6 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":<5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '<5',
         tail: ')'
       });
-      this.eq((Ω___7 = function() {
+      this.eq((Ωfstr___7 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":>5.2;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '>5.2',
         tail: ')'
       });
-      this.eq((Ω___8 = function() {
+      this.eq((Ωfstr___8 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;<5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '\\',
         tail: '<5;)'
       });
-      this.eq((Ω___9 = function() {
+      this.eq((Ωfstr___9 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;<5;);".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '\\',
         tail: '<5;);'
       });
-      this.eq((Ω__10 = function() {
+      this.eq((Ωfstr__10 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;<5;)\\;".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '\\',
         tail: '<5;)\\;'
       });
-      this.eq((Ω__11 = function() {
+      this.eq((Ωfstr__11 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;>15;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
         fmt: '\\',
         tail: '>15;)'
       });
-      this.eq((Ω__12 = function() {
+      this.eq((Ωfstr__12 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":;>15;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
@@ -112,52 +112,52 @@
     },
     //---------------------------------------------------------------------------------------------------------
     basic_functionality: function() {
-      var f, Ω__13, Ω__14, Ω__15, Ω__16, Ω__17, Ω__18, Ω__19, Ω__20, Ω__21, Ω__22, Ω__23, Ω__24, Ω__25, Ω__26, Ω__27;
+      var f, Ωfstr__13, Ωfstr__14, Ωfstr__15, Ωfstr__16, Ωfstr__17, Ωfstr__18, Ωfstr__19, Ωfstr__20, Ωfstr__21, Ωfstr__22, Ωfstr__23, Ωfstr__24, Ωfstr__25, Ωfstr__26, Ωfstr__27;
       ({f} = require('../../../apps/effstring'));
       //.....................................................................................................
-      this.eq((Ω__13 = function() {
+      this.eq((Ωfstr__13 = function() {
         return f``;
       }), '');
-      this.eq((Ω__14 = function() {
+      this.eq((Ωfstr__14 = function() {
         return f`helo`;
       }), 'helo');
-      this.eq((Ω__15 = function() {
+      this.eq((Ωfstr__15 = function() {
         return f`(#{123})`;
       }), '(#{123})');
-      this.eq((Ω__16 = function() {
+      this.eq((Ωfstr__16 = function() {
         return f`(#{123}\;)`;
       }), '(#{123};)');
-      this.eq((Ω__17 = function() {
+      this.eq((Ωfstr__17 = function() {
         return f`(#{123}\\;)`;
       }), '(#{123}\\;)');
-      this.eq((Ω__18 = function() {
+      this.eq((Ωfstr__18 = function() {
         return f`(${123})`;
       }), '(123)');
-      this.eq((Ω__19 = function() {
+      this.eq((Ωfstr__19 = function() {
         return f`(${123}:5;)`;
       }), '(  123)');
-      this.eq((Ω__20 = function() {
+      this.eq((Ωfstr__20 = function() {
         return f`(${123}:>5;)`;
       }), '(  123)');
-      this.eq((Ω__21 = function() {
+      this.eq((Ωfstr__21 = function() {
         return f`(${123}:<5;)`;
       }), '(123  )');
-      this.eq((Ω__22 = function() {
+      this.eq((Ωfstr__22 = function() {
         return f`(${123.456}:>5.2;)`;
       }), '(1.2e+2)');
-      this.eq((Ω__23 = function() {
+      this.eq((Ωfstr__23 = function() {
         return f`(${123}:;>15;)`;
       }), '(;;;;;;;;;;;;123)');
-      this.eq((Ω__24 = function() {
+      this.eq((Ωfstr__24 = function() {
         return f`(${123}:;<15;)`;
       }), '(123;;;;;;;;;;;;)');
-      this.eq((Ω__25 = function() {
+      this.eq((Ωfstr__25 = function() {
         return f`(${123}:>>15;)`;
       }), '(>>>>>>>>>>>>123)');
-      this.eq((Ω__26 = function() {
+      this.eq((Ωfstr__26 = function() {
         return f`(${123}:<>15;)`;
       }), '(<<<<<<<<<<<<123)');
-      this.eq((Ω__27 = function() {
+      this.eq((Ωfstr__27 = function() {
         return f`(${123}:;<7;)`;
       }), '(123;;;;)');
       //.......................................................................................................
@@ -165,22 +165,22 @@
     },
     //---------------------------------------------------------------------------------------------------------
     malformed_formats: function() {
-      var Effstring_error, Effstring_lib_syntax_error, Effstring_syntax_error, f, Ω__28, Ω__29, Ω__30, Ω__31, Ω__32, Ω__33, Ω__34, Ω__35, Ω__36, Ω__37, Ω__38, Ω__39, Ω__40, Ω__41;
+      var Effstring_error, Effstring_lib_syntax_error, Effstring_syntax_error, f, Ωfstr__28, Ωfstr__29, Ωfstr__30, Ωfstr__31, Ωfstr__32, Ωfstr__33, Ωfstr__34, Ωfstr__35, Ωfstr__36, Ωfstr__37, Ωfstr__38, Ωfstr__39, Ωfstr__40, Ωfstr__41;
       ({f, Effstring_error, Effstring_syntax_error, Effstring_lib_syntax_error} = require('../../../apps/effstring'));
       //.......................................................................................................
-      this.throws((Ω__28 = function() {
+      this.throws((Ωfstr__28 = function() {
         return f`(${123}:;>15)`;
       }), /\(Effstring_syntax_error\) illegal format expression ':;>15\)'/);
-      this.throws((Ω__29 = function() {
+      this.throws((Ωfstr__29 = function() {
         return f`(${123}:)`;
       }), /\(Effstring_syntax_error\) illegal format expression/);
-      this.throws((Ω__30 = function() {
+      this.throws((Ωfstr__30 = function() {
         return f`(${123}:;)`;
       }), /\(Effstring_syntax_error\) illegal format expression ':;\)'/);
-      this.throws((Ω__31 = function() {
+      this.throws((Ωfstr__31 = function() {
         return f`(${123}:--->3f;)`;
       }), /\(Effstring_lib_syntax_error\) illegal format expression '--->3f'/);
-      this.eq((Ω__32 = function() {
+      this.eq((Ωfstr__32 = function() {
         var e;
         try {
           return f`(${123}:;)`;
@@ -189,7 +189,7 @@
           return e instanceof Effstring_error;
         }
       }), true);
-      this.eq((Ω__33 = function() {
+      this.eq((Ωfstr__33 = function() {
         var e;
         try {
           return f`(${123}:;)`;
@@ -198,7 +198,7 @@
           return e instanceof Effstring_syntax_error;
         }
       }), true);
-      this.eq((Ω__34 = function() {
+      this.eq((Ωfstr__34 = function() {
         var e;
         try {
           return f`(${123}:;)`;
@@ -207,7 +207,7 @@
           return e instanceof Effstring_lib_syntax_error;
         }
       }), false);
-      this.eq((Ω__35 = function() {
+      this.eq((Ωfstr__35 = function() {
         var e;
         try {
           return f`(${123}:--->3f;)`;
@@ -216,7 +216,7 @@
           return e instanceof Effstring_error;
         }
       }), true);
-      this.eq((Ω__36 = function() {
+      this.eq((Ωfstr__36 = function() {
         var e;
         try {
           return f`(${123}:--->3f;)`;
@@ -225,7 +225,7 @@
           return e instanceof Effstring_syntax_error;
         }
       }), true);
-      this.eq((Ω__37 = function() {
+      this.eq((Ωfstr__37 = function() {
         var e;
         try {
           return f`(${123}:--->3f;)`;
@@ -234,16 +234,16 @@
           return e instanceof Effstring_lib_syntax_error;
         }
       }), true);
-      this.throws((Ω__38 = function() {
+      this.throws((Ωfstr__38 = function() {
         return f`(${123}:\\;<5;)`;
       }), /illegal format expression/);
-      this.throws((Ω__39 = function() {
+      this.throws((Ωfstr__39 = function() {
         return f`(${123}:\\;<5;);`;
       }), /illegal format expression/);
-      this.throws((Ω__40 = function() {
+      this.throws((Ωfstr__40 = function() {
         return f`(${123}:\\;<5;)\\;`;
       }), /illegal format expression/);
-      this.throws((Ω__41 = function() {
+      this.throws((Ωfstr__41 = function() {
         return f`(${123}:\\;>15;)`;
       }), /illegal format expression/);
       //.......................................................................................................
@@ -251,80 +251,80 @@
     },
     //---------------------------------------------------------------------------------------------------------
     fixed_point_notation: function() {
-      var f, Ω__42, Ω__43, Ω__44, Ω__45, Ω__46, Ω__47, Ω__48, Ω__49, Ω__50, Ω__51, Ω__52, Ω__53, Ω__54, Ω__55, Ω__56, Ω__57, Ω__58, Ω__59, Ω__60, Ω__61, Ω__62, Ω__63, Ω__64, Ω__65;
+      var f, Ωfstr__42, Ωfstr__43, Ωfstr__44, Ωfstr__45, Ωfstr__46, Ωfstr__47, Ωfstr__48, Ωfstr__49, Ωfstr__50, Ωfstr__51, Ωfstr__52, Ωfstr__53, Ωfstr__54, Ωfstr__55, Ωfstr__56, Ωfstr__57, Ωfstr__58, Ωfstr__59, Ωfstr__60, Ωfstr__61, Ωfstr__62, Ωfstr__63, Ωfstr__64, Ωfstr__65;
       ({f} = require('../../../apps/effstring'));
       //.....................................................................................................
-      this.eq((Ω__42 = function() {
+      this.eq((Ωfstr__42 = function() {
         return f`(${123.456}:>5.2f;)`;
       }), '(123.46)');
-      this.eq((Ω__43 = function() {
+      this.eq((Ωfstr__43 = function() {
         return f`(${123.456}:>15.2f;)`;
       }), '(         123.46)');
-      this.eq((Ω__44 = function() {
+      this.eq((Ωfstr__44 = function() {
         return f`(${123.456}:<15.2f;)`;
       }), '(123.46         )');
-      this.eq((Ω__45 = function() {
+      this.eq((Ωfstr__45 = function() {
         return f`(${1234.567}:>15.2f;)`;
       }), '(        1234.57)');
-      this.eq((Ω__46 = function() {
+      this.eq((Ωfstr__46 = function() {
         return f`(${1234.567}:<15.2f;)`;
       }), '(1234.57        )');
-      this.eq((Ω__47 = function() {
+      this.eq((Ωfstr__47 = function() {
         return f`(${1234.567}:=>15.2f;)`;
       }), '(========1234.57)');
-      this.eq((Ω__48 = function() {
+      this.eq((Ωfstr__48 = function() {
         return f`(${1234.567}:=<15.2f;)`;
       }), '(1234.57========)');
-      this.eq((Ω__49 = function() {
+      this.eq((Ωfstr__49 = function() {
         return f`(${1234.567}:=>15,.2f;)`;
       }), '(=======1,234.57)');
-      this.eq((Ω__50 = function() {
+      this.eq((Ωfstr__50 = function() {
         return f`(${1234.567}:=<15,.2f;)`;
       }), '(1,234.57=======)');
       //.......................................................................................................
-      this.eq((Ω__51 = function() {
+      this.eq((Ωfstr__51 = function() {
         return f`(${-1234.567}:_>15,.2f;)`;
       }), '(______−1,234.57)');
-      this.eq((Ω__52 = function() {
+      this.eq((Ωfstr__52 = function() {
         return f`(${+1234.567}:_>-15,.2f;)`;
       }), '(_______1,234.57)');
-      this.eq((Ω__53 = function() {
+      this.eq((Ωfstr__53 = function() {
         return f`(${-1234.567}:_>-15,.2f;)`;
       }), '(______−1,234.57)');
-      this.eq((Ω__54 = function() {
+      this.eq((Ωfstr__54 = function() {
         return f`(${+1234.567}:_>+15,.2f;)`;
       }), '(______+1,234.57)');
-      this.eq((Ω__55 = function() {
+      this.eq((Ωfstr__55 = function() {
         return f`(${-1234.567}:_>+15,.2f;)`;
       }), '(______−1,234.57)');
-      this.eq((Ω__56 = function() {
+      this.eq((Ωfstr__56 = function() {
         return f`(${+1234.567}:_=+15,.2f;)`;
       }), '(+______1,234.57)');
-      this.eq((Ω__57 = function() {
+      this.eq((Ωfstr__57 = function() {
         return f`(${-1234.567}:_=+15,.2f;)`;
       }), '(−______1,234.57)');
-      this.eq((Ω__58 = function() {
+      this.eq((Ωfstr__58 = function() {
         return f`(${-1234.567}:_=+015,.2f;)`;
       }), '(−0,000,001,234.57)');
-      this.eq((Ω__59 = function() {
+      this.eq((Ωfstr__59 = function() {
         return f`(${-1234.567}:=+015,.2f;)`;
       }), '(−0,000,001,234.57)');
-      this.eq((Ω__60 = function() {
+      this.eq((Ωfstr__60 = function() {
         return f`(${+1234.567}:_=015,.2f;)`;
       }), '(0,000,001,234.57)');
-      this.eq((Ω__61 = function() {
+      this.eq((Ωfstr__61 = function() {
         return f`(${+1234.567}:=015,.2f;)`;
       }), '(0,000,001,234.57)');
-      this.eq((Ω__62 = function() {
+      this.eq((Ωfstr__62 = function() {
         return f`(${+1234.567}:_=015.2f;)`;
       }), '(000000001234.57)');
-      this.eq((Ω__63 = function() {
+      this.eq((Ωfstr__63 = function() {
         return f`(${+1234.567}:=015.2f;)`;
       }), '(000000001234.57)');
-      this.eq((Ω__64 = function() {
+      this.eq((Ωfstr__64 = function() {
         return f`(${-1234.567}:_=015.2f;)`;
       }), '(−00000001234.57)');
-      this.eq((Ω__65 = function() {
+      this.eq((Ωfstr__65 = function() {
         return f`(${-1234.567}:=015.2f;)`;
       }), '(−00000001234.57)');
       //.......................................................................................................
@@ -332,30 +332,30 @@
     },
     //---------------------------------------------------------------------------------------------------------
     from_the_docs: function() {
-      var f, Ω__66, Ω__67, Ω__69, Ω__70, Ω__71, Ω__72, Ω__73;
+      var f, Ωfstr__66, Ωfstr__67, Ωfstr__69, Ωfstr__70, Ωfstr__71, Ωfstr__72, Ωfstr__73;
       ({f} = require('../../../apps/effstring'));
       /* TAINT check with `$` format will rely on locale setting of the machine the tests are running on */
       //.....................................................................................................
-      this.eq((Ω__66 = function() {
+      this.eq((Ωfstr__66 = function() {
         return f`${0.123}:.0%;`;
       }), '12%'); // rounded percentage, "12%"
-      this.eq((Ω__67 = function() {
+      this.eq((Ωfstr__67 = function() {
         return f`${-3.5}:($.2f;`;
       }), '($3.50)'); // localized fixed-point currency, "(£3.50)"
-      // @eq ( Ω__68 = -> f"#{-3.5}:($.2f;"  ), '(£3.50)'              # localized fixed-point currency, "(£3.50)"
-      this.eq((Ω__69 = function() {
+      // @eq ( Ωfstr__68 = -> f"#{-3.5}:($.2f;"  ), '(£3.50)'              # localized fixed-point currency, "(£3.50)"
+      this.eq((Ωfstr__69 = function() {
         return f`${42}:+20;`;
       }), '                 +42'); // space-filled and signed, "                 +42"
-      this.eq((Ω__70 = function() {
+      this.eq((Ωfstr__70 = function() {
         return f`${42}:.^20;`;
       }), '.........42.........'); // dot-filled and centered, ".........42........."
-      this.eq((Ω__71 = function() {
+      this.eq((Ωfstr__71 = function() {
         return f`${42e6}:.2s;`;
       }), '42M'); // SI-prefix with two significant digits, "42M"
-      this.eq((Ω__72 = function() {
+      this.eq((Ωfstr__72 = function() {
         return f`${48879}:#x;`;
       }), '0xbeef'); // prefixed lowercase hexadecimal, "0xbeef"
-      this.eq((Ω__73 = function() {
+      this.eq((Ωfstr__73 = function() {
         return f`${4223}:,.2r;`;
       }), '4,200'); // grouped thousands with two significant digits, "4,200"
       //.......................................................................................................
@@ -363,29 +363,29 @@
     },
     //---------------------------------------------------------------------------------------------------------
     effstring_format_test_js: function() {
-      var f, Ω__74, Ω__75, Ω__76, Ω__77, Ω__78, Ω__79, Ω__80;
+      var f, Ωfstr__74, Ωfstr__75, Ωfstr__76, Ωfstr__77, Ωfstr__78, Ωfstr__79, Ωfstr__80;
       ({f} = require('../../../apps/effstring'));
       /* TAINT check with `$` format will rely on locale setting of the machine the tests are running on */
       //.....................................................................................................
-      this.throws((Ω__74 = function() {
+      this.throws((Ωfstr__74 = function() {
         return f`${0}:foo;`;
       }), /invalid format: foo/);
-      this.throws((Ω__75 = function() {
+      this.throws((Ωfstr__75 = function() {
         return f`${0}:.-2s;`;
       }), /invalid format: \.-2s/);
-      this.throws((Ω__76 = function() {
+      this.throws((Ωfstr__76 = function() {
         return f`${0}:.f;`;
       }), /invalid format: \.f/);
-      this.eq((Ω__77 = function() {
+      this.eq((Ωfstr__77 = function() {
         return f`${0}:.30f;`;
       }), "0.00000000000000000000");
-      this.eq((Ω__78 = function() {
+      this.eq((Ωfstr__78 = function() {
         return f`${1}:.0g;`;
       }), "1");
-      this.eq((Ω__79 = function() {
+      this.eq((Ωfstr__79 = function() {
         return f`${Number.MIN_VALUE}:s;`;
       }), "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005y");
-      this.eq((Ω__80 = function() {
+      this.eq((Ωfstr__80 = function() {
         return f`${Number.MAX_VALUE}:s;`;
       }), "179769000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000Y");
       //.......................................................................................................
@@ -396,9 +396,9 @@
       var en_US, f, format, formatDefaultLocale, formatPrefix, fr_FR;
       ({f} = require('../../../apps/effstring'));
       ({format, formatPrefix, formatDefaultLocale} = require('../../../apps/effstring/node_modules/d3-format'));
-      debug('Ω__81', format);
-      debug('Ω__82', formatPrefix);
-      debug('Ω__83', formatDefaultLocale);
+      debug('Ωfstr__81', format);
+      debug('Ωfstr__82', formatPrefix);
+      debug('Ωfstr__83', formatDefaultLocale);
       //.......................................................................................................
       en_US = {
         decimal: '.',
@@ -414,13 +414,13 @@
         percent: '\u202f%'
       };
       (() => {        //.......................................................................................................
-        var locale, Ω__84, Ω__85;
+        var locale, Ωfstr__84, Ωfstr__85;
         locale = formatDefaultLocale(fr_FR);
         try {
-          this.eq((Ω__84 = function() {
+          this.eq((Ωfstr__84 = function() {
             return (locale.format("$,.2f"))(12345678.90);
           }), "12.345.678,90\u00a0€");
-          this.eq((Ω__85 = function() {
+          this.eq((Ωfstr__85 = function() {
             return (locale.format(",.0%"))(12345678.90);
           }), "1.234.567.890\u202f%"); // narrow no-break space
         } finally {
@@ -429,14 +429,14 @@
         return null;
       })();
       (() => {        //.......................................................................................................
-        var locale, Ω__86, Ω__88;
+        var locale, Ωfstr__86, Ωfstr__88;
         locale = formatDefaultLocale(fr_FR);
         try {
-          this.eq((Ω__86 = function() {
+          this.eq((Ωfstr__86 = function() {
             return formatPrefix;
           }), locale.formatPrefix);
-          // @eq ( Ω__87 = -> ( formatPrefix ",.2", 1e3 ) 12345678.90 ), "12.345,68k"
-          this.eq((Ω__88 = function() {
+          // @eq ( Ωfstr__87 = -> ( formatPrefix ",.2", 1e3 ) 12345678.90 ), "12.345,68k"
+          this.eq((Ωfstr__88 = function() {
             return (locale.formatPrefix(",.2", 1e3))(12345678.90);
           }), "12.345,68k");
         } finally {
@@ -449,56 +449,237 @@
     },
     //---------------------------------------------------------------------------------------------------------
     format_type_c_test_js: function() {
-      var f, Ω__89, Ω__90, Ω__91, Ω__92, Ω__93, Ω__94;
+      var f, Ωfstr__89, Ωfstr__90, Ωfstr__91, Ωfstr__92, Ωfstr__93, Ωfstr__94;
       ({f} = require('../../../apps/effstring'));
       //.......................................................................................................
-      this.eq((Ω__89 = function() {
+      this.eq((Ωfstr__89 = function() {
         return f`${'☃'}:c;`;
       }), "☃");
-      this.eq((Ω__90 = function() {
+      this.eq((Ωfstr__90 = function() {
         return f`${'☃'}:020c;`;
       }), "0000000000000000000☃");
-      this.eq((Ω__91 = function() {
+      this.eq((Ωfstr__91 = function() {
         return f`${'☃'}: ^20c;`;
       }), "         ☃          ");
-      this.eq((Ω__92 = function() {
+      this.eq((Ωfstr__92 = function() {
         return f`${'経済'}: ^20c;`;
       }), '         経済         ');
-      this.eq((Ω__93 = function() {
+      this.eq((Ωfstr__93 = function() {
         return f`${'abcd'}: ^20c;`;
       }), '        abcd        ');
-      this.eq((Ω__94 = function() {
+      this.eq((Ωfstr__94 = function() {
         return f`${'☃'}:$c;`;
       }), "$☃");
       //.......................................................................................................
       return null;
     },
     //---------------------------------------------------------------------------------------------------------
-    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX: function() {
-      var _locale_cfg_from_bcp47, f, new_formatter, new_locale;
-      ({f, _locale_cfg_from_bcp47, new_formatter, new_locale} = require('../../../apps/effstring'));
+    locale_internals: function() {
+      var _d3_format, _format_cfg_from_hints, _hint_as_locale_cfg, _locale_cfg_from_bcp47, f, new_ftag, Ωfstr_100, Ωfstr_101, Ωfstr_102, Ωfstr_103, Ωfstr_104, Ωfstr_105, Ωfstr_106, Ωfstr_107, Ωfstr_108, Ωfstr_109, Ωfstr_110, Ωfstr_111, Ωfstr_112, Ωfstr_113, Ωfstr_114, Ωfstr__95, Ωfstr__96, Ωfstr__97, Ωfstr__98, Ωfstr__99;
+      ({f, new_ftag, _d3_format, _locale_cfg_from_bcp47, _format_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
       //.......................................................................................................
-      debug('Ωfstr__95', _locale_cfg_from_bcp47('ar-AE'));
-      debug('Ωfstr__96', _locale_cfg_from_bcp47('en-US'));
-      debug('Ωfstr__97', _locale_cfg_from_bcp47('de-DE'));
-      debug('Ωfstr__98', new_locale('ar-AE'));
-      debug('Ωfstr__99', new_locale('en-US'));
-      debug('Ωfstr_100', new_locale('de-DE'));
-      debug('Ωfstr_101', new_locale({}));
-      f = new_formatter({});
-      debug('Ωfstr_102', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_formatter('de-DE');
-      debug('Ωfstr_103', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_formatter('ar-AE');
-      debug('Ωfstr_104', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_formatter('ar-001');
-      debug('Ωfstr_105', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_formatter('en-US');
-      debug('Ωfstr_106', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_formatter('es-MX');
-      debug('Ωfstr_107', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_formatter('en-IN');
-      debug('Ωfstr_108', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      this.eq((Ωfstr__95 = function() {
+        return (_d3_format != null) && ((typeof _d3_format) === 'object');
+      }), true);
+      this.eq((Ωfstr__96 = function() {
+        return (_locale_cfg_from_bcp47 != null) && ((typeof _locale_cfg_from_bcp47) === 'function');
+      }), true);
+      this.eq((Ωfstr__97 = function() {
+        return (_format_cfg_from_hints != null) && ((typeof _format_cfg_from_hints) === 'function');
+      }), true);
+      this.eq((Ωfstr__98 = function() {
+        return (_hint_as_locale_cfg != null) && ((typeof _hint_as_locale_cfg) === 'function');
+      }), true);
+      //.......................................................................................................
+      this.eq((Ωfstr__99 = function() {
+        return _locale_cfg_from_bcp47('ar-AE');
+      }), {
+        decimal: '٫',
+        thousands: '٬',
+        grouping: [3],
+        currency: ['', ' د.إ.'],
+        numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
+      });
+      this.eq((Ωfstr_100 = function() {
+        return _locale_cfg_from_bcp47('en-US');
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3],
+        currency: ['$', '']
+      });
+      this.eq((Ωfstr_101 = function() {
+        return _locale_cfg_from_bcp47('de-DE');
+      }), {
+        decimal: ',',
+        thousands: '.',
+        grouping: [3],
+        currency: ['', ' €']
+      });
+      this.eq((Ωfstr_102 = function() {
+        return _locale_cfg_from_bcp47('en-IN');
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        currency: ['₹', '']
+      });
+      //.......................................................................................................
+      this.eq((Ωfstr_103 = function() {
+        return _hint_as_locale_cfg('ar-AE');
+      }), {
+        decimal: '٫',
+        thousands: '٬',
+        grouping: [3],
+        currency: ['', ' د.إ.'],
+        numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
+      });
+      this.eq((Ωfstr_104 = function() {
+        return _hint_as_locale_cfg('en-US');
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3],
+        currency: ['$', '']
+      });
+      this.eq((Ωfstr_105 = function() {
+        return _hint_as_locale_cfg('de-DE');
+      }), {
+        decimal: ',',
+        thousands: '.',
+        grouping: [3],
+        currency: ['', ' €']
+      });
+      this.eq((Ωfstr_106 = function() {
+        return _hint_as_locale_cfg('en-IN');
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        currency: ['₹', '']
+      });
+      this.eq((Ωfstr_107 = function() {
+        return _hint_as_locale_cfg({});
+      }), {});
+      //.......................................................................................................
+      this.eq((Ωfstr_108 = function() {
+        return _format_cfg_from_hints('ar-AE');
+      }), {
+        decimal: '٫',
+        thousands: '٬',
+        grouping: [3],
+        currency: ['', ' د.إ.'],
+        numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
+      });
+      this.eq((Ωfstr_109 = function() {
+        return _format_cfg_from_hints('en-US');
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3],
+        currency: ['$', '']
+      });
+      this.eq((Ωfstr_110 = function() {
+        return _format_cfg_from_hints('de-DE');
+      }), {
+        decimal: ',',
+        thousands: '.',
+        grouping: [3],
+        currency: ['', ' €']
+      });
+      this.eq((Ωfstr_111 = function() {
+        return _format_cfg_from_hints({
+          percent: '\xa0v.Hd.'
+        });
+      }), {
+        percent: ' v.Hd.'
+      });
+      this.eq((Ωfstr_112 = function() {
+        return _format_cfg_from_hints('de-DE', {
+          percent: '\xa0v.Hd.'
+        });
+      }), {
+        decimal: ',',
+        thousands: '.',
+        grouping: [3],
+        currency: ['', ' €'],
+        percent: ' v.Hd.'
+      });
+      this.eq((Ωfstr_113 = function() {
+        return _format_cfg_from_hints('de-DE', {
+          percent: '\xa0v.Hd.'
+        }, {
+          thousands: "'"
+        });
+      }), {
+        decimal: ',',
+        thousands: "'",
+        grouping: [3],
+        currency: ['', ' €'],
+        percent: ' v.Hd.'
+      });
+      this.eq((Ωfstr_114 = function() {
+        return _format_cfg_from_hints({});
+      }), {});
+      (() => {        //.......................................................................................................
+        var locale, locale_cfg, Ωfstr_115, Ωfstr_116;
+        locale_cfg = _format_cfg_from_hints('de-DE');
+        locale = _d3_format.formatLocale(locale_cfg);
+        this.eq((Ωfstr_115 = function() {
+          return (locale.format('_>17,.5%'))(0.754321);
+        }), '________75,43210%');
+        this.eq((Ωfstr_116 = function() {
+          return (locale.format('_>17,.5f'))(1234567890);
+        }), '1.234.567.890,00000');
+        return null;
+      })();
+      (() => {        //.......................................................................................................
+        var locale, locale_cfg, Ωfstr_120, Ωfstr_121;
+        locale_cfg = _format_cfg_from_hints('de-DE', {
+          numerals: ['O', 'ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ'],
+          percent: ' v.H.'
+        });
+        locale = _d3_format.formatLocale(locale_cfg);
+        this.eq((Ωfstr_120 = function() {
+          return (locale.format('_>17,.5%'))(0.754321);
+        }), '___hf,edcba v.H.');
+        return this.eq((Ωfstr_121 = function() {
+          return (locale.format('_>17,.5f'))(1234567890);
+        }), 'b.cde.fgh.ija,aaaaa');
+      })();
+      return null;
+      warn('Ωfstr_122', '————————————————————————————————————————————————————––');
+      info('Ωfstr_123', f`${0.75}:_>17.5%;`);
+      ((f) => {
+        f = new_ftag({
+          numerals: ['O', 'ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ'],
+          percent: 'v.Hdt.'
+        });
+        info('Ωfstr_124', f`${0.75}:_>17.5%;`);
+        return null;
+      })(f);
+      ((f) => {
+        f = new_ftag({
+          grouping: [1, 4],
+          percent: 'v.Hdt.'
+        });
+        info('Ωfstr_125', f`${123456789123456789.75}:_>37,.5f;`);
+        return null;
+      })(f);
+      f = new_ftag({});
+      debug('Ωfstr_126', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      f = new_ftag('de-DE');
+      debug('Ωfstr_127', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      f = new_ftag('ar-AE');
+      debug('Ωfstr_128', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      f = new_ftag('ar-001');
+      debug('Ωfstr_129', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      f = new_ftag('en-US');
+      debug('Ωfstr_130', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      f = new_ftag('es-MX');
+      debug('Ωfstr_131', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      f = new_ftag('en-IN');
+      debug('Ωfstr_132', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
       //.......................................................................................................
       return null;
     }
@@ -507,11 +688,15 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      // ( new Test { throw_on_error: true, } ).test { type_instantiation: @intertype_tasks.type_instantiation, }
       // ( new Test { throw_on_error: true, } ).test @intertype_tasks
-      return (new Test({
+      (new Test({
         throw_on_error: false
       })).test(this.intertype_tasks);
+      return (new Test({
+        throw_on_error: true
+      })).test({
+        locale_internals: this.intertype_tasks.locale_internals
+      });
     })();
   }
 
