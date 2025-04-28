@@ -226,6 +226,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
   locale_internals: ->
     { f
       new_ftag
+      _default_locale
       _d3_format
       _locale_cfg_from_bcp47
       _format_cfg_from_hints
@@ -236,61 +237,55 @@ GTNG                      = require '../../../apps/guy-test-NG'
     @eq ( Ωfstr__97 = -> _format_cfg_from_hints?  and ( ( typeof _format_cfg_from_hints ) is 'function' ) ), true
     @eq ( Ωfstr__98 = -> _hint_as_locale_cfg?     and ( ( typeof _hint_as_locale_cfg    ) is 'function' ) ), true
     #.......................................................................................................
-    @eq ( Ωfstr__99 = -> _locale_cfg_from_bcp47 'ar-AE' ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ] }
-    @eq ( Ωfstr_100 = -> _locale_cfg_from_bcp47 'en-US' ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ] }
-    @eq ( Ωfstr_101 = -> _locale_cfg_from_bcp47 'de-DE' ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ] }
-    @eq ( Ωfstr_102 = -> _locale_cfg_from_bcp47 'en-IN' ), { decimal: '.', thousands: ',', grouping: [ 3, 2, 2, 2, 2, 2, 2, 2, 2, 2 ], currency: [ '₹', '' ] }
+    @eq ( Ωfstr__99 = -> _default_locale                ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_100 = -> _locale_cfg_from_bcp47 'ar-AE' ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ] }
+    @eq ( Ωfstr_101 = -> _locale_cfg_from_bcp47 'en-US' ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ] }
+    @eq ( Ωfstr_102 = -> _locale_cfg_from_bcp47 'de-DE' ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ] }
+    @eq ( Ωfstr_103 = -> _locale_cfg_from_bcp47 'en-IN' ), { decimal: '.', thousands: ',', grouping: [ 3, 2, 2, 2, 2, 2, 2, 2, 2, 2 ], currency: [ '₹', '' ] }
     #.......................................................................................................
-    @eq ( Ωfstr_103 = -> _hint_as_locale_cfg 'ar-AE'    ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ] }
-    @eq ( Ωfstr_104 = -> _hint_as_locale_cfg 'en-US'    ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ] }
-    @eq ( Ωfstr_105 = -> _hint_as_locale_cfg 'de-DE'    ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ] }
-    @eq ( Ωfstr_106 = -> _hint_as_locale_cfg 'en-IN'    ), { decimal: '.', thousands: ',', grouping: [ 3, 2, 2, 2, 2, 2, 2, 2, 2, 2 ], currency: [ '₹', '' ] }
-    @eq ( Ωfstr_107 = -> _hint_as_locale_cfg {}         ), {}
+    @eq ( Ωfstr_104 = -> _hint_as_locale_cfg 'ar-AE'    ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ] }
+    @eq ( Ωfstr_105 = -> _hint_as_locale_cfg 'en-US'    ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ] }
+    @eq ( Ωfstr_106 = -> _hint_as_locale_cfg 'de-DE'    ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ] }
+    @eq ( Ωfstr_107 = -> _hint_as_locale_cfg 'en-IN'    ), { decimal: '.', thousands: ',', grouping: [ 3, 2, 2, 2, 2, 2, 2, 2, 2, 2 ], currency: [ '₹', '' ] }
+    @eq ( Ωfstr_108 = -> _hint_as_locale_cfg {}         ), {}
     #.......................................................................................................
-    @eq ( Ωfstr_108 = -> _format_cfg_from_hints 'ar-AE'                             ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ] }
-    @eq ( Ωfstr_109 = -> _format_cfg_from_hints 'en-US'                             ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ] }
-    @eq ( Ωfstr_110 = -> _format_cfg_from_hints 'de-DE'                             ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ] }
-    @eq ( Ωfstr_111 = -> _format_cfg_from_hints          { percent: '\xa0v.Hd.', }  ), { percent: ' v.Hd.' }
-    @eq ( Ωfstr_112 = -> _format_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }  ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], percent: ' v.Hd.' }
-    @eq ( Ωfstr_113 = -> _format_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }, { thousands: "'", } ), { decimal: ',', thousands: "'", grouping: [ 3 ], currency: [ '', ' €' ], percent: ' v.Hd.' }
-    @eq ( Ωfstr_114 = -> _format_cfg_from_hints {}                                  ), {}
+    @eq ( Ωfstr_109 = -> _format_cfg_from_hints 'ar-AE'                                                 ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_110 = -> _format_cfg_from_hints 'en-US'                                                 ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_111 = -> _format_cfg_from_hints 'de-DE'                                                 ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_112 = -> _format_cfg_from_hints          { percent: '\xa0v.Hd.', }                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_113 = -> _format_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }                      ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_114 = -> _format_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }, { thousands: "'", } ), { decimal: ',', thousands: "'", grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_115 = -> _format_cfg_from_hints {}                                                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
     #.......................................................................................................
     do =>
       locale_cfg  = _format_cfg_from_hints 'de-DE'
       locale      = _d3_format.formatLocale locale_cfg
-      @eq ( Ωfstr_115 = -> ( locale.format '_>17,.5%' ) 0.754321    ), '________75,43210%'
-      @eq ( Ωfstr_116 = -> ( locale.format '_>17,.5f' ) 1234567890  ), '1.234.567.890,00000'
+      @eq ( Ωfstr_116 = -> ( locale.format '_>17,.5%' ) 0.754321    ), '________75,43210%'
+      @eq ( Ωfstr_117 = -> ( locale.format '_>17,.5f' ) 1234567890  ), '1.234.567.890,00000'
       return null
     #.......................................................................................................
     do =>
-      locale_cfg  = _format_cfg_from_hints 'de-DE', { numerals: [ 'O', 'ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ', ], percent: ' v.H.', }
+      locale_cfg  = _format_cfg_from_hints 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
       locale      = _d3_format.formatLocale locale_cfg
-      @eq ( Ωfstr_120 = -> ( locale.format '_>17,.5%' ) 0.754321    ), '___hf,edcba v.H.'
-      @eq ( Ωfstr_121 = -> ( locale.format '_>17,.5f' ) 1234567890  ), 'b.cde.fgh.ija,aaaaa'
-
-
-    return null
-    warn 'Ωfstr_122', '————————————————————————————————————————————————————––'
-    info 'Ωfstr_123', ( f"#{0.75}:_>17.5%;" )
-    do ( f ) =>
-      f = new_ftag { numerals: [ 'O', 'ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ', ], percent: 'v.Hdt.', }
-      info 'Ωfstr_124', ( f"#{0.75}:_>17.5%;" )
+      @eq ( Ωfstr_118 = -> ( locale.format '_>17,.5%' ) 0.754321    ), '____⁷⁵,⁴³²¹⁰ v.H.'
+      @eq ( Ωfstr_119 = -> ( locale.format '_>17,.5f' ) 1234567890  ), '¹.²³⁴.⁵⁶⁷.⁸⁹⁰,⁰⁰⁰⁰⁰'
       return null
+    #.......................................................................................................
     do ( f ) =>
-      f = new_ftag { grouping: [ 1, 4, ], percent: 'v.Hdt.', }
-      info 'Ωfstr_125', ( f"#{123456789123456789.75}:_>37,.5f;" )
+      f = new_ftag 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
+      @eq ( Ωfstr_120 = -> ( f"#{0.754321}:_>17.5%;" )    ), '____⁷⁵,⁴³²¹⁰ v.H.'
       return null
-    f = new_ftag {}; debug 'Ωfstr_126', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
-    f = new_ftag 'de-DE'; debug 'Ωfstr_127', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
-    f = new_ftag 'ar-AE'; debug 'Ωfstr_128', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
-    f = new_ftag 'ar-001'; debug 'Ωfstr_129', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
-    f = new_ftag 'en-US'; debug 'Ωfstr_130', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
-    f = new_ftag 'es-MX'; debug 'Ωfstr_131', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
-    f = new_ftag 'en-IN'; debug 'Ωfstr_132', f"#{1.23}:$03.2f; #{1234567890.123456}:20,.4f;"
+    #.......................................................................................................
+    @eq ( Ωfstr_121 = -> ( new_ftag 'en-US' )"#{123456789123456789.75}:_>37,.5f;" ), '________123,456,789,123,456,784.00000'
+    @eq ( Ωfstr_122 = -> ( new_ftag { grouping: [ 4, ], } )"#{123456789123456789.75}:_>37,.5f;" ), '_________12,3456,7891,2345,6784.00000'
+    @eq ( Ωfstr_123 = -> ( new_ftag()       )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '$1.23[  1,234,567,890.1235]'
+    @eq ( Ωfstr_124 = -> ( new_ftag {}      )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '$1.23[  1,234,567,890.1235]'
+    @eq ( Ωfstr_125 = -> ( new_ftag 'de-DE' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '1,23 €[  1.234.567.890,1235]'
+    @eq ( Ωfstr_126 = -> ( new_ftag 'en-US' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '$1.23[  1,234,567,890.1235]'
+    @eq ( Ωfstr_127 = -> ( new_ftag 'es-MX' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '$1.23[  1,234,567,890.1235]'
+    @eq ( Ωfstr_128 = -> ( new_ftag 'en-IN' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '₹1.23[ 1,23,45,67,890.1235]'
     #.......................................................................................................
     return null
-
-
 
 
 

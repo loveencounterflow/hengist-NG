@@ -475,8 +475,8 @@
     },
     //---------------------------------------------------------------------------------------------------------
     locale_internals: function() {
-      var _d3_format, _format_cfg_from_hints, _hint_as_locale_cfg, _locale_cfg_from_bcp47, f, new_ftag, Ωfstr_100, Ωfstr_101, Ωfstr_102, Ωfstr_103, Ωfstr_104, Ωfstr_105, Ωfstr_106, Ωfstr_107, Ωfstr_108, Ωfstr_109, Ωfstr_110, Ωfstr_111, Ωfstr_112, Ωfstr_113, Ωfstr_114, Ωfstr__95, Ωfstr__96, Ωfstr__97, Ωfstr__98, Ωfstr__99;
-      ({f, new_ftag, _d3_format, _locale_cfg_from_bcp47, _format_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      var _d3_format, _default_locale, _format_cfg_from_hints, _hint_as_locale_cfg, _locale_cfg_from_bcp47, f, new_ftag, Ωfstr_100, Ωfstr_101, Ωfstr_102, Ωfstr_103, Ωfstr_104, Ωfstr_105, Ωfstr_106, Ωfstr_107, Ωfstr_108, Ωfstr_109, Ωfstr_110, Ωfstr_111, Ωfstr_112, Ωfstr_113, Ωfstr_114, Ωfstr_115, Ωfstr_121, Ωfstr_122, Ωfstr_123, Ωfstr_124, Ωfstr_125, Ωfstr_126, Ωfstr_127, Ωfstr_128, Ωfstr__95, Ωfstr__96, Ωfstr__97, Ωfstr__98, Ωfstr__99;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _format_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
       //.......................................................................................................
       this.eq((Ωfstr__95 = function() {
         return (_d3_format != null) && ((typeof _d3_format) === 'object');
@@ -492,6 +492,18 @@
       }), true);
       //.......................................................................................................
       this.eq((Ωfstr__99 = function() {
+        return _default_locale;
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3],
+        currency: ['$', ''],
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: '%',
+        minus: '−',
+        nan: 'NaN'
+      });
+      this.eq((Ωfstr_100 = function() {
         return _locale_cfg_from_bcp47('ar-AE');
       }), {
         decimal: '٫',
@@ -500,7 +512,7 @@
         currency: ['', ' د.إ.'],
         numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
       });
-      this.eq((Ωfstr_100 = function() {
+      this.eq((Ωfstr_101 = function() {
         return _locale_cfg_from_bcp47('en-US');
       }), {
         decimal: '.',
@@ -508,7 +520,7 @@
         grouping: [3],
         currency: ['$', '']
       });
-      this.eq((Ωfstr_101 = function() {
+      this.eq((Ωfstr_102 = function() {
         return _locale_cfg_from_bcp47('de-DE');
       }), {
         decimal: ',',
@@ -516,7 +528,7 @@
         grouping: [3],
         currency: ['', ' €']
       });
-      this.eq((Ωfstr_102 = function() {
+      this.eq((Ωfstr_103 = function() {
         return _locale_cfg_from_bcp47('en-IN');
       }), {
         decimal: '.',
@@ -525,7 +537,7 @@
         currency: ['₹', '']
       });
       //.......................................................................................................
-      this.eq((Ωfstr_103 = function() {
+      this.eq((Ωfstr_104 = function() {
         return _hint_as_locale_cfg('ar-AE');
       }), {
         decimal: '٫',
@@ -534,7 +546,7 @@
         currency: ['', ' د.إ.'],
         numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
       });
-      this.eq((Ωfstr_104 = function() {
+      this.eq((Ωfstr_105 = function() {
         return _hint_as_locale_cfg('en-US');
       }), {
         decimal: '.',
@@ -542,7 +554,7 @@
         grouping: [3],
         currency: ['$', '']
       });
-      this.eq((Ωfstr_105 = function() {
+      this.eq((Ωfstr_106 = function() {
         return _hint_as_locale_cfg('de-DE');
       }), {
         decimal: ',',
@@ -550,7 +562,7 @@
         grouping: [3],
         currency: ['', ' €']
       });
-      this.eq((Ωfstr_106 = function() {
+      this.eq((Ωfstr_107 = function() {
         return _hint_as_locale_cfg('en-IN');
       }), {
         decimal: '.',
@@ -558,43 +570,61 @@
         grouping: [3, 2, 2, 2, 2, 2, 2, 2, 2, 2],
         currency: ['₹', '']
       });
-      this.eq((Ωfstr_107 = function() {
+      this.eq((Ωfstr_108 = function() {
         return _hint_as_locale_cfg({});
       }), {});
       //.......................................................................................................
-      this.eq((Ωfstr_108 = function() {
+      this.eq((Ωfstr_109 = function() {
         return _format_cfg_from_hints('ar-AE');
       }), {
         decimal: '٫',
         thousands: '٬',
         grouping: [3],
         currency: ['', ' د.إ.'],
-        numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
+        numerals: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'],
+        percent: '%',
+        minus: '−',
+        nan: 'NaN'
       });
-      this.eq((Ωfstr_109 = function() {
+      this.eq((Ωfstr_110 = function() {
         return _format_cfg_from_hints('en-US');
       }), {
         decimal: '.',
         thousands: ',',
         grouping: [3],
-        currency: ['$', '']
+        currency: ['$', ''],
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: '%',
+        minus: '−',
+        nan: 'NaN'
       });
-      this.eq((Ωfstr_110 = function() {
+      this.eq((Ωfstr_111 = function() {
         return _format_cfg_from_hints('de-DE');
       }), {
         decimal: ',',
         thousands: '.',
         grouping: [3],
-        currency: ['', ' €']
+        currency: ['', ' €'],
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: '%',
+        minus: '−',
+        nan: 'NaN'
       });
-      this.eq((Ωfstr_111 = function() {
+      this.eq((Ωfstr_112 = function() {
         return _format_cfg_from_hints({
           percent: '\xa0v.Hd.'
         });
       }), {
-        percent: ' v.Hd.'
+        decimal: '.',
+        thousands: ',',
+        grouping: [3],
+        currency: ['$', ''],
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: ' v.Hd.',
+        minus: '−',
+        nan: 'NaN'
       });
-      this.eq((Ωfstr_112 = function() {
+      this.eq((Ωfstr_113 = function() {
         return _format_cfg_from_hints('de-DE', {
           percent: '\xa0v.Hd.'
         });
@@ -603,9 +633,12 @@
         thousands: '.',
         grouping: [3],
         currency: ['', ' €'],
-        percent: ' v.Hd.'
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: ' v.Hd.',
+        minus: '−',
+        nan: 'NaN'
       });
-      this.eq((Ωfstr_113 = function() {
+      this.eq((Ωfstr_114 = function() {
         return _format_cfg_from_hints('de-DE', {
           percent: '\xa0v.Hd.'
         }, {
@@ -616,70 +649,89 @@
         thousands: "'",
         grouping: [3],
         currency: ['', ' €'],
-        percent: ' v.Hd.'
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: ' v.Hd.',
+        minus: '−',
+        nan: 'NaN'
       });
-      this.eq((Ωfstr_114 = function() {
+      this.eq((Ωfstr_115 = function() {
         return _format_cfg_from_hints({});
-      }), {});
+      }), {
+        decimal: '.',
+        thousands: ',',
+        grouping: [3],
+        currency: ['$', ''],
+        numerals: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        percent: '%',
+        minus: '−',
+        nan: 'NaN'
+      });
       (() => {        //.......................................................................................................
-        var locale, locale_cfg, Ωfstr_115, Ωfstr_116;
+        var locale, locale_cfg, Ωfstr_116, Ωfstr_117;
         locale_cfg = _format_cfg_from_hints('de-DE');
         locale = _d3_format.formatLocale(locale_cfg);
-        this.eq((Ωfstr_115 = function() {
+        this.eq((Ωfstr_116 = function() {
           return (locale.format('_>17,.5%'))(0.754321);
         }), '________75,43210%');
-        this.eq((Ωfstr_116 = function() {
+        this.eq((Ωfstr_117 = function() {
           return (locale.format('_>17,.5f'))(1234567890);
         }), '1.234.567.890,00000');
         return null;
       })();
       (() => {        //.......................................................................................................
-        var locale, locale_cfg, Ωfstr_120, Ωfstr_121;
+        var locale, locale_cfg, Ωfstr_118, Ωfstr_119;
         locale_cfg = _format_cfg_from_hints('de-DE', {
-          numerals: ['O', 'ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ'],
+          numerals: ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'],
           percent: ' v.H.'
         });
         locale = _d3_format.formatLocale(locale_cfg);
-        this.eq((Ωfstr_120 = function() {
+        this.eq((Ωfstr_118 = function() {
           return (locale.format('_>17,.5%'))(0.754321);
-        }), '___hf,edcba v.H.');
-        return this.eq((Ωfstr_121 = function() {
+        }), '____⁷⁵,⁴³²¹⁰ v.H.');
+        this.eq((Ωfstr_119 = function() {
           return (locale.format('_>17,.5f'))(1234567890);
-        }), 'b.cde.fgh.ija,aaaaa');
+        }), '¹.²³⁴.⁵⁶⁷.⁸⁹⁰,⁰⁰⁰⁰⁰');
+        return null;
       })();
-      return null;
-      warn('Ωfstr_122', '————————————————————————————————————————————————————––');
-      info('Ωfstr_123', f`${0.75}:_>17.5%;`);
+      //.......................................................................................................
       ((f) => {
-        f = new_ftag({
-          numerals: ['O', 'ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ'],
-          percent: 'v.Hdt.'
+        var Ωfstr_120;
+        f = new_ftag('de-DE', {
+          numerals: ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'],
+          percent: ' v.H.'
         });
-        info('Ωfstr_124', f`${0.75}:_>17.5%;`);
+        this.eq((Ωfstr_120 = function() {
+          return f`${0.754321}:_>17.5%;`;
+        }), '____⁷⁵,⁴³²¹⁰ v.H.');
         return null;
       })(f);
-      ((f) => {
-        f = new_ftag({
-          grouping: [1, 4],
-          percent: 'v.Hdt.'
-        });
-        info('Ωfstr_125', f`${123456789123456789.75}:_>37,.5f;`);
-        return null;
-      })(f);
-      f = new_ftag({});
-      debug('Ωfstr_126', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_ftag('de-DE');
-      debug('Ωfstr_127', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_ftag('ar-AE');
-      debug('Ωfstr_128', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_ftag('ar-001');
-      debug('Ωfstr_129', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_ftag('en-US');
-      debug('Ωfstr_130', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_ftag('es-MX');
-      debug('Ωfstr_131', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
-      f = new_ftag('en-IN');
-      debug('Ωfstr_132', f`${1.23}:$03.2f; ${1234567890.123456}:20,.4f;`);
+      //.......................................................................................................
+      this.eq((Ωfstr_121 = function() {
+        return (new_ftag('en-US'))`${123456789123456789.75}:_>37,.5f;`;
+      }), '________123,456,789,123,456,784.00000');
+      this.eq((Ωfstr_122 = function() {
+        return (new_ftag({
+          grouping: [4]
+        }))`${123456789123456789.75}:_>37,.5f;`;
+      }), '_________12,3456,7891,2345,6784.00000');
+      this.eq((Ωfstr_123 = function() {
+        return (new_ftag())`${1.23}:$03.2f;[${1234567890.123456}:20,.4f;]`;
+      }), '$1.23[  1,234,567,890.1235]');
+      this.eq((Ωfstr_124 = function() {
+        return (new_ftag({}))`${1.23}:$03.2f;[${1234567890.123456}:20,.4f;]`;
+      }), '$1.23[  1,234,567,890.1235]');
+      this.eq((Ωfstr_125 = function() {
+        return (new_ftag('de-DE'))`${1.23}:$03.2f;[${1234567890.123456}:20,.4f;]`;
+      }), '1,23 €[  1.234.567.890,1235]');
+      this.eq((Ωfstr_126 = function() {
+        return (new_ftag('en-US'))`${1.23}:$03.2f;[${1234567890.123456}:20,.4f;]`;
+      }), '$1.23[  1,234,567,890.1235]');
+      this.eq((Ωfstr_127 = function() {
+        return (new_ftag('es-MX'))`${1.23}:$03.2f;[${1234567890.123456}:20,.4f;]`;
+      }), '$1.23[  1,234,567,890.1235]');
+      this.eq((Ωfstr_128 = function() {
+        return (new_ftag('en-IN'))`${1.23}:$03.2f;[${1234567890.123456}:20,.4f;]`;
+      }), '₹1.23[ 1,23,45,67,890.1235]');
       //.......................................................................................................
       return null;
     }
