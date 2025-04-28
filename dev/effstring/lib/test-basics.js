@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, TMP_types, Test, WGUY, alert, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var GTNG, GUY, README_demo, TMP_types, Test, WGUY, alert, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -41,70 +41,70 @@
     },
     //---------------------------------------------------------------------------------------------------------
     re_matches: function() {
-      var _format_re, Ωfstr__10, Ωfstr__11, Ωfstr__12, Ωfstr___4, Ωfstr___5, Ωfstr___6, Ωfstr___7, Ωfstr___8, Ωfstr___9;
-      ({_format_re} = require('../../../apps/effstring'));
+      var _fmtspec_re, Ωfstr__10, Ωfstr__11, Ωfstr__12, Ωfstr___4, Ωfstr___5, Ωfstr___6, Ωfstr___7, Ωfstr___8, Ωfstr___9;
+      ({_fmtspec_re} = require('../../../apps/effstring'));
       //.....................................................................................................
       this.eq((Ωfstr___4 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '5',
+        fmtspec: '5',
         tail: ')'
       });
       this.eq((Ωfstr___5 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":>5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":>5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '>5',
+        fmtspec: '>5',
         tail: ')'
       });
       this.eq((Ωfstr___6 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":<5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":<5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '<5',
+        fmtspec: '<5',
         tail: ')'
       });
       this.eq((Ωfstr___7 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":>5.2;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":>5.2;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '>5.2',
+        fmtspec: '>5.2',
         tail: ')'
       });
       this.eq((Ωfstr___8 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":\\;<5;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":\\;<5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '\\',
+        fmtspec: '\\',
         tail: '<5;)'
       });
       this.eq((Ωfstr___9 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":\\;<5;);".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":\\;<5;);".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '\\',
+        fmtspec: '\\',
         tail: '<5;);'
       });
       this.eq((Ωfstr__10 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":\\;<5;)\\;".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":\\;<5;)\\;".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '\\',
+        fmtspec: '\\',
         tail: '<5;)\\;'
       });
       this.eq((Ωfstr__11 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":\\;>15;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":\\;>15;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: '\\',
+        fmtspec: '\\',
         tail: '>15;)'
       });
       this.eq((Ωfstr__12 = function() {
         var ref, ref1;
-        return (ref = (ref1 = ":;>15;)".match(_format_re)) != null ? ref1.groups : void 0) != null ? ref : null;
+        return (ref = (ref1 = ":;>15;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmt: ';>15',
+        fmtspec: ';>15',
         tail: ')'
       });
       //.......................................................................................................
@@ -738,17 +738,53 @@
   };
 
   //===========================================================================================================
+  README_demo = function() {
+    (() => {
+      var f;
+      ({f} = require('../../../apps/effstring'));
+      console.log(f`${'Alice'}:*<15c; has ${1234}:_>$12,.2f; in their pocket.`);
+      console.log(f`${'Bob'}:*<15c; has ${45678.93}:_>$12,.2f; in their pocket.`);
+      return null;
+    })();
+    (() => {
+      var f_en, f_ja, new_ftag;
+      ({new_ftag} = require('../../../apps/effstring'));
+      f_en = new_ftag('en-GB');
+      f_ja = new_ftag('ja-JP', {
+        numerals: ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+      });
+      console.log(f_en`${'Alice'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
+      console.log(f_en`${'Bob'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
+      console.log(f_ja`${'アリスさん'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
+      console.log(f_ja`${'ボブさん'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
+      return null;
+    })();
+    (() => {
+      var f_en, f_ja, new_ftag, to_width;
+      ({to_width} = require('../../../apps/to-width'));
+      ({new_ftag} = require('../../../apps/effstring'));
+      f_en = new_ftag('en-GB');
+      f_ja = new_ftag('ja-JP', {
+        numerals: ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+      });
+      console.log(f_en`${'Alice'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
+      console.log(f_en`${'Bob'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
+      console.log(f_ja`${'アリスさん'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
+      console.log(f_ja`${'ボブさん'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
+      return null;
+    })();
+    return null;
+  };
+
+  //===========================================================================================================
   if (module === require.main) {
     await (() => {
       // ( new Test { throw_on_error: true, } ).test @intertype_tasks
       (new Test({
         throw_on_error: false
       })).test(this.intertype_tasks);
-      return (new Test({
-        throw_on_error: true
-      })).test({
-        locale_internals: this.intertype_tasks.locale_internals
-      });
+      // ( new Test { throw_on_error: true, } ).test { locale_internals: @intertype_tasks.locale_internals, }
+      return README_demo();
     })();
   }
 

@@ -45,17 +45,17 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
   #---------------------------------------------------------------------------------------------------------
   re_matches: ->
-    { _format_re } = require '../../../apps/effstring'
+    { _fmtspec_re } = require '../../../apps/effstring'
     #.....................................................................................................
-    @eq ( Ωfstr___4 = ->  ( ( ":5;)"        ).match _format_re )?.groups ? null ), { fmt: '5',      tail: ')'       }
-    @eq ( Ωfstr___5 = ->  ( ( ":>5;)"       ).match _format_re )?.groups ? null ), { fmt: '>5',     tail: ')'       }
-    @eq ( Ωfstr___6 = ->  ( ( ":<5;)"       ).match _format_re )?.groups ? null ), { fmt: '<5',     tail: ')'       }
-    @eq ( Ωfstr___7 = ->  ( ( ":>5.2;)"     ).match _format_re )?.groups ? null ), { fmt: '>5.2',   tail: ')'       }
-    @eq ( Ωfstr___8 = ->  ( ( ":\\;<5;)"    ).match _format_re )?.groups ? null ), { fmt: '\\',     tail: '<5;)'    }
-    @eq ( Ωfstr___9 = ->  ( ( ":\\;<5;);"   ).match _format_re )?.groups ? null ), { fmt: '\\',     tail: '<5;);'   }
-    @eq ( Ωfstr__10 = ->  ( ( ":\\;<5;)\\;" ).match _format_re )?.groups ? null ), { fmt: '\\',     tail: '<5;)\\;' }
-    @eq ( Ωfstr__11 = ->  ( ( ":\\;>15;)"   ).match _format_re )?.groups ? null ), { fmt: '\\',     tail: '>15;)'   }
-    @eq ( Ωfstr__12 = ->  ( ( ":;>15;)"     ).match _format_re )?.groups ? null ), { fmt: ';>15',   tail: ')'       }
+    @eq ( Ωfstr___4 = ->  ( ( ":5;)"        ).match _fmtspec_re )?.groups ? null ), { fmtspec: '5',      tail: ')'       }
+    @eq ( Ωfstr___5 = ->  ( ( ":>5;)"       ).match _fmtspec_re )?.groups ? null ), { fmtspec: '>5',     tail: ')'       }
+    @eq ( Ωfstr___6 = ->  ( ( ":<5;)"       ).match _fmtspec_re )?.groups ? null ), { fmtspec: '<5',     tail: ')'       }
+    @eq ( Ωfstr___7 = ->  ( ( ":>5.2;)"     ).match _fmtspec_re )?.groups ? null ), { fmtspec: '>5.2',   tail: ')'       }
+    @eq ( Ωfstr___8 = ->  ( ( ":\\;<5;)"    ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '<5;)'    }
+    @eq ( Ωfstr___9 = ->  ( ( ":\\;<5;);"   ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '<5;);'   }
+    @eq ( Ωfstr__10 = ->  ( ( ":\\;<5;)\\;" ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '<5;)\\;' }
+    @eq ( Ωfstr__11 = ->  ( ( ":\\;>15;)"   ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '>15;)'   }
+    @eq ( Ωfstr__12 = ->  ( ( ":;>15;)"     ).match _fmtspec_re )?.groups ? null ), { fmtspec: ';>15',   tail: ')'       }
     #.......................................................................................................
     return null
 
@@ -287,10 +287,43 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     return null
 
+#===========================================================================================================
+README_demo = ->
+  do =>
+    { f, } = require '../../../apps/effstring'
+    console.log f"#{'Alice'}:*<15c; has #{1234}:_>$12,.2f; in their pocket."
+    console.log f"#{'Bob'}:*<15c; has #{45678.93}:_>$12,.2f; in their pocket."
+    return null
+  do =>
+    { new_ftag, } = require '../../../apps/effstring'
+    f_en = new_ftag 'en-GB'
+    f_ja = new_ftag 'ja-JP', numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ]
+    console.log f_en"#{'Alice'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_en"#{'Bob'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'アリスさん'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'ボブさん'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
+    return null
+  do =>
+    { to_width  } = require '../../../apps/to-width'
+    { new_ftag, } = require '../../../apps/effstring'
+    f_en = new_ftag 'en-GB'
+    f_ja = new_ftag 'ja-JP', numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ]
+    console.log f_en"#{'Alice'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_en"#{'Bob'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'アリスさん'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'ボブさん'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
+    return null
+  return null
+
+
 
 
 #===========================================================================================================
 if module is require.main then await do =>
   # ( new Test { throw_on_error: true, } ).test @intertype_tasks
   ( new Test { throw_on_error: false, } ).test @intertype_tasks
-  ( new Test { throw_on_error: true, } ).test { locale_internals: @intertype_tasks.locale_internals, }
+  # ( new Test { throw_on_error: true, } ).test { locale_internals: @intertype_tasks.locale_internals, }
+  README_demo()
+
+
+
