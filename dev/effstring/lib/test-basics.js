@@ -48,63 +48,63 @@
         var ref, ref1;
         return (ref = (ref1 = ":5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '5',
+        fmt_spec: '5',
         tail: ')'
       });
       this.eq((Ωfstr___5 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":>5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '>5',
+        fmt_spec: '>5',
         tail: ')'
       });
       this.eq((Ωfstr___6 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":<5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '<5',
+        fmt_spec: '<5',
         tail: ')'
       });
       this.eq((Ωfstr___7 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":>5.2;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '>5.2',
+        fmt_spec: '>5.2',
         tail: ')'
       });
       this.eq((Ωfstr___8 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;<5;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '\\',
+        fmt_spec: '\\',
         tail: '<5;)'
       });
       this.eq((Ωfstr___9 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;<5;);".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '\\',
+        fmt_spec: '\\',
         tail: '<5;);'
       });
       this.eq((Ωfstr__10 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;<5;)\\;".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '\\',
+        fmt_spec: '\\',
         tail: '<5;)\\;'
       });
       this.eq((Ωfstr__11 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":\\;>15;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: '\\',
+        fmt_spec: '\\',
         tail: '>15;)'
       });
       this.eq((Ωfstr__12 = function() {
         var ref, ref1;
         return (ref = (ref1 = ":;>15;)".match(_fmtspec_re)) != null ? ref1.groups : void 0) != null ? ref : null;
       }), {
-        fmtspec: ';>15',
+        fmt_spec: ';>15',
         tail: ')'
       });
       //.......................................................................................................
@@ -460,10 +460,10 @@
       }), "0000000000000000000☃");
       this.eq((Ωfstr__91 = function() {
         return f`${'☃'}: ^20c;`;
-      }), "         ☃          ");
+      }), '         ☃         ');
       this.eq((Ωfstr__92 = function() {
         return f`${'経済'}: ^20c;`;
-      }), '         経済         ');
+      }), '        経済        ');
       this.eq((Ωfstr__93 = function() {
         return f`${'abcd'}: ^20c;`;
       }), '        abcd        ');
@@ -475,8 +475,8 @@
     },
     //---------------------------------------------------------------------------------------------------------
     locale_internals: function() {
-      var _d3_format, _default_locale, _format_cfg_from_hints, _hint_as_locale_cfg, _locale_cfg_from_bcp47, f, new_ftag, Ωfstr_100, Ωfstr_101, Ωfstr_102, Ωfstr_103, Ωfstr_104, Ωfstr_105, Ωfstr_106, Ωfstr_107, Ωfstr_108, Ωfstr_109, Ωfstr_110, Ωfstr_111, Ωfstr_112, Ωfstr_113, Ωfstr_114, Ωfstr_115, Ωfstr_121, Ωfstr_122, Ωfstr_123, Ωfstr_124, Ωfstr_125, Ωfstr_126, Ωfstr_127, Ωfstr_128, Ωfstr__95, Ωfstr__96, Ωfstr__97, Ωfstr__98, Ωfstr__99;
-      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _format_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, Ωfstr_100, Ωfstr_101, Ωfstr_102, Ωfstr_103, Ωfstr_104, Ωfstr_105, Ωfstr_106, Ωfstr_107, Ωfstr_108, Ωfstr_109, Ωfstr_110, Ωfstr_111, Ωfstr_112, Ωfstr_113, Ωfstr_114, Ωfstr_115, Ωfstr_121, Ωfstr_122, Ωfstr_123, Ωfstr_124, Ωfstr_125, Ωfstr_126, Ωfstr_127, Ωfstr_128, Ωfstr__95, Ωfstr__96, Ωfstr__97, Ωfstr__98, Ωfstr__99;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
       //.......................................................................................................
       this.eq((Ωfstr__95 = function() {
         return (_d3_format != null) && ((typeof _d3_format) === 'object');
@@ -485,7 +485,7 @@
         return (_locale_cfg_from_bcp47 != null) && ((typeof _locale_cfg_from_bcp47) === 'function');
       }), true);
       this.eq((Ωfstr__97 = function() {
-        return (_format_cfg_from_hints != null) && ((typeof _format_cfg_from_hints) === 'function');
+        return (_locale_cfg_from_hints != null) && ((typeof _locale_cfg_from_hints) === 'function');
       }), true);
       this.eq((Ωfstr__98 = function() {
         return (_hint_as_locale_cfg != null) && ((typeof _hint_as_locale_cfg) === 'function');
@@ -575,7 +575,7 @@
       }), {});
       //.......................................................................................................
       this.eq((Ωfstr_109 = function() {
-        return _format_cfg_from_hints('ar-AE');
+        return _locale_cfg_from_hints('ar-AE');
       }), {
         decimal: '٫',
         thousands: '٬',
@@ -587,7 +587,7 @@
         nan: 'NaN'
       });
       this.eq((Ωfstr_110 = function() {
-        return _format_cfg_from_hints('en-US');
+        return _locale_cfg_from_hints('en-US');
       }), {
         decimal: '.',
         thousands: ',',
@@ -599,7 +599,7 @@
         nan: 'NaN'
       });
       this.eq((Ωfstr_111 = function() {
-        return _format_cfg_from_hints('de-DE');
+        return _locale_cfg_from_hints('de-DE');
       }), {
         decimal: ',',
         thousands: '.',
@@ -611,7 +611,7 @@
         nan: 'NaN'
       });
       this.eq((Ωfstr_112 = function() {
-        return _format_cfg_from_hints({
+        return _locale_cfg_from_hints({
           percent: '\xa0v.Hd.'
         });
       }), {
@@ -625,7 +625,7 @@
         nan: 'NaN'
       });
       this.eq((Ωfstr_113 = function() {
-        return _format_cfg_from_hints('de-DE', {
+        return _locale_cfg_from_hints('de-DE', {
           percent: '\xa0v.Hd.'
         });
       }), {
@@ -639,7 +639,7 @@
         nan: 'NaN'
       });
       this.eq((Ωfstr_114 = function() {
-        return _format_cfg_from_hints('de-DE', {
+        return _locale_cfg_from_hints('de-DE', {
           percent: '\xa0v.Hd.'
         }, {
           thousands: "'"
@@ -655,7 +655,7 @@
         nan: 'NaN'
       });
       this.eq((Ωfstr_115 = function() {
-        return _format_cfg_from_hints({});
+        return _locale_cfg_from_hints({});
       }), {
         decimal: '.',
         thousands: ',',
@@ -668,7 +668,7 @@
       });
       (() => {        //.......................................................................................................
         var locale, locale_cfg, Ωfstr_116, Ωfstr_117;
-        locale_cfg = _format_cfg_from_hints('de-DE');
+        locale_cfg = _locale_cfg_from_hints('de-DE');
         locale = _d3_format.formatLocale(locale_cfg);
         this.eq((Ωfstr_116 = function() {
           return (locale.format('_>17,.5%'))(0.754321);
@@ -680,7 +680,7 @@
       })();
       (() => {        //.......................................................................................................
         var locale, locale_cfg, Ωfstr_118, Ωfstr_119;
-        locale_cfg = _format_cfg_from_hints('de-DE', {
+        locale_cfg = _locale_cfg_from_hints('de-DE', {
           numerals: ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'],
           percent: ' v.H.'
         });
@@ -740,37 +740,36 @@
   //===========================================================================================================
   README_demo = function() {
     (() => {
-      var f;
-      ({f} = require('../../../apps/effstring'));
-      console.log(f`${'Alice'}:*<15c; has ${1234}:_>$12,.2f; in their pocket.`);
-      console.log(f`${'Bob'}:*<15c; has ${45678.93}:_>$12,.2f; in their pocket.`);
+      var f_en, f_ja, ja_jp_cfg, new_ftag;
+      ({new_ftag} = require('../../../apps/effstring'));
+      ja_jp_cfg = {
+        numerals: ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+      };
+      f_en = new_ftag('en-GB');
+      f_ja = new_ftag('ja-JP', ja_jp_cfg);
+      console.log(f_en`${'Alice'}:*<15c; is in ${'London'}:.^12c; and has ${1234}:_>$22,.2f; in their pocket.`);
+      console.log(f_en`${'Bob'}:*<15c; is in ${'London'}:.^12c; and has ${45678.93}:_>$22,.2f; in their pocket.`);
+      console.log(f_ja`${'アリスさん'}:*<15c; is in ${'倫敦'}:.^12c; and has ${1234}:_>$22,.2f; in their pocket.`);
+      console.log(f_ja`${'ボブさん'}:*<15c; is in ${'倫敦'}:.^12c; and has ${45678.93}:_>$22,.2f; in their pocket.`);
       return null;
     })();
     (() => {
-      var f_en, f_ja, new_ftag;
+      var f_en, f_zh, new_ftag, zh_tw_cfg;
       ({new_ftag} = require('../../../apps/effstring'));
+      zh_tw_cfg = {
+        currency: ['新臺幣', '']
+      };
+      // numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ],
       f_en = new_ftag('en-GB');
-      f_ja = new_ftag('ja-JP', {
-        numerals: ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
-      });
-      console.log(f_en`${'Alice'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
-      console.log(f_en`${'Bob'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
-      console.log(f_ja`${'アリスさん'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
-      console.log(f_ja`${'ボブさん'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
-      return null;
-    })();
-    (() => {
-      var f_en, f_ja, new_ftag, to_width;
-      ({to_width} = require('../../../apps/to-width'));
-      ({new_ftag} = require('../../../apps/effstring'));
-      f_en = new_ftag('en-GB');
-      f_ja = new_ftag('ja-JP', {
-        numerals: ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
-      });
-      console.log(f_en`${'Alice'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
-      console.log(f_en`${'Bob'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
-      console.log(f_ja`${'アリスさん'}:*<15c; has ${1234}:_>$22,.2f; in their pocket.`);
-      console.log(f_ja`${'ボブさん'}:*<15c; has ${45678.93}:_>$22,.2f; in their pocket.`);
+      f_zh = new_ftag('zh-CN', zh_tw_cfg);
+      console.log(f_en`${-98765.43}:·>$20,.2f;`);
+      console.log(f_zh`${-98765.43}:·>$20,.2f;`);
+      console.log(f_en`${-98765.43}:·=$20,.2f;`);
+      console.log(f_zh`${-98765.43}:·=$20,.2f;`);
+      // console.log f_en"#{-98765.43}:〇>$20,.2f;"
+      // console.log f_zh"#{-98765.43}:〇>$20,.2f;"
+      // console.log f_en"#{-98765.43}:〇=$20,.2f;"
+      // console.log f_zh"#{-98765.43}:〇=$20,.2f;"
       return null;
     })();
     return null;

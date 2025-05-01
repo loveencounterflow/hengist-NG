@@ -47,15 +47,15 @@ GTNG                      = require '../../../apps/guy-test-NG'
   re_matches: ->
     { _fmtspec_re } = require '../../../apps/effstring'
     #.....................................................................................................
-    @eq ( Ωfstr___4 = ->  ( ( ":5;)"        ).match _fmtspec_re )?.groups ? null ), { fmtspec: '5',      tail: ')'       }
-    @eq ( Ωfstr___5 = ->  ( ( ":>5;)"       ).match _fmtspec_re )?.groups ? null ), { fmtspec: '>5',     tail: ')'       }
-    @eq ( Ωfstr___6 = ->  ( ( ":<5;)"       ).match _fmtspec_re )?.groups ? null ), { fmtspec: '<5',     tail: ')'       }
-    @eq ( Ωfstr___7 = ->  ( ( ":>5.2;)"     ).match _fmtspec_re )?.groups ? null ), { fmtspec: '>5.2',   tail: ')'       }
-    @eq ( Ωfstr___8 = ->  ( ( ":\\;<5;)"    ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '<5;)'    }
-    @eq ( Ωfstr___9 = ->  ( ( ":\\;<5;);"   ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '<5;);'   }
-    @eq ( Ωfstr__10 = ->  ( ( ":\\;<5;)\\;" ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '<5;)\\;' }
-    @eq ( Ωfstr__11 = ->  ( ( ":\\;>15;)"   ).match _fmtspec_re )?.groups ? null ), { fmtspec: '\\',     tail: '>15;)'   }
-    @eq ( Ωfstr__12 = ->  ( ( ":;>15;)"     ).match _fmtspec_re )?.groups ? null ), { fmtspec: ';>15',   tail: ')'       }
+    @eq ( Ωfstr___4 = ->  ( ( ":5;)"        ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '5',      tail: ')'       }
+    @eq ( Ωfstr___5 = ->  ( ( ":>5;)"       ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '>5',     tail: ')'       }
+    @eq ( Ωfstr___6 = ->  ( ( ":<5;)"       ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '<5',     tail: ')'       }
+    @eq ( Ωfstr___7 = ->  ( ( ":>5.2;)"     ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '>5.2',   tail: ')'       }
+    @eq ( Ωfstr___8 = ->  ( ( ":\\;<5;)"    ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '\\',     tail: '<5;)'    }
+    @eq ( Ωfstr___9 = ->  ( ( ":\\;<5;);"   ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '\\',     tail: '<5;);'   }
+    @eq ( Ωfstr__10 = ->  ( ( ":\\;<5;)\\;" ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '\\',     tail: '<5;)\\;' }
+    @eq ( Ωfstr__11 = ->  ( ( ":\\;>15;)"   ).match _fmtspec_re )?.groups ? null ), { fmt_spec: '\\',     tail: '>15;)'   }
+    @eq ( Ωfstr__12 = ->  ( ( ":;>15;)"     ).match _fmtspec_re )?.groups ? null ), { fmt_spec: ';>15',   tail: ')'       }
     #.......................................................................................................
     return null
 
@@ -215,8 +215,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     @eq ( Ωfstr__89 = -> f"#{'☃'}:c;"         ), "☃"
     @eq ( Ωfstr__90 = -> f"#{'☃'}:020c;"      ),  "0000000000000000000☃"
-    @eq ( Ωfstr__91 = -> f"#{'☃'}: ^20c;"     ), "         ☃          "
-    @eq ( Ωfstr__92 = -> f"#{'経済'}: ^20c;"   ), '         経済         '
+    @eq ( Ωfstr__91 = -> f"#{'☃'}: ^20c;"     ), '         ☃         '
+    @eq ( Ωfstr__92 = -> f"#{'経済'}: ^20c;"   ), '        経済        '
     @eq ( Ωfstr__93 = -> f"#{'abcd'}: ^20c;"   ), '        abcd        '
     @eq ( Ωfstr__94 = -> f"#{'☃'}:$c;"        ), "$☃"
     #.......................................................................................................
@@ -229,12 +229,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
       _default_locale
       _d3_format
       _locale_cfg_from_bcp47
-      _format_cfg_from_hints
+      _locale_cfg_from_hints
       _hint_as_locale_cfg              } = require '../../../apps/effstring'
     #.......................................................................................................
     @eq ( Ωfstr__95 = -> _d3_format?              and ( ( typeof _d3_format             ) is 'object'   ) ), true
     @eq ( Ωfstr__96 = -> _locale_cfg_from_bcp47?  and ( ( typeof _locale_cfg_from_bcp47 ) is 'function' ) ), true
-    @eq ( Ωfstr__97 = -> _format_cfg_from_hints?  and ( ( typeof _format_cfg_from_hints ) is 'function' ) ), true
+    @eq ( Ωfstr__97 = -> _locale_cfg_from_hints?  and ( ( typeof _locale_cfg_from_hints ) is 'function' ) ), true
     @eq ( Ωfstr__98 = -> _hint_as_locale_cfg?     and ( ( typeof _hint_as_locale_cfg    ) is 'function' ) ), true
     #.......................................................................................................
     @eq ( Ωfstr__99 = -> _default_locale                ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
@@ -249,23 +249,23 @@ GTNG                      = require '../../../apps/guy-test-NG'
     @eq ( Ωfstr_107 = -> _hint_as_locale_cfg 'en-IN'    ), { decimal: '.', thousands: ',', grouping: [ 3, 2, 2, 2, 2, 2, 2, 2, 2, 2 ], currency: [ '₹', '' ] }
     @eq ( Ωfstr_108 = -> _hint_as_locale_cfg {}         ), {}
     #.......................................................................................................
-    @eq ( Ωfstr_109 = -> _format_cfg_from_hints 'ar-AE'                                                 ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ], percent: '%', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_110 = -> _format_cfg_from_hints 'en-US'                                                 ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_111 = -> _format_cfg_from_hints 'de-DE'                                                 ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_112 = -> _format_cfg_from_hints          { percent: '\xa0v.Hd.', }                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_113 = -> _format_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }                      ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_114 = -> _format_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }, { thousands: "'", } ), { decimal: ',', thousands: "'", grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_115 = -> _format_cfg_from_hints {}                                                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_109 = -> _locale_cfg_from_hints 'ar-AE'                                                 ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_110 = -> _locale_cfg_from_hints 'en-US'                                                 ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_111 = -> _locale_cfg_from_hints 'de-DE'                                                 ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_112 = -> _locale_cfg_from_hints          { percent: '\xa0v.Hd.', }                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_113 = -> _locale_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }                      ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_114 = -> _locale_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }, { thousands: "'", } ), { decimal: ',', thousands: "'", grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_115 = -> _locale_cfg_from_hints {}                                                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
     #.......................................................................................................
     do =>
-      locale_cfg  = _format_cfg_from_hints 'de-DE'
+      locale_cfg  = _locale_cfg_from_hints 'de-DE'
       locale      = _d3_format.formatLocale locale_cfg
       @eq ( Ωfstr_116 = -> ( locale.format '_>17,.5%' ) 0.754321    ), '________75,43210%'
       @eq ( Ωfstr_117 = -> ( locale.format '_>17,.5f' ) 1234567890  ), '1.234.567.890,00000'
       return null
     #.......................................................................................................
     do =>
-      locale_cfg  = _format_cfg_from_hints 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
+      locale_cfg  = _locale_cfg_from_hints 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
       locale      = _d3_format.formatLocale locale_cfg
       @eq ( Ωfstr_118 = -> ( locale.format '_>17,.5%' ) 0.754321    ), '____⁷⁵,⁴³²¹⁰ v.H.'
       @eq ( Ωfstr_119 = -> ( locale.format '_>17,.5f' ) 1234567890  ), '¹.²³⁴.⁵⁶⁷.⁸⁹⁰,⁰⁰⁰⁰⁰'
@@ -290,28 +290,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #===========================================================================================================
 README_demo = ->
   do =>
-    { f, } = require '../../../apps/effstring'
-    console.log f"#{'Alice'}:*<15c; has #{1234}:_>$12,.2f; in their pocket."
-    console.log f"#{'Bob'}:*<15c; has #{45678.93}:_>$12,.2f; in their pocket."
+    { new_ftag, } = require '../../../apps/effstring'
+    ja_jp_cfg     = {
+      numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ], }
+    f_en = new_ftag 'en-GB'
+    f_ja = new_ftag 'ja-JP', ja_jp_cfg
+    console.log f_en"#{'Alice'}:*<15c; is in #{'London'}:.^12c; and has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_en"#{'Bob'}:*<15c; is in #{'London'}:.^12c; and has #{45678.93}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'アリスさん'}:*<15c; is in #{'倫敦'}:.^12c; and has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'ボブさん'}:*<15c; is in #{'倫敦'}:.^12c; and has #{45678.93}:_>$22,.2f; in their pocket."
     return null
   do =>
     { new_ftag, } = require '../../../apps/effstring'
+    zh_tw_cfg     = {
+      currency: [ '新臺幣', '', ],
+      # numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ],
+      }
     f_en = new_ftag 'en-GB'
-    f_ja = new_ftag 'ja-JP', numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ]
-    console.log f_en"#{'Alice'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
-    console.log f_en"#{'Bob'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
-    console.log f_ja"#{'アリスさん'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
-    console.log f_ja"#{'ボブさん'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
-    return null
-  do =>
-    { to_width  } = require '../../../apps/to-width'
-    { new_ftag, } = require '../../../apps/effstring'
-    f_en = new_ftag 'en-GB'
-    f_ja = new_ftag 'ja-JP', numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ]
-    console.log f_en"#{'Alice'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
-    console.log f_en"#{'Bob'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
-    console.log f_ja"#{'アリスさん'}:*<15c; has #{1234}:_>$22,.2f; in their pocket."
-    console.log f_ja"#{'ボブさん'}:*<15c; has #{45678.93}:_>$22,.2f; in their pocket."
+    f_zh = new_ftag 'zh-CN', zh_tw_cfg
+    console.log f_en"#{-98765.43}:·>$20,.2f;"
+    console.log f_zh"#{-98765.43}:·>$20,.2f;"
+    console.log f_en"#{-98765.43}:·=$20,.2f;"
+    console.log f_zh"#{-98765.43}:·=$20,.2f;"
+    # console.log f_en"#{-98765.43}:〇>$20,.2f;"
+    # console.log f_zh"#{-98765.43}:〇>$20,.2f;"
+    # console.log f_en"#{-98765.43}:〇=$20,.2f;"
+    # console.log f_zh"#{-98765.43}:〇=$20,.2f;"
     return null
   return null
 
