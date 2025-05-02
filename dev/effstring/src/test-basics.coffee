@@ -237,7 +237,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
     @eq ( Ωfstr__97 = -> _locale_cfg_from_hints?  and ( ( typeof _locale_cfg_from_hints ) is 'function' ) ), true
     @eq ( Ωfstr__98 = -> _hint_as_locale_cfg?     and ( ( typeof _hint_as_locale_cfg    ) is 'function' ) ), true
     #.......................................................................................................
-    @eq ( Ωfstr__99 = -> _default_locale                ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr__99 = -> _default_locale                ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN', fullwidth: true, }
     @eq ( Ωfstr_100 = -> _locale_cfg_from_bcp47 'ar-AE' ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ] }
     @eq ( Ωfstr_101 = -> _locale_cfg_from_bcp47 'en-US' ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ] }
     @eq ( Ωfstr_102 = -> _locale_cfg_from_bcp47 'de-DE' ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ] }
@@ -249,13 +249,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
     @eq ( Ωfstr_107 = -> _hint_as_locale_cfg 'en-IN'    ), { decimal: '.', thousands: ',', grouping: [ 3, 2, 2, 2, 2, 2, 2, 2, 2, 2 ], currency: [ '₹', '' ] }
     @eq ( Ωfstr_108 = -> _hint_as_locale_cfg {}         ), {}
     #.......................................................................................................
-    @eq ( Ωfstr_109 = -> _locale_cfg_from_hints 'ar-AE'                                                 ), { decimal: '٫', thousands: '٬', grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ], percent: '%', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_110 = -> _locale_cfg_from_hints 'en-US'                                                 ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_111 = -> _locale_cfg_from_hints 'de-DE'                                                 ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_112 = -> _locale_cfg_from_hints          { percent: '\xa0v.Hd.', }                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_113 = -> _locale_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }                      ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_114 = -> _locale_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }, { thousands: "'", } ), { decimal: ',', thousands: "'", grouping: [ 3 ], currency: [ '', ' €' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN' }
-    @eq ( Ωfstr_115 = -> _locale_cfg_from_hints {}                                                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ], numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN' }
+    @eq ( Ωfstr_109 = -> _locale_cfg_from_hints 'ar-AE'                                                 ), { decimal: '٫', thousands: '٬',  grouping: [ 3 ], currency: [ '', ' د.إ.' ], numerals: [ '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ], percent: '%', minus: '−', nan: 'NaN', fullwidth: true, }
+    @eq ( Ωfstr_110 = -> _locale_cfg_from_hints 'en-US'                                                 ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ],      numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN', fullwidth: true, }
+    @eq ( Ωfstr_111 = -> _locale_cfg_from_hints 'de-DE'                                                 ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ],     numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN', fullwidth: true, }
+    @eq ( Ωfstr_112 = -> _locale_cfg_from_hints          { percent: '\xa0v.Hd.', }                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ],      numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN', fullwidth: true, }
+    @eq ( Ωfstr_113 = -> _locale_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }                      ), { decimal: ',', thousands: '.', grouping: [ 3 ], currency: [ '', ' €' ],     numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN', fullwidth: true, }
+    @eq ( Ωfstr_114 = -> _locale_cfg_from_hints 'de-DE', { percent: '\xa0v.Hd.', }, { thousands: "'", } ), { decimal: ',', thousands: "'", grouping: [ 3 ], currency: [ '', ' €' ],     numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: ' v.Hd.', minus: '−', nan: 'NaN', fullwidth: true, }
+    @eq ( Ωfstr_115 = -> _locale_cfg_from_hints {}                                                      ), { decimal: '.', thousands: ',', grouping: [ 3 ], currency: [ '$', '' ],      numerals: [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ], percent: '%', minus: '−', nan: 'NaN', fullwidth: true, }
     #.......................................................................................................
     do =>
       locale_cfg  = _locale_cfg_from_hints 'de-DE'
@@ -287,10 +287,58 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  si_units_format_specifier: ->
+    { f
+      new_ftag
+      _default_locale
+      _d3_format
+      _locale_cfg_from_bcp47
+      _locale_cfg_from_hints
+      _hint_as_locale_cfg              } = require '../../../apps/effstring'
+    #.......................................................................................................
+    do =>
+      ff = _d3_format.formatPrefix "_>15,.3f", 1e-6
+      matchers = []
+      info 'Ωfstr_129', ff 0.00000042
+      info 'Ωfstr_130', ff 0.0000042
+      info 'Ωfstr_131', ff 0.000042
+      info 'Ωfstr_132', ff 0.00042
+      info 'Ωfstr_133', ff 0.0042
+      info 'Ωfstr_134', ff 0.042
+      info 'Ωfstr_135', ff 0.42
+      return null
+    # do =>
+    #   echo()
+    #   info 'Ωfstr_136', f"#{0.00000042}:_<15,.3/µ;"
+    #   info 'Ωfstr_137', f"#{0.0000042}:_<15,.3/µ;"
+    #   info 'Ωfstr_138', f"#{0.000042}:_<15,.3/µ;"
+    #   info 'Ωfstr_139', f"#{0.00042}:_<15,.3/µ;"
+    #   info 'Ωfstr_140', f"#{0.0042}:_<15,.3/µ;"
+    #   info 'Ωfstr_141', f"#{0.042}:_<15,.3/µ;"
+    #   info 'Ωfstr_142', f"#{0.42}:_<15,.3/µ;"
+    # do ( f ) =>
+    #   f = new_ftag 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
+    #   @eq ( Ωfstr_143 = -> ( f"#{0.754321}:_>17.5%;" )    ), '____⁷⁵,⁴³²¹⁰ v.H.'
+    #   return null
+    #.......................................................................................................
+    # @eq ( Ωfstr_144 = -> ( new_ftag 'en-IN' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '₹1.23[ 1,23,45,67,890.1235]'
+    #.......................................................................................................
+    return null
+
 #===========================================================================================================
 README_demo = ->
+  { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
+  echo()
   do =>
-    { new_ftag, } = require '../../../apps/effstring'
+    # info 'Ωfstr_145', f"——#{1234}:$#20x;——"
+    info 'Ωfstr_146', f"——#{1234}:;>20;——"
+    info 'Ωfstr_147', f"——#{1234}:#>20.3e;——"
+    info 'Ωfstr_148', f"——#{1234}:#>20.3f;——"
+    info 'Ωfstr_149', f"——#{1234}:#>20.3s;——"
+    info 'Ωfstr_150', f"——#{1234}:#>20.3n;——"
+    info 'Ωfstr_151', f"——#{Infinity}:#>20.3n;——"
+  do =>
     ja_jp_cfg     = {
       numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ], }
     f_en = new_ftag 'en-GB'
@@ -301,7 +349,6 @@ README_demo = ->
     console.log f_ja"#{'ボブさん'}:*<15c; is in #{'倫敦'}:.^12c; and has #{45678.93}:_>$22,.2f; in their pocket."
     return null
   do =>
-    { new_ftag, } = require '../../../apps/effstring'
     zh_tw_cfg     = {
       currency: [ '新臺幣', '', ],
       # numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ],
@@ -312,11 +359,114 @@ README_demo = ->
     console.log f_zh"#{-98765.43}:·>$20,.2f;"
     console.log f_en"#{-98765.43}:·=$20,.2f;"
     console.log f_zh"#{-98765.43}:·=$20,.2f;"
-    # console.log f_en"#{-98765.43}:〇>$20,.2f;"
-    # console.log f_zh"#{-98765.43}:〇>$20,.2f;"
-    # console.log f_en"#{-98765.43}:〇=$20,.2f;"
-    # console.log f_zh"#{-98765.43}:〇=$20,.2f;"
     return null
+  echo()
+  do =>
+    ja_jp_cfg     = {
+      numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ], }
+    f_en = new_ftag 'en-GB',            { fullwidth: false, }
+    f_ja = new_ftag 'ja-JP', ja_jp_cfg, { fullwidth: false, }
+    console.log f_en"#{'Alice'}:*<15c; is in #{'London'}:.^12c; and has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_en"#{'Bob'}:*<15c; is in #{'London'}:.^12c; and has #{45678.93}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'アリスさん'}:*<15c; is in #{'倫敦'}:.^12c; and has #{1234}:_>$22,.2f; in their pocket."
+    console.log f_ja"#{'ボブさん'}:*<15c; is in #{'倫敦'}:.^12c; and has #{45678.93}:_>$22,.2f; in their pocket."
+    return null
+  do =>
+    zh_tw_cfg     = {
+      currency: [ '新臺幣', '', ],
+      # numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ],
+      }
+    f_en = new_ftag 'en-GB',            { fullwidth: false, }
+    f_zh = new_ftag 'zh-CN', zh_tw_cfg, { fullwidth: false, }
+    console.log f_en"#{-98765.43}:·>$20,.2f;"
+    console.log f_zh"#{-98765.43}:·>$20,.2f;"
+    console.log f_en"#{-98765.43}:·=$20,.2f;"
+    console.log f_zh"#{-98765.43}:·=$20,.2f;"
+    return null
+  echo()
+  do =>
+    zh_tw_cfg     = {
+      currency: [ 'NT ', ' $', ],
+      numerals:   [ '(0)', '(1)', '(2)', '(3)', '(4)', '(5)', '(6)', '(7)', '(8)', '(9)', ]
+      }
+    f_en = new_ftag 'en-GB',            { fullwidth: true, }
+    f_zh = new_ftag 'zh-CN', zh_tw_cfg, { fullwidth: true, }
+    console.log f_en"#{-98765.43}:·>$50,.2f;"
+    console.log f_zh"#{-98765.43}:·>$50,.2f;"
+    console.log f_en"#{-98765.43}:·=$50,.2f;"
+    console.log f_zh"#{-98765.43}:·=$50,.2f;"
+    return null
+  do =>
+    zh_tw_cfg     = {
+      currency: [ 'NT ', ' $', ],
+      numerals:   [ '(0)', '(1)', '(2)', '(3)', '(4)', '(5)', '(6)', '(7)', '(8)', '(9)', ]
+      }
+    f_en = new_ftag 'en-GB',            { fullwidth: false, }
+    f_zh = new_ftag 'zh-CN', zh_tw_cfg, { fullwidth: false, }
+    console.log f_en"#{-98765.43}:·>$50,.2f;"
+    console.log f_zh"#{-98765.43}:·>$50,.2f;"
+    console.log f_en"#{-98765.43}:·=$50,.2f;"
+    console.log f_zh"#{-98765.43}:·=$50,.2f;"
+    return null
+  echo()
+  do =>
+    # f_en = new_ftag 'en-GB',            { fullwidth: false, }
+    # console.log f_en"#{-98765.43}:·>$50,.2f;"
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_<15,.3~", 1e-6
+      info 'Ωfstr_152', ff 0.00000042
+      info 'Ωfstr_153', ff 0.0000042
+      info 'Ωfstr_154', ff 0.000042
+      info 'Ωfstr_155', ff 0.00042
+      info 'Ωfstr_156', ff 0.0042
+      info 'Ωfstr_157', ff 0.042
+      info 'Ωfstr_158', ff 0.42
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_<15,.3~s", 1e-6
+      info 'Ωfstr_159', ff 0.00000042
+      info 'Ωfstr_160', ff 0.0000042
+      info 'Ωfstr_161', ff 0.000042
+      info 'Ωfstr_162', ff 0.00042
+      info 'Ωfstr_163', ff 0.0042
+      info 'Ωfstr_164', ff 0.042
+      info 'Ωfstr_165', ff 0.42
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_<15,.3~f", 1e-6
+      info 'Ωfstr_166', ff 0.00000042
+      info 'Ωfstr_167', ff 0.0000042
+      info 'Ωfstr_168', ff 0.000042
+      info 'Ωfstr_169', ff 0.00042
+      info 'Ωfstr_170', ff 0.0042
+      info 'Ωfstr_171', ff 0.042
+      info 'Ωfstr_172', ff 0.42
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_<15,.3~c", 1e-6
+      info 'Ωfstr_173', ff 0.00000042
+      info 'Ωfstr_174', ff 0.0000042
+      info 'Ωfstr_175', ff 0.000042
+      info 'Ωfstr_176', ff 0.00042
+      info 'Ωfstr_177', ff 0.0042
+      info 'Ωfstr_178', ff 0.042
+      info 'Ωfstr_179', ff 0.42
+      return null
+    do =>
+      echo()
+      info 'Ωfstr_180', f"#{0.00000042}:_<15,.3/µ;"
+      info 'Ωfstr_181', f"#{0.0000042}:_<15,.3/µ;"
+      info 'Ωfstr_182', f"#{0.000042}:_<15,.3/µ;"
+      info 'Ωfstr_183', f"#{0.00042}:_<15,.3/µ;"
+      info 'Ωfstr_184', f"#{0.0042}:_<15,.3/µ;"
+      info 'Ωfstr_185', f"#{0.042}:_<15,.3/µ;"
+      info 'Ωfstr_186', f"#{0.42}:_<15,.3/µ;"
+      return null
+  echo()
   return null
 
 
@@ -324,10 +474,10 @@ README_demo = ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  # ( new Test { throw_on_error: true, } ).test @intertype_tasks
-  ( new Test { throw_on_error: false, } ).test @intertype_tasks
+  ( new Test { throw_on_error: true, } ).test @intertype_tasks
+  # ( new Test { throw_on_error: false, } ).test @intertype_tasks
   # ( new Test { throw_on_error: true, } ).test { locale_internals: @intertype_tasks.locale_internals, }
-  README_demo()
+  # README_demo()
 
 
 
