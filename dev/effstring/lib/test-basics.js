@@ -751,13 +751,13 @@
         var ff, matchers;
         ff = _d3_format.formatPrefix("_>15,.3f", 1e-6);
         matchers = [];
-        info('Ωfstr_129', ff(0.00000042));
-        info('Ωfstr_130', ff(0.0000042));
-        info('Ωfstr_131', ff(0.000042));
-        info('Ωfstr_132', ff(0.00042));
-        info('Ωfstr_133', ff(0.0042));
-        info('Ωfstr_134', ff(0.042));
-        info('Ωfstr_135', ff(0.42));
+        info('Ωfstr_129', rpr(ff(0.00000042)));
+        info('Ωfstr_130', rpr(ff(0.0000042)));
+        info('Ωfstr_131', rpr(ff(0.000042)));
+        info('Ωfstr_132', rpr(ff(0.00042)));
+        info('Ωfstr_133', rpr(ff(0.0042)));
+        info('Ωfstr_134', rpr(ff(0.042)));
+        info('Ωfstr_135', rpr(ff(0.42)));
         return null;
       })();
       // do =>
