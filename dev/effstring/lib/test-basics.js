@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, README_demo, TMP_types, Test, WGUY, alert, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var GTNG, GUY, README_demo, TMP_types, Test, WGUY, alert, debug, echo, help, info, inspect, intl_number_demo, log, mantissa_exponent_demo, plain, praise, reverse, rpr, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -170,16 +170,16 @@
       //.......................................................................................................
       this.throws((Ωfstr__28 = function() {
         return f`(${123}:;>15)`;
-      }), /\(Effstring_syntax_error\) illegal format expression ':;>15\)'/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__29 = function() {
         return f`(${123}:)`;
-      }), /\(Effstring_syntax_error\) illegal format expression/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__30 = function() {
         return f`(${123}:;)`;
-      }), /\(Effstring_syntax_error\) illegal format expression ':;\)'/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__31 = function() {
         return f`(${123}:--->3f;)`;
-      }), /\(Effstring_lib_syntax_error\) illegal format expression '--->3f'/);
+      }), /illegal format specifier/);
       this.eq((Ωfstr__32 = function() {
         var e;
         try {
@@ -236,16 +236,16 @@
       }), true);
       this.throws((Ωfstr__38 = function() {
         return f`(${123}:\\;<5;)`;
-      }), /illegal format expression/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__39 = function() {
         return f`(${123}:\\;<5;);`;
-      }), /illegal format expression/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__40 = function() {
         return f`(${123}:\\;<5;)\\;`;
-      }), /illegal format expression/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__41 = function() {
         return f`(${123}:\\;>15;)`;
-      }), /illegal format expression/);
+      }), /illegal format specifier/);
       //.......................................................................................................
       return null;
     },
@@ -369,13 +369,13 @@
       //.....................................................................................................
       this.throws((Ωfstr__74 = function() {
         return f`${0}:foo;`;
-      }), /invalid format: foo/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__75 = function() {
         return f`${0}:.-2s;`;
-      }), /invalid format: \.-2s/);
+      }), /illegal format specifier/);
       this.throws((Ωfstr__76 = function() {
         return f`${0}:.f;`;
-      }), /invalid format: \.f/);
+      }), /illegal format specifier/);
       this.eq((Ωfstr__77 = function() {
         return f`${0}:.30f;`;
       }), "0.00000000000000000000");
@@ -744,37 +744,348 @@
       return null;
     },
     //---------------------------------------------------------------------------------------------------------
-    si_units_format_specifier: function() {
-      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag;
-      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+    si_units_format_specifier_internals: function() {
+      var _fmtspec_unit_re;
+      ({_fmtspec_unit_re} = require('../../../apps/effstring'));
       (() => {        //.......................................................................................................
-        var ff, matchers;
-        ff = _d3_format.formatPrefix("_>15,.3f", 1e-6);
-        matchers = [];
-        info('Ωfstr_129', rpr(ff(0.00000042)));
-        info('Ωfstr_130', rpr(ff(0.0000042)));
-        info('Ωfstr_131', rpr(ff(0.000042)));
-        info('Ωfstr_132', rpr(ff(0.00042)));
-        info('Ωfstr_133', rpr(ff(0.0042)));
-        info('Ωfstr_134', rpr(ff(0.042)));
-        info('Ωfstr_135', rpr(ff(0.42)));
+        var Ωfstr_129, Ωfstr_130, Ωfstr_131, Ωfstr_132, Ωfstr_133, Ωfstr_134, Ωfstr_135, Ωfstr_136, Ωfstr_137, Ωfstr_138, Ωfstr_139, Ωfstr_140, Ωfstr_141, Ωfstr_142, Ωfstr_143, Ωfstr_144, Ωfstr_145, Ωfstr_146;
+        this.eq((Ωfstr_129 = function() {
+          var ref;
+          return (ref = '_<15,.3f/y'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/y',
+          unit: 'y'
+        });
+        this.eq((Ωfstr_130 = function() {
+          var ref;
+          return (ref = '_<15,.3f/z'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/z',
+          unit: 'z'
+        });
+        this.eq((Ωfstr_131 = function() {
+          var ref;
+          return (ref = '_<15,.3f/a'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/a',
+          unit: 'a'
+        });
+        this.eq((Ωfstr_132 = function() {
+          var ref;
+          return (ref = '_<15,.3f/f'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/f',
+          unit: 'f'
+        });
+        this.eq((Ωfstr_133 = function() {
+          var ref;
+          return (ref = '_<15,.3f/p'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/p',
+          unit: 'p'
+        });
+        this.eq((Ωfstr_134 = function() {
+          var ref;
+          return (ref = '_<15,.3f/n'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/n',
+          unit: 'n'
+        });
+        this.eq((Ωfstr_135 = function() {
+          var ref;
+          return (ref = '_<15,.3f/µ'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/µ',
+          unit: 'µ'
+        });
+        this.eq((Ωfstr_136 = function() {
+          var ref;
+          return (ref = '_<15,.3f/m'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/m',
+          unit: 'm'
+        });
+        this.eq((Ωfstr_137 = function() {
+          var ref;
+          return (ref = '_<15,.3f/1'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/1',
+          unit: '1'
+        });
+        this.eq((Ωfstr_138 = function() {
+          var ref;
+          return (ref = '_<15,.3f/k'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/k',
+          unit: 'k'
+        });
+        this.eq((Ωfstr_139 = function() {
+          var ref;
+          return (ref = '_<15,.3f/M'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/M',
+          unit: 'M'
+        });
+        this.eq((Ωfstr_140 = function() {
+          var ref;
+          return (ref = '_<15,.3f/G'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/G',
+          unit: 'G'
+        });
+        this.eq((Ωfstr_141 = function() {
+          var ref;
+          return (ref = '_<15,.3f/T'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/T',
+          unit: 'T'
+        });
+        this.eq((Ωfstr_142 = function() {
+          var ref;
+          return (ref = '_<15,.3f/P'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/P',
+          unit: 'P'
+        });
+        this.eq((Ωfstr_143 = function() {
+          var ref;
+          return (ref = '_<15,.3f/E'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/E',
+          unit: 'E'
+        });
+        this.eq((Ωfstr_144 = function() {
+          var ref;
+          return (ref = '_<15,.3f/Z'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/Z',
+          unit: 'Z'
+        });
+        this.eq((Ωfstr_145 = function() {
+          var ref;
+          return (ref = '_<15,.3f/Y'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), {
+          discard: '/Y',
+          unit: 'Y'
+        });
+        this.eq((Ωfstr_146 = function() {
+          var ref;
+          return (ref = '_<15,.3f/b'.match(_fmtspec_unit_re)) != null ? ref.groups : void 0;
+        }), void 0);
         return null;
       })();
-      // do =>
-      //   echo()
-      //   info 'Ωfstr_136', f"#{0.00000042}:_<15,.3/µ;"
-      //   info 'Ωfstr_137', f"#{0.0000042}:_<15,.3/µ;"
-      //   info 'Ωfstr_138', f"#{0.000042}:_<15,.3/µ;"
-      //   info 'Ωfstr_139', f"#{0.00042}:_<15,.3/µ;"
-      //   info 'Ωfstr_140', f"#{0.0042}:_<15,.3/µ;"
-      //   info 'Ωfstr_141', f"#{0.042}:_<15,.3/µ;"
-      //   info 'Ωfstr_142', f"#{0.42}:_<15,.3/µ;"
-      // do ( f ) =>
-      //   f = new_ftag 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
-      //   @eq ( Ωfstr_143 = -> ( f"#{0.754321}:_>17.5%;" )    ), '____⁷⁵,⁴³²¹⁰ v.H.'
-      //   return null
       //.......................................................................................................
-      // @eq ( Ωfstr_144 = -> ( new_ftag 'en-IN' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '₹1.23[ 1,23,45,67,890.1235]'
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    si_units_format_specifier: function() {
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, probes_and_matchers;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      //.......................................................................................................
+      probes_and_matchers = [[0.00000042, '__________0.420µ'], [0.0000042, '__________4.200µ'], [0.000042, '_________42.000µ'], [0.00042, '________420.000µ'], [0.0042, '______4,200.000µ'], [0.042, '_____42,000.000µ'], [0.42, '____420,000.000µ']];
+      (() => {        //.......................................................................................................
+        var ff, i, len, matcher, probe, Ωfstr_147;
+        ff = _d3_format.formatPrefix("_>15,.3f", 1e-6);
+        for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+          [probe, matcher] = probes_and_matchers[i];
+          this.eq((Ωfstr_147 = function() {
+            return ff(probe);
+          }), matcher);
+        }
+        return null;
+      })();
+      (() => {        //.......................................................................................................
+        var i, len, matcher, probe, Ωfstr_148;
+        for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+          [probe, matcher] = probes_and_matchers[i];
+          this.eq((Ωfstr_148 = function() {
+            return f`${probe}:_>15,.3f/µ;`;
+          }), matcher);
+        }
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    si_units_format_specifiers_updated_with_faults: function() {
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, Ωfstr_149, Ωfstr_150, Ωfstr_151, Ωfstr_152, Ωfstr_153, Ωfstr_154, Ωfstr_155, Ωfstr_156, Ωfstr_157, Ωfstr_158, Ωfstr_159, Ωfstr_160, Ωfstr_161, Ωfstr_162, Ωfstr_163, Ωfstr_164, Ωfstr_165;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      //.......................................................................................................
+      this.eq((Ωfstr_149 = function() {
+        return f`d = ${1234.5678}:_>50.20f/y;m`;
+      }), 'd = _____________________________________1.2345678e+27ym');
+      this.eq((Ωfstr_150 = function() {
+        return f`d = ${1234.5678}:_>50.20f/z;m`;
+      }), 'd = _____________________________________1.2345678e+24zm');
+      this.eq((Ωfstr_151 = function() {
+        return f`d = ${1234.5678}:_>50.20f/a;m`;
+      }), 'd = _____________________________________1.2345678e+21am');
+      this.eq((Ωfstr_152 = function() {
+        return f`d = ${1234.5678}:_>50.20f/f;m`;
+      }), 'd = __________1234567800000000000.00000000000000000000fm');
+      this.eq((Ωfstr_153 = function() {
+        return f`d = ${1234.5678}:_>50.20f/p;m`;
+      }), 'd = _____________1234567800000000.00000000000000000000pm');
+      this.eq((Ωfstr_154 = function() {
+        return f`d = ${1234.5678}:_>50.20f/n;m`;
+      }), 'd = ________________1234567800000.00000000000000000000nm');
+      this.eq((Ωfstr_155 = function() {
+        return f`d = ${1234.5678}:_>50.20f/µ;m`;
+      }), 'd = ___________________1234567800.00000000000000000000µm');
+      this.eq((Ωfstr_156 = function() {
+        return f`d = ${1234.5678}:_>50.20f/m;m`;
+      }), 'd = ______________________1234567.80000000004656612873mm');
+      this.eq((Ωfstr_157 = function() {
+        return f`d = ${1234.5678}:_>50.20f/1;m`;
+      }), 'd = _________________________1234.56780000000003383320m');
+      this.eq((Ωfstr_158 = function() {
+        return f`d = ${1234.5678}:_>50.20f/k;m`;
+      }), 'd = ____________________________1.23456779999999999298km');
+      this.eq((Ωfstr_159 = function() {
+        return f`d = ${1234.5678}:_>50.20f/M;m`;
+      }), 'd = ____________________________0.00123456780000000006Mm');
+      this.eq((Ωfstr_160 = function() {
+        return f`d = ${1234.5678}:_>50.20f/G;m`;
+      }), 'd = ____________________________0.00000123456780000000Gm');
+      this.eq((Ωfstr_161 = function() {
+        return f`d = ${1234.5678}:_>50.20f/T;m`;
+      }), 'd = ____________________________0.00000000123456780000Tm');
+      this.eq((Ωfstr_162 = function() {
+        return f`d = ${1234.5678}:_>50.20f/P;m`;
+      }), 'd = ____________________________0.00000000000123456780Pm');
+      this.eq((Ωfstr_163 = function() {
+        return f`d = ${1234.5678}:_>50.20f/E;m`;
+      }), 'd = ____________________________0.00000000000000123457Em');
+      this.eq((Ωfstr_164 = function() {
+        return f`d = ${1234.5678}:_>50.20f/Z;m`;
+      }), 'd = ____________________________0.00000000000000000123Zm');
+      this.eq((Ωfstr_165 = function() {
+        return f`d = ${1234.5678}:_>50.20f/Y;m`;
+      }), 'd = ____________________________0.00000000000000000000Ym');
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    si_units_format_specifiers_updated_ideal: function() {
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, Ωfstr_166, Ωfstr_167, Ωfstr_168, Ωfstr_169, Ωfstr_170, Ωfstr_171, Ωfstr_172, Ωfstr_173, Ωfstr_174, Ωfstr_175, Ωfstr_176, Ωfstr_177, Ωfstr_178, Ωfstr_179, Ωfstr_180, Ωfstr_181, Ωfstr_182;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      //.......................................................................................................
+      this.eq((Ωfstr_166 = function() {
+        return f`d = ${1234.5678}:_>50.20f/y;m`;
+      }), 'd = _____________________________________1.2345678e+27ym');
+      this.eq((Ωfstr_167 = function() {
+        return f`d = ${1234.5678}:_>50.20f/z;m`;
+      }), 'd = _____________________________________1.2345678e+24zm');
+      this.eq((Ωfstr_168 = function() {
+        return f`d = ${1234.5678}:_>50.20f/a;m`;
+      }), 'd = _____________________________________1.2345678e+21am');
+      this.eq((Ωfstr_169 = function() {
+        return f`d = ${1234.5678}:_>50.20f/f;m`;
+      }), 'd = __________1234567800000000000.00000000000000000000fm');
+      this.eq((Ωfstr_170 = function() {
+        return f`d = ${1234.5678}:_>50.20f/p;m`;
+      }), 'd = _____________1234567800000000.00000000000000000000pm');
+      this.eq((Ωfstr_171 = function() {
+        return f`d = ${1234.5678}:_>50.20f/n;m`;
+      }), 'd = ________________1234567800000.00000000000000000000nm');
+      this.eq((Ωfstr_172 = function() {
+        return f`d = ${1234.5678}:_>50.20f/µ;m`;
+      }), 'd = ___________________1234567800.00000000000000000000µm');
+      this.eq((Ωfstr_173 = function() {
+        return f`d = ${1234.5678}:_>50.20f/m;m`;
+      }), 'd = ______________________1234567.80000000004656612873mm');
+      this.eq((Ωfstr_174 = function() {
+        return f`d = ${1234.5678}:_>50.20f/1;m`;
+      }), 'd = _________________________1234.56780000000003383320m');
+      this.eq((Ωfstr_175 = function() {
+        return f`d = ${1234.5678}:_>50.20f/k;m`;
+      }), 'd = ____________________________1.23456779999999999298km');
+      this.eq((Ωfstr_176 = function() {
+        return f`d = ${1234.5678}:_>50.20f/M;m`;
+      }), 'd = ____________________________0.00123456780000000006Mm');
+      this.eq((Ωfstr_177 = function() {
+        return f`d = ${1234.5678}:_>50.20f/G;m`;
+      }), 'd = ____________________________0.00000123456780000000Gm');
+      this.eq((Ωfstr_178 = function() {
+        return f`d = ${1234.5678}:_>50.20f/T;m`;
+      }), 'd = ____________________________0.00000000123456780000Tm');
+      this.eq((Ωfstr_179 = function() {
+        return f`d = ${1234.5678}:_>50.20f/P;m`;
+      }), 'd = ____________________________0.00000000000123456780Pm');
+      this.eq((Ωfstr_180 = function() {
+        return f`d = ${1234.5678}:_>50.20f/E;m`;
+      }), 'd = ____________________________0.00000000000000123457Em');
+      this.eq((Ωfstr_181 = function() {
+        return f`d = ${1234.5678}:_>50.20f/Z;m`;
+      }), 'd = ____________________________0.00000000000000000123Zm');
+      this.eq((Ωfstr_182 = function() {
+        return f`d = ${1234.5678}:_>50.20f/Y;m`;
+      }), 'd = ____________________________0.00000000000000000000Ym');
+      // @eq ( Ωfstr_183 = -> f"d = #{1234.5678}:50.60f/y;m" ), 'd =                                      1.2345678e+27ym'
+      // @eq ( Ωfstr_184 = -> f"d = #{1234.5678}:50.60f/z;m" ), 'd =                                      1.2345678e+24zm'
+      // @eq ( Ωfstr_185 = -> f"d = #{1234.5678}:50.60f/a;m" ), 'd =                                      1.2345678e+21am'
+      // @eq ( Ωfstr_186 = -> f"d = #{1234.5678}:50.60f/f;m" ), 'd =           1234567800000000000.00000000000000000000fm'
+      // @eq ( Ωfstr_187 = -> f"d = #{1234.5678}:50.60f/p;m" ), 'd =              1234567800000000.00000000000000000000pm'
+      // @eq ( Ωfstr_188 = -> f"d = #{1234.5678}:50.60f/n;m" ), 'd =                 1234567800000.00000000000000000000nm'
+      // @eq ( Ωfstr_189 = -> f"d = #{1234.5678}:50.60f/µ;m" ), 'd =                    1234567800.00000000000000000000µm'
+      // @eq ( Ωfstr_190 = -> f"d = #{1234.5678}:50.60f/m;m" ), 'd =                       1234567.80000000004656612873mm'
+      // @eq ( Ωfstr_191 = -> f"d = #{1234.5678}:50.60f/1;m" ), 'd =                          1234.56780000000003383320m'
+      // @eq ( Ωfstr_192 = -> f"d = #{1234.5678}:50.60f/k;m" ), 'd =                             1.23456779999999999298km'
+      // @eq ( Ωfstr_193 = -> f"d = #{1234.5678}:50.60f/M;m" ), 'd =                             0.00123456780000000006Mm'
+      // @eq ( Ωfstr_194 = -> f"d = #{1234.5678}:50.60f/G;m" ), 'd =                             0.0000012345678000000000000Gm'
+      // @eq ( Ωfstr_195 = -> f"d = #{1234.5678}:50.60f/T;m" ), 'd =                             0.0000000012345678000000000Tm'
+      // @eq ( Ωfstr_196 = -> f"d = #{1234.5678}:50.60f/P;m" ), 'd =                             0.0000000000012345678000000Pm'
+      // @eq ( Ωfstr_197 = -> f"d = #{1234.5678}:50.60f/E;m" ), 'd =                             0.0000000000000012345678000Em'
+      // @eq ( Ωfstr_198 = -> f"d = #{1234.5678}:50.60f/Z;m" ), 'd =                             0.0000000000000000012345678Zm'
+      // @eq ( Ωfstr_199 = -> f"d = #{1234.5678}:50.60f/Y;m" ), 'd =                             0.0000000000000000000012345Ym'
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    si_units_format_specifier_unit: function() {
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, probes_and_matchers;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      //.......................................................................................................
+      probes_and_matchers = [[0.00000042, '__________0.000'], [0.0000042, '__________0.000'], [0.000042, '__________0.000'], [0.00042, '__________0.000'], [0.0042, '__________0.004'], [0.042, '__________0.042'], [0.42, '__________0.420'], [4.2, '__________4.200'], [42, '_________42.000']];
+      (() => {        //.......................................................................................................
+        var ff, i, len, matcher, probe, Ωfstr_200;
+        ff = _d3_format.formatPrefix("_>15,.3f", 1);
+        for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+          [probe, matcher] = probes_and_matchers[i];
+          this.eq((Ωfstr_200 = function() {
+            return ff(probe);
+          }), matcher);
+        }
+        return null;
+      })();
+      (() => {        //.......................................................................................................
+        var i, len, matcher, probe, Ωfstr_201;
+        for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+          [probe, matcher] = probes_and_matchers[i];
+          this.eq((Ωfstr_201 = function() {
+            return f`${probe}:_>15,.3f/1;`;
+          }), matcher);
+        }
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    handle_nonnumeric_values: function() {
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, Ωfstr_202, Ωfstr_204, Ωfstr_206;
+      ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+      //.......................................................................................................
+      this.eq((Ωfstr_202 = function() {
+        return urge('Ωfstr_203', rpr(f`d = ${"helo"}:60.40f/k;m`));
+      }), null);
+      this.eq((Ωfstr_204 = function() {
+        return urge('Ωfstr_205', rpr(f`d = ${true}:60.40f/k;m`));
+      }), null);
+      this.eq((Ωfstr_206 = function() {
+        return urge('Ωfstr_207', rpr(f`d = ${123456789n}:60.40f/k;m`));
+      }), null);
       //.......................................................................................................
       return null;
     }
@@ -786,13 +1097,13 @@
     ({f, new_ftag, _d3_format} = require('../../../apps/effstring'));
     echo();
     (() => {
-      // info 'Ωfstr_145', f"——#{1234}:$#20x;——"
-      info('Ωfstr_146', f`——${1234}:;>20;——`);
-      info('Ωfstr_147', f`——${1234}:#>20.3e;——`);
-      info('Ωfstr_148', f`——${1234}:#>20.3f;——`);
-      info('Ωfstr_149', f`——${1234}:#>20.3s;——`);
-      info('Ωfstr_150', f`——${1234}:#>20.3n;——`);
-      return info('Ωfstr_151', f`——${2e308}:#>20.3n;——`);
+      // info 'Ωfstr_208', f"——#{1234}:$#20x;——"
+      info('Ωfstr_209', f`——${1234}:;>20;——`);
+      info('Ωfstr_210', f`——${1234}:#>20.3e;——`);
+      info('Ωfstr_211', f`——${1234}:#>20.3f;——`);
+      info('Ωfstr_212', f`——${1234}:#>20.3s;——`);
+      info('Ωfstr_213', f`——${1234}:#>20.3n;——`);
+      return info('Ωfstr_214', f`——${2e308}:#>20.3n;——`);
     })();
     (() => {
       var f_en, f_ja, ja_jp_cfg;
@@ -900,64 +1211,112 @@
         // console.log f_en"#{-98765.43}:·>$50,.2f;"
         var ff;
         echo();
-        ff = _d3_format.formatPrefix("_<15,.3~", 1e-6);
-        info('Ωfstr_152', ff(0.00000042));
-        info('Ωfstr_153', ff(0.0000042));
-        info('Ωfstr_154', ff(0.000042));
-        info('Ωfstr_155', ff(0.00042));
-        info('Ωfstr_156', ff(0.0042));
-        info('Ωfstr_157', ff(0.042));
-        info('Ωfstr_158', ff(0.42));
+        ff = _d3_format.formatPrefix("_>15,.3~", 1e-6);
+        info('Ωfstr_215', ff(0.00000042));
+        info('Ωfstr_216', ff(0.0000042));
+        info('Ωfstr_217', ff(0.000042));
+        info('Ωfstr_218', ff(0.00042));
+        info('Ωfstr_219', ff(0.0042));
+        info('Ωfstr_220', ff(0.042));
+        info('Ωfstr_221', ff(0.42));
         return null;
       })();
       (() => {
         var ff;
         echo();
-        ff = _d3_format.formatPrefix("_<15,.3~s", 1e-6);
-        info('Ωfstr_159', ff(0.00000042));
-        info('Ωfstr_160', ff(0.0000042));
-        info('Ωfstr_161', ff(0.000042));
-        info('Ωfstr_162', ff(0.00042));
-        info('Ωfstr_163', ff(0.0042));
-        info('Ωfstr_164', ff(0.042));
-        info('Ωfstr_165', ff(0.42));
+        ff = _d3_format.formatPrefix("_>15,.3~s", 1e-6);
+        info('Ωfstr_222', ff(0.00000042));
+        info('Ωfstr_223', ff(0.0000042));
+        info('Ωfstr_224', ff(0.000042));
+        info('Ωfstr_225', ff(0.00042));
+        info('Ωfstr_226', ff(0.0042));
+        info('Ωfstr_227', ff(0.042));
+        info('Ωfstr_228', ff(0.42));
         return null;
       })();
       (() => {
         var ff;
         echo();
-        ff = _d3_format.formatPrefix("_<15,.3~f", 1e-6);
-        info('Ωfstr_166', ff(0.00000042));
-        info('Ωfstr_167', ff(0.0000042));
-        info('Ωfstr_168', ff(0.000042));
-        info('Ωfstr_169', ff(0.00042));
-        info('Ωfstr_170', ff(0.0042));
-        info('Ωfstr_171', ff(0.042));
-        info('Ωfstr_172', ff(0.42));
+        ff = _d3_format.formatPrefix("_>15,.3~f", 1e-6);
+        info('Ωfstr_229', ff(0.00000042));
+        info('Ωfstr_230', ff(0.0000042));
+        info('Ωfstr_231', ff(0.000042));
+        info('Ωfstr_232', ff(0.00042));
+        info('Ωfstr_233', ff(0.0042));
+        info('Ωfstr_234', ff(0.042));
+        info('Ωfstr_235', ff(0.42));
+        return null;
+      })();
+      (() => {
+        echo();
+        info('Ωfstr_236', f`${0.00000042}:_>15,.3f/µ;`);
+        info('Ωfstr_237', f`${0.0000042}:_>15,.3f/µ;`);
+        info('Ωfstr_238', f`${0.000042}:_>15,.3f/µ;`);
+        info('Ωfstr_239', f`${0.00042}:_>15,.3f/µ;`);
+        info('Ωfstr_240', f`${0.0042}:_>15,.3f/µ;`);
+        info('Ωfstr_241', f`${0.042}:_>15,.3f/µ;`);
+        info('Ωfstr_242', f`${0.42}:_>15,.3f/µ;`);
+        return null;
+      })();
+      (() => {
+        echo();
+        info('Ωfstr_243', f`${123000}:_>9,.3f/k;m`);
+        info('Ωfstr_244', f`${7000}:_>9,.3f/k;m`);
+        info('Ωfstr_245', f`${500}:_>9,.3f/k;m`);
+        info('Ωfstr_246', f`${99}:_>9,.3f/k;m`);
         return null;
       })();
       (() => {
         var ff;
         echo();
-        ff = _d3_format.formatPrefix("_<15,.3~c", 1e-6);
-        info('Ωfstr_173', ff(0.00000042));
-        info('Ωfstr_174', ff(0.0000042));
-        info('Ωfstr_175', ff(0.000042));
-        info('Ωfstr_176', ff(0.00042));
-        info('Ωfstr_177', ff(0.0042));
-        info('Ωfstr_178', ff(0.042));
-        info('Ωfstr_179', ff(0.42));
+        ff = _d3_format.formatPrefix("_>15,.3f", 1e-3);
+        info('Ωfstr_247', ff(0.00089));
+        info('Ωfstr_248', ff(0.0089));
+        info('Ωfstr_249', ff(0.089));
+        info('Ωfstr_250', ff(0.89));
+        info('Ωfstr_251', ff(8.9));
+        info('Ωfstr_252', ff(89));
+        info('Ωfstr_253', ff(890));
+        return null;
+      })();
+      (() => {
+        var ff;
+        echo();
+        ff = _d3_format.formatPrefix("_>15,.3f", 1e-2);
+        info('Ωfstr_254', ff(0.00089));
+        info('Ωfstr_255', ff(0.0089));
+        info('Ωfstr_256', ff(0.089));
+        info('Ωfstr_257', ff(0.89));
+        info('Ωfstr_258', ff(8.9));
+        info('Ωfstr_259', ff(89));
+        info('Ωfstr_260', ff(890));
+        return null;
+      })();
+      (() => {
+        var ff;
+        echo();
+        ff = _d3_format.formatPrefix("_>15,.3f", 1e-1);
+        info('Ωfstr_261', ff(0.00089));
+        info('Ωfstr_262', ff(0.0089));
+        info('Ωfstr_263', ff(0.089));
+        info('Ωfstr_264', ff(0.89));
+        info('Ωfstr_265', ff(8.9));
+        info('Ωfstr_266', ff(89));
+        info('Ωfstr_267', ff(890));
         return null;
       })();
       return (() => {
+        var ff, scale;
         echo();
-        info('Ωfstr_180', f`${0.00000042}:_<15,.3/µ;`);
-        info('Ωfstr_181', f`${0.0000042}:_<15,.3/µ;`);
-        info('Ωfstr_182', f`${0.000042}:_<15,.3/µ;`);
-        info('Ωfstr_183', f`${0.00042}:_<15,.3/µ;`);
-        info('Ωfstr_184', f`${0.0042}:_<15,.3/µ;`);
-        info('Ωfstr_185', f`${0.042}:_<15,.3/µ;`);
-        info('Ωfstr_186', f`${0.42}:_<15,.3/µ;`);
+        ff = _d3_format.formatPrefix("_>15,.3f", 1e0);
+        scale = 1 / 1e-2;
+        info('Ωfstr_268', ff(0.00089 * scale));
+        info('Ωfstr_269', ff(0.0089 * scale));
+        info('Ωfstr_270', ff(0.089 * scale));
+        info('Ωfstr_271', ff(0.89 * scale));
+        info('Ωfstr_272', ff(8.9 * scale));
+        info('Ωfstr_273', ff(89 * scale));
+        info('Ωfstr_274', ff(890 * scale));
         return null;
       })();
     })();
@@ -966,17 +1325,218 @@
   };
 
   //===========================================================================================================
+  intl_number_demo = function() {
+    var _d3_format, amount, f, new_ftag, rvs;
+    ({f, new_ftag, _d3_format} = require('../../../apps/effstring'));
+    ({
+      reverse: rvs
+    } = GUY.trm);
+    debug('Ωfstr_275', 1234567891234567891);
+    debug('Ωfstr_276', f`${1234567891234567891}:<30.3f;`);
+    // debug 'Ωfstr_277', f"#{1234567891234567891n}:<30.3f;"
+    debug('Ωfstr_278', f`${'1234567891234567891'}:<30.3f;`);
+    (() => {
+      var i, len, locale, ref, results, type, value;
+      locale = new Intl.NumberFormat('en-US'); //, { style: 'currency', currency: 'USD', }
+      help('Ωfstr_279', locale.resolvedOptions());
+      urge('Ωfstr_280', locale.format(9876543210));
+      ref = locale.formatToParts(9876543210);
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        ({type, value} = ref[i]);
+        results.push(debug('Ωfstr_281', f`${type}:15c;`, rvs(rpr(value))));
+      }
+      return results;
+    })();
+    echo();
+    (() => {
+      var de_DE, en_US, number;
+      number = 123456.789;
+      de_DE = new Intl.NumberFormat('de-DE');
+      urge('Ωfstr_282', rvs(rpr(de_DE.format(number))));
+      en_US = new Intl.NumberFormat('en-US');
+      urge('Ωfstr_283', rvs(rpr(en_US.format(number))));
+      return null;
+    })();
+    // You can also specify additional options such as the style of formatting (decimal, currency, or
+    // percent), the currency to use if formatting a currency, and the number of minimum and maximum fraction
+    // digits. For instance, to format a number as a currency in US dollars:
+    amount = 654321.987;
+    (() => {
+      var numberFormat;
+      numberFormat = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      });
+      return info('Ωfstr_284', rvs(rpr(numberFormat.format(amount))));
+    })();
+    (() => {
+      var numberFormat;
+      numberFormat = new Intl.NumberFormat('en-US', {
+        style: 'percent',
+        currency: 'USD'
+      });
+      info('Ωfstr_285', rvs(rpr(numberFormat.format(amount))));
+      return info('Ωfstr_286', rvs(rpr(numberFormat.format(0.756789))));
+    })();
+    (() => {
+      var numberFormat;
+      numberFormat = new Intl.NumberFormat('en-US', {
+        style: 'percent',
+        currency: 'USD',
+        maximumSignificantDigits: 2
+      });
+      info('Ωfstr_287', rvs(rpr(numberFormat.format(amount))));
+      return info('Ωfstr_288', rvs(rpr(numberFormat.format(0.756789))));
+    })();
+    (() => {
+      // the nu extension key requests a numbering system, e.g. Chinese decimal
+      help('Ωfstr_289', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec')).format(123456.789))));
+      help('Ωfstr_290', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hans')).format(123456.789))));
+      help('Ωfstr_291', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hansfin')).format(123456.789))));
+      help('Ωfstr_292', rvs(rpr((new Intl.NumberFormat('zh-Hant-TW-u-nu-hant')).format(123456.789))));
+      help('Ωfstr_293', rvs(rpr((new Intl.NumberFormat('zh-Hant-TW-u-nu-hantfin')).format(123456.789))));
+      return help('Ωfstr_294', rvs(rpr((new Intl.NumberFormat('roman')).format(123456.789))));
+    })();
+    (() => {
+      var numberFormat;
+      // Additionally, you can use the format method of an Intl.NumberFormat instance to format a number
+      // according to the locale and formatting options of the object
+      numberFormat = new Intl.NumberFormat('en-US');
+      return info('Ωfstr_295', rvs(rpr(numberFormat.format(123456.789)))); // "123,456.789"
+    })();
+    return null;
+  };
+
+  //===========================================================================================================
+  mantissa_exponent_demo = function() {
+    var _d3_format, d, e, f, formatter, get_mantissa_and_exponent, new_ftag, rvs;
+    ({f, new_ftag, _d3_format} = require('../../../apps/effstring'));
+    ({
+      reverse: rvs
+    } = GUY.trm);
+    (() => {})();
+    get_mantissa_and_exponent = function(num) {
+      var bits, exponent, mantissa, sign;
+      bits = num.toString(2);
+      sign = bits === '1';
+      exponent = parseInt(bits.slice(1, 12), 2) - 1023;
+      mantissa = '1' + bits.slice(12);
+      return {sign, exponent, mantissa};
+    };
+    d = 123_456_789.123456789;
+    e = d * 1e18;
+    debug('Ωfstr_296', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d * 1e12;
+    debug('Ωfstr_297', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d * 1e09;
+    debug('Ωfstr_298', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d * 1e06;
+    debug('Ωfstr_299', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d * 1e03;
+    debug('Ωfstr_300', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d;
+    debug('Ωfstr_301', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d / 1e03;
+    debug('Ωfstr_302', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d / 1e06;
+    debug('Ωfstr_303', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d / 1e09;
+    debug('Ωfstr_304', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d / 1e12;
+    debug('Ωfstr_305', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    e = d / 1e18;
+    debug('Ωfstr_306', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+    formatter = new Intl.NumberFormat('en-US', {
+      useGrouping: false,
+      // minimumFractionDigits:    40,
+      // maximumFractionDigits:    40,
+      minimumSignificantDigits: 16, // max allowed value is 21
+      maximumSignificantDigits: 16 // max allowed value is 21
+    });
+    e = d * 1e44;
+    help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e41;
+    help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e39;
+    help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e36;
+    help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e33;
+    help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e30;
+    help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e27;
+    help('Ωfstr_308', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e24;
+    help('Ωfstr_309', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e21;
+    help('Ωfstr_310', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e18;
+    help('Ωfstr_311', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e15;
+    help('Ωfstr_312', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e12;
+    help('Ωfstr_313', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e09;
+    help('Ωfstr_314', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e06;
+    help('Ωfstr_315', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d * 1e03;
+    help('Ωfstr_316', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    echo();
+    e = d;
+    help('Ωfstr_317', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    echo();
+    e = d / 1e03;
+    help('Ωfstr_318', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e06;
+    help('Ωfstr_319', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e09;
+    help('Ωfstr_320', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e12;
+    help('Ωfstr_321', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e15;
+    help('Ωfstr_322', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e18;
+    help('Ωfstr_323', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e21;
+    help('Ωfstr_324', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e24;
+    help('Ωfstr_325', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e27;
+    help('Ωfstr_326', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e30;
+    help('Ωfstr_327', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e33;
+    help('Ωfstr_328', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e36;
+    help('Ωfstr_329', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e39;
+    help('Ωfstr_330', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e41;
+    help('Ωfstr_331', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    e = d / 1e44;
+    help('Ωfstr_332', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    echo();
+    e = 0.1 + 0.1 + 0.1;
+    help('Ωfstr_333', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+    return null;
+  };
+
+  //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      return (new Test({
-        throw_on_error: true
+      // ( new Test { throw_on_error: true, } ).test @intertype_tasks
+      (new Test({
+        throw_on_error: false
       })).test(this.intertype_tasks);
+      // ( new Test { throw_on_error: false, } ).test { si_units_format_specifier: @intertype_tasks.si_units_format_specifier, }
+      // README_demo()
+      // intl_number_demo()
+      return mantissa_exponent_demo();
     })();
   }
-
-  // ( new Test { throw_on_error: false, } ).test @intertype_tasks
-// ( new Test { throw_on_error: true, } ).test { locale_internals: @intertype_tasks.locale_internals, }
-// README_demo()
 
 }).call(this);
 

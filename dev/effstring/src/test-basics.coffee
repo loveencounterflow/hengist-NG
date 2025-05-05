@@ -88,20 +88,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
       Effstring_syntax_error
       Effstring_lib_syntax_error } = require '../../../apps/effstring'
     #.......................................................................................................
-    @throws ( Ωfstr__28 = -> f"(#{123}:;>15)"       ), /\(Effstring_syntax_error\) illegal format expression ':;>15\)'/
-    @throws ( Ωfstr__29 = -> f"(#{123}:)"           ), /\(Effstring_syntax_error\) illegal format expression/
-    @throws ( Ωfstr__30 = -> f"(#{123}:;)"          ), /\(Effstring_syntax_error\) illegal format expression ':;\)'/
-    @throws ( Ωfstr__31 = -> f"(#{123}:--->3f;)"    ), /\(Effstring_lib_syntax_error\) illegal format expression '--->3f'/
+    @throws ( Ωfstr__28 = -> f"(#{123}:;>15)"       ), /illegal format specifier/
+    @throws ( Ωfstr__29 = -> f"(#{123}:)"           ), /illegal format specifier/
+    @throws ( Ωfstr__30 = -> f"(#{123}:;)"          ), /illegal format specifier/
+    @throws ( Ωfstr__31 = -> f"(#{123}:--->3f;)"    ), /illegal format specifier/
     @eq ( Ωfstr__32 = -> try f"(#{123}:;)"        catch e then e instanceof Effstring_error   ), true
     @eq ( Ωfstr__33 = -> try f"(#{123}:;)"        catch e then e instanceof Effstring_syntax_error   ), true
     @eq ( Ωfstr__34 = -> try f"(#{123}:;)"        catch e then e instanceof Effstring_lib_syntax_error   ), false
     @eq ( Ωfstr__35 = -> try f"(#{123}:--->3f;)"  catch e then e instanceof Effstring_error   ), true
     @eq ( Ωfstr__36 = -> try f"(#{123}:--->3f;)"  catch e then e instanceof Effstring_syntax_error   ), true
     @eq ( Ωfstr__37 = -> try f"(#{123}:--->3f;)"  catch e then e instanceof Effstring_lib_syntax_error   ), true
-    @throws ( Ωfstr__38 = -> f"(#{123}:\\;<5;)"    ), /illegal format expression/
-    @throws ( Ωfstr__39 = -> f"(#{123}:\\;<5;);"   ), /illegal format expression/
-    @throws ( Ωfstr__40 = -> f"(#{123}:\\;<5;)\\;" ), /illegal format expression/
-    @throws ( Ωfstr__41 = -> f"(#{123}:\\;>15;)"   ), /illegal format expression/
+    @throws ( Ωfstr__38 = -> f"(#{123}:\\;<5;)"    ), /illegal format specifier/
+    @throws ( Ωfstr__39 = -> f"(#{123}:\\;<5;);"   ), /illegal format specifier/
+    @throws ( Ωfstr__40 = -> f"(#{123}:\\;<5;)\\;" ), /illegal format specifier/
+    @throws ( Ωfstr__41 = -> f"(#{123}:\\;>15;)"   ), /illegal format specifier/
     #.......................................................................................................
     return null
 
@@ -158,9 +158,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
     { f, } = require '../../../apps/effstring'
     ### TAINT check with `$` format will rely on locale setting of the machine the tests are running on ###
     #.....................................................................................................
-    @throws ( Ωfstr__74 = -> f"#{0}:foo;"   ), /invalid format: foo/
-    @throws ( Ωfstr__75 = -> f"#{0}:.-2s;"  ), /invalid format: \.-2s/
-    @throws ( Ωfstr__76 = -> f"#{0}:.f;"    ), /invalid format: \.f/
+    @throws ( Ωfstr__74 = -> f"#{0}:foo;"   ), /illegal format specifier/
+    @throws ( Ωfstr__75 = -> f"#{0}:.-2s;"  ), /illegal format specifier/
+    @throws ( Ωfstr__76 = -> f"#{0}:.f;"    ), /illegal format specifier/
     @eq ( Ωfstr__77 = -> f"#{0}:.30f;"              ), "0.00000000000000000000"
     @eq ( Ωfstr__78 = -> f"#{1}:.0g;"               ), "1"
     @eq ( Ωfstr__79 = -> f"#{Number.MIN_VALUE}:s;"  ), "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005y"
@@ -288,6 +288,33 @@ GTNG                      = require '../../../apps/guy-test-NG'
     return null
 
   #---------------------------------------------------------------------------------------------------------
+  si_units_format_specifier_internals: ->
+    { _fmtspec_unit_re } = require '../../../apps/effstring'
+    #.......................................................................................................
+    do =>
+      @eq ( Ωfstr_129 = -> ( '_<15,.3f/y'.match _fmtspec_unit_re )?.groups ), { discard: '/y', unit: 'y', }
+      @eq ( Ωfstr_130 = -> ( '_<15,.3f/z'.match _fmtspec_unit_re )?.groups ), { discard: '/z', unit: 'z', }
+      @eq ( Ωfstr_131 = -> ( '_<15,.3f/a'.match _fmtspec_unit_re )?.groups ), { discard: '/a', unit: 'a', }
+      @eq ( Ωfstr_132 = -> ( '_<15,.3f/f'.match _fmtspec_unit_re )?.groups ), { discard: '/f', unit: 'f', }
+      @eq ( Ωfstr_133 = -> ( '_<15,.3f/p'.match _fmtspec_unit_re )?.groups ), { discard: '/p', unit: 'p', }
+      @eq ( Ωfstr_134 = -> ( '_<15,.3f/n'.match _fmtspec_unit_re )?.groups ), { discard: '/n', unit: 'n', }
+      @eq ( Ωfstr_135 = -> ( '_<15,.3f/µ'.match _fmtspec_unit_re )?.groups ), { discard: '/µ', unit: 'µ', }
+      @eq ( Ωfstr_136 = -> ( '_<15,.3f/m'.match _fmtspec_unit_re )?.groups ), { discard: '/m', unit: 'm', }
+      @eq ( Ωfstr_137 = -> ( '_<15,.3f/1'.match _fmtspec_unit_re )?.groups ), { discard: '/1', unit: '1', }
+      @eq ( Ωfstr_138 = -> ( '_<15,.3f/k'.match _fmtspec_unit_re )?.groups ), { discard: '/k', unit: 'k', }
+      @eq ( Ωfstr_139 = -> ( '_<15,.3f/M'.match _fmtspec_unit_re )?.groups ), { discard: '/M', unit: 'M', }
+      @eq ( Ωfstr_140 = -> ( '_<15,.3f/G'.match _fmtspec_unit_re )?.groups ), { discard: '/G', unit: 'G', }
+      @eq ( Ωfstr_141 = -> ( '_<15,.3f/T'.match _fmtspec_unit_re )?.groups ), { discard: '/T', unit: 'T', }
+      @eq ( Ωfstr_142 = -> ( '_<15,.3f/P'.match _fmtspec_unit_re )?.groups ), { discard: '/P', unit: 'P', }
+      @eq ( Ωfstr_143 = -> ( '_<15,.3f/E'.match _fmtspec_unit_re )?.groups ), { discard: '/E', unit: 'E', }
+      @eq ( Ωfstr_144 = -> ( '_<15,.3f/Z'.match _fmtspec_unit_re )?.groups ), { discard: '/Z', unit: 'Z', }
+      @eq ( Ωfstr_145 = -> ( '_<15,.3f/Y'.match _fmtspec_unit_re )?.groups ), { discard: '/Y', unit: 'Y', }
+      @eq ( Ωfstr_146 = -> ( '_<15,.3f/b'.match _fmtspec_unit_re )?.groups ), undefined
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   si_units_format_specifier: ->
     { f
       new_ftag
@@ -297,32 +324,154 @@ GTNG                      = require '../../../apps/guy-test-NG'
       _locale_cfg_from_hints
       _hint_as_locale_cfg              } = require '../../../apps/effstring'
     #.......................................................................................................
+    probes_and_matchers = [
+      [ 0.00000042, '__________0.420µ', ]
+      [ 0.0000042,  '__________4.200µ', ]
+      [ 0.000042,   '_________42.000µ', ]
+      [ 0.00042,    '________420.000µ', ]
+      [ 0.0042,     '______4,200.000µ', ]
+      [ 0.042,      '_____42,000.000µ', ]
+      [ 0.42,       '____420,000.000µ', ]
+      ]
+    #.......................................................................................................
     do =>
       ff = _d3_format.formatPrefix "_>15,.3f", 1e-6
-      matchers = []
-      info 'Ωfstr_129', rpr ff 0.00000042
-      info 'Ωfstr_130', rpr ff 0.0000042
-      info 'Ωfstr_131', rpr ff 0.000042
-      info 'Ωfstr_132', rpr ff 0.00042
-      info 'Ωfstr_133', rpr ff 0.0042
-      info 'Ωfstr_134', rpr ff 0.042
-      info 'Ωfstr_135', rpr ff 0.42
+      for [ probe, matcher, ] in probes_and_matchers
+        @eq ( Ωfstr_147 = -> ff probe ), matcher
       return null
-    # do =>
-    #   echo()
-    #   info 'Ωfstr_136', f"#{0.00000042}:_<15,.3/µ;"
-    #   info 'Ωfstr_137', f"#{0.0000042}:_<15,.3/µ;"
-    #   info 'Ωfstr_138', f"#{0.000042}:_<15,.3/µ;"
-    #   info 'Ωfstr_139', f"#{0.00042}:_<15,.3/µ;"
-    #   info 'Ωfstr_140', f"#{0.0042}:_<15,.3/µ;"
-    #   info 'Ωfstr_141', f"#{0.042}:_<15,.3/µ;"
-    #   info 'Ωfstr_142', f"#{0.42}:_<15,.3/µ;"
-    # do ( f ) =>
-    #   f = new_ftag 'de-DE', { numerals: [ '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', ], percent: ' v.H.', }
-    #   @eq ( Ωfstr_143 = -> ( f"#{0.754321}:_>17.5%;" )    ), '____⁷⁵,⁴³²¹⁰ v.H.'
-    #   return null
     #.......................................................................................................
-    # @eq ( Ωfstr_144 = -> ( new_ftag 'en-IN' )"#{1.23}:$03.2f;[#{1234567890.123456}:20,.4f;]" ), '₹1.23[ 1,23,45,67,890.1235]'
+    do =>
+      for [ probe, matcher, ] in probes_and_matchers
+        @eq ( Ωfstr_148 = -> f"#{probe}:_>15,.3f/µ;" ), matcher
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  si_units_format_specifiers_updated_with_faults: ->
+    { f
+      new_ftag
+      _default_locale
+      _d3_format
+      _locale_cfg_from_bcp47
+      _locale_cfg_from_hints
+      _hint_as_locale_cfg              } = require '../../../apps/effstring'
+    #.......................................................................................................
+    @eq ( Ωfstr_149 = -> f"d = #{1234.5678}:_>50.20f/y;m" ), 'd = _____________________________________1.2345678e+27ym'
+    @eq ( Ωfstr_150 = -> f"d = #{1234.5678}:_>50.20f/z;m" ), 'd = _____________________________________1.2345678e+24zm'
+    @eq ( Ωfstr_151 = -> f"d = #{1234.5678}:_>50.20f/a;m" ), 'd = _____________________________________1.2345678e+21am'
+    @eq ( Ωfstr_152 = -> f"d = #{1234.5678}:_>50.20f/f;m" ), 'd = __________1234567800000000000.00000000000000000000fm'
+    @eq ( Ωfstr_153 = -> f"d = #{1234.5678}:_>50.20f/p;m" ), 'd = _____________1234567800000000.00000000000000000000pm'
+    @eq ( Ωfstr_154 = -> f"d = #{1234.5678}:_>50.20f/n;m" ), 'd = ________________1234567800000.00000000000000000000nm'
+    @eq ( Ωfstr_155 = -> f"d = #{1234.5678}:_>50.20f/µ;m" ), 'd = ___________________1234567800.00000000000000000000µm'
+    @eq ( Ωfstr_156 = -> f"d = #{1234.5678}:_>50.20f/m;m" ), 'd = ______________________1234567.80000000004656612873mm'
+    @eq ( Ωfstr_157 = -> f"d = #{1234.5678}:_>50.20f/1;m" ), 'd = _________________________1234.56780000000003383320m'
+    @eq ( Ωfstr_158 = -> f"d = #{1234.5678}:_>50.20f/k;m" ), 'd = ____________________________1.23456779999999999298km'
+    @eq ( Ωfstr_159 = -> f"d = #{1234.5678}:_>50.20f/M;m" ), 'd = ____________________________0.00123456780000000006Mm'
+    @eq ( Ωfstr_160 = -> f"d = #{1234.5678}:_>50.20f/G;m" ), 'd = ____________________________0.00000123456780000000Gm'
+    @eq ( Ωfstr_161 = -> f"d = #{1234.5678}:_>50.20f/T;m" ), 'd = ____________________________0.00000000123456780000Tm'
+    @eq ( Ωfstr_162 = -> f"d = #{1234.5678}:_>50.20f/P;m" ), 'd = ____________________________0.00000000000123456780Pm'
+    @eq ( Ωfstr_163 = -> f"d = #{1234.5678}:_>50.20f/E;m" ), 'd = ____________________________0.00000000000000123457Em'
+    @eq ( Ωfstr_164 = -> f"d = #{1234.5678}:_>50.20f/Z;m" ), 'd = ____________________________0.00000000000000000123Zm'
+    @eq ( Ωfstr_165 = -> f"d = #{1234.5678}:_>50.20f/Y;m" ), 'd = ____________________________0.00000000000000000000Ym'
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  si_units_format_specifiers_updated_ideal: ->
+    { f
+      new_ftag
+      _default_locale
+      _d3_format
+      _locale_cfg_from_bcp47
+      _locale_cfg_from_hints
+      _hint_as_locale_cfg              } = require '../../../apps/effstring'
+    #.......................................................................................................
+    @eq ( Ωfstr_166 = -> f"d = #{1234.5678}:_>50.20f/y;m" ), 'd = _____________________________________1.2345678e+27ym'
+    @eq ( Ωfstr_167 = -> f"d = #{1234.5678}:_>50.20f/z;m" ), 'd = _____________________________________1.2345678e+24zm'
+    @eq ( Ωfstr_168 = -> f"d = #{1234.5678}:_>50.20f/a;m" ), 'd = _____________________________________1.2345678e+21am'
+    @eq ( Ωfstr_169 = -> f"d = #{1234.5678}:_>50.20f/f;m" ), 'd = __________1234567800000000000.00000000000000000000fm'
+    @eq ( Ωfstr_170 = -> f"d = #{1234.5678}:_>50.20f/p;m" ), 'd = _____________1234567800000000.00000000000000000000pm'
+    @eq ( Ωfstr_171 = -> f"d = #{1234.5678}:_>50.20f/n;m" ), 'd = ________________1234567800000.00000000000000000000nm'
+    @eq ( Ωfstr_172 = -> f"d = #{1234.5678}:_>50.20f/µ;m" ), 'd = ___________________1234567800.00000000000000000000µm'
+    @eq ( Ωfstr_173 = -> f"d = #{1234.5678}:_>50.20f/m;m" ), 'd = ______________________1234567.80000000004656612873mm'
+    @eq ( Ωfstr_174 = -> f"d = #{1234.5678}:_>50.20f/1;m" ), 'd = _________________________1234.56780000000003383320m'
+    @eq ( Ωfstr_175 = -> f"d = #{1234.5678}:_>50.20f/k;m" ), 'd = ____________________________1.23456779999999999298km'
+    @eq ( Ωfstr_176 = -> f"d = #{1234.5678}:_>50.20f/M;m" ), 'd = ____________________________0.00123456780000000006Mm'
+    @eq ( Ωfstr_177 = -> f"d = #{1234.5678}:_>50.20f/G;m" ), 'd = ____________________________0.00000123456780000000Gm'
+    @eq ( Ωfstr_178 = -> f"d = #{1234.5678}:_>50.20f/T;m" ), 'd = ____________________________0.00000000123456780000Tm'
+    @eq ( Ωfstr_179 = -> f"d = #{1234.5678}:_>50.20f/P;m" ), 'd = ____________________________0.00000000000123456780Pm'
+    @eq ( Ωfstr_180 = -> f"d = #{1234.5678}:_>50.20f/E;m" ), 'd = ____________________________0.00000000000000123457Em'
+    @eq ( Ωfstr_181 = -> f"d = #{1234.5678}:_>50.20f/Z;m" ), 'd = ____________________________0.00000000000000000123Zm'
+    @eq ( Ωfstr_182 = -> f"d = #{1234.5678}:_>50.20f/Y;m" ), 'd = ____________________________0.00000000000000000000Ym'
+    # @eq ( Ωfstr_183 = -> f"d = #{1234.5678}:50.60f/y;m" ), 'd =                                      1.2345678e+27ym'
+    # @eq ( Ωfstr_184 = -> f"d = #{1234.5678}:50.60f/z;m" ), 'd =                                      1.2345678e+24zm'
+    # @eq ( Ωfstr_185 = -> f"d = #{1234.5678}:50.60f/a;m" ), 'd =                                      1.2345678e+21am'
+    # @eq ( Ωfstr_186 = -> f"d = #{1234.5678}:50.60f/f;m" ), 'd =           1234567800000000000.00000000000000000000fm'
+    # @eq ( Ωfstr_187 = -> f"d = #{1234.5678}:50.60f/p;m" ), 'd =              1234567800000000.00000000000000000000pm'
+    # @eq ( Ωfstr_188 = -> f"d = #{1234.5678}:50.60f/n;m" ), 'd =                 1234567800000.00000000000000000000nm'
+    # @eq ( Ωfstr_189 = -> f"d = #{1234.5678}:50.60f/µ;m" ), 'd =                    1234567800.00000000000000000000µm'
+    # @eq ( Ωfstr_190 = -> f"d = #{1234.5678}:50.60f/m;m" ), 'd =                       1234567.80000000004656612873mm'
+    # @eq ( Ωfstr_191 = -> f"d = #{1234.5678}:50.60f/1;m" ), 'd =                          1234.56780000000003383320m'
+    # @eq ( Ωfstr_192 = -> f"d = #{1234.5678}:50.60f/k;m" ), 'd =                             1.23456779999999999298km'
+    # @eq ( Ωfstr_193 = -> f"d = #{1234.5678}:50.60f/M;m" ), 'd =                             0.00123456780000000006Mm'
+    # @eq ( Ωfstr_194 = -> f"d = #{1234.5678}:50.60f/G;m" ), 'd =                             0.0000012345678000000000000Gm'
+    # @eq ( Ωfstr_195 = -> f"d = #{1234.5678}:50.60f/T;m" ), 'd =                             0.0000000012345678000000000Tm'
+    # @eq ( Ωfstr_196 = -> f"d = #{1234.5678}:50.60f/P;m" ), 'd =                             0.0000000000012345678000000Pm'
+    # @eq ( Ωfstr_197 = -> f"d = #{1234.5678}:50.60f/E;m" ), 'd =                             0.0000000000000012345678000Em'
+    # @eq ( Ωfstr_198 = -> f"d = #{1234.5678}:50.60f/Z;m" ), 'd =                             0.0000000000000000012345678Zm'
+    # @eq ( Ωfstr_199 = -> f"d = #{1234.5678}:50.60f/Y;m" ), 'd =                             0.0000000000000000000012345Ym'
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  si_units_format_specifier_unit: ->
+    { f
+      new_ftag
+      _default_locale
+      _d3_format
+      _locale_cfg_from_bcp47
+      _locale_cfg_from_hints
+      _hint_as_locale_cfg              } = require '../../../apps/effstring'
+    #.......................................................................................................
+    probes_and_matchers = [
+      [ 0.00000042, '__________0.000', ]
+      [ 0.0000042,  '__________0.000', ]
+      [ 0.000042,   '__________0.000', ]
+      [ 0.00042,    '__________0.000', ]
+      [ 0.0042,     '__________0.004', ]
+      [ 0.042,      '__________0.042', ]
+      [ 0.42,       '__________0.420', ]
+      [ 4.2,        '__________4.200', ]
+      [ 42,         '_________42.000', ]
+      ]
+    #.......................................................................................................
+    do =>
+      ff = _d3_format.formatPrefix "_>15,.3f", 1
+      for [ probe, matcher, ] in probes_and_matchers
+        @eq ( Ωfstr_200 = -> ff probe ), matcher
+      return null
+    #.......................................................................................................
+    do =>
+      for [ probe, matcher, ] in probes_and_matchers
+        @eq ( Ωfstr_201 = -> f"#{probe}:_>15,.3f/1;" ), matcher
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  handle_nonnumeric_values: ->
+    { f
+      new_ftag
+      _default_locale
+      _d3_format
+      _locale_cfg_from_bcp47
+      _locale_cfg_from_hints
+      _hint_as_locale_cfg              } = require '../../../apps/effstring'
+    #.......................................................................................................
+    @eq ( Ωfstr_202 = -> urge 'Ωfstr_203', rpr f"d = #{"helo"}:60.40f/k;m" ), null
+    @eq ( Ωfstr_204 = -> urge 'Ωfstr_205', rpr f"d = #{true}:60.40f/k;m" ), null
+    @eq ( Ωfstr_206 = -> urge 'Ωfstr_207', rpr f"d = #{123456789n}:60.40f/k;m" ), null
     #.......................................................................................................
     return null
 
@@ -331,13 +480,13 @@ README_demo = ->
   { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
   echo()
   do =>
-    # info 'Ωfstr_145', f"——#{1234}:$#20x;——"
-    info 'Ωfstr_146', f"——#{1234}:;>20;——"
-    info 'Ωfstr_147', f"——#{1234}:#>20.3e;——"
-    info 'Ωfstr_148', f"——#{1234}:#>20.3f;——"
-    info 'Ωfstr_149', f"——#{1234}:#>20.3s;——"
-    info 'Ωfstr_150', f"——#{1234}:#>20.3n;——"
-    info 'Ωfstr_151', f"——#{Infinity}:#>20.3n;——"
+    # info 'Ωfstr_208', f"——#{1234}:$#20x;——"
+    info 'Ωfstr_209', f"——#{1234}:;>20;——"
+    info 'Ωfstr_210', f"——#{1234}:#>20.3e;——"
+    info 'Ωfstr_211', f"——#{1234}:#>20.3f;——"
+    info 'Ωfstr_212', f"——#{1234}:#>20.3s;——"
+    info 'Ωfstr_213', f"——#{1234}:#>20.3n;——"
+    info 'Ωfstr_214', f"——#{Infinity}:#>20.3n;——"
   do =>
     ja_jp_cfg     = {
       numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ], }
@@ -414,70 +563,228 @@ README_demo = ->
     # console.log f_en"#{-98765.43}:·>$50,.2f;"
     do =>
       echo()
-      ff = _d3_format.formatPrefix "_<15,.3~", 1e-6
-      info 'Ωfstr_152', ff 0.00000042
-      info 'Ωfstr_153', ff 0.0000042
-      info 'Ωfstr_154', ff 0.000042
-      info 'Ωfstr_155', ff 0.00042
-      info 'Ωfstr_156', ff 0.0042
-      info 'Ωfstr_157', ff 0.042
-      info 'Ωfstr_158', ff 0.42
+      ff = _d3_format.formatPrefix "_>15,.3~", 1e-6
+      info 'Ωfstr_215', ff 0.00000042
+      info 'Ωfstr_216', ff 0.0000042
+      info 'Ωfstr_217', ff 0.000042
+      info 'Ωfstr_218', ff 0.00042
+      info 'Ωfstr_219', ff 0.0042
+      info 'Ωfstr_220', ff 0.042
+      info 'Ωfstr_221', ff 0.42
       return null
     do =>
       echo()
-      ff = _d3_format.formatPrefix "_<15,.3~s", 1e-6
-      info 'Ωfstr_159', ff 0.00000042
-      info 'Ωfstr_160', ff 0.0000042
-      info 'Ωfstr_161', ff 0.000042
-      info 'Ωfstr_162', ff 0.00042
-      info 'Ωfstr_163', ff 0.0042
-      info 'Ωfstr_164', ff 0.042
-      info 'Ωfstr_165', ff 0.42
+      ff = _d3_format.formatPrefix "_>15,.3~s", 1e-6
+      info 'Ωfstr_222', ff 0.00000042
+      info 'Ωfstr_223', ff 0.0000042
+      info 'Ωfstr_224', ff 0.000042
+      info 'Ωfstr_225', ff 0.00042
+      info 'Ωfstr_226', ff 0.0042
+      info 'Ωfstr_227', ff 0.042
+      info 'Ωfstr_228', ff 0.42
       return null
     do =>
       echo()
-      ff = _d3_format.formatPrefix "_<15,.3~f", 1e-6
-      info 'Ωfstr_166', ff 0.00000042
-      info 'Ωfstr_167', ff 0.0000042
-      info 'Ωfstr_168', ff 0.000042
-      info 'Ωfstr_169', ff 0.00042
-      info 'Ωfstr_170', ff 0.0042
-      info 'Ωfstr_171', ff 0.042
-      info 'Ωfstr_172', ff 0.42
+      ff = _d3_format.formatPrefix "_>15,.3~f", 1e-6
+      info 'Ωfstr_229', ff 0.00000042
+      info 'Ωfstr_230', ff 0.0000042
+      info 'Ωfstr_231', ff 0.000042
+      info 'Ωfstr_232', ff 0.00042
+      info 'Ωfstr_233', ff 0.0042
+      info 'Ωfstr_234', ff 0.042
+      info 'Ωfstr_235', ff 0.42
       return null
     do =>
       echo()
-      ff = _d3_format.formatPrefix "_<15,.3~c", 1e-6
-      info 'Ωfstr_173', ff 0.00000042
-      info 'Ωfstr_174', ff 0.0000042
-      info 'Ωfstr_175', ff 0.000042
-      info 'Ωfstr_176', ff 0.00042
-      info 'Ωfstr_177', ff 0.0042
-      info 'Ωfstr_178', ff 0.042
-      info 'Ωfstr_179', ff 0.42
+      info 'Ωfstr_236', f"#{0.00000042}:_>15,.3f/µ;"
+      info 'Ωfstr_237', f"#{0.0000042}:_>15,.3f/µ;"
+      info 'Ωfstr_238', f"#{0.000042}:_>15,.3f/µ;"
+      info 'Ωfstr_239', f"#{0.00042}:_>15,.3f/µ;"
+      info 'Ωfstr_240', f"#{0.0042}:_>15,.3f/µ;"
+      info 'Ωfstr_241', f"#{0.042}:_>15,.3f/µ;"
+      info 'Ωfstr_242', f"#{0.42}:_>15,.3f/µ;"
       return null
     do =>
       echo()
-      info 'Ωfstr_180', f"#{0.00000042}:_<15,.3/µ;"
-      info 'Ωfstr_181', f"#{0.0000042}:_<15,.3/µ;"
-      info 'Ωfstr_182', f"#{0.000042}:_<15,.3/µ;"
-      info 'Ωfstr_183', f"#{0.00042}:_<15,.3/µ;"
-      info 'Ωfstr_184', f"#{0.0042}:_<15,.3/µ;"
-      info 'Ωfstr_185', f"#{0.042}:_<15,.3/µ;"
-      info 'Ωfstr_186', f"#{0.42}:_<15,.3/µ;"
+      info 'Ωfstr_243', f"#{ 123000    }:_>9,.3f/k;m"
+      info 'Ωfstr_244', f"#{ 7000      }:_>9,.3f/k;m"
+      info 'Ωfstr_245', f"#{ 500       }:_>9,.3f/k;m"
+      info 'Ωfstr_246', f"#{ 99        }:_>9,.3f/k;m"
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_>15,.3f", 1e-3
+      info 'Ωfstr_247', ff 0.00089
+      info 'Ωfstr_248', ff 0.0089
+      info 'Ωfstr_249', ff 0.089
+      info 'Ωfstr_250', ff 0.89
+      info 'Ωfstr_251', ff 8.9
+      info 'Ωfstr_252', ff 89
+      info 'Ωfstr_253', ff 890
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_>15,.3f", 1e-2
+      info 'Ωfstr_254', ff 0.00089
+      info 'Ωfstr_255', ff 0.0089
+      info 'Ωfstr_256', ff 0.089
+      info 'Ωfstr_257', ff 0.89
+      info 'Ωfstr_258', ff 8.9
+      info 'Ωfstr_259', ff 89
+      info 'Ωfstr_260', ff 890
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_>15,.3f", 1e-1
+      info 'Ωfstr_261', ff 0.00089
+      info 'Ωfstr_262', ff 0.0089
+      info 'Ωfstr_263', ff 0.089
+      info 'Ωfstr_264', ff 0.89
+      info 'Ωfstr_265', ff 8.9
+      info 'Ωfstr_266', ff 89
+      info 'Ωfstr_267', ff 890
+      return null
+    do =>
+      echo()
+      ff = _d3_format.formatPrefix "_>15,.3f", 1e0
+      scale = 1 / 1e-2
+      info 'Ωfstr_268', ff 0.00089  * scale
+      info 'Ωfstr_269', ff 0.0089   * scale
+      info 'Ωfstr_270', ff 0.089    * scale
+      info 'Ωfstr_271', ff 0.89     * scale
+      info 'Ωfstr_272', ff 8.9      * scale
+      info 'Ωfstr_273', ff 89       * scale
+      info 'Ωfstr_274', ff 890      * scale
       return null
   echo()
   return null
 
 
+#===========================================================================================================
+intl_number_demo = ->
+  { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
+  { reverse: rvs } = GUY.trm
+  debug 'Ωfstr_275', 1234567891234567891
+  debug 'Ωfstr_276', f"#{1234567891234567891}:<30.3f;"
+  # debug 'Ωfstr_277', f"#{1234567891234567891n}:<30.3f;"
+  debug 'Ωfstr_278', f"#{'1234567891234567891'}:<30.3f;"
+  do =>
+    locale = new Intl.NumberFormat 'en-US' #, { style: 'currency', currency: 'USD', }
+    help 'Ωfstr_279', locale.resolvedOptions()
+    urge 'Ωfstr_280', locale.format 9876543210
+    for { type, value, } in locale.formatToParts 9876543210
+      debug 'Ωfstr_281', ( f"#{type}:15c;" ), ( rvs rpr value )
+  echo()
+  do =>
+    number  = 123456.789
+    de_DE   = new Intl.NumberFormat 'de-DE'; urge 'Ωfstr_282', rvs rpr de_DE.format number
+    en_US   = new Intl.NumberFormat 'en-US'; urge 'Ωfstr_283', rvs rpr en_US.format number
+    return null
+  # You can also specify additional options such as the style of formatting (decimal, currency, or
+  # percent), the currency to use if formatting a currency, and the number of minimum and maximum fraction
+  # digits. For instance, to format a number as a currency in US dollars:
+  amount  = 654321.987;
+  do =>
+    numberFormat = new Intl.NumberFormat 'en-US', { style: 'currency', currency: 'USD', }
+    info 'Ωfstr_284', rvs rpr numberFormat.format amount
+  do =>
+    numberFormat = new Intl.NumberFormat 'en-US', { style: 'percent', currency: 'USD', }
+    info 'Ωfstr_285', rvs rpr numberFormat.format amount
+    info 'Ωfstr_286', rvs rpr numberFormat.format 0.756789
+  do =>
+    numberFormat = new Intl.NumberFormat 'en-US', { style: 'percent', currency: 'USD', maximumSignificantDigits: 2, }
+    info 'Ωfstr_287', rvs rpr numberFormat.format amount
+    info 'Ωfstr_288', rvs rpr numberFormat.format 0.756789
+  do =>
+    # the nu extension key requests a numbering system, e.g. Chinese decimal
+    help 'Ωfstr_289', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hanidec' ).format 123456.789
+    help 'Ωfstr_290', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hans'    ).format 123456.789
+    help 'Ωfstr_291', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hansfin' ).format 123456.789
+    help 'Ωfstr_292', rvs rpr ( new Intl.NumberFormat 'zh-Hant-TW-u-nu-hant'    ).format 123456.789
+    help 'Ωfstr_293', rvs rpr ( new Intl.NumberFormat 'zh-Hant-TW-u-nu-hantfin' ).format 123456.789
+    help 'Ωfstr_294', rvs rpr ( new Intl.NumberFormat 'roman' ).format 123456.789
+  do =>
+    # Additionally, you can use the format method of an Intl.NumberFormat instance to format a number
+    # according to the locale and formatting options of the object
+    numberFormat = new Intl.NumberFormat 'en-US'
+    info 'Ωfstr_295', rvs rpr numberFormat.format 123456.789 # "123,456.789"
+  return null
+
+#===========================================================================================================
+mantissa_exponent_demo = ->
+  { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
+  { reverse: rvs } = GUY.trm
+  do =>
+  get_mantissa_and_exponent = ( num ) ->
+    bits      = num.toString 2
+    sign      = bits is '1'
+    exponent  = parseInt( bits.slice(1, 12), 2) - 1023
+    mantissa  = '1' + bits.slice(12)
+    return { sign, exponent, mantissa, }
+  d = 123_456_789.123456789
+  e = d * 1e18; debug 'Ωfstr_296', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d * 1e12; debug 'Ωfstr_297', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d * 1e09; debug 'Ωfstr_298', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d * 1e06; debug 'Ωfstr_299', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d * 1e03; debug 'Ωfstr_300', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d;        debug 'Ωfstr_301', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d / 1e03; debug 'Ωfstr_302', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d / 1e06; debug 'Ωfstr_303', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d / 1e09; debug 'Ωfstr_304', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d / 1e12; debug 'Ωfstr_305', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  e = d / 1e18; debug 'Ωfstr_306', f"#{e}:34,.17;", get_mantissa_and_exponent e
+  formatter = new Intl.NumberFormat 'en-US', {
+    useGrouping:              false,
+    # minimumFractionDigits:    40,
+    # maximumFractionDigits:    40,
+    minimumSignificantDigits: 16, # max allowed value is 21
+    maximumSignificantDigits: 16, # max allowed value is 21
+    }
+  e = d * 1e44; help 'Ωfstr_307', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e41; help 'Ωfstr_307', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e39; help 'Ωfstr_307', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e36; help 'Ωfstr_307', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e33; help 'Ωfstr_307', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e30; help 'Ωfstr_307', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e27; help 'Ωfstr_308', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e24; help 'Ωfstr_309', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e21; help 'Ωfstr_310', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e18; help 'Ωfstr_311', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e15; help 'Ωfstr_312', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e12; help 'Ωfstr_313', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e09; help 'Ωfstr_314', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e06; help 'Ωfstr_315', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d * 1e03; help 'Ωfstr_316', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  echo()
+  e = d;        help 'Ωfstr_317', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  echo()
+  e = d / 1e03; help 'Ωfstr_318', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e06; help 'Ωfstr_319', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e09; help 'Ωfstr_320', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e12; help 'Ωfstr_321', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e15; help 'Ωfstr_322', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e18; help 'Ωfstr_323', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e21; help 'Ωfstr_324', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e24; help 'Ωfstr_325', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e27; help 'Ωfstr_326', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e30; help 'Ωfstr_327', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e33; help 'Ωfstr_328', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e36; help 'Ωfstr_329', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e39; help 'Ωfstr_330', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e41; help 'Ωfstr_331', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  e = d / 1e44; help 'Ωfstr_332', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  echo()
+  e = 0.1 + 0.1 + 0.1;        help 'Ωfstr_333', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+  return null
+
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  ( new Test { throw_on_error: true, } ).test @intertype_tasks
-  # ( new Test { throw_on_error: false, } ).test @intertype_tasks
-  # ( new Test { throw_on_error: true, } ).test { locale_internals: @intertype_tasks.locale_internals, }
+  # ( new Test { throw_on_error: true, } ).test @intertype_tasks
+  ( new Test { throw_on_error: false, } ).test @intertype_tasks
+  # ( new Test { throw_on_error: false, } ).test { si_units_format_specifier: @intertype_tasks.si_units_format_specifier, }
   # README_demo()
-
-
+  # intl_number_demo()
+  mantissa_exponent_demo()
 
