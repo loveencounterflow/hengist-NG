@@ -785,11 +785,42 @@ mantissa_exponent_demo = ->
 
 
 #===========================================================================================================
+demo_grouping = ->
+  { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
+  { reverse: rvs } = GUY.trm
+  #---------------------------------------------------------------------------------------------------------
+  group_digits = ( text, n = 3, separator = ',' ) ->
+    ### TAINT validate n is integer between 1 and 100 ###
+    # grouping_re = /// \B (?= ( \d{ #{n} } )+ (?! \d ) ) ///g
+    grouping_re = /// \B (?= ( \d{ #{n} } )+ $ ) ///g
+    return text.replace grouping_re, separator
+    notation = ->
+      '...,###'                   ; [ ',', 3, ]
+      '...,###,##-#:#'            ; [ ',', 3, ',', 2, '-', 1, ':', 1, ]
+      ',###'                      ; [ 0, ',', 3, ]
+      ',###,##-#:#'               ; [ 0, ',', 3, ',', 2, '-', 1, ':', 1, ]
+  debug 'Ωfstr_344', rpr '\#'
+  debug 'Ωfstr_345', rpr String.raw'\#'
+  #---------------------------------------------------------------------------------------------------------
+  urge 'Ωfstr_346', f"#{group_digits '1'}:>20c;"
+  urge 'Ωfstr_347', f"#{group_digits '12'}:>20c;"
+  urge 'Ωfstr_348', f"#{group_digits '123'}:>20c;"
+  urge 'Ωfstr_349', f"#{group_digits '1234'}:>20c;"
+  urge 'Ωfstr_350', f"#{group_digits '12345'}:>20c;"
+  urge 'Ωfstr_351', f"#{group_digits '123456'}:>20c;"
+  urge 'Ωfstr_352', f"#{group_digits '1234567'}:>20c;"
+  urge 'Ωfstr_353', f"#{group_digits '12345678'}:>20c;"
+  urge 'Ωfstr_354', f"#{group_digits '123456789'}:>20c;"
+  urge 'Ωfstr_355', f"#{group_digits '1234567890'}:>20c;"
+  return null
+
+
+#===========================================================================================================
 if module is require.main then await do =>
   # ( new Test { throw_on_error: true, } ).test @intertype_tasks
   ( new Test { throw_on_error: false, } ).test @intertype_tasks
   # ( new Test { throw_on_error: false, } ).test { si_units_format_specifier: @intertype_tasks.si_units_format_specifier, }
   # README_demo()
   # intl_number_demo()
-  mantissa_exponent_demo()
-
+  # mantissa_exponent_demo()
+  demo_grouping()
