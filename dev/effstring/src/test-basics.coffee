@@ -816,6 +816,8 @@ demo =
     urge 'Ωfstr_352', f"#{group_digits '123456789'}:>20c;"
     urge 'Ωfstr_353', f"#{group_digits '1234567890'}:>20c;"
     #-------------------------------------------------------------------------------------------------------
+    class TOBEDONE_Error extends Error
+    #-------------------------------------------------------------------------------------------------------
     walk_group_steps = ( grouping_cfg, chr_count ) ->
       ### assuming grouping_cfg has been validated ###
       ### TAINT consider to use `grouping_cfg.at -1` &c ###
@@ -823,12 +825,13 @@ demo =
       return null if chr_count < 1
       chr_idx   = chr_count
       group_idx = grouping_cfg.length - 2
-      repeat    = grouping_cfg[ 0 ] is 0
+      repeat    = grouping_cfg[ 0 ] isnt 0
       loop
         [ marker, delta, ] = grouping_cfg[ group_idx .. group_idx + 1 ]
+        throw new TOBEDONE_Error "delta is zero or less" if delta < 1
         chr_idx -= delta
-        yield { marker, delta, chr_idx, }
         break if chr_idx <= 0
+        yield { marker, delta, chr_idx, }
         if repeat
           group_idx -= 2 if group_idx > 1
         else
@@ -836,16 +839,22 @@ demo =
           group_idx -= 2
       return null
     #-------------------------------------------------------------------------------------------------------
-    do =>
-      chrs          = Array.from 'abcdefgh'
-      grouping_cfg  = [ ',', 3, ',', 2, '-', 1, ':', 1, ]
-      for d from walk_group_steps [ ',', 3, ',', 2, '-', 1, ':', 1, ], chrs.length
-        help 'Ωfstr_354', d
-        chrs.splice d.chr_idx, 0, d.marker
-        debug 'Ωfstr_355', chrs
+    demo_grouping = ( text, grouping_cfg ) ->
+      # [...new Intl.Segmenter().segment( text )].map(s => s.segment)
       urge 'Ωfstr_356', rpr grouping_cfg.join ''
-      urge 'Ωfstr_356', rpr chrs.join ''
-      return null
+      chrs = Array.from text
+      for insertion from walk_group_steps grouping_cfg, chrs.length
+        chrs.splice insertion.chr_idx, 0, insertion.marker
+      return chrs.join ''
+    #-------------------------------------------------------------------------------------------------------
+    do =>
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [     ',', 3, ',', 2, '-', 1, ':', 1, ]
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [ 0,  ',', 3, ',', 2, '-', 1, ':', 1, ]
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [     ',', 1,                         ]
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [     ',', 2,                         ]
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [     ',', 3,                         ]
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [     ',', 4,                         ]
+      info 'Ωfstr_358', demo_grouping '98765432109876543210', [     ',', 5,                         ]
     #-------------------------------------------------------------------------------------------------------
     return null
 
