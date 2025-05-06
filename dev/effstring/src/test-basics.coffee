@@ -804,30 +804,41 @@ demo =
         '...,###,##-#:#'            ; [ ',', 3, ',', 2, '-', 1, ':', 1, ]
         ',###'                      ; [ 0, ',', 3, ]
         ',###,##-#:#'               ; [ 0, ',', 3, ',', 2, '-', 1, ':', 1, ]
-    debug 'Ωfstr_344', rpr '\#'
-    debug 'Ωfstr_345', rpr String.raw'\#'
     #-------------------------------------------------------------------------------------------------------
-    urge 'Ωfstr_346', f"#{group_digits '1'}:>20c;"
-    urge 'Ωfstr_347', f"#{group_digits '12'}:>20c;"
-    urge 'Ωfstr_348', f"#{group_digits '123'}:>20c;"
-    urge 'Ωfstr_349', f"#{group_digits '1234'}:>20c;"
-    urge 'Ωfstr_350', f"#{group_digits '12345'}:>20c;"
-    urge 'Ωfstr_351', f"#{group_digits '123456'}:>20c;"
-    urge 'Ωfstr_352', f"#{group_digits '1234567'}:>20c;"
-    urge 'Ωfstr_353', f"#{group_digits '12345678'}:>20c;"
-    urge 'Ωfstr_354', f"#{group_digits '123456789'}:>20c;"
-    urge 'Ωfstr_355', f"#{group_digits '1234567890'}:>20c;"
+    urge 'Ωfstr_344', f"#{group_digits '1'}:>20c;"
+    urge 'Ωfstr_345', f"#{group_digits '12'}:>20c;"
+    urge 'Ωfstr_346', f"#{group_digits '123'}:>20c;"
+    urge 'Ωfstr_347', f"#{group_digits '1234'}:>20c;"
+    urge 'Ωfstr_348', f"#{group_digits '12345'}:>20c;"
+    urge 'Ωfstr_349', f"#{group_digits '123456'}:>20c;"
+    urge 'Ωfstr_350', f"#{group_digits '1234567'}:>20c;"
+    urge 'Ωfstr_351', f"#{group_digits '12345678'}:>20c;"
+    urge 'Ωfstr_352', f"#{group_digits '123456789'}:>20c;"
+    urge 'Ωfstr_353', f"#{group_digits '1234567890'}:>20c;"
+    #-------------------------------------------------------------------------------------------------------
+    walk_group_indices = ( group_cfg ) ->
+      ### assuming group_cfg has been validated ###
+      ### TAINT consider to use `group_cfg.at -1` &c ###
+      idx     = group_cfg.length - 2
+      repeat  = group_cfg[ 0 ] is 0
+      loop
+        debug 'Ωfstr_354', group_cfg[ idx .. idx ]
+        break
+      return null
+    #-------------------------------------------------------------------------------------------------------
+    urge 'Ωfstr_355', [ ( walk_group_indices [ ',', 3, ',', 2, '-', 1, ':', 1, ] )..., ]
+    #-------------------------------------------------------------------------------------------------------
     return null
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  ( new Test { throw_on_error: true, } ).test @intertype_tasks
+  # ( new Test { throw_on_error: true, } ).test @intertype_tasks
   # ( new Test { throw_on_error: false, } ).test @intertype_tasks
   # ( new Test { throw_on_error: false, } ).test { si_units_format_specifier: @intertype_tasks.si_units_format_specifier, }
   # ( new Test() ).test demo
   # demo.README()
   # demo.intl_number()
   # demo.mantissa_exponent()
-  # demo.grouping()
+  demo.grouping()
 
