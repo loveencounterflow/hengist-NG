@@ -1540,7 +1540,7 @@
     },
     //=========================================================================================================
     grouping: function() {
-      var _d3_format, f, group_digits, new_ftag, rvs, walk_group_indices;
+      var _d3_format, f, group_digits, new_ftag, rvs, walk_group_steps;
       ({f, new_ftag, _d3_format} = require('../../../apps/effstring'));
       ({
         reverse: rvs
@@ -1575,20 +1575,51 @@
       urge('Ωfstr_352', f`${group_digits('123456789')}:>20c;`);
       urge('Ωfstr_353', f`${group_digits('1234567890')}:>20c;`);
       //-------------------------------------------------------------------------------------------------------
-      walk_group_indices = function(group_cfg) {
-        /* assuming group_cfg has been validated */
-        /* TAINT consider to use `group_cfg.at -1` &c */
-        var idx, repeat;
-        idx = group_cfg.length - 2;
-        repeat = group_cfg[0] === 0;
+      walk_group_steps = function*(grouping_cfg, chr_count) {
+        var chr_idx, delta, group_idx, marker, repeat;
+        if (chr_count < 1) {
+          /* assuming grouping_cfg has been validated */
+          /* TAINT consider to use `grouping_cfg.at -1` &c */
+          /* TAINT validate chr_count */
+          return null;
+        }
+        chr_idx = chr_count;
+        group_idx = grouping_cfg.length - 2;
+        repeat = grouping_cfg[0] === 0;
         while (true) {
-          debug('Ωfstr_354', group_cfg.slice(idx, +idx + 1 || 9e9));
-          break;
+          [marker, delta] = grouping_cfg.slice(group_idx, +(group_idx + 1) + 1 || 9e9);
+          chr_idx -= delta;
+          yield ({marker, delta, chr_idx});
+          if (chr_idx <= 0) {
+            break;
+          }
+          if (repeat) {
+            if (group_idx > 1) {
+              group_idx -= 2;
+            }
+          } else {
+            if (group_idx < 1) {
+              break;
+            }
+            group_idx -= 2;
+          }
         }
         return null;
       };
-      //-------------------------------------------------------------------------------------------------------
-      urge('Ωfstr_355', [...(walk_group_indices([',', 3, ',', 2, '-', 1, ':', 1]))]);
+      (() => {        //-------------------------------------------------------------------------------------------------------
+        var chrs, d, grouping_cfg, ref;
+        chrs = Array.from('abcdefgh');
+        grouping_cfg = [',', 3, ',', 2, '-', 1, ':', 1];
+        ref = walk_group_steps([',', 3, ',', 2, '-', 1, ':', 1], chrs.length);
+        for (d of ref) {
+          help('Ωfstr_354', d);
+          chrs.splice(d.chr_idx, 0, d.marker);
+          debug('Ωfstr_355', chrs);
+        }
+        urge('Ωfstr_356', rpr(grouping_cfg.join('')));
+        urge('Ωfstr_356', rpr(chrs.join('')));
+        return null;
+      })();
       //-------------------------------------------------------------------------------------------------------
       return null;
     }

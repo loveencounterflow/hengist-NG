@@ -816,17 +816,36 @@ demo =
     urge 'Ωfstr_352', f"#{group_digits '123456789'}:>20c;"
     urge 'Ωfstr_353', f"#{group_digits '1234567890'}:>20c;"
     #-------------------------------------------------------------------------------------------------------
-    walk_group_indices = ( group_cfg ) ->
-      ### assuming group_cfg has been validated ###
-      ### TAINT consider to use `group_cfg.at -1` &c ###
-      idx     = group_cfg.length - 2
-      repeat  = group_cfg[ 0 ] is 0
+    walk_group_steps = ( grouping_cfg, chr_count ) ->
+      ### assuming grouping_cfg has been validated ###
+      ### TAINT consider to use `grouping_cfg.at -1` &c ###
+      ### TAINT validate chr_count ###
+      return null if chr_count < 1
+      chr_idx   = chr_count
+      group_idx = grouping_cfg.length - 2
+      repeat    = grouping_cfg[ 0 ] is 0
       loop
-        debug 'Ωfstr_354', group_cfg[ idx .. idx ]
-        break
+        [ marker, delta, ] = grouping_cfg[ group_idx .. group_idx + 1 ]
+        chr_idx -= delta
+        yield { marker, delta, chr_idx, }
+        break if chr_idx <= 0
+        if repeat
+          group_idx -= 2 if group_idx > 1
+        else
+          break if group_idx < 1
+          group_idx -= 2
       return null
     #-------------------------------------------------------------------------------------------------------
-    urge 'Ωfstr_355', [ ( walk_group_indices [ ',', 3, ',', 2, '-', 1, ':', 1, ] )..., ]
+    do =>
+      chrs          = Array.from 'abcdefgh'
+      grouping_cfg  = [ ',', 3, ',', 2, '-', 1, ':', 1, ]
+      for d from walk_group_steps [ ',', 3, ',', 2, '-', 1, ':', 1, ], chrs.length
+        help 'Ωfstr_354', d
+        chrs.splice d.chr_idx, 0, d.marker
+        debug 'Ωfstr_355', chrs
+      urge 'Ωfstr_356', rpr grouping_cfg.join ''
+      urge 'Ωfstr_356', rpr chrs.join ''
+      return null
     #-------------------------------------------------------------------------------------------------------
     return null
 
