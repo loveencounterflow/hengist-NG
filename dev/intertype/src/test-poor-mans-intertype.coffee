@@ -84,21 +84,30 @@ class Types
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  isa:          ( type, x ) -> type.$isa x
+  isa: ( type, x ) ->
+    ctx = { me: type, types: @, } ### TAINT avoid object re-creation ###
+    return type.$isa.call ctx, x
+
+  #---------------------------------------------------------------------------------------------------------
   isa_optional: ( type, x ) -> ( not x? ) or ( @isa type, x )
 
   #---------------------------------------------------------------------------------------------------------
   validate: ( type, x ) ->
     return x if @isa type, x
-    throw new Intertype_validation_error "Ωpmi___1 #{rpr type} #{rpr x}"
+    throw new Intertype_validation_error "Ωpmi___1 validation error\n#{rpr type}\n#{rpr x}"
 
   #---------------------------------------------------------------------------------------------------------
   validate_optional: ( type, x ) ->
     return x if @isa_optional type, x
-    throw new Intertype_validation_error "Ωpmi___2 #{rpr type} #{rpr x}"
+    throw new Intertype_validation_error "Ωpmi___2 validation error\n#{rpr type}\n#{rpr x}"
 
   #---------------------------------------------------------------------------------------------------------
-  create: ( type, P... ) -> @validate type, type.$create P...
+  create: ( type, P... ) ->
+    ctx = { me: type, types: @, } ### TAINT avoid object re-creation ###
+    return @validate type, type.$create.call ctx, P...
+
+#===========================================================================================================
+types = new Types()
 
 
 #===========================================================================================================
@@ -110,56 +119,56 @@ class Type
     @$create  = declaration.$create
     return undefined
 
-  #---------------------------------------------------------------------------------------------------------
-  $isa: ->
-  $create: ->
+  # #---------------------------------------------------------------------------------------------------------
+  # $isa: ->
+  # $create: ->
 
 
 #===========================================================================================================
-declarations =
-  anything:
+t =
+  anything: new Type
     $isa: ( x ) -> true
     # $create: ( cfg ) ->
-  boolean:
+  boolean: new Type
     $isa: ( x ) -> ( x is true ) or ( x is false )
     # $create: ( cfg ) ->
-  function:
+  function: new Type
     $isa: ( x ) -> ( Object::toString.call x ) is '[object Function]'
     $create: -> -> null
-  asyncfunction:
+  asyncfunction: new Type
     $isa: ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
     $create: -> -> await null
-  symbol:
+  symbol: new Type
     $isa: ( x ) -> ( typeof x ) is 'symbol'
     # $create: ( cfg ) ->
-  object:
+  object: new Type
     $isa: ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
     $create: ( cfg ) -> { cfg..., }
-  float:
+  float: new Type
     $isa: ( x ) -> Number.isFinite x
     $create: -> 0
-  text:
+  text: new Type
     $isa: ( x ) -> ( typeof x ) is 'string'
     $create: -> ''
-  nullary:
+  nullary: new Type
     $isa: ( x ) -> x? and ( ( x.length is 0 ) or ( x.size is 0 ) )
     # $create: ( cfg ) ->
-  unary:
+  unary: new Type
     $isa: ( x ) -> x? and ( ( x.length is 1 ) or ( x.size is 1 ) )
     # $create: ( cfg ) ->
-  binary:
+  binary: new Type
     $isa: ( x ) -> x? and ( ( x.length is 2 ) or ( x.size is 2 ) )
     # $create: ( cfg ) ->
-  trinary:
+  trinary: new Type
     $isa: ( x ) -> x? and ( ( x.length is 3 ) or ( x.size is 3 ) )
     # $create: ( cfg ) ->
-  set:
+  set: new Type
     $isa: ( x ) -> x instanceof Set
     $create: ( cfg ) -> new Set cfg ? []
-  map:
+  map: new Type
     $isa: ( x ) -> x instanceof Map
     $create: ( cfg ) -> new Map cfg ? []
-  list:
+  list: new Type
     $isa: ( x ) -> Array.isArray x
     $create: ( cfg ) -> ( x for x from cfg ? [] )
 
@@ -181,22 +190,31 @@ declarations =
         default:
           loners:     true
       ###
-      types =
+      t2 =
         lt_constructor_cfg:
           $isa: ( x ) ->
-            return false unless types.isa.object x
-            return false unless @loners.$isa x.loners
+            return false unless @types.isa t.object, x
+            return false unless @types.isa @me.loners, x.loners
             return true
           loners:
-            $isa:       ( x ) -> types.isa.boolean x
+            $isa:       ( x ) -> @types.isa t.boolean, x
           $template:
             loners:     true
           $create: ( x ) ->
-            return x unless types.isa_optional.object x
-            return { @$template..., x..., }
+            return x unless @types.isa_optional t.object, x
+            return { @me.$template..., x..., }
       #.....................................................................................................
-      # @eq ( Ωit___3 = -> create_typespace()             instanceof Typespace  ), true
-      # @throws ( Ωit___4 = -> create_typespace() ), /declaration for type 'wholenumber' contains forward reference to type 'integer'/
+      @eq ( Ωpmi___3 = -> types.isa t.float, true                                   ), false
+      @eq ( Ωpmi___4 = -> types.isa t.float, '3'                                    ), false
+      @eq ( Ωpmi___5 = -> types.isa t.float, 337465                                 ), true
+      @eq ( Ωpmi___6 = -> types.isa t2.lt_constructor_cfg, 337465                   ), false
+      @eq ( Ωpmi___7 = -> types.isa t2.lt_constructor_cfg, {}                       ), false
+      @eq ( Ωpmi___8 = -> types.isa t2.lt_constructor_cfg, { loners: 8, }           ), false
+      @eq ( Ωpmi___9 = -> types.isa t2.lt_constructor_cfg, { loners: true, }        ), true
+      @eq ( Ωpmi__10 = -> types.validate t2.lt_constructor_cfg, { loners: true, }   ), { loners: true, }
+      @eq ( Ωpmi__11 = -> types.create t2.lt_constructor_cfg                        ), { loners: true, }
+      @throws ( Ωpmi__12 = -> types.create    t2.lt_constructor_cfg, { loners: 7, } ), /validation error/
+      @throws ( Ωpmi__13 = -> types.validate  t2.lt_constructor_cfg, { loners: 8, } ), /validation error/
       #.....................................................................................................
       return null
 
@@ -206,3 +224,13 @@ declarations =
 if module is require.main then await do =>
   ( new Test { throw_on_error: true, } ).test @intertype_tasks
   # ( new Test { throw_on_error: true, } ).test { mvp_isa: @intertype_tasks.MVP.isa, }
+
+  ->
+    d =
+      a: ->
+        foo: 1
+        bar: 2
+    debug 'Ωpmi__14', d
+    debug 'Ωpmi__15', d.a
+    debug 'Ωpmi__16', d.a.name
+    debug 'Ωpmi__17', d.a()
