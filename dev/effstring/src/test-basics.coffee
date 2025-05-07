@@ -794,16 +794,16 @@ demo =
     { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
     { reverse: rvs } = GUY.trm
     #-------------------------------------------------------------------------------------------------------
-    group_digits = ( text, n = 3, separator = ',' ) ->
-      ### TAINT validate n is integer between 1 and 100 ###
-      # grouping_re = /// \B (?= ( \d{ #{n} } )+ (?! \d ) ) ///g
-      grouping_re = /// \B (?= ( \d{ #{n} } )+ $ ) ///g
-      return text.replace grouping_re, separator
-      notation = ->
-        '...,###'                   ; [ ',', 3, ]
-        '...,###,##-#:#'            ; [ ',', 3, ',', 2, '-', 1, ':', 1, ]
-        ',###'                      ; [ 0, ',', 3, ]
-        ',###,##-#:#'               ; [ 0, ',', 3, ',', 2, '-', 1, ':', 1, ]
+    # group_digits = ( text, n = 3, separator = ',' ) ->
+    #   ### TAINT validate n is integer between 1 and 100 ###
+    #   # grouping_re = /// \B (?= ( \d{ #{n} } )+ (?! \d ) ) ///g
+    #   grouping_re = /// \B (?= ( \d{ #{n} } )+ $ ) ///g
+    #   return text.replace grouping_re, separator
+    notation = ->
+      '...,###'                   ; [ ',', 3, ]
+      '...,###,##-#:#'            ; [ ',', 3, ',', 2, '-', 1, ':', 1, ]
+      ',###'                      ; [ 0, ',', 3, ]
+      ',###,##-#:#'               ; [ 0, ',', 3, ',', 2, '-', 1, ':', 1, ]
     #-------------------------------------------------------------------------------------------------------
     urge 'Ωfstr_344', f"#{group_digits '1'}:>20c;"
     urge 'Ωfstr_345', f"#{group_digits '12'}:>20c;"
@@ -828,6 +828,7 @@ demo =
       repeat    = grouping_cfg[ 0 ] isnt 0
       loop
         [ marker, delta, ] = grouping_cfg[ group_idx .. group_idx + 1 ]
+        ### for safety only, should never happen with validated grouping_cfg: ###
         throw new TOBEDONE_Error "delta is zero or less" if delta < 1
         chr_idx -= delta
         break if chr_idx <= 0

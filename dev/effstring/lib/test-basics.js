@@ -1540,28 +1540,26 @@
     },
     //=========================================================================================================
     grouping: function() {
-      var TOBEDONE_Error, _d3_format, demo_grouping, f, group_digits, new_ftag, rvs, walk_group_steps;
+      var TOBEDONE_Error, _d3_format, demo_grouping, f, new_ftag, notation, rvs, walk_group_steps;
       ({f, new_ftag, _d3_format} = require('../../../apps/effstring'));
       ({
         reverse: rvs
       } = GUY.trm);
       //-------------------------------------------------------------------------------------------------------
-      group_digits = function(text, n = 3, separator = ',') {
-        var grouping_re, notation;
-        /* TAINT validate n is integer between 1 and 100 */
-        // grouping_re = /// \B (?= ( \d{ #{n} } )+ (?! \d ) ) ///g
-        grouping_re = RegExp(`\\B(?=(\\d{${n}})+$)`, "g");
-        return text.replace(grouping_re, separator);
-        return notation = function() {
-          '...,###';
-          [',', 3];
-          '...,###,##-#:#';
-          [',', 3, ',', 2, '-', 1, ':', 1];
-          ',###';
-          [0, ',', 3];
-          ',###,##-#:#';
-          return [0, ',', 3, ',', 2, '-', 1, ':', 1];
-        };
+      // group_digits = ( text, n = 3, separator = ',' ) ->
+      //   ### TAINT validate n is integer between 1 and 100 ###
+      //   # grouping_re = /// \B (?= ( \d{ #{n} } )+ (?! \d ) ) ///g
+      //   grouping_re = /// \B (?= ( \d{ #{n} } )+ $ ) ///g
+      //   return text.replace grouping_re, separator
+      notation = function() {
+        '...,###';
+        [',', 3];
+        '...,###,##-#:#';
+        [',', 3, ',', 2, '-', 1, ':', 1];
+        ',###';
+        [0, ',', 3];
+        ',###,##-#:#';
+        return [0, ',', 3, ',', 2, '-', 1, ':', 1];
       };
       //-------------------------------------------------------------------------------------------------------
       urge('Ωfstr_344', f`${group_digits('1')}:>20c;`);
@@ -1591,6 +1589,7 @@
         while (true) {
           [marker, delta] = grouping_cfg.slice(group_idx, +(group_idx + 1) + 1 || 9e9);
           if (delta < 1) {
+            /* for safety only, should never happen with validated grouping_cfg: */
             throw new TOBEDONE_Error("delta is zero or less");
           }
           chr_idx -= delta;

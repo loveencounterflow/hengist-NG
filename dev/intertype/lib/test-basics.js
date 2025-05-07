@@ -455,22 +455,22 @@
           return $isa.object(ts1.quantity_typs.fields);
         }), true);
         this.eq((Ωit__22 = function() {
-          return mvp.quantity_refs.fields.q instanceof Type;
+          return mvp.quantity_refs.$fields.q instanceof Type;
         }), true);
         this.eq((Ωit__23 = function() {
-          return mvp.quantity_funs.fields.q instanceof Type;
+          return mvp.quantity_funs.$fields.q instanceof Type;
         }), true);
         this.eq((Ωit__24 = function() {
-          return ts1.quantity_typs.fields.q instanceof Type;
+          return ts1.quantity_typs.$fields.q instanceof Type;
         }), true);
         this.eq((Ωit__25 = function() {
-          return $isa.function(mvp.quantity_refs.fields.q.isa);
+          return $isa.function(mvp.quantity_refs.$fields.q.isa);
         }), true);
         this.eq((Ωit__26 = function() {
-          return $isa.function(mvp.quantity_funs.fields.q.isa);
+          return $isa.function(mvp.quantity_funs.$fields.q.isa);
         }), true);
         this.eq((Ωit__27 = function() {
-          return $isa.function(ts1.quantity_typs.fields.q.isa);
+          return $isa.function(ts1.quantity_typs.$fields.q.isa);
         }), true);
         //.....................................................................................................
         echo();
@@ -594,22 +594,22 @@
           return types.isa(mvp.nonempty_text, '');
         }), false);
         this.eq((Ωit__64 = function() {
-          return types.isa(mvp.quantity_refs.fields.q, '123.456');
+          return types.isa(mvp.quantity_refs.$fields.q, '123.456');
         }), false);
         this.eq((Ωit__65 = function() {
-          return types.isa(mvp.quantity_funs.fields.q, '123.456');
+          return types.isa(mvp.quantity_funs.$fields.q, '123.456');
         }), false);
         this.eq((Ωit__66 = function() {
-          return types.isa(ts1.quantity_typs.fields.q, '123.456');
+          return types.isa(ts1.quantity_typs.$fields.q, '123.456');
         }), false);
         this.eq((Ωit__67 = function() {
-          return types.isa(mvp.quantity_refs.fields.u, '');
+          return types.isa(mvp.quantity_refs.$fields.u, '');
         }), false);
         this.eq((Ωit__68 = function() {
-          return types.isa(mvp.quantity_funs.fields.u, '');
+          return types.isa(mvp.quantity_funs.$fields.u, '');
         }), false);
         this.eq((Ωit__69 = function() {
-          return types.isa(ts1.quantity_typs.fields.u, '');
+          return types.isa(ts1.quantity_typs.$fields.u, '');
         }), false);
         this.eq((Ωit__70 = function() {
           return types.isa(mvp.quantity_refs, {
@@ -2085,16 +2085,17 @@
       // await ( new Test { throw_on_error: true, } ).async_test { tasks: @tasks, }
       // await ( new Test { throw_on_error: true, } ).async_test { can_use_values_of_unknown_type: @tasks.can_use_values_of_unknown_type, }
       // demo_1()
-      // ( new Test { throw_on_error: false, } ).test @intertype_tasks
+      // ( new Test { throw_on_error: true, } ).test @intertype_tasks
       return (new Test({
         throw_on_error: true
       })).test({
-        type_instantiation: this.intertype_tasks.type_instantiation
+        mvp_isa: this.intertype_tasks.MVP.isa
       });
     })();
   }
 
-  // ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
+  // ( new Test { throw_on_error: true, } ).test { type_instantiation: @intertype_tasks.type_instantiation, }
+// ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
 // ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }
 // ( new Test { throw_on_error: false, } ).test { clone_fields_and_template: @intertype_tasks.create.clone_fields_and_template, }
 // ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }

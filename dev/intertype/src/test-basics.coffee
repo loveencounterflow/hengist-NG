@@ -274,12 +274,12 @@ sample_declarations =
       @eq ( Ωit__19 = -> $isa.object    mvp.quantity_refs.fields           ), true
       @eq ( Ωit__20 = -> $isa.object    mvp.quantity_funs.fields           ), true
       @eq ( Ωit__21 = -> $isa.object    ts1.quantity_typs.fields           ), true
-      @eq ( Ωit__22 = -> mvp.quantity_refs.fields.q instanceof Type        ), true
-      @eq ( Ωit__23 = -> mvp.quantity_funs.fields.q instanceof Type        ), true
-      @eq ( Ωit__24 = -> ts1.quantity_typs.fields.q instanceof Type        ), true
-      @eq ( Ωit__25 = -> $isa.function  mvp.quantity_refs.fields.q.isa     ), true
-      @eq ( Ωit__26 = -> $isa.function  mvp.quantity_funs.fields.q.isa     ), true
-      @eq ( Ωit__27 = -> $isa.function  ts1.quantity_typs.fields.q.isa     ), true
+      @eq ( Ωit__22 = -> mvp.quantity_refs.$fields.q instanceof Type        ), true
+      @eq ( Ωit__23 = -> mvp.quantity_funs.$fields.q instanceof Type        ), true
+      @eq ( Ωit__24 = -> ts1.quantity_typs.$fields.q instanceof Type        ), true
+      @eq ( Ωit__25 = -> $isa.function  mvp.quantity_refs.$fields.q.isa     ), true
+      @eq ( Ωit__26 = -> $isa.function  mvp.quantity_funs.$fields.q.isa     ), true
+      @eq ( Ωit__27 = -> $isa.function  ts1.quantity_typs.$fields.q.isa     ), true
       #.....................................................................................................
       echo()
       @eq ( Ωit__28 = -> types.isa mvp.integer,              5                          ), true
@@ -320,12 +320,12 @@ sample_declarations =
       @eq ( Ωit__61 = -> types.isa flatly_2.evenly,          5                          ), false
       @eq ( Ωit__62 = -> types.isa flatly_2.plain,           5                          ), false
       @eq ( Ωit__63 = -> types.isa mvp.nonempty_text,        ''                         ), false
-      @eq ( Ωit__64 = -> types.isa mvp.quantity_refs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__65 = -> types.isa mvp.quantity_funs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__66 = -> types.isa ts1.quantity_typs.fields.q,    '123.456'                  ), false
-      @eq ( Ωit__67 = -> types.isa mvp.quantity_refs.fields.u,    ''                         ), false
-      @eq ( Ωit__68 = -> types.isa mvp.quantity_funs.fields.u,    ''                         ), false
-      @eq ( Ωit__69 = -> types.isa ts1.quantity_typs.fields.u,    ''                         ), false
+      @eq ( Ωit__64 = -> types.isa mvp.quantity_refs.$fields.q,   '123.456'                  ), false
+      @eq ( Ωit__65 = -> types.isa mvp.quantity_funs.$fields.q,   '123.456'                  ), false
+      @eq ( Ωit__66 = -> types.isa ts1.quantity_typs.$fields.q,   '123.456'                  ), false
+      @eq ( Ωit__67 = -> types.isa mvp.quantity_refs.$fields.u,   ''                         ), false
+      @eq ( Ωit__68 = -> types.isa mvp.quantity_funs.$fields.u,   ''                         ), false
+      @eq ( Ωit__69 = -> types.isa ts1.quantity_typs.$fields.u,   ''                         ), false
       @eq ( Ωit__70 = -> types.isa mvp.quantity_refs,             { q: 123.456, u: '', }     ), false
       @eq ( Ωit__71 = -> types.isa mvp.quantity_funs,             { q: 123.456, u: '', }     ), false
       @eq ( Ωit__72 = -> types.isa ts1.quantity_typs,             { q: 123.456, u: '', }     ), false
@@ -906,8 +906,9 @@ if module is require.main then await do =>
   # await ( new Test { throw_on_error: true, } ).async_test { tasks: @tasks, }
   # await ( new Test { throw_on_error: true, } ).async_test { can_use_values_of_unknown_type: @tasks.can_use_values_of_unknown_type, }
   # demo_1()
-  # ( new Test { throw_on_error: false, } ).test @intertype_tasks
-  ( new Test { throw_on_error: true, } ).test { type_instantiation: @intertype_tasks.type_instantiation, }
+  # ( new Test { throw_on_error: true, } ).test @intertype_tasks
+  ( new Test { throw_on_error: true, } ).test { mvp_isa: @intertype_tasks.MVP.isa, }
+  # ( new Test { throw_on_error: true, } ).test { type_instantiation: @intertype_tasks.type_instantiation, }
   # ( new Test { throw_on_error: true, } ).test { disallow_forward_refs: @intertype_tasks.MVP.disallow_forward_refs, }
   # ( new Test { throw_on_error: false, } ).test { create: @intertype_tasks.create, }
   # ( new Test { throw_on_error: false, } ).test { clone_fields_and_template: @intertype_tasks.create.clone_fields_and_template, }
