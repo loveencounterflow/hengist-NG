@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Intertype_error, Intertype_validation_error, TMP_types, Test, Type, Types, WGUY, alert, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, t, types, urge, warn, whisper;
+  var GTNG, GUY, Intertype, Intertype_error, Intertype_validation_error, TMP_types, Test, Type, WGUY, alert, debug, echo, help, info, inspect, log, plain, praise, reverse, rpr, t, types, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -70,20 +70,29 @@
   Intertype_validation_error = class Intertype_validation_error extends Intertype_error {};
 
   //===========================================================================================================
-  Types = class Types {
+  Intertype = class Intertype {
     //---------------------------------------------------------------------------------------------------------
     constructor() {
+      this._contexts = new WeakMap();
       return void 0;
     }
 
     //---------------------------------------------------------------------------------------------------------
-    isa(type, x) {
-      var ctx;
-      ctx = {
+    _get_ctx(type) {
+      var R;
+      if (typeof R !== "undefined" && R !== null) {
+        return (R = this._contexts.get(type));
+      }
+      this._contexts.set(type, R = {
         me: type,
         types: this
-      };
-/* TAINT avoid object re-creation */      return type.$isa.call(ctx, x);
+      });
+      return R;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    isa(type, x) {
+      return type.$isa.call(this._get_ctx(type), x);
     }
 
     //---------------------------------------------------------------------------------------------------------
@@ -109,18 +118,13 @@
 
     //---------------------------------------------------------------------------------------------------------
     create(type, ...P) {
-      var ctx;
-      ctx = {
-        me: type,
-        types: this
-      };
-      return this./* TAINT avoid object re-creation */validate(type, type.$create.call(ctx, ...P));
+      return this.validate(type, type.$create.call(this._get_ctx(type), ...P));
     }
 
   };
 
   //===========================================================================================================
-  types = new Types();
+  types = new Intertype();
 
   //===========================================================================================================
   Type = class Type {
@@ -139,19 +143,19 @@
 
   //===========================================================================================================
   t = {
-    anything: new Type({
+    anything: {
       $isa: function(x) {
         return true;
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    boolean: new Type({
+    boolean: {
       $isa: function(x) {
         return (x === true) || (x === false);
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    function: new Type({
+    function: {
       $isa: function(x) {
         return (Object.prototype.toString.call(x)) === '[object Function]';
       },
@@ -160,8 +164,8 @@
           return null;
         };
       }
-    }),
-    asyncfunction: new Type({
+    },
+    asyncfunction: {
       $isa: function(x) {
         return (Object.prototype.toString.call(x)) === '[object AsyncFunction]';
       },
@@ -170,78 +174,78 @@
           return (await null);
         };
       }
-    }),
-    symbol: new Type({
+    },
+    symbol: {
       $isa: function(x) {
         return (typeof x) === 'symbol';
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    object: new Type({
+    object: {
       $isa: function(x) {
         return (x != null) && (typeof x === 'object') && ((Object.prototype.toString.call(x)) === '[object Object]');
       },
       $create: function(cfg) {
         return {...cfg};
       }
-    }),
-    float: new Type({
+    },
+    float: {
       $isa: function(x) {
         return Number.isFinite(x);
       },
       $create: function() {
         return 0;
       }
-    }),
-    text: new Type({
+    },
+    text: {
       $isa: function(x) {
         return (typeof x) === 'string';
       },
       $create: function() {
         return '';
       }
-    }),
-    nullary: new Type({
+    },
+    nullary: {
       $isa: function(x) {
         return (x != null) && ((x.length === 0) || (x.size === 0));
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    unary: new Type({
+    unary: {
       $isa: function(x) {
         return (x != null) && ((x.length === 1) || (x.size === 1));
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    binary: new Type({
+    binary: {
       $isa: function(x) {
         return (x != null) && ((x.length === 2) || (x.size === 2));
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    trinary: new Type({
+    trinary: {
       $isa: function(x) {
         return (x != null) && ((x.length === 3) || (x.size === 3));
       }
-    }),
+    },
     // $create: ( cfg ) ->
-    set: new Type({
+    set: {
       $isa: function(x) {
         return x instanceof Set;
       },
       $create: function(cfg) {
         return new Set(cfg != null ? cfg : []);
       }
-    }),
-    map: new Type({
+    },
+    map: {
       $isa: function(x) {
         return x instanceof Map;
       },
       $create: function(cfg) {
         return new Map(cfg != null ? cfg : []);
       }
-    }),
-    list: new Type({
+    },
+    list: {
       $isa: function(x) {
         return Array.isArray(x);
       },
@@ -254,7 +258,7 @@
         }
         return results;
       }
-    })
+    }
   };
 
   //###########################################################################################################
@@ -272,7 +276,7 @@
           default:
             loners:     true
         */
-        var t2, Ωpmi__10, Ωpmi__11, Ωpmi__12, Ωpmi__13, Ωpmi___3, Ωpmi___4, Ωpmi___5, Ωpmi___6, Ωpmi___7, Ωpmi___8, Ωpmi___9;
+        var t2, Ωpmi__10, Ωpmi__11, Ωpmi__12, Ωpmi__13, Ωpmi__14, Ωpmi__15, Ωpmi___3, Ωpmi___4, Ωpmi___5, Ωpmi___6, Ωpmi___7, Ωpmi___8, Ωpmi___9;
         t2 = {
           lt_constructor_cfg: {
             $isa: function(x) {
@@ -338,12 +342,22 @@
         }), {
           loners: true
         });
-        this.throws((Ωpmi__12 = function() {
+        this.eq((Ωpmi__12 = function() {
+          return types.create(t2.lt_constructor_cfg, null);
+        }), {
+          loners: true
+        });
+        this.eq((Ωpmi__13 = function() {
+          return types.create(t2.lt_constructor_cfg, void 0);
+        }), {
+          loners: true
+        });
+        this.throws((Ωpmi__14 = function() {
           return types.create(t2.lt_constructor_cfg, {
             loners: 7
           });
         }), /validation error/);
-        this.throws((Ωpmi__13 = function() {
+        this.throws((Ωpmi__15 = function() {
           return types.validate(t2.lt_constructor_cfg, {
             loners: 8
           });
@@ -370,10 +384,10 @@
             };
           }
         };
-        debug('Ωpmi__14', d);
-        debug('Ωpmi__15', d.a);
-        debug('Ωpmi__16', d.a.name);
-        return debug('Ωpmi__17', d.a());
+        debug('Ωpmi__16', d);
+        debug('Ωpmi__17', d.a);
+        debug('Ωpmi__18', d.a.name);
+        return debug('Ωpmi__19', d.a());
       };
     })();
   }
