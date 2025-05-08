@@ -81,13 +81,13 @@ class Intertype
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ->
-    @_contexts = new WeakMap()
+    @_contexts = if false then new WeakMap() else new Map ### TAINT this is going to be configurable for testing ###
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
   _get_ctx: ( type ) ->
     return ( R = @_contexts.get type ) if R?
-    @_contexts.set type, R = { me: type, types: @, }
+    @_contexts.set type, R = Object.freeze { me: type, types: @, }
     return R
 
   #---------------------------------------------------------------------------------------------------------
@@ -188,6 +188,7 @@ t =
 
     #-------------------------------------------------------------------------------------------------------
     isa: ->
+      tt = new Intertype()
       ###
       declare.lt_constructor_cfg
         fields:
@@ -209,19 +210,25 @@ t =
             return x unless @types.isa_optional t.object, x
             return { @me.$template..., x..., }
       #.....................................................................................................
-      @eq ( Ωpmi___3 = -> types.isa t.float, true                                   ), false
-      @eq ( Ωpmi___4 = -> types.isa t.float, '3'                                    ), false
-      @eq ( Ωpmi___5 = -> types.isa t.float, 337465                                 ), true
-      @eq ( Ωpmi___6 = -> types.isa t2.lt_constructor_cfg, 337465                   ), false
-      @eq ( Ωpmi___7 = -> types.isa t2.lt_constructor_cfg, {}                       ), false
-      @eq ( Ωpmi___8 = -> types.isa t2.lt_constructor_cfg, { loners: 8, }           ), false
-      @eq ( Ωpmi___9 = -> types.isa t2.lt_constructor_cfg, { loners: true, }        ), true
-      @eq ( Ωpmi__10 = -> types.validate t2.lt_constructor_cfg, { loners: true, }   ), { loners: true, }
-      @eq ( Ωpmi__11 = -> types.create t2.lt_constructor_cfg                        ), { loners: true, }
-      @eq ( Ωpmi__12 = -> types.create t2.lt_constructor_cfg, null                  ), { loners: true, }
-      @eq ( Ωpmi__13 = -> types.create t2.lt_constructor_cfg, undefined             ), { loners: true, }
-      @throws ( Ωpmi__14 = -> types.create    t2.lt_constructor_cfg, { loners: 7, } ), /validation error/
-      @throws ( Ωpmi__15 = -> types.validate  t2.lt_constructor_cfg, { loners: 8, } ), /validation error/
+      @eq ( Ωpmi___3 = -> tt.isa t.float, true                                   ), false
+      @eq ( Ωpmi___4 = -> tt.isa t.float, '3'                                    ), false
+      @eq ( Ωpmi___5 = -> tt.isa t.float, 337465                                 ), true
+      @eq ( Ωpmi___6 = -> tt.isa t2.lt_constructor_cfg, 337465                   ), false
+      @eq ( Ωpmi___7 = -> tt.isa t2.lt_constructor_cfg, {}                       ), false
+      @eq ( Ωpmi___8 = -> tt.isa t2.lt_constructor_cfg, { loners: 8, }           ), false
+      @eq ( Ωpmi___9 = -> tt.isa t2.lt_constructor_cfg, { loners: true, }        ), true
+      @eq ( Ωpmi__10 = -> tt.validate t2.lt_constructor_cfg, { loners: true, }   ), { loners: true, }
+      @eq ( Ωpmi__11 = -> tt.create t2.lt_constructor_cfg                        ), { loners: true, }
+      @eq ( Ωpmi__12 = -> tt.create t2.lt_constructor_cfg, null                  ), { loners: true, }
+      @eq ( Ωpmi__13 = -> tt.create t2.lt_constructor_cfg, undefined             ), { loners: true, }
+      @throws ( Ωpmi__14 = -> tt.create    t2.lt_constructor_cfg, { loners: 7, } ), /validation error/
+      @throws ( Ωpmi__15 = -> tt.validate  t2.lt_constructor_cfg, { loners: 8, } ), /validation error/
+      do =>
+        contexts = new Set tt._contexts.keys()
+        @eq ( Ωpmi__16 = -> contexts.has t.float                          ), true
+        @eq ( Ωpmi__17 = -> contexts.has t2.lt_constructor_cfg            ), true
+        @eq ( Ωpmi__18 = -> contexts.has t2.lt_constructor_cfg.loners     ), true
+        @eq ( Ωpmi__19 = -> contexts.has t.text                           ), false
       #.....................................................................................................
       return null
 
@@ -237,7 +244,7 @@ if module is require.main then await do =>
       a: ->
         foo: 1
         bar: 2
-    debug 'Ωpmi__16', d
-    debug 'Ωpmi__17', d.a
-    debug 'Ωpmi__18', d.a.name
-    debug 'Ωpmi__19', d.a()
+    debug 'Ωpmi__20', d
+    debug 'Ωpmi__21', d.a
+    debug 'Ωpmi__22', d.a.name
+    debug 'Ωpmi__23', d.a()

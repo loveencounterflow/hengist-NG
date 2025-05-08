@@ -73,7 +73,7 @@
   Intertype = class Intertype {
     //---------------------------------------------------------------------------------------------------------
     constructor() {
-      this._contexts = new WeakMap();
+      this._contexts = false ? new WeakMap() : new Map/* TAINT this is going to be configurable for testing */();
       return void 0;
     }
 
@@ -83,10 +83,10 @@
       if (typeof R !== "undefined" && R !== null) {
         return (R = this._contexts.get(type));
       }
-      this._contexts.set(type, R = {
+      this._contexts.set(type, R = Object.freeze({
         me: type,
         types: this
-      });
+      }));
       return R;
     }
 
@@ -276,7 +276,8 @@
           default:
             loners:     true
         */
-        var t2, Ωpmi__10, Ωpmi__11, Ωpmi__12, Ωpmi__13, Ωpmi__14, Ωpmi__15, Ωpmi___3, Ωpmi___4, Ωpmi___5, Ωpmi___6, Ωpmi___7, Ωpmi___8, Ωpmi___9;
+        var t2, tt, Ωpmi__10, Ωpmi__11, Ωpmi__12, Ωpmi__13, Ωpmi__14, Ωpmi__15, Ωpmi___3, Ωpmi___4, Ωpmi___5, Ωpmi___6, Ωpmi___7, Ωpmi___8, Ωpmi___9;
+        tt = new Intertype();
         t2 = {
           lt_constructor_cfg: {
             $isa: function(x) {
@@ -306,62 +307,78 @@
         };
         //.....................................................................................................
         this.eq((Ωpmi___3 = function() {
-          return types.isa(t.float, true);
+          return tt.isa(t.float, true);
         }), false);
         this.eq((Ωpmi___4 = function() {
-          return types.isa(t.float, '3');
+          return tt.isa(t.float, '3');
         }), false);
         this.eq((Ωpmi___5 = function() {
-          return types.isa(t.float, 337465);
+          return tt.isa(t.float, 337465);
         }), true);
         this.eq((Ωpmi___6 = function() {
-          return types.isa(t2.lt_constructor_cfg, 337465);
+          return tt.isa(t2.lt_constructor_cfg, 337465);
         }), false);
         this.eq((Ωpmi___7 = function() {
-          return types.isa(t2.lt_constructor_cfg, {});
+          return tt.isa(t2.lt_constructor_cfg, {});
         }), false);
         this.eq((Ωpmi___8 = function() {
-          return types.isa(t2.lt_constructor_cfg, {
+          return tt.isa(t2.lt_constructor_cfg, {
             loners: 8
           });
         }), false);
         this.eq((Ωpmi___9 = function() {
-          return types.isa(t2.lt_constructor_cfg, {
+          return tt.isa(t2.lt_constructor_cfg, {
             loners: true
           });
         }), true);
         this.eq((Ωpmi__10 = function() {
-          return types.validate(t2.lt_constructor_cfg, {
+          return tt.validate(t2.lt_constructor_cfg, {
             loners: true
           });
         }), {
           loners: true
         });
         this.eq((Ωpmi__11 = function() {
-          return types.create(t2.lt_constructor_cfg);
+          return tt.create(t2.lt_constructor_cfg);
         }), {
           loners: true
         });
         this.eq((Ωpmi__12 = function() {
-          return types.create(t2.lt_constructor_cfg, null);
+          return tt.create(t2.lt_constructor_cfg, null);
         }), {
           loners: true
         });
         this.eq((Ωpmi__13 = function() {
-          return types.create(t2.lt_constructor_cfg, void 0);
+          return tt.create(t2.lt_constructor_cfg, void 0);
         }), {
           loners: true
         });
         this.throws((Ωpmi__14 = function() {
-          return types.create(t2.lt_constructor_cfg, {
+          return tt.create(t2.lt_constructor_cfg, {
             loners: 7
           });
         }), /validation error/);
         this.throws((Ωpmi__15 = function() {
-          return types.validate(t2.lt_constructor_cfg, {
+          return tt.validate(t2.lt_constructor_cfg, {
             loners: 8
           });
         }), /validation error/);
+        (() => {
+          var contexts, Ωpmi__16, Ωpmi__17, Ωpmi__18, Ωpmi__19;
+          contexts = new Set(tt._contexts.keys());
+          this.eq((Ωpmi__16 = function() {
+            return contexts.has(t.float);
+          }), true);
+          this.eq((Ωpmi__17 = function() {
+            return contexts.has(t2.lt_constructor_cfg);
+          }), true);
+          this.eq((Ωpmi__18 = function() {
+            return contexts.has(t2.lt_constructor_cfg.loners);
+          }), true);
+          return this.eq((Ωpmi__19 = function() {
+            return contexts.has(t.text);
+          }), false);
+        })();
         //.....................................................................................................
         return null;
       }
@@ -384,10 +401,10 @@
             };
           }
         };
-        debug('Ωpmi__16', d);
-        debug('Ωpmi__17', d.a);
-        debug('Ωpmi__18', d.a.name);
-        return debug('Ωpmi__19', d.a());
+        debug('Ωpmi__20', d);
+        debug('Ωpmi__21', d.a);
+        debug('Ωpmi__22', d.a.name);
+        return debug('Ωpmi__23', d.a());
       };
     })();
   }
