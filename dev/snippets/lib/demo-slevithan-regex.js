@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GUY, alert, debug, demo_1, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var GUY, alert, debug, demo_1, demo_lexer_1, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -129,10 +129,75 @@ $`));
     return null;
   };
 
+  //-----------------------------------------------------------------------------------------------------------
+  demo_lexer_1 = function() {
+    var partial, regex;
+    ({partial, regex} = require('regex'));
+    (() => {      //.........................................................................................................
+      var a, b, match;
+      urge('Ω__29', a = (regex('y'))`(?<name>[a-z]+)`);
+      urge('Ω__30', b = (regex('y'))`${a}\s+in\s+(?<place>[a-z]+)`);
+      if ((match = "alice in cairo".match(b)) != null) {
+        info('Ω__31', {...match.groups});
+      }
+      return null;
+    })();
+    (() => {      //.........................................................................................................
+      var f, hit, match, name, patterns, re, ref, rey, start, stop, text;
+      ({f} = require('../../../apps/effstring'));
+      rey = regex('y');
+      patterns = {
+        name: {
+          re: rey`(?<initial>[A-Z])[a-z]*`
+        },
+        number: {
+          re: rey`[0-9]+`
+        },
+        paren_start: {
+          re: rey`\(`
+        },
+        paren_stop: {
+          re: rey`\)`
+        },
+        other: {
+          re: rey`[A-Za-z0-9]+`
+        },
+        ws: {
+          re: rey`\s+`
+        }
+      };
+      urge('Ω__32', patterns);
+      text = "Alice in Cairo 1912 (approximately)";
+      stop = 0;
+      while (true) {
+        for (name in patterns) {
+          ({re} = patterns[name]);
+          // debug 'Ω__33', f"#{name}:>20c;: #{re}"
+          hit = null;
+          re.lastIndex = stop;
+          if ((match = text.match(re)) != null) {
+            break;
+          }
+        }
+        if (match == null) {
+          break;
+        }
+        hit = match[0];
+        start = stop;
+        stop += hit.length;
+        help('Ω__35', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${rpr({...((ref = match.groups) != null ? ref : {})})}`);
+      }
+      return null;
+    })();
+    //.........................................................................................................
+    return null;
+  };
+
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      return demo_1();
+      // demo_1()
+      return demo_lexer_1();
     })();
   }
 

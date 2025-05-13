@@ -125,6 +125,50 @@ demo_1 = ->
   urge 'Ω__28', regex"^(?:(?!\b(the|an?)\b).)+"
   return null
 
+
+#-----------------------------------------------------------------------------------------------------------
+demo_lexer_1 = ->
+  { partial, regex, } = require 'regex'
+  #.........................................................................................................
+  do =>
+    urge 'Ω__29', a = ( regex 'y' )"(?<name>[a-z]+)"
+    urge 'Ω__30', b = ( regex 'y' )"#{a}\s+in\s+(?<place>[a-z]+)"
+    if ( match = "alice in cairo".match b )?
+      info 'Ω__31', { match.groups..., }
+    return null
+  #.........................................................................................................
+  do =>
+    { f } = require '../../../apps/effstring'
+    rey   = regex 'y'
+    patterns = {
+      name:         { re: rey"(?<initial>[A-Z])[a-z]*", }
+      number:       { re: rey"[0-9]+",                  }
+      paren_start:  { re: rey"\(",                      }
+      paren_stop:   { re: rey"\)",                      }
+      other:        { re: rey"[A-Za-z0-9]+",            }
+      ws:           { re: rey"\s+",                     }
+      }
+    urge 'Ω__32', patterns
+    text      = "Alice in Cairo 1912 (approximately)"
+    stop      = 0
+    loop
+      for name, { re, } of patterns
+        # debug 'Ω__33', f"#{name}:>20c;: #{re}"
+        hit           = null
+        re.lastIndex  = stop
+        if ( match = text.match re )?
+          break
+      break unless match?
+      hit       = match[ 0 ]
+      start     = stop
+      stop     += hit.length
+      help 'Ω__35', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{rpr { ( match.groups ? {} )..., }}"
+    return null
+  #.........................................................................................................
+  return null
+
+
 #===========================================================================================================
 if module is require.main then await do =>
-  demo_1()
+  # demo_1()
+  demo_lexer_1()

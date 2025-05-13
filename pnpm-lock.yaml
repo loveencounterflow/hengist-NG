@@ -99,8 +99,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       regex:
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^6.0.1
+        version: 6.0.1
       strip-ansi:
         specifier: ^7.1.0
         version: 7.1.0
@@ -573,11 +573,11 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
-  regex-utilities@2.0.0:
-    resolution: {integrity: sha512-cbzUpCx3guHr4nMSrEfup1oo9v7wJkgPA12AYRcXGKZVh9Bh97IULb07ZppOFZwqn/JHvPCEFsDmnu9K+bcmAQ==}
+  regex-utilities@2.3.0:
+    resolution: {integrity: sha512-8VhliFJAWRaUiVvREIiW2NXXTmHs4vMNnSzuJVhscgmGav3g9VDxLrQndI3dZZVVdp0ZO/5v0xmX516/7M9cng==}
 
-  regex@2.1.0:
-    resolution: {integrity: sha512-n07HpPP6RKQpqJj17VqA8bmMBMLKjXEBNeI4b8/YqdVo4xCQafCX+w/oDLw07UGpmsekkC/GIVGOLzUcdjRiXQ==}
+  regex@6.0.1:
+    resolution: {integrity: sha512-uorlqlzAKjKQZ5P+kTJr3eeJGSVroLKoHmquUj4zHWuR+hEyNqlXsSKlYYF5F4NI6nl7tWCs0apKJ0lmfsXAPA==}
 
   reusify@1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
@@ -1280,11 +1280,11 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
-  regex-utilities@2.0.0: {}
+  regex-utilities@2.3.0: {}
 
-  regex@2.1.0:
+  regex@6.0.1:
     dependencies:
-      regex-utilities: 2.0.0
+      regex-utilities: 2.3.0
 
   reusify@1.0.4: {}
 
