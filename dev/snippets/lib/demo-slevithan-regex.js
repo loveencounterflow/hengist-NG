@@ -210,26 +210,34 @@ $`));
 
   //-----------------------------------------------------------------------------------------------------------
   demo_lexer_2 = function() {
-    var Lexeme, Token, f, i, len, level, partial, regex, rx, text, texts, tokenize;
+    var Grammar, Level, Lexeme, Token, f, gnd, hide, i, len, partial, regex, rx, text, texts, token, tokenize;
     ({partial, regex} = require('regex'));
     ({f} = require('../../../apps/effstring'));
+    hide = function(owner, name, value) {
+      return Object.defineProperty(owner, name, {
+        enumerable: false,
+        value,
+        writable: true
+      });
+    };
     rx = regex('y');
     //===========================================================================================================
     Token = class Token {
       //---------------------------------------------------------------------------------------------------------
-      constructor(name, cfg) {
-        var ref;
-        this.name = name;
-        this.re = cfg.re;
-        this.jump = (ref = cfg.jump) != null ? ref : null;
+      constructor(cfg) {
+        var ref, ref1;
+        this.name = cfg.name;
+        hide(this, 'level', (ref = cfg.level) != null ? ref : null);
+        hide(this, 'matcher', cfg.matcher);
+        hide(this, 'jump', (ref1 = cfg.jump) != null ? ref1 : null);
         return void 0;
       }
 
       //---------------------------------------------------------------------------------------------------------
       match_at(start, text) {
         var match;
-        this.re.lastIndex = start;
-        if ((match = text.match(this.re)) == null) {
+        this.matcher.lastIndex = start;
+        if ((match = text.match(this.matcher)) == null) {
           return null;
         }
         return new Lexeme(this, match);
@@ -251,47 +259,118 @@ $`));
 
     };
     //===========================================================================================================
-    level = [
-      new Token('name',
-      {
-        re: rx`(?<initial>[A-Z])[a-z]*`
-      }),
-      new Token('number',
-      {
-        re: rx`[0-9]+`
-      }),
-      new Token('sq_string_start',
-      {
-        re: rx`(?!<\\)'`,
-        jump: '[string'
-      }),
-      new Token('paren_start',
-      {
-        re: rx`\(`
-      }),
-      new Token('paren_stop',
-      {
-        re: rx`\)`
-      }),
-      new Token('other',
-      {
-        re: rx`[A-Za-z0-9]+`
-      }),
-      new Token('ws',
-      {
-        re: rx`\s+`
-      })
-    ];
+    Level = class Level {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(cfg) {
+        var ref, ref1;
+        this.name = cfg.name;
+        hide(this, 'grammar', (ref = cfg.grammar) != null ? ref : null);
+        hide(this, 'tokens', [...((ref1 = cfg.tokens) != null ? ref1 : [])]);
+        return void 0;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      * [Symbol.iterator]() {
+        var i, len, ref, results, t;
+        ref = this.tokens;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          t = ref[i];
+          results.push((yield t));
+        }
+        return results;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      push(token) {
+        if (!(token instanceof Token)) {
+          token = new Token(token);
+        }
+        if ((token.level != null) && token.level !== this) {
+          throw new Error("Ω__36 inconsistent level");
+        }
+        token.level = this;
+        this.tokens.push(token);
+        return token;
+      }
+
+    };
+    //===========================================================================================================
+    Grammar = class Grammar {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(cfg) {
+        this.name = cfg.name;
+        hide(this, 'levels', {});
+        return void 0;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      new_level(cfg) {
+        var level;
+        if (!(level instanceof Level)) {
+          level = new Level(level);
+        }
+        if (this.levels[level.name] != null) {
+          throw new Error(`Ω__36 level ${rpr(level.name)} elready exists`);
+        }
+        this.levels[level.name] = level;
+        return level;
+      }
+
+    };
+    //===========================================================================================================
+    /*
+    `Token` defines `matcher`, can jump into a level or back
+    `Level` has one or more `Token`s
+    `Grammar` has one or more `Level`s
+    `Lexeme` produced by a `Token` instance when matcher matches source
+
+    */
+    //===========================================================================================================
+    gnd = new Level({
+      name: 'gnd'
+    });
+    gnd.push({
+      name: 'name',
+      matcher: rx`(?<initial>[A-Z])[a-z]*`
+    });
+    gnd.push({
+      name: 'number',
+      matcher: rx`[0-9]+`
+    });
+    gnd.push({
+      name: 'sq_string_start',
+      matcher: rx`(?!<\\)'`,
+      jump: '[string'
+    });
+    gnd.push({
+      name: 'paren_start',
+      matcher: rx`\(`
+    });
+    gnd.push({
+      name: 'paren_stop',
+      matcher: rx`\)`
+    });
+    gnd.push({
+      name: 'other',
+      matcher: rx`[A-Za-z0-9]+`
+    });
+    gnd.push({
+      name: 'ws',
+      matcher: rx`\s+`
+    });
     //.........................................................................................................
-    debug('Ω__36', level);
+    debug('Ω__37', gnd);
+    for (token of gnd) {
+      debug('Ω__38', token);
+    }
     tokenize = function(text) {
-      var groups, groups_rpr, hit, i, len, lexeme, name, start, stop, token;
+      var groups, groups_rpr, hit, lexeme, name, start, stop;
       start = 0;
-      info('Ω__37', rpr(text));
+      info('Ω__39', rpr(text));
       while (true) {
         lexeme = null;
-        for (i = 0, len = level.length; i < len; i++) {
-          token = level[i];
+        for (token of gnd) {
           if ((lexeme = token.match_at(start, text)) != null) {
             break;
           }
@@ -301,7 +380,7 @@ $`));
         }
         ({name, stop, hit, groups} = lexeme);
         groups_rpr = groups != null ? rpr({...groups}) : '';
-        help('Ω__38', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${groups_rpr}`);
+        help('Ω__40', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${groups_rpr}`);
         start = stop;
       }
       return null;

@@ -183,21 +183,23 @@ demo_lexer_2 = ->
 demo_lexer_2 = ->
   { partial, regex, } = require 'regex'
   { f } = require '../../../apps/effstring'
+  hide  = ( owner, name, value ) -> Object.defineProperty owner, name, { enumerable: false, value, writable: true, }
   rx    = regex 'y'
   #===========================================================================================================
   class Token
 
     #---------------------------------------------------------------------------------------------------------
-    constructor: ( name, cfg ) ->
-      @name = name
-      @re   = cfg.re
-      @jump = cfg.jump ? null
+    constructor: ( cfg ) ->
+      @name = cfg.name
+      hide @, 'level',    cfg.level ? null
+      hide @, 'matcher',  cfg.matcher
+      hide @, 'jump',     cfg.jump ? null
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
     match_at: ( start, text ) ->
-      @re.lastIndex = start
-      return null unless ( match = text.match @re )?
+      @matcher.lastIndex = start
+      return null unless ( match = text.match @matcher )?
       return new Lexeme @, match
 
 
@@ -215,23 +217,71 @@ demo_lexer_2 = ->
 
 
   #===========================================================================================================
-  level = [
-    new Token 'name',            { re: rx"(?<initial>[A-Z])[a-z]*", }
-    new Token 'number',          { re: rx"[0-9]+",                  }
-    new Token 'sq_string_start', { re: rx"(?!<\\)'",                jump: '[string', }
-    new Token 'paren_start',     { re: rx"\(",                      }
-    new Token 'paren_stop',      { re: rx"\)",                      }
-    new Token 'other',           { re: rx"[A-Za-z0-9]+",            }
-    new Token 'ws',              { re: rx"\s+",                     }
-    ]
+  class Level
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ( cfg ) ->
+      @name = cfg.name
+      hide @, 'grammar',  cfg.grammar ? null
+      hide @, 'tokens',   [ ( cfg.tokens ? [] )..., ]
+      return undefined
+
+    #---------------------------------------------------------------------------------------------------------
+    [Symbol.iterator]: -> yield t for t in @tokens
+
+    #---------------------------------------------------------------------------------------------------------
+    push: ( token ) ->
+      token = ( new Token token ) unless ( token instanceof Token )
+      if token.level? and token.level isnt @
+        throw new Error "Ω__36 inconsistent level"
+      token.level = @
+      @tokens.push token
+      return token
+
+  #===========================================================================================================
+  class Grammar
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ( cfg ) ->
+      @name = cfg.name
+      hide @, 'levels', {}
+      return undefined
+
+    #---------------------------------------------------------------------------------------------------------
+    new_level: ( cfg ) ->
+      level = ( new Level level ) unless ( level instanceof Level )
+      if @levels[ level.name ]?
+        throw new Error "Ω__36 level #{rpr level.name} elready exists"
+      @levels[ level.name ] = level
+      return level
+
+
+  #===========================================================================================================
+  ###
+  `Token` defines `matcher`, can jump into a level or back
+  `Level` has one or more `Token`s
+  `Grammar` has one or more `Level`s
+  `Lexeme` produced by a `Token` instance when matcher matches source
+
+  ###
+  #===========================================================================================================
+  gnd = new Level { name: 'gnd', }
+  gnd.push { name: 'name',            matcher: rx"(?<initial>[A-Z])[a-z]*", }
+  gnd.push { name: 'number',          matcher: rx"[0-9]+",                  }
+  gnd.push { name: 'sq_string_start', matcher: rx"(?!<\\)'",                jump: '[string', }
+  gnd.push { name: 'paren_start',     matcher: rx"\(",                      }
+  gnd.push { name: 'paren_stop',      matcher: rx"\)",                      }
+  gnd.push { name: 'other',           matcher: rx"[A-Za-z0-9]+",            }
+  gnd.push { name: 'ws',              matcher: rx"\s+",                     }
   #.........................................................................................................
-  debug 'Ω__36', level
+  debug 'Ω__37', gnd
+  debug 'Ω__38', token for token from gnd
   tokenize = ( text ) ->
     start   = 0
-    info 'Ω__37', rpr text
+    info 'Ω__39', rpr text
     loop
       lexeme  = null
-      for token in level
+      for token from gnd
         if ( lexeme = token.match_at start, text )?
           break
       break unless lexeme?
@@ -240,7 +290,7 @@ demo_lexer_2 = ->
         hit
         groups  } = lexeme
       groups_rpr  = if groups? then ( rpr { groups..., } ) else ''
-      help 'Ω__38', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{groups_rpr}"
+      help 'Ω__40', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{groups_rpr}"
       start     = stop
     return null
   #.........................................................................................................
