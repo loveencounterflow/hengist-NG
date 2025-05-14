@@ -130,30 +130,34 @@ demo_1 = ->
 demo_lexer_1 = ->
   { partial, regex, } = require 'regex'
   #.........................................................................................................
-  do =>
-    urge 'Ω__29', a = ( regex 'y' )"(?<name>[a-z]+)"
-    urge 'Ω__30', b = ( regex 'y' )"#{a}\s+in\s+(?<place>[a-z]+)"
-    if ( match = "alice in cairo".match b )?
-      info 'Ω__31', { match.groups..., }
-    return null
+  urge 'Ω__29', a = ( regex 'y' )"(?<name>[a-z]+)"
+  urge 'Ω__30', b = ( regex 'y' )"#{a}\s+in\s+(?<place>[a-z]+)"
+  if ( match = "alice in cairo".match b )?
+    info 'Ω__31', { match.groups..., }
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+demo_lexer_2 = ->
+  { partial, regex, } = require 'regex'
+  { f } = require '../../../apps/effstring'
+  rx    = regex 'y'
+  patterns = {
+    name:             { re: rx"(?<initial>[A-Z])[a-z]*", }
+    number:           { re: rx"[0-9]+",                  }
+    sq_string_start:  { re: rx"(?!<\\)'",                }
+    paren_start:      { re: rx"\(",                      }
+    paren_stop:       { re: rx"\)",                      }
+    other:            { re: rx"[A-Za-z0-9]+",            }
+    ws:               { re: rx"\s+",                     }
+    }
+  urge 'Ω__32', patterns
   #.........................................................................................................
-  do =>
-    { f } = require '../../../apps/effstring'
-    rey   = regex 'y'
-    patterns = {
-      name:         { re: rey"(?<initial>[A-Z])[a-z]*", }
-      number:       { re: rey"[0-9]+",                  }
-      paren_start:  { re: rey"\(",                      }
-      paren_stop:   { re: rey"\)",                      }
-      other:        { re: rey"[A-Za-z0-9]+",            }
-      ws:           { re: rey"\s+",                     }
-      }
-    urge 'Ω__32', patterns
-    text      = "Alice in Cairo 1912 (approximately)"
+  tokenize = ( text ) ->
     stop      = 0
+    info 'Ω__33', rpr text
     loop
       for name, { re, } of patterns
-        # debug 'Ω__33', f"#{name}:>20c;: #{re}"
+        # debug 'Ω__34', f"#{name}:>20c;: #{re}"
         hit           = null
         re.lastIndex  = stop
         if ( match = text.match re )?
@@ -165,10 +169,93 @@ demo_lexer_1 = ->
       help 'Ω__35', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{rpr { ( match.groups ? {} )..., }}"
     return null
   #.........................................................................................................
+  texts = [
+    "Alice in Cairo 1912 (approximately)"
+    "Alice in Cairo 1912 'approximately'"
+    ]
+  #.........................................................................................................
+  for text in texts
+    tokenize text
+  #.........................................................................................................
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+demo_lexer_2 = ->
+  { partial, regex, } = require 'regex'
+  { f } = require '../../../apps/effstring'
+  rx    = regex 'y'
+  #===========================================================================================================
+  class Token
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ( name, cfg ) ->
+      @name = name
+      @re   = cfg.re
+      @jump = cfg.jump ? null
+      return undefined
+
+    #---------------------------------------------------------------------------------------------------------
+    match_at: ( start, text ) ->
+      @re.lastIndex = start
+      return null unless ( match = text.match @re )?
+      return new Lexeme @, match
+
+
+  #===========================================================================================================
+  class Lexeme
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ( token, match ) ->
+      @name   = token.name
+      @hit    = match[ 0 ]
+      @start  = match.index
+      @stop   = @start + @hit.length
+      @groups = match.groups ? null
+      return undefined
+
+
+  #===========================================================================================================
+  level = [
+    new Token 'name',            { re: rx"(?<initial>[A-Z])[a-z]*", }
+    new Token 'number',          { re: rx"[0-9]+",                  }
+    new Token 'sq_string_start', { re: rx"(?!<\\)'",                jump: '[string', }
+    new Token 'paren_start',     { re: rx"\(",                      }
+    new Token 'paren_stop',      { re: rx"\)",                      }
+    new Token 'other',           { re: rx"[A-Za-z0-9]+",            }
+    new Token 'ws',              { re: rx"\s+",                     }
+    ]
+  #.........................................................................................................
+  debug 'Ω__36', level
+  tokenize = ( text ) ->
+    start   = 0
+    info 'Ω__37', rpr text
+    loop
+      lexeme  = null
+      for token in level
+        if ( lexeme = token.match_at start, text )?
+          break
+      break unless lexeme?
+      { name
+        stop
+        hit
+        groups  } = lexeme
+      groups_rpr  = if groups? then ( rpr { groups..., } ) else ''
+      help 'Ω__38', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{groups_rpr}"
+      start     = stop
+    return null
+  #.........................................................................................................
+  texts = [
+    "Alice in Cairo 1912 (approximately)"
+    "Alice in Cairo 1912 'approximately'"
+    ]
+  #.........................................................................................................
+  for text in texts
+    tokenize text
+  #.........................................................................................................
   return null
 
 
 #===========================================================================================================
 if module is require.main then await do =>
   # demo_1()
-  demo_lexer_1()
+  demo_lexer_2()

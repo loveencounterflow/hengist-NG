@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GUY, alert, debug, demo_1, demo_lexer_1, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var GUY, alert, debug, demo_1, demo_lexer_1, demo_lexer_2, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -131,48 +131,56 @@ $`));
 
   //-----------------------------------------------------------------------------------------------------------
   demo_lexer_1 = function() {
-    var partial, regex;
+    var a, b, match, partial, regex;
     ({partial, regex} = require('regex'));
-    (() => {      //.........................................................................................................
-      var a, b, match;
-      urge('Ω__29', a = (regex('y'))`(?<name>[a-z]+)`);
-      urge('Ω__30', b = (regex('y'))`${a}\s+in\s+(?<place>[a-z]+)`);
-      if ((match = "alice in cairo".match(b)) != null) {
-        info('Ω__31', {...match.groups});
+    //.........................................................................................................
+    urge('Ω__29', a = (regex('y'))`(?<name>[a-z]+)`);
+    urge('Ω__30', b = (regex('y'))`${a}\s+in\s+(?<place>[a-z]+)`);
+    if ((match = "alice in cairo".match(b)) != null) {
+      info('Ω__31', {...match.groups});
+    }
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  demo_lexer_2 = function() {
+    var f, i, len, partial, patterns, regex, rx, text, texts, tokenize;
+    ({partial, regex} = require('regex'));
+    ({f} = require('../../../apps/effstring'));
+    rx = regex('y');
+    patterns = {
+      name: {
+        re: rx`(?<initial>[A-Z])[a-z]*`
+      },
+      number: {
+        re: rx`[0-9]+`
+      },
+      sq_string_start: {
+        re: rx`(?!<\\)'`
+      },
+      paren_start: {
+        re: rx`\(`
+      },
+      paren_stop: {
+        re: rx`\)`
+      },
+      other: {
+        re: rx`[A-Za-z0-9]+`
+      },
+      ws: {
+        re: rx`\s+`
       }
-      return null;
-    })();
-    (() => {      //.........................................................................................................
-      var f, hit, match, name, patterns, re, ref, rey, start, stop, text;
-      ({f} = require('../../../apps/effstring'));
-      rey = regex('y');
-      patterns = {
-        name: {
-          re: rey`(?<initial>[A-Z])[a-z]*`
-        },
-        number: {
-          re: rey`[0-9]+`
-        },
-        paren_start: {
-          re: rey`\(`
-        },
-        paren_stop: {
-          re: rey`\)`
-        },
-        other: {
-          re: rey`[A-Za-z0-9]+`
-        },
-        ws: {
-          re: rey`\s+`
-        }
-      };
-      urge('Ω__32', patterns);
-      text = "Alice in Cairo 1912 (approximately)";
+    };
+    urge('Ω__32', patterns);
+    //.........................................................................................................
+    tokenize = function(text) {
+      var hit, match, name, re, ref, start, stop;
       stop = 0;
+      info('Ω__33', rpr(text));
       while (true) {
         for (name in patterns) {
           ({re} = patterns[name]);
-          // debug 'Ω__33', f"#{name}:>20c;: #{re}"
+          // debug 'Ω__34', f"#{name}:>20c;: #{re}"
           hit = null;
           re.lastIndex = stop;
           if ((match = text.match(re)) != null) {
@@ -188,7 +196,123 @@ $`));
         help('Ω__35', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${rpr({...((ref = match.groups) != null ? ref : {})})}`);
       }
       return null;
-    })();
+    };
+    //.........................................................................................................
+    texts = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
+//.........................................................................................................
+    for (i = 0, len = texts.length; i < len; i++) {
+      text = texts[i];
+      tokenize(text);
+    }
+    //.........................................................................................................
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  demo_lexer_2 = function() {
+    var Lexeme, Token, f, i, len, level, partial, regex, rx, text, texts, tokenize;
+    ({partial, regex} = require('regex'));
+    ({f} = require('../../../apps/effstring'));
+    rx = regex('y');
+    //===========================================================================================================
+    Token = class Token {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(name, cfg) {
+        var ref;
+        this.name = name;
+        this.re = cfg.re;
+        this.jump = (ref = cfg.jump) != null ? ref : null;
+        return void 0;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      match_at(start, text) {
+        var match;
+        this.re.lastIndex = start;
+        if ((match = text.match(this.re)) == null) {
+          return null;
+        }
+        return new Lexeme(this, match);
+      }
+
+    };
+    //===========================================================================================================
+    Lexeme = class Lexeme {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(token, match) {
+        var ref;
+        this.name = token.name;
+        this.hit = match[0];
+        this.start = match.index;
+        this.stop = this.start + this.hit.length;
+        this.groups = (ref = match.groups) != null ? ref : null;
+        return void 0;
+      }
+
+    };
+    //===========================================================================================================
+    level = [
+      new Token('name',
+      {
+        re: rx`(?<initial>[A-Z])[a-z]*`
+      }),
+      new Token('number',
+      {
+        re: rx`[0-9]+`
+      }),
+      new Token('sq_string_start',
+      {
+        re: rx`(?!<\\)'`,
+        jump: '[string'
+      }),
+      new Token('paren_start',
+      {
+        re: rx`\(`
+      }),
+      new Token('paren_stop',
+      {
+        re: rx`\)`
+      }),
+      new Token('other',
+      {
+        re: rx`[A-Za-z0-9]+`
+      }),
+      new Token('ws',
+      {
+        re: rx`\s+`
+      })
+    ];
+    //.........................................................................................................
+    debug('Ω__36', level);
+    tokenize = function(text) {
+      var groups, groups_rpr, hit, i, len, lexeme, name, start, stop, token;
+      start = 0;
+      info('Ω__37', rpr(text));
+      while (true) {
+        lexeme = null;
+        for (i = 0, len = level.length; i < len; i++) {
+          token = level[i];
+          if ((lexeme = token.match_at(start, text)) != null) {
+            break;
+          }
+        }
+        if (lexeme == null) {
+          break;
+        }
+        ({name, stop, hit, groups} = lexeme);
+        groups_rpr = groups != null ? rpr({...groups}) : '';
+        help('Ω__38', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${groups_rpr}`);
+        start = stop;
+      }
+      return null;
+    };
+    //.........................................................................................................
+    texts = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
+//.........................................................................................................
+    for (i = 0, len = texts.length; i < len; i++) {
+      text = texts[i];
+      tokenize(text);
+    }
     //.........................................................................................................
     return null;
   };
@@ -197,7 +321,7 @@ $`));
   if (module === require.main) {
     await (() => {
       // demo_1()
-      return demo_lexer_1();
+      return demo_lexer_2();
     })();
   }
 
