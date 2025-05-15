@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GUY, alert, debug, demo_1, demo_lexer_1, demo_lexer_2, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var GUY, alert, debug, demo_1, demo_lexer_1, demo_lexer_2, demo_lexer_3, echo, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -209,7 +209,7 @@ $`));
   };
 
   //-----------------------------------------------------------------------------------------------------------
-  demo_lexer_2 = function() {
+  demo_lexer_3 = function() {
     var Grammar, Level, Lexeme, Token, f, g, gnd, hide, i, jump_literal_re, len, partial, regex, rx, show_jump, string11, string12, text, texts, token;
     ({partial, regex} = require('regex'));
     ({f} = require('../../../apps/effstring'));
@@ -223,20 +223,21 @@ $`));
     rx = regex('y');
     //===========================================================================================================
     jump_literal_re = regex`^(
-\[ (?<post_jump> [^ \^ . \s \[ \] ]+ )     |
-   (?<pre_jump>  [^ \^ . \s \[ \] ]+ ) \[  |
-\] (?<post_back> [     .          ]  )     |
-   (?<pre_back>  [     .          ]  ) \]  |
+\[ (?<exclusive_jump> [^ \^ . \s \[ \] ]+ )     |
+   (?<inclusive_jump> [^ \^ . \s \[ \] ]+ ) \[  |
+\] (?<exclusive_back> [     .          ]  )     |
+   (?<inclusive_back> [     .          ]  ) \]
 )$ `;
     //===========================================================================================================
     Token = class Token {
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
-        var ref, ref1;
+        var ref, ref1, ref2;
         this.name = cfg.name;
         hide(this, 'level', (ref = cfg.level) != null ? ref : null);
         hide(this, 'matcher', cfg.matcher);
-        hide(this, 'jump', (ref1 = cfg.jump) != null ? ref1 : null);
+        hide(this, 'jump', this.parse_jump((ref1 = cfg.jump) != null ? ref1 : null));
+        hide(this, 'jump_literal', (ref2 = cfg.jump) != null ? ref2 : null);
         return void 0;
       }
 
@@ -250,6 +251,28 @@ $`));
         return new Lexeme(this, match);
       }
 
+      //---------------------------------------------------------------------------------------------------------
+      parse_jump(jump_literal) {
+        var action, affinity, key, level, match, ref;
+        if (jump_literal == null) {
+          return null;
+        }
+        /* TAINT use cleartype */
+        if ((match = jump_literal.match(jump_literal_re)) == null) {
+          throw new Error(`Ω__36 expected a well-formed jump literal, got ${rpr(jump_literal)}`);
+        }
+        ref = match.groups;
+        for (key in ref) {
+          level = ref[key];
+          if (level == null) {
+            continue;
+          }
+          [affinity, action] = key.split('_');
+          break;
+        }
+        return {affinity, action, level};
+      }
+
     };
     //===========================================================================================================
     Lexeme = class Lexeme {
@@ -261,6 +284,7 @@ $`));
         this.start = match.index;
         this.stop = this.start + this.hit.length;
         this.groups = (ref = match.groups) != null ? ref : null;
+        this.jump = token.jump;
         return void 0;
       }
 
@@ -297,19 +321,11 @@ $`));
           token = new Token(token);
         }
         if ((token.level != null) && token.level !== this) {
-          throw new Error("Ω__36 inconsistent level");
+          throw new Error("Ω__37 inconsistent level");
         }
         token.level = this;
         this.tokens.push(token);
         return token;
-      }
-
-      //---------------------------------------------------------------------------------------------------------
-      parse_jump(jump_literal) {
-        var match;
-        if ((match = jump_literal_re.match) == null) {
-          throw new Error(`Ω__37 not a well-formed jump literal: ${rpr(jump_literal)}`);
-        }
       }
 
     };
@@ -340,7 +356,7 @@ $`));
 
       //---------------------------------------------------------------------------------------------------------
       tokenize(source) {
-        var groups, groups_rpr, hit, lexeme, name, start, stop, token;
+        var groups, groups_rpr, hit, jump, jump_rpr, lexeme, name, start, stop, token;
         start = 0;
         info('Ω__39', rpr(source));
         while (true) {
@@ -353,9 +369,10 @@ $`));
           if (lexeme == null) {
             break;
           }
-          ({name, stop, hit, groups} = lexeme);
+          ({name, stop, hit, jump, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
-          help('Ω__40', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${groups_rpr}`);
+          jump_rpr = jump != null ? rpr(jump) : '';
+          help('Ω__40', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>15c;: ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
           start = stop;
         }
         return null;
@@ -370,6 +387,33 @@ $`));
     `Lexeme` produced by a `Token` instance when matcher matches source
 
     */
+    //===========================================================================================================
+    show_jump = function(jump_literal) {
+      var key, match, ref, value;
+      if ((match = jump_literal.match(jump_literal_re)) != null) {
+        ref = match.groups;
+        for (key in ref) {
+          value = ref[key];
+          if (value == null) {
+            continue;
+          }
+          urge('Ω__47', rpr(jump_literal), GUY.trm.grey(key), rpr(value));
+        }
+      } else {
+        urge('Ω__48', rpr(jump_literal), null);
+      }
+      return null;
+    };
+    show_jump('abc');
+    show_jump('[abc[');
+    show_jump('[abc');
+    show_jump('abc[');
+    show_jump('[string11');
+    show_jump('string11[');
+    show_jump('abc]');
+    show_jump(']abc');
+    show_jump('.]');
+    show_jump('].');
     //===========================================================================================================
     g = new Grammar({
       name: 'g'
@@ -432,31 +476,6 @@ $`));
       debug('Ω__46', token);
     }
     //.........................................................................................................
-    show_jump = function(jump_literal) {
-      var key, match, ref, value;
-      if ((match = jump_literal.match(jump_literal_re)) != null) {
-        ref = match.groups;
-        for (key in ref) {
-          value = ref[key];
-          if (value == null) {
-            continue;
-          }
-          urge('Ω__47', rpr(jump_literal), GUY.trm.grey(key), rpr(value));
-        }
-      } else {
-        urge('Ω__48', rpr(jump_literal), null);
-      }
-      return null;
-    };
-    show_jump('abc');
-    show_jump('[abc[');
-    show_jump('[abc');
-    show_jump('abc[');
-    show_jump('abc]');
-    show_jump(']abc');
-    show_jump('.]');
-    show_jump('].');
-    //.........................................................................................................
     texts = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
     for (i = 0, len = texts.length; i < len; i++) {
@@ -471,7 +490,7 @@ $`));
   if (module === require.main) {
     await (() => {
       // demo_1()
-      return demo_lexer_2();
+      return demo_lexer_3();
     })();
   }
 

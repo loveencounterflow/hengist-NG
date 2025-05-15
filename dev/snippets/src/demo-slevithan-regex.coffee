@@ -180,7 +180,7 @@ demo_lexer_2 = ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-demo_lexer_2 = ->
+demo_lexer_3 = ->
   { partial, regex, } = require 'regex'
   { f } = require '../../../apps/effstring'
   hide  = ( owner, name, value ) -> Object.defineProperty owner, name, { enumerable: false, value, writable: true, }
@@ -188,10 +188,10 @@ demo_lexer_2 = ->
   #===========================================================================================================
   jump_literal_re = regex"""
     ^(
-    \[ (?<post_jump> [^ \^ . \s \[ \] ]+ )     |
-       (?<pre_jump>  [^ \^ . \s \[ \] ]+ ) \[  |
-    \] (?<post_back> [     .          ]  )     |
-       (?<pre_back>  [     .          ]  ) \]  |
+    \[ (?<exclusive_jump> [^ \^ . \s \[ \] ]+ )     |
+       (?<inclusive_jump> [^ \^ . \s \[ \] ]+ ) \[  |
+    \] (?<exclusive_back> [     .          ]  )     |
+       (?<inclusive_back> [     .          ]  ) \]
     )$ """
 
   #===========================================================================================================
@@ -200,9 +200,10 @@ demo_lexer_2 = ->
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
       @name = cfg.name
-      hide @, 'level',    cfg.level ? null
-      hide @, 'matcher',  cfg.matcher
-      hide @, 'jump',     cfg.jump ? null
+      hide @, 'level',        cfg.level             ? null
+      hide @, 'matcher',      cfg.matcher
+      hide @, 'jump',         @parse_jump cfg.jump  ? null
+      hide @, 'jump_literal', cfg.jump              ? null
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
@@ -210,6 +211,18 @@ demo_lexer_2 = ->
       @matcher.lastIndex = start
       return null unless ( match = text.match @matcher )?
       return new Lexeme @, match
+
+    #---------------------------------------------------------------------------------------------------------
+    parse_jump: ( jump_literal ) ->
+      return null unless jump_literal?
+      ### TAINT use cleartype ###
+      unless ( match = jump_literal.match jump_literal_re )?
+        throw new Error "Ω__36 expected a well-formed jump literal, got #{rpr jump_literal}"
+      for key, level of match.groups
+        continue unless level?
+        [ affinity, action, ] = key.split '_'
+        break
+      return { affinity, action, level, }
 
 
   #===========================================================================================================
@@ -222,6 +235,7 @@ demo_lexer_2 = ->
       @start  = match.index
       @stop   = @start + @hit.length
       @groups = match.groups ? null
+      @jump   = token.jump
       return undefined
 
 
@@ -243,16 +257,10 @@ demo_lexer_2 = ->
     new_token: ( token ) ->
       token = ( new Token token ) unless ( token instanceof Token )
       if token.level? and token.level isnt @
-        throw new Error "Ω__36 inconsistent level"
+        throw new Error "Ω__37 inconsistent level"
       token.level = @
       @tokens.push token
       return token
-
-    #---------------------------------------------------------------------------------------------------------
-    parse_jump: ( jump_literal ) ->
-      unless ( match = jump_literal_re.match )?
-        throw new Error "Ω__37 not a well-formed jump literal: #{rpr jump_literal}"
-
 
   #===========================================================================================================
   class Grammar
@@ -285,9 +293,11 @@ demo_lexer_2 = ->
         { name
           stop
           hit
+          jump
           groups  } = lexeme
-        groups_rpr  = if groups? then ( rpr { groups..., } ) else ''
-        help 'Ω__40', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{groups_rpr}"
+        groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
+        jump_rpr    = if jump?    then ( rpr jump           ) else ''
+        help 'Ω__40', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>15c;: #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
         start     = stop
       return null
 
@@ -300,6 +310,25 @@ demo_lexer_2 = ->
   `Lexeme` produced by a `Token` instance when matcher matches source
 
   ###
+  #===========================================================================================================
+  show_jump = ( jump_literal ) ->
+    if ( match = jump_literal.match jump_literal_re  )?
+      for key, value of match.groups
+        continue unless value?
+        urge 'Ω__47', ( rpr jump_literal ), ( GUY.trm.grey key ), ( rpr value )
+    else
+      urge 'Ω__48', ( rpr jump_literal ), null
+    return null
+  show_jump 'abc'
+  show_jump '[abc['
+  show_jump '[abc'
+  show_jump 'abc['
+  show_jump '[string11'
+  show_jump 'string11['
+  show_jump 'abc]'
+  show_jump ']abc'
+  show_jump '.]'
+  show_jump '].'
   #===========================================================================================================
   g         = new Grammar { name: 'g', }
   gnd       = g.new_level { name: 'gnd', }
@@ -322,23 +351,6 @@ demo_lexer_2 = ->
   debug 'Ω__45', gnd
   debug 'Ω__46', token for token from gnd
   #.........................................................................................................
-  show_jump = ( jump_literal ) ->
-    if ( match = jump_literal.match jump_literal_re  )?
-      for key, value of match.groups
-        continue unless value?
-        urge 'Ω__47', ( rpr jump_literal ), ( GUY.trm.grey key ), ( rpr value )
-    else
-      urge 'Ω__48', ( rpr jump_literal ), null
-    return null
-  show_jump 'abc'
-  show_jump '[abc['
-  show_jump '[abc'
-  show_jump 'abc['
-  show_jump 'abc]'
-  show_jump ']abc'
-  show_jump '.]'
-  show_jump '].'
-  #.........................................................................................................
   texts = [
     "Alice in Cairo 1912 (approximately)"
     "Alice in Cairo 1912 'approximately'"
@@ -353,4 +365,4 @@ demo_lexer_2 = ->
 #===========================================================================================================
 if module is require.main then await do =>
   # demo_1()
-  demo_lexer_2()
+  demo_lexer_3()
