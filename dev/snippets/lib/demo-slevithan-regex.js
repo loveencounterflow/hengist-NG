@@ -210,7 +210,7 @@ $`));
 
   //-----------------------------------------------------------------------------------------------------------
   demo_lexer_2 = function() {
-    var Grammar, Level, Lexeme, Token, f, gnd, hide, i, len, partial, regex, rx, text, texts, token, tokenize;
+    var Grammar, Level, Lexeme, Token, f, g, gnd, hide, i, jump_literal_re, len, partial, regex, rx, show_jump, string11, string12, text, texts, token;
     ({partial, regex} = require('regex'));
     ({f} = require('../../../apps/effstring'));
     hide = function(owner, name, value) {
@@ -221,6 +221,13 @@ $`));
       });
     };
     rx = regex('y');
+    //===========================================================================================================
+    jump_literal_re = regex`^(
+\[ (?<post_jump> [^ \^ . \s \[ \] ]+ )     |
+   (?<pre_jump>  [^ \^ . \s \[ \] ]+ ) \[  |
+\] (?<post_back> [     .          ]  )     |
+   (?<pre_back>  [     .          ]  ) \]  |
+)$ `;
     //===========================================================================================================
     Token = class Token {
       //---------------------------------------------------------------------------------------------------------
@@ -262,10 +269,13 @@ $`));
     Level = class Level {
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
-        var ref, ref1;
-        this.name = cfg.name;
-        hide(this, 'grammar', (ref = cfg.grammar) != null ? ref : null);
-        hide(this, 'tokens', [...((ref1 = cfg.tokens) != null ? ref1 : [])]);
+        var ref, ref1, ref2;
+        if (cfg == null) {
+          cfg = {};
+        }
+        this.name = (ref = cfg.name) != null ? ref : 'gnd';
+        hide(this, 'grammar', (ref1 = cfg.grammar) != null ? ref1 : null);
+        hide(this, 'tokens', [...((ref2 = cfg.tokens) != null ? ref2 : [])]);
         return void 0;
       }
 
@@ -282,7 +292,7 @@ $`));
       }
 
       //---------------------------------------------------------------------------------------------------------
-      push(token) {
+      new_token(token) {
         if (!(token instanceof Token)) {
           token = new Token(token);
         }
@@ -294,27 +304,61 @@ $`));
         return token;
       }
 
+      //---------------------------------------------------------------------------------------------------------
+      parse_jump(jump_literal) {
+        var match;
+        if ((match = jump_literal_re.match) == null) {
+          throw new Error(`Ω__37 not a well-formed jump literal: ${rpr(jump_literal)}`);
+        }
+      }
+
     };
     //===========================================================================================================
     Grammar = class Grammar {
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
-        this.name = cfg.name;
-        hide(this, 'levels', {});
+        var ref, ref1;
+        if (cfg == null) {
+          cfg = {};
+        }
+        this.name = (ref = cfg.name) != null ? ref : 'g';
+        hide(this, 'levels', {...((ref1 = cfg.levels) != null ? ref1 : {})});
         return void 0;
       }
 
       //---------------------------------------------------------------------------------------------------------
-      new_level(cfg) {
-        var level;
+      new_level(level) {
         if (!(level instanceof Level)) {
           level = new Level(level);
         }
         if (this.levels[level.name] != null) {
-          throw new Error(`Ω__36 level ${rpr(level.name)} elready exists`);
+          throw new Error(`Ω__38 level ${rpr(level.name)} elready exists`);
         }
         this.levels[level.name] = level;
         return level;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      tokenize(source) {
+        var groups, groups_rpr, hit, lexeme, name, start, stop, token;
+        start = 0;
+        info('Ω__39', rpr(source));
+        while (true) {
+          lexeme = null;
+          for (token of gnd) {
+            if ((lexeme = token.match_at(start, source)) != null) {
+              break;
+            }
+          }
+          if (lexeme == null) {
+            break;
+          }
+          ({name, stop, hit, groups} = lexeme);
+          groups_rpr = groups != null ? rpr({...groups}) : '';
+          help('Ω__40', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${groups_rpr}`);
+          start = stop;
+        }
+        return null;
       }
 
     };
@@ -327,70 +371,97 @@ $`));
 
     */
     //===========================================================================================================
-    gnd = new Level({
+    g = new Grammar({
+      name: 'g'
+    });
+    gnd = g.new_level({
       name: 'gnd'
     });
-    gnd.push({
+    string11 = g.new_level({
+      name: 'string11'
+    });
+    string12 = g.new_level({
+      name: 'string12'
+    });
+    gnd.new_token({
       name: 'name',
       matcher: rx`(?<initial>[A-Z])[a-z]*`
     });
-    gnd.push({
+    gnd.new_token({
       name: 'number',
       matcher: rx`[0-9]+`
     });
-    gnd.push({
-      name: 'sq_string_start',
+    gnd.new_token({
+      name: 'string11_start',
       matcher: rx`(?!<\\)'`,
-      jump: '[string'
+      jump: 'string11['
     });
-    gnd.push({
+    gnd.new_token({
+      name: 'string12_start',
+      matcher: rx`(?!<\\)"`,
+      jump: 'string12['
+    });
+    gnd.new_token({
       name: 'paren_start',
       matcher: rx`\(`
     });
-    gnd.push({
+    gnd.new_token({
       name: 'paren_stop',
       matcher: rx`\)`
     });
-    gnd.push({
+    gnd.new_token({
       name: 'other',
       matcher: rx`[A-Za-z0-9]+`
     });
-    gnd.push({
+    gnd.new_token({
       name: 'ws',
       matcher: rx`\s+`
     });
+    string11.new_token({
+      name: 'text',
+      matcher: rx`'`,
+      jump: '].'
+    });
     //.........................................................................................................
-    debug('Ω__37', gnd);
+    debug('Ω__41', g);
+    debug('Ω__42', g.levels);
+    debug('Ω__43', g.levels.gnd);
+    debug('Ω__44', g.levels.gnd.tokens);
+    debug('Ω__45', gnd);
     for (token of gnd) {
-      debug('Ω__38', token);
+      debug('Ω__46', token);
     }
-    tokenize = function(text) {
-      var groups, groups_rpr, hit, lexeme, name, start, stop;
-      start = 0;
-      info('Ω__39', rpr(text));
-      while (true) {
-        lexeme = null;
-        for (token of gnd) {
-          if ((lexeme = token.match_at(start, text)) != null) {
-            break;
+    //.........................................................................................................
+    show_jump = function(jump_literal) {
+      var key, match, ref, value;
+      if ((match = jump_literal.match(jump_literal_re)) != null) {
+        ref = match.groups;
+        for (key in ref) {
+          value = ref[key];
+          if (value == null) {
+            continue;
           }
+          urge('Ω__47', rpr(jump_literal), GUY.trm.grey(key), rpr(value));
         }
-        if (lexeme == null) {
-          break;
-        }
-        ({name, stop, hit, groups} = lexeme);
-        groups_rpr = groups != null ? rpr({...groups}) : '';
-        help('Ω__40', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>20c;: ${rpr(hit)}:<30c; ${groups_rpr}`);
-        start = stop;
+      } else {
+        urge('Ω__48', rpr(jump_literal), null);
       }
       return null;
     };
+    show_jump('abc');
+    show_jump('[abc[');
+    show_jump('[abc');
+    show_jump('abc[');
+    show_jump('abc]');
+    show_jump(']abc');
+    show_jump('.]');
+    show_jump('].');
     //.........................................................................................................
     texts = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
     for (i = 0, len = texts.length; i < len; i++) {
       text = texts[i];
-      tokenize(text);
+      g.tokenize(text);
     }
     //.........................................................................................................
     return null;

@@ -186,6 +186,15 @@ demo_lexer_2 = ->
   hide  = ( owner, name, value ) -> Object.defineProperty owner, name, { enumerable: false, value, writable: true, }
   rx    = regex 'y'
   #===========================================================================================================
+  jump_literal_re = regex"""
+    ^(
+    \[ (?<post_jump> [^ \^ . \s \[ \] ]+ )     |
+       (?<pre_jump>  [^ \^ . \s \[ \] ]+ ) \[  |
+    \] (?<post_back> [     .          ]  )     |
+       (?<pre_back>  [     .          ]  ) \]  |
+    )$ """
+
+  #===========================================================================================================
   class Token
 
     #---------------------------------------------------------------------------------------------------------
@@ -221,7 +230,8 @@ demo_lexer_2 = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
-      @name = cfg.name
+      cfg    ?= {}
+      @name   = cfg.name ? 'gnd'
       hide @, 'grammar',  cfg.grammar ? null
       hide @, 'tokens',   [ ( cfg.tokens ? [] )..., ]
       return undefined
@@ -230,7 +240,7 @@ demo_lexer_2 = ->
     [Symbol.iterator]: -> yield t for t in @tokens
 
     #---------------------------------------------------------------------------------------------------------
-    push: ( token ) ->
+    new_token: ( token ) ->
       token = ( new Token token ) unless ( token instanceof Token )
       if token.level? and token.level isnt @
         throw new Error "Ω__36 inconsistent level"
@@ -238,22 +248,48 @@ demo_lexer_2 = ->
       @tokens.push token
       return token
 
+    #---------------------------------------------------------------------------------------------------------
+    parse_jump: ( jump_literal ) ->
+      unless ( match = jump_literal_re.match )?
+        throw new Error "Ω__37 not a well-formed jump literal: #{rpr jump_literal}"
+
+
   #===========================================================================================================
   class Grammar
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
-      @name = cfg.name
-      hide @, 'levels', {}
+      cfg    ?= {}
+      @name   = cfg.name ? 'g'
+      hide @, 'levels', { ( cfg.levels ? {} )..., }
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
-    new_level: ( cfg ) ->
+    new_level: ( level ) ->
       level = ( new Level level ) unless ( level instanceof Level )
       if @levels[ level.name ]?
-        throw new Error "Ω__36 level #{rpr level.name} elready exists"
+        throw new Error "Ω__38 level #{rpr level.name} elready exists"
       @levels[ level.name ] = level
       return level
+
+    #---------------------------------------------------------------------------------------------------------
+    tokenize: ( source ) ->
+      start   = 0
+      info 'Ω__39', rpr source
+      loop
+        lexeme  = null
+        for token from gnd
+          if ( lexeme = token.match_at start, source )?
+            break
+        break unless lexeme?
+        { name
+          stop
+          hit
+          groups  } = lexeme
+        groups_rpr  = if groups? then ( rpr { groups..., } ) else ''
+        help 'Ω__40', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{groups_rpr}"
+        start     = stop
+      return null
 
 
   #===========================================================================================================
@@ -265,34 +301,43 @@ demo_lexer_2 = ->
 
   ###
   #===========================================================================================================
-  gnd = new Level { name: 'gnd', }
-  gnd.push { name: 'name',            matcher: rx"(?<initial>[A-Z])[a-z]*", }
-  gnd.push { name: 'number',          matcher: rx"[0-9]+",                  }
-  gnd.push { name: 'sq_string_start', matcher: rx"(?!<\\)'",                jump: '[string', }
-  gnd.push { name: 'paren_start',     matcher: rx"\(",                      }
-  gnd.push { name: 'paren_stop',      matcher: rx"\)",                      }
-  gnd.push { name: 'other',           matcher: rx"[A-Za-z0-9]+",            }
-  gnd.push { name: 'ws',              matcher: rx"\s+",                     }
+  g         = new Grammar { name: 'g', }
+  gnd       = g.new_level { name: 'gnd', }
+  string11  = g.new_level { name: 'string11', }
+  string12  = g.new_level { name: 'string12', }
+  gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
+  gnd.new_token       { name: 'number',         matcher: rx"[0-9]+",                  }
+  gnd.new_token       { name: 'string11_start', matcher: rx"(?!<\\)'",                jump: 'string11[', }
+  gnd.new_token       { name: 'string12_start', matcher: rx'(?!<\\)"',                jump: 'string12[', }
+  gnd.new_token       { name: 'paren_start',    matcher: rx"\(",                      }
+  gnd.new_token       { name: 'paren_stop',     matcher: rx"\)",                      }
+  gnd.new_token       { name: 'other',          matcher: rx"[A-Za-z0-9]+",            }
+  gnd.new_token       { name: 'ws',             matcher: rx"\s+",                     }
+  string11.new_token  { name: 'text',           matcher: rx"'",                       jump: '].', }
   #.........................................................................................................
-  debug 'Ω__37', gnd
-  debug 'Ω__38', token for token from gnd
-  tokenize = ( text ) ->
-    start   = 0
-    info 'Ω__39', rpr text
-    loop
-      lexeme  = null
-      for token from gnd
-        if ( lexeme = token.match_at start, text )?
-          break
-      break unless lexeme?
-      { name
-        stop
-        hit
-        groups  } = lexeme
-      groups_rpr  = if groups? then ( rpr { groups..., } ) else ''
-      help 'Ω__40', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>20c;: #{rpr hit}:<30c; #{groups_rpr}"
-      start     = stop
+  debug 'Ω__41', g
+  debug 'Ω__42', g.levels
+  debug 'Ω__43', g.levels.gnd
+  debug 'Ω__44', g.levels.gnd.tokens
+  debug 'Ω__45', gnd
+  debug 'Ω__46', token for token from gnd
+  #.........................................................................................................
+  show_jump = ( jump_literal ) ->
+    if ( match = jump_literal.match jump_literal_re  )?
+      for key, value of match.groups
+        continue unless value?
+        urge 'Ω__47', ( rpr jump_literal ), ( GUY.trm.grey key ), ( rpr value )
+    else
+      urge 'Ω__48', ( rpr jump_literal ), null
     return null
+  show_jump 'abc'
+  show_jump '[abc['
+  show_jump '[abc'
+  show_jump 'abc['
+  show_jump 'abc]'
+  show_jump ']abc'
+  show_jump '.]'
+  show_jump '].'
   #.........................................................................................................
   texts = [
     "Alice in Cairo 1912 (approximately)"
@@ -300,7 +345,7 @@ demo_lexer_2 = ->
     ]
   #.........................................................................................................
   for text in texts
-    tokenize text
+    g.tokenize text
   #.........................................................................................................
   return null
 
