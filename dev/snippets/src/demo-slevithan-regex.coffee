@@ -199,8 +199,10 @@ demo_lexer_3 = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
+      debug 'Ω__36', "new Token", cfg.name, cfg.level, cfg.level.grammar
       @name = cfg.name
-      hide @, 'level',        cfg.level             ? null
+      hide @, 'level',        cfg.level
+      hide @, 'grammar',      cfg.level.grammar
       hide @, 'matcher',      cfg.matcher
       hide @, 'jump',         @parse_jump cfg.jump  ? null
       hide @, 'jump_literal', cfg.jump              ? null
@@ -217,11 +219,15 @@ demo_lexer_3 = ->
       return null unless jump_literal?
       ### TAINT use cleartype ###
       unless ( match = jump_literal.match jump_literal_re )?
-        throw new Error "Ω__36 expected a well-formed jump literal, got #{rpr jump_literal}"
-      for key, level of match.groups
-        continue unless level?
+        throw new Error "Ω__37 expected a well-formed jump literal, got #{rpr jump_literal}"
+      for key, level_name of match.groups
+        continue unless level_name?
         [ affinity, action, ] = key.split '_'
         break
+      if level_name is '.'
+        level = level_name
+      else unless ( level = @grammar.levels[ level_name ] )?
+        throw new Error "Ω__38 expected name of a known level, got #{rpr level_name}"
       return { affinity, action, level, }
 
 
@@ -230,12 +236,17 @@ demo_lexer_3 = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( token, match ) ->
-      @name   = token.name
-      @hit    = match[ 0 ]
-      @start  = match.index
-      @stop   = @start + @hit.length
-      @groups = match.groups ? null
-      @jump   = token.jump
+      # debug 'Ω__39', token
+      # debug 'Ω__40', token.jump, token.grammar.levels[ token.jump.level ] if token.jump?
+      @name         = token.name
+      @fqname       = "#{token.level.name}.#{token.name}"
+      @level        = token.level
+      @hit          = match[ 0 ]
+      @start        = match.index
+      @stop         = @start + @hit.length
+      @groups       = match.groups ? null
+      @jump         = token.jump
+      @jump_literal = token.jump_literal
       return undefined
 
 
@@ -246,7 +257,7 @@ demo_lexer_3 = ->
     constructor: ( cfg ) ->
       cfg    ?= {}
       @name   = cfg.name ? 'gnd'
-      hide @, 'grammar',  cfg.grammar ? null
+      hide @, 'grammar',  cfg.grammar
       hide @, 'tokens',   [ ( cfg.tokens ? [] )..., ]
       return undefined
 
@@ -254,12 +265,10 @@ demo_lexer_3 = ->
     [Symbol.iterator]: -> yield t for t in @tokens
 
     #---------------------------------------------------------------------------------------------------------
-    new_token: ( token ) ->
-      token = ( new Token token ) unless ( token instanceof Token )
-      if token.level? and token.level isnt @
-        throw new Error "Ω__37 inconsistent level"
-      token.level = @
-      @tokens.push token
+    new_token: ( cfg ) ->
+      if cfg.level? and cfg.level isnt @
+        throw new Error "Ω__41 inconsistent level"
+      @tokens.push token = new Token { cfg..., level: @, }
       return token
 
   #===========================================================================================================
@@ -267,37 +276,43 @@ demo_lexer_3 = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ( cfg ) ->
-      cfg    ?= {}
-      @name   = cfg.name ? 'g'
-      hide @, 'levels', { ( cfg.levels ? {} )..., }
+      cfg              ?= {}
+      @name             = cfg.name ? 'g'
+      @start_name       = null
+      hide @, 'start',    null
+      hide @, 'levels',   { ( cfg.levels ? {} )..., }
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
-    new_level: ( level ) ->
-      level = ( new Level level ) unless ( level instanceof Level )
-      if @levels[ level.name ]?
-        throw new Error "Ω__38 level #{rpr level.name} elready exists"
-      @levels[ level.name ] = level
+    new_level: ( cfg ) ->
+      if @levels[ cfg.name ]?
+        throw new Error "Ω__42 level #{rpr level.name} elready exists"
+      level                   = new Level { cfg..., grammar: @, }
+      @levels[ level.name ]   = level
+      @start                 ?= level
+      @start_name            ?= level.name
       return level
 
     #---------------------------------------------------------------------------------------------------------
     tokenize: ( source ) ->
       start   = 0
-      info 'Ω__39', rpr source
+      info 'Ω__43', rpr source
+      level   = @start
       loop
         lexeme  = null
         for token from gnd
-          if ( lexeme = token.match_at start, source )?
-            break
+          break if ( lexeme = token.match_at start, source )?
         break unless lexeme?
         { name
+          fqname
           stop
           hit
           jump
+          jump_literal
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
-        jump_rpr    = if jump?    then ( rpr jump           ) else ''
-        help 'Ω__40', f"#{start}:>3.0f;:#{stop}:<3.0f; #{name}:>15c;: #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        jump_rpr    = jump_literal ? ''
+        help 'Ω__44', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
         start     = stop
       return null
 
@@ -315,9 +330,9 @@ demo_lexer_3 = ->
     if ( match = jump_literal.match jump_literal_re  )?
       for key, value of match.groups
         continue unless value?
-        urge 'Ω__47', ( rpr jump_literal ), ( GUY.trm.grey key ), ( rpr value )
+        urge 'Ω__45', ( rpr jump_literal ), ( GUY.trm.grey key ), ( rpr value )
     else
-      urge 'Ω__48', ( rpr jump_literal ), null
+      urge 'Ω__46', ( rpr jump_literal ), null
     return null
   show_jump 'abc'
   show_jump '[abc['
@@ -334,6 +349,7 @@ demo_lexer_3 = ->
   gnd       = g.new_level { name: 'gnd', }
   string11  = g.new_level { name: 'string11', }
   string12  = g.new_level { name: 'string12', }
+  #.........................................................................................................
   gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
   gnd.new_token       { name: 'number',         matcher: rx"[0-9]+",                  }
   gnd.new_token       { name: 'string11_start', matcher: rx"(?!<\\)'",                jump: 'string11[', }
@@ -342,14 +358,16 @@ demo_lexer_3 = ->
   gnd.new_token       { name: 'paren_stop',     matcher: rx"\)",                      }
   gnd.new_token       { name: 'other',          matcher: rx"[A-Za-z0-9]+",            }
   gnd.new_token       { name: 'ws',             matcher: rx"\s+",                     }
-  string11.new_token  { name: 'text',           matcher: rx"'",                       jump: '].', }
   #.........................................................................................................
-  debug 'Ω__41', g
-  debug 'Ω__42', g.levels
-  debug 'Ω__43', g.levels.gnd
-  debug 'Ω__44', g.levels.gnd.tokens
-  debug 'Ω__45', gnd
-  debug 'Ω__46', token for token from gnd
+  string11.new_token  { name: 'string11_stop',  matcher: rx"'",                       jump: '].', }
+  string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
+  #.........................................................................................................
+  debug 'Ω__47', g
+  debug 'Ω__48', g.levels
+  debug 'Ω__49', g.levels.gnd
+  debug 'Ω__50', g.levels.gnd.tokens
+  debug 'Ω__51', gnd
+  debug 'Ω__52', token for token from gnd
   #.........................................................................................................
   texts = [
     "Alice in Cairo 1912 (approximately)"

@@ -232,12 +232,14 @@ $`));
     Token = class Token {
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
-        var ref, ref1, ref2;
+        var ref, ref1;
+        debug('Ω__36', "new Token", cfg.name, cfg.level, cfg.level.grammar);
         this.name = cfg.name;
-        hide(this, 'level', (ref = cfg.level) != null ? ref : null);
+        hide(this, 'level', cfg.level);
+        hide(this, 'grammar', cfg.level.grammar);
         hide(this, 'matcher', cfg.matcher);
-        hide(this, 'jump', this.parse_jump((ref1 = cfg.jump) != null ? ref1 : null));
-        hide(this, 'jump_literal', (ref2 = cfg.jump) != null ? ref2 : null);
+        hide(this, 'jump', this.parse_jump((ref = cfg.jump) != null ? ref : null));
+        hide(this, 'jump_literal', (ref1 = cfg.jump) != null ? ref1 : null);
         return void 0;
       }
 
@@ -253,22 +255,27 @@ $`));
 
       //---------------------------------------------------------------------------------------------------------
       parse_jump(jump_literal) {
-        var action, affinity, key, level, match, ref;
+        var action, affinity, key, level, level_name, match, ref;
         if (jump_literal == null) {
           return null;
         }
         /* TAINT use cleartype */
         if ((match = jump_literal.match(jump_literal_re)) == null) {
-          throw new Error(`Ω__36 expected a well-formed jump literal, got ${rpr(jump_literal)}`);
+          throw new Error(`Ω__37 expected a well-formed jump literal, got ${rpr(jump_literal)}`);
         }
         ref = match.groups;
         for (key in ref) {
-          level = ref[key];
-          if (level == null) {
+          level_name = ref[key];
+          if (level_name == null) {
             continue;
           }
           [affinity, action] = key.split('_');
           break;
+        }
+        if (level_name === '.') {
+          level = level_name;
+        } else if ((level = this.grammar.levels[level_name]) == null) {
+          throw new Error(`Ω__38 expected name of a known level, got ${rpr(level_name)}`);
         }
         return {affinity, action, level};
       }
@@ -279,12 +286,17 @@ $`));
       //---------------------------------------------------------------------------------------------------------
       constructor(token, match) {
         var ref;
+        // debug 'Ω__39', token
+        // debug 'Ω__40', token.jump, token.grammar.levels[ token.jump.level ] if token.jump?
         this.name = token.name;
+        this.fqname = `${token.level.name}.${token.name}`;
+        this.level = token.level;
         this.hit = match[0];
         this.start = match.index;
         this.stop = this.start + this.hit.length;
         this.groups = (ref = match.groups) != null ? ref : null;
         this.jump = token.jump;
+        this.jump_literal = token.jump_literal;
         return void 0;
       }
 
@@ -293,13 +305,13 @@ $`));
     Level = class Level {
       //---------------------------------------------------------------------------------------------------------
       constructor(cfg) {
-        var ref, ref1, ref2;
+        var ref, ref1;
         if (cfg == null) {
           cfg = {};
         }
         this.name = (ref = cfg.name) != null ? ref : 'gnd';
-        hide(this, 'grammar', (ref1 = cfg.grammar) != null ? ref1 : null);
-        hide(this, 'tokens', [...((ref2 = cfg.tokens) != null ? ref2 : [])]);
+        hide(this, 'grammar', cfg.grammar);
+        hide(this, 'tokens', [...((ref1 = cfg.tokens) != null ? ref1 : [])]);
         return void 0;
       }
 
@@ -316,15 +328,15 @@ $`));
       }
 
       //---------------------------------------------------------------------------------------------------------
-      new_token(token) {
-        if (!(token instanceof Token)) {
-          token = new Token(token);
+      new_token(cfg) {
+        var token;
+        if ((cfg.level != null) && cfg.level !== this) {
+          throw new Error("Ω__41 inconsistent level");
         }
-        if ((token.level != null) && token.level !== this) {
-          throw new Error("Ω__37 inconsistent level");
-        }
-        token.level = this;
-        this.tokens.push(token);
+        this.tokens.push(token = new Token({
+          ...cfg,
+          level: this
+        }));
         return token;
       }
 
@@ -338,27 +350,38 @@ $`));
           cfg = {};
         }
         this.name = (ref = cfg.name) != null ? ref : 'g';
+        this.start_name = null;
+        hide(this, 'start', null);
         hide(this, 'levels', {...((ref1 = cfg.levels) != null ? ref1 : {})});
         return void 0;
       }
 
       //---------------------------------------------------------------------------------------------------------
-      new_level(level) {
-        if (!(level instanceof Level)) {
-          level = new Level(level);
+      new_level(cfg) {
+        var level;
+        if (this.levels[cfg.name] != null) {
+          throw new Error(`Ω__42 level ${rpr(level.name)} elready exists`);
         }
-        if (this.levels[level.name] != null) {
-          throw new Error(`Ω__38 level ${rpr(level.name)} elready exists`);
-        }
+        level = new Level({
+          ...cfg,
+          grammar: this
+        });
         this.levels[level.name] = level;
+        if (this.start == null) {
+          this.start = level;
+        }
+        if (this.start_name == null) {
+          this.start_name = level.name;
+        }
         return level;
       }
 
       //---------------------------------------------------------------------------------------------------------
       tokenize(source) {
-        var groups, groups_rpr, hit, jump, jump_rpr, lexeme, name, start, stop, token;
+        var fqname, groups, groups_rpr, hit, jump, jump_literal, jump_rpr, level, lexeme, name, start, stop, token;
         start = 0;
-        info('Ω__39', rpr(source));
+        info('Ω__43', rpr(source));
+        level = this.start;
         while (true) {
           lexeme = null;
           for (token of gnd) {
@@ -369,10 +392,10 @@ $`));
           if (lexeme == null) {
             break;
           }
-          ({name, stop, hit, jump, groups} = lexeme);
+          ({name, fqname, stop, hit, jump, jump_literal, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
-          jump_rpr = jump != null ? rpr(jump) : '';
-          help('Ω__40', f`${start}:>3.0f;:${stop}:<3.0f; ${name}:>15c;: ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          jump_rpr = jump_literal != null ? jump_literal : '';
+          help('Ω__44', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
           start = stop;
         }
         return null;
@@ -397,10 +420,10 @@ $`));
           if (value == null) {
             continue;
           }
-          urge('Ω__47', rpr(jump_literal), GUY.trm.grey(key), rpr(value));
+          urge('Ω__45', rpr(jump_literal), GUY.trm.grey(key), rpr(value));
         }
       } else {
-        urge('Ω__48', rpr(jump_literal), null);
+        urge('Ω__46', rpr(jump_literal), null);
       }
       return null;
     };
@@ -427,6 +450,7 @@ $`));
     string12 = g.new_level({
       name: 'string12'
     });
+    //.........................................................................................................
     gnd.new_token({
       name: 'name',
       matcher: rx`(?<initial>[A-Z])[a-z]*`
@@ -461,19 +485,24 @@ $`));
       name: 'ws',
       matcher: rx`\s+`
     });
+    //.........................................................................................................
     string11.new_token({
-      name: 'text',
+      name: 'string11_stop',
       matcher: rx`'`,
       jump: '].'
     });
+    string11.new_token({
+      name: 'text',
+      matcher: rx`[^']*`
+    });
     //.........................................................................................................
-    debug('Ω__41', g);
-    debug('Ω__42', g.levels);
-    debug('Ω__43', g.levels.gnd);
-    debug('Ω__44', g.levels.gnd.tokens);
-    debug('Ω__45', gnd);
+    debug('Ω__47', g);
+    debug('Ω__48', g.levels);
+    debug('Ω__49', g.levels.gnd);
+    debug('Ω__50', g.levels.gnd.tokens);
+    debug('Ω__51', gnd);
     for (token of gnd) {
-      debug('Ω__46', token);
+      debug('Ω__52', token);
     }
     //.........................................................................................................
     texts = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
