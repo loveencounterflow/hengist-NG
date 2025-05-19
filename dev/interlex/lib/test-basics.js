@@ -289,35 +289,13 @@
         (() => {          // { Grammar
           //   rx      } = require '../../../apps/interlex'
           //.....................................................................................................
-          var VALID_FLAGS, new_regex_tag, regex, rx, Ωilxt__69;
-          ({regex} = require('../../../apps/interlex/node_modules/regex'));
-          // thx to https://github.com/loveencounterflow/coffeescript/commit/27e0e4cfee65ec7e1404240ccec6389b85ae9e69
-          VALID_FLAGS = /^(?!.*(.).*\1)[dgimsuvy]*$/;
-          new_regex_tag = function(flags = 'dy') {
-            var R;
-            R = function(...P) {
-              return regex(...P);
-            };
-            return new Proxy(R, {
-              get: function(target, key) {
-                var local_flags;
-                if (key === Symbol.toStringTag) {
-                  return void 0;
-                }
-                local_flags = [...((new Set(flags)).union(new Set(key)))].join('');
-                urge('Ωilxt__64', "local_flags", rpr(local_flags), VALID_FLAGS.test(local_flags));
-                if (!VALID_FLAGS.test(local_flags)) {
-                  throw new Error(`invalid flags present in ${rpr(key)}`);
-                }
-                return target(local_flags);
-              }
-            });
-          };
-          debug('Ωilxt__65', rx = new_regex_tag('dy'));
-          debug('Ωilxt__66', (new_regex_tag('dy'))`[a-z]`);
-          debug('Ωilxt__67', (new_regex_tag('dy')).si);
-          debug('Ωilxt__68', (new_regex_tag('dy')).si`[a-z]`);
-          return this.throws((Ωilxt__69 = function() {
+          var new_regex_tag, regex, rx, Ωilxt__68;
+          ({rx, regex, new_regex_tag} = require('../../../apps/interlex'));
+          debug('Ωilxt__64', rx = new_regex_tag('dy'));
+          debug('Ωilxt__65', (new_regex_tag('dy'))`[a-z]`);
+          debug('Ωilxt__66', (new_regex_tag('dy')).si);
+          debug('Ωilxt__67', (new_regex_tag('dy')).si`[a-z]`);
+          return this.throws((Ωilxt__68 = function() {
             return (new_regex_tag('dy')).ab`[a-z]`;
           }), /invalid flags/);
         })();
@@ -332,66 +310,18 @@
       },
       //-------------------------------------------------------------------------------------------------------
       rx_flags: function() {
-        var new_regex_tag, rx;
+        var new_regex_tag, rx, Ωilxt__69, Ωilxt__70, Ωilxt__72;
         ({rx, new_regex_tag} = require('../../../apps/interlex'));
-        (() => {          //.....................................................................................................
-          var re, Ωilxt__70, Ωilxt__71, Ωilxt__72, Ωilxt__73, Ωilxt__74, Ωilxt__75, Ωilxt__76, Ωilxt__77;
-          re = rx`x`;
-          this.eq((Ωilxt__70 = function() {
-            return re.hasIndices;
-          }), true);
-          this.eq((Ωilxt__71 = function() {
-            return re.global;
-          }), false);
-          this.eq((Ωilxt__72 = function() {
-            return re.ignoreCase;
-          }), false);
-          this.eq((Ωilxt__73 = function() {
-            return re.multiline;
-          }), false);
-          this.eq((Ωilxt__74 = function() {
-            return re.dotAll;
-          }), false);
-          this.eq((Ωilxt__75 = function() {
-            return re.unicode;
-          }), false);
-          this.eq((Ωilxt__76 = function() {
-            return re.unicodeSets;
-          }), true);
-          this.eq((Ωilxt__77 = function() {
-            return re.sticky;
-          }), true);
-          return null;
-        })();
-        (() => {          //.....................................................................................................
-          var re, Ωilxt__78, Ωilxt__79, Ωilxt__80, Ωilxt__81, Ωilxt__82, Ωilxt__83, Ωilxt__84, Ωilxt__85;
-          re = rx.si`x`;
-          this.eq((Ωilxt__78 = function() {
-            return re.hasIndices;
-          }), true);
-          this.eq((Ωilxt__79 = function() {
-            return re.global;
-          }), false);
-          this.eq((Ωilxt__80 = function() {
-            return re.ignoreCase;
-          }), true);
-          this.eq((Ωilxt__81 = function() {
-            return re.multiline;
-          }), false);
-          this.eq((Ωilxt__82 = function() {
-            return re.dotAll;
-          }), true);
-          this.eq((Ωilxt__83 = function() {
-            return re.unicode;
-          }), false);
-          this.eq((Ωilxt__84 = function() {
-            return re.unicodeSets;
-          }), true);
-          this.eq((Ωilxt__85 = function() {
-            return re.sticky;
-          }), true);
-          return null;
-        })();
+        this.eq((Ωilxt__69 = function() {
+          return (rx`x`).flags;
+        }), 'dvy');
+        this.eq((Ωilxt__70 = function() {
+          return (rx.si`x`).flags;
+        }), 'disvy');
+        // @eq ( Ωilxt__71 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
+        this.eq((Ωilxt__72 = function() {
+          return (rx.y`x`).flags;
+        }), 'dvy');
         //.....................................................................................................
         return null;
       },
@@ -431,63 +361,63 @@
           return g;
         };
         (() => {          //.....................................................................................................
-          var g, matcher, probe, probes_and_matchers, tokens, x, Ωilxt__86, Ωilxt__87, Ωilxt__88, Ωilxt__89, Ωilxt__92;
+          var g, matcher, probe, probes_and_matchers, tokens, x, Ωilxt__73, Ωilxt__74, Ωilxt__75, Ωilxt__76, Ωilxt__79;
           g = new_grammar();
-          this.eq((Ωilxt__86 = function() {
+          this.eq((Ωilxt__73 = function() {
             return g.cfg.counter_name;
           }), 'line_nr');
-          this.eq((Ωilxt__87 = function() {
+          this.eq((Ωilxt__74 = function() {
             return g.cfg.counter_step;
           }), +1);
-          this.eq((Ωilxt__88 = function() {
+          this.eq((Ωilxt__75 = function() {
             return g.cfg.counter_value;
           }), 1);
-          this.eq((Ωilxt__89 = function() {
+          this.eq((Ωilxt__76 = function() {
             return g.state.count;
           }), 1);
           probes_and_matchers = [["1st line", 1], ["2nd line", 2], ["3rd line", 3], ["4th line (and EOF)", 4]];
 //...................................................................................................
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
-            info('Ωilxt__90', rpr(probe));
+            info('Ωilxt__77', rpr(probe));
             tokens = g.get_tokens(probe);
-            // urge 'Ωilxt__91', tokens
-            this.eq((Ωilxt__92 = function() {
+            urge('Ωilxt__78', tokens);
+            this.eq((Ωilxt__79 = function() {
               return tokens[0].line_nr;
             }), matcher);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, matcher, probe, probes_and_matchers, tokens, x, Ωilxt_102, Ωilxt__93, Ωilxt__94, Ωilxt__95, Ωilxt__96;
+          var g, matcher, probe, probes_and_matchers, tokens, x, Ωilxt__80, Ωilxt__81, Ωilxt__82, Ωilxt__83, Ωilxt__89;
           g = new_grammar({
             counter_name: 'test_id',
             counter_step: -1,
             counter_value: 10
           });
-          this.eq((Ωilxt__93 = function() {
+          this.eq((Ωilxt__80 = function() {
             return g.cfg.counter_name;
           }), 'test_id');
-          this.eq((Ωilxt__94 = function() {
+          this.eq((Ωilxt__81 = function() {
             return g.cfg.counter_step;
           }), -1);
-          this.eq((Ωilxt__95 = function() {
+          this.eq((Ωilxt__82 = function() {
             return g.cfg.counter_value;
           }), 10);
-          this.eq((Ωilxt__96 = function() {
+          this.eq((Ωilxt__83 = function() {
             return g.state.count;
           }), 10);
           probes_and_matchers = [["1st line", 10], ["2nd line", 9], ["3rd line", 8], ["4th line (and EOF)", 7]];
 //...................................................................................................
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
-            info('Ωilxt__97', rpr(probe));
+            info('Ωilxt__84', rpr(probe));
             tokens = g.get_tokens(probe);
-            // urge 'Ωilxt__98', tokens
-            urge('Ωilxt__99', g);
-            urge('Ωilxt_100', g.cfg);
-            urge('Ωilxt_101', g.state);
-            this.eq((Ωilxt_102 = function() {
+            // urge 'Ωilxt__85', tokens
+            urge('Ωilxt__86', g);
+            urge('Ωilxt__87', g.cfg);
+            urge('Ωilxt__88', g.state);
+            this.eq((Ωilxt__89 = function() {
               return tokens[0].test_id;
             }), matcher);
           }
@@ -516,8 +446,8 @@
         string12 = g.new_level({
           name: 'string12'
         });
-        // debug 'Ωilxt_103', [ string11, string12, ]
-        // console.debug 'Ωilxt_104', [ string11, string12, ]
+        // debug 'Ωilxt__90', [ string11, string12, ]
+        // console.debug 'Ωilxt__91', [ string11, string12, ]
         // process.exit 111
         //.........................................................................................................
         gnd.new_token({
@@ -565,13 +495,13 @@
           matcher: rx`[^']*`
         });
         //.........................................................................................................
-        debug('Ωilxt_105', g);
-        debug('Ωilxt_106', g.levels);
-        debug('Ωilxt_107', g.levels.gnd);
-        debug('Ωilxt_108', g.levels.gnd.tokens);
-        debug('Ωilxt_109', gnd);
+        debug('Ωilxt__92', g);
+        debug('Ωilxt__93', g.levels);
+        debug('Ωilxt__94', g.levels.gnd);
+        debug('Ωilxt__95', g.levels.gnd.tokens);
+        debug('Ωilxt__96', gnd);
         for (token of gnd) {
-          debug('Ωilxt_110', token);
+          debug('Ωilxt__97', token);
         }
         //.........................................................................................................
         show_lexeme = function(lexeme) {
@@ -579,13 +509,13 @@
           ({name, fqname, start, stop, hit, jump, jump_spec, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
           jump_rpr = jump_spec != null ? jump_spec : '';
-          return urge('Ωilxt_111', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          return urge('Ωilxt__98', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
         };
         //.........................................................................................................
         sources = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
         for (source of sources) {
-          info('Ωilxt_112', rpr(source));
+          info('Ωilxt__99', rpr(source));
           for (lexeme of g.walk_tokens(source)) {
             show_lexeme(lexeme);
           }
@@ -602,24 +532,25 @@
       (new Test({
         throw_on_error: true
       })).test(this.interlex_tasks);
-      (() => {})();      // ( new Test { throw_on_error: true, } ).test { new_regex_tag_preview: @interlex_tasks.basics.new_regex_tag_preview, }
+      (() => {})();      // ( new Test { throw_on_error: true, } ).test { numbering: @interlex_tasks.basics.numbering, }
+      // ( new Test { throw_on_error: true, } ).test { demo: @interlex_tasks.demo.demo, }
       // demo()
       // demo_jsidentifier()
       return f = function() {
         var match;
-        help('Ωilxt_113', Array.from('a🈯z'));
-        help('Ωilxt_114', 'a🈯z'.split(/(.)/u));
-        help('Ωilxt_115', 'a🈯z'.split(/(.)/v));
-        help('Ωilxt_116', 'a🈯z'.split(/(.)/d));
-        help('Ωilxt_117', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
-        help('Ωilxt_118', {...match.groups});
-        return help('Ωilxt_119', {...match.indices.groups});
+        help('Ωilxt_100', Array.from('a🈯z'));
+        help('Ωilxt_101', 'a🈯z'.split(/(.)/u));
+        help('Ωilxt_102', 'a🈯z'.split(/(.)/v));
+        help('Ωilxt_103', 'a🈯z'.split(/(.)/d));
+        help('Ωilxt_104', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
+        help('Ωilxt_105', {...match.groups});
+        return help('Ωilxt_106', {...match.indices.groups});
       };
     })();
   }
 
-  // help 'Ωilxt_120', rx"."
-// help 'Ωilxt_121', rx/./
+  // help 'Ωilxt_107', rx"."
+// help 'Ωilxt_108', rx/./
 
 }).call(this);
 

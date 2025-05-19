@@ -154,24 +154,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #   rx      } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        { regex } = require '../../../apps/interlex/node_modules/regex'
-        # thx to https://github.com/loveencounterflow/coffeescript/commit/27e0e4cfee65ec7e1404240ccec6389b85ae9e69
-        VALID_FLAGS  = /^(?!.*(.).*\1)[dgimsuvy]*$/
-        new_regex_tag = ( flags = 'dy' ) ->
-          R = ( P... ) -> regex P...
-          return new Proxy R,
-            get: ( target, key ) ->
-              return undefined if key is Symbol.toStringTag
-              local_flags = [ ( ( new Set flags ).union new Set key )..., ].join ''
-              urge 'Ωilxt__64', "local_flags", ( rpr local_flags ), VALID_FLAGS.test local_flags
-              unless VALID_FLAGS.test local_flags
-                throw new Error "invalid flags present in #{rpr key}"
-              return target local_flags
-        debug 'Ωilxt__65', rx = new_regex_tag 'dy'
-        debug 'Ωilxt__66', ( new_regex_tag 'dy' )"[a-z]"
-        debug 'Ωilxt__67', ( new_regex_tag 'dy' ).si
-        debug 'Ωilxt__68', ( new_regex_tag 'dy' ).si"[a-z]"
-        @throws ( Ωilxt__69 = -> ( new_regex_tag 'dy' ).ab"[a-z]" ), /invalid flags/
+        { rx
+          regex
+          new_regex_tag } = require '../../../apps/interlex'
+        debug 'Ωilxt__64', rx = new_regex_tag 'dy'
+        debug 'Ωilxt__65', ( new_regex_tag 'dy' )"[a-z]"
+        debug 'Ωilxt__66', ( new_regex_tag 'dy' ).si
+        debug 'Ωilxt__67', ( new_regex_tag 'dy' ).si"[a-z]"
+        @throws ( Ωilxt__68 = -> ( new_regex_tag 'dy' ).ab"[a-z]" ), /invalid flags/
         # rx"x"
         # ( rx 's' )
         # debug ( rx 's' )"x#{/a/i}"
@@ -185,30 +175,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
     rx_flags: ->
       { rx
         new_regex_tag } = require '../../../apps/interlex'
-      #.....................................................................................................
-      do =>
-        re = rx"x"
-        @eq ( Ωilxt__70 = -> re.hasIndices    ), true
-        @eq ( Ωilxt__71 = -> re.global        ), false
-        @eq ( Ωilxt__72 = -> re.ignoreCase    ), false
-        @eq ( Ωilxt__73 = -> re.multiline     ), false
-        @eq ( Ωilxt__74 = -> re.dotAll        ), false
-        @eq ( Ωilxt__75 = -> re.unicode       ), false
-        @eq ( Ωilxt__76 = -> re.unicodeSets   ), true
-        @eq ( Ωilxt__77 = -> re.sticky        ), true
-        return null
-      #.....................................................................................................
-      do =>
-        re = rx.si"x"
-        @eq ( Ωilxt__78 = -> re.hasIndices    ), true
-        @eq ( Ωilxt__79 = -> re.global        ), false
-        @eq ( Ωilxt__80 = -> re.ignoreCase    ), true
-        @eq ( Ωilxt__81 = -> re.multiline     ), false
-        @eq ( Ωilxt__82 = -> re.dotAll        ), true
-        @eq ( Ωilxt__83 = -> re.unicode       ), false
-        @eq ( Ωilxt__84 = -> re.unicodeSets   ), true
-        @eq ( Ωilxt__85 = -> re.sticky        ), true
-        return null
+      @eq ( Ωilxt__69 = -> ( rx"x"        ).flags ), 'dvy'
+      @eq ( Ωilxt__70 = -> ( rx.si"x"     ).flags ), 'disvy'
+      # @eq ( Ωilxt__71 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
+      @eq ( Ωilxt__72 = -> ( rx.y"x"      ).flags ), 'dvy'
       #.....................................................................................................
       return null
 
@@ -231,10 +201,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g = new_grammar()
-        @eq ( Ωilxt__86 = -> g.cfg.counter_name   ), 'line_nr'
-        @eq ( Ωilxt__87 = -> g.cfg.counter_step   ), +1
-        @eq ( Ωilxt__88 = -> g.cfg.counter_value  ), 1
-        @eq ( Ωilxt__89 = -> g.state.count        ), 1
+        @eq ( Ωilxt__73 = -> g.cfg.counter_name   ), 'line_nr'
+        @eq ( Ωilxt__74 = -> g.cfg.counter_step   ), +1
+        @eq ( Ωilxt__75 = -> g.cfg.counter_value  ), 1
+        @eq ( Ωilxt__76 = -> g.state.count        ), 1
         probes_and_matchers = [
           [ "1st line",           1, ]
           [ "2nd line",           2, ]
@@ -242,18 +212,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
           [ "4th line (and EOF)", 4, ] ]
         #...................................................................................................
         for [ probe, matcher, ] from probes_and_matchers
-          info 'Ωilxt__90', rpr probe
+          info 'Ωilxt__77', rpr probe
           tokens = g.get_tokens probe
-          # urge 'Ωilxt__91', tokens
-          @eq ( Ωilxt__92 = -> tokens[ 0 ].line_nr ), matcher
+          urge 'Ωilxt__78', tokens
+          @eq ( Ωilxt__79 = -> tokens[ 0 ].line_nr ), matcher
         return null
       #.....................................................................................................
       do =>
         g = new_grammar { counter_name: 'test_id', counter_step: -1, counter_value: 10, }
-        @eq ( Ωilxt__93 = -> g.cfg.counter_name   ), 'test_id'
-        @eq ( Ωilxt__94 = -> g.cfg.counter_step   ), -1
-        @eq ( Ωilxt__95 = -> g.cfg.counter_value  ), 10
-        @eq ( Ωilxt__96 = -> g.state.count        ), 10
+        @eq ( Ωilxt__80 = -> g.cfg.counter_name   ), 'test_id'
+        @eq ( Ωilxt__81 = -> g.cfg.counter_step   ), -1
+        @eq ( Ωilxt__82 = -> g.cfg.counter_value  ), 10
+        @eq ( Ωilxt__83 = -> g.state.count        ), 10
         probes_and_matchers = [
           [ "1st line",           10, ]
           [ "2nd line",           9, ]
@@ -261,13 +231,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
           [ "4th line (and EOF)", 7, ] ]
         #...................................................................................................
         for [ probe, matcher, ] from probes_and_matchers
-          info 'Ωilxt__97', rpr probe
+          info 'Ωilxt__84', rpr probe
           tokens = g.get_tokens probe
-          # urge 'Ωilxt__98', tokens
-          urge 'Ωilxt__99', g
-          urge 'Ωilxt_100', g.cfg
-          urge 'Ωilxt_101', g.state
-          @eq ( Ωilxt_102 = -> tokens[ 0 ].test_id ), matcher
+          # urge 'Ωilxt__85', tokens
+          urge 'Ωilxt__86', g
+          urge 'Ωilxt__87', g.cfg
+          urge 'Ωilxt__88', g.state
+          @eq ( Ωilxt__89 = -> tokens[ 0 ].test_id ), matcher
         return null
       #.....................................................................................................
       return null
@@ -285,8 +255,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       string12  = g.new_level { name: 'string12', }
-      # debug 'Ωilxt_103', [ string11, string12, ]
-      # console.debug 'Ωilxt_104', [ string11, string12, ]
+      # debug 'Ωilxt__90', [ string11, string12, ]
+      # console.debug 'Ωilxt__91', [ string11, string12, ]
       # process.exit 111
       #.........................................................................................................
       gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
@@ -301,12 +271,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
       string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..', }
       string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
       #.........................................................................................................
-      debug 'Ωilxt_105', g
-      debug 'Ωilxt_106', g.levels
-      debug 'Ωilxt_107', g.levels.gnd
-      debug 'Ωilxt_108', g.levels.gnd.tokens
-      debug 'Ωilxt_109', gnd
-      debug 'Ωilxt_110', token for token from gnd
+      debug 'Ωilxt__92', g
+      debug 'Ωilxt__93', g.levels
+      debug 'Ωilxt__94', g.levels.gnd
+      debug 'Ωilxt__95', g.levels.gnd.tokens
+      debug 'Ωilxt__96', gnd
+      debug 'Ωilxt__97', token for token from gnd
       #.........................................................................................................
       show_lexeme = ( lexeme ) ->
         { name
@@ -319,7 +289,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
         jump_rpr    = jump_spec ? ''
-        urge 'Ωilxt_111', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        urge 'Ωilxt__98', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
       #.........................................................................................................
       sources = [
         "Alice in Cairo 1912 (approximately)"
@@ -327,7 +297,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         ]
       #.........................................................................................................
       for source from sources
-        info 'Ωilxt_112', rpr source
+        info 'Ωilxt__99', rpr source
         for lexeme from g.walk_tokens source
           show_lexeme lexeme
       #.........................................................................................................
@@ -337,19 +307,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #===========================================================================================================
 if module is require.main then await do =>
   ( new Test { throw_on_error: true, } ).test @interlex_tasks
-  # ( new Test { throw_on_error: true, } ).test { new_regex_tag_preview: @interlex_tasks.basics.new_regex_tag_preview, }
+  # ( new Test { throw_on_error: true, } ).test { numbering: @interlex_tasks.basics.numbering, }
+  # ( new Test { throw_on_error: true, } ).test { demo: @interlex_tasks.demo.demo, }
   # demo()
   # demo_jsidentifier()
   do =>
   f = ->
-    help 'Ωilxt_113', Array.from 'a🈯z'
-    help 'Ωilxt_114', 'a🈯z'.split /(.)/u
-    help 'Ωilxt_115', 'a🈯z'.split( /(.)/v )
-    help 'Ωilxt_116', 'a🈯z'.split( /(.)/d )
-    help 'Ωilxt_117', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
-    help 'Ωilxt_118', { match.groups..., }
-    help 'Ωilxt_119', { match.indices.groups..., }
-    # help 'Ωilxt_120', rx"."
-    # help 'Ωilxt_121', rx/./
+    help 'Ωilxt_100', Array.from 'a🈯z'
+    help 'Ωilxt_101', 'a🈯z'.split /(.)/u
+    help 'Ωilxt_102', 'a🈯z'.split( /(.)/v )
+    help 'Ωilxt_103', 'a🈯z'.split( /(.)/d )
+    help 'Ωilxt_104', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
+    help 'Ωilxt_105', { match.groups..., }
+    help 'Ωilxt_106', { match.indices.groups..., }
+    # help 'Ωilxt_107', rx"."
+    # help 'Ωilxt_108', rx/./
 
 
