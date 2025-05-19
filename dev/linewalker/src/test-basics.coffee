@@ -1,35 +1,36 @@
 
 'use strict'
 
+GUY                       = require 'guy'
+{ alert
+  debug
+  help
+  info
+  plain
+  praise
+  urge
+  warn
+  whisper }               = GUY.trm.get_loggers 'intertype/test-basics'
+{ rpr
+  inspect
+  echo
+  reverse
+  log     }               = GUY.trm
+# WGUY                      = require '../../../apps/webguy'
+GTNG                      = require '../../../apps/guy-test-NG'
+{ Test                  } = GTNG
 
-############################################################################################################
-PATH                      = require 'path'
-FS                        = require 'fs'
-#...........................................................................................................
-CND                       = require 'cnd'
-rpr                       = CND.rpr
-badge                     = 'GUY/TESTS/WALK-LINES'
-log                       = CND.get_logger 'plain',     badge
-info                      = CND.get_logger 'info',      badge
-whisper                   = CND.get_logger 'whisper',   badge
-alert                     = CND.get_logger 'alert',     badge
-debug                     = CND.get_logger 'debug',     badge
-warn                      = CND.get_logger 'warn',      badge
-help                      = CND.get_logger 'help',      badge
-urge                      = CND.get_logger 'urge',      badge
-echo                      = CND.echo.bind CND
-#...........................................................................................................
-test                      = require '../../../apps/guy-test'
-PATH                      = require 'path'
-FS                        = require 'fs'
-H                         = require './helpers'
-types                     = new ( require 'intertype' ).Intertype
-{ freeze }                = require 'letsfreezethat'
-{ isa
-  type_of
-  validate
-  validate_list_of
-  equals }                = types.export()
+
+# PATH                      = require 'path'
+# FS                        = require 'fs'
+# H                         = require './helpers'
+# types                     = new ( require 'intertype' ).Intertype
+# { freeze }                = require 'letsfreezethat'
+# { isa
+#   type_of
+#   validate
+#   validate_list_of
+#   equals }                = types.export()
 
 #===========================================================================================================
 # TESTS FOR STR
@@ -481,34 +482,6 @@ types                     = new ( require 'intertype' ).Intertype
 
 
 
-############################################################################################################
-if require.main is module then do =>
-  # @GUY_fs__walk_lines_with_positions()
-  # test @GUY_fs__walk_lines_with_positions
-  # test @GUY_fs__walk_lines__walk_advancements
-  # @GUY_str_walk_lines_with_positions()
-  # test @GUY_str_walk_lines_with_positions
-  # test @GUY_fs_walk_lines_with_positions
-  # test @GUY_fs_walk_lines_with_positions_no_encoding
-  # test @
-  # test @GUY_fs_walk_lines_prepend_append
-  test @GUY_str_walk_lines_prepend_append
-  # test @GUY_fs_walk_lines
-  # @GUY_str_walk_lines()
-  # test @GUY_str_walk_lines
-  # @GUY_fs__walk_lines__advance()
-  # test @GUY_fs__walk_lines__advance
-  # @GUY_fs_walk_buffers()
-  # test @GUY_fs_walk_buffers
-  # test @GUY_fs_walk_buffers_walk_lines_reject_chunk_size_lt_1
-  # test @GUY_fs_walk_buffers_with_positions
-
-
-
-
-
-
-
 
 
 
@@ -586,27 +559,6 @@ if require.main is module then do =>
 
 
 
-
-'use strict'
-
-GUY                       = require 'guy'
-{ alert
-  debug
-  help
-  info
-  plain
-  praise
-  urge
-  warn
-  whisper }               = GUY.trm.get_loggers 'intertype/test-basics'
-{ rpr
-  inspect
-  echo
-  reverse
-  log     }               = GUY.trm
-# WGUY                      = require '../../../apps/webguy'
-GTNG                      = require '../../../apps/guy-test-NG'
-{ Test                  } = GTNG
 
 
 
@@ -614,18 +566,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
 ############################################################################################################
 #
 #===========================================================================================================
-@cleartype_tasks =
+@linewalker_tasks =
 
   #=========================================================================================================
   basics:
 
     #-------------------------------------------------------------------------------------------------------
-    builtins: ->
-      { Cleartype
-        std } = require '../../../apps/cleartype'
-      ct = new Cleartype()
+    module_exports: ->
+      { walk_lines
+        walk_lines_with_positions } = require '../../../apps/linewalker'
       #.....................................................................................................
-      @eq ( Ωctt___1 = -> ct.isa std.primitive, 1          ), true
+      @eq ( Ωlwkt___1 = -> typeof walk_lines                 ), 'function'
+      @eq ( Ωlwkt___2 = -> typeof walk_lines_with_positions  ), 'function'
       #.....................................................................................................
       return null
 
@@ -633,5 +585,5 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 if module is require.main then await do =>
-  ( new Test { throw_on_error: true, } ).test @cleartype_tasks
+  ( new Test { throw_on_error: true, } ).test @linewalker_tasks
 
