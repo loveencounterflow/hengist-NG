@@ -350,7 +350,7 @@
       },
       //-------------------------------------------------------------------------------------------------------
       rx_flags: function() {
-        var new_regex_tag, rx, Ωilxt__80, Ωilxt__81, Ωilxt__83;
+        var new_regex_tag, rx, Ωilxt__80, Ωilxt__81, Ωilxt__83, Ωilxt__84;
         ({rx, new_regex_tag} = require('../../../apps/interlex'));
         this.eq((Ωilxt__80 = function() {
           return (rx`x`).flags;
@@ -362,6 +362,9 @@
         this.eq((Ωilxt__83 = function() {
           return (rx.y`x`).flags;
         }), 'dvy');
+        this.eq((Ωilxt__84 = function() {
+          return rpr(rx`[abc]+`);
+        }), '/[abc]+/dvy');
         //.....................................................................................................
         return null;
       },
@@ -401,66 +404,112 @@
           return g;
         };
         (() => {          //.....................................................................................................
-          var g, matcher, probe, probes_and_matchers, tokens, x, Ωilxt__84, Ωilxt__85, Ωilxt__86, Ωilxt__87, Ωilxt__90;
+          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt__85, Ωilxt__86, Ωilxt__87, Ωilxt__88, Ωilxt__91;
           g = new_grammar();
-          this.eq((Ωilxt__84 = function() {
+          this.eq((Ωilxt__85 = function() {
             return g.cfg.counter_name;
           }), 'line_nr');
-          this.eq((Ωilxt__85 = function() {
+          this.eq((Ωilxt__86 = function() {
             return g.cfg.counter_step;
           }), +1);
-          this.eq((Ωilxt__86 = function() {
+          this.eq((Ωilxt__87 = function() {
             return g.cfg.counter_value;
           }), 1);
-          this.eq((Ωilxt__87 = function() {
+          this.eq((Ωilxt__88 = function() {
             return g.state.count;
           }), 1);
           probes_and_matchers = [["1st line", 1], ["2nd line", 2], ["3rd line", 3], ["4th line (and EOF)", 4]];
 //...................................................................................................
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
-            info('Ωilxt__88', rpr(probe));
-            tokens = g.get_tokens(probe);
-            urge('Ωilxt__89', tokens);
-            this.eq((Ωilxt__90 = function() {
-              return tokens[0].line_nr;
+            info('Ωilxt__89', rpr(probe));
+            lexemes = g.get_lexemes(probe);
+            urge('Ωilxt__90', lexemes);
+            this.eq((Ωilxt__91 = function() {
+              return lexemes[0].line_nr;
             }), matcher);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, matcher, probe, probes_and_matchers, tokens, x, Ωilxt_100, Ωilxt__91, Ωilxt__92, Ωilxt__93, Ωilxt__94;
+          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_101, Ωilxt__92, Ωilxt__93, Ωilxt__94, Ωilxt__95;
           g = new_grammar({
             counter_name: 'test_id',
             counter_step: -1,
             counter_value: 10
           });
-          this.eq((Ωilxt__91 = function() {
+          this.eq((Ωilxt__92 = function() {
             return g.cfg.counter_name;
           }), 'test_id');
-          this.eq((Ωilxt__92 = function() {
+          this.eq((Ωilxt__93 = function() {
             return g.cfg.counter_step;
           }), -1);
-          this.eq((Ωilxt__93 = function() {
+          this.eq((Ωilxt__94 = function() {
             return g.cfg.counter_value;
           }), 10);
-          this.eq((Ωilxt__94 = function() {
+          this.eq((Ωilxt__95 = function() {
             return g.state.count;
           }), 10);
           probes_and_matchers = [["1st line", 10], ["2nd line", 9], ["3rd line", 8], ["4th line (and EOF)", 7]];
 //...................................................................................................
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
-            info('Ωilxt__95', rpr(probe));
-            tokens = g.get_tokens(probe);
-            // urge 'Ωilxt__96', tokens
-            urge('Ωilxt__97', g);
-            urge('Ωilxt__98', g.cfg);
-            urge('Ωilxt__99', g.state);
-            this.eq((Ωilxt_100 = function() {
-              return tokens[0].test_id;
+            info('Ωilxt__96', rpr(probe));
+            lexemes = g.get_lexemes(probe);
+            // urge 'Ωilxt__97', lexemes
+            urge('Ωilxt__98', g);
+            urge('Ωilxt__99', g.cfg);
+            urge('Ωilxt_100', g.state);
+            this.eq((Ωilxt_101 = function() {
+              return lexemes[0].test_id;
             }), matcher);
           }
+          return null;
+        })();
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      can_use_plain_regexes: function() {
+        var Grammar, condense_lexemes, rx;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        //-----------------------------------------------------------------------------------------------------
+        condense_lexemes = function(lexemes) {};
+        (() => {          //-----------------------------------------------------------------------------------------------------
+          var g, gnd, lexemes, matcher, probe, probes_and_matchers, x;
+          g = new Grammar({
+            name: 'g'
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          //...................................................................................................
+          gnd.new_token({
+            name: 'name',
+            matcher: rx`(?<initial>[A-Z])[a-z]*`
+          });
+          gnd.new_token({
+            name: 'number',
+            matcher: rx`[0-9]+`
+          });
+          gnd.new_token({
+            name: 'ws',
+            matcher: rx`\s+`
+          });
+          gnd.new_token({
+            name: 'text',
+            matcher: rx`[^a-zA-Z0-9\s]+`
+          });
+          //...................................................................................................
+          probes_and_matchers = [["1st line", 1], ["2nd line", 2], ["3rd line", 3], ["4th line (and EOF)", 4]];
+//...................................................................................................
+          for (x of probes_and_matchers) {
+            [probe, matcher] = x;
+            info('Ωilxt_102', rpr(probe));
+            lexemes = g.get_lexemes(probe);
+            urge('Ωilxt_103', lexemes);
+          }
+          // @eq ( Ωilxt_104 = -> tokens[ 0 ].line_nr ), matcher
           return null;
         })();
         //.....................................................................................................
@@ -486,8 +535,8 @@
         string12 = g.new_level({
           name: 'string12'
         });
-        // debug 'Ωilxt_101', [ string11, string12, ]
-        // console.debug 'Ωilxt_102', [ string11, string12, ]
+        // debug 'Ωilxt_105', [ string11, string12, ]
+        // console.debug 'Ωilxt_106', [ string11, string12, ]
         // process.exit 111
         //.........................................................................................................
         gnd.new_token({
@@ -535,13 +584,13 @@
           matcher: rx`[^']*`
         });
         //.........................................................................................................
-        debug('Ωilxt_103', g);
-        debug('Ωilxt_104', g.levels);
-        debug('Ωilxt_105', g.levels.gnd);
-        debug('Ωilxt_106', g.levels.gnd.tokens);
-        debug('Ωilxt_107', gnd);
+        debug('Ωilxt_107', g);
+        debug('Ωilxt_108', g.levels);
+        debug('Ωilxt_109', g.levels.gnd);
+        debug('Ωilxt_110', g.levels.gnd.tokens);
+        debug('Ωilxt_111', gnd);
         for (token of gnd) {
-          debug('Ωilxt_108', token);
+          debug('Ωilxt_112', token);
         }
         //.........................................................................................................
         show_lexeme = function(lexeme) {
@@ -549,14 +598,14 @@
           ({name, fqname, start, stop, hit, jump, jump_spec, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
           jump_rpr = jump_spec != null ? jump_spec : '';
-          return urge('Ωilxt_109', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          return urge('Ωilxt_113', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
         };
         //.........................................................................................................
         sources = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
         for (source of sources) {
-          info('Ωilxt_110', rpr(source));
-          for (lexeme of g.walk_tokens(source)) {
+          info('Ωilxt_114', rpr(source));
+          for (lexeme of g.walk_lexemes(source)) {
             show_lexeme(lexeme);
           }
         }
@@ -575,26 +624,26 @@
       (new Test({
         throw_on_error: true
       })).test({
-        copy_regex: this.interlex_tasks.basics.copy_regex
+        can_use_plain_regexes: this.interlex_tasks.basics.can_use_plain_regexes
       });
       (() => {})();      // ( new Test { throw_on_error: true, } ).test { demo: @interlex_tasks.demo.demo, }
       // demo()
       // demo_jsidentifier()
       return f = function() {
         var match;
-        help('Ωilxt_111', Array.from('a🈯z'));
-        help('Ωilxt_112', 'a🈯z'.split(/(.)/u));
-        help('Ωilxt_113', 'a🈯z'.split(/(.)/v));
-        help('Ωilxt_114', 'a🈯z'.split(/(.)/d));
-        help('Ωilxt_115', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
-        help('Ωilxt_116', {...match.groups});
-        return help('Ωilxt_117', {...match.indices.groups});
+        help('Ωilxt_115', Array.from('a🈯z'));
+        help('Ωilxt_116', 'a🈯z'.split(/(.)/u));
+        help('Ωilxt_117', 'a🈯z'.split(/(.)/v));
+        help('Ωilxt_118', 'a🈯z'.split(/(.)/d));
+        help('Ωilxt_119', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
+        help('Ωilxt_120', {...match.groups});
+        return help('Ωilxt_121', {...match.indices.groups});
       };
     })();
   }
 
-  // help 'Ωilxt_118', rx"."
-// help 'Ωilxt_119', rx/./
+  // help 'Ωilxt_122', rx"."
+// help 'Ωilxt_123', rx/./
 
 }).call(this);
 
