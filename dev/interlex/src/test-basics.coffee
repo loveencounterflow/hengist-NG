@@ -88,7 +88,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       return null
 
   #=========================================================================================================
-  basics:
+  regexes:
 
     #-------------------------------------------------------------------------------------------------------
     regexes: ->
@@ -116,7 +116,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    regexes_new_implementation: ->
+    new_implementation: ->
       { rx
         new_regex_tag
         internals       } = require '../../../apps/interlex'
@@ -128,43 +128,96 @@ GTNG                      = require '../../../apps/guy-test-NG'
         mandatory_flags_txt:      'dy'
         forbidden_flags_re:       /[uv]/g
         #---------------------------------------------------------------------------------------------------------
-        normalize_flags: ( flags = '' ) ->
-          ### Given a RegExp flags text, sets `d`, `y`, removes `u`, `v`, and returns sorted text with unique
-          flags. ###
-          unless ( typeof flags )
+        validate_regex_flags: ( flags ) ->
+          unless ( typeof flags ) is 'string'
             throw new Error "Ωilx__41 expected a text, got #{rpr flags}"
           unless internals.regex_flags_re.test flags
             throw new Error "Ωilx__42 illegal or duplicate flags in #{rpr flags}"
+          return flags
+        #---------------------------------------------------------------------------------------------------------
+        normalize_flags: ( flags = null ) ->
+          ### Given a RegExp `flags` text, sets `d`, `y`, removes `u`, `v`, and returns sorted text with unique
+          flags. ###
+          flags   = internals.validate_regex_flags flags ? ''
           flags   = flags.replace internals.forbidden_flags_re, ''
           flags  += internals.mandatory_flags_txt
-          return [ ( new Set flags)..., ].sort().join ''
+          return internals.get_unique_sorted_letters flags
         #---------------------------------------------------------------------------------------------------------
-        copy_regex: ( regex, new_flags ) ->
-          flags = new Set regex.flags
-          for new_flag from new_flags
-            switch true
-              when _regex_flag_lower_re.test new_flag then flags.add    new_flag
-              when _regex_flag_upper_re.test new_flag then flags.delete new_flag.toLowerCase()
-              else throw new Error "Ωilx___1 invalid regex flag #{rpr new_flag} in #{rpr new_flags}"
-          return new RegExp regex.source, [ flags..., ].join ''
-      #-----------------------------------------------------------------------------------------------------------
-      @eq ( Ωilxt__43 = -> internals.normalize_flags()                ), 'dy'
-      @eq ( Ωilxt__44 = -> internals.normalize_flags ''               ), 'dy'
-      @eq ( Ωilxt__45 = -> internals.normalize_flags 'd'              ), 'dy'
-      @eq ( Ωilxt__46 = -> internals.normalize_flags 'y'              ), 'dy'
-      @eq ( Ωilxt__47 = -> internals.normalize_flags 'dy'             ), 'dy'
-      @eq ( Ωilxt__48 = -> internals.normalize_flags 'yd'             ), 'dy'
-      #-----------------------------------------------------------------------------------------------------------
-      @eq ( Ωilxt__49 = -> internals.normalize_flags 'i'              ), 'diy'
-      @eq ( Ωilxt__50 = -> internals.normalize_flags 'g'              ), 'dgy'
-      @eq ( Ωilxt__51 = -> internals.normalize_flags 'm'              ), 'dmy'
-      @eq ( Ωilxt__52 = -> internals.normalize_flags 's'              ), 'dsy'
-      @eq ( Ωilxt__53 = -> internals.normalize_flags 'dgimsuvy'       ), 'dgimsy'
-      #-----------------------------------------------------------------------------------------------------------
-      @throws ( Ωilxt__54 = -> internals.normalize_flags 'a'          ), /illegal or duplicate flags/
-      @throws ( Ωilxt__55 = -> internals.normalize_flags 'yy'         ), /illegal or duplicate flags/
+        get_unique_sorted_letters: ( text ) -> [ ( new Set text )..., ].sort().join ''
+        #---------------------------------------------------------------------------------------------------------
+        normalize_regex: ( regex ) ->
+          ### Given a `regex`, return a new regex with the same pattern but normalized flags. ###
+          unless regex instanceof RegExp
+            throw new Error "Ωilx__43 expected a regex, got #{rpr regex}"
+          return new RegExp regex.source, ( internals.normalize_flags regex.flags )
+      #-----------------------------------------------------------------------------------------------------
+      new_regex_tag = ( global_flags = null ) ->
+        global_flags  = internals.normalize_flags global_flags
+        R             = ( P... ) -> ( regex global_flags ) P...
+        return new Proxy R,
+          get: ( target, key ) ->
+            return undefined unless typeof key is 'string'
+            return regex internals.normalize_flags internals.get_unique_sorted_letters global_flags + key
+      #-----------------------------------------------------------------------------------------------------
+      @eq ( Ωilxt__44 = -> internals.normalize_flags()                ), 'dy'
+      @eq ( Ωilxt__45 = -> internals.normalize_flags undefined        ), 'dy'
+      @eq ( Ωilxt__46 = -> internals.normalize_flags null             ), 'dy'
+      @eq ( Ωilxt__47 = -> internals.normalize_flags ''               ), 'dy'
+      @eq ( Ωilxt__48 = -> internals.normalize_flags 'd'              ), 'dy'
+      @eq ( Ωilxt__49 = -> internals.normalize_flags 'y'              ), 'dy'
+      @eq ( Ωilxt__50 = -> internals.normalize_flags 'dy'             ), 'dy'
+      @eq ( Ωilxt__51 = -> internals.normalize_flags 'yd'             ), 'dy'
+      #.....................................................................................................
+      @eq ( Ωilxt__52 = -> internals.normalize_flags 'i'              ), 'diy'
+      @eq ( Ωilxt__53 = -> internals.normalize_flags 'g'              ), 'dgy'
+      @eq ( Ωilxt__54 = -> internals.normalize_flags 'm'              ), 'dmy'
+      @eq ( Ωilxt__55 = -> internals.normalize_flags 's'              ), 'dsy'
+      @eq ( Ωilxt__56 = -> internals.normalize_flags 'dgimsuvy'       ), 'dgimsy'
+      #.....................................................................................................
+      @throws ( Ωilxt__57 = -> internals.normalize_flags 'a'          ), /illegal or duplicate flags/
+      @throws ( Ωilxt__58 = -> internals.normalize_flags 'yy'         ), /illegal or duplicate flags/
+      #-----------------------------------------------------------------------------------------------------
+      @eq ( Ωilxt__59 = -> internals.normalize_regex /./              ), /./dy
+      @eq ( Ωilxt__60 = -> internals.normalize_regex /./d             ), /./dy
+      @eq ( Ωilxt__61 = -> internals.normalize_regex /./y             ), /./dy
+      @eq ( Ωilxt__62 = -> internals.normalize_regex /./dy            ), /./dy
+      @eq ( Ωilxt__63 = -> internals.normalize_regex /./yd            ), /./dy
+      #.....................................................................................................
+      @eq ( Ωilxt__64 = -> internals.normalize_regex /./i             ), /./diy
+      @eq ( Ωilxt__65 = -> internals.normalize_regex /./g             ), /./dgy
+      @eq ( Ωilxt__66 = -> internals.normalize_regex /./m             ), /./dmy
+      @eq ( Ωilxt__67 = -> internals.normalize_regex /./s             ), /./dsy
+      @eq ( Ωilxt__68 = -> internals.normalize_regex /./dgimsvy       ), /./dgimsy
+      @eq ( Ωilxt__69 = -> internals.normalize_regex /./dgimsuy       ), /./dgimsy
+      #.....................................................................................................
+      @throws ( Ωilxt__70 = -> internals.normalize_regex()            ), /expected a regex, got/
+      @throws ( Ωilxt__71 = -> internals.normalize_regex 'helo'       ), /expected a regex, got/
+      #-----------------------------------------------------------------------------------------------------
+      @eq ( Ωilxt__72 = -> ( new_regex_tag ''       )'.'              ), /./dvy
+      @eq ( Ωilxt__73 = -> ( new_regex_tag 'd'      )'.'              ), /./dvy
+      @eq ( Ωilxt__74 = -> ( new_regex_tag 'y'      )'.'              ), /./dvy
+      @eq ( Ωilxt__75 = -> ( new_regex_tag 'dy'     )'.'              ), /./dvy
+      @eq ( Ωilxt__76 = -> ( new_regex_tag 'yd'     )'.'              ), /./dvy
+      @eq ( Ωilxt__77 = -> ( new_regex_tag 'd'      ).d'.'            ), /./dvy
+      @eq ( Ωilxt__78 = -> ( new_regex_tag 'y'      ).y'.'            ), /./dvy
+      @eq ( Ωilxt__79 = -> ( new_regex_tag 'dy'     ).dy'.'           ), /./dvy
+      @eq ( Ωilxt__80 = -> ( new_regex_tag 'yd'     ).yd'.'           ), /./dvy
+      @eq ( Ωilxt__81 = -> ( new_regex_tag ''       ).d'.'            ), /./dvy
+      @eq ( Ωilxt__82 = -> ( new_regex_tag ''       ).y'.'            ), /./dvy
+      @eq ( Ωilxt__83 = -> ( new_regex_tag ''       ).dy'.'           ), /./dvy
+      @eq ( Ωilxt__84 = -> ( new_regex_tag ''       ).yd'.'           ), /./dvy
+      #.....................................................................................................
+      @eq ( Ωilxt__85 = -> ( new_regex_tag ''       ).i'.'            ), /./divy
+      @eq ( Ωilxt__86 = -> ( new_regex_tag ''       ).g'.'            ), /./dgvy
+      @eq ( Ωilxt__87 = -> ( new_regex_tag ''       ).m'.'            ), /./dmvy
+      @eq ( Ωilxt__88 = -> ( new_regex_tag ''       ).s'.'            ), /./dsvy
+      @eq ( Ωilxt__89 = -> ( new_regex_tag ''       ).dgimsvy'.'      ), /./dgimsvy
+      @eq ( Ωilxt__90 = -> ( new_regex_tag ''       ).dgimsuy'.'      ), /./dgimsvy
       #.....................................................................................................
       return null
+
+  #=========================================================================================================
+  basics:
 
     #-------------------------------------------------------------------------------------------------------
     simple_1: ->
@@ -183,49 +236,49 @@ GTNG                      = require '../../../apps/guy-test-NG'
       number_tk         = gnd.new_token { name: 'number', matcher: number_tk_matcher, }
       number_lx         = null
       #.....................................................................................................
-      @eq ( Ωilxt__69 = -> g.start_level instanceof Level                                 ), true
-      @eq ( Ωilxt__70 = -> g.start_level                                                  ), gnd
-      @eq ( Ωilxt__71 = -> g.start_level_name                                             ), 'gnd'
-      @eq ( Ωilxt__72 = -> g.name                                                         ), 'g'
-      @eq ( Ωilxt__73 = -> g.levels instanceof Object                                     ), true
-      @eq ( Ωilxt__74 = -> g.levels.gnd                                                   ), gnd
+      @eq ( Ωilxt__91 = -> g.start_level instanceof Level                                 ), true
+      @eq ( Ωilxt__92 = -> g.start_level                                                  ), gnd
+      @eq ( Ωilxt__93 = -> g.start_level_name                                             ), 'gnd'
+      @eq ( Ωilxt__94 = -> g.name                                                         ), 'g'
+      @eq ( Ωilxt__95 = -> g.levels instanceof Object                                     ), true
+      @eq ( Ωilxt__96 = -> g.levels.gnd                                                   ), gnd
       #.....................................................................................................
-      @eq ( Ωilxt__75 = -> gnd instanceof Level                                           ), true
-      @eq ( Ωilxt__76 = -> gnd.name                                                       ), 'gnd'
-      @eq ( Ωilxt__77 = -> gnd.grammar                                                    ), g
-      @eq ( Ωilxt__78 = -> gnd.tokens instanceof Array                                    ), true
-      @eq ( Ωilxt__79 = -> gnd.tokens.length                                              ), 1
-      @eq ( Ωilxt__80 = -> gnd.tokens[ 0 ]                                                ), number_tk
+      @eq ( Ωilxt__97 = -> gnd instanceof Level                                           ), true
+      @eq ( Ωilxt__98 = -> gnd.name                                                       ), 'gnd'
+      @eq ( Ωilxt__99 = -> gnd.grammar                                                    ), g
+      @eq ( Ωilxt_100 = -> gnd.tokens instanceof Array                                    ), true
+      @eq ( Ωilxt_101 = -> gnd.tokens.length                                              ), 1
+      @eq ( Ωilxt_102 = -> gnd.tokens[ 0 ]                                                ), number_tk
       #.....................................................................................................
-      @eq ( Ωilxt__81 = -> number_tk instanceof Token                                     ), true
-      @eq ( Ωilxt__82 = -> number_tk.name                                                 ), 'number'
-      @eq ( Ωilxt__83 = -> number_tk.level                                                ), gnd
-      @eq ( Ωilxt__84 = -> number_tk.grammar                                              ), g
-      @eq ( Ωilxt__85 = -> rpr number_tk.matcher                                          ), '/[0-9]+/dvy'
-      @eq ( Ωilxt__86 = -> number_tk.matcher.hasIndices                                   ), true
-      @eq ( Ωilxt__87 = -> number_tk.matcher.sticky                                       ), true
-      @eq ( Ωilxt__88 = -> number_tk.matcher.unicodeSets                                  ), true
-      @eq ( Ωilxt__89 = -> number_tk.jump                                                 ), null
-      @eq ( Ωilxt__90 = -> number_tk.jump_spec                                            ), null
+      @eq ( Ωilxt_103 = -> number_tk instanceof Token                                     ), true
+      @eq ( Ωilxt_104 = -> number_tk.name                                                 ), 'number'
+      @eq ( Ωilxt_105 = -> number_tk.level                                                ), gnd
+      @eq ( Ωilxt_106 = -> number_tk.grammar                                              ), g
+      @eq ( Ωilxt_107 = -> rpr number_tk.matcher                                          ), '/[0-9]+/dvy'
+      @eq ( Ωilxt_108 = -> number_tk.matcher.hasIndices                                   ), true
+      @eq ( Ωilxt_109 = -> number_tk.matcher.sticky                                       ), true
+      @eq ( Ωilxt_110 = -> number_tk.matcher.unicodeSets                                  ), true
+      @eq ( Ωilxt_111 = -> number_tk.jump                                                 ), null
+      @eq ( Ωilxt_112 = -> number_tk.jump_spec                                            ), null
       #.....................................................................................................
-      @eq ( Ωilxt__91 = -> ( number_lx = number_tk.match_at 0, '398ä' )?                  ), true
-      @eq ( Ωilxt__92 = -> number_lx instanceof Lexeme                                    ), true
-      @eq ( Ωilxt__93 = -> number_lx.name                                                 ), 'number'
-      @eq ( Ωilxt__94 = -> number_lx.fqname                                               ), 'gnd.number'
-      @eq ( Ωilxt__95 = -> number_lx.level                                                ), gnd
-      @eq ( Ωilxt__96 = -> number_lx.hit                                                  ), '398'
-      @eq ( Ωilxt__97 = -> number_lx.start                                                ), 0
-      @eq ( Ωilxt__98 = -> number_lx.stop                                                 ), 3
+      @eq ( Ωilxt_113 = -> ( number_lx = number_tk.match_at 0, '398ä' )?                  ), true
+      @eq ( Ωilxt_114 = -> number_lx instanceof Lexeme                                    ), true
+      @eq ( Ωilxt_115 = -> number_lx.name                                                 ), 'number'
+      @eq ( Ωilxt_116 = -> number_lx.fqname                                               ), 'gnd.number'
+      @eq ( Ωilxt_117 = -> number_lx.level                                                ), gnd
+      @eq ( Ωilxt_118 = -> number_lx.hit                                                  ), '398'
+      @eq ( Ωilxt_119 = -> number_lx.start                                                ), 0
+      @eq ( Ωilxt_120 = -> number_lx.stop                                                 ), 3
       #.....................................................................................................
-      @eq ( Ωilxt__99 = -> ( number_lx = number_tk.match_at 7, 'abcdefgh00102xyz' )?      ), false
-      @eq ( Ωilxt_100 = -> ( number_lx = number_tk.match_at 8, 'abcdefgh00102xyz' )?      ), true
-      @eq ( Ωilxt_101 = -> number_lx instanceof Lexeme                                    ), true
-      @eq ( Ωilxt_102 = -> number_lx.name                                                 ), 'number'
-      @eq ( Ωilxt_103 = -> number_lx.fqname                                               ), 'gnd.number'
-      @eq ( Ωilxt_104 = -> number_lx.level                                                ), gnd
-      @eq ( Ωilxt_105 = -> number_lx.hit                                                  ), '00102'
-      @eq ( Ωilxt_106 = -> number_lx.start                                                ), 8
-      @eq ( Ωilxt_107 = -> number_lx.stop                                                 ), 13
+      @eq ( Ωilxt_121 = -> ( number_lx = number_tk.match_at 7, 'abcdefgh00102xyz' )?      ), false
+      @eq ( Ωilxt_122 = -> ( number_lx = number_tk.match_at 8, 'abcdefgh00102xyz' )?      ), true
+      @eq ( Ωilxt_123 = -> number_lx instanceof Lexeme                                    ), true
+      @eq ( Ωilxt_124 = -> number_lx.name                                                 ), 'number'
+      @eq ( Ωilxt_125 = -> number_lx.fqname                                               ), 'gnd.number'
+      @eq ( Ωilxt_126 = -> number_lx.level                                                ), gnd
+      @eq ( Ωilxt_127 = -> number_lx.hit                                                  ), '00102'
+      @eq ( Ωilxt_128 = -> number_lx.start                                                ), 8
+      @eq ( Ωilxt_129 = -> number_lx.stop                                                 ), 13
       #.....................................................................................................
       return null
 
@@ -235,45 +288,45 @@ GTNG                      = require '../../../apps/guy-test-NG'
         regex
         new_regex_tag } = require '../../../apps/interlex'
       #.....................................................................................................
-      @eq ( Ωilxt_108 = -> typeof   new_regex_tag 'dy'                                  ), 'function'
-      @eq ( Ωilxt_109 = -> ( (      new_regex_tag 'dyis'  )"[a-z]" ) instanceof RegExp  ), true
-      @eq ( Ωilxt_110 = -> rpr (    new_regex_tag 'dyis'  )"[a-z]"                      ), '/[a-z]/disvy'
-      @eq ( Ωilxt_111 = -> typeof ( new_regex_tag 'dy'    ).si                          ), 'function'
-      @eq ( Ωilxt_112 = -> rpr (    new_regex_tag 'dy'    ).si"[a-z]"                   ), '/[a-z]/disvy'
-      @eq ( Ωilxt_113 = -> rpr (    new_regex_tag 'dys'   ).si"[a-z]"                   ), '/[a-z]/disvy'
-      @eq ( Ωilxt_114 = -> rpr (    new_regex_tag 'dys'   ).i"[a-z]"                    ), '/[a-z]/disvy'
-      @eq ( Ωilxt_115 = -> rpr (    new_regex_tag 'dysi'  )"[a-z]"                      ), '/[a-z]/disvy'
-      @eq ( Ωilxt_116 = -> rpr (    new_regex_tag 'v'     ).si"[a-z]"                   ), '/[a-z]/disvy'
-      @throws ( Ωilxt_117 = -> (    new_regex_tag 'dy'    ).ab"[a-z]"                   ), /invalid flags/
-      @throws ( Ωilxt_118 = -> (    new_regex_tag 'dyab'  )"[a-z]"                      ), /invalid flags/
+      @eq ( Ωilxt_130 = -> typeof   new_regex_tag 'dy'                                  ), 'function'
+      @eq ( Ωilxt_131 = -> ( (      new_regex_tag 'dyis'  )"[a-z]" ) instanceof RegExp  ), true
+      @eq ( Ωilxt_132 = -> rpr (    new_regex_tag 'dyis'  )"[a-z]"                      ), '/[a-z]/disvy'
+      @eq ( Ωilxt_133 = -> typeof ( new_regex_tag 'dy'    ).si                          ), 'function'
+      @eq ( Ωilxt_134 = -> rpr (    new_regex_tag 'dy'    ).si"[a-z]"                   ), '/[a-z]/disvy'
+      @eq ( Ωilxt_135 = -> rpr (    new_regex_tag 'dys'   ).si"[a-z]"                   ), '/[a-z]/disvy'
+      @eq ( Ωilxt_136 = -> rpr (    new_regex_tag 'dys'   ).i"[a-z]"                    ), '/[a-z]/disvy'
+      @eq ( Ωilxt_137 = -> rpr (    new_regex_tag 'dysi'  )"[a-z]"                      ), '/[a-z]/disvy'
+      @eq ( Ωilxt_138 = -> rpr (    new_regex_tag 'v'     ).si"[a-z]"                   ), '/[a-z]/disvy'
+      @throws ( Ωilxt_139 = -> (    new_regex_tag 'dy'    ).ab"[a-z]"                   ), /invalid flags/
+      @throws ( Ωilxt_140 = -> (    new_regex_tag 'dyab'  )"[a-z]"                      ), /invalid flags/
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
     copy_regex: ->
       { _copy_regex } = require '../../../apps/interlex'
-      @eq ( Ωilxt_119 = -> typeof _copy_regex                                         ), 'function'
-      @eq ( Ωilxt_120 = -> ( _copy_regex /[a-z]/i, 'I'          ) instanceof RegExp   ), true
-      @eq ( Ωilxt_121 = -> ( _copy_regex /[a-z]/i, 'I'          ).source              ), '[a-z]'
-      @eq ( Ωilxt_122 = -> ( _copy_regex /[a-z]/i, 'I'          ).flags               ), ''
-      @eq ( Ωilxt_123 = -> ( _copy_regex /[a-z]/i, 'Ig'         ).flags               ), 'g'
-      @eq ( Ωilxt_124 = -> ( _copy_regex /[a-z]/i, 'IgV'        ).flags               ), 'g'
-      @eq ( Ωilxt_125 = -> ( _copy_regex /[a-z]/i, 'gv'         ).flags               ), 'giv'
-      @eq ( Ωilxt_126 = -> ( _copy_regex /[a-z]/i, 'gu'         ).flags               ), 'giu'
-      @eq ( Ωilxt_127 = -> ( _copy_regex /[a-z]/igvys, 'SYVGI'  ).flags               ), ''
-      @throws ( Ωilxt_128 = -> _copy_regex /[a-z]/i, 'guv'      ), /Invalid flags supplied to RegExp constructor/
-      @throws ( Ωilxt_129 = -> _copy_regex /[a-z]/u, 'v'        ), /Invalid flags supplied to RegExp constructor/
+      @eq ( Ωilxt_141 = -> typeof _copy_regex                                         ), 'function'
+      @eq ( Ωilxt_142 = -> ( _copy_regex /[a-z]/i, 'I'          ) instanceof RegExp   ), true
+      @eq ( Ωilxt_143 = -> ( _copy_regex /[a-z]/i, 'I'          ).source              ), '[a-z]'
+      @eq ( Ωilxt_144 = -> ( _copy_regex /[a-z]/i, 'I'          ).flags               ), ''
+      @eq ( Ωilxt_145 = -> ( _copy_regex /[a-z]/i, 'Ig'         ).flags               ), 'g'
+      @eq ( Ωilxt_146 = -> ( _copy_regex /[a-z]/i, 'IgV'        ).flags               ), 'g'
+      @eq ( Ωilxt_147 = -> ( _copy_regex /[a-z]/i, 'gv'         ).flags               ), 'giv'
+      @eq ( Ωilxt_148 = -> ( _copy_regex /[a-z]/i, 'gu'         ).flags               ), 'giu'
+      @eq ( Ωilxt_149 = -> ( _copy_regex /[a-z]/igvys, 'SYVGI'  ).flags               ), ''
+      @throws ( Ωilxt_150 = -> _copy_regex /[a-z]/i, 'guv'      ), /Invalid flags supplied to RegExp constructor/
+      @throws ( Ωilxt_151 = -> _copy_regex /[a-z]/u, 'v'        ), /Invalid flags supplied to RegExp constructor/
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
     rx_flags: ->
       { rx } = require '../../../apps/interlex'
-      @eq ( Ωilxt_130 = -> ( rx"x"        ).flags ), 'dvy'
-      @eq ( Ωilxt_131 = -> ( rx.si"x"     ).flags ), 'disvy'
-      # @eq ( Ωilxt_132 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
-      @eq ( Ωilxt_133 = -> ( rx.y"x"      ).flags ), 'dvy'
-      @eq ( Ωilxt_134 = -> rpr rx"[abc]+" ), '/[abc]+/dvy'
+      @eq ( Ωilxt_152 = -> ( rx"x"        ).flags ), 'dvy'
+      @eq ( Ωilxt_153 = -> ( rx.si"x"     ).flags ), 'disvy'
+      # @eq ( Ωilxt_154 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
+      @eq ( Ωilxt_155 = -> ( rx.y"x"      ).flags ), 'dvy'
+      @eq ( Ωilxt_156 = -> rpr rx"[abc]+" ), '/[abc]+/dvy'
       #.....................................................................................................
       return null
 
@@ -296,10 +349,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g = new_grammar()
-        @eq ( Ωilxt_135 = -> g.cfg.counter_name   ), 'line_nr'
-        @eq ( Ωilxt_136 = -> g.cfg.counter_step   ), +1
-        @eq ( Ωilxt_137 = -> g.cfg.counter_value  ), 1
-        @eq ( Ωilxt_138 = -> g.state.count        ), 1
+        @eq ( Ωilxt_157 = -> g.cfg.counter_name   ), 'line_nr'
+        @eq ( Ωilxt_158 = -> g.cfg.counter_step   ), +1
+        @eq ( Ωilxt_159 = -> g.cfg.counter_value  ), 1
+        @eq ( Ωilxt_160 = -> g.state.count        ), 1
         probes_and_matchers = [
           [ "1st line",           1, ]
           [ "2nd line",           2, ]
@@ -307,18 +360,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
           [ "4th line (and EOF)", 4, ] ]
         #...................................................................................................
         for [ probe, matcher, ] from probes_and_matchers
-          info 'Ωilxt_139', rpr probe
+          info 'Ωilxt_161', rpr probe
           lexemes = g.get_lexemes probe
-          urge 'Ωilxt_140', lexemes
-          @eq ( Ωilxt_141 = -> lexemes[ 0 ].line_nr ), matcher
+          urge 'Ωilxt_162', lexemes
+          @eq ( Ωilxt_163 = -> lexemes[ 0 ].line_nr ), matcher
         return null
       #.....................................................................................................
       do =>
         g = new_grammar { counter_name: 'test_id', counter_step: -1, counter_value: 10, }
-        @eq ( Ωilxt_142 = -> g.cfg.counter_name   ), 'test_id'
-        @eq ( Ωilxt_143 = -> g.cfg.counter_step   ), -1
-        @eq ( Ωilxt_144 = -> g.cfg.counter_value  ), 10
-        @eq ( Ωilxt_145 = -> g.state.count        ), 10
+        @eq ( Ωilxt_164 = -> g.cfg.counter_name   ), 'test_id'
+        @eq ( Ωilxt_165 = -> g.cfg.counter_step   ), -1
+        @eq ( Ωilxt_166 = -> g.cfg.counter_value  ), 10
+        @eq ( Ωilxt_167 = -> g.state.count        ), 10
         probes_and_matchers = [
           [ "1st line",           10, ]
           [ "2nd line",           9, ]
@@ -326,13 +379,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
           [ "4th line (and EOF)", 7, ] ]
         #...................................................................................................
         for [ probe, matcher, ] from probes_and_matchers
-          info 'Ωilxt_146', rpr probe
+          info 'Ωilxt_168', rpr probe
           lexemes = g.get_lexemes probe
-          # urge 'Ωilxt_147', lexemes
-          urge 'Ωilxt_148', g
-          urge 'Ωilxt_149', g.cfg
-          urge 'Ωilxt_150', g.state
-          @eq ( Ωilxt_151 = -> lexemes[ 0 ].test_id ), matcher
+          # urge 'Ωilxt_169', lexemes
+          urge 'Ωilxt_170', g
+          urge 'Ωilxt_171', g.cfg
+          urge 'Ωilxt_172', g.state
+          @eq ( Ωilxt_173 = -> lexemes[ 0 ].test_id ), matcher
         return null
       #.....................................................................................................
       return null
@@ -355,10 +408,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         for [ probe, matcher, ] from probes_and_matchers
           g.reset_count()
           lexemes = g.get_lexemes probe
-          @eq ( Ωilxt_152 = -> condense_lexemes lexemes ), matcher.condensed
-          @eq ( Ωilxt_153 = -> lexemes.length ), matcher.length
+          @eq ( Ωilxt_174 = -> condense_lexemes lexemes ), matcher.condensed
+          @eq ( Ωilxt_175 = -> lexemes.length ), matcher.length
           g.reset_count()
-          @eq ( Ωilxt_154 = -> [ ( g.walk_lexemes probe )..., ] ), lexemes
+          @eq ( Ωilxt_176 = -> [ ( g.walk_lexemes probe )..., ] ), lexemes
         return null
       #-----------------------------------------------------------------------------------------------------
       do =>
@@ -428,8 +481,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       string12  = g.new_level { name: 'string12', }
-      # debug 'Ωilxt_155', [ string11, string12, ]
-      # console.debug 'Ωilxt_156', [ string11, string12, ]
+      # debug 'Ωilxt_177', [ string11, string12, ]
+      # console.debug 'Ωilxt_178', [ string11, string12, ]
       # process.exit 111
       #.........................................................................................................
       gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
@@ -444,12 +497,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
       string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..', }
       string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
       #.........................................................................................................
-      debug 'Ωilxt_157', g
-      debug 'Ωilxt_158', g.levels
-      debug 'Ωilxt_159', g.levels.gnd
-      debug 'Ωilxt_160', g.levels.gnd.tokens
-      debug 'Ωilxt_161', gnd
-      debug 'Ωilxt_162', token for token from gnd
+      debug 'Ωilxt_179', g
+      debug 'Ωilxt_180', g.levels
+      debug 'Ωilxt_181', g.levels.gnd
+      debug 'Ωilxt_182', g.levels.gnd.tokens
+      debug 'Ωilxt_183', gnd
+      debug 'Ωilxt_184', token for token from gnd
       #.........................................................................................................
       show_lexeme = ( lexeme ) ->
         { name
@@ -462,7 +515,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
         jump_rpr    = jump_spec ? ''
-        urge 'Ωilxt_163', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        urge 'Ωilxt_185', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
       #.........................................................................................................
       sources = [
         "Alice in Cairo 1912 (approximately)"
@@ -470,7 +523,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         ]
       #.........................................................................................................
       for source from sources
-        info 'Ωilxt_164', rpr source
+        info 'Ωilxt_186', rpr source
         for lexeme from g.walk_lexemes source
           show_lexeme lexeme
       #.........................................................................................................
@@ -482,21 +535,21 @@ if module is require.main then await do =>
   # ( new Test { throw_on_error: true, } ).test @interlex_tasks
   # ( new Test { throw_on_error: false, } ).test @interlex_tasks
   # ( new Test { throw_on_error: true, } ).test { regexes: @interlex_tasks.basics.regexes, }
-  ( new Test { throw_on_error: true, } ).test { regexes_new_implementation: @interlex_tasks.basics.regexes_new_implementation, }
+  ( new Test { throw_on_error: true, } ).test { new_implementation: @interlex_tasks.regexes.new_implementation, }
   # ( new Test { throw_on_error: true, } ).test { can_use_plain_regexes: @interlex_tasks.basics.can_use_plain_regexes, }
   # ( new Test { throw_on_error: true, } ).test { demo: @interlex_tasks.demo.demo, }
   # demo()
   # demo_jsidentifier()
   do =>
   f = ->
-    help 'Ωilxt_165', Array.from 'a🈯z'
-    help 'Ωilxt_166', 'a🈯z'.split /(.)/u
-    help 'Ωilxt_167', 'a🈯z'.split( /(.)/v )
-    help 'Ωilxt_168', 'a🈯z'.split( /(.)/d )
-    help 'Ωilxt_169', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
-    help 'Ωilxt_170', { match.groups..., }
-    help 'Ωilxt_171', { match.indices.groups..., }
-    # help 'Ωilxt_172', rx"."
-    # help 'Ωilxt_173', rx/./
+    help 'Ωilxt_187', Array.from 'a🈯z'
+    help 'Ωilxt_188', 'a🈯z'.split /(.)/u
+    help 'Ωilxt_189', 'a🈯z'.split( /(.)/v )
+    help 'Ωilxt_190', 'a🈯z'.split( /(.)/d )
+    help 'Ωilxt_191', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
+    help 'Ωilxt_192', { match.groups..., }
+    help 'Ωilxt_193', { match.indices.groups..., }
+    # help 'Ωilxt_194', rx"."
+    # help 'Ωilxt_195', rx/./
 
 
