@@ -615,19 +615,26 @@ condense_lexemes = ( lexemes ) ->
           [ [ 5, '123abc',   ], "first.one_letter'c'",      ]
           ]
         #...................................................................................................
-        g     = new Grammar()
-        first = g.new_level { name: 'first', }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        #.....................................................................................................
-        for [ [ position, source, ], matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_175 = -> condense_lexemes first.match_longest_at position, source ), matcher
+        shuffle = GUY.rnd.get_shuffle 0.9876, 0.3456
+        for _ in [ 1 .. 100 ]
+          do =>
+            g           = new Grammar()
+            first       = g.new_level { name: 'first', }
+            token_cfgs  = shuffle [
+              { name: 'one_digit',      matcher: /[0-9]{1}/i, }
+              { name: 'two_digits',     matcher: /[0-9]{2}/i, }
+              { name: 'three_digits',   matcher: /[0-9]{3}/i, }
+              { name: 'four_digits',    matcher: /[0-9]{4}/i, }
+              { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+              { name: 'two_letters',    matcher: /[a-z]{2}/i, }
+              { name: 'three_letters',  matcher: /[a-z]{3}/i, }
+              { name: 'four_letters',   matcher: /[a-z]{4}/i, } ]
+            first.new_token token_cfg for token_cfg in token_cfgs
+            #...............................................................................................
+            for [ [ position, source, ], matcher, ] in probes_and_matchers
+              @eq ( Ωilxt_175 = -> condense_lexemes first.match_longest_at position, source ), matcher
+            #...............................................................................................
+            return null
         return null
       #.....................................................................................................
       return null
@@ -642,22 +649,29 @@ condense_lexemes = ( lexemes ) ->
           [ 'abcd1234', "first.four_letters'abcd'|first.four_digits'1234'", ]
           [ '123abc',   "first.three_digits'123'|first.three_letters'abc'", ]
           ]
-        #...................................................................................................
-        g     = new Grammar { strategy: 'longest', }
-        first = g.new_level { name: 'first', }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
         #.....................................................................................................
-        @eq ( Ωilxt_176 = -> g.cfg.strategy ), 'longest'
-        @eq ( Ωilxt_177 = -> first.strategy ), 'longest'
-        for [ source, matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_178 = -> condense_lexemes g.get_lexemes source ), matcher
+        shuffle = GUY.rnd.get_shuffle 0.9876, 0.3456
+        for _ in [ 1 .. 100 ]
+          do =>
+            g           = new Grammar { strategy: 'longest', }
+            first       = g.new_level { name: 'first', }
+            token_cfgs  = shuffle [
+              { name: 'one_digit',      matcher: /[0-9]{1}/i, }
+              { name: 'two_digits',     matcher: /[0-9]{2}/i, }
+              { name: 'three_digits',   matcher: /[0-9]{3}/i, }
+              { name: 'four_digits',    matcher: /[0-9]{4}/i, }
+              { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+              { name: 'two_letters',    matcher: /[a-z]{2}/i, }
+              { name: 'three_letters',  matcher: /[a-z]{3}/i, }
+              { name: 'four_letters',   matcher: /[a-z]{4}/i, } ]
+            first.new_token token_cfg for token_cfg in token_cfgs
+            #...............................................................................................
+            @eq ( Ωilxt_176 = -> g.cfg.strategy ), 'longest'
+            @eq ( Ωilxt_177 = -> first.strategy ), 'longest'
+            for [ source, matcher, ] in probes_and_matchers
+              @eq ( Ωilxt_178 = -> condense_lexemes g.get_lexemes source ), matcher
+            #...............................................................................................
+            return null
         return null
       #.....................................................................................................
       do =>

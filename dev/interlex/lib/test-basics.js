@@ -1183,51 +1183,65 @@
         })();
         (() => {          //.....................................................................................................
           /* strategy 'longest', scrambled tokens */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_175;
+          var _, i, probes_and_matchers, shuffle;
           probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
-          g = new Grammar();
-          first = g.new_level({
-            name: 'first'
-          });
-          first.new_token({
-            name: 'two_letters',
-            matcher: /[a-z]{2}/i
-          });
-          first.new_token({
-            name: 'one_digit',
-            matcher: /[0-9]{1}/i
-          });
-          first.new_token({
-            name: 'three_digits',
-            matcher: /[0-9]{3}/i
-          });
-          first.new_token({
-            name: 'four_digits',
-            matcher: /[0-9]{4}/i
-          });
-          first.new_token({
-            name: 'two_digits',
-            matcher: /[0-9]{2}/i
-          });
-          first.new_token({
-            name: 'one_letter',
-            matcher: /[a-z]{1}/i
-          });
-          first.new_token({
-            name: 'four_letters',
-            matcher: /[a-z]{4}/i
-          });
-          first.new_token({
-            name: 'three_letters',
-            matcher: /[a-z]{3}/i
-          });
-//.....................................................................................................
-          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [[position, source], matcher] = probes_and_matchers[i];
-            this.eq((Ωilxt_175 = function() {
-              return condense_lexemes(first.match_longest_at(position, source));
-            }), matcher);
+          shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
+          for (_ = i = 1; i <= 100; _ = ++i) {
+            (() => {
+              var first, g, j, k, len, len1, matcher, position, source, token_cfg, token_cfgs, Ωilxt_175;
+              g = new Grammar();
+              first = g.new_level({
+                name: 'first'
+              });
+              token_cfgs = shuffle([
+                {
+                  name: 'one_digit',
+                  matcher: /[0-9]{1}/i
+                },
+                {
+                  name: 'two_digits',
+                  matcher: /[0-9]{2}/i
+                },
+                {
+                  name: 'three_digits',
+                  matcher: /[0-9]{3}/i
+                },
+                {
+                  name: 'four_digits',
+                  matcher: /[0-9]{4}/i
+                },
+                {
+                  name: 'one_letter',
+                  matcher: /[a-z]{1}/i
+                },
+                {
+                  name: 'two_letters',
+                  matcher: /[a-z]{2}/i
+                },
+                {
+                  name: 'three_letters',
+                  matcher: /[a-z]{3}/i
+                },
+                {
+                  name: 'four_letters',
+                  matcher: /[a-z]{4}/i
+                }
+              ]);
+              for (j = 0, len = token_cfgs.length; j < len; j++) {
+                token_cfg = token_cfgs[j];
+                first.new_token(token_cfg);
+              }
+//...............................................................................................
+              for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
+                [[position, source], matcher] = probes_and_matchers[k];
+                this.eq((Ωilxt_175 = function() {
+                  return condense_lexemes(first.match_longest_at(position, source));
+                }), matcher);
+              }
+              //...............................................................................................
+              return null;
+            })();
           }
           return null;
         })();
@@ -1240,59 +1254,73 @@
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
           /* strategy 'longest', scrambled tokens */
-          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_176, Ωilxt_177, Ωilxt_178;
+          var _, i, probes_and_matchers, shuffle;
           probes_and_matchers = [['abcd1234', "first.four_letters'abcd'|first.four_digits'1234'"], ['123abc', "first.three_digits'123'|first.three_letters'abc'"]];
-          //...................................................................................................
-          g = new Grammar({
-            strategy: 'longest'
-          });
-          first = g.new_level({
-            name: 'first'
-          });
-          first.new_token({
-            name: 'two_letters',
-            matcher: /[a-z]{2}/i
-          });
-          first.new_token({
-            name: 'one_digit',
-            matcher: /[0-9]{1}/i
-          });
-          first.new_token({
-            name: 'three_digits',
-            matcher: /[0-9]{3}/i
-          });
-          first.new_token({
-            name: 'four_digits',
-            matcher: /[0-9]{4}/i
-          });
-          first.new_token({
-            name: 'two_digits',
-            matcher: /[0-9]{2}/i
-          });
-          first.new_token({
-            name: 'one_letter',
-            matcher: /[a-z]{1}/i
-          });
-          first.new_token({
-            name: 'four_letters',
-            matcher: /[a-z]{4}/i
-          });
-          first.new_token({
-            name: 'three_letters',
-            matcher: /[a-z]{3}/i
-          });
           //.....................................................................................................
-          this.eq((Ωilxt_176 = function() {
-            return g.cfg.strategy;
-          }), 'longest');
-          this.eq((Ωilxt_177 = function() {
-            return first.strategy;
-          }), 'longest');
-          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [source, matcher] = probes_and_matchers[i];
-            this.eq((Ωilxt_178 = function() {
-              return condense_lexemes(g.get_lexemes(source));
-            }), matcher);
+          shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
+          for (_ = i = 1; i <= 100; _ = ++i) {
+            (() => {
+              var first, g, j, k, len, len1, matcher, source, token_cfg, token_cfgs, Ωilxt_176, Ωilxt_177, Ωilxt_178;
+              g = new Grammar({
+                strategy: 'longest'
+              });
+              first = g.new_level({
+                name: 'first'
+              });
+              token_cfgs = shuffle([
+                {
+                  name: 'one_digit',
+                  matcher: /[0-9]{1}/i
+                },
+                {
+                  name: 'two_digits',
+                  matcher: /[0-9]{2}/i
+                },
+                {
+                  name: 'three_digits',
+                  matcher: /[0-9]{3}/i
+                },
+                {
+                  name: 'four_digits',
+                  matcher: /[0-9]{4}/i
+                },
+                {
+                  name: 'one_letter',
+                  matcher: /[a-z]{1}/i
+                },
+                {
+                  name: 'two_letters',
+                  matcher: /[a-z]{2}/i
+                },
+                {
+                  name: 'three_letters',
+                  matcher: /[a-z]{3}/i
+                },
+                {
+                  name: 'four_letters',
+                  matcher: /[a-z]{4}/i
+                }
+              ]);
+              for (j = 0, len = token_cfgs.length; j < len; j++) {
+                token_cfg = token_cfgs[j];
+                first.new_token(token_cfg);
+              }
+              //...............................................................................................
+              this.eq((Ωilxt_176 = function() {
+                return g.cfg.strategy;
+              }), 'longest');
+              this.eq((Ωilxt_177 = function() {
+                return first.strategy;
+              }), 'longest');
+              for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
+                [source, matcher] = probes_and_matchers[k];
+                this.eq((Ωilxt_178 = function() {
+                  return condense_lexemes(g.get_lexemes(source));
+                }), matcher);
+              }
+              //...............................................................................................
+              return null;
+            })();
           }
           return null;
         })();
