@@ -632,6 +632,88 @@ condense_lexemes = ( lexemes ) ->
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    grammars_use_strategies: ->
+      { Grammar } = require '../../../apps/interlex'
+      #.....................................................................................................
+      do =>
+        ### strategy 'longest', scrambled tokens ###
+        probes_and_matchers = [
+          [ 'abcd1234', "first.four_letters'abcd'|first.four_digits'1234'", ]
+          [ '123abc',   "first.three_digits'123'|first.three_letters'abc'", ]
+          ]
+        #...................................................................................................
+        g     = new Grammar { strategy: 'longest', }
+        first = g.new_level { name: 'first', }
+        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
+        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
+        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
+        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
+        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
+        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
+        #.....................................................................................................
+        @eq ( Ωilxt_176 = -> g.cfg.strategy ), 'longest'
+        @eq ( Ωilxt_177 = -> first.strategy ), 'longest'
+        for [ source, matcher, ] in probes_and_matchers
+          @eq ( Ωilxt_178 = -> condense_lexemes g.get_lexemes source ), matcher
+        return null
+      #.....................................................................................................
+      do =>
+        ### strategy 'first', scrambled tokens ###
+        probes_and_matchers = [
+          [ 'abcd1234',     "first.two_letters'ab'|first.two_letters'cd'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'", ]
+          [ 'abcde12345',   "first.two_letters'ab'|first.two_letters'cd'|first.one_letter'e'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'", ]
+          [ 'abcdef123456', "first.two_letters'ab'|first.two_letters'cd'|first.two_letters'ef'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'|first.one_digit'6'", ]
+          [ '123abc',       "first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.two_letters'ab'|first.one_letter'c'", ]
+          ]
+        #...................................................................................................
+        g     = new Grammar { strategy: 'first', }
+        first = g.new_level { name: 'first', }
+        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
+        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
+        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
+        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
+        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
+        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
+        #.....................................................................................................
+        @eq ( Ωilxt_179 = -> g.cfg.strategy ), 'first'
+        @eq ( Ωilxt_180 = -> first.strategy ), 'first'
+        for [ source, matcher, ] in probes_and_matchers
+          @eq ( Ωilxt_181 = -> condense_lexemes g.get_lexemes source ), matcher
+        return null
+      #.....................................................................................................
+      do =>
+        ### strategy 'first', long tokens first ###
+        probes_and_matchers = [
+          [ 'abcd1234',     "first.four_letters'abcd'|first.four_digits'1234'", ]
+          [ 'abcde12345',   "first.four_letters'abcd'|first.one_letter'e'|first.four_digits'1234'|first.one_digit'5'", ]
+          [ 'abcdef123456', "first.four_letters'abcd'|first.two_letters'ef'|first.four_digits'1234'|first.two_digits'56'", ]
+          [ '123abc',       "first.three_digits'123'|first.three_letters'abc'", ]
+          ]
+        #...................................................................................................
+        g     = new Grammar { strategy: 'first', }
+        first = g.new_level { name: 'first', }
+        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
+        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
+        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
+        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
+        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
+        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
+        #.....................................................................................................
+        @eq ( Ωilxt_182 = -> g.cfg.strategy ), 'first'
+        @eq ( Ωilxt_183 = -> first.strategy ), 'first'
+        for [ source, matcher, ] in probes_and_matchers
+          @eq ( Ωilxt_184 = -> condense_lexemes g.get_lexemes source ), matcher
+        return null
+      #.....................................................................................................
+      return null
+
 
   #=========================================================================================================
   demo:
@@ -645,8 +727,8 @@ condense_lexemes = ( lexemes ) ->
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       string12  = g.new_level { name: 'string12', }
-      # debug 'Ωilxt_176', [ string11, string12, ]
-      # console.debug 'Ωilxt_177', [ string11, string12, ]
+      # debug 'Ωilxt_185', [ string11, string12, ]
+      # console.debug 'Ωilxt_186', [ string11, string12, ]
       # process.exit 111
       #.........................................................................................................
       gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
@@ -661,12 +743,12 @@ condense_lexemes = ( lexemes ) ->
       string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..', }
       string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
       #.........................................................................................................
-      debug 'Ωilxt_178', g
-      debug 'Ωilxt_179', g.levels
-      debug 'Ωilxt_180', g.levels.gnd
-      debug 'Ωilxt_181', g.levels.gnd.tokens
-      debug 'Ωilxt_182', gnd
-      debug 'Ωilxt_183', token for token from gnd
+      debug 'Ωilxt_187', g
+      debug 'Ωilxt_188', g.levels
+      debug 'Ωilxt_189', g.levels.gnd
+      debug 'Ωilxt_190', g.levels.gnd.tokens
+      debug 'Ωilxt_191', gnd
+      debug 'Ωilxt_192', token for token from gnd
       #.........................................................................................................
       show_lexeme = ( lexeme ) ->
         { name
@@ -679,7 +761,7 @@ condense_lexemes = ( lexemes ) ->
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
         jump_rpr    = jump_spec ? ''
-        urge 'Ωilxt_184', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        urge 'Ωilxt_193', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
       #.........................................................................................................
       sources = [
         "Alice in Cairo 1912 (approximately)"
@@ -687,7 +769,7 @@ condense_lexemes = ( lexemes ) ->
         ]
       #.........................................................................................................
       for source from sources
-        info 'Ωilxt_185', rpr source
+        info 'Ωilxt_194', rpr source
         for lexeme from g.walk_lexemes source
           show_lexeme lexeme
       #.........................................................................................................
@@ -707,14 +789,14 @@ if module is require.main then await do =>
   # demo_jsidentifier()
   do =>
   f = ->
-    help 'Ωilxt_186', Array.from 'a🈯z'
-    help 'Ωilxt_187', 'a🈯z'.split /(.)/u
-    help 'Ωilxt_188', 'a🈯z'.split( /(.)/v )
-    help 'Ωilxt_189', 'a🈯z'.split( /(.)/d )
-    help 'Ωilxt_190', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
-    help 'Ωilxt_191', { match.groups..., }
-    help 'Ωilxt_192', { match.indices.groups..., }
-    # help 'Ωilxt_193', rx"."
-    # help 'Ωilxt_194', rx/./
+    help 'Ωilxt_195', Array.from 'a🈯z'
+    help 'Ωilxt_196', 'a🈯z'.split /(.)/u
+    help 'Ωilxt_197', 'a🈯z'.split( /(.)/v )
+    help 'Ωilxt_198', 'a🈯z'.split( /(.)/d )
+    help 'Ωilxt_199', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
+    help 'Ωilxt_200', { match.groups..., }
+    help 'Ωilxt_201', { match.indices.groups..., }
+    # help 'Ωilxt_202', rx"."
+    # help 'Ωilxt_203', rx/./
 
 

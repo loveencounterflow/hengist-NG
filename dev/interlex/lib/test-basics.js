@@ -1233,6 +1233,187 @@
         })();
         //.....................................................................................................
         return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      grammars_use_strategies: function() {
+        var Grammar;
+        ({Grammar} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          /* strategy 'longest', scrambled tokens */
+          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_176, Ωilxt_177, Ωilxt_178;
+          probes_and_matchers = [['abcd1234', "first.four_letters'abcd'|first.four_digits'1234'"], ['123abc', "first.three_digits'123'|first.three_letters'abc'"]];
+          //...................................................................................................
+          g = new Grammar({
+            strategy: 'longest'
+          });
+          first = g.new_level({
+            name: 'first'
+          });
+          first.new_token({
+            name: 'two_letters',
+            matcher: /[a-z]{2}/i
+          });
+          first.new_token({
+            name: 'one_digit',
+            matcher: /[0-9]{1}/i
+          });
+          first.new_token({
+            name: 'three_digits',
+            matcher: /[0-9]{3}/i
+          });
+          first.new_token({
+            name: 'four_digits',
+            matcher: /[0-9]{4}/i
+          });
+          first.new_token({
+            name: 'two_digits',
+            matcher: /[0-9]{2}/i
+          });
+          first.new_token({
+            name: 'one_letter',
+            matcher: /[a-z]{1}/i
+          });
+          first.new_token({
+            name: 'four_letters',
+            matcher: /[a-z]{4}/i
+          });
+          first.new_token({
+            name: 'three_letters',
+            matcher: /[a-z]{3}/i
+          });
+          //.....................................................................................................
+          this.eq((Ωilxt_176 = function() {
+            return g.cfg.strategy;
+          }), 'longest');
+          this.eq((Ωilxt_177 = function() {
+            return first.strategy;
+          }), 'longest');
+          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+            [source, matcher] = probes_and_matchers[i];
+            this.eq((Ωilxt_178 = function() {
+              return condense_lexemes(g.get_lexemes(source));
+            }), matcher);
+          }
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          /* strategy 'first', scrambled tokens */
+          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_179, Ωilxt_180, Ωilxt_181;
+          probes_and_matchers = [['abcd1234', "first.two_letters'ab'|first.two_letters'cd'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'"], ['abcde12345', "first.two_letters'ab'|first.two_letters'cd'|first.one_letter'e'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'"], ['abcdef123456', "first.two_letters'ab'|first.two_letters'cd'|first.two_letters'ef'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'|first.one_digit'6'"], ['123abc', "first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.two_letters'ab'|first.one_letter'c'"]];
+          //...................................................................................................
+          g = new Grammar({
+            strategy: 'first'
+          });
+          first = g.new_level({
+            name: 'first'
+          });
+          first.new_token({
+            name: 'two_letters',
+            matcher: /[a-z]{2}/i
+          });
+          first.new_token({
+            name: 'one_digit',
+            matcher: /[0-9]{1}/i
+          });
+          first.new_token({
+            name: 'three_digits',
+            matcher: /[0-9]{3}/i
+          });
+          first.new_token({
+            name: 'four_digits',
+            matcher: /[0-9]{4}/i
+          });
+          first.new_token({
+            name: 'two_digits',
+            matcher: /[0-9]{2}/i
+          });
+          first.new_token({
+            name: 'one_letter',
+            matcher: /[a-z]{1}/i
+          });
+          first.new_token({
+            name: 'four_letters',
+            matcher: /[a-z]{4}/i
+          });
+          first.new_token({
+            name: 'three_letters',
+            matcher: /[a-z]{3}/i
+          });
+          //.....................................................................................................
+          this.eq((Ωilxt_179 = function() {
+            return g.cfg.strategy;
+          }), 'first');
+          this.eq((Ωilxt_180 = function() {
+            return first.strategy;
+          }), 'first');
+          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+            [source, matcher] = probes_and_matchers[i];
+            this.eq((Ωilxt_181 = function() {
+              return condense_lexemes(g.get_lexemes(source));
+            }), matcher);
+          }
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          /* strategy 'first', long tokens first */
+          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_182, Ωilxt_183, Ωilxt_184;
+          probes_and_matchers = [['abcd1234', "first.four_letters'abcd'|first.four_digits'1234'"], ['abcde12345', "first.four_letters'abcd'|first.one_letter'e'|first.four_digits'1234'|first.one_digit'5'"], ['abcdef123456', "first.four_letters'abcd'|first.two_letters'ef'|first.four_digits'1234'|first.two_digits'56'"], ['123abc', "first.three_digits'123'|first.three_letters'abc'"]];
+          //...................................................................................................
+          g = new Grammar({
+            strategy: 'first'
+          });
+          first = g.new_level({
+            name: 'first'
+          });
+          first.new_token({
+            name: 'four_letters',
+            matcher: /[a-z]{4}/i
+          });
+          first.new_token({
+            name: 'three_letters',
+            matcher: /[a-z]{3}/i
+          });
+          first.new_token({
+            name: 'two_letters',
+            matcher: /[a-z]{2}/i
+          });
+          first.new_token({
+            name: 'one_letter',
+            matcher: /[a-z]{1}/i
+          });
+          first.new_token({
+            name: 'four_digits',
+            matcher: /[0-9]{4}/i
+          });
+          first.new_token({
+            name: 'three_digits',
+            matcher: /[0-9]{3}/i
+          });
+          first.new_token({
+            name: 'two_digits',
+            matcher: /[0-9]{2}/i
+          });
+          first.new_token({
+            name: 'one_digit',
+            matcher: /[0-9]{1}/i
+          });
+          //.....................................................................................................
+          this.eq((Ωilxt_182 = function() {
+            return g.cfg.strategy;
+          }), 'first');
+          this.eq((Ωilxt_183 = function() {
+            return first.strategy;
+          }), 'first');
+          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+            [source, matcher] = probes_and_matchers[i];
+            this.eq((Ωilxt_184 = function() {
+              return condense_lexemes(g.get_lexemes(source));
+            }), matcher);
+          }
+          return null;
+        })();
+        //.....................................................................................................
+        return null;
       }
     },
     //=========================================================================================================
@@ -1254,8 +1435,8 @@
         string12 = g.new_level({
           name: 'string12'
         });
-        // debug 'Ωilxt_176', [ string11, string12, ]
-        // console.debug 'Ωilxt_177', [ string11, string12, ]
+        // debug 'Ωilxt_185', [ string11, string12, ]
+        // console.debug 'Ωilxt_186', [ string11, string12, ]
         // process.exit 111
         //.........................................................................................................
         gnd.new_token({
@@ -1303,13 +1484,13 @@
           matcher: rx`[^']*`
         });
         //.........................................................................................................
-        debug('Ωilxt_178', g);
-        debug('Ωilxt_179', g.levels);
-        debug('Ωilxt_180', g.levels.gnd);
-        debug('Ωilxt_181', g.levels.gnd.tokens);
-        debug('Ωilxt_182', gnd);
+        debug('Ωilxt_187', g);
+        debug('Ωilxt_188', g.levels);
+        debug('Ωilxt_189', g.levels.gnd);
+        debug('Ωilxt_190', g.levels.gnd.tokens);
+        debug('Ωilxt_191', gnd);
         for (token of gnd) {
-          debug('Ωilxt_183', token);
+          debug('Ωilxt_192', token);
         }
         //.........................................................................................................
         show_lexeme = function(lexeme) {
@@ -1317,13 +1498,13 @@
           ({name, fqname, start, stop, hit, jump, jump_spec, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
           jump_rpr = jump_spec != null ? jump_spec : '';
-          return urge('Ωilxt_184', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          return urge('Ωilxt_193', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
         };
         //.........................................................................................................
         sources = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
         for (source of sources) {
-          info('Ωilxt_185', rpr(source));
+          info('Ωilxt_194', rpr(source));
           for (lexeme of g.walk_lexemes(source)) {
             show_lexeme(lexeme);
           }
@@ -1350,19 +1531,19 @@
       // demo_jsidentifier()
       return f = function() {
         var match;
-        help('Ωilxt_186', Array.from('a🈯z'));
-        help('Ωilxt_187', 'a🈯z'.split(/(.)/u));
-        help('Ωilxt_188', 'a🈯z'.split(/(.)/v));
-        help('Ωilxt_189', 'a🈯z'.split(/(.)/d));
-        help('Ωilxt_190', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
-        help('Ωilxt_191', {...match.groups});
-        return help('Ωilxt_192', {...match.indices.groups});
+        help('Ωilxt_195', Array.from('a🈯z'));
+        help('Ωilxt_196', 'a🈯z'.split(/(.)/u));
+        help('Ωilxt_197', 'a🈯z'.split(/(.)/v));
+        help('Ωilxt_198', 'a🈯z'.split(/(.)/d));
+        help('Ωilxt_199', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
+        help('Ωilxt_200', {...match.groups});
+        return help('Ωilxt_201', {...match.indices.groups});
       };
     })();
   }
 
-  // help 'Ωilxt_193', rx"."
-// help 'Ωilxt_194', rx/./
+  // help 'Ωilxt_202', rx"."
+// help 'Ωilxt_203', rx/./
 
 }).call(this);
 
