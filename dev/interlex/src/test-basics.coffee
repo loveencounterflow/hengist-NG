@@ -646,9 +646,9 @@ condense_lexemes = ( lexemes ) ->
       do =>
         ### strategy 'longest', scrambled tokens ###
         probes_and_matchers = [
-          [ 'abcd1234', "first.four_letters'abcd'|first.four_digits'1234'", ]
-          [ 'abcdefgh1234567890', "first.four_letters'abcd'|first.four_digits'1234'", ]
-          [ '123abc',   "first.three_digits'123'|first.three_letters'abc'", ]
+          [ 'abcd1234',           "first.four_letters'abcd'|first.four_digits'1234'",                                                                       ]
+          [ 'abcdefgh1234567890', "first.four_letters'abcd'|first.four_letters'efgh'|first.four_digits'1234'|first.four_digits'5678'|first.two_digits'90'", ]
+          [ '123abc',             "first.three_digits'123'|first.three_letters'abc'",                                                                       ]
           ]
         #.....................................................................................................
         shuffle = GUY.rnd.get_shuffle 0.9876, 0.3456
@@ -694,7 +694,7 @@ condense_lexemes = ( lexemes ) ->
         first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
         first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
         first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        #.....................................................................................................
+        #...................................................................................................
         @eq ( Ωilxt_179 = -> g.cfg.strategy ), 'first'
         @eq ( Ωilxt_180 = -> first.strategy ), 'first'
         for [ source, matcher, ] in probes_and_matchers
@@ -720,7 +720,7 @@ condense_lexemes = ( lexemes ) ->
         first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
         first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
         first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        #.....................................................................................................
+        #...................................................................................................
         @eq ( Ωilxt_182 = -> g.cfg.strategy ), 'first'
         @eq ( Ωilxt_183 = -> first.strategy ), 'first'
         for [ source, matcher, ] in probes_and_matchers
