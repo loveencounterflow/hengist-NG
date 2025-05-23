@@ -647,6 +647,7 @@ condense_lexemes = ( lexemes ) ->
         ### strategy 'longest', scrambled tokens ###
         probes_and_matchers = [
           [ 'abcd1234', "first.four_letters'abcd'|first.four_digits'1234'", ]
+          [ 'abcdefgh1234567890', "first.four_letters'abcd'|first.four_digits'1234'", ]
           [ '123abc',   "first.three_digits'123'|first.three_letters'abc'", ]
           ]
         #.....................................................................................................
