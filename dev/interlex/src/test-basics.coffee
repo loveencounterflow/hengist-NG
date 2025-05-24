@@ -648,6 +648,7 @@ condense_lexemes = ( lexemes ) ->
         probes_and_matchers = [
           [ 'abcd1234',           "first.four_letters'abcd'|first.four_digits'1234'",                                                                       ]
           [ 'abcdefgh1234567890', "first.four_letters'abcd'|first.four_letters'efgh'|first.four_digits'1234'|first.four_digits'5678'|first.two_digits'90'", ]
+          [ 'abcdefg123456789',   "first.four_letters'abcd'|first.three_letters'efg'|first.four_digits'1234'|first.four_digits'5678'|first.one_digit'9'",   ]
           [ '123abc',             "first.three_digits'123'|first.three_letters'abc'",                                                                       ]
           ]
         #.....................................................................................................
