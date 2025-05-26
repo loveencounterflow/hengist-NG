@@ -742,15 +742,136 @@
         //.....................................................................................................
         return null;
       }
+    },
+    //=========================================================================================================
+    demo: {
+      //-------------------------------------------------------------------------------------------------------
+      standard_function_signatures: function() {
+        var Cleartype, clean_arguments, ff, g, h, std;
+        ({Cleartype, std} = require('../../../apps/cleartype'));
+        ({
+          f: ff
+        } = require('../../../apps/effstring'));
+        // { lt_types }  = get_typespaces()
+        // { isa
+        //   isa_optional
+        //   create
+        //   validate
+        //   validate_optional } = require '../../../apps/cleartype'
+        //.....................................................................................................
+        clean_arguments = function(P) {
+          while ((P.length > 0) && ((P.at(-1)) === void 0)) {
+            P.pop();
+          }
+          return P;
+        };
+        g = function(cfg, ...P) {
+          return (h(cfg))(...P);
+        };
+        h = function(cfg) {
+          var template;
+          debug('Ωctt_118', cfg);
+          if (arguments.length !== 1) {
+            throw new Error(`Ωctt_119 expected 1 arguments, got ${arguments.length}`);
+          }
+          //...................................................................................................
+          template = {
+            name: '(anonymous)',
+            min: 1,
+            max: 1,
+            template: {}
+          };
+          cfg = {...template, ...cfg};
+          //...................................................................................................
+          return function(...P) {
+            var R, ref;
+            debug('Ωctt_120', clean_arguments(P));
+            if (!((cfg.min <= (ref = P.length) && ref <= cfg.max))) {
+              throw new Error(`Ωctt_121 expected between ${cfg.min} and ${cfg.max} arguments, got ${P.length}`);
+            }
+            R = {};
+            return R;
+          };
+        };
+        (() => {          //.....................................................................................................
+          var f, Ωctt_129;
+          f = function(name, matcher, cfg) {
+            var A, cfg_rpr, matcher_rpr, name_rpr;
+            info('Ωctt_122', g({
+              name: 'f',
+              min: 1,
+              max: 3
+            }, name, matcher, cfg));
+            // info 'Ωctt_123', g { name: 'f', min: 1, max: 3, }, arguments...
+            name_rpr = name === void 0 ? '█' : rpr(name);
+            matcher_rpr = matcher === void 0 ? '█' : rpr(matcher);
+            cfg_rpr = cfg === void 0 ? '█' : rpr(cfg);
+            A = [...arguments];
+            return help('Ωctt_124', f.length, A.length, ff`${name_rpr}:20c; ${matcher_rpr}:20c; ${cfg_rpr}:20c;`);
+          };
+          // help 'Ωctt_125', cfg
+          // help 'Ωctt_126', { cfg..., }
+          // help 'Ωctt_127', Object.assign cfg...
+          urge('Ωctt_128', '———————————————————————————————————————————————————');
+          this.throws((Ωctt_129 = function() {
+            return f();
+          }), /expected/);
+          f('myname');
+          f('myname', 'mymatcher');
+          f('myname', 'mymatcher', {
+            jump: true,
+            ...{}
+          });
+          f('myname', {
+            jump: true
+          });
+          f({
+            jump: true
+          });
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var f;
+          f = function(name, matcher = /./, cfg) {
+            var A, cfg_rpr, matcher_rpr, name_rpr;
+            name_rpr = name === void 0 ? '█' : rpr(name);
+            matcher_rpr = matcher === void 0 ? '█' : rpr(matcher);
+            cfg_rpr = cfg === void 0 ? '█' : rpr(cfg);
+            A = [...arguments];
+            return help('Ωctt_130', f.length, A.length, ff`${name_rpr}:20c; ${matcher_rpr}:20c; ${cfg_rpr}:20c;`);
+          };
+          // help 'Ωctt_131', cfg
+          // help 'Ωctt_132', { cfg..., }
+          // help 'Ωctt_133', Object.assign cfg...
+          urge('Ωctt_134', '———————————————————————————————————————————————————');
+          f();
+          f('myname');
+          f('myname', 'mymatcher');
+          f('myname', 'mymatcher', {
+            jump: true,
+            ...{}
+          });
+          f('myname', {
+            jump: true
+          });
+          f({
+            jump: true
+          });
+          return null;
+        })();
+        //.....................................................................................................
+        return null;
+      }
     }
   };
 
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
+      // ( new Test { throw_on_error: true, } ).test @cleartype_tasks
       (new Test({
         throw_on_error: true
-      })).test(this.cleartype_tasks);
+      })).test(this.cleartype_tasks.demo);
       return function() {        // ( new Test { throw_on_error: false, } ).test @cleartype_tasks
         // ( new Test { throw_on_error: true, } ).test { mvp_isa: @cleartype_tasks.MVP.isa, }
         // ( new Test { throw_on_error: true, } ).test { instance_methods_are_bound: @cleartype_tasks.basics.instance_methods_are_bound, }
@@ -763,10 +884,10 @@
             };
           }
         };
-        debug('Ωctt_118', d);
-        debug('Ωctt_119', d.a);
-        debug('Ωctt_120', d.a.name);
-        return debug('Ωctt_121', d.a());
+        debug('Ωctt_135', d);
+        debug('Ωctt_136', d.a);
+        debug('Ωctt_137', d.a.name);
+        return debug('Ωctt_138', d.a());
       };
     })();
   }

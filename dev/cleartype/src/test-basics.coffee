@@ -404,10 +404,85 @@ get_typespaces = ->
       #.....................................................................................................
       return null
 
+  #=========================================================================================================
+  demo:
+
+    #-------------------------------------------------------------------------------------------------------
+    standard_function_signatures: ->
+      { Cleartype
+        std } = require '../../../apps/cleartype'
+      { f: ff, } = require '../../../apps/effstring'
+      # { lt_types }  = get_typespaces()
+      # { isa
+      #   isa_optional
+      #   create
+      #   validate
+      #   validate_optional } = require '../../../apps/cleartype'
+      #.....................................................................................................
+      clean_arguments = ( P ) -> P.pop() while ( P.length > 0 ) and ( ( P.at -1 ) is undefined ); P
+      g = ( cfg, P... ) -> ( h cfg ) P...
+      h = ( cfg ) ->
+        debug 'Ωctt_118', cfg
+        unless arguments.length is 1
+          throw new Error "Ωctt_119 expected 1 arguments, got #{arguments.length}"
+        #...................................................................................................
+        template  = { name: '(anonymous)', min: 1, max: 1, template: {}, }
+        cfg       = { template..., cfg..., }
+        #...................................................................................................
+        return ( P... ) ->
+          debug 'Ωctt_120', clean_arguments P
+          unless cfg.min <= P.length <= cfg.max
+            throw new Error "Ωctt_121 expected between #{cfg.min} and #{cfg.max} arguments, got #{P.length}"
+          R = {}
+          return R
+      #.....................................................................................................
+      do =>
+        f = ( name, matcher, cfg ) ->
+          info 'Ωctt_122', g { name: 'f', min: 1, max: 3, }, name, matcher, cfg
+          # info 'Ωctt_123', g { name: 'f', min: 1, max: 3, }, arguments...
+          name_rpr    = if ( name    is undefined ) then '█' else rpr name
+          matcher_rpr = if ( matcher is undefined ) then '█' else rpr matcher
+          cfg_rpr     = if ( cfg     is undefined ) then '█' else rpr cfg
+          A = [ arguments..., ]
+          help 'Ωctt_124', f.length, A.length, ff"#{name_rpr}:20c; #{matcher_rpr}:20c; #{cfg_rpr}:20c;"
+          # help 'Ωctt_125', cfg
+          # help 'Ωctt_126', { cfg..., }
+          # help 'Ωctt_127', Object.assign cfg...
+        urge 'Ωctt_128', '———————————————————————————————————————————————————'
+        @throws ( Ωctt_129 = -> f() ), /expected/
+        f 'myname'
+        f 'myname', 'mymatcher'
+        f 'myname', 'mymatcher', { jump: true, {}..., }
+        f 'myname', { jump: true, }
+        f { jump: true, }
+        return null
+      #.....................................................................................................
+      do =>
+        f = ( name, matcher = /./, cfg ) ->
+          name_rpr    = if ( name    is undefined ) then '█' else rpr name
+          matcher_rpr = if ( matcher is undefined ) then '█' else rpr matcher
+          cfg_rpr     = if ( cfg     is undefined ) then '█' else rpr cfg
+          A = [ arguments..., ]
+          help 'Ωctt_130', f.length, A.length, ff"#{name_rpr}:20c; #{matcher_rpr}:20c; #{cfg_rpr}:20c;"
+          # help 'Ωctt_131', cfg
+          # help 'Ωctt_132', { cfg..., }
+          # help 'Ωctt_133', Object.assign cfg...
+        urge 'Ωctt_134', '———————————————————————————————————————————————————'
+        f()
+        f 'myname'
+        f 'myname', 'mymatcher'
+        f 'myname', 'mymatcher', { jump: true, {}..., }
+        f 'myname', { jump: true, }
+        f { jump: true, }
+        return null
+      #.....................................................................................................
+      return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
-  ( new Test { throw_on_error: true, } ).test @cleartype_tasks
+  # ( new Test { throw_on_error: true, } ).test @cleartype_tasks
+  ( new Test { throw_on_error: true, } ).test @cleartype_tasks.demo
   # ( new Test { throw_on_error: false, } ).test @cleartype_tasks
   # ( new Test { throw_on_error: true, } ).test { mvp_isa: @cleartype_tasks.MVP.isa, }
   # ( new Test { throw_on_error: true, } ).test { instance_methods_are_bound: @cleartype_tasks.basics.instance_methods_are_bound, }
@@ -417,7 +492,7 @@ if module is require.main then await do =>
       a: ->
         foo: 1
         bar: 2
-    debug 'Ωctt_118', d
-    debug 'Ωctt_119', d.a
-    debug 'Ωctt_120', d.a.name
-    debug 'Ωctt_121', d.a()
+    debug 'Ωctt_135', d
+    debug 'Ωctt_136', d.a
+    debug 'Ωctt_137', d.a.name
+    debug 'Ωctt_138', d.a()

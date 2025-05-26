@@ -1442,6 +1442,75 @@
         })();
         //.....................................................................................................
         return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      all_strategies_refuse_empty_matches: function() {
+        var Grammar;
+        ({Grammar} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          var g, gnd, Ωilxt_185;
+          g = new Grammar({
+            strategy: 'first'
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          gnd.new_token({
+            name: 'a',
+            matcher: /a/
+          });
+          gnd.new_token({
+            name: 'b',
+            matcher: /(?=b)/
+          });
+          return this.throws((Ωilxt_185 = function() {
+            return g.get_lexemes("ab");
+          }), /encountered zero-length match/);
+        })();
+        (() => {          //.....................................................................................................
+          var g, gnd, Ωilxt_186;
+          g = new Grammar({
+            strategy: 'longest'
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          gnd.new_token({
+            name: 'a',
+            matcher: /a/
+          });
+          gnd.new_token({
+            name: 'b',
+            matcher: /(?=b)/
+          });
+          return this.throws((Ωilxt_186 = function() {
+            return g.get_lexemes("ab");
+          }), /encountered zero-length match/);
+        })();
+        (() => {          //.....................................................................................................
+          /* We accept the empty match here since while it does get produced as an intermediate value to find
+                 the longest match, it does not get passed on as a resulting lexeme. */
+          var g, gnd, Ωilxt_187;
+          g = new Grammar({
+            strategy: 'longest'
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          gnd.new_token({
+            name: 'a',
+            matcher: /[ab]/
+          });
+          gnd.new_token({
+            name: 'b',
+            matcher: /(?=b)/
+          });
+          return this.eq((Ωilxt_187 = function() {
+            return condense_lexemes(g.get_lexemes("ab"));
+          }), "gnd.a'a'|gnd.a'b'");
+        })();
+        //.....................................................................................................
+        return null;
       }
     },
     //=========================================================================================================
@@ -1451,12 +1520,12 @@
         var Grammar;
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var first, g, Ωilxt_185;
+          var first, g, Ωilxt_188;
           g = new Grammar();
           first = g.new_level({
             name: 'first'
           });
-          this.throws((Ωilxt_185 = function() {
+          this.throws((Ωilxt_188 = function() {
             return first.new_token({
               name: 'digit',
               matcher: /[0-9]/,
@@ -1469,11 +1538,118 @@
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
+      demo_parse_jumps: function() {
+        var internals;
+        ({internals} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          var parse_jump, Ωilxt_191, Ωilxt_192, Ωilxt_193, Ωilxt_194, Ωilxt_195, Ωilxt_196, Ωilxt_197, Ωilxt_198, Ωilxt_199, Ωilxt_200, Ωilxt_201, Ωilxt_202, Ωilxt_203, Ωilxt_204, Ωilxt_205, Ωilxt_206;
+          parse_jump = function(jump_spec) {
+            var action, inex, key, match, re, ref;
+            match = null;
+            ref = internals.jump_spec_res;
+            for (key in ref) {
+              re = ref[key];
+              if ((match = jump_spec.match(re)) == null) {
+                continue;
+              }
+              ({inex, action} = (key.match(/^(?<inex>[^_]+)_(?<action>[^_]+)$/)).groups);
+              break;
+            }
+            if (match == null) {
+              throw new Error(`Ωilxt_189 encountered illegal jump spec ${rpr(jump_spec)}`);
+            }
+            // info 'Ωilxt_190', { jump_spec, inex, action, match.groups..., }
+            return {jump_spec, inex, action, ...match.groups};
+          };
+          //...................................................................................................
+          this.eq((Ωilxt_191 = function() {
+            return parse_jump('..');
+          }), {
+            jump_spec: '..',
+            inex: 'bare',
+            action: 'back',
+            target: '..'
+          });
+          this.eq((Ωilxt_192 = function() {
+            return parse_jump('..]');
+          }), {
+            jump_spec: '..]',
+            inex: 'exclusive',
+            action: 'back',
+            target: '..'
+          });
+          this.eq((Ωilxt_193 = function() {
+            return parse_jump(']..');
+          }), {
+            jump_spec: ']..',
+            inex: 'inclusive',
+            action: 'back',
+            target: '..'
+          });
+          this.eq((Ωilxt_194 = function() {
+            return parse_jump('mylevel');
+          }), {
+            jump_spec: 'mylevel',
+            inex: 'bare',
+            action: 'fore',
+            target: 'mylevel'
+          });
+          this.eq((Ωilxt_195 = function() {
+            return parse_jump('[mylevel');
+          }), {
+            jump_spec: '[mylevel',
+            inex: 'inclusive',
+            action: 'fore',
+            target: 'mylevel'
+          });
+          this.eq((Ωilxt_196 = function() {
+            return parse_jump('mylevel[');
+          }), {
+            jump_spec: 'mylevel[',
+            inex: 'exclusive',
+            action: 'fore',
+            target: 'mylevel'
+          });
+          this.throws((Ωilxt_197 = function() {
+            return parse_jump('[mylevel[');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_198 = function() {
+            return parse_jump('[mylevel]');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_199 = function() {
+            return parse_jump(']mylevel');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_200 = function() {
+            return parse_jump('[..');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_201 = function() {
+            return parse_jump('[..]');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_202 = function() {
+            return parse_jump('..[');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_203 = function() {
+            return parse_jump('[...');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_204 = function() {
+            return parse_jump('...');
+          }), /encountered illegal jump spec/);
+          this.throws((Ωilxt_205 = function() {
+            return parse_jump('%');
+          }), /encountered illegal jump spec/);
+          return this.throws((Ωilxt_206 = function() {
+            return parse_jump('my-name');
+          }), /encountered illegal jump spec/);
+        })();
+        //...................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
       demo_in_and_exclusive_levels: function() {
         var Grammar;
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var first, g, i, len, lexeme, matcher, number, probes_and_matchers, source, Ωilxt_187;
+          var first, g, i, len, lexeme, matcher, number, probes_and_matchers, source, Ωilxt_208;
           g = new Grammar();
           //...................................................................................................
           first = g.new_level({
@@ -1507,16 +1683,16 @@
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [source, matcher] = probes_and_matchers[i];
             for (lexeme of g.walk_lexemes(source)) {
-              urge('Ωilxt_186', f`${lexeme.fqname}:<20c;${rpr(lexeme.hit)}:<20c;${lexeme.start}:3.0f; :${lexeme.stop}:3.0f;`);
+              urge('Ωilxt_207', f`${lexeme.fqname}:<20c;${rpr(lexeme.hit)}:<20c;${lexeme.start}:3.0f; :${lexeme.stop}:3.0f;`);
             }
-            this.eq((Ωilxt_187 = function() {
+            this.eq((Ωilxt_208 = function() {
               return condense_lexemes(g.get_lexemes(source));
             }), matcher);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
-          var dqstring, first, g, i, len, lexeme, matcher, probes_and_matchers, source, Ωilxt_189;
+          var dqstring, first, g, i, len, lexeme, matcher, probes_and_matchers, source, Ωilxt_210;
           g = new Grammar();
           //...................................................................................................
           first = g.new_level({
@@ -1550,9 +1726,9 @@
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [source, matcher] = probes_and_matchers[i];
             for (lexeme of g.walk_lexemes(source)) {
-              urge('Ωilxt_188', f`${lexeme.fqname}:<20c;${rpr(lexeme.hit)}:<20c;${lexeme.start}:3.0f; :${lexeme.stop}:3.0f;`);
+              urge('Ωilxt_209', f`${lexeme.fqname}:<20c;${rpr(lexeme.hit)}:<20c;${lexeme.start}:3.0f; :${lexeme.stop}:3.0f;`);
             }
-            this.eq((Ωilxt_189 = function() {
+            this.eq((Ωilxt_210 = function() {
               return condense_lexemes(g.get_lexemes(source));
             }), matcher);
           }
@@ -1581,8 +1757,8 @@
         string12 = g.new_level({
           name: 'string12'
         });
-        // debug 'Ωilxt_190', [ string11, string12, ]
-        // console.debug 'Ωilxt_191', [ string11, string12, ]
+        // debug 'Ωilxt_211', [ string11, string12, ]
+        // console.debug 'Ωilxt_212', [ string11, string12, ]
         // process.exit 111
         //.........................................................................................................
         gnd.new_token({
@@ -1630,13 +1806,13 @@
           matcher: rx`[^']*`
         });
         //.........................................................................................................
-        debug('Ωilxt_192', g);
-        debug('Ωilxt_193', g.levels);
-        debug('Ωilxt_194', g.levels.gnd);
-        debug('Ωilxt_195', g.levels.gnd.tokens);
-        debug('Ωilxt_196', gnd);
+        debug('Ωilxt_213', g);
+        debug('Ωilxt_214', g.levels);
+        debug('Ωilxt_215', g.levels.gnd);
+        debug('Ωilxt_216', g.levels.gnd.tokens);
+        debug('Ωilxt_217', gnd);
         for (token of gnd) {
-          debug('Ωilxt_197', token);
+          debug('Ωilxt_218', token);
         }
         //.........................................................................................................
         show_lexeme = function(lexeme) {
@@ -1644,13 +1820,13 @@
           ({name, fqname, start, stop, hit, jump, jump_spec, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
           jump_rpr = jump_spec != null ? jump_spec : '';
-          return urge('Ωilxt_198', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          return urge('Ωilxt_219', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
         };
         //.........................................................................................................
         sources = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
         for (source of sources) {
-          info('Ωilxt_199', rpr(source));
+          info('Ωilxt_220', rpr(source));
           for (lexeme of g.walk_lexemes(source)) {
             show_lexeme(lexeme);
           }
@@ -1669,12 +1845,14 @@
         throw_on_error: false
       })).test(this.interlex_tasks);
       // ( new Test { throw_on_error: true, } ).test { illegal_to_declare_jump_to_same_level: @interlex_tasks.levels.illegal_to_declare_jump_to_same_level, }
+      // ( new Test { throw_on_error: true, } ).test { demo_in_and_exclusive_levels: @interlex_tasks.levels.demo_in_and_exclusive_levels, }
       (new Test({
         throw_on_error: true
       })).test({
-        demo_in_and_exclusive_levels: this.interlex_tasks.levels.demo_in_and_exclusive_levels
+        demo_parse_jumps: this.interlex_tasks.levels.demo_parse_jumps
       });
-      (() => {})();      // ( new Test { throw_on_error: true, } ).test { new_implementation: @interlex_tasks.regexes.new_implementation, }
+      (() => {})();      // ( new Test { throw_on_error: true, } ).test { all_strategies_refuse_empty_matches: @interlex_tasks.strategies.all_strategies_refuse_empty_matches, }
+      // ( new Test { throw_on_error: true, } ).test { new_implementation: @interlex_tasks.regexes.new_implementation, }
       // ( new Test { throw_on_error: true, } ).test { can_use_zero_length_matchers: @interlex_tasks.basics.can_use_zero_length_matchers, }
       // ( new Test { throw_on_error: true, } ).test { sort_lexemes_by_length_dec: @interlex_tasks.internals.sort_lexemes_by_length_dec, }
       // ( new Test { throw_on_error: true, } ).test { demo: @interlex_tasks.demo.demo, }
@@ -1682,19 +1860,19 @@
       // demo_jsidentifier()
       return f = function() {
         var match;
-        help('Ωilxt_200', Array.from('a🈯z'));
-        help('Ωilxt_201', 'a🈯z'.split(/(.)/u));
-        help('Ωilxt_202', 'a🈯z'.split(/(.)/v));
-        help('Ωilxt_203', 'a🈯z'.split(/(.)/d));
-        help('Ωilxt_204', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
-        help('Ωilxt_205', {...match.groups});
-        return help('Ωilxt_206', {...match.indices.groups});
+        help('Ωilxt_221', Array.from('a🈯z'));
+        help('Ωilxt_222', 'a🈯z'.split(/(.)/u));
+        help('Ωilxt_223', 'a🈯z'.split(/(.)/v));
+        help('Ωilxt_224', 'a🈯z'.split(/(.)/d));
+        help('Ωilxt_225', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
+        help('Ωilxt_226', {...match.groups});
+        return help('Ωilxt_227', {...match.indices.groups});
       };
     })();
   }
 
-  // help 'Ωilxt_207', rx"."
-// help 'Ωilxt_208', rx/./
+  // help 'Ωilxt_228', rx"."
+// help 'Ωilxt_229', rx/./
 
 }).call(this);
 
