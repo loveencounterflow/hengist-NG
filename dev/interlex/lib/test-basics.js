@@ -1681,35 +1681,40 @@
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: 'Bob said '
+            hit: 'Bob said ',
+            pos: '0:9'
           });
           this.eq((Ωilxt_202 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
-            hit: '"'
+            hit: '"',
+            pos: '9:10'
           });
           this.eq((Ωilxt_203 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
-            hit: 'wow'
+            hit: 'wow',
+            pos: '10:13'
           });
           this.eq((Ωilxt_204 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
-            hit: '"'
+            hit: '"',
+            pos: '13:14'
           });
           this.eq((Ωilxt_205 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: '.'
+            hit: '.',
+            pos: '14:15'
           });
           this.eq((Ωilxt_206 = function() {
             return lexemes.next().done;
@@ -1776,35 +1781,40 @@
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: 'Bob said '
+            hit: 'Bob said ',
+            pos: '0:9'
           });
           this.eq((Ωilxt_212 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
-            hit: '"'
+            hit: '"',
+            pos: '9:10'
           });
           this.eq((Ωilxt_213 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
-            hit: 'wow'
+            hit: 'wow',
+            pos: '10:13'
           });
           this.eq((Ωilxt_214 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
-            hit: '"'
+            hit: '"',
+            pos: '13:14'
           });
           this.eq((Ωilxt_215 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: '.'
+            hit: '.',
+            pos: '14:15'
           });
           this.eq((Ωilxt_216 = function() {
             return lexemes.next().done;
@@ -1871,35 +1881,40 @@
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: 'Bob said '
+            hit: 'Bob said ',
+            pos: '0:9'
           });
           this.eq((Ωilxt_222 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
-            hit: '"'
+            hit: '"',
+            pos: '9:10'
           });
           this.eq((Ωilxt_223 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
-            hit: 'wow'
+            hit: 'wow',
+            pos: '10:13'
           });
           this.eq((Ωilxt_224 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
-            hit: '"'
+            hit: '"',
+            pos: '13:14'
           });
           this.eq((Ωilxt_225 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: '.'
+            hit: '.',
+            pos: '14:15'
           });
           this.eq((Ωilxt_226 = function() {
             return lexemes.next().done;
@@ -1966,35 +1981,40 @@
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: 'Bob said '
+            hit: 'Bob said ',
+            pos: '0:9'
           });
           this.eq((Ωilxt_232 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
-            hit: '"'
+            hit: '"',
+            pos: '9:10'
           });
           this.eq((Ωilxt_233 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
-            hit: 'wow'
+            hit: 'wow',
+            pos: '10:13'
           });
           this.eq((Ωilxt_234 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
-            hit: '"'
+            hit: '"',
+            pos: '13:14'
           });
           this.eq((Ωilxt_235 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
-            hit: '.'
+            hit: '.',
+            pos: '14:15'
           });
           this.eq((Ωilxt_236 = function() {
             return lexemes.next().done;
@@ -2141,49 +2161,56 @@
           }), {
             level: 'gnd',
             fqname: 'gnd.before_digits',
-            hit: ''
+            hit: '',
+            pos: '0:0'
           });
           this.eq((Ωilxt_243 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.integer',
-            hit: '99'
+            hit: '99',
+            pos: '0:2'
           });
           this.eq((Ωilxt_244 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.unit',
-            hit: 'kg'
+            hit: 'kg',
+            pos: '2:4'
           });
           this.eq((Ωilxt_245 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'gnd',
             fqname: 'gnd.before_digits',
-            hit: ''
+            hit: '',
+            pos: '4:4'
           });
           this.eq((Ωilxt_246 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.integer',
-            hit: '23'
+            hit: '23',
+            pos: '4:6'
           });
           this.eq((Ωilxt_247 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.unit',
-            hit: 'mm'
+            hit: 'mm',
+            pos: '6:8'
           });
           return this.eq((Ωilxt_248 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: null,
             fqname: null,
-            hit: null
+            hit: null,
+            pos: null
           });
         })();
         //.....................................................................................................

@@ -791,11 +791,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_200 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_201 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ' }
-        @eq ( Ωilxt_202 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"' }
-        @eq ( Ωilxt_203 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow' }
-        @eq ( Ωilxt_204 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"' }
-        @eq ( Ωilxt_205 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.' }
+        @eq ( Ωilxt_201 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ',  pos: '0:9',   }
+        @eq ( Ωilxt_202 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',          pos: '9:10',  }
+        @eq ( Ωilxt_203 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',        pos: '10:13', }
+        @eq ( Ωilxt_204 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',          pos: '13:14', }
+        @eq ( Ωilxt_205 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',          pos: '14:15', }
         @eq ( Ωilxt_206 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -817,11 +817,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_210 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_211 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', }
-        @eq ( Ωilxt_212 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         }
-        @eq ( Ωilxt_213 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       }
-        @eq ( Ωilxt_214 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         }
-        @eq ( Ωilxt_215 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         }
+        @eq ( Ωilxt_211 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
+        @eq ( Ωilxt_212 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '9:10',  }
+        @eq ( Ωilxt_213 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
+        @eq ( Ωilxt_214 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '13:14', }
+        @eq ( Ωilxt_215 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         pos: '14:15', }
         @eq ( Ωilxt_216 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -843,11 +843,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_220 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_221 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', }
-        @eq ( Ωilxt_222 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',         }
-        @eq ( Ωilxt_223 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       }
-        @eq ( Ωilxt_224 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         }
-        @eq ( Ωilxt_225 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         }
+        @eq ( Ωilxt_221 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
+        @eq ( Ωilxt_222 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',         pos: '9:10',  }
+        @eq ( Ωilxt_223 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
+        @eq ( Ωilxt_224 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '13:14', }
+        @eq ( Ωilxt_225 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         pos: '14:15', }
         @eq ( Ωilxt_226 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -869,11 +869,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_230 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_231 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', }
-        @eq ( Ωilxt_232 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         }
-        @eq ( Ωilxt_233 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       }
-        @eq ( Ωilxt_234 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',         }
-        @eq ( Ωilxt_235 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         }
+        @eq ( Ωilxt_231 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
+        @eq ( Ωilxt_232 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '9:10',  }
+        @eq ( Ωilxt_233 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
+        @eq ( Ωilxt_234 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',         pos: '13:14', }
+        @eq ( Ωilxt_235 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         pos: '14:15', }
         @eq ( Ωilxt_236 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -938,13 +938,13 @@ abbrlx = ( lxm ) -> {
           urge 'Ωilxt_241', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
           return lxm
         lexemes = g.walk_lexemes "99kg23mm"
-        @eq ( Ωilxt_242 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        @eq ( Ωilxt_243 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
-        @eq ( Ωilxt_244 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
-        @eq ( Ωilxt_245 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        @eq ( Ωilxt_246 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
-        @eq ( Ωilxt_247 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
-        @eq ( Ωilxt_248 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
+        @eq ( Ωilxt_242 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '0:0', }
+        @eq ( Ωilxt_243 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99', pos: '0:2', }
+        @eq ( Ωilxt_244 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg', pos: '2:4', }
+        @eq ( Ωilxt_245 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '4:4', }
+        @eq ( Ωilxt_246 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23', pos: '4:6', }
+        @eq ( Ωilxt_247 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm', pos: '6:8', }
+        @eq ( Ωilxt_248 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null, pos: null, }
       #.....................................................................................................
       return null
 
