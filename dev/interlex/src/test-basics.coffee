@@ -29,7 +29,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #===========================================================================================================
 condense_lexemes = ( lexemes ) ->
   lexemes = [ lexemes, ] unless Array.isArray lexemes
-  ( "#{lexeme.fqname}#{rpr lexeme.hit}" for lexeme from lexemes ).join '|'
+  ( "#{lexeme?.fqname ? null}#{rpr lexeme?.hit ? null}" for lexeme from lexemes ).join '|'
+
+#-----------------------------------------------------------------------------------------------------------
+abbrlx = ( lexeme ) -> {
+  level:  lexeme?.level?.name ? null,
+  fqname: lexeme?.fqname      ? null,
+  hit:    lexeme?.hit         ? null, }
 
 
 ############################################################################################################
@@ -284,7 +290,7 @@ condense_lexemes = ( lexemes ) ->
         for [ probe, matcher, ] from probes_and_matchers
           info 'Ωilxt_130', rpr probe
           lexemes = g.get_lexemes probe
-          urge 'Ωilxt_131', lexemes
+          # urge 'Ωilxt_131', lexemes
           @eq ( Ωilxt_132 = -> lexemes[ 0 ].line_nr ), matcher
         return null
       #.....................................................................................................
@@ -304,9 +310,9 @@ condense_lexemes = ( lexemes ) ->
           info 'Ωilxt_137', rpr probe
           lexemes = g.get_lexemes probe
           # urge 'Ωilxt_138', lexemes
-          urge 'Ωilxt_139', g
-          urge 'Ωilxt_140', g.cfg
-          urge 'Ωilxt_141', g.state
+          # urge 'Ωilxt_139', g
+          # urge 'Ωilxt_140', g.cfg
+          # urge 'Ωilxt_141', g.state
           @eq ( Ωilxt_142 = -> lexemes[ 0 ].test_id ), matcher
         return null
       #.....................................................................................................
@@ -765,7 +771,6 @@ condense_lexemes = ( lexemes ) ->
     #-------------------------------------------------------------------------------------------------------
     carrying_and_sticking_jumps: ->
       { Grammar } = require '../../../apps/interlex'
-      abbrlx      = ( lexeme ) -> { level: lexeme.level.name, fqname: lexeme.fqname, hit: lexeme.hit, }
       #.....................................................................................................
       do =>
         ### forejump carries, backjump sticks ###
@@ -911,6 +916,37 @@ condense_lexemes = ( lexemes ) ->
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    can_use_zero_length_matchers_with_jumps_2: ->
+      { Grammar
+        rx      } = require '../../../apps/interlex'
+      #-----------------------------------------------------------------------------------------------------
+      do =>
+        g         = new Grammar { name: 'g', }
+        gnd       = g.new_level { name: 'gnd', }
+        number    = g.new_level { name: 'number', }
+        #...................................................................................................
+        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number',  }
+        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                         }
+        #...................................................................................................
+        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,           }
+        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
+        #...................................................................................................
+        show    = ( lxm ) ->
+          urge 'Ωilxt_242', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
+          return lxm
+        lexemes = g.walk_lexemes "99kg23mm"
+        @eq ( Ωilxt_243 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
+        @eq ( Ωilxt_244 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
+        @eq ( Ωilxt_245 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
+        @eq ( Ωilxt_246 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
+        @eq ( Ωilxt_247 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
+        @eq ( Ωilxt_248 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
+        @eq ( Ωilxt_249 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
+      #.....................................................................................................
+      return null
+
   #=========================================================================================================
   demo:
 
@@ -923,8 +959,8 @@ condense_lexemes = ( lexemes ) ->
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       string12  = g.new_level { name: 'string12', }
-      # debug 'Ωilxt_242', [ string11, string12, ]
-      # console.debug 'Ωilxt_243', [ string11, string12, ]
+      # debug 'Ωilxt_250', [ string11, string12, ]
+      # console.debug 'Ωilxt_251', [ string11, string12, ]
       # process.exit 111
       #.........................................................................................................
       gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
@@ -939,12 +975,12 @@ condense_lexemes = ( lexemes ) ->
       string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..!', }
       string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
       #.........................................................................................................
-      debug 'Ωilxt_244', g
-      debug 'Ωilxt_245', g.levels
-      debug 'Ωilxt_246', g.levels.gnd
-      debug 'Ωilxt_247', g.levels.gnd.tokens
-      debug 'Ωilxt_248', gnd
-      debug 'Ωilxt_249', token for token from gnd
+      # debug 'Ωilxt_252', g
+      # debug 'Ωilxt_253', g.levels
+      # debug 'Ωilxt_254', g.levels.gnd
+      # debug 'Ωilxt_255', g.levels.gnd.tokens
+      # debug 'Ωilxt_256', gnd
+      # debug 'Ωilxt_257', token for token from gnd
       #.........................................................................................................
       show_lexeme = ( lexeme ) ->
         { name
@@ -957,7 +993,7 @@ condense_lexemes = ( lexemes ) ->
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
         jump_rpr    = jump_spec ? ''
-        urge 'Ωilxt_250', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        urge 'Ωilxt_258', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
       #.........................................................................................................
       sources = [
         "Alice in Cairo 1912 (approximately)"
@@ -965,7 +1001,7 @@ condense_lexemes = ( lexemes ) ->
         ]
       #.........................................................................................................
       for source from sources
-        info 'Ωilxt_251', rpr source
+        info 'Ωilxt_259', rpr source
         for lexeme from g.walk_lexemes source
           show_lexeme lexeme
       #.........................................................................................................
@@ -974,20 +1010,19 @@ condense_lexemes = ( lexemes ) ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  ( new Test { throw_on_error: false, } ).test @interlex_tasks
-  # ( new Test { throw_on_error: true, } ).test @interlex_tasks
-  ( new Test { throw_on_error: true, } ).test { can_use_zero_length_matchers_with_jumps: @interlex_tasks.levels.can_use_zero_length_matchers_with_jumps, }
-  # ( new Test { throw_on_error: true, } ).test { demo: @interlex_tasks.demo.demo, }
+  gt_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
+  ( new Test gt_cfg ).test @interlex_tasks
+  ( new Test gt_cfg ).test { can_use_zero_length_matchers_with_jumps_2: @interlex_tasks.levels.can_use_zero_length_matchers_with_jumps_2, }
   do =>
   f = ->
-    help 'Ωilxt_252', Array.from 'a🈯z'
-    help 'Ωilxt_253', 'a🈯z'.split /(.)/u
-    help 'Ωilxt_254', 'a🈯z'.split( /(.)/v )
-    help 'Ωilxt_255', 'a🈯z'.split( /(.)/d )
-    help 'Ωilxt_256', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
-    help 'Ωilxt_257', { match.groups..., }
-    help 'Ωilxt_258', { match.indices.groups..., }
-    # help 'Ωilxt_259', rx"."
-    # help 'Ωilxt_260', rx/./
+    help 'Ωilxt_260', Array.from 'a🈯z'
+    help 'Ωilxt_261', 'a🈯z'.split /(.)/u
+    help 'Ωilxt_262', 'a🈯z'.split( /(.)/v )
+    help 'Ωilxt_263', 'a🈯z'.split( /(.)/d )
+    help 'Ωilxt_264', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
+    help 'Ωilxt_265', { match.groups..., }
+    help 'Ωilxt_266', { match.indices.groups..., }
+    # help 'Ωilxt_267', rx"."
+    # help 'Ωilxt_268', rx/./
 
 
