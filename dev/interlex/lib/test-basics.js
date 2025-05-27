@@ -315,7 +315,7 @@
     basics: {
       //-------------------------------------------------------------------------------------------------------
       simple_1: function() {
-        var Grammar, ILX, Level, Lexeme, Token, g, gnd, internals, number_lx, number_tk, number_tk_matcher, rx, Ωilxt_100, Ωilxt_101, Ωilxt_102, Ωilxt__64, Ωilxt__65, Ωilxt__66, Ωilxt__67, Ωilxt__68, Ωilxt__69, Ωilxt__70, Ωilxt__71, Ωilxt__72, Ωilxt__73, Ωilxt__74, Ωilxt__75, Ωilxt__76, Ωilxt__77, Ωilxt__78, Ωilxt__79, Ωilxt__80, Ωilxt__81, Ωilxt__82, Ωilxt__83, Ωilxt__84, Ωilxt__85, Ωilxt__86, Ωilxt__87, Ωilxt__88, Ωilxt__89, Ωilxt__90, Ωilxt__91, Ωilxt__92, Ωilxt__93, Ωilxt__94, Ωilxt__95, Ωilxt__96, Ωilxt__97, Ωilxt__98, Ωilxt__99;
+        var Grammar, ILX, Level, Lexeme, Token, g, gnd, internals, number_lx, number_tk, number_tk_matcher, rx, Ωilxt_100, Ωilxt_101, Ωilxt__64, Ωilxt__65, Ωilxt__66, Ωilxt__67, Ωilxt__68, Ωilxt__69, Ωilxt__70, Ωilxt__71, Ωilxt__72, Ωilxt__73, Ωilxt__74, Ωilxt__75, Ωilxt__76, Ωilxt__77, Ωilxt__78, Ωilxt__79, Ωilxt__80, Ωilxt__81, Ωilxt__82, Ωilxt__83, Ωilxt__84, Ωilxt__85, Ωilxt__86, Ωilxt__87, Ωilxt__88, Ωilxt__89, Ωilxt__90, Ωilxt__91, Ωilxt__92, Ωilxt__93, Ωilxt__94, Ωilxt__95, Ωilxt__96, Ωilxt__97, Ωilxt__98, Ωilxt__99;
         ILX = require('../../../apps/interlex');
         ({Grammar, Level, Token, Lexeme, rx, internals} = ILX);
         //===========================================================================================================
@@ -397,60 +397,57 @@
         this.eq((Ωilxt__84 = function() {
           return number_tk.jump;
         }), null);
-        this.eq((Ωilxt__85 = function() {
-          return number_tk.jump_spec;
-        }), null);
         //.....................................................................................................
-        this.eq((Ωilxt__86 = function() {
+        this.eq((Ωilxt__85 = function() {
           return (number_lx = number_tk.match_at(0, '398ä')) != null;
         }), true);
-        this.eq((Ωilxt__87 = function() {
+        this.eq((Ωilxt__86 = function() {
           return number_lx instanceof Lexeme;
         }), true);
-        this.eq((Ωilxt__88 = function() {
+        this.eq((Ωilxt__87 = function() {
           return number_lx.name;
         }), 'number');
-        this.eq((Ωilxt__89 = function() {
+        this.eq((Ωilxt__88 = function() {
           return number_lx.fqname;
         }), 'gnd.number');
-        this.eq((Ωilxt__90 = function() {
+        this.eq((Ωilxt__89 = function() {
           return number_lx.level;
         }), gnd);
-        this.eq((Ωilxt__91 = function() {
+        this.eq((Ωilxt__90 = function() {
           return number_lx.hit;
         }), '398');
-        this.eq((Ωilxt__92 = function() {
+        this.eq((Ωilxt__91 = function() {
           return number_lx.start;
         }), 0);
-        this.eq((Ωilxt__93 = function() {
+        this.eq((Ωilxt__92 = function() {
           return number_lx.stop;
         }), 3);
         //.....................................................................................................
-        this.eq((Ωilxt__94 = function() {
+        this.eq((Ωilxt__93 = function() {
           return (number_lx = number_tk.match_at(7, 'abcdefgh00102xyz')) != null;
         }), false);
-        this.eq((Ωilxt__95 = function() {
+        this.eq((Ωilxt__94 = function() {
           return (number_lx = number_tk.match_at(8, 'abcdefgh00102xyz')) != null;
         }), true);
-        this.eq((Ωilxt__96 = function() {
+        this.eq((Ωilxt__95 = function() {
           return number_lx instanceof Lexeme;
         }), true);
-        this.eq((Ωilxt__97 = function() {
+        this.eq((Ωilxt__96 = function() {
           return number_lx.name;
         }), 'number');
-        this.eq((Ωilxt__98 = function() {
+        this.eq((Ωilxt__97 = function() {
           return number_lx.fqname;
         }), 'gnd.number');
-        this.eq((Ωilxt__99 = function() {
+        this.eq((Ωilxt__98 = function() {
           return number_lx.level;
         }), gnd);
-        this.eq((Ωilxt_100 = function() {
+        this.eq((Ωilxt__99 = function() {
           return number_lx.hit;
         }), '00102');
-        this.eq((Ωilxt_101 = function() {
+        this.eq((Ωilxt_100 = function() {
           return number_lx.start;
         }), 8);
-        this.eq((Ωilxt_102 = function() {
+        this.eq((Ωilxt_101 = function() {
           return number_lx.stop;
         }), 13);
         //.....................................................................................................
@@ -458,42 +455,42 @@
       },
       //-------------------------------------------------------------------------------------------------------
       new_regex_tag: function() {
-        var internals, new_regex_tag, regex, rx, Ωilxt_103, Ωilxt_104, Ωilxt_105, Ωilxt_106, Ωilxt_107, Ωilxt_108, Ωilxt_109, Ωilxt_110, Ωilxt_111, Ωilxt_112, Ωilxt_113;
+        var internals, new_regex_tag, regex, rx, Ωilxt_102, Ωilxt_103, Ωilxt_104, Ωilxt_105, Ωilxt_106, Ωilxt_107, Ωilxt_108, Ωilxt_109, Ωilxt_110, Ωilxt_111, Ωilxt_112;
         ({rx, regex, internals, new_regex_tag} = require('../../../apps/interlex'));
         //.....................................................................................................
-        this.eq((Ωilxt_103 = function() {
+        this.eq((Ωilxt_102 = function() {
           return typeof new_regex_tag('dy');
         }), 'function');
-        this.eq((Ωilxt_104 = function() {
+        this.eq((Ωilxt_103 = function() {
           return typeof (new_regex_tag('dy')).si;
         }), 'function');
-        this.eq((Ωilxt_105 = function() {
+        this.eq((Ωilxt_104 = function() {
           return ((new_regex_tag('dyis'))`[a-z]`) instanceof RegExp;
         }), true);
         //.....................................................................................................
-        this.eq((Ωilxt_106 = function() {
+        this.eq((Ωilxt_105 = function() {
           return (new_regex_tag('dyis'))`[a-z]`;
         }), /[a-z]/disvy);
-        this.eq((Ωilxt_107 = function() {
+        this.eq((Ωilxt_106 = function() {
           return (new_regex_tag('dy')).si`[a-z]`;
         }), /[a-z]/disvy);
-        this.eq((Ωilxt_108 = function() {
+        this.eq((Ωilxt_107 = function() {
           return (new_regex_tag('dys')).si`[a-z]`;
         }), /[a-z]/disvy);
-        this.eq((Ωilxt_109 = function() {
+        this.eq((Ωilxt_108 = function() {
           return (new_regex_tag('dys')).i`[a-z]`;
         }), /[a-z]/disvy);
-        this.eq((Ωilxt_110 = function() {
+        this.eq((Ωilxt_109 = function() {
           return (new_regex_tag('dysi'))`[a-z]`;
         }), /[a-z]/disvy);
-        this.eq((Ωilxt_111 = function() {
+        this.eq((Ωilxt_110 = function() {
           return (new_regex_tag('v')).si`[a-z]`;
         }), /[a-z]/disvy);
         //.....................................................................................................
-        this.throws((Ωilxt_112 = function() {
+        this.throws((Ωilxt_111 = function() {
           return (new_regex_tag('dy')).ab`[a-z]`;
         }), /illegal or duplicate flags/);
-        this.throws((Ωilxt_113 = function() {
+        this.throws((Ωilxt_112 = function() {
           return (new_regex_tag('dyab'))`[a-z]`;
         }), /illegal or duplicate flags/);
         //.....................................................................................................
@@ -501,28 +498,28 @@
       },
       //-------------------------------------------------------------------------------------------------------
       normalize_regex: function() {
-        var internals, normalize_regex, Ωilxt_114, Ωilxt_115, Ωilxt_116, Ωilxt_117, Ωilxt_118, Ωilxt_119, Ωilxt_120;
+        var internals, normalize_regex, Ωilxt_113, Ωilxt_114, Ωilxt_115, Ωilxt_116, Ωilxt_117, Ωilxt_118, Ωilxt_119;
         ({internals} = require('../../../apps/interlex'));
         ({normalize_regex} = internals);
-        this.eq((Ωilxt_114 = function() {
+        this.eq((Ωilxt_113 = function() {
           return typeof normalize_regex;
         }), 'function');
-        this.eq((Ωilxt_115 = function() {
+        this.eq((Ωilxt_114 = function() {
           return normalize_regex(/[a-z]/ig);
         }), /[a-z]/dgivy);
-        this.eq((Ωilxt_116 = function() {
+        this.eq((Ωilxt_115 = function() {
           return normalize_regex(/[a-z]/i);
         }), /[a-z]/divy);
-        this.eq((Ωilxt_117 = function() {
+        this.eq((Ωilxt_116 = function() {
           return normalize_regex(/[a-z]/u);
         }), /[a-z]/dvy);
-        this.eq((Ωilxt_118 = function() {
+        this.eq((Ωilxt_117 = function() {
           return normalize_regex(/[a-z]/gv);
         }), /[a-z]/dgvy);
-        this.eq((Ωilxt_119 = function() {
+        this.eq((Ωilxt_118 = function() {
           return normalize_regex(/[a-z]/gu);
         }), /[a-z]/dgvy);
-        this.eq((Ωilxt_120 = function() {
+        this.eq((Ωilxt_119 = function() {
           return normalize_regex(/[a-z]/v);
         }), /[a-z]/dvy);
         //.....................................................................................................
@@ -530,19 +527,19 @@
       },
       //-------------------------------------------------------------------------------------------------------
       rx_flags: function() {
-        var rx, Ωilxt_121, Ωilxt_122, Ωilxt_124, Ωilxt_125;
+        var rx, Ωilxt_120, Ωilxt_121, Ωilxt_123, Ωilxt_124;
         ({rx} = require('../../../apps/interlex'));
-        this.eq((Ωilxt_121 = function() {
+        this.eq((Ωilxt_120 = function() {
           return (rx`x`).flags;
         }), 'dvy');
-        this.eq((Ωilxt_122 = function() {
+        this.eq((Ωilxt_121 = function() {
           return (rx.si`x`).flags;
         }), 'disvy');
-        // @eq ( Ωilxt_123 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
-        this.eq((Ωilxt_124 = function() {
+        // @eq ( Ωilxt_122 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
+        this.eq((Ωilxt_123 = function() {
           return (rx.y`x`).flags;
         }), 'dvy');
-        this.eq((Ωilxt_125 = function() {
+        this.eq((Ωilxt_124 = function() {
           return rpr(rx`[abc]+`);
         }), '/[abc]+/dvy');
         //.....................................................................................................
@@ -584,66 +581,66 @@
           return g;
         };
         (() => {          //.....................................................................................................
-          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_126, Ωilxt_127, Ωilxt_128, Ωilxt_129, Ωilxt_132;
+          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_125, Ωilxt_126, Ωilxt_127, Ωilxt_128, Ωilxt_131;
           g = new_grammar({
             emit_signals: false
           });
-          this.eq((Ωilxt_126 = function() {
+          this.eq((Ωilxt_125 = function() {
             return g.cfg.counter_name;
           }), 'line_nr');
-          this.eq((Ωilxt_127 = function() {
+          this.eq((Ωilxt_126 = function() {
             return g.cfg.counter_step;
           }), +1);
-          this.eq((Ωilxt_128 = function() {
+          this.eq((Ωilxt_127 = function() {
             return g.cfg.counter_value;
           }), 1);
-          this.eq((Ωilxt_129 = function() {
+          this.eq((Ωilxt_128 = function() {
             return g.state.count;
           }), 1);
           probes_and_matchers = [["1st line", 1], ["2nd line", 2], ["3rd line", 3], ["4th line (and EOF)", 4]];
 //...................................................................................................
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
-            info('Ωilxt_130', rpr(probe));
+            info('Ωilxt_129', rpr(probe));
             lexemes = g.get_lexemes(probe);
-            // urge 'Ωilxt_131', lexemes
-            this.eq((Ωilxt_132 = function() {
+            // urge 'Ωilxt_130', lexemes
+            this.eq((Ωilxt_131 = function() {
               return lexemes[0].line_nr;
             }), matcher);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_133, Ωilxt_134, Ωilxt_135, Ωilxt_136, Ωilxt_142;
+          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_132, Ωilxt_133, Ωilxt_134, Ωilxt_135, Ωilxt_141;
           g = new_grammar({
             counter_name: 'test_id',
             counter_step: -1,
             counter_value: 10,
             emit_signals: false
           });
-          this.eq((Ωilxt_133 = function() {
+          this.eq((Ωilxt_132 = function() {
             return g.cfg.counter_name;
           }), 'test_id');
-          this.eq((Ωilxt_134 = function() {
+          this.eq((Ωilxt_133 = function() {
             return g.cfg.counter_step;
           }), -1);
-          this.eq((Ωilxt_135 = function() {
+          this.eq((Ωilxt_134 = function() {
             return g.cfg.counter_value;
           }), 10);
-          this.eq((Ωilxt_136 = function() {
+          this.eq((Ωilxt_135 = function() {
             return g.state.count;
           }), 10);
           probes_and_matchers = [["1st line", 10], ["2nd line", 9], ["3rd line", 8], ["4th line (and EOF)", 7]];
 //...................................................................................................
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
-            info('Ωilxt_137', rpr(probe));
+            info('Ωilxt_136', rpr(probe));
             lexemes = g.get_lexemes(probe);
-            // urge 'Ωilxt_138', lexemes
-            // urge 'Ωilxt_139', g
-            // urge 'Ωilxt_140', g.cfg
-            // urge 'Ωilxt_141', g.state
-            this.eq((Ωilxt_142 = function() {
+            // urge 'Ωilxt_137', lexemes
+            // urge 'Ωilxt_138', g
+            // urge 'Ωilxt_139', g.cfg
+            // urge 'Ωilxt_140', g.state
+            this.eq((Ωilxt_141 = function() {
               return lexemes[0].test_id;
             }), matcher);
           }
@@ -689,19 +686,19 @@
         ];
         //-----------------------------------------------------------------------------------------------------
         test = (g) => {
-          var lexemes, matcher, probe, x, Ωilxt_143, Ωilxt_144, Ωilxt_145;
+          var lexemes, matcher, probe, x, Ωilxt_142, Ωilxt_143, Ωilxt_144;
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
             g.reset_count();
             lexemes = g.get_lexemes(probe);
-            this.eq((Ωilxt_143 = function() {
+            this.eq((Ωilxt_142 = function() {
               return condense_lexemes(lexemes);
             }), matcher.condensed);
-            this.eq((Ωilxt_144 = function() {
+            this.eq((Ωilxt_143 = function() {
               return lexemes.length;
             }), matcher.length);
             g.reset_count();
-            this.eq((Ωilxt_145 = function() {
+            this.eq((Ωilxt_144 = function() {
               return [...(g.walk_lexemes(probe))];
             }), lexemes);
           }
@@ -867,7 +864,7 @@
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
           /* strategy 'first', shortest tokens first */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_146;
+          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_145;
           probes_and_matchers = [[[0, 'abcd1234'], "first.one_letter'a'"], [[1, 'abcd1234'], "first.one_letter'b'"], [[2, 'abcd1234'], "first.one_letter'c'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.one_digit'1'"], [[5, 'abcd1234'], "first.one_digit'2'"], [[0, '123abc'], "first.one_digit'1'"], [[1, '123abc'], "first.one_digit'2'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.one_letter'a'"], [[4, '123abc'], "first.one_letter'b'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar();
@@ -909,7 +906,7 @@
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [[position, source], matcher] = probes_and_matchers[i];
-            this.eq((Ωilxt_146 = function() {
+            this.eq((Ωilxt_145 = function() {
               return condense_lexemes(first.match_first_at(position, source));
             }), matcher);
           }
@@ -917,6 +914,56 @@
         })();
         (() => {          //.....................................................................................................
           /* strategy 'first', longest tokens first */
+          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_146;
+          probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
+          //...................................................................................................
+          g = new Grammar();
+          first = g.new_level({
+            name: 'first'
+          });
+          first.new_token({
+            name: 'four_digits',
+            matcher: /[0-9]{4}/i
+          });
+          first.new_token({
+            name: 'three_digits',
+            matcher: /[0-9]{3}/i
+          });
+          first.new_token({
+            name: 'two_digits',
+            matcher: /[0-9]{2}/i
+          });
+          first.new_token({
+            name: 'one_digit',
+            matcher: /[0-9]{1}/i
+          });
+          first.new_token({
+            name: 'four_letters',
+            matcher: /[a-z]{4}/i
+          });
+          first.new_token({
+            name: 'three_letters',
+            matcher: /[a-z]{3}/i
+          });
+          first.new_token({
+            name: 'two_letters',
+            matcher: /[a-z]{2}/i
+          });
+          first.new_token({
+            name: 'one_letter',
+            matcher: /[a-z]{1}/i
+          });
+//.....................................................................................................
+          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
+            [[position, source], matcher] = probes_and_matchers[i];
+            this.eq((Ωilxt_146 = function() {
+              return condense_lexemes(first.match_first_at(position, source));
+            }), matcher);
+          }
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          /* strategy 'longest', shortest tokens first */
           var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_147;
           probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
@@ -925,48 +972,48 @@
             name: 'first'
           });
           first.new_token({
-            name: 'four_digits',
-            matcher: /[0-9]{4}/i
-          });
-          first.new_token({
-            name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            name: 'one_digit',
+            matcher: /[0-9]{1}/i
           });
           first.new_token({
             name: 'two_digits',
             matcher: /[0-9]{2}/i
           });
           first.new_token({
-            name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            name: 'three_digits',
+            matcher: /[0-9]{3}/i
           });
           first.new_token({
-            name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            name: 'four_digits',
+            matcher: /[0-9]{4}/i
           });
           first.new_token({
-            name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            name: 'one_letter',
+            matcher: /[a-z]{1}/i
           });
           first.new_token({
             name: 'two_letters',
             matcher: /[a-z]{2}/i
           });
           first.new_token({
-            name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            name: 'three_letters',
+            matcher: /[a-z]{3}/i
+          });
+          first.new_token({
+            name: 'four_letters',
+            matcher: /[a-z]{4}/i
           });
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [[position, source], matcher] = probes_and_matchers[i];
             this.eq((Ωilxt_147 = function() {
-              return condense_lexemes(first.match_first_at(position, source));
+              return condense_lexemes(first.match_longest_at(position, source));
             }), matcher);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
-          /* strategy 'longest', shortest tokens first */
+          /* strategy 'longest', longest tokens first */
           var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_148;
           probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
@@ -975,91 +1022,41 @@
             name: 'first'
           });
           first.new_token({
-            name: 'one_digit',
-            matcher: /[0-9]{1}/i
-          });
-          first.new_token({
-            name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            name: 'four_digits',
+            matcher: /[0-9]{4}/i
           });
           first.new_token({
             name: 'three_digits',
             matcher: /[0-9]{3}/i
           });
           first.new_token({
-            name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            name: 'two_digits',
+            matcher: /[0-9]{2}/i
           });
           first.new_token({
-            name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            name: 'one_digit',
+            matcher: /[0-9]{1}/i
           });
           first.new_token({
-            name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            name: 'four_letters',
+            matcher: /[a-z]{4}/i
           });
           first.new_token({
             name: 'three_letters',
             matcher: /[a-z]{3}/i
           });
           first.new_token({
-            name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            name: 'two_letters',
+            matcher: /[a-z]{2}/i
+          });
+          first.new_token({
+            name: 'one_letter',
+            matcher: /[a-z]{1}/i
           });
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [[position, source], matcher] = probes_and_matchers[i];
             this.eq((Ωilxt_148 = function() {
-              return condense_lexemes(first.match_longest_at(position, source));
-            }), matcher);
-          }
-          return null;
-        })();
-        (() => {          //.....................................................................................................
-          /* strategy 'longest', longest tokens first */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_149;
-          probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
-          //...................................................................................................
-          g = new Grammar();
-          first = g.new_level({
-            name: 'first'
-          });
-          first.new_token({
-            name: 'four_digits',
-            matcher: /[0-9]{4}/i
-          });
-          first.new_token({
-            name: 'three_digits',
-            matcher: /[0-9]{3}/i
-          });
-          first.new_token({
-            name: 'two_digits',
-            matcher: /[0-9]{2}/i
-          });
-          first.new_token({
-            name: 'one_digit',
-            matcher: /[0-9]{1}/i
-          });
-          first.new_token({
-            name: 'four_letters',
-            matcher: /[a-z]{4}/i
-          });
-          first.new_token({
-            name: 'three_letters',
-            matcher: /[a-z]{3}/i
-          });
-          first.new_token({
-            name: 'two_letters',
-            matcher: /[a-z]{2}/i
-          });
-          first.new_token({
-            name: 'one_letter',
-            matcher: /[a-z]{1}/i
-          });
-//.....................................................................................................
-          for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [[position, source], matcher] = probes_and_matchers[i];
-            this.eq((Ωilxt_149 = function() {
               return condense_lexemes(first.match_longest_at(position, source));
             }), matcher);
           }
@@ -1073,7 +1070,7 @@
           shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
           for (_ = i = 1; i <= 100; _ = ++i) {
             (() => {
-              var first, g, j, k, len, len1, matcher, position, source, token_cfg, token_cfgs, Ωilxt_150;
+              var first, g, j, k, len, len1, matcher, position, source, token_cfg, token_cfgs, Ωilxt_149;
               g = new Grammar();
               first = g.new_level({
                 name: 'first'
@@ -1119,7 +1116,7 @@
 //...............................................................................................
               for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
                 [[position, source], matcher] = probes_and_matchers[k];
-                this.eq((Ωilxt_150 = function() {
+                this.eq((Ωilxt_149 = function() {
                   return condense_lexemes(first.match_longest_at(position, source));
                 }), matcher);
               }
@@ -1144,7 +1141,7 @@
           shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
           for (_ = i = 1; i <= 100; _ = ++i) {
             (() => {
-              var first, g, j, k, len, len1, matcher, source, token_cfg, token_cfgs, Ωilxt_151, Ωilxt_152, Ωilxt_153;
+              var first, g, j, k, len, len1, matcher, source, token_cfg, token_cfgs, Ωilxt_150, Ωilxt_151, Ωilxt_152;
               g = new Grammar({
                 strategy: 'longest',
                 emit_signals: false
@@ -1191,15 +1188,15 @@
                 first.new_token(token_cfg);
               }
               //...............................................................................................
-              this.eq((Ωilxt_151 = function() {
+              this.eq((Ωilxt_150 = function() {
                 return g.cfg.strategy;
               }), 'longest');
-              this.eq((Ωilxt_152 = function() {
+              this.eq((Ωilxt_151 = function() {
                 return first.strategy;
               }), 'longest');
               for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
                 [source, matcher] = probes_and_matchers[k];
-                this.eq((Ωilxt_153 = function() {
+                this.eq((Ωilxt_152 = function() {
                   return condense_lexemes(g.get_lexemes(source));
                 }), matcher);
               }
@@ -1211,7 +1208,7 @@
         })();
         (() => {          //.....................................................................................................
           /* strategy 'first', scrambled tokens */
-          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_154, Ωilxt_155, Ωilxt_156;
+          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_153, Ωilxt_154, Ωilxt_155;
           probes_and_matchers = [['abcd1234', "first.two_letters'ab'|first.two_letters'cd'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'"], ['abcde12345', "first.two_letters'ab'|first.two_letters'cd'|first.one_letter'e'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'"], ['abcdef123456', "first.two_letters'ab'|first.two_letters'cd'|first.two_letters'ef'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'|first.one_digit'6'"], ['123abc', "first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.two_letters'ab'|first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar({
@@ -1254,15 +1251,15 @@
             matcher: /[a-z]{3}/i
           });
           //...................................................................................................
-          this.eq((Ωilxt_154 = function() {
+          this.eq((Ωilxt_153 = function() {
             return g.cfg.strategy;
           }), 'first');
-          this.eq((Ωilxt_155 = function() {
+          this.eq((Ωilxt_154 = function() {
             return first.strategy;
           }), 'first');
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [source, matcher] = probes_and_matchers[i];
-            this.eq((Ωilxt_156 = function() {
+            this.eq((Ωilxt_155 = function() {
               return condense_lexemes(g.get_lexemes(source));
             }), matcher);
           }
@@ -1270,7 +1267,7 @@
         })();
         (() => {          //.....................................................................................................
           /* strategy 'first', long tokens first */
-          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_157, Ωilxt_158, Ωilxt_159;
+          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_156, Ωilxt_157, Ωilxt_158;
           probes_and_matchers = [['abcd1234', "first.four_letters'abcd'|first.four_digits'1234'"], ['abcde12345', "first.four_letters'abcd'|first.one_letter'e'|first.four_digits'1234'|first.one_digit'5'"], ['abcdef123456', "first.four_letters'abcd'|first.two_letters'ef'|first.four_digits'1234'|first.two_digits'56'"], ['123abc', "first.three_digits'123'|first.three_letters'abc'"]];
           //...................................................................................................
           g = new Grammar({
@@ -1313,15 +1310,15 @@
             matcher: /[0-9]{1}/i
           });
           //...................................................................................................
-          this.eq((Ωilxt_157 = function() {
+          this.eq((Ωilxt_156 = function() {
             return g.cfg.strategy;
           }), 'first');
-          this.eq((Ωilxt_158 = function() {
+          this.eq((Ωilxt_157 = function() {
             return first.strategy;
           }), 'first');
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [source, matcher] = probes_and_matchers[i];
-            this.eq((Ωilxt_159 = function() {
+            this.eq((Ωilxt_158 = function() {
               return condense_lexemes(g.get_lexemes(source));
             }), matcher);
           }
@@ -1335,9 +1332,30 @@
         var Grammar;
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var g, gnd, Ωilxt_160;
+          var g, gnd, Ωilxt_159;
           g = new Grammar({
             strategy: 'first',
+            emit_signals: false
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          gnd.new_token({
+            name: 'a',
+            matcher: /a/
+          });
+          gnd.new_token({
+            name: 'b',
+            matcher: /(?=b)/
+          });
+          return this.throws((Ωilxt_159 = function() {
+            return g.get_lexemes("ab");
+          }), /encountered zero-length match/);
+        })();
+        (() => {          //.....................................................................................................
+          var g, gnd, Ωilxt_160;
+          g = new Grammar({
+            strategy: 'longest',
             emit_signals: false
           });
           gnd = g.new_level({
@@ -1356,30 +1374,9 @@
           }), /encountered zero-length match/);
         })();
         (() => {          //.....................................................................................................
-          var g, gnd, Ωilxt_161;
-          g = new Grammar({
-            strategy: 'longest',
-            emit_signals: false
-          });
-          gnd = g.new_level({
-            name: 'gnd'
-          });
-          gnd.new_token({
-            name: 'a',
-            matcher: /a/
-          });
-          gnd.new_token({
-            name: 'b',
-            matcher: /(?=b)/
-          });
-          return this.throws((Ωilxt_161 = function() {
-            return g.get_lexemes("ab");
-          }), /encountered zero-length match/);
-        })();
-        (() => {          //.....................................................................................................
           /* We accept the empty match here since while it does get produced as an intermediate value to find
                  the longest match, it does not get passed on as a resulting lexeme. */
-          var g, gnd, Ωilxt_162;
+          var g, gnd, Ωilxt_161;
           g = new Grammar({
             strategy: 'longest',
             emit_signals: false
@@ -1395,7 +1392,7 @@
             name: 'b',
             matcher: /(?=b)/
           });
-          return this.eq((Ωilxt_162 = function() {
+          return this.eq((Ωilxt_161 = function() {
             return condense_lexemes(g.get_lexemes("ab"));
           }), "gnd.a'a'|gnd.a'b'");
         })();
@@ -1410,19 +1407,19 @@
         var Grammar;
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var first, g, Ωilxt_163, Ωilxt_164;
+          var first, g, Ωilxt_162, Ωilxt_163;
           g = new Grammar();
           first = g.new_level({
             name: 'first'
           });
-          this.throws((Ωilxt_163 = function() {
+          this.throws((Ωilxt_162 = function() {
             return first.new_token({
               name: 'digit',
               matcher: /[0-9]/,
               jump: 'first'
             });
           }), /cannot jump to same level/);
-          this.throws((Ωilxt_164 = function() {
+          this.throws((Ωilxt_163 = function() {
             return first.new_token({
               name: 'digit',
               matcher: /[0-9]/,
@@ -1436,107 +1433,107 @@
       },
       //-------------------------------------------------------------------------------------------------------
       parse_jumps: function() {
-        var Token, Ωilxt_165, Ωilxt_166, Ωilxt_167, Ωilxt_168, Ωilxt_169, Ωilxt_170, Ωilxt_171, Ωilxt_172, Ωilxt_173, Ωilxt_174, Ωilxt_175, Ωilxt_176, Ωilxt_177, Ωilxt_178, Ωilxt_179, Ωilxt_180, Ωilxt_181, Ωilxt_182, Ωilxt_183, Ωilxt_184, Ωilxt_185, Ωilxt_186, Ωilxt_187;
+        var Token, Ωilxt_164, Ωilxt_165, Ωilxt_166, Ωilxt_167, Ωilxt_168, Ωilxt_169, Ωilxt_170, Ωilxt_171, Ωilxt_172, Ωilxt_173, Ωilxt_174, Ωilxt_175, Ωilxt_176, Ωilxt_177, Ωilxt_178, Ωilxt_179, Ωilxt_180, Ωilxt_181, Ωilxt_182, Ωilxt_183, Ωilxt_184, Ωilxt_185, Ωilxt_186;
         ({Token} = require('../../../apps/interlex'));
         //.....................................................................................................
-        this.eq((Ωilxt_165 = function() {
+        this.eq((Ωilxt_164 = function() {
           return Token._parse_jump();
         }), null);
-        this.eq((Ωilxt_166 = function() {
+        this.eq((Ωilxt_165 = function() {
           return Token._parse_jump('..');
         }), {
-          jump_spec: '..',
+          spec: '..',
           carry: false,
           action: 'back',
           target: '..'
         });
-        this.eq((Ωilxt_167 = function() {
+        this.eq((Ωilxt_166 = function() {
           return Token._parse_jump('mylevel');
         }), {
-          jump_spec: 'mylevel',
+          spec: 'mylevel',
           carry: false,
           action: 'fore',
           target: 'mylevel'
         });
-        this.eq((Ωilxt_168 = function() {
+        this.eq((Ωilxt_167 = function() {
           return Token._parse_jump('..!');
         }), {
-          jump_spec: '..!',
+          spec: '..!',
           carry: true,
           action: 'back',
           target: '..'
         });
-        this.eq((Ωilxt_169 = function() {
+        this.eq((Ωilxt_168 = function() {
           return Token._parse_jump('mylevel!');
         }), {
-          jump_spec: 'mylevel!',
+          spec: 'mylevel!',
           carry: true,
           action: 'fore',
           target: 'mylevel'
         });
-        this.eq((Ωilxt_170 = function() {
+        this.eq((Ωilxt_169 = function() {
           return Token._parse_jump('mylevel!', {
             name: 'otherlevel'
           });
         }), {
-          jump_spec: 'mylevel!',
+          spec: 'mylevel!',
           carry: true,
           action: 'fore',
           target: 'mylevel'
         });
-        this.throws((Ωilxt_171 = function() {
+        this.throws((Ωilxt_170 = function() {
           return Token._parse_jump('..]');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_172 = function() {
+        this.throws((Ωilxt_171 = function() {
           return Token._parse_jump(']..');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_173 = function() {
+        this.throws((Ωilxt_172 = function() {
           return Token._parse_jump('[mylevel');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_174 = function() {
+        this.throws((Ωilxt_173 = function() {
           return Token._parse_jump('mylevel[');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_175 = function() {
+        this.throws((Ωilxt_174 = function() {
           return Token._parse_jump('mylevel[', {
             name: 'otherlevel'
           });
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_176 = function() {
+        this.throws((Ωilxt_175 = function() {
           return Token._parse_jump('[mylevel[');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_177 = function() {
+        this.throws((Ωilxt_176 = function() {
           return Token._parse_jump('[mylevel]');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_178 = function() {
+        this.throws((Ωilxt_177 = function() {
           return Token._parse_jump(']mylevel');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_179 = function() {
+        this.throws((Ωilxt_178 = function() {
           return Token._parse_jump('[..');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_180 = function() {
+        this.throws((Ωilxt_179 = function() {
           return Token._parse_jump('[..]');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_181 = function() {
+        this.throws((Ωilxt_180 = function() {
           return Token._parse_jump('..[');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_182 = function() {
+        this.throws((Ωilxt_181 = function() {
           return Token._parse_jump('[...');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_183 = function() {
+        this.throws((Ωilxt_182 = function() {
           return Token._parse_jump('...');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_184 = function() {
+        this.throws((Ωilxt_183 = function() {
           return Token._parse_jump('%');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_185 = function() {
+        this.throws((Ωilxt_184 = function() {
           return Token._parse_jump('my-name');
         }), /encountered illegal jump spec/);
-        this.throws((Ωilxt_186 = function() {
+        this.throws((Ωilxt_185 = function() {
           return Token._parse_jump('mylevel', {
             name: 'mylevel'
           });
         }), /cannot jump to same level/);
-        this.throws((Ωilxt_187 = function() {
+        this.throws((Ωilxt_186 = function() {
           return Token._parse_jump('mylevel!', {
             name: 'mylevel'
           });
@@ -1549,7 +1546,7 @@
         var Grammar, Lexeme, Token;
         ({Grammar, Token, Lexeme} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var first, g, lexeme, number, Ωilxt_188, Ωilxt_189, Ωilxt_190, Ωilxt_191, Ωilxt_192, Ωilxt_193, Ωilxt_194, Ωilxt_195, Ωilxt_196, Ωilxt_197;
+          var first, g, lexeme, number, Ωilxt_187, Ωilxt_188, Ωilxt_189, Ωilxt_190, Ωilxt_191, Ωilxt_192, Ωilxt_193, Ωilxt_194, Ωilxt_195, Ωilxt_196;
           g = new Grammar({
             emit_signals: false
           });
@@ -1581,35 +1578,35 @@
           });
           //...................................................................................................
           [lexeme] = g.get_lexemes('5');
-          this.eq((Ωilxt_188 = function() {
+          this.eq((Ωilxt_187 = function() {
             return lexeme instanceof Lexeme;
           }), true);
-          this.eq((Ωilxt_189 = function() {
+          this.eq((Ωilxt_188 = function() {
             return lexeme.token instanceof Token;
           }), true);
-          this.eq((Ωilxt_190 = function() {
+          this.eq((Ωilxt_189 = function() {
             return lexeme.name;
           }), 'digit');
-          this.eq((Ωilxt_191 = function() {
+          this.eq((Ωilxt_190 = function() {
             return lexeme.level.name;
           }), 'first');
-          this.eq((Ωilxt_192 = function() {
+          this.eq((Ωilxt_191 = function() {
             return lexeme.fqname;
           }), 'first.digit');
           lexeme.set_level(number);
-          this.eq((Ωilxt_193 = function() {
+          this.eq((Ωilxt_192 = function() {
             return lexeme instanceof Lexeme;
           }), true);
-          this.eq((Ωilxt_194 = function() {
+          this.eq((Ωilxt_193 = function() {
             return lexeme.token instanceof Token;
           }), true);
-          this.eq((Ωilxt_195 = function() {
+          this.eq((Ωilxt_194 = function() {
             return lexeme.name;
           }), 'digit');
-          this.eq((Ωilxt_196 = function() {
+          this.eq((Ωilxt_195 = function() {
             return lexeme.level.name;
           }), 'number');
-          return this.eq((Ωilxt_197 = function() {
+          return this.eq((Ωilxt_196 = function() {
             return lexeme.fqname;
           }), 'number.digit');
         })();
@@ -1625,7 +1622,7 @@
         };
         (() => {          //.....................................................................................................
           /* forejump carries, backjump sticks */
-          var dqstring, first, g, lexemes, Ωilxt_198, Ωilxt_199, Ωilxt_200, Ωilxt_201, Ωilxt_202, Ωilxt_203, Ωilxt_204, Ωilxt_205, Ωilxt_206, Ωilxt_207;
+          var dqstring, first, g, lexemes, Ωilxt_197, Ωilxt_198, Ωilxt_199, Ωilxt_200, Ωilxt_201, Ωilxt_202, Ωilxt_203, Ωilxt_204, Ωilxt_205, Ωilxt_206;
           g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
@@ -1654,73 +1651,73 @@
             jump: '..'
           });
           //...................................................................................................
-          this.eq((Ωilxt_198 = function() {
+          this.eq((Ωilxt_197 = function() {
             return first.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_199 = function() {
+          this.eq((Ωilxt_198 = function() {
             return first.tokens[1].jump;
           }), {
-            jump_spec: 'dqstring!',
+            spec: 'dqstring!',
             carry: true,
             action: 'fore',
             target: 'dqstring'
           });
-          this.eq((Ωilxt_200 = function() {
+          this.eq((Ωilxt_199 = function() {
             return dqstring.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_201 = function() {
+          this.eq((Ωilxt_200 = function() {
             return dqstring.tokens[1].jump;
           }), {
-            jump_spec: '..',
+            spec: '..',
             carry: false,
             action: 'back',
             target: '..'
           });
           //...................................................................................................
           lexemes = g.walk_lexemes('Bob said "wow".');
-          this.eq((Ωilxt_202 = function() {
+          this.eq((Ωilxt_201 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: 'Bob said '
           });
-          this.eq((Ωilxt_203 = function() {
+          this.eq((Ωilxt_202 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_204 = function() {
+          this.eq((Ωilxt_203 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
             hit: 'wow'
           });
-          this.eq((Ωilxt_205 = function() {
+          this.eq((Ωilxt_204 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_206 = function() {
+          this.eq((Ωilxt_205 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: '.'
           });
-          this.eq((Ωilxt_207 = function() {
+          this.eq((Ωilxt_206 = function() {
             return lexemes.next().done;
           }), true);
           return null;
         })();
         (() => {          //.....................................................................................................
           /* forejump sticks, backjump carries */
-          var dqstring, first, g, lexemes, Ωilxt_208, Ωilxt_209, Ωilxt_210, Ωilxt_211, Ωilxt_212, Ωilxt_213, Ωilxt_214, Ωilxt_215, Ωilxt_216, Ωilxt_217;
+          var dqstring, first, g, lexemes, Ωilxt_207, Ωilxt_208, Ωilxt_209, Ωilxt_210, Ωilxt_211, Ωilxt_212, Ωilxt_213, Ωilxt_214, Ωilxt_215, Ωilxt_216;
           g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
@@ -1749,73 +1746,73 @@
             jump: '..!'
           });
           //...................................................................................................
-          this.eq((Ωilxt_208 = function() {
+          this.eq((Ωilxt_207 = function() {
             return first.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_209 = function() {
+          this.eq((Ωilxt_208 = function() {
             return first.tokens[1].jump;
           }), {
-            jump_spec: 'dqstring',
+            spec: 'dqstring',
             carry: false,
             action: 'fore',
             target: 'dqstring'
           });
-          this.eq((Ωilxt_210 = function() {
+          this.eq((Ωilxt_209 = function() {
             return dqstring.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_211 = function() {
+          this.eq((Ωilxt_210 = function() {
             return dqstring.tokens[1].jump;
           }), {
-            jump_spec: '..!',
+            spec: '..!',
             carry: true,
             action: 'back',
             target: '..'
           });
           //...................................................................................................
           lexemes = g.walk_lexemes('Bob said "wow".');
-          this.eq((Ωilxt_212 = function() {
+          this.eq((Ωilxt_211 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: 'Bob said '
           });
-          this.eq((Ωilxt_213 = function() {
+          this.eq((Ωilxt_212 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_214 = function() {
+          this.eq((Ωilxt_213 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
             hit: 'wow'
           });
-          this.eq((Ωilxt_215 = function() {
+          this.eq((Ωilxt_214 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_216 = function() {
+          this.eq((Ωilxt_215 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: '.'
           });
-          this.eq((Ωilxt_217 = function() {
+          this.eq((Ωilxt_216 = function() {
             return lexemes.next().done;
           }), true);
           return null;
         })();
         (() => {          //.....................................................................................................
           /* forejump carries, backjump carries */
-          var dqstring, first, g, lexemes, Ωilxt_218, Ωilxt_219, Ωilxt_220, Ωilxt_221, Ωilxt_222, Ωilxt_223, Ωilxt_224, Ωilxt_225, Ωilxt_226, Ωilxt_227;
+          var dqstring, first, g, lexemes, Ωilxt_217, Ωilxt_218, Ωilxt_219, Ωilxt_220, Ωilxt_221, Ωilxt_222, Ωilxt_223, Ωilxt_224, Ωilxt_225, Ωilxt_226;
           g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
@@ -1844,73 +1841,73 @@
             jump: '..!'
           });
           //...................................................................................................
-          this.eq((Ωilxt_218 = function() {
+          this.eq((Ωilxt_217 = function() {
             return first.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_219 = function() {
+          this.eq((Ωilxt_218 = function() {
             return first.tokens[1].jump;
           }), {
-            jump_spec: 'dqstring!',
+            spec: 'dqstring!',
             carry: true,
             action: 'fore',
             target: 'dqstring'
           });
-          this.eq((Ωilxt_220 = function() {
+          this.eq((Ωilxt_219 = function() {
             return dqstring.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_221 = function() {
+          this.eq((Ωilxt_220 = function() {
             return dqstring.tokens[1].jump;
           }), {
-            jump_spec: '..!',
+            spec: '..!',
             carry: true,
             action: 'back',
             target: '..'
           });
           //...................................................................................................
           lexemes = g.walk_lexemes('Bob said "wow".');
-          this.eq((Ωilxt_222 = function() {
+          this.eq((Ωilxt_221 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: 'Bob said '
           });
-          this.eq((Ωilxt_223 = function() {
+          this.eq((Ωilxt_222 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_224 = function() {
+          this.eq((Ωilxt_223 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
             hit: 'wow'
           });
-          this.eq((Ωilxt_225 = function() {
+          this.eq((Ωilxt_224 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_226 = function() {
+          this.eq((Ωilxt_225 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: '.'
           });
-          this.eq((Ωilxt_227 = function() {
+          this.eq((Ωilxt_226 = function() {
             return lexemes.next().done;
           }), true);
           return null;
         })();
         (() => {          //.....................................................................................................
           /* forejump sticks, backjump sticks */
-          var dqstring, first, g, lexemes, Ωilxt_228, Ωilxt_229, Ωilxt_230, Ωilxt_231, Ωilxt_232, Ωilxt_233, Ωilxt_234, Ωilxt_235, Ωilxt_236, Ωilxt_237;
+          var dqstring, first, g, lexemes, Ωilxt_227, Ωilxt_228, Ωilxt_229, Ωilxt_230, Ωilxt_231, Ωilxt_232, Ωilxt_233, Ωilxt_234, Ωilxt_235, Ωilxt_236;
           g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
@@ -1939,66 +1936,66 @@
             jump: '..'
           });
           //...................................................................................................
-          this.eq((Ωilxt_228 = function() {
+          this.eq((Ωilxt_227 = function() {
             return first.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_229 = function() {
+          this.eq((Ωilxt_228 = function() {
             return first.tokens[1].jump;
           }), {
-            jump_spec: 'dqstring',
+            spec: 'dqstring',
             carry: false,
             action: 'fore',
             target: 'dqstring'
           });
-          this.eq((Ωilxt_230 = function() {
+          this.eq((Ωilxt_229 = function() {
             return dqstring.tokens[1].name;
           }), 'dq');
-          this.eq((Ωilxt_231 = function() {
+          this.eq((Ωilxt_230 = function() {
             return dqstring.tokens[1].jump;
           }), {
-            jump_spec: '..',
+            spec: '..',
             carry: false,
             action: 'back',
             target: '..'
           });
           //...................................................................................................
           lexemes = g.walk_lexemes('Bob said "wow".');
-          this.eq((Ωilxt_232 = function() {
+          this.eq((Ωilxt_231 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: 'Bob said '
           });
-          this.eq((Ωilxt_233 = function() {
+          this.eq((Ωilxt_232 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_234 = function() {
+          this.eq((Ωilxt_233 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.other',
             hit: 'wow'
           });
-          this.eq((Ωilxt_235 = function() {
+          this.eq((Ωilxt_234 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'dqstring',
             fqname: 'dqstring.dq',
             hit: '"'
           });
-          this.eq((Ωilxt_236 = function() {
+          this.eq((Ωilxt_235 = function() {
             return abbrlx(lexemes.next().value);
           }), {
             level: 'first',
             fqname: 'first.other',
             hit: '.'
           });
-          this.eq((Ωilxt_237 = function() {
+          this.eq((Ωilxt_236 = function() {
             return lexemes.next().done;
           }), true);
           return null;
@@ -2029,19 +2026,19 @@
         ];
         //-----------------------------------------------------------------------------------------------------
         test = (g) => {
-          var lexemes, matcher, probe, x, Ωilxt_238, Ωilxt_239, Ωilxt_240;
+          var lexemes, matcher, probe, x, Ωilxt_237, Ωilxt_238, Ωilxt_239;
           for (x of probes_and_matchers) {
             [probe, matcher] = x;
             g.reset_count();
             lexemes = g.get_lexemes(probe);
-            this.eq((Ωilxt_238 = function() {
+            this.eq((Ωilxt_237 = function() {
               return condense_lexemes(lexemes);
             }), matcher.condensed);
-            this.eq((Ωilxt_239 = function() {
+            this.eq((Ωilxt_238 = function() {
               return lexemes.length;
             }), matcher.length);
             g.reset_count();
-            this.eq((Ωilxt_240 = function() {
+            this.eq((Ωilxt_239 = function() {
               return [...(g.walk_lexemes(probe))];
             }), lexemes);
           }
@@ -2084,7 +2081,7 @@
           source = probes_and_matchers[0][0];
           results = [];
           for (lexeme of g.walk_lexemes(source)) {
-            results.push(urge('Ωilxt_241', f`${lexeme.fqname}:_<25c; ${rpr(lexeme.hit)}:<20c;`));
+            results.push(urge('Ωilxt_240', f`${lexeme.fqname}:_<25c; ${rpr(lexeme.hit)}:<20c;`));
           }
           return results;
         })();
@@ -2096,7 +2093,7 @@
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //-----------------------------------------------------------------------------------------------------
-          var g, gnd, lexemes, number, show, Ωilxt_243, Ωilxt_244, Ωilxt_245, Ωilxt_246, Ωilxt_247, Ωilxt_248, Ωilxt_249;
+          var g, gnd, lexemes, number, show, Ωilxt_242, Ωilxt_243, Ωilxt_244, Ωilxt_245, Ωilxt_246, Ωilxt_247, Ωilxt_248;
           g = new Grammar({
             name: 'g',
             emit_signals: false
@@ -2134,53 +2131,53 @@
           //...................................................................................................
           show = function(lxm) {
             var ref, ref1;
-            urge('Ωilxt_242', f`${(ref = lxm != null ? lxm.fqname : void 0) != null ? ref : null}:_<25c; ${rpr((ref1 = lxm != null ? lxm.hit : void 0) != null ? ref1 : null)}:<20c;`, abbrlx(lxm));
+            urge('Ωilxt_241', f`${(ref = lxm != null ? lxm.fqname : void 0) != null ? ref : null}:_<25c; ${rpr((ref1 = lxm != null ? lxm.hit : void 0) != null ? ref1 : null)}:<20c;`, abbrlx(lxm));
             return lxm;
           };
           lexemes = g.walk_lexemes("99kg23mm");
-          this.eq((Ωilxt_243 = function() {
+          this.eq((Ωilxt_242 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'gnd',
             fqname: 'gnd.before_digits',
             hit: ''
           });
-          this.eq((Ωilxt_244 = function() {
+          this.eq((Ωilxt_243 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.integer',
             hit: '99'
           });
-          this.eq((Ωilxt_245 = function() {
+          this.eq((Ωilxt_244 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.unit',
             hit: 'kg'
           });
-          this.eq((Ωilxt_246 = function() {
+          this.eq((Ωilxt_245 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'gnd',
             fqname: 'gnd.before_digits',
             hit: ''
           });
-          this.eq((Ωilxt_247 = function() {
+          this.eq((Ωilxt_246 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.integer',
             hit: '23'
           });
-          this.eq((Ωilxt_248 = function() {
+          this.eq((Ωilxt_247 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: 'number',
             fqname: 'number.unit',
             hit: 'mm'
           });
-          return this.eq((Ωilxt_249 = function() {
+          return this.eq((Ωilxt_248 = function() {
             return abbrlx(show(lexemes.next().value));
           }), {
             level: null,
@@ -2188,6 +2185,115 @@
             hit: null
           });
         })();
+        //.....................................................................................................
+        return null;
+      }
+    },
+    //=========================================================================================================
+    signals: {
+      //-------------------------------------------------------------------------------------------------------
+      cfg_settings: function() {
+        var Grammar, Ωilxt_249, Ωilxt_250, Ωilxt_251, Ωilxt_252;
+        ({Grammar} = require('../../../apps/interlex'));
+        this.eq((Ωilxt_249 = function() {
+          return (new Grammar({
+            emit_signals: false
+          })).cfg.emit_signals;
+        }), false);
+        this.eq((Ωilxt_250 = function() {
+          return (new Grammar({
+            emit_signals: true
+          })).cfg.emit_signals;
+        }), true);
+        this.eq((Ωilxt_251 = function() {
+          return (new Grammar({})).cfg.emit_signals;
+        }), true);
+        this.eq((Ωilxt_252 = function() {
+          return (new Grammar()).cfg.emit_signals;
+        }), true);
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      can_use_zero_length_matchers_with_jumps_2: function() {
+        var Grammar, rx;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        (() => {          //-----------------------------------------------------------------------------------------------------
+          var $system, $system_error, $system_jump, $system_start, $system_stop, g, gnd, lexeme, lexemes, number, show, signal;
+          g = new Grammar({
+            name: 'g',
+            emit_signals: true
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          number = g.new_level({
+            name: 'number'
+          });
+          $system = g.new_level({
+            name: '$system'
+          });
+          //...................................................................................................
+          $system_start = $system.new_token({
+            name: 'start',
+            matcher: /|/
+          });
+          $system_stop = $system.new_token({
+            name: 'stop',
+            matcher: /|/
+          });
+          $system_jump = $system.new_token({
+            name: 'jump',
+            matcher: /|/
+          });
+          $system_error = $system.new_token({
+            name: 'error',
+            matcher: /|/
+          });
+          //...................................................................................................
+          gnd.new_token({
+            name: 'letters',
+            matcher: /[a-zA-Z]+/
+          });
+          gnd.new_token({
+            name: 'before_digits',
+            matcher: /(?=[0-9])/,
+            jump: 'number'
+          });
+          gnd.new_token({
+            name: 'ws',
+            matcher: /\s+/
+          });
+          //...................................................................................................
+          number.new_token({
+            name: 'integer',
+            matcher: /[0-9]+/
+          });
+          number.new_token({
+            name: 'unit',
+            matcher: /[a-zA-Z]+/,
+            jump: '..'
+          });
+          //...................................................................................................
+          show = function(lxm) {
+            var ref, ref1;
+            urge('Ωilxt_253', f`${(ref = lxm != null ? lxm.fqname : void 0) != null ? ref : null}:_<25c; ${rpr((ref1 = lxm != null ? lxm.hit : void 0) != null ? ref1 : null)}:<20c;`, abbrlx(lxm));
+            return lxm;
+          };
+          lexemes = g.walk_lexemes("99kg23mm");
+          for (lexeme of lexemes) {
+            info('Ωilxt_254', lexeme);
+          }
+          debug('Ωilxt_255', signal = $system_start.match_at(0, ''));
+          debug('Ωilxt_256', abbrlx(signal));
+          return debug('Ωilxt_257', show(signal));
+        })();
+        // @eq ( Ωilxt_258 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
+        // @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
+        // @eq ( Ωilxt_260 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
+        // @eq ( Ωilxt_261 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
+        // @eq ( Ωilxt_262 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
+        // @eq ( Ωilxt_263 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
+        // @eq ( Ωilxt_264 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
         //.....................................................................................................
         return null;
       }
@@ -2211,8 +2317,8 @@
         string12 = g.new_level({
           name: 'string12'
         });
-        // debug 'Ωilxt_250', [ string11, string12, ]
-        // console.debug 'Ωilxt_251', [ string11, string12, ]
+        // debug 'Ωilxt_265', [ string11, string12, ]
+        // console.debug 'Ωilxt_266', [ string11, string12, ]
         // process.exit 111
         //.........................................................................................................
         gnd.new_token({
@@ -2260,25 +2366,25 @@
           matcher: rx`[^']*`
         });
         //.........................................................................................................
-        // debug 'Ωilxt_252', g
-        // debug 'Ωilxt_253', g.levels
-        // debug 'Ωilxt_254', g.levels.gnd
-        // debug 'Ωilxt_255', g.levels.gnd.tokens
-        // debug 'Ωilxt_256', gnd
-        // debug 'Ωilxt_257', token for token from gnd
+        // debug 'Ωilxt_267', g
+        // debug 'Ωilxt_268', g.levels
+        // debug 'Ωilxt_269', g.levels.gnd
+        // debug 'Ωilxt_270', g.levels.gnd.tokens
+        // debug 'Ωilxt_271', gnd
+        // debug 'Ωilxt_272', token for token from gnd
         //.........................................................................................................
         show_lexeme = function(lexeme) {
-          var fqname, groups, groups_rpr, hit, jump, jump_rpr, jump_spec, name, start, stop;
-          ({name, fqname, start, stop, hit, jump, jump_spec, groups} = lexeme);
+          var fqname, groups, groups_rpr, hit, jump, jump_rpr, name, ref, start, stop;
+          ({name, fqname, start, stop, hit, jump, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
-          jump_rpr = jump_spec != null ? jump_spec : '';
-          return urge('Ωilxt_258', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          jump_rpr = (ref = jump != null ? jump.spec : void 0) != null ? ref : '';
+          return urge('Ωilxt_273', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
         };
         //.........................................................................................................
         sources = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
         for (source of sources) {
-          info('Ωilxt_259', rpr(source));
+          info('Ωilxt_274', rpr(source));
           for (lexeme of g.walk_lexemes(source)) {
             show_lexeme(lexeme);
           }
@@ -2300,24 +2406,24 @@
       };
       (new Test(gt_cfg)).test(this.interlex_tasks);
       (new Test(gt_cfg)).test({
-        can_use_zero_length_matchers_with_jumps_2: this.interlex_tasks.levels.can_use_zero_length_matchers_with_jumps_2
+        signals: this.interlex_tasks.signals
       });
       (() => {})();
       return f = function() {
         var match;
-        help('Ωilxt_260', Array.from('a🈯z'));
-        help('Ωilxt_261', 'a🈯z'.split(/(.)/u));
-        help('Ωilxt_262', 'a🈯z'.split(/(.)/v));
-        help('Ωilxt_263', 'a🈯z'.split(/(.)/d));
-        help('Ωilxt_264', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
-        help('Ωilxt_265', {...match.groups});
-        return help('Ωilxt_266', {...match.indices.groups});
+        help('Ωilxt_275', Array.from('a🈯z'));
+        help('Ωilxt_276', 'a🈯z'.split(/(.)/u));
+        help('Ωilxt_277', 'a🈯z'.split(/(.)/v));
+        help('Ωilxt_278', 'a🈯z'.split(/(.)/d));
+        help('Ωilxt_279', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
+        help('Ωilxt_280', {...match.groups});
+        return help('Ωilxt_281', {...match.indices.groups});
       };
     })();
   }
 
-  // help 'Ωilxt_267', rx"."
-// help 'Ωilxt_268', rx/./
+  // help 'Ωilxt_282', rx"."
+// help 'Ωilxt_283', rx/./
 
 }).call(this);
 
