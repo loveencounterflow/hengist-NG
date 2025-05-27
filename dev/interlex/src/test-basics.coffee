@@ -912,8 +912,9 @@ abbrlx = ( lxm ) -> {
         #...................................................................................................
         test g
         source = probes_and_matchers[ 0 ][ 0 ]
+        info 'Ωilxt_240', source
         for lexeme from g.walk_lexemes source
-          urge 'Ωilxt_240', f"#{lexeme.fqname}:_<25c; #{rpr lexeme.hit}:<20c;"
+          urge 'Ωilxt_241', f"#{lexeme.fqname}:_<25c; #{rpr lexeme.hit}:<20c;"
       #.....................................................................................................
       return null
 
@@ -935,30 +936,31 @@ abbrlx = ( lxm ) -> {
         number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         show    = ( lxm ) ->
-          urge 'Ωilxt_241', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
+          urge 'Ωilxt_242', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
           return lxm
+        source = "99kg23mm"
+        info 'Ωilxt_243', source
         lexemes = g.walk_lexemes "99kg23mm"
-        @eq ( Ωilxt_242 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '0:0', }
-        @eq ( Ωilxt_243 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99', pos: '0:2', }
-        @eq ( Ωilxt_244 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg', pos: '2:4', }
-        @eq ( Ωilxt_245 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '4:4', }
-        @eq ( Ωilxt_246 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23', pos: '4:6', }
-        @eq ( Ωilxt_247 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm', pos: '6:8', }
-        @eq ( Ωilxt_248 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null, pos: null, }
+        @eq ( Ωilxt_244 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '0:0', }
+        @eq ( Ωilxt_245 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99', pos: '0:2', }
+        @eq ( Ωilxt_246 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg', pos: '2:4', }
+        @eq ( Ωilxt_247 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '4:4', }
+        @eq ( Ωilxt_248 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23', pos: '4:6', }
+        @eq ( Ωilxt_249 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm', pos: '6:8', }
+        @eq ( Ωilxt_250 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null, pos: null, }
       #.....................................................................................................
       return null
 
   #=========================================================================================================
   signals:
 
-
     #-------------------------------------------------------------------------------------------------------
     cfg_settings: ->
       { Grammar } = require '../../../apps/interlex'
-      @eq ( Ωilxt_249 = -> ( new Grammar { emit_signals: false, } ).cfg.emit_signals ), false
-      @eq ( Ωilxt_250 = -> ( new Grammar { emit_signals: true,  } ).cfg.emit_signals ), true
-      @eq ( Ωilxt_251 = -> ( new Grammar {}                       ).cfg.emit_signals ), true
-      @eq ( Ωilxt_252 = -> ( new Grammar()                        ).cfg.emit_signals ), true
+      @eq ( Ωilxt_251 = -> ( new Grammar { emit_signals: false, } ).cfg.emit_signals ), false
+      @eq ( Ωilxt_252 = -> ( new Grammar { emit_signals: true,  } ).cfg.emit_signals ), true
+      @eq ( Ωilxt_253 = -> ( new Grammar {}                       ).cfg.emit_signals ), true
+      @eq ( Ωilxt_254 = -> ( new Grammar()                        ).cfg.emit_signals ), true
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -970,28 +972,24 @@ abbrlx = ( lxm ) -> {
         g         = new Grammar { name: 'g', emit_signals: true, }
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
-        $system   = g.new_level { name: '$system',  }
-        #...................................................................................................
-        $system_start = $system.new_token { name: 'start', matcher: /|/, }
-        $system_stop  = $system.new_token { name: 'stop',  matcher: /|/, }
-        $system_jump  = $system.new_token { name: 'jump',  matcher: /|/, }
-        $system_error = $system.new_token { name: 'error', matcher: /|/, }
         #...................................................................................................
         gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number',  }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                         }
+        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number',     }
+        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,           }
+        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
         number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         show    = ( lxm ) ->
-          urge 'Ωilxt_253', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
+          data_rpr = if lxm.has_data then rpr { lxm.data..., } else ''
+          urge 'Ωilxt_255', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c; #{data_rpr}" #, abbrlx lxm
           return lxm
         #...................................................................................................
         source = "99kg23mm"
-        show  $system_start.match_at  0, source
+        info 'Ωilxt_256', source
+        # show  g.system_tokens.start.match_at  0, source
         show  lexeme for lexeme from g.walk_lexemes source
-        show  $system_stop.match_at lexeme.stop, source
+        # show  g.system_tokens.stop.match_at lexeme.stop, source
         #...................................................................................................
         # @eq ( Ωilxt_257 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
         # @eq ( Ωilxt_258 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
