@@ -2285,7 +2285,7 @@
           }
           debug('Ωilxt_255', signal = $system_start.match_at(0, ''));
           debug('Ωilxt_256', abbrlx(signal));
-          return debug('Ωilxt_257', show(signal));
+          return show(signal);
         })();
         // @eq ( Ωilxt_258 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
         // @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
