@@ -585,7 +585,9 @@
         };
         (() => {          //.....................................................................................................
           var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_126, Ωilxt_127, Ωilxt_128, Ωilxt_129, Ωilxt_132;
-          g = new_grammar();
+          g = new_grammar({
+            emit_signals: false
+          });
           this.eq((Ωilxt_126 = function() {
             return g.cfg.counter_name;
           }), 'line_nr');
@@ -616,7 +618,8 @@
           g = new_grammar({
             counter_name: 'test_id',
             counter_step: -1,
-            counter_value: 10
+            counter_value: 10,
+            emit_signals: false
           });
           this.eq((Ωilxt_133 = function() {
             return g.cfg.counter_name;
@@ -707,7 +710,8 @@
         (() => {          //-----------------------------------------------------------------------------------------------------
           var g, gnd;
           g = new Grammar({
-            name: 'g'
+            name: 'g',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -743,7 +747,8 @@
         (() => {          //-----------------------------------------------------------------------------------------------------
           var g, gnd;
           g = new Grammar({
-            name: 'g'
+            name: 'g',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -779,7 +784,8 @@
         (() => {          //-----------------------------------------------------------------------------------------------------
           var g, gnd;
           g = new Grammar({
-            name: 'g'
+            name: 'g',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -815,7 +821,8 @@
         (() => {          //-----------------------------------------------------------------------------------------------------
           var g, gnd;
           g = new Grammar({
-            name: 'g'
+            name: 'g',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -1139,7 +1146,8 @@
             (() => {
               var first, g, j, k, len, len1, matcher, source, token_cfg, token_cfgs, Ωilxt_151, Ωilxt_152, Ωilxt_153;
               g = new Grammar({
-                strategy: 'longest'
+                strategy: 'longest',
+                emit_signals: false
               });
               first = g.new_level({
                 name: 'first'
@@ -1207,7 +1215,8 @@
           probes_and_matchers = [['abcd1234', "first.two_letters'ab'|first.two_letters'cd'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'"], ['abcde12345', "first.two_letters'ab'|first.two_letters'cd'|first.one_letter'e'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'"], ['abcdef123456', "first.two_letters'ab'|first.two_letters'cd'|first.two_letters'ef'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'|first.one_digit'6'"], ['123abc', "first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.two_letters'ab'|first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar({
-            strategy: 'first'
+            strategy: 'first',
+            emit_signals: false
           });
           first = g.new_level({
             name: 'first'
@@ -1265,7 +1274,8 @@
           probes_and_matchers = [['abcd1234', "first.four_letters'abcd'|first.four_digits'1234'"], ['abcde12345', "first.four_letters'abcd'|first.one_letter'e'|first.four_digits'1234'|first.one_digit'5'"], ['abcdef123456', "first.four_letters'abcd'|first.two_letters'ef'|first.four_digits'1234'|first.two_digits'56'"], ['123abc', "first.three_digits'123'|first.three_letters'abc'"]];
           //...................................................................................................
           g = new Grammar({
-            strategy: 'first'
+            strategy: 'first',
+            emit_signals: false
           });
           first = g.new_level({
             name: 'first'
@@ -1327,7 +1337,8 @@
         (() => {          //.....................................................................................................
           var g, gnd, Ωilxt_160;
           g = new Grammar({
-            strategy: 'first'
+            strategy: 'first',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -1347,7 +1358,8 @@
         (() => {          //.....................................................................................................
           var g, gnd, Ωilxt_161;
           g = new Grammar({
-            strategy: 'longest'
+            strategy: 'longest',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -1369,7 +1381,8 @@
                  the longest match, it does not get passed on as a resulting lexeme. */
           var g, gnd, Ωilxt_162;
           g = new Grammar({
-            strategy: 'longest'
+            strategy: 'longest',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -1537,7 +1550,9 @@
         ({Grammar, Token, Lexeme} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
           var first, g, lexeme, number, Ωilxt_188, Ωilxt_189, Ωilxt_190, Ωilxt_191, Ωilxt_192, Ωilxt_193, Ωilxt_194, Ωilxt_195, Ωilxt_196, Ωilxt_197;
-          g = new Grammar();
+          g = new Grammar({
+            emit_signals: false
+          });
           //...................................................................................................
           first = g.new_level({
             name: 'first'
@@ -1603,12 +1618,15 @@
       },
       //-------------------------------------------------------------------------------------------------------
       carrying_and_sticking_jumps: function() {
-        var Grammar;
+        var Grammar, g_cfg;
         ({Grammar} = require('../../../apps/interlex'));
+        g_cfg = {
+          emit_signals: false
+        };
         (() => {          //.....................................................................................................
           /* forejump carries, backjump sticks */
           var dqstring, first, g, lexemes, Ωilxt_198, Ωilxt_199, Ωilxt_200, Ωilxt_201, Ωilxt_202, Ωilxt_203, Ωilxt_204, Ωilxt_205, Ωilxt_206, Ωilxt_207;
-          g = new Grammar();
+          g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
             name: 'first'
@@ -1703,7 +1721,7 @@
         (() => {          //.....................................................................................................
           /* forejump sticks, backjump carries */
           var dqstring, first, g, lexemes, Ωilxt_208, Ωilxt_209, Ωilxt_210, Ωilxt_211, Ωilxt_212, Ωilxt_213, Ωilxt_214, Ωilxt_215, Ωilxt_216, Ωilxt_217;
-          g = new Grammar();
+          g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
             name: 'first'
@@ -1798,7 +1816,7 @@
         (() => {          //.....................................................................................................
           /* forejump carries, backjump carries */
           var dqstring, first, g, lexemes, Ωilxt_218, Ωilxt_219, Ωilxt_220, Ωilxt_221, Ωilxt_222, Ωilxt_223, Ωilxt_224, Ωilxt_225, Ωilxt_226, Ωilxt_227;
-          g = new Grammar();
+          g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
             name: 'first'
@@ -1893,7 +1911,7 @@
         (() => {          //.....................................................................................................
           /* forejump sticks, backjump sticks */
           var dqstring, first, g, lexemes, Ωilxt_228, Ωilxt_229, Ωilxt_230, Ωilxt_231, Ωilxt_232, Ωilxt_233, Ωilxt_234, Ωilxt_235, Ωilxt_236, Ωilxt_237;
-          g = new Grammar();
+          g = new Grammar(g_cfg);
           //...................................................................................................
           first = g.new_level({
             name: 'first'
@@ -2032,7 +2050,8 @@
         (() => {          //-----------------------------------------------------------------------------------------------------
           var g, gnd, lexeme, number, results, source;
           g = new Grammar({
-            name: 'g'
+            name: 'g',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'
@@ -2079,7 +2098,8 @@
         (() => {          //-----------------------------------------------------------------------------------------------------
           var g, gnd, lexemes, number, show, Ωilxt_243, Ωilxt_244, Ωilxt_245, Ωilxt_246, Ωilxt_247, Ωilxt_248, Ωilxt_249;
           g = new Grammar({
-            name: 'g'
+            name: 'g',
+            emit_signals: false
           });
           gnd = g.new_level({
             name: 'gnd'

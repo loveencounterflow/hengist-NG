@@ -276,7 +276,7 @@ abbrlx = ( lexeme ) -> {
         return g
       #.....................................................................................................
       do =>
-        g = new_grammar()
+        g = new_grammar { emit_signals: false, }
         @eq ( Ωilxt_126 = -> g.cfg.counter_name   ), 'line_nr'
         @eq ( Ωilxt_127 = -> g.cfg.counter_step   ), +1
         @eq ( Ωilxt_128 = -> g.cfg.counter_value  ), 1
@@ -295,7 +295,7 @@ abbrlx = ( lexeme ) -> {
         return null
       #.....................................................................................................
       do =>
-        g = new_grammar { counter_name: 'test_id', counter_step: -1, counter_value: 10, }
+        g = new_grammar { counter_name: 'test_id', counter_step: -1, counter_value: 10, emit_signals: false, }
         @eq ( Ωilxt_133 = -> g.cfg.counter_name   ), 'test_id'
         @eq ( Ωilxt_134 = -> g.cfg.counter_step   ), -1
         @eq ( Ωilxt_135 = -> g.cfg.counter_value  ), 10
@@ -340,7 +340,7 @@ abbrlx = ( lexeme ) -> {
         return null
       #-----------------------------------------------------------------------------------------------------
       do =>
-        g         = new Grammar { name: 'g', }
+        g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
         gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]+",           }
@@ -353,7 +353,7 @@ abbrlx = ( lexeme ) -> {
         test g
       #-----------------------------------------------------------------------------------------------------
       do =>
-        g         = new Grammar { name: 'g', }
+        g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
         gnd.new_token       { name: 'name',           matcher: /(?<initial>[A-Z])[a-z]+/dvy,            }
@@ -366,7 +366,7 @@ abbrlx = ( lexeme ) -> {
         test g
       #-----------------------------------------------------------------------------------------------------
       do =>
-        g         = new Grammar { name: 'g', }
+        g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
         gnd.new_token       { name: 'name',           matcher: /(?<initial>[A-Z])[a-z]+/,               }
@@ -379,7 +379,7 @@ abbrlx = ( lexeme ) -> {
         test g
       #-----------------------------------------------------------------------------------------------------
       do =>
-        g         = new Grammar { name: 'g', }
+        g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
         gnd.new_token       { name: 'name',           matcher: /(?<initial>[A-Z])[a-z]+/v,              }
@@ -585,7 +585,7 @@ abbrlx = ( lexeme ) -> {
         shuffle = GUY.rnd.get_shuffle 0.9876, 0.3456
         for _ in [ 1 .. 100 ]
           do =>
-            g           = new Grammar { strategy: 'longest', }
+            g           = new Grammar { strategy: 'longest', emit_signals: false, }
             first       = g.new_level { name: 'first', }
             token_cfgs  = shuffle [
               { name: 'one_digit',      matcher: /[0-9]{1}/i, }
@@ -615,7 +615,7 @@ abbrlx = ( lexeme ) -> {
           [ '123abc',       "first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.two_letters'ab'|first.one_letter'c'", ]
           ]
         #...................................................................................................
-        g     = new Grammar { strategy: 'first', }
+        g     = new Grammar { strategy: 'first', emit_signals: false, }
         first = g.new_level { name: 'first', }
         first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
         first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
@@ -641,7 +641,7 @@ abbrlx = ( lexeme ) -> {
           [ '123abc',       "first.three_digits'123'|first.three_letters'abc'", ]
           ]
         #...................................................................................................
-        g     = new Grammar { strategy: 'first', }
+        g     = new Grammar { strategy: 'first', emit_signals: false, }
         first = g.new_level { name: 'first', }
         first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
         first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
@@ -665,14 +665,14 @@ abbrlx = ( lexeme ) -> {
       { Grammar } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        g = new Grammar { strategy: 'first', }
+        g = new Grammar { strategy: 'first', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
         gnd.new_token { name: 'a', matcher: /a/, }
         gnd.new_token { name: 'b', matcher: /(?=b)/, }
         @throws ( Ωilxt_160 = -> g.get_lexemes "ab" ), /encountered zero-length match/
       #.....................................................................................................
       do =>
-        g = new Grammar { strategy: 'longest', }
+        g = new Grammar { strategy: 'longest', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
         gnd.new_token { name: 'a', matcher: /a/, }
         gnd.new_token { name: 'b', matcher: /(?=b)/, }
@@ -681,7 +681,7 @@ abbrlx = ( lexeme ) -> {
       do =>
         ### We accept the empty match here since while it does get produced as an intermediate value to find
         the longest match, it does not get passed on as a resulting lexeme. ###
-        g = new Grammar { strategy: 'longest', }
+        g = new Grammar { strategy: 'longest', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
         gnd.new_token { name: 'a', matcher: /[ab]/, }
         gnd.new_token { name: 'b', matcher: /(?=b)/, }
@@ -743,7 +743,7 @@ abbrlx = ( lexeme ) -> {
         Lexeme } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        g       = new Grammar()
+        g       = new Grammar { emit_signals: false, }
         #...................................................................................................
         first   = g.new_level { name: 'first', }
         first.new_token   { name: 'digit',      matcher: /[0-9]/,     jump: 'number',   }
@@ -771,10 +771,11 @@ abbrlx = ( lexeme ) -> {
     #-------------------------------------------------------------------------------------------------------
     carrying_and_sticking_jumps: ->
       { Grammar } = require '../../../apps/interlex'
+      g_cfg = { emit_signals: false, }
       #.....................................................................................................
       do =>
         ### forejump carries, backjump sticks ###
-        g = new Grammar()
+        g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
         first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
@@ -800,7 +801,7 @@ abbrlx = ( lexeme ) -> {
       #.....................................................................................................
       do =>
         ### forejump sticks, backjump carries ###
-        g = new Grammar()
+        g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
         first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
@@ -826,7 +827,7 @@ abbrlx = ( lexeme ) -> {
       #.....................................................................................................
       do =>
         ### forejump carries, backjump carries ###
-        g = new Grammar()
+        g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
         first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
@@ -852,7 +853,7 @@ abbrlx = ( lexeme ) -> {
       #.....................................................................................................
       do =>
         ### forejump sticks, backjump sticks ###
-        g = new Grammar()
+        g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
         first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
@@ -899,7 +900,7 @@ abbrlx = ( lexeme ) -> {
         return null
       #-----------------------------------------------------------------------------------------------------
       do =>
-        g         = new Grammar { name: 'g', }
+        g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         number    = g.new_level { name: 'number', }
         #...................................................................................................
@@ -922,7 +923,7 @@ abbrlx = ( lexeme ) -> {
         rx      } = require '../../../apps/interlex'
       #-----------------------------------------------------------------------------------------------------
       do =>
-        g         = new Grammar { name: 'g', }
+        g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         number    = g.new_level { name: 'number', }
         #...................................................................................................
