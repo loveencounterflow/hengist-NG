@@ -32,10 +32,11 @@ condense_lexemes = ( lexemes ) ->
   ( "#{lexeme?.fqname ? null}#{rpr lexeme?.hit ? null}" for lexeme from lexemes ).join '|'
 
 #-----------------------------------------------------------------------------------------------------------
-abbrlx = ( lexeme ) -> {
-  level:  lexeme?.level?.name ? null,
-  fqname: lexeme?.fqname      ? null,
-  hit:    lexeme?.hit         ? null, }
+abbrlx = ( lxm ) -> {
+  level:  lxm?.level?.name ? null,
+  fqname: lxm?.fqname      ? null,
+  hit:    lxm?.hit         ? null,
+  pos:    ( if lxm? then "#{lxm.start}:#{lxm.stop}" else null ), }
 
 
 ############################################################################################################

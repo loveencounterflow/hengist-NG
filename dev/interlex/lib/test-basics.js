@@ -34,12 +34,13 @@
   };
 
   //-----------------------------------------------------------------------------------------------------------
-  abbrlx = function(lexeme) {
+  abbrlx = function(lxm) {
     var ref, ref1, ref2, ref3;
     return {
-      level: (ref = lexeme != null ? (ref1 = lexeme.level) != null ? ref1.name : void 0 : void 0) != null ? ref : null,
-      fqname: (ref2 = lexeme != null ? lexeme.fqname : void 0) != null ? ref2 : null,
-      hit: (ref3 = lexeme != null ? lexeme.hit : void 0) != null ? ref3 : null
+      level: (ref = lxm != null ? (ref1 = lxm.level) != null ? ref1.name : void 0 : void 0) != null ? ref : null,
+      fqname: (ref2 = lxm != null ? lxm.fqname : void 0) != null ? ref2 : null,
+      hit: (ref3 = lxm != null ? lxm.hit : void 0) != null ? ref3 : null,
+      pos: (lxm != null ? `${lxm.start}:${lxm.stop}` : null)
     };
   };
 
