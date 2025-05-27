@@ -986,19 +986,18 @@ abbrlx = ( lexeme ) -> {
         show    = ( lxm ) ->
           urge 'Ωilxt_253', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
           return lxm
-        lexemes = g.walk_lexemes "99kg23mm"
-        for lexeme from lexemes
-          info 'Ωilxt_254', lexeme
-        debug 'Ωilxt_255', signal = $system_start.match_at 0, ''
-        debug 'Ωilxt_256', abbrlx signal
-        show   signal
+        #...................................................................................................
+        show  $system_start.match_at  0, ''
+        show  lexeme for lexeme from g.walk_lexemes "99kg23mm"
+        show  $system_stop.match_at   0, ''
+        #...................................................................................................
+        # @eq ( Ωilxt_255 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
+        # @eq ( Ωilxt_256 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
+        # @eq ( Ωilxt_257 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
         # @eq ( Ωilxt_258 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        # @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
-        # @eq ( Ωilxt_260 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
-        # @eq ( Ωilxt_261 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        # @eq ( Ωilxt_262 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
-        # @eq ( Ωilxt_263 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
-        # @eq ( Ωilxt_264 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
+        # @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
+        # @eq ( Ωilxt_260 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
+        # @eq ( Ωilxt_261 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
       #.....................................................................................................
       return null
 
@@ -1014,8 +1013,8 @@ abbrlx = ( lexeme ) -> {
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       string12  = g.new_level { name: 'string12', }
-      # debug 'Ωilxt_265', [ string11, string12, ]
-      # console.debug 'Ωilxt_266', [ string11, string12, ]
+      # debug 'Ωilxt_262', [ string11, string12, ]
+      # console.debug 'Ωilxt_263', [ string11, string12, ]
       # process.exit 111
       #.........................................................................................................
       gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
@@ -1030,12 +1029,12 @@ abbrlx = ( lexeme ) -> {
       string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..!', }
       string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
       #.........................................................................................................
-      # debug 'Ωilxt_267', g
-      # debug 'Ωilxt_268', g.levels
-      # debug 'Ωilxt_269', g.levels.gnd
-      # debug 'Ωilxt_270', g.levels.gnd.tokens
-      # debug 'Ωilxt_271', gnd
-      # debug 'Ωilxt_272', token for token from gnd
+      # debug 'Ωilxt_264', g
+      # debug 'Ωilxt_265', g.levels
+      # debug 'Ωilxt_266', g.levels.gnd
+      # debug 'Ωilxt_267', g.levels.gnd.tokens
+      # debug 'Ωilxt_268', gnd
+      # debug 'Ωilxt_269', token for token from gnd
       #.........................................................................................................
       show_lexeme = ( lexeme ) ->
         { name
@@ -1047,7 +1046,7 @@ abbrlx = ( lexeme ) -> {
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
         jump_rpr    = jump?.spec ? ''
-        urge 'Ωilxt_273', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        urge 'Ωilxt_270', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
       #.........................................................................................................
       sources = [
         "Alice in Cairo 1912 (approximately)"
@@ -1055,7 +1054,7 @@ abbrlx = ( lexeme ) -> {
         ]
       #.........................................................................................................
       for source from sources
-        info 'Ωilxt_274', rpr source
+        info 'Ωilxt_271', rpr source
         for lexeme from g.walk_lexemes source
           show_lexeme lexeme
       #.........................................................................................................
@@ -1069,14 +1068,14 @@ if module is require.main then await do =>
   ( new Test gt_cfg ).test { signals: @interlex_tasks.signals, }
   do =>
   f = ->
-    help 'Ωilxt_275', Array.from 'a🈯z'
-    help 'Ωilxt_276', 'a🈯z'.split /(.)/u
-    help 'Ωilxt_277', 'a🈯z'.split( /(.)/v )
-    help 'Ωilxt_278', 'a🈯z'.split( /(.)/d )
-    help 'Ωilxt_279', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
-    help 'Ωilxt_280', { match.groups..., }
-    help 'Ωilxt_281', { match.indices.groups..., }
-    # help 'Ωilxt_282', rx"."
-    # help 'Ωilxt_283', rx/./
+    help 'Ωilxt_272', Array.from 'a🈯z'
+    help 'Ωilxt_273', 'a🈯z'.split /(.)/u
+    help 'Ωilxt_274', 'a🈯z'.split( /(.)/v )
+    help 'Ωilxt_275', 'a🈯z'.split( /(.)/d )
+    help 'Ωilxt_276', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
+    help 'Ωilxt_277', { match.groups..., }
+    help 'Ωilxt_278', { match.indices.groups..., }
+    # help 'Ωilxt_279', rx"."
+    # help 'Ωilxt_280', rx/./
 
 

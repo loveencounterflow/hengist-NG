@@ -2218,7 +2218,7 @@
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //-----------------------------------------------------------------------------------------------------
-          var $system, $system_error, $system_jump, $system_start, $system_stop, g, gnd, lexeme, lexemes, number, show, signal;
+          var $system, $system_error, $system_jump, $system_start, $system_stop, g, gnd, lexeme, number, show;
           g = new Grammar({
             name: 'g',
             emit_signals: true
@@ -2279,21 +2279,21 @@
             urge('Ωilxt_253', f`${(ref = lxm != null ? lxm.fqname : void 0) != null ? ref : null}:_<25c; ${rpr((ref1 = lxm != null ? lxm.hit : void 0) != null ? ref1 : null)}:<20c;`, abbrlx(lxm));
             return lxm;
           };
-          lexemes = g.walk_lexemes("99kg23mm");
-          for (lexeme of lexemes) {
-            info('Ωilxt_254', lexeme);
+          //...................................................................................................
+          show($system_start.match_at(0, ''));
+          for (lexeme of g.walk_lexemes("99kg23mm")) {
+            show(lexeme);
           }
-          debug('Ωilxt_255', signal = $system_start.match_at(0, ''));
-          debug('Ωilxt_256', abbrlx(signal));
-          return show(signal);
+          return show($system_stop.match_at(0, ''));
         })();
+        //...................................................................................................
+        // @eq ( Ωilxt_255 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
+        // @eq ( Ωilxt_256 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
+        // @eq ( Ωilxt_257 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
         // @eq ( Ωilxt_258 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        // @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
-        // @eq ( Ωilxt_260 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
-        // @eq ( Ωilxt_261 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        // @eq ( Ωilxt_262 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
-        // @eq ( Ωilxt_263 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
-        // @eq ( Ωilxt_264 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
+        // @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
+        // @eq ( Ωilxt_260 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
+        // @eq ( Ωilxt_261 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
         //.....................................................................................................
         return null;
       }
@@ -2317,8 +2317,8 @@
         string12 = g.new_level({
           name: 'string12'
         });
-        // debug 'Ωilxt_265', [ string11, string12, ]
-        // console.debug 'Ωilxt_266', [ string11, string12, ]
+        // debug 'Ωilxt_262', [ string11, string12, ]
+        // console.debug 'Ωilxt_263', [ string11, string12, ]
         // process.exit 111
         //.........................................................................................................
         gnd.new_token({
@@ -2366,25 +2366,25 @@
           matcher: rx`[^']*`
         });
         //.........................................................................................................
-        // debug 'Ωilxt_267', g
-        // debug 'Ωilxt_268', g.levels
-        // debug 'Ωilxt_269', g.levels.gnd
-        // debug 'Ωilxt_270', g.levels.gnd.tokens
-        // debug 'Ωilxt_271', gnd
-        // debug 'Ωilxt_272', token for token from gnd
+        // debug 'Ωilxt_264', g
+        // debug 'Ωilxt_265', g.levels
+        // debug 'Ωilxt_266', g.levels.gnd
+        // debug 'Ωilxt_267', g.levels.gnd.tokens
+        // debug 'Ωilxt_268', gnd
+        // debug 'Ωilxt_269', token for token from gnd
         //.........................................................................................................
         show_lexeme = function(lexeme) {
           var fqname, groups, groups_rpr, hit, jump, jump_rpr, name, ref, start, stop;
           ({name, fqname, start, stop, hit, jump, groups} = lexeme);
           groups_rpr = groups != null ? rpr({...groups}) : '';
           jump_rpr = (ref = jump != null ? jump.spec : void 0) != null ? ref : '';
-          return urge('Ωilxt_273', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
+          return urge('Ωilxt_270', f`${start}:>3.0f;:${stop}:<3.0f; ${fqname}:<20c; ${rpr(hit)}:<30c; ${jump_rpr}:<15c; ${groups_rpr}`);
         };
         //.........................................................................................................
         sources = ["Alice in Cairo 1912 (approximately)", "Alice in Cairo 1912 'approximately'"];
 //.........................................................................................................
         for (source of sources) {
-          info('Ωilxt_274', rpr(source));
+          info('Ωilxt_271', rpr(source));
           for (lexeme of g.walk_lexemes(source)) {
             show_lexeme(lexeme);
           }
@@ -2411,19 +2411,19 @@
       (() => {})();
       return f = function() {
         var match;
-        help('Ωilxt_275', Array.from('a🈯z'));
-        help('Ωilxt_276', 'a🈯z'.split(/(.)/u));
-        help('Ωilxt_277', 'a🈯z'.split(/(.)/v));
-        help('Ωilxt_278', 'a🈯z'.split(/(.)/d));
-        help('Ωilxt_279', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
-        help('Ωilxt_280', {...match.groups});
-        return help('Ωilxt_281', {...match.indices.groups});
+        help('Ωilxt_272', Array.from('a🈯z'));
+        help('Ωilxt_273', 'a🈯z'.split(/(.)/u));
+        help('Ωilxt_274', 'a🈯z'.split(/(.)/v));
+        help('Ωilxt_275', 'a🈯z'.split(/(.)/d));
+        help('Ωilxt_276', match = 'a🈯z'.match(/^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d));
+        help('Ωilxt_277', {...match.groups});
+        return help('Ωilxt_278', {...match.indices.groups});
       };
     })();
   }
 
-  // help 'Ωilxt_282', rx"."
-// help 'Ωilxt_283', rx/./
+  // help 'Ωilxt_279', rx"."
+// help 'Ωilxt_280', rx/./
 
 }).call(this);
 
