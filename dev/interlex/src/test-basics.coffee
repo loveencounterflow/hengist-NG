@@ -32,11 +32,21 @@ condense_lexemes = ( lexemes ) ->
   ( "#{lexeme?.fqname ? null}#{rpr lexeme?.hit ? null}" for lexeme from lexemes ).join '|'
 
 #-----------------------------------------------------------------------------------------------------------
-abbrlx = ( lxm ) -> {
-  level:  lxm?.level?.name ? null,
-  fqname: lxm?.fqname      ? null,
-  hit:    lxm?.hit         ? null,
-  pos:    ( if lxm? then "#{lxm.start}:#{lxm.stop}" else null ), }
+# abbrlxm = ( lxm ) -> {
+#   level:  lxm?.level?.name ? null,
+#   fqname: lxm?.fqname      ? null,
+#   hit:    lxm?.hit         ? null,
+#   pos:    ( if lxm? then "#{lxm.start}:#{lxm.stop}" else null ), }
+
+#-----------------------------------------------------------------------------------------------------------
+abbrlxm = ( lxm ) ->
+  return null unless lxm?
+  R =
+    fqname: lxm.fqname
+    hit:    lxm.hit
+    pos:    "#{lxm.start}:#{lxm.stop}"
+  R.data = { lxm.data..., } if lxm.has_data
+  return R
 
 
 ############################################################################################################
@@ -791,11 +801,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_200 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_201 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ',  pos: '0:9',   }
-        @eq ( Ωilxt_202 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',          pos: '9:10',  }
-        @eq ( Ωilxt_203 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',        pos: '10:13', }
-        @eq ( Ωilxt_204 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',          pos: '13:14', }
-        @eq ( Ωilxt_205 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',          pos: '14:15', }
+        @eq ( Ωilxt_201 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ',  pos: '0:9',   }
+        @eq ( Ωilxt_202 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',          pos: '9:10',  }
+        @eq ( Ωilxt_203 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',        pos: '10:13', }
+        @eq ( Ωilxt_204 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',          pos: '13:14', }
+        @eq ( Ωilxt_205 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',          pos: '14:15', }
         @eq ( Ωilxt_206 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -817,11 +827,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_210 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_211 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
-        @eq ( Ωilxt_212 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '9:10',  }
-        @eq ( Ωilxt_213 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
-        @eq ( Ωilxt_214 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '13:14', }
-        @eq ( Ωilxt_215 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         pos: '14:15', }
+        @eq ( Ωilxt_211 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
+        @eq ( Ωilxt_212 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '9:10',  }
+        @eq ( Ωilxt_213 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
+        @eq ( Ωilxt_214 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '13:14', }
+        @eq ( Ωilxt_215 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '14:15', }
         @eq ( Ωilxt_216 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -843,11 +853,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_220 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_221 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
-        @eq ( Ωilxt_222 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',         pos: '9:10',  }
-        @eq ( Ωilxt_223 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
-        @eq ( Ωilxt_224 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '13:14', }
-        @eq ( Ωilxt_225 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         pos: '14:15', }
+        @eq ( Ωilxt_221 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
+        @eq ( Ωilxt_222 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',         pos: '9:10',  }
+        @eq ( Ωilxt_223 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
+        @eq ( Ωilxt_224 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '13:14', }
+        @eq ( Ωilxt_225 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '14:15', }
         @eq ( Ωilxt_226 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -869,11 +879,11 @@ abbrlx = ( lxm ) -> {
         @eq ( Ωilxt_230 = -> dqstring.tokens[ 1 ].jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.walk_lexemes 'Bob said "wow".'
-        @eq ( Ωilxt_231 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
-        @eq ( Ωilxt_232 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.dq',       hit: '"',         pos: '9:10',  }
-        @eq ( Ωilxt_233 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
-        @eq ( Ωilxt_234 = -> abbrlx lexemes.next().value ), { level: 'dqstring', fqname: 'dqstring.dq',    hit: '"',         pos: '13:14', }
-        @eq ( Ωilxt_235 = -> abbrlx lexemes.next().value ), { level: 'first',    fqname: 'first.other',    hit: '.',         pos: '14:15', }
+        @eq ( Ωilxt_231 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '0:9',   }
+        @eq ( Ωilxt_232 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '9:10',  }
+        @eq ( Ωilxt_233 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '10:13', }
+        @eq ( Ωilxt_234 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',         pos: '13:14', }
+        @eq ( Ωilxt_235 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '14:15', }
         @eq ( Ωilxt_236 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
@@ -936,20 +946,73 @@ abbrlx = ( lxm ) -> {
         number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         show    = ( lxm ) ->
-          urge 'Ωilxt_242', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlx lxm
+          urge 'Ωilxt_242', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c;", abbrlxm lxm
           return lxm
         source = "99kg23mm"
         info 'Ωilxt_243', source
         lexemes = g.walk_lexemes "99kg23mm"
-        @eq ( Ωilxt_244 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '0:0', }
-        @eq ( Ωilxt_245 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99', pos: '0:2', }
-        @eq ( Ωilxt_246 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg', pos: '2:4', }
-        @eq ( Ωilxt_247 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '',   pos: '4:4', }
-        @eq ( Ωilxt_248 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23', pos: '4:6', }
-        @eq ( Ωilxt_249 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm', pos: '6:8', }
-        @eq ( Ωilxt_250 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null, pos: null, }
+        @eq ( Ωilxt_244 = -> abbrlxm show lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '0:0', }
+        @eq ( Ωilxt_245 = -> abbrlxm show lexemes.next().value ), { fqname: 'number.integer',    hit: '99', pos: '0:2', }
+        @eq ( Ωilxt_246 = -> abbrlxm show lexemes.next().value ), { fqname: 'number.unit',       hit: 'kg', pos: '2:4', }
+        @eq ( Ωilxt_247 = -> abbrlxm show lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '4:4', }
+        @eq ( Ωilxt_248 = -> abbrlxm show lexemes.next().value ), { fqname: 'number.integer',    hit: '23', pos: '4:6', }
+        @eq ( Ωilxt_249 = -> abbrlxm show lexemes.next().value ), { fqname: 'number.unit',       hit: 'mm', pos: '6:8', }
+        @eq ( Ωilxt_250 = -> abbrlxm show lexemes.next().value ), null
       #.....................................................................................................
       return null
+
+  #=========================================================================================================
+  stack: ->
+    Levelstack = ( require '../../../apps/interlex' ).internals.Levelstack
+    do =>
+      stack = new Levelstack()
+      @eq     ( Ωilxt_251 = -> stack.is_empty                   ), true
+      stack.push { name: '1', }
+      @eq     ( Ωilxt_252 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_253 = -> stack.peek()                     ), { name: '1', }
+      @eq     ( Ωilxt_254 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_255 = -> stack.length                     ), 0
+    do =>
+      stack = new Levelstack { name: '1', }
+      @eq     ( Ωilxt_256 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_257 = -> stack.peek()                     ), { name: '1', }
+      @eq     ( Ωilxt_258 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_259 = -> stack.length                     ), 0
+    do =>
+      stack = new Levelstack { name: '1', }, { name: '2', }
+      @eq     ( Ωilxt_260 = -> stack.length                     ), 2
+      @eq     ( Ωilxt_261 = -> stack.peek()                     ), { name: '2', }
+      @eq     ( Ωilxt_262 = -> stack.popnpeek()                 ), { name: '1', }
+      @eq     ( Ωilxt_263 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_264 = -> stack.peek()                     ), { name: '1', }
+      @eq     ( Ωilxt_265 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_266 = -> stack.length                     ), 0
+    do =>
+      stack = new Levelstack { name: '1', }, { name: '2', }
+      @eq     ( Ωilxt_267 = -> stack.length                     ), 2
+      @eq     ( Ωilxt_268 = -> stack.peek_name()                ), '2'
+      @eq     ( Ωilxt_269 = -> stack.popnpeek_name()            ), '1'
+      @eq     ( Ωilxt_270 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_271 = -> stack.is_empty                   ), false
+      @eq     ( Ωilxt_272 = -> stack.peek_name()                ), '1'
+      @eq     ( Ωilxt_273 = -> stack.pop_name()                 ), '1'
+      @eq     ( Ωilxt_274 = -> stack.length                     ), 0
+      @eq     ( Ωilxt_275 = -> stack.is_empty                   ), true
+    do =>
+      stack = new Levelstack { name: '1', }, { name: '2', }
+      @eq     ( Ωilxt_276 = -> stack.pop()                      ), { name: '2', }
+      @eq     ( Ωilxt_277 = -> stack.is_empty                   ), false
+      @eq     ( Ωilxt_278 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_279 = -> stack.is_empty                   ), true
+      @throws ( Ωilxt_280 = -> stack.pop()                      ), /stack is empty/
+      @throws ( Ωilxt_281 = -> stack.popnpeek()                 ), /stack is empty/
+      @throws ( Ωilxt_282 = -> stack.pop_name()                 ), /stack is empty/
+      @throws ( Ωilxt_283 = -> stack.popnpeek_name()            ), /stack is empty/
+      @eq     ( Ωilxt_284 = -> stack.pop            'fallback'  ), 'fallback'
+      @eq     ( Ωilxt_285 = -> stack.popnpeek       'fallback'  ), 'fallback'
+      @eq     ( Ωilxt_286 = -> stack.pop_name       'fallback'  ), 'fallback'
+      @eq     ( Ωilxt_287 = -> stack.popnpeek_name  'fallback'  ), 'fallback'
+    return null
 
   #=========================================================================================================
   signals:
@@ -957,10 +1020,12 @@ abbrlx = ( lxm ) -> {
     #-------------------------------------------------------------------------------------------------------
     cfg_settings: ->
       { Grammar } = require '../../../apps/interlex'
-      @eq ( Ωilxt_251 = -> ( new Grammar { emit_signals: false, } ).cfg.emit_signals ), false
-      @eq ( Ωilxt_252 = -> ( new Grammar { emit_signals: true,  } ).cfg.emit_signals ), true
-      @eq ( Ωilxt_253 = -> ( new Grammar {}                       ).cfg.emit_signals ), true
-      @eq ( Ωilxt_254 = -> ( new Grammar()                        ).cfg.emit_signals ), true
+      @eq ( Ωilxt_288 = -> ( new Grammar { emit_signals: false,         } ).cfg.emit_signals ), false
+      @eq ( Ωilxt_289 = -> ( new Grammar { emit_signals: true,          } ).cfg.emit_signals ), true
+      @eq ( Ωilxt_290 = -> ( new Grammar {}                               ).cfg.emit_signals ), true
+      @eq ( Ωilxt_291 = -> ( new Grammar()                                ).cfg.emit_signals ), true
+      # @throws ( Ωilxt_ACCEPTFORNOW_292 = -> ( new Grammar { emit_signals: null,      } ).cfg.emit_signals ), /——————————————————————/
+      # @throws ( Ωilxt_ACCEPTFORNOW_293 = -> ( new Grammar { emit_signals: undefined, } ).cfg.emit_signals ), /——————————————————————/
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -981,24 +1046,72 @@ abbrlx = ( lxm ) -> {
         number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         show    = ( lxm ) ->
+          return lxm unless lxm?
           data_rpr = if lxm.has_data then rpr { lxm.data..., } else ''
-          urge 'Ωilxt_255', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c; #{data_rpr}" #, abbrlx lxm
-          return lxm
+          urge 'Ωilxt_294', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c; #{data_rpr}" #, abbrlxm lxm
+          return abbrlxm lxm
         #...................................................................................................
         source = "99kg23mm"
-        info 'Ωilxt_256', source
-        # show  g.system_tokens.start.match_at  0, source
-        show  lexeme for lexeme from g.walk_lexemes source
-        # show  g.system_tokens.stop.match_at lexeme.stop, source
-        #...................................................................................................
-        # @eq ( Ωilxt_257 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        # @eq ( Ωilxt_258 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '99' }
-        # @eq ( Ωilxt_259 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'kg' }
-        # @eq ( Ωilxt_260 = -> abbrlx show lexemes.next().value ), { level: 'gnd',    fqname: 'gnd.before_digits', hit: '' }
-        # @eq ( Ωilxt_261 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.integer',    hit: '23' }
-        # @eq ( Ωilxt_262 = -> abbrlx show lexemes.next().value ), { level: 'number', fqname: 'number.unit',       hit: 'mm' }
-        # @eq ( Ωilxt_263 = -> abbrlx show lexemes.next().value ), { level: null,     fqname: null,                hit: null }
+        info 'Ωilxt_295', source; urge 'Ωilxt_296', abbrlxm lxm for lxm from g.walk_lexemes source
+        # info 'Ωilxt_297', source
+        # lexemes = g.walk_lexemes source
+        # @eq ( Ωilxt_298 = -> show lexemes.next().value ), { fqname: '$system.start',     hit: '',   pos: '0:0' }
+        # @eq ( Ωilxt_299 = -> show lexemes.next().value ), { fqname: '$system.jump',      hit: '',   pos: '0:0', data: { from_level: null, to_level: 'gnd' }, }
+        # @eq ( Ωilxt_300 = -> show lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '0:0' }
+        # @eq ( Ωilxt_301 = -> show lexemes.next().value ), { fqname: '$system.jump',      hit: '',   pos: '2:2', data: { from_level: 'gnd', to_level: 'number' }, }
+        # @eq ( Ωilxt_302 = -> show lexemes.next().value ), { fqname: 'number.integer',    hit: '99', pos: '0:2' }
+        # @eq ( Ωilxt_303 = -> show lexemes.next().value ), { fqname: 'number.unit',       hit: 'kg', pos: '2:4' }
+        # @eq ( Ωilxt_304 = -> show lexemes.next().value ), { fqname: '$system.jump',      hit: '',   pos: '4:4', data: { from_level: 'number', to_level: 'gnd' }, }
+        # @eq ( Ωilxt_305 = -> show lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '4:4' }
+        # @eq ( Ωilxt_306 = -> show lexemes.next().value ), { fqname: '$system.jump',      hit: '',   pos: '6:6', data: { from_level: 'gnd', to_level: 'number' }, }
+        # @eq ( Ωilxt_307 = -> show lexemes.next().value ), { fqname: 'number.integer',    hit: '23', pos: '4:6' }
+        # @eq ( Ωilxt_308 = -> show lexemes.next().value ), { fqname: 'number.unit',       hit: 'mm', pos: '6:8' }
+        # @eq ( Ωilxt_309 = -> show lexemes.next().value ), { fqname: '$system.jump',      hit: '',   pos: '8:8', data: { from_level: 'number', to_level: 'gnd' }, }
+        # @eq ( Ωilxt_310 = -> show lexemes.next().value ), { fqname: '$system.jump',      hit: '',   pos: '8:8', data: { from_level: 'gnd', to_level: null }, }
+        # @eq ( Ωilxt_311 = -> show lexemes.next().value ), { fqname: '$system.stop',      hit: '',   pos: '8:8' }
+        # @eq ( Ωilxt_312 = -> show lexemes.next().value ), null
+        return null
       #.....................................................................................................
+      do =>
+        g         = new Grammar { name: 'g', emit_signals: true, }
+        gnd       = g.new_level { name: 'gnd',      }
+        number    = g.new_level { name: 'number',   }
+        #...................................................................................................
+        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number!',    }
+        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
+        #...................................................................................................
+        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
+        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
+        #...................................................................................................
+        show    = ( lxm ) ->
+          return lxm unless lxm?
+          data_rpr = if lxm.has_data then rpr { lxm.data..., } else ''
+          urge 'Ωilxt_313', f"#{lxm?.fqname ? null}:_<25c; #{rpr lxm?.hit ? null}:<20c; #{data_rpr}" #, abbrlxm lxm
+          return abbrlxm lxm
+        #...................................................................................................
+        source = "99kg23mm"
+        # info 'Ωilxt_314', source; show lxm for lxm from g.walk_lexemes source
+        info 'Ωilxt_315', source; urge 'Ωilxt_316', abbrlxm lxm for lxm from g.walk_lexemes source
+        # info 'Ωilxt_317', source
+        # lexemes = g.walk_lexemes source
+        # @eq ( Ωilxt_318 = -> show lexemes.next().value ), { fqname: '$system.start',        hit: '',   pos: '0:0' }
+        # @eq ( Ωilxt_319 = -> show lexemes.next().value ), { fqname: '$system.jump',         hit: '',   pos: '0:0', data: { from_level: null,     to_level: 'gnd' }, }
+        # @eq ( Ωilxt_320 = -> show lexemes.next().value ), { fqname: '$system.jump',         hit: '',   pos: '0:0', data: { from_level: 'gnd',    to_level: 'number' }, }
+        # @eq ( Ωilxt_321 = -> show lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '0:0' }
+        # @eq ( Ωilxt_322 = -> show lexemes.next().value ), { fqname: 'number.integer',       hit: '99', pos: '0:2' }
+        # @eq ( Ωilxt_323 = -> show lexemes.next().value ), { fqname: 'number.unit',          hit: 'kg', pos: '2:4' }
+        # @eq ( Ωilxt_324 = -> show lexemes.next().value ), { fqname: '$system.jump',         hit: '',   pos: '4:4', data: { from_level: 'number', to_level: 'gnd' }, }
+        # @eq ( Ωilxt_325 = -> show lexemes.next().value ), { fqname: '$system.jump',         hit: '',   pos: '4:4', data: { from_level: 'gnd',    to_level: 'number' }, }
+        # @eq ( Ωilxt_326 = -> show lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '4:4' }
+        # @eq ( Ωilxt_327 = -> show lexemes.next().value ), { fqname: 'number.integer',       hit: '23', pos: '4:6' }
+        # @eq ( Ωilxt_328 = -> show lexemes.next().value ), { fqname: 'number.unit',          hit: 'mm', pos: '6:8' }
+        # @eq ( Ωilxt_329 = -> show lexemes.next().value ), { fqname: '$system.jump',         hit: '',   pos: '8:8', data: { from_level: 'number', to_level: 'gnd' }, }
+        # @eq ( Ωilxt_330 = -> show lexemes.next().value ), { fqname: '$system.jump',         hit: '',   pos: '8:8', data: { from_level: 'gnd',    to_level: null }, }
+        # @eq ( Ωilxt_331 = -> show lexemes.next().value ), { fqname: '$system.stop',         hit: '',   pos: '8:8' }
+        # @eq ( Ωilxt_332 = -> show lexemes.next().value ), null
+        return null
+        #...................................................................................................
       return null
 
   #=========================================================================================================
@@ -1013,8 +1126,8 @@ abbrlx = ( lxm ) -> {
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       string12  = g.new_level { name: 'string12', }
-      # debug 'Ωilxt_264', [ string11, string12, ]
-      # console.debug 'Ωilxt_265', [ string11, string12, ]
+      # debug 'Ωilxt_333', [ string11, string12, ]
+      # console.debug 'Ωilxt_334', [ string11, string12, ]
       # process.exit 111
       #.........................................................................................................
       gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
@@ -1029,12 +1142,12 @@ abbrlx = ( lxm ) -> {
       string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..!', }
       string11.new_token  { name: 'text',           matcher: rx"[^']*",                   }
       #.........................................................................................................
-      # debug 'Ωilxt_266', g
-      # debug 'Ωilxt_267', g.levels
-      # debug 'Ωilxt_268', g.levels.gnd
-      # debug 'Ωilxt_269', g.levels.gnd.tokens
-      # debug 'Ωilxt_270', gnd
-      # debug 'Ωilxt_271', token for token from gnd
+      # debug 'Ωilxt_335', g
+      # debug 'Ωilxt_336', g.levels
+      # debug 'Ωilxt_337', g.levels.gnd
+      # debug 'Ωilxt_338', g.levels.gnd.tokens
+      # debug 'Ωilxt_339', gnd
+      # debug 'Ωilxt_340', token for token from gnd
       #.........................................................................................................
       show_lexeme = ( lexeme ) ->
         { name
@@ -1046,7 +1159,7 @@ abbrlx = ( lxm ) -> {
           groups  } = lexeme
         groups_rpr  = if groups?  then ( rpr { groups..., } ) else ''
         jump_rpr    = jump?.spec ? ''
-        urge 'Ωilxt_272', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
+        urge 'Ωilxt_341', f"#{start}:>3.0f;:#{stop}:<3.0f; #{fqname}:<20c; #{rpr hit}:<30c; #{jump_rpr}:<15c; #{groups_rpr}"
       #.........................................................................................................
       sources = [
         "Alice in Cairo 1912 (approximately)"
@@ -1054,7 +1167,7 @@ abbrlx = ( lxm ) -> {
         ]
       #.........................................................................................................
       for source from sources
-        info 'Ωilxt_273', rpr source
+        info 'Ωilxt_342', rpr source
         for lexeme from g.walk_lexemes source
           show_lexeme lexeme
       #.........................................................................................................
@@ -1063,19 +1176,20 @@ abbrlx = ( lxm ) -> {
 
 #===========================================================================================================
 if module is require.main then await do =>
-  gt_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
+  gt_cfg = { throw_on_error: true, show_passes: false, report_checks: false, }
   ( new Test gt_cfg ).test @interlex_tasks
   ( new Test gt_cfg ).test { signals: @interlex_tasks.signals, }
+  ( new Test gt_cfg ).test { stack: @interlex_tasks.stack, }
   do =>
   f = ->
-    help 'Ωilxt_274', Array.from 'a🈯z'
-    help 'Ωilxt_275', 'a🈯z'.split /(.)/u
-    help 'Ωilxt_276', 'a🈯z'.split( /(.)/v )
-    help 'Ωilxt_277', 'a🈯z'.split( /(.)/d )
-    help 'Ωilxt_278', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
-    help 'Ωilxt_279', { match.groups..., }
-    help 'Ωilxt_280', { match.indices.groups..., }
-    # help 'Ωilxt_281', rx"."
-    # help 'Ωilxt_282', rx/./
+    help 'Ωilxt_343', Array.from 'a🈯z'
+    help 'Ωilxt_344', 'a🈯z'.split /(.)/u
+    help 'Ωilxt_345', 'a🈯z'.split( /(.)/v )
+    help 'Ωilxt_346', 'a🈯z'.split( /(.)/d )
+    help 'Ωilxt_347', match = 'a🈯z'.match /^(?<head>[a-z]+)(?<other>[^a-z]+)(?<tail>[a-z]+)/d
+    help 'Ωilxt_348', { match.groups..., }
+    help 'Ωilxt_349', { match.indices.groups..., }
+    # help 'Ωilxt_350', rx"."
+    # help 'Ωilxt_351', rx/./
 
 
