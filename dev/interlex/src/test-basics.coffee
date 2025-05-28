@@ -1179,7 +1179,7 @@ if module is require.main then await do =>
   gt_cfg = { throw_on_error: true, show_passes: false, report_checks: false, }
   ( new Test gt_cfg ).test @interlex_tasks
   ( new Test gt_cfg ).test { signals: @interlex_tasks.signals, }
-  ( new Test gt_cfg ).test { stack: @interlex_tasks.stack, }
+  # ( new Test gt_cfg ).test { stack: @interlex_tasks.stack, }
   do =>
   f = ->
     help 'Ωilxt_343', Array.from 'a🈯z'

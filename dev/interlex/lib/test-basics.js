@@ -2663,10 +2663,7 @@
       (new Test(gt_cfg)).test({
         signals: this.interlex_tasks.signals
       });
-      (new Test(gt_cfg)).test({
-        stack: this.interlex_tasks.stack
-      });
-      (() => {})();
+      (() => {})();      // ( new Test gt_cfg ).test { stack: @interlex_tasks.stack, }
       return f = function() {
         var match;
         help('Ωilxt_343', Array.from('a🈯z'));
