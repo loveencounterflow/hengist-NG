@@ -196,7 +196,7 @@ tabulate_lexeme = ( lexeme ) ->
       g                 = new Grammar { name: 'g', }
       gnd               = g.new_level { name: 'gnd', }
       number_tk_matcher = rx"[0-9]+"
-      number_tk         = gnd.new_token { name: 'number', matcher: number_tk_matcher, }
+      number_tk         = gnd.new_token { name: 'number', fit: number_tk_matcher, }
       number_lx         = null
       #.....................................................................................................
       @eq ( Ωilxt__66 = -> g.start_level instanceof Level                                 ), true
@@ -217,10 +217,10 @@ tabulate_lexeme = ( lexeme ) ->
       @eq ( Ωilxt__79 = -> number_tk.name                                                 ), 'number'
       @eq ( Ωilxt__80 = -> number_tk.level                                                ), gnd
       @eq ( Ωilxt__81 = -> number_tk.grammar                                              ), g
-      @eq ( Ωilxt__82 = -> number_tk.matcher                                              ), /[0-9]+/dvy
-      @eq ( Ωilxt__83 = -> number_tk.matcher.hasIndices                                   ), true
-      @eq ( Ωilxt__84 = -> number_tk.matcher.sticky                                       ), true
-      @eq ( Ωilxt__85 = -> number_tk.matcher.unicodeSets                                  ), true
+      @eq ( Ωilxt__82 = -> number_tk.fit                                              ), /[0-9]+/dvy
+      @eq ( Ωilxt__83 = -> number_tk.fit.hasIndices                                   ), true
+      @eq ( Ωilxt__84 = -> number_tk.fit.sticky                                       ), true
+      @eq ( Ωilxt__85 = -> number_tk.fit.unicodeSets                                  ), true
       @eq ( Ωilxt__86 = -> number_tk.jump                                                 ), null
       #.....................................................................................................
       @eq ( Ωilxt__87 = -> ( number_lx = number_tk.match_at 0, '398ä' )?                  ), true
@@ -302,10 +302,10 @@ tabulate_lexeme = ( lexeme ) ->
         g         = new Grammar { name: 'g', cfg..., }
         gnd       = g.new_level { name: 'gnd', }
         #.....................................................................................................
-        gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
-        gnd.new_token       { name: 'number',         matcher: rx"[0-9]+",                  }
-        gnd.new_token       { name: 'ws',             matcher: rx"\s+",                     }
-        gnd.new_token       { name: 'text',           matcher: rx"[^a-zA-Z0-9\s]+",         }
+        gnd.new_token       { name: 'name',           fit: rx"(?<initial>[A-Z])[a-z]*", }
+        gnd.new_token       { name: 'number',         fit: rx"[0-9]+",                  }
+        gnd.new_token       { name: 'ws',             fit: rx"\s+",                     }
+        gnd.new_token       { name: 'text',           fit: rx"[^a-zA-Z0-9\s]+",         }
         #.....................................................................................................
         return g
       #.....................................................................................................
@@ -318,11 +318,11 @@ tabulate_lexeme = ( lexeme ) ->
           [ "3rd line",           3, ]
           [ "4th line (and EOF)", 4, ] ]
         #...................................................................................................
-        for [ probe, matcher, ] from probes_and_matchers
+        for [ probe, fit, ] from probes_and_matchers
           info 'Ωilxt_128', rpr probe
           lexemes = g.scan_to_list probe
           # urge 'Ωilxt_129', lexemes
-          @eq ( Ωilxt_130 = -> lexemes[ 0 ].lnr ), matcher
+          @eq ( Ωilxt_130 = -> lexemes[ 0 ].lnr ), fit
         return null
       #.....................................................................................................
       do =>
@@ -336,10 +336,10 @@ tabulate_lexeme = ( lexeme ) ->
           [ "3rd line",           12, ]
           [ "4th line (and EOF)", 13, ] ]
         #...................................................................................................
-        for [ probe, matcher, ] from probes_and_matchers
+        for [ probe, fit, ] from probes_and_matchers
           info 'Ωilxt_133', rpr probe
           lexeme = ( g.scan_to_list probe )[ 0 ]
-          @eq ( Ωilxt_134 = -> lexeme.lnr ), matcher
+          @eq ( Ωilxt_134 = -> lexeme.lnr ), fit
         return null
       #.....................................................................................................
       return null
@@ -356,11 +356,11 @@ tabulate_lexeme = ( lexeme ) ->
         [ "4th line (and EOF)", { length: 9, condensed: "gnd.ordinal'4th'|gnd.ws' '|gnd.word'line'|gnd.ws' '|gnd.other'('|gnd.word'and'|gnd.ws' '|gnd.word'EOF'|gnd.other')'", }, ] ]
       #-----------------------------------------------------------------------------------------------------
       test = ( g ) =>
-        for [ probe, matcher, ] from probes_and_matchers
+        for [ probe, fit, ] from probes_and_matchers
           g.reset_lnr()
           lexemes = g.scan_to_list probe
-          @eq ( Ωilxt_135 = -> condense_lexemes lexemes ), matcher.condensed
-          @eq ( Ωilxt_136 = -> lexemes.length ), matcher.length
+          @eq ( Ωilxt_135 = -> condense_lexemes lexemes ), fit.condensed
+          @eq ( Ωilxt_136 = -> lexemes.length ), fit.length
           g.reset_lnr()
           @eq ( Ωilxt_137 = -> [ ( g.scan probe )..., ] ), lexemes
         return null
@@ -369,12 +369,12 @@ tabulate_lexeme = ( lexeme ) ->
         g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
-        gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]+",           }
-        gnd.new_token       { name: 'ordinal',        matcher: rx"(?<ordinal>[0-9]+)(st|nd|rd|th)",   }
-        gnd.new_token       { name: 'number',         matcher: rx"[0-9]+",                            }
-        gnd.new_token       { name: 'ws',             matcher: rx"\s+",                               }
-        gnd.new_token       { name: 'word',           matcher: rx.i"[a-z]+",                          }
-        gnd.new_token       { name: 'other',          matcher: rx.i"[^a-z0-9\s]+",                    }
+        gnd.new_token       { name: 'name',           fit: rx"(?<initial>[A-Z])[a-z]+",           }
+        gnd.new_token       { name: 'ordinal',        fit: rx"(?<ordinal>[0-9]+)(st|nd|rd|th)",   }
+        gnd.new_token       { name: 'number',         fit: rx"[0-9]+",                            }
+        gnd.new_token       { name: 'ws',             fit: rx"\s+",                               }
+        gnd.new_token       { name: 'word',           fit: rx.i"[a-z]+",                          }
+        gnd.new_token       { name: 'other',          fit: rx.i"[^a-z0-9\s]+",                    }
         #...................................................................................................
         test g
       #-----------------------------------------------------------------------------------------------------
@@ -382,12 +382,12 @@ tabulate_lexeme = ( lexeme ) ->
         g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
-        gnd.new_token       { name: 'name',           matcher: /(?<initial>[A-Z])[a-z]+/dvy,            }
-        gnd.new_token       { name: 'ordinal',        matcher: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/dvy,  }
-        gnd.new_token       { name: 'number',         matcher: /[0-9]+/dvy,                             }
-        gnd.new_token       { name: 'ws',             matcher: /\s+/dvy,                                }
-        gnd.new_token       { name: 'word',           matcher: /[a-z]+/divy,                            }
-        gnd.new_token       { name: 'other',          matcher: /[^a-z0-9\s]+/divy,                      }
+        gnd.new_token       { name: 'name',           fit: /(?<initial>[A-Z])[a-z]+/dvy,            }
+        gnd.new_token       { name: 'ordinal',        fit: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/dvy,  }
+        gnd.new_token       { name: 'number',         fit: /[0-9]+/dvy,                             }
+        gnd.new_token       { name: 'ws',             fit: /\s+/dvy,                                }
+        gnd.new_token       { name: 'word',           fit: /[a-z]+/divy,                            }
+        gnd.new_token       { name: 'other',          fit: /[^a-z0-9\s]+/divy,                      }
         #...................................................................................................
         test g
       #-----------------------------------------------------------------------------------------------------
@@ -395,12 +395,12 @@ tabulate_lexeme = ( lexeme ) ->
         g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
-        gnd.new_token       { name: 'name',           matcher: /(?<initial>[A-Z])[a-z]+/,               }
-        gnd.new_token       { name: 'ordinal',        matcher: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/,     }
-        gnd.new_token       { name: 'number',         matcher: /[0-9]+/,                                }
-        gnd.new_token       { name: 'ws',             matcher: /\s+/,                                   }
-        gnd.new_token       { name: 'word',           matcher: /[a-z]+/i,                               }
-        gnd.new_token       { name: 'other',          matcher: /[^a-z0-9\s]+/i,                         }
+        gnd.new_token       { name: 'name',           fit: /(?<initial>[A-Z])[a-z]+/,               }
+        gnd.new_token       { name: 'ordinal',        fit: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/,     }
+        gnd.new_token       { name: 'number',         fit: /[0-9]+/,                                }
+        gnd.new_token       { name: 'ws',             fit: /\s+/,                                   }
+        gnd.new_token       { name: 'word',           fit: /[a-z]+/i,                               }
+        gnd.new_token       { name: 'other',          fit: /[^a-z0-9\s]+/i,                         }
         #...................................................................................................
         test g
       #-----------------------------------------------------------------------------------------------------
@@ -408,12 +408,12 @@ tabulate_lexeme = ( lexeme ) ->
         g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
-        gnd.new_token       { name: 'name',           matcher: /(?<initial>[A-Z])[a-z]+/v,              }
-        gnd.new_token       { name: 'ordinal',        matcher: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/u,    }
-        gnd.new_token       { name: 'number',         matcher: /[0-9]+/,                                }
-        gnd.new_token       { name: 'ws',             matcher: /\s+/,                                   }
-        gnd.new_token       { name: 'word',           matcher: /[a-z]+/i,                               }
-        gnd.new_token       { name: 'other',          matcher: /[^a-z0-9\s]+/i,                         }
+        gnd.new_token       { name: 'name',           fit: /(?<initial>[A-Z])[a-z]+/v,              }
+        gnd.new_token       { name: 'ordinal',        fit: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/u,    }
+        gnd.new_token       { name: 'number',         fit: /[0-9]+/,                                }
+        gnd.new_token       { name: 'ws',             fit: /\s+/,                                   }
+        gnd.new_token       { name: 'word',           fit: /[a-z]+/i,                               }
+        gnd.new_token       { name: 'other',          fit: /[^a-z0-9\s]+/i,                         }
         #...................................................................................................
         test g
       #.....................................................................................................
@@ -445,17 +445,17 @@ tabulate_lexeme = ( lexeme ) ->
         #...................................................................................................
         g     = new Grammar()
         first = g.new_level { name: 'first', }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
+        first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
+        first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
+        first.new_token { name: 'three_digits',   fit: /[0-9]{3}/i, }
+        first.new_token { name: 'four_digits',    fit: /[0-9]{4}/i, }
+        first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
+        first.new_token { name: 'two_letters',    fit: /[a-z]{2}/i, }
+        first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
+        first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
         #.....................................................................................................
-        for [ [ position, source, ], matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_138 = -> condense_lexemes first.match_first_at position, source ), matcher
+        for [ [ position, source, ], fit, ] in probes_and_matchers
+          @eq ( Ωilxt_138 = -> condense_lexemes first.match_first_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -477,17 +477,17 @@ tabulate_lexeme = ( lexeme ) ->
         #...................................................................................................
         g     = new Grammar()
         first = g.new_level { name: 'first', }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+        first.new_token { name: 'four_digits',    fit: /[0-9]{4}/i, }
+        first.new_token { name: 'three_digits',   fit: /[0-9]{3}/i, }
+        first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
+        first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
+        first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
+        first.new_token { name: 'two_letters',    fit: /[a-z]{2}/i, }
+        first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
         #.....................................................................................................
-        for [ [ position, source, ], matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_139 = -> condense_lexemes first.match_first_at position, source ), matcher
+        for [ [ position, source, ], fit, ] in probes_and_matchers
+          @eq ( Ωilxt_139 = -> condense_lexemes first.match_first_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -509,17 +509,17 @@ tabulate_lexeme = ( lexeme ) ->
         #...................................................................................................
         g     = new Grammar()
         first = g.new_level { name: 'first', }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
+        first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
+        first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
+        first.new_token { name: 'three_digits',   fit: /[0-9]{3}/i, }
+        first.new_token { name: 'four_digits',    fit: /[0-9]{4}/i, }
+        first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
+        first.new_token { name: 'two_letters',    fit: /[a-z]{2}/i, }
+        first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
+        first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
         #.....................................................................................................
-        for [ [ position, source, ], matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_140 = -> condense_lexemes first.match_longest_at position, source ), matcher
+        for [ [ position, source, ], fit, ] in probes_and_matchers
+          @eq ( Ωilxt_140 = -> condense_lexemes first.match_longest_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -541,17 +541,17 @@ tabulate_lexeme = ( lexeme ) ->
         #...................................................................................................
         g     = new Grammar()
         first = g.new_level { name: 'first', }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
+        first.new_token { name: 'four_digits',    fit: /[0-9]{4}/i, }
+        first.new_token { name: 'three_digits',   fit: /[0-9]{3}/i, }
+        first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
+        first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
+        first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
+        first.new_token { name: 'two_letters',    fit: /[a-z]{2}/i, }
+        first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
         #.....................................................................................................
-        for [ [ position, source, ], matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_141 = -> condense_lexemes first.match_longest_at position, source ), matcher
+        for [ [ position, source, ], fit, ] in probes_and_matchers
+          @eq ( Ωilxt_141 = -> condense_lexemes first.match_longest_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -577,18 +577,18 @@ tabulate_lexeme = ( lexeme ) ->
             g           = new Grammar()
             first       = g.new_level { name: 'first', }
             token_cfgs  = shuffle [
-              { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-              { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-              { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-              { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-              { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-              { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-              { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-              { name: 'four_letters',   matcher: /[a-z]{4}/i, } ]
+              { name: 'one_digit',      fit: /[0-9]{1}/i, }
+              { name: 'two_digits',     fit: /[0-9]{2}/i, }
+              { name: 'three_digits',   fit: /[0-9]{3}/i, }
+              { name: 'four_digits',    fit: /[0-9]{4}/i, }
+              { name: 'one_letter',     fit: /[a-z]{1}/i, }
+              { name: 'two_letters',    fit: /[a-z]{2}/i, }
+              { name: 'three_letters',  fit: /[a-z]{3}/i, }
+              { name: 'four_letters',   fit: /[a-z]{4}/i, } ]
             first.new_token token_cfg for token_cfg in token_cfgs
             #...............................................................................................
-            for [ [ position, source, ], matcher, ] in probes_and_matchers
-              @eq ( Ωilxt_142 = -> condense_lexemes first.match_longest_at position, source ), matcher
+            for [ [ position, source, ], fit, ] in probes_and_matchers
+              @eq ( Ωilxt_142 = -> condense_lexemes first.match_longest_at position, source ), fit
             #...............................................................................................
             return null
         return null
@@ -614,20 +614,20 @@ tabulate_lexeme = ( lexeme ) ->
             g           = new Grammar { strategy: 'longest', emit_signals: false, }
             first       = g.new_level { name: 'first', }
             token_cfgs  = shuffle [
-              { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-              { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-              { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-              { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-              { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-              { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-              { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-              { name: 'four_letters',   matcher: /[a-z]{4}/i, } ]
+              { name: 'one_digit',      fit: /[0-9]{1}/i, }
+              { name: 'two_digits',     fit: /[0-9]{2}/i, }
+              { name: 'three_digits',   fit: /[0-9]{3}/i, }
+              { name: 'four_digits',    fit: /[0-9]{4}/i, }
+              { name: 'one_letter',     fit: /[a-z]{1}/i, }
+              { name: 'two_letters',    fit: /[a-z]{2}/i, }
+              { name: 'three_letters',  fit: /[a-z]{3}/i, }
+              { name: 'four_letters',   fit: /[a-z]{4}/i, } ]
             first.new_token token_cfg for token_cfg in token_cfgs
             #...............................................................................................
             @eq ( Ωilxt_143 = -> g.cfg.strategy ), 'longest'
             @eq ( Ωilxt_144 = -> first.strategy ), 'longest'
-            for [ source, matcher, ] in probes_and_matchers
-              @eq ( Ωilxt_145 = -> condense_lexemes g.scan_to_list source ), matcher
+            for [ source, fit, ] in probes_and_matchers
+              @eq ( Ωilxt_145 = -> condense_lexemes g.scan_to_list source ), fit
             #...............................................................................................
             return null
         return null
@@ -643,19 +643,19 @@ tabulate_lexeme = ( lexeme ) ->
         #...................................................................................................
         g     = new Grammar { strategy: 'first', emit_signals: false, }
         first = g.new_level { name: 'first', }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
+        first.new_token { name: 'two_letters',    fit: /[a-z]{2}/i, }
+        first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
+        first.new_token { name: 'three_digits',   fit: /[0-9]{3}/i, }
+        first.new_token { name: 'four_digits',    fit: /[0-9]{4}/i, }
+        first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
+        first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
+        first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
         #...................................................................................................
         @eq ( Ωilxt_146 = -> g.cfg.strategy ), 'first'
         @eq ( Ωilxt_147 = -> first.strategy ), 'first'
-        for [ source, matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_148 = -> condense_lexemes g.scan_to_list source ), matcher
+        for [ source, fit, ] in probes_and_matchers
+          @eq ( Ωilxt_148 = -> condense_lexemes g.scan_to_list source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -669,19 +669,19 @@ tabulate_lexeme = ( lexeme ) ->
         #...................................................................................................
         g     = new Grammar { strategy: 'first', emit_signals: false, }
         first = g.new_level { name: 'first', }
-        first.new_token { name: 'four_letters',   matcher: /[a-z]{4}/i, }
-        first.new_token { name: 'three_letters',  matcher: /[a-z]{3}/i, }
-        first.new_token { name: 'two_letters',    matcher: /[a-z]{2}/i, }
-        first.new_token { name: 'one_letter',     matcher: /[a-z]{1}/i, }
-        first.new_token { name: 'four_digits',    matcher: /[0-9]{4}/i, }
-        first.new_token { name: 'three_digits',   matcher: /[0-9]{3}/i, }
-        first.new_token { name: 'two_digits',     matcher: /[0-9]{2}/i, }
-        first.new_token { name: 'one_digit',      matcher: /[0-9]{1}/i, }
+        first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
+        first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
+        first.new_token { name: 'two_letters',    fit: /[a-z]{2}/i, }
+        first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
+        first.new_token { name: 'four_digits',    fit: /[0-9]{4}/i, }
+        first.new_token { name: 'three_digits',   fit: /[0-9]{3}/i, }
+        first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
+        first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
         #...................................................................................................
         @eq ( Ωilxt_149 = -> g.cfg.strategy ), 'first'
         @eq ( Ωilxt_150 = -> first.strategy ), 'first'
-        for [ source, matcher, ] in probes_and_matchers
-          @eq ( Ωilxt_151 = -> condense_lexemes g.scan_to_list source ), matcher
+        for [ source, fit, ] in probes_and_matchers
+          @eq ( Ωilxt_151 = -> condense_lexemes g.scan_to_list source ), fit
         return null
       #.....................................................................................................
       return null
@@ -693,15 +693,15 @@ tabulate_lexeme = ( lexeme ) ->
       do =>
         g = new Grammar { strategy: 'first', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
-        gnd.new_token { name: 'a', matcher: /a/, }
-        gnd.new_token { name: 'b', matcher: /(?=b)/, }
+        gnd.new_token { name: 'a', fit: /a/, }
+        gnd.new_token { name: 'b', fit: /(?=b)/, }
         @throws ( Ωilxt_152 = -> g.scan_to_list "ab" ), /encountered zero-length match/
       #.....................................................................................................
       do =>
         g = new Grammar { strategy: 'longest', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
-        gnd.new_token { name: 'a', matcher: /a/, }
-        gnd.new_token { name: 'b', matcher: /(?=b)/, }
+        gnd.new_token { name: 'a', fit: /a/, }
+        gnd.new_token { name: 'b', fit: /(?=b)/, }
         @throws ( Ωilxt_153 = -> g.scan_to_list "ab" ), /encountered zero-length match/
       #.....................................................................................................
       do =>
@@ -709,8 +709,8 @@ tabulate_lexeme = ( lexeme ) ->
         the longest match, it does not get passed on as a resulting lexeme. ###
         g = new Grammar { strategy: 'longest', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
-        gnd.new_token { name: 'a', matcher: /[ab]/, }
-        gnd.new_token { name: 'b', matcher: /(?=b)/, }
+        gnd.new_token { name: 'a', fit: /[ab]/, }
+        gnd.new_token { name: 'b', fit: /(?=b)/, }
         @eq ( Ωilxt_154 = -> condense_lexemes g.scan_to_list "ab" ), "gnd.a'a'|gnd.a'b'"
       #.....................................................................................................
       return null
@@ -726,8 +726,8 @@ tabulate_lexeme = ( lexeme ) ->
       do =>
         g       = new Grammar()
         first   = g.new_level { name: 'first', }
-        @throws ( Ωilxt_155 = -> first.new_token { name: 'digit', matcher: /[0-9]/, jump: 'first',  } ), /cannot jump to same level/
-        @throws ( Ωilxt_156 = -> first.new_token { name: 'digit', matcher: /[0-9]/, jump: 'first!', } ), /cannot jump to same level/
+        @throws ( Ωilxt_155 = -> first.new_token { name: 'digit', fit: /[0-9]/, jump: 'first',  } ), /cannot jump to same level/
+        @throws ( Ωilxt_156 = -> first.new_token { name: 'digit', fit: /[0-9]/, jump: 'first!', } ), /cannot jump to same level/
         return null
       #.....................................................................................................
       return null
@@ -772,12 +772,12 @@ tabulate_lexeme = ( lexeme ) ->
         g       = new Grammar { emit_signals: false, }
         #...................................................................................................
         first   = g.new_level { name: 'first', }
-        first.new_token   { name: 'digit',      matcher: /[0-9]/,     jump: 'number',   }
-        first.new_token   { name: 'other',      matcher: /[^0-9]+/,                     }
+        first.new_token   { name: 'digit',      fit: /[0-9]/,     jump: 'number',   }
+        first.new_token   { name: 'other',      fit: /[^0-9]+/,                     }
         #...................................................................................................
         number  = g.new_level { name: 'number', }
-        number.new_token  { name: 'digits',     matcher: /[0-9]+/,                      }
-        number.new_token  { name: 'other',      matcher: /[^0-9]/,    jump: '..',       }
+        number.new_token  { name: 'digits',     fit: /[0-9]+/,                      }
+        number.new_token  { name: 'other',      fit: /[^0-9]/,    jump: '..',       }
         #...................................................................................................
         [ lexeme, ] = g.scan_to_list '5'
         @eq ( Ωilxt_180 = -> lexeme instanceof Lexeme       ), true
@@ -804,12 +804,12 @@ tabulate_lexeme = ( lexeme ) ->
         g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
-        first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
-        first.new_token     { name: 'dq',         matcher: /"/,             jump: 'dqstring!',  }
+        first.new_token     { name: 'other',      fit: /[^"]+/,                             }
+        first.new_token     { name: 'dq',         fit: /"/,             jump: 'dqstring!',  }
         #...................................................................................................
         dqstring  = g.new_level { name: 'dqstring', }
-        dqstring.new_token  { name: 'other',      matcher: /[^"]+/,                             }
-        dqstring.new_token  { name: 'dq',         matcher: /"/,             jump: '..'          }
+        dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
+        dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..'          }
         #...................................................................................................
         @eq ( Ωilxt_190 = -> first.tokens[ 1 ].name     ), 'dq'
         @eq ( Ωilxt_191 = -> first.tokens[ 1 ].jump     ), { spec: 'dqstring!', carry: true, action: 'fore', target: 'dqstring', }
@@ -830,12 +830,12 @@ tabulate_lexeme = ( lexeme ) ->
         g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
-        first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
-        first.new_token     { name: 'dq',         matcher: /"/,             jump: 'dqstring',   }
+        first.new_token     { name: 'other',      fit: /[^"]+/,                             }
+        first.new_token     { name: 'dq',         fit: /"/,             jump: 'dqstring',   }
         #...................................................................................................
         dqstring  = g.new_level { name: 'dqstring', }
-        dqstring.new_token  { name: 'other',      matcher: /[^"]+/,                             }
-        dqstring.new_token  { name: 'dq',         matcher: /"/,             jump: '..!'         }
+        dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
+        dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..!'         }
         #...................................................................................................
         @eq ( Ωilxt_200 = -> first.tokens[ 1 ].name     ), 'dq'
         @eq ( Ωilxt_201 = -> first.tokens[ 1 ].jump     ), { spec: 'dqstring', carry: false, action: 'fore', target: 'dqstring', }
@@ -856,12 +856,12 @@ tabulate_lexeme = ( lexeme ) ->
         g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
-        first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
-        first.new_token     { name: 'dq',         matcher: /"/,             jump: 'dqstring!',  }
+        first.new_token     { name: 'other',      fit: /[^"]+/,                             }
+        first.new_token     { name: 'dq',         fit: /"/,             jump: 'dqstring!',  }
         #...................................................................................................
         dqstring  = g.new_level { name: 'dqstring', }
-        dqstring.new_token  { name: 'other',      matcher: /[^"]+/,                             }
-        dqstring.new_token  { name: 'dq',         matcher: /"/,             jump: '..!'         }
+        dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
+        dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..!'         }
         #...................................................................................................
         @eq ( Ωilxt_210 = -> first.tokens[ 1 ].name     ), 'dq'
         @eq ( Ωilxt_211 = -> first.tokens[ 1 ].jump     ), { spec: 'dqstring!', carry: true, action: 'fore', target: 'dqstring', }
@@ -882,12 +882,12 @@ tabulate_lexeme = ( lexeme ) ->
         g = new Grammar g_cfg
         #...................................................................................................
         first     = g.new_level { name: 'first', }
-        first.new_token     { name: 'other',      matcher: /[^"]+/,                             }
-        first.new_token     { name: 'dq',         matcher: /"/,             jump: 'dqstring',   }
+        first.new_token     { name: 'other',      fit: /[^"]+/,                             }
+        first.new_token     { name: 'dq',         fit: /"/,             jump: 'dqstring',   }
         #...................................................................................................
         dqstring  = g.new_level { name: 'dqstring', }
-        dqstring.new_token  { name: 'other',      matcher: /[^"]+/,                             }
-        dqstring.new_token  { name: 'dq',         matcher: /"/,             jump: '..'          }
+        dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
+        dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..'          }
         #...................................................................................................
         @eq ( Ωilxt_220 = -> first.tokens[ 1 ].name     ), 'dq'
         @eq ( Ωilxt_221 = -> first.tokens[ 1 ].jump     ), { spec: 'dqstring', carry: false, action: 'fore', target: 'dqstring', }
@@ -916,11 +916,11 @@ tabulate_lexeme = ( lexeme ) ->
         ]
       #-----------------------------------------------------------------------------------------------------
       test = ( g ) =>
-        for [ probe, matcher, ] from probes_and_matchers
+        for [ probe, fit, ] from probes_and_matchers
           g.reset_lnr()
           lexemes = g.scan_to_list probe
-          @eq ( Ωilxt_230 = -> condense_lexemes lexemes ), matcher.condensed
-          @eq ( Ωilxt_231 = -> lexemes.length ), matcher.length
+          @eq ( Ωilxt_230 = -> condense_lexemes lexemes ), fit.condensed
+          @eq ( Ωilxt_231 = -> lexemes.length ), fit.length
           g.reset_lnr()
           @eq ( Ωilxt_232 = -> [ ( g.scan probe )..., ] ), lexemes
         return null
@@ -930,11 +930,11 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd', }
         number    = g.new_level { name: 'number', }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher: /[a-z]+/i,                      }
-        gnd.new_token     { name: 'before_digits',    matcher: /(?=[0-9])/i,  jump: 'number',  }
-        gnd.new_token     { name: 'ws',               matcher: /\s+/i,                         }
+        gnd.new_token     { name: 'letters',          fit: /[a-z]+/i,                      }
+        gnd.new_token     { name: 'before_digits',    fit: /(?=[0-9])/i,  jump: 'number',  }
+        gnd.new_token     { name: 'ws',               fit: /\s+/i,                         }
         #...................................................................................................
-        number.new_token  { name: 'digits',           matcher: /[0-9]+/i,     jump: '..',      }
+        number.new_token  { name: 'digits',           fit: /[0-9]+/i,     jump: '..',      }
         #...................................................................................................
         test g
         source = probes_and_matchers[ 0 ][ 0 ]
@@ -952,12 +952,12 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd', }
         number    = g.new_level { name: 'number', }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number',  }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                         }
+        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number',  }
+        gnd.new_token     { name: 'ws',               fit:  /\s+/,                         }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,           }
-        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
+        number.new_token  { name: 'integer',          fit:  /[0-9]+/,           }
+        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         source = "99kg23mm"
         info 'Ωilxt_234', source; g.reset_lnr 1; lexemes = g.scan source
@@ -1036,11 +1036,11 @@ tabulate_lexeme = ( lexeme ) ->
       text      = g.new_level { name: 'text', }
       number    = g.new_level { name: 'number', }
       #.....................................................................................................
-      text.new_token    { name: 'text',         matcher: /// \\ \p{Decimal_Number} | \p{Letter} ///v,                 }
-      text.new_token    { name: 'ws',           matcher: /// \p{White_Space}                    ///v,                 }
-      text.new_token    { name: 'number_start', matcher: /// (?= (?!< \\ ) \p{Decimal_Number} ) ///v, jump: 'number', }
-      number.new_token  { name: 'digit',        matcher: /// \p{Decimal_Number} | \. | e        ///v,                 }
-      number.new_token  { name: 'number_stop',  matcher: /// (?= \P{Decimal_Number} )           ///v, jump: '..',     }
+      text.new_token    { name: 'text',         fit: /// \\ \p{Decimal_Number} | \p{Letter} ///v,                 }
+      text.new_token    { name: 'ws',           fit: /// \p{White_Space}                    ///v,                 }
+      text.new_token    { name: 'number_start', fit: /// (?= (?!< \\ ) \p{Decimal_Number} ) ///v, jump: 'number', }
+      number.new_token  { name: 'digit',        fit: /// \p{Decimal_Number} | \. | e        ///v,                 }
+      number.new_token  { name: 'number_stop',  fit: /// (?= \P{Decimal_Number} )           ///v, jump: '..',     }
       #.....................................................................................................
       do =>
         source = "R\\2D\\2 has 3556.3 Petabytes"
@@ -1086,11 +1086,11 @@ tabulate_lexeme = ( lexeme ) ->
       text      = g.new_level { name: 'text', }
       number    = g.new_level { name: 'number', }
       #.....................................................................................................
-      text.new_token    { name: 'text',         matcher: /// \\ \p{Decimal_Number} | \p{Letter} ///v, merge: true,    }
-      text.new_token    { name: 'ws',           matcher: /// \p{White_Space}                    ///v, merge: true,    }
-      text.new_token    { name: 'number_start', matcher: /// (?= (?!< \\ ) \p{Decimal_Number} ) ///v, jump: 'number', }
-      number.new_token  { name: 'digit',        matcher: /// \p{Decimal_Number} | \. | e        ///v, merge: true,    }
-      number.new_token  { name: 'number_stop',  matcher: /// (?= \P{Decimal_Number} )           ///v, jump: '..',     }
+      text.new_token    { name: 'text',         fit: /// \\ \p{Decimal_Number} | \p{Letter} ///v, merge: true,    }
+      text.new_token    { name: 'ws',           fit: /// \p{White_Space}                    ///v, merge: true,    }
+      text.new_token    { name: 'number_start', fit: /// (?= (?!< \\ ) \p{Decimal_Number} ) ///v, jump: 'number', }
+      number.new_token  { name: 'digit',        fit: /// \p{Decimal_Number} | \. | e        ///v, merge: true,    }
+      number.new_token  { name: 'number_stop',  fit: /// (?= \P{Decimal_Number} )           ///v, jump: '..',     }
       #.....................................................................................................
       do =>
         source = "R\\2D\\2 has 3556.3 Petabytes"
@@ -1118,7 +1118,7 @@ tabulate_lexeme = ( lexeme ) ->
       g         = new Grammar { name: 'g', emit_signals: false, }
       text      = g.new_level { name: 'text', }
       #.....................................................................................................
-      text.new_token { name: 'name', matcher: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge: true,    }
+      text.new_token { name: 'name', fit: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge: true,    }
       #.....................................................................................................
       do =>
         source = "ArcBoCyDeen"
@@ -1138,7 +1138,7 @@ tabulate_lexeme = ( lexeme ) ->
       g         = new Grammar { name: 'g', emit_signals: false, }
       text      = g.new_level { name: 'text', }
       #.....................................................................................................
-      text.new_token { name: 'name', matcher: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge: 'assign',    }
+      text.new_token { name: 'name', fit: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge: 'assign',    }
       #.....................................................................................................
       do =>
         source = "ArcBoCyDeen"
@@ -1158,7 +1158,7 @@ tabulate_lexeme = ( lexeme ) ->
       g         = new Grammar { name: 'g', emit_signals: false, }
       text      = g.new_level { name: 'text', }
       #.....................................................................................................
-      text.new_token { name: 'name', matcher: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge: true,    }
+      text.new_token { name: 'name', fit: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge: true,    }
       #.....................................................................................................
       do =>
         source = "Arc"
@@ -1182,7 +1182,7 @@ tabulate_lexeme = ( lexeme ) ->
       merge     = ({ merged, lexemes, }) ->
         merged.assign { initial: ( lxm.data.initial for lxm in lexemes ), }
         return null
-      text.new_token { name: 'name', matcher: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge, }
+      text.new_token { name: 'name', fit: /// (?<initial> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ///v, merge, }
       #.....................................................................................................
       do =>
         source = "ArcBoCyDeen"
@@ -1203,8 +1203,8 @@ tabulate_lexeme = ( lexeme ) ->
       g         = new Grammar { name: 'g', emit_signals: false, }
       text      = g.new_level { name: 'text', }
       #.....................................................................................................
-      matcher = /// (?<parts> (?<initials> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ) ///v
-      text.new_token { name: 'name', matcher, merge: 'list', }
+      fit = /// (?<parts> (?<initials> \p{Uppercase_Letter} ) \p{Lowercase_Letter}+ ) ///v
+      text.new_token { name: 'name', fit, merge: 'list', }
       #.....................................................................................................
       do =>
         source = "ArcBoCyDeen"
@@ -1224,7 +1224,7 @@ tabulate_lexeme = ( lexeme ) ->
       { Grammar } = require '../../../apps/interlex'
       g     = new Grammar()
       gnd   = g.new_level { name: 'gnd', }
-      name  = gnd.new_token { name: 'name', matcher: ///
+      name  = gnd.new_token { name: 'name', fit: ///
         (?<initial> \p{Uppercase_Letter} ) (?<tail> \p{Lowercase_Letter}* ) ///, }
       lexeme = g.scan_first 'Brobdignac'
       @eq ( Ωilxt_341 = -> lexeme.groups              ), undefined
@@ -1263,12 +1263,12 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number',     }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
+        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number',     }
+        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
+        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
+        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         source = "99kg23mm"
         # info 'Ωilxt_356', source; tabulate_lexemes g.scan source
@@ -1297,12 +1297,12 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number!',    }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
+        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number!',    }
+        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
+        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
+        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         source = "99kg23mm"
         # info 'Ωilxt_374', source; tabulate_lexemes g.scan source
@@ -1331,12 +1331,12 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number!',    }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
+        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number!',    }
+        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..!',     }
+        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
+        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..!',     }
         #...................................................................................................
         source = "99kg23mm"
         # info 'Ωilxt_392', source; tabulate_lexemes g.scan source
@@ -1365,12 +1365,12 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number',     }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
+        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number',     }
+        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..!',     }
+        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
+        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..!',     }
         #...................................................................................................
         source = "99kg23mm"
         # info 'Ωilxt_410', source; tabulate_lexemes g.scan source
@@ -1406,12 +1406,12 @@ tabulate_lexeme = ( lexeme ) ->
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
         #...................................................................................................
-        gnd.new_token     { name: 'letters',          matcher:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    matcher:  /(?=[0-9])/,  jump: 'number!',    }
-        gnd.new_token     { name: 'ws',               matcher:  /\s+/,                            }
+        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
+        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number!',    }
+        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
         #...................................................................................................
-        number.new_token  { name: 'integer',          matcher:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             matcher:  /[a-zA-Z]+/,     jump: '..',      }
+        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
+        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         source = "99kg23mm"
         # info 'Ωilxt_428', source; tabulate_lexemes g.scan source
@@ -1443,12 +1443,12 @@ tabulate_lexeme = ( lexeme ) ->
       g         = new Grammar { name: 'g', }
       gnd       = g.new_level { name: 'gnd', }
       #.....................................................................................................
-      gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
-      gnd.new_token       { name: 'number',         matcher: rx"[0-9]+",                  }
-      gnd.new_token       { name: 'paren_start',    matcher: rx"\(",                      }
-      gnd.new_token       { name: 'paren_stop',     matcher: rx"\)",                      }
-      gnd.new_token       { name: 'other',          matcher: rx"[A-Za-z0-9]+",            }
-      gnd.new_token       { name: 'ws',             matcher: rx"\s+",                     }
+      gnd.new_token       { name: 'name',           fit: rx"(?<initial>[A-Z])[a-z]*", }
+      gnd.new_token       { name: 'number',         fit: rx"[0-9]+",                  }
+      gnd.new_token       { name: 'paren_start',    fit: rx"\(",                      }
+      gnd.new_token       { name: 'paren_stop',     fit: rx"\)",                      }
+      gnd.new_token       { name: 'other',          fit: rx"[A-Za-z0-9]+",            }
+      gnd.new_token       { name: 'ws',             fit: rx"\s+",                     }
       #.....................................................................................................
       source = "Alice in Cairo 1912 (approximately)"
       info 'Ωilxt_442', source; tabulate_lexemes g.scan source
@@ -1481,16 +1481,16 @@ tabulate_lexeme = ( lexeme ) ->
       gnd       = g.new_level { name: 'gnd', }
       string11  = g.new_level { name: 'string11', }
       #.....................................................................................................
-      gnd.new_token       { name: 'name',           matcher: rx"(?<initial>[A-Z])[a-z]*", }
-      gnd.new_token       { name: 'number',         matcher: rx"[0-9]+",                  }
-      gnd.new_token       { name: 'string11_start', matcher: rx"(?!<\\)'",                jump: 'string11', }
-      gnd.new_token       { name: 'paren_start',    matcher: rx"\(",                      }
-      gnd.new_token       { name: 'paren_stop',     matcher: rx"\)",                      }
-      gnd.new_token       { name: 'other',          matcher: rx"[A-Za-z0-9]+",            }
-      gnd.new_token       { name: 'ws',             matcher: rx"\s+",                     }
+      gnd.new_token       { name: 'name',           fit: rx"(?<initial>[A-Z])[a-z]*", }
+      gnd.new_token       { name: 'number',         fit: rx"[0-9]+",                  }
+      gnd.new_token       { name: 'string11_start', fit: rx"(?!<\\)'",                jump: 'string11', }
+      gnd.new_token       { name: 'paren_start',    fit: rx"\(",                      }
+      gnd.new_token       { name: 'paren_stop',     fit: rx"\)",                      }
+      gnd.new_token       { name: 'other',          fit: rx"[A-Za-z0-9]+",            }
+      gnd.new_token       { name: 'ws',             fit: rx"\s+",                     }
       #.....................................................................................................
-      # string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..!', }
-      string11.new_token  { name: 'text',           matcher: rx"[^']+",                   }
+      # string11.new_token  { name: 'string11_stop',  fit: rx"(?!<\\)'",                jump: '..!', }
+      string11.new_token  { name: 'text',           fit: rx"[^']+",                   }
       #.....................................................................................................
       source = "Alice in Cairo 1912 'approximately'"
       info 'Ωilxt_460', source; tabulate_lexemes g.scan source
@@ -1523,9 +1523,9 @@ tabulate_lexeme = ( lexeme ) ->
       gnd       = g.new_level { name: 'gnd', }
       number    = g.new_level { name: 'number', }
       #.....................................................................................................
-      gnd.new_token       { name: 'text',           matcher: rx.i"\\[0-9]|[a-z\s]+",                  }
-      gnd.new_token       { name: 'number_start',   matcher: rx"(?=(?!<\\)[0-9])",    jump: 'number', }
-      number.new_token    { name: 'number',         matcher: rx"[0-9]+",                              }
+      gnd.new_token       { name: 'text',           fit: rx.i"\\[0-9]|[a-z\s]+",                  }
+      gnd.new_token       { name: 'number_start',   fit: rx"(?=(?!<\\)[0-9])",    jump: 'number', }
+      number.new_token    { name: 'number',         fit: rx"[0-9]+",                              }
       #.....................................................................................................
       do =>
         source = "R\\2D\\2 on Charon 3"

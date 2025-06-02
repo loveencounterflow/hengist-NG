@@ -367,7 +367,7 @@
         number_tk_matcher = rx`[0-9]+`;
         number_tk = gnd.new_token({
           name: 'number',
-          matcher: number_tk_matcher
+          fit: number_tk_matcher
         });
         number_lx = null;
         //.....................................................................................................
@@ -422,16 +422,16 @@
           return number_tk.grammar;
         }), g);
         this.eq((Ωilxt__82 = function() {
-          return number_tk.matcher;
+          return number_tk.fit;
         }), /[0-9]+/dvy);
         this.eq((Ωilxt__83 = function() {
-          return number_tk.matcher.hasIndices;
+          return number_tk.fit.hasIndices;
         }), true);
         this.eq((Ωilxt__84 = function() {
-          return number_tk.matcher.sticky;
+          return number_tk.fit.sticky;
         }), true);
         this.eq((Ωilxt__85 = function() {
-          return number_tk.matcher.unicodeSets;
+          return number_tk.fit.unicodeSets;
         }), true);
         this.eq((Ωilxt__86 = function() {
           return number_tk.jump;
@@ -602,25 +602,25 @@
           //.....................................................................................................
           gnd.new_token({
             name: 'name',
-            matcher: rx`(?<initial>[A-Z])[a-z]*`
+            fit: rx`(?<initial>[A-Z])[a-z]*`
           });
           gnd.new_token({
             name: 'number',
-            matcher: rx`[0-9]+`
+            fit: rx`[0-9]+`
           });
           gnd.new_token({
             name: 'ws',
-            matcher: rx`\s+`
+            fit: rx`\s+`
           });
           gnd.new_token({
             name: 'text',
-            matcher: rx`[^a-zA-Z0-9\s]+`
+            fit: rx`[^a-zA-Z0-9\s]+`
           });
           //.....................................................................................................
           return g;
         };
         (() => {          //.....................................................................................................
-          var g, lexemes, matcher, probe, probes_and_matchers, x, Ωilxt_127, Ωilxt_130;
+          var fit, g, lexemes, probe, probes_and_matchers, x, Ωilxt_127, Ωilxt_130;
           g = new_grammar({
             emit_signals: false
           });
@@ -630,18 +630,18 @@
           probes_and_matchers = [["1st line", 1], ["2nd line", 2], ["3rd line", 3], ["4th line (and EOF)", 4]];
 //...................................................................................................
           for (x of probes_and_matchers) {
-            [probe, matcher] = x;
+            [probe, fit] = x;
             info('Ωilxt_128', rpr(probe));
             lexemes = g.scan_to_list(probe);
             // urge 'Ωilxt_129', lexemes
             this.eq((Ωilxt_130 = function() {
               return lexemes[0].lnr;
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, lexeme, matcher, probe, probes_and_matchers, x, Ωilxt_131, Ωilxt_132, Ωilxt_134;
+          var fit, g, lexeme, probe, probes_and_matchers, x, Ωilxt_131, Ωilxt_132, Ωilxt_134;
           g = new_grammar({
             emit_signals: false
           });
@@ -655,12 +655,12 @@
           probes_and_matchers = [["1st line", 10], ["2nd line", 11], ["3rd line", 12], ["4th line (and EOF)", 13]];
 //...................................................................................................
           for (x of probes_and_matchers) {
-            [probe, matcher] = x;
+            [probe, fit] = x;
             info('Ωilxt_133', rpr(probe));
             lexeme = (g.scan_to_list(probe))[0];
             this.eq((Ωilxt_134 = function() {
               return lexeme.lnr;
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
@@ -704,17 +704,17 @@
         ];
         //-----------------------------------------------------------------------------------------------------
         test = (g) => {
-          var lexemes, matcher, probe, x, Ωilxt_135, Ωilxt_136, Ωilxt_137;
+          var fit, lexemes, probe, x, Ωilxt_135, Ωilxt_136, Ωilxt_137;
           for (x of probes_and_matchers) {
-            [probe, matcher] = x;
+            [probe, fit] = x;
             g.reset_lnr();
             lexemes = g.scan_to_list(probe);
             this.eq((Ωilxt_135 = function() {
               return condense_lexemes(lexemes);
-            }), matcher.condensed);
+            }), fit.condensed);
             this.eq((Ωilxt_136 = function() {
               return lexemes.length;
-            }), matcher.length);
+            }), fit.length);
             g.reset_lnr();
             this.eq((Ωilxt_137 = function() {
               return [...(g.scan(probe))];
@@ -734,27 +734,27 @@
           //...................................................................................................
           gnd.new_token({
             name: 'name',
-            matcher: rx`(?<initial>[A-Z])[a-z]+`
+            fit: rx`(?<initial>[A-Z])[a-z]+`
           });
           gnd.new_token({
             name: 'ordinal',
-            matcher: rx`(?<ordinal>[0-9]+)(st|nd|rd|th)`
+            fit: rx`(?<ordinal>[0-9]+)(st|nd|rd|th)`
           });
           gnd.new_token({
             name: 'number',
-            matcher: rx`[0-9]+`
+            fit: rx`[0-9]+`
           });
           gnd.new_token({
             name: 'ws',
-            matcher: rx`\s+`
+            fit: rx`\s+`
           });
           gnd.new_token({
             name: 'word',
-            matcher: rx.i`[a-z]+`
+            fit: rx.i`[a-z]+`
           });
           gnd.new_token({
             name: 'other',
-            matcher: rx.i`[^a-z0-9\s]+`
+            fit: rx.i`[^a-z0-9\s]+`
           });
           //...................................................................................................
           return test(g);
@@ -771,27 +771,27 @@
           //...................................................................................................
           gnd.new_token({
             name: 'name',
-            matcher: /(?<initial>[A-Z])[a-z]+/dvy
+            fit: /(?<initial>[A-Z])[a-z]+/dvy
           });
           gnd.new_token({
             name: 'ordinal',
-            matcher: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/dvy
+            fit: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/dvy
           });
           gnd.new_token({
             name: 'number',
-            matcher: /[0-9]+/dvy
+            fit: /[0-9]+/dvy
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/dvy
+            fit: /\s+/dvy
           });
           gnd.new_token({
             name: 'word',
-            matcher: /[a-z]+/divy
+            fit: /[a-z]+/divy
           });
           gnd.new_token({
             name: 'other',
-            matcher: /[^a-z0-9\s]+/divy
+            fit: /[^a-z0-9\s]+/divy
           });
           //...................................................................................................
           return test(g);
@@ -808,27 +808,27 @@
           //...................................................................................................
           gnd.new_token({
             name: 'name',
-            matcher: /(?<initial>[A-Z])[a-z]+/
+            fit: /(?<initial>[A-Z])[a-z]+/
           });
           gnd.new_token({
             name: 'ordinal',
-            matcher: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/
+            fit: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/
           });
           gnd.new_token({
             name: 'number',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           gnd.new_token({
             name: 'word',
-            matcher: /[a-z]+/i
+            fit: /[a-z]+/i
           });
           gnd.new_token({
             name: 'other',
-            matcher: /[^a-z0-9\s]+/i
+            fit: /[^a-z0-9\s]+/i
           });
           //...................................................................................................
           return test(g);
@@ -845,27 +845,27 @@
           //...................................................................................................
           gnd.new_token({
             name: 'name',
-            matcher: /(?<initial>[A-Z])[a-z]+/v
+            fit: /(?<initial>[A-Z])[a-z]+/v
           });
           gnd.new_token({
             name: 'ordinal',
-            matcher: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/u
+            fit: /(?<ordinal>[0-9]+)(?:st|nd|rd|th)/u
           });
           gnd.new_token({
             name: 'number',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           gnd.new_token({
             name: 'word',
-            matcher: /[a-z]+/i
+            fit: /[a-z]+/i
           });
           gnd.new_token({
             name: 'other',
-            matcher: /[^a-z0-9\s]+/i
+            fit: /[^a-z0-9\s]+/i
           });
           //...................................................................................................
           return test(g);
@@ -882,7 +882,7 @@
         ({Grammar} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
           /* strategy 'first', shortest tokens first */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_138;
+          var first, fit, g, i, len, position, probes_and_matchers, source, Ωilxt_138;
           probes_and_matchers = [[[0, 'abcd1234'], "first.one_letter'a'"], [[1, 'abcd1234'], "first.one_letter'b'"], [[2, 'abcd1234'], "first.one_letter'c'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.one_digit'1'"], [[5, 'abcd1234'], "first.one_digit'2'"], [[0, '123abc'], "first.one_digit'1'"], [[1, '123abc'], "first.one_digit'2'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.one_letter'a'"], [[4, '123abc'], "first.one_letter'b'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar();
@@ -891,48 +891,48 @@
           });
           first.new_token({
             name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            fit: /[0-9]{1}/i
           });
           first.new_token({
             name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            fit: /[0-9]{2}/i
           });
           first.new_token({
             name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            fit: /[0-9]{3}/i
           });
           first.new_token({
             name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            fit: /[0-9]{4}/i
           });
           first.new_token({
             name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            fit: /[a-z]{1}/i
           });
           first.new_token({
             name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            fit: /[a-z]{2}/i
           });
           first.new_token({
             name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            fit: /[a-z]{3}/i
           });
           first.new_token({
             name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            fit: /[a-z]{4}/i
           });
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [[position, source], matcher] = probes_and_matchers[i];
+            [[position, source], fit] = probes_and_matchers[i];
             this.eq((Ωilxt_138 = function() {
               return condense_lexemes(first.match_first_at(position, source));
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
           /* strategy 'first', longest tokens first */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_139;
+          var first, fit, g, i, len, position, probes_and_matchers, source, Ωilxt_139;
           probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar();
@@ -941,48 +941,48 @@
           });
           first.new_token({
             name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            fit: /[0-9]{4}/i
           });
           first.new_token({
             name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            fit: /[0-9]{3}/i
           });
           first.new_token({
             name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            fit: /[0-9]{2}/i
           });
           first.new_token({
             name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            fit: /[0-9]{1}/i
           });
           first.new_token({
             name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            fit: /[a-z]{4}/i
           });
           first.new_token({
             name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            fit: /[a-z]{3}/i
           });
           first.new_token({
             name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            fit: /[a-z]{2}/i
           });
           first.new_token({
             name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            fit: /[a-z]{1}/i
           });
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [[position, source], matcher] = probes_and_matchers[i];
+            [[position, source], fit] = probes_and_matchers[i];
             this.eq((Ωilxt_139 = function() {
               return condense_lexemes(first.match_first_at(position, source));
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
           /* strategy 'longest', shortest tokens first */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_140;
+          var first, fit, g, i, len, position, probes_and_matchers, source, Ωilxt_140;
           probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar();
@@ -991,48 +991,48 @@
           });
           first.new_token({
             name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            fit: /[0-9]{1}/i
           });
           first.new_token({
             name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            fit: /[0-9]{2}/i
           });
           first.new_token({
             name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            fit: /[0-9]{3}/i
           });
           first.new_token({
             name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            fit: /[0-9]{4}/i
           });
           first.new_token({
             name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            fit: /[a-z]{1}/i
           });
           first.new_token({
             name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            fit: /[a-z]{2}/i
           });
           first.new_token({
             name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            fit: /[a-z]{3}/i
           });
           first.new_token({
             name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            fit: /[a-z]{4}/i
           });
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [[position, source], matcher] = probes_and_matchers[i];
+            [[position, source], fit] = probes_and_matchers[i];
             this.eq((Ωilxt_140 = function() {
               return condense_lexemes(first.match_longest_at(position, source));
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
           /* strategy 'longest', longest tokens first */
-          var first, g, i, len, matcher, position, probes_and_matchers, source, Ωilxt_141;
+          var first, fit, g, i, len, position, probes_and_matchers, source, Ωilxt_141;
           probes_and_matchers = [[[0, 'abcd1234'], "first.four_letters'abcd'"], [[1, 'abcd1234'], "first.three_letters'bcd'"], [[2, 'abcd1234'], "first.two_letters'cd'"], [[3, 'abcd1234'], "first.one_letter'd'"], [[4, 'abcd1234'], "first.four_digits'1234'"], [[5, 'abcd1234'], "first.three_digits'234'"], [[0, '123abc'], "first.three_digits'123'"], [[1, '123abc'], "first.two_digits'23'"], [[2, '123abc'], "first.one_digit'3'"], [[3, '123abc'], "first.three_letters'abc'"], [[4, '123abc'], "first.two_letters'bc'"], [[5, '123abc'], "first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar();
@@ -1041,42 +1041,42 @@
           });
           first.new_token({
             name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            fit: /[0-9]{4}/i
           });
           first.new_token({
             name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            fit: /[0-9]{3}/i
           });
           first.new_token({
             name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            fit: /[0-9]{2}/i
           });
           first.new_token({
             name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            fit: /[0-9]{1}/i
           });
           first.new_token({
             name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            fit: /[a-z]{4}/i
           });
           first.new_token({
             name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            fit: /[a-z]{3}/i
           });
           first.new_token({
             name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            fit: /[a-z]{2}/i
           });
           first.new_token({
             name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            fit: /[a-z]{1}/i
           });
 //.....................................................................................................
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [[position, source], matcher] = probes_and_matchers[i];
+            [[position, source], fit] = probes_and_matchers[i];
             this.eq((Ωilxt_141 = function() {
               return condense_lexemes(first.match_longest_at(position, source));
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
@@ -1088,7 +1088,7 @@
           shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
           for (_ = i = 1; i <= 100; _ = ++i) {
             (() => {
-              var first, g, j, k, len, len1, matcher, position, source, token_cfg, token_cfgs, Ωilxt_142;
+              var first, fit, g, j, k, len, len1, position, source, token_cfg, token_cfgs, Ωilxt_142;
               g = new Grammar();
               first = g.new_level({
                 name: 'first'
@@ -1096,35 +1096,35 @@
               token_cfgs = shuffle([
                 {
                   name: 'one_digit',
-                  matcher: /[0-9]{1}/i
+                  fit: /[0-9]{1}/i
                 },
                 {
                   name: 'two_digits',
-                  matcher: /[0-9]{2}/i
+                  fit: /[0-9]{2}/i
                 },
                 {
                   name: 'three_digits',
-                  matcher: /[0-9]{3}/i
+                  fit: /[0-9]{3}/i
                 },
                 {
                   name: 'four_digits',
-                  matcher: /[0-9]{4}/i
+                  fit: /[0-9]{4}/i
                 },
                 {
                   name: 'one_letter',
-                  matcher: /[a-z]{1}/i
+                  fit: /[a-z]{1}/i
                 },
                 {
                   name: 'two_letters',
-                  matcher: /[a-z]{2}/i
+                  fit: /[a-z]{2}/i
                 },
                 {
                   name: 'three_letters',
-                  matcher: /[a-z]{3}/i
+                  fit: /[a-z]{3}/i
                 },
                 {
                   name: 'four_letters',
-                  matcher: /[a-z]{4}/i
+                  fit: /[a-z]{4}/i
                 }
               ]);
               for (j = 0, len = token_cfgs.length; j < len; j++) {
@@ -1133,10 +1133,10 @@
               }
 //...............................................................................................
               for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
-                [[position, source], matcher] = probes_and_matchers[k];
+                [[position, source], fit] = probes_and_matchers[k];
                 this.eq((Ωilxt_142 = function() {
                   return condense_lexemes(first.match_longest_at(position, source));
-                }), matcher);
+                }), fit);
               }
               //...............................................................................................
               return null;
@@ -1159,7 +1159,7 @@
           shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
           for (_ = i = 1; i <= 100; _ = ++i) {
             (() => {
-              var first, g, j, k, len, len1, matcher, source, token_cfg, token_cfgs, Ωilxt_143, Ωilxt_144, Ωilxt_145;
+              var first, fit, g, j, k, len, len1, source, token_cfg, token_cfgs, Ωilxt_143, Ωilxt_144, Ωilxt_145;
               g = new Grammar({
                 strategy: 'longest',
                 emit_signals: false
@@ -1170,35 +1170,35 @@
               token_cfgs = shuffle([
                 {
                   name: 'one_digit',
-                  matcher: /[0-9]{1}/i
+                  fit: /[0-9]{1}/i
                 },
                 {
                   name: 'two_digits',
-                  matcher: /[0-9]{2}/i
+                  fit: /[0-9]{2}/i
                 },
                 {
                   name: 'three_digits',
-                  matcher: /[0-9]{3}/i
+                  fit: /[0-9]{3}/i
                 },
                 {
                   name: 'four_digits',
-                  matcher: /[0-9]{4}/i
+                  fit: /[0-9]{4}/i
                 },
                 {
                   name: 'one_letter',
-                  matcher: /[a-z]{1}/i
+                  fit: /[a-z]{1}/i
                 },
                 {
                   name: 'two_letters',
-                  matcher: /[a-z]{2}/i
+                  fit: /[a-z]{2}/i
                 },
                 {
                   name: 'three_letters',
-                  matcher: /[a-z]{3}/i
+                  fit: /[a-z]{3}/i
                 },
                 {
                   name: 'four_letters',
-                  matcher: /[a-z]{4}/i
+                  fit: /[a-z]{4}/i
                 }
               ]);
               for (j = 0, len = token_cfgs.length; j < len; j++) {
@@ -1213,10 +1213,10 @@
                 return first.strategy;
               }), 'longest');
               for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
-                [source, matcher] = probes_and_matchers[k];
+                [source, fit] = probes_and_matchers[k];
                 this.eq((Ωilxt_145 = function() {
                   return condense_lexemes(g.scan_to_list(source));
-                }), matcher);
+                }), fit);
               }
               //...............................................................................................
               return null;
@@ -1226,7 +1226,7 @@
         })();
         (() => {          //.....................................................................................................
           /* strategy 'first', scrambled tokens */
-          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_146, Ωilxt_147, Ωilxt_148;
+          var first, fit, g, i, len, probes_and_matchers, source, Ωilxt_146, Ωilxt_147, Ωilxt_148;
           probes_and_matchers = [['abcd1234', "first.two_letters'ab'|first.two_letters'cd'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'"], ['abcde12345', "first.two_letters'ab'|first.two_letters'cd'|first.one_letter'e'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'"], ['abcdef123456', "first.two_letters'ab'|first.two_letters'cd'|first.two_letters'ef'|first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.one_digit'4'|first.one_digit'5'|first.one_digit'6'"], ['123abc', "first.one_digit'1'|first.one_digit'2'|first.one_digit'3'|first.two_letters'ab'|first.one_letter'c'"]];
           //...................................................................................................
           g = new Grammar({
@@ -1238,35 +1238,35 @@
           });
           first.new_token({
             name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            fit: /[a-z]{2}/i
           });
           first.new_token({
             name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            fit: /[0-9]{1}/i
           });
           first.new_token({
             name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            fit: /[0-9]{3}/i
           });
           first.new_token({
             name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            fit: /[0-9]{4}/i
           });
           first.new_token({
             name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            fit: /[0-9]{2}/i
           });
           first.new_token({
             name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            fit: /[a-z]{1}/i
           });
           first.new_token({
             name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            fit: /[a-z]{4}/i
           });
           first.new_token({
             name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            fit: /[a-z]{3}/i
           });
           //...................................................................................................
           this.eq((Ωilxt_146 = function() {
@@ -1276,16 +1276,16 @@
             return first.strategy;
           }), 'first');
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [source, matcher] = probes_and_matchers[i];
+            [source, fit] = probes_and_matchers[i];
             this.eq((Ωilxt_148 = function() {
               return condense_lexemes(g.scan_to_list(source));
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
         (() => {          //.....................................................................................................
           /* strategy 'first', long tokens first */
-          var first, g, i, len, matcher, probes_and_matchers, source, Ωilxt_149, Ωilxt_150, Ωilxt_151;
+          var first, fit, g, i, len, probes_and_matchers, source, Ωilxt_149, Ωilxt_150, Ωilxt_151;
           probes_and_matchers = [['abcd1234', "first.four_letters'abcd'|first.four_digits'1234'"], ['abcde12345', "first.four_letters'abcd'|first.one_letter'e'|first.four_digits'1234'|first.one_digit'5'"], ['abcdef123456', "first.four_letters'abcd'|first.two_letters'ef'|first.four_digits'1234'|first.two_digits'56'"], ['123abc', "first.three_digits'123'|first.three_letters'abc'"]];
           //...................................................................................................
           g = new Grammar({
@@ -1297,35 +1297,35 @@
           });
           first.new_token({
             name: 'four_letters',
-            matcher: /[a-z]{4}/i
+            fit: /[a-z]{4}/i
           });
           first.new_token({
             name: 'three_letters',
-            matcher: /[a-z]{3}/i
+            fit: /[a-z]{3}/i
           });
           first.new_token({
             name: 'two_letters',
-            matcher: /[a-z]{2}/i
+            fit: /[a-z]{2}/i
           });
           first.new_token({
             name: 'one_letter',
-            matcher: /[a-z]{1}/i
+            fit: /[a-z]{1}/i
           });
           first.new_token({
             name: 'four_digits',
-            matcher: /[0-9]{4}/i
+            fit: /[0-9]{4}/i
           });
           first.new_token({
             name: 'three_digits',
-            matcher: /[0-9]{3}/i
+            fit: /[0-9]{3}/i
           });
           first.new_token({
             name: 'two_digits',
-            matcher: /[0-9]{2}/i
+            fit: /[0-9]{2}/i
           });
           first.new_token({
             name: 'one_digit',
-            matcher: /[0-9]{1}/i
+            fit: /[0-9]{1}/i
           });
           //...................................................................................................
           this.eq((Ωilxt_149 = function() {
@@ -1335,10 +1335,10 @@
             return first.strategy;
           }), 'first');
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [source, matcher] = probes_and_matchers[i];
+            [source, fit] = probes_and_matchers[i];
             this.eq((Ωilxt_151 = function() {
               return condense_lexemes(g.scan_to_list(source));
-            }), matcher);
+            }), fit);
           }
           return null;
         })();
@@ -1360,11 +1360,11 @@
           });
           gnd.new_token({
             name: 'a',
-            matcher: /a/
+            fit: /a/
           });
           gnd.new_token({
             name: 'b',
-            matcher: /(?=b)/
+            fit: /(?=b)/
           });
           return this.throws((Ωilxt_152 = function() {
             return g.scan_to_list("ab");
@@ -1381,11 +1381,11 @@
           });
           gnd.new_token({
             name: 'a',
-            matcher: /a/
+            fit: /a/
           });
           gnd.new_token({
             name: 'b',
-            matcher: /(?=b)/
+            fit: /(?=b)/
           });
           return this.throws((Ωilxt_153 = function() {
             return g.scan_to_list("ab");
@@ -1404,11 +1404,11 @@
           });
           gnd.new_token({
             name: 'a',
-            matcher: /[ab]/
+            fit: /[ab]/
           });
           gnd.new_token({
             name: 'b',
-            matcher: /(?=b)/
+            fit: /(?=b)/
           });
           return this.eq((Ωilxt_154 = function() {
             return condense_lexemes(g.scan_to_list("ab"));
@@ -1433,14 +1433,14 @@
           this.throws((Ωilxt_155 = function() {
             return first.new_token({
               name: 'digit',
-              matcher: /[0-9]/,
+              fit: /[0-9]/,
               jump: 'first'
             });
           }), /cannot jump to same level/);
           this.throws((Ωilxt_156 = function() {
             return first.new_token({
               name: 'digit',
-              matcher: /[0-9]/,
+              fit: /[0-9]/,
               jump: 'first!'
             });
           }), /cannot jump to same level/);
@@ -1574,12 +1574,12 @@
           });
           first.new_token({
             name: 'digit',
-            matcher: /[0-9]/,
+            fit: /[0-9]/,
             jump: 'number'
           });
           first.new_token({
             name: 'other',
-            matcher: /[^0-9]+/
+            fit: /[^0-9]+/
           });
           //...................................................................................................
           number = g.new_level({
@@ -1587,11 +1587,11 @@
           });
           number.new_token({
             name: 'digits',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'other',
-            matcher: /[^0-9]/,
+            fit: /[^0-9]/,
             jump: '..'
           });
           //...................................................................................................
@@ -1648,11 +1648,11 @@
           });
           first.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           first.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: 'dqstring!'
           });
           //...................................................................................................
@@ -1661,11 +1661,11 @@
           });
           dqstring.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           dqstring.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: '..'
           });
           //...................................................................................................
@@ -1743,11 +1743,11 @@
           });
           first.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           first.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: 'dqstring'
           });
           //...................................................................................................
@@ -1756,11 +1756,11 @@
           });
           dqstring.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           dqstring.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: '..!'
           });
           //...................................................................................................
@@ -1838,11 +1838,11 @@
           });
           first.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           first.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: 'dqstring!'
           });
           //...................................................................................................
@@ -1851,11 +1851,11 @@
           });
           dqstring.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           dqstring.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: '..!'
           });
           //...................................................................................................
@@ -1933,11 +1933,11 @@
           });
           first.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           first.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: 'dqstring'
           });
           //...................................................................................................
@@ -1946,11 +1946,11 @@
           });
           dqstring.new_token({
             name: 'other',
-            matcher: /[^"]+/
+            fit: /[^"]+/
           });
           dqstring.new_token({
             name: 'dq',
-            matcher: /"/,
+            fit: /"/,
             jump: '..'
           });
           //...................................................................................................
@@ -2044,17 +2044,17 @@
         ];
         //-----------------------------------------------------------------------------------------------------
         test = (g) => {
-          var lexemes, matcher, probe, x, Ωilxt_230, Ωilxt_231, Ωilxt_232;
+          var fit, lexemes, probe, x, Ωilxt_230, Ωilxt_231, Ωilxt_232;
           for (x of probes_and_matchers) {
-            [probe, matcher] = x;
+            [probe, fit] = x;
             g.reset_lnr();
             lexemes = g.scan_to_list(probe);
             this.eq((Ωilxt_230 = function() {
               return condense_lexemes(lexemes);
-            }), matcher.condensed);
+            }), fit.condensed);
             this.eq((Ωilxt_231 = function() {
               return lexemes.length;
-            }), matcher.length);
+            }), fit.length);
             g.reset_lnr();
             this.eq((Ωilxt_232 = function() {
               return [...(g.scan(probe))];
@@ -2077,21 +2077,21 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-z]+/i
+            fit: /[a-z]+/i
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/i,
+            fit: /(?=[0-9])/i,
             jump: 'number'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/i
+            fit: /\s+/i
           });
           //...................................................................................................
           number.new_token({
             name: 'digits',
-            matcher: /[0-9]+/i,
+            fit: /[0-9]+/i,
             jump: '..'
           });
           //...................................................................................................
@@ -2123,25 +2123,25 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-zA-Z]+/
+            fit: /[a-zA-Z]+/
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/,
+            fit: /(?=[0-9])/,
             jump: 'number'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           //...................................................................................................
           number.new_token({
             name: 'integer',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'unit',
-            matcher: /[a-zA-Z]+/,
+            fit: /[a-zA-Z]+/,
             jump: '..'
           });
           //...................................................................................................
@@ -2393,24 +2393,24 @@
         //.....................................................................................................
         text.new_token({
           name: 'text',
-          matcher: /\\\p{Decimal_Number}|\p{Letter}/v
+          fit: /\\\p{Decimal_Number}|\p{Letter}/v
         });
         text.new_token({
           name: 'ws',
-          matcher: /\p{White_Space}/v
+          fit: /\p{White_Space}/v
         });
         text.new_token({
           name: 'number_start',
-          matcher: /(?=(?!<\\)\p{Decimal_Number})/v,
+          fit: /(?=(?!<\\)\p{Decimal_Number})/v,
           jump: 'number'
         });
         number.new_token({
           name: 'digit',
-          matcher: /\p{Decimal_Number}|\.|e/v
+          fit: /\p{Decimal_Number}|\.|e/v
         });
         number.new_token({
           name: 'number_stop',
-          matcher: /(?=\P{Decimal_Number})/v,
+          fit: /(?=\P{Decimal_Number})/v,
           jump: '..'
         });
         return (() => {          //.....................................................................................................
@@ -2634,27 +2634,27 @@
         //.....................................................................................................
         text.new_token({
           name: 'text',
-          matcher: /\\\p{Decimal_Number}|\p{Letter}/v,
+          fit: /\\\p{Decimal_Number}|\p{Letter}/v,
           merge: true
         });
         text.new_token({
           name: 'ws',
-          matcher: /\p{White_Space}/v,
+          fit: /\p{White_Space}/v,
           merge: true
         });
         text.new_token({
           name: 'number_start',
-          matcher: /(?=(?!<\\)\p{Decimal_Number})/v,
+          fit: /(?=(?!<\\)\p{Decimal_Number})/v,
           jump: 'number'
         });
         number.new_token({
           name: 'digit',
-          matcher: /\p{Decimal_Number}|\.|e/v,
+          fit: /\p{Decimal_Number}|\.|e/v,
           merge: true
         });
         number.new_token({
           name: 'number_stop',
-          matcher: /(?=\P{Decimal_Number})/v,
+          fit: /(?=\P{Decimal_Number})/v,
           jump: '..'
         });
         (() => {          //.....................................................................................................
@@ -2750,7 +2750,7 @@
         //.....................................................................................................
         text.new_token({
           name: 'name',
-          matcher: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
+          fit: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
           merge: true
         });
         (() => {          //.....................................................................................................
@@ -2793,7 +2793,7 @@
         //.....................................................................................................
         text.new_token({
           name: 'name',
-          matcher: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
+          fit: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
           merge: 'assign'
         });
         (() => {          //.....................................................................................................
@@ -2836,7 +2836,7 @@
         //.....................................................................................................
         text.new_token({
           name: 'name',
-          matcher: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
+          fit: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
           merge: true
         });
         (() => {          //.....................................................................................................
@@ -2894,7 +2894,7 @@
         };
         text.new_token({
           name: 'name',
-          matcher: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
+          fit: /(?<initial>\p{Uppercase_Letter})\p{Lowercase_Letter}+/v,
           merge
         });
         (() => {          //.....................................................................................................
@@ -2924,7 +2924,7 @@
       },
       //-------------------------------------------------------------------------------------------------------
       token_merging_with_merge_list: function() {
-        var Grammar, g, internals, matcher, rx, text;
+        var Grammar, fit, g, internals, rx, text;
         ({Grammar, internals, rx} = require('../../../apps/interlex'));
         //=====================================================================================================
         g = new Grammar({
@@ -2935,10 +2935,10 @@
           name: 'text'
         });
         //.....................................................................................................
-        matcher = /(?<parts>(?<initials>\p{Uppercase_Letter})\p{Lowercase_Letter}+)/v;
+        fit = /(?<parts>(?<initials>\p{Uppercase_Letter})\p{Lowercase_Letter}+)/v;
         text.new_token({
           name: 'name',
-          matcher,
+          fit,
           merge: 'list'
         });
         (() => {          //.....................................................................................................
@@ -2980,7 +2980,7 @@
         });
         name = gnd.new_token({
           name: 'name',
-          matcher: /(?<initial>\p{Uppercase_Letter})(?<tail>\p{Lowercase_Letter}*)/
+          fit: /(?<initial>\p{Uppercase_Letter})(?<tail>\p{Lowercase_Letter}*)/
         });
         lexeme = g.scan_first('Brobdignac');
         this.eq((Ωilxt_341 = function() {
@@ -3068,25 +3068,25 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-zA-Z]+/
+            fit: /[a-zA-Z]+/
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/,
+            fit: /(?=[0-9])/,
             jump: 'number'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           //...................................................................................................
           number.new_token({
             name: 'integer',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'unit',
-            matcher: /[a-zA-Z]+/,
+            fit: /[a-zA-Z]+/,
             jump: '..'
           });
           //...................................................................................................
@@ -3242,25 +3242,25 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-zA-Z]+/
+            fit: /[a-zA-Z]+/
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/,
+            fit: /(?=[0-9])/,
             jump: 'number!'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           //...................................................................................................
           number.new_token({
             name: 'integer',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'unit',
-            matcher: /[a-zA-Z]+/,
+            fit: /[a-zA-Z]+/,
             jump: '..'
           });
           //...................................................................................................
@@ -3416,25 +3416,25 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-zA-Z]+/
+            fit: /[a-zA-Z]+/
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/,
+            fit: /(?=[0-9])/,
             jump: 'number!'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           //...................................................................................................
           number.new_token({
             name: 'integer',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'unit',
-            matcher: /[a-zA-Z]+/,
+            fit: /[a-zA-Z]+/,
             jump: '..!'
           });
           //...................................................................................................
@@ -3590,25 +3590,25 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-zA-Z]+/
+            fit: /[a-zA-Z]+/
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/,
+            fit: /(?=[0-9])/,
             jump: 'number'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           //...................................................................................................
           number.new_token({
             name: 'integer',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'unit',
-            matcher: /[a-zA-Z]+/,
+            fit: /[a-zA-Z]+/,
             jump: '..!'
           });
           //...................................................................................................
@@ -3770,25 +3770,25 @@
           //...................................................................................................
           gnd.new_token({
             name: 'letters',
-            matcher: /[a-zA-Z]+/
+            fit: /[a-zA-Z]+/
           });
           gnd.new_token({
             name: 'before_digits',
-            matcher: /(?=[0-9])/,
+            fit: /(?=[0-9])/,
             jump: 'number!'
           });
           gnd.new_token({
             name: 'ws',
-            matcher: /\s+/
+            fit: /\s+/
           });
           //...................................................................................................
           number.new_token({
             name: 'integer',
-            matcher: /[0-9]+/
+            fit: /[0-9]+/
           });
           number.new_token({
             name: 'unit',
-            matcher: /[a-zA-Z]+/,
+            fit: /[a-zA-Z]+/,
             jump: '..'
           });
           //...................................................................................................
@@ -3911,27 +3911,27 @@
         //.....................................................................................................
         gnd.new_token({
           name: 'name',
-          matcher: rx`(?<initial>[A-Z])[a-z]*`
+          fit: rx`(?<initial>[A-Z])[a-z]*`
         });
         gnd.new_token({
           name: 'number',
-          matcher: rx`[0-9]+`
+          fit: rx`[0-9]+`
         });
         gnd.new_token({
           name: 'paren_start',
-          matcher: rx`\(`
+          fit: rx`\(`
         });
         gnd.new_token({
           name: 'paren_stop',
-          matcher: rx`\)`
+          fit: rx`\)`
         });
         gnd.new_token({
           name: 'other',
-          matcher: rx`[A-Za-z0-9]+`
+          fit: rx`[A-Za-z0-9]+`
         });
         gnd.new_token({
           name: 'ws',
-          matcher: rx`\s+`
+          fit: rx`\s+`
         });
         //.....................................................................................................
         source = "Alice in Cairo 1912 (approximately)";
@@ -4082,38 +4082,38 @@
         //.....................................................................................................
         gnd.new_token({
           name: 'name',
-          matcher: rx`(?<initial>[A-Z])[a-z]*`
+          fit: rx`(?<initial>[A-Z])[a-z]*`
         });
         gnd.new_token({
           name: 'number',
-          matcher: rx`[0-9]+`
+          fit: rx`[0-9]+`
         });
         gnd.new_token({
           name: 'string11_start',
-          matcher: rx`(?!<\\)'`,
+          fit: rx`(?!<\\)'`,
           jump: 'string11'
         });
         gnd.new_token({
           name: 'paren_start',
-          matcher: rx`\(`
+          fit: rx`\(`
         });
         gnd.new_token({
           name: 'paren_stop',
-          matcher: rx`\)`
+          fit: rx`\)`
         });
         gnd.new_token({
           name: 'other',
-          matcher: rx`[A-Za-z0-9]+`
+          fit: rx`[A-Za-z0-9]+`
         });
         gnd.new_token({
           name: 'ws',
-          matcher: rx`\s+`
+          fit: rx`\s+`
         });
         //.....................................................................................................
-        // string11.new_token  { name: 'string11_stop',  matcher: rx"(?!<\\)'",                jump: '..!', }
+        // string11.new_token  { name: 'string11_stop',  fit: rx"(?!<\\)'",                jump: '..!', }
         string11.new_token({
           name: 'text',
-          matcher: rx`[^']+`
+          fit: rx`[^']+`
         });
         //.....................................................................................................
         source = "Alice in Cairo 1912 'approximately'";
@@ -4279,16 +4279,16 @@
         //.....................................................................................................
         gnd.new_token({
           name: 'text',
-          matcher: rx.i`\\[0-9]|[a-z\s]+`
+          fit: rx.i`\\[0-9]|[a-z\s]+`
         });
         gnd.new_token({
           name: 'number_start',
-          matcher: rx`(?=(?!<\\)[0-9])`,
+          fit: rx`(?=(?!<\\)[0-9])`,
           jump: 'number'
         });
         number.new_token({
           name: 'number',
-          matcher: rx`[0-9]+`
+          fit: rx`[0-9]+`
         });
         (() => {          //.....................................................................................................
           var lexemes, source, Ωilxt_481, Ωilxt_482, Ωilxt_483, Ωilxt_484, Ωilxt_485, Ωilxt_486, Ωilxt_487, Ωilxt_488;
