@@ -3112,9 +3112,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_360 = function() {
@@ -3131,9 +3129,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_362 = function() {
@@ -3157,9 +3153,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_365 = function() {
@@ -3176,9 +3170,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_367 = function() {
@@ -3202,9 +3194,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_370 = function() {
@@ -3214,9 +3204,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'gnd',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_371 = function() {
@@ -3292,9 +3280,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_378 = function() {
@@ -3304,9 +3290,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_379 = function() {
@@ -3337,9 +3321,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_383 = function() {
@@ -3349,9 +3331,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_384 = function() {
@@ -3382,9 +3362,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_388 = function() {
@@ -3394,9 +3372,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'gnd',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_389 = function() {
@@ -3472,9 +3448,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_396 = function() {
@@ -3484,9 +3458,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_397 = function() {
@@ -3510,9 +3482,7 @@
             hit: '',
             pos: '1:2:2',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_400 = function() {
@@ -3529,9 +3499,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_402 = function() {
@@ -3555,9 +3523,7 @@
             hit: '',
             pos: '1:6:6',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_405 = function() {
@@ -3574,9 +3540,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'gnd',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_407 = function() {
@@ -3652,9 +3616,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_414 = function() {
@@ -3671,9 +3633,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_416 = function() {
@@ -3690,9 +3650,7 @@
             hit: '',
             pos: '1:2:2',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_418 = function() {
@@ -3716,9 +3674,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'fore',
-              from_level: 'gnd',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_421 = function() {
@@ -3735,9 +3691,7 @@
             hit: '',
             pos: '1:6:6',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'gnd'
+              target: 'gnd'
             }
           });
           this.eq((Ωilxt_423 = function() {
@@ -3754,9 +3708,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'gnd',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_425 = function() {
@@ -3838,9 +3790,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_432 = function() {
@@ -3871,9 +3821,7 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: 'number'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_436 = function() {
@@ -3904,9 +3852,7 @@
             hit: '',
             pos: '1:8:8',
             data: {
-              action: 'back',
-              from_level: 'number',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_440 = function() {
@@ -3978,9 +3924,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'level_one'
+              target: 'level_one'
             }
           });
           this.eq((Ωilxt_448 = function() {
@@ -3997,9 +3941,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: 'level_one',
-              to_level: 'level_two'
+              target: 'level_two'
             }
           });
           this.eq((Ωilxt_450 = function() {
@@ -4076,9 +4018,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'text'
+              target: 'text'
             }
           });
           this.eq((Ωilxt_458 = function() {
@@ -4095,9 +4035,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: 'text',
-              to_level: 'tag'
+              target: 'tag'
             }
           });
           this.eq((Ωilxt_460 = function() {
@@ -4114,9 +4052,7 @@
             hit: '',
             pos: '1:7:7',
             data: {
-              action: 'fore',
-              from_level: 'tag',
-              to_level: 'text'
+              target: 'text'
             }
           });
           this.eq((Ωilxt_462 = function() {
@@ -4133,9 +4069,7 @@
             hit: '',
             pos: '1:7:7',
             data: {
-              action: 'fore',
-              from_level: 'text',
-              to_level: 'tag'
+              target: 'tag'
             }
           });
           this.eq((Ωilxt_464 = function() {
@@ -4152,9 +4086,7 @@
             hit: '',
             pos: '1:14:14',
             data: {
-              action: 'fore',
-              from_level: 'tag',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_466 = function() {
@@ -4235,9 +4167,7 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              action: 'fore',
-              from_level: null,
-              to_level: 'tag'
+              target: 'tag'
             }
           });
           this.eq((Ωilxt_474 = function() {
@@ -4254,9 +4184,7 @@
             hit: '',
             pos: '1:7:7',
             data: {
-              action: 'fore',
-              from_level: 'tag',
-              to_level: 'tag'
+              target: 'tag'
             }
           });
           this.eq((Ωilxt_476 = function() {
@@ -4273,9 +4201,7 @@
             hit: '',
             pos: '1:14:14',
             data: {
-              action: 'fore',
-              from_level: 'tag',
-              to_level: null
+              target: null
             }
           });
           this.eq((Ωilxt_478 = function() {
@@ -4353,9 +4279,7 @@
           hit: '',
           pos: '1:0:0',
           data: {
-            action: 'fore',
-            from_level: null,
-            to_level: 'gnd'
+            target: 'gnd'
           }
         });
         this.eq((Ωilxt_484 = function() {
@@ -4448,9 +4372,7 @@
           hit: '',
           pos: '1:35:35',
           data: {
-            action: 'back',
-            from_level: 'gnd',
-            to_level: null
+            target: null
           }
         });
         this.eq((Ωilxt_ACCEPT_496 = function() {
@@ -4537,9 +4459,7 @@
           hit: '',
           pos: '1:0:0',
           data: {
-            action: 'fore',
-            from_level: null,
-            to_level: 'gnd'
+            target: 'gnd'
           }
         });
         this.eq((Ωilxt_502 = function() {
@@ -4618,9 +4538,7 @@
           hit: '',
           pos: '1:21:21',
           data: {
-            action: 'fore',
-            from_level: 'gnd',
-            to_level: 'string11'
+            target: 'string11'
           }
         });
         this.eq((Ωilxt_512 = function() {
@@ -4637,9 +4555,7 @@
           hit: '',
           pos: '1:34:34',
           data: {
-            action: 'back',
-            from_level: 'string11',
-            to_level: null
+            target: null
           }
         });
         this.eq((Ωilxt_514 = function() {
