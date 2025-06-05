@@ -744,6 +744,52 @@
       }
     },
     //=========================================================================================================
+    standard_basic_methods: {
+      //-------------------------------------------------------------------------------------------------------
+      type_of: function() {
+        var type_of, Ωctt_118, Ωctt_119, Ωctt_120, Ωctt_121, Ωctt_122, Ωctt_123, Ωctt_124, Ωctt_125, Ωctt_126, Ωctt_127, Ωctt_128, Ωctt_129;
+        ({type_of} = require('../../../apps/cleartype'));
+        this.eq((Ωctt_118 = function() {
+          return type_of(null);
+        }), 'null');
+        this.eq((Ωctt_119 = function() {
+          return type_of(void 0);
+        }), 'undefined');
+        this.eq((Ωctt_120 = function() {
+          return type_of(+2e308);
+        }), 'infinity');
+        this.eq((Ωctt_121 = function() {
+          return type_of(-2e308);
+        }), 'infinity');
+        this.eq((Ωctt_122 = function() {
+          return type_of(true);
+        }), 'boolean');
+        this.eq((Ωctt_123 = function() {
+          return type_of(false);
+        }), 'boolean');
+        this.eq((Ωctt_124 = function() {
+          return type_of(0/0);
+        }), 'nan');
+        this.eq((Ωctt_125 = function() {
+          return type_of(8);
+        }), 'float');
+        this.eq((Ωctt_126 = function() {
+          return type_of(/xxx/);
+        }), 'regex');
+        this.eq((Ωctt_127 = function() {
+          return type_of('xyz');
+        }), 'text');
+        this.eq((Ωctt_128 = function() {
+          return type_of(['xyz']);
+        }), 'list');
+        this.eq((Ωctt_129 = function() {
+          return type_of({});
+        }), 'object');
+        //.....................................................................................................
+        return null;
+      }
+    },
+    //=========================================================================================================
     demo: {
       //-------------------------------------------------------------------------------------------------------
       standard_function_signatures: function() {
@@ -770,9 +816,9 @@
         };
         h = function(cfg) {
           var template;
-          debug('Ωctt_118', cfg);
+          debug('Ωctt_130', cfg);
           if (arguments.length !== 1) {
-            throw new Error(`Ωctt_119 expected 1 arguments, got ${arguments.length}`);
+            throw new Error(`Ωctt_131 expected 1 arguments, got ${arguments.length}`);
           }
           //...................................................................................................
           template = {
@@ -785,35 +831,35 @@
           //...................................................................................................
           return function(...P) {
             var R, ref;
-            debug('Ωctt_120', clean_arguments(P));
+            debug('Ωctt_132', clean_arguments(P));
             if (!((cfg.min <= (ref = P.length) && ref <= cfg.max))) {
-              throw new Error(`Ωctt_121 expected between ${cfg.min} and ${cfg.max} arguments, got ${P.length}`);
+              throw new Error(`Ωctt_133 expected between ${cfg.min} and ${cfg.max} arguments, got ${P.length}`);
             }
             R = {};
             return R;
           };
         };
         (() => {          //.....................................................................................................
-          var f, Ωctt_129;
+          var f, Ωctt_141;
           f = function(name, matcher, cfg) {
             var A, cfg_rpr, matcher_rpr, name_rpr;
-            info('Ωctt_122', g({
+            info('Ωctt_134', g({
               name: 'f',
               min: 1,
               max: 3
             }, name, matcher, cfg));
-            // info 'Ωctt_123', g { name: 'f', min: 1, max: 3, }, arguments...
+            // info 'Ωctt_135', g { name: 'f', min: 1, max: 3, }, arguments...
             name_rpr = name === void 0 ? '█' : rpr(name);
             matcher_rpr = matcher === void 0 ? '█' : rpr(matcher);
             cfg_rpr = cfg === void 0 ? '█' : rpr(cfg);
             A = [...arguments];
-            return help('Ωctt_124', f.length, A.length, ff`${name_rpr}:20c; ${matcher_rpr}:20c; ${cfg_rpr}:20c;`);
+            return help('Ωctt_136', f.length, A.length, ff`${name_rpr}:20c; ${matcher_rpr}:20c; ${cfg_rpr}:20c;`);
           };
-          // help 'Ωctt_125', cfg
-          // help 'Ωctt_126', { cfg..., }
-          // help 'Ωctt_127', Object.assign cfg...
-          urge('Ωctt_128', '———————————————————————————————————————————————————');
-          this.throws((Ωctt_129 = function() {
+          // help 'Ωctt_137', cfg
+          // help 'Ωctt_138', { cfg..., }
+          // help 'Ωctt_139', Object.assign cfg...
+          urge('Ωctt_140', '———————————————————————————————————————————————————');
+          this.throws((Ωctt_141 = function() {
             return f();
           }), /expected/);
           f('myname');
@@ -838,12 +884,12 @@
             matcher_rpr = matcher === void 0 ? '█' : rpr(matcher);
             cfg_rpr = cfg === void 0 ? '█' : rpr(cfg);
             A = [...arguments];
-            return help('Ωctt_130', f.length, A.length, ff`${name_rpr}:20c; ${matcher_rpr}:20c; ${cfg_rpr}:20c;`);
+            return help('Ωctt_142', f.length, A.length, ff`${name_rpr}:20c; ${matcher_rpr}:20c; ${cfg_rpr}:20c;`);
           };
-          // help 'Ωctt_131', cfg
-          // help 'Ωctt_132', { cfg..., }
-          // help 'Ωctt_133', Object.assign cfg...
-          urge('Ωctt_134', '———————————————————————————————————————————————————');
+          // help 'Ωctt_143', cfg
+          // help 'Ωctt_144', { cfg..., }
+          // help 'Ωctt_145', Object.assign cfg...
+          urge('Ωctt_146', '———————————————————————————————————————————————————');
           f();
           f('myname');
           f('myname', 'mymatcher');
@@ -868,11 +914,11 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      // ( new Test { throw_on_error: true, } ).test @cleartype_tasks
       (new Test({
         throw_on_error: true
-      })).test(this.cleartype_tasks.demo);
-      return function() {        // ( new Test { throw_on_error: false, } ).test @cleartype_tasks
+      })).test(this.cleartype_tasks);
+      return function() {        // ( new Test { throw_on_error: true, } ).test @cleartype_tasks.demo
+        // ( new Test { throw_on_error: false, } ).test @cleartype_tasks
         // ( new Test { throw_on_error: true, } ).test { mvp_isa: @cleartype_tasks.MVP.isa, }
         // ( new Test { throw_on_error: true, } ).test { instance_methods_are_bound: @cleartype_tasks.basics.instance_methods_are_bound, }
         var d;
@@ -884,10 +930,10 @@
             };
           }
         };
-        debug('Ωctt_135', d);
-        debug('Ωctt_136', d.a);
-        debug('Ωctt_137', d.a.name);
-        return debug('Ωctt_138', d.a());
+        debug('Ωctt_147', d);
+        debug('Ωctt_148', d.a);
+        debug('Ωctt_149', d.a.name);
+        return debug('Ωctt_150', d.a());
       };
     })();
   }

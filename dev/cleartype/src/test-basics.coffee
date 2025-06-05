@@ -405,6 +405,27 @@ get_typespaces = ->
       return null
 
   #=========================================================================================================
+  standard_basic_methods:
+
+    #-------------------------------------------------------------------------------------------------------
+    type_of: ->
+      { type_of } = require '../../../apps/cleartype'
+      @eq ( Ωctt_118 = -> type_of null                  ), 'null'
+      @eq ( Ωctt_119 = -> type_of undefined             ), 'undefined'
+      @eq ( Ωctt_120 = -> type_of +Infinity             ), 'infinity'
+      @eq ( Ωctt_121 = -> type_of -Infinity             ), 'infinity'
+      @eq ( Ωctt_122 = -> type_of true                  ), 'boolean'
+      @eq ( Ωctt_123 = -> type_of false                 ), 'boolean'
+      @eq ( Ωctt_124 = -> type_of NaN                   ), 'nan'
+      @eq ( Ωctt_125 = -> type_of 8                     ), 'float'
+      @eq ( Ωctt_126 = -> type_of /xxx/                 ), 'regex'
+      @eq ( Ωctt_127 = -> type_of 'xyz'                 ), 'text'
+      @eq ( Ωctt_128 = -> type_of [ 'xyz', ]            ), 'list'
+      @eq ( Ωctt_129 = -> type_of {}                    ), 'object'
+      #.....................................................................................................
+      return null
+
+  #=========================================================================================================
   demo:
 
     #-------------------------------------------------------------------------------------------------------
@@ -422,34 +443,34 @@ get_typespaces = ->
       clean_arguments = ( P ) -> P.pop() while ( P.length > 0 ) and ( ( P.at -1 ) is undefined ); P
       g = ( cfg, P... ) -> ( h cfg ) P...
       h = ( cfg ) ->
-        debug 'Ωctt_118', cfg
+        debug 'Ωctt_130', cfg
         unless arguments.length is 1
-          throw new Error "Ωctt_119 expected 1 arguments, got #{arguments.length}"
+          throw new Error "Ωctt_131 expected 1 arguments, got #{arguments.length}"
         #...................................................................................................
         template  = { name: '(anonymous)', min: 1, max: 1, template: {}, }
         cfg       = { template..., cfg..., }
         #...................................................................................................
         return ( P... ) ->
-          debug 'Ωctt_120', clean_arguments P
+          debug 'Ωctt_132', clean_arguments P
           unless cfg.min <= P.length <= cfg.max
-            throw new Error "Ωctt_121 expected between #{cfg.min} and #{cfg.max} arguments, got #{P.length}"
+            throw new Error "Ωctt_133 expected between #{cfg.min} and #{cfg.max} arguments, got #{P.length}"
           R = {}
           return R
       #.....................................................................................................
       do =>
         f = ( name, matcher, cfg ) ->
-          info 'Ωctt_122', g { name: 'f', min: 1, max: 3, }, name, matcher, cfg
-          # info 'Ωctt_123', g { name: 'f', min: 1, max: 3, }, arguments...
+          info 'Ωctt_134', g { name: 'f', min: 1, max: 3, }, name, matcher, cfg
+          # info 'Ωctt_135', g { name: 'f', min: 1, max: 3, }, arguments...
           name_rpr    = if ( name    is undefined ) then '█' else rpr name
           matcher_rpr = if ( matcher is undefined ) then '█' else rpr matcher
           cfg_rpr     = if ( cfg     is undefined ) then '█' else rpr cfg
           A = [ arguments..., ]
-          help 'Ωctt_124', f.length, A.length, ff"#{name_rpr}:20c; #{matcher_rpr}:20c; #{cfg_rpr}:20c;"
-          # help 'Ωctt_125', cfg
-          # help 'Ωctt_126', { cfg..., }
-          # help 'Ωctt_127', Object.assign cfg...
-        urge 'Ωctt_128', '———————————————————————————————————————————————————'
-        @throws ( Ωctt_129 = -> f() ), /expected/
+          help 'Ωctt_136', f.length, A.length, ff"#{name_rpr}:20c; #{matcher_rpr}:20c; #{cfg_rpr}:20c;"
+          # help 'Ωctt_137', cfg
+          # help 'Ωctt_138', { cfg..., }
+          # help 'Ωctt_139', Object.assign cfg...
+        urge 'Ωctt_140', '———————————————————————————————————————————————————'
+        @throws ( Ωctt_141 = -> f() ), /expected/
         f 'myname'
         f 'myname', 'mymatcher'
         f 'myname', 'mymatcher', { jump: true, {}..., }
@@ -463,11 +484,11 @@ get_typespaces = ->
           matcher_rpr = if ( matcher is undefined ) then '█' else rpr matcher
           cfg_rpr     = if ( cfg     is undefined ) then '█' else rpr cfg
           A = [ arguments..., ]
-          help 'Ωctt_130', f.length, A.length, ff"#{name_rpr}:20c; #{matcher_rpr}:20c; #{cfg_rpr}:20c;"
-          # help 'Ωctt_131', cfg
-          # help 'Ωctt_132', { cfg..., }
-          # help 'Ωctt_133', Object.assign cfg...
-        urge 'Ωctt_134', '———————————————————————————————————————————————————'
+          help 'Ωctt_142', f.length, A.length, ff"#{name_rpr}:20c; #{matcher_rpr}:20c; #{cfg_rpr}:20c;"
+          # help 'Ωctt_143', cfg
+          # help 'Ωctt_144', { cfg..., }
+          # help 'Ωctt_145', Object.assign cfg...
+        urge 'Ωctt_146', '———————————————————————————————————————————————————'
         f()
         f 'myname'
         f 'myname', 'mymatcher'
@@ -481,8 +502,8 @@ get_typespaces = ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  # ( new Test { throw_on_error: true, } ).test @cleartype_tasks
-  ( new Test { throw_on_error: true, } ).test @cleartype_tasks.demo
+  ( new Test { throw_on_error: true, } ).test @cleartype_tasks
+  # ( new Test { throw_on_error: true, } ).test @cleartype_tasks.demo
   # ( new Test { throw_on_error: false, } ).test @cleartype_tasks
   # ( new Test { throw_on_error: true, } ).test { mvp_isa: @cleartype_tasks.MVP.isa, }
   # ( new Test { throw_on_error: true, } ).test { instance_methods_are_bound: @cleartype_tasks.basics.instance_methods_are_bound, }
@@ -492,7 +513,7 @@ if module is require.main then await do =>
       a: ->
         foo: 1
         bar: 2
-    debug 'Ωctt_135', d
-    debug 'Ωctt_136', d.a
-    debug 'Ωctt_137', d.a.name
-    debug 'Ωctt_138', d.a()
+    debug 'Ωctt_147', d
+    debug 'Ωctt_148', d.a
+    debug 'Ωctt_149', d.a.name
+    debug 'Ωctt_150', d.a()
