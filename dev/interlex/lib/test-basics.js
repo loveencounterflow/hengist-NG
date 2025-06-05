@@ -5230,7 +5230,7 @@
        */
       //-------------------------------------------------------------------------------------------------------
       grammar: function() {
-        var Grammar, declare_lexemes, rx;
+        var Grammar, cast, declare_lexemes, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         //.....................................................................................................
         declare_lexemes = function(g) {
@@ -5254,15 +5254,35 @@
           });
           //...................................................................................................
           fspec.new_token({
+            name: 'fill_align',
+            fit: /(?<fill>.?)(?<align>[<\^>=])/
+          });
+          fspec.new_token({
+            name: 'sign',
+            fit: /(?<sign>[\-+\x20\(])/
+          });
+          fspec.new_token({
+            name: 'symbol',
+            fit: /(?<symbol>[$#])/
+          });
+          fspec.new_token({
+            name: 'zeros_width',
+            fit: /(?<zeros>0*)(?<width>[0-9]+)/
+          });
+          fspec.new_token({
+            name: 'separator',
+            fit: /(?<separator>,)/
+          });
+          fspec.new_token({
             name: 'precision',
-            fit: /\.(?<count>[0-9]+)/
+            fit: /\.(?<precision>[0-9]+)/
           });
           fspec.new_token({
             name: 'trim',
             fit: /(?<trim>~)/
           });
           fspec.new_token({
-            name: 'type',
+            name: 'type_unit',
             fit: rx`(?<type>[efgrs%pbodxXc])(/(?<unit>[zafpnµm1kMGT]))?`
           });
           fspec.new_token({
@@ -5272,10 +5292,31 @@
           });
           return g;
         };
+        //.....................................................................................................
+        cast = function({fqname, data}) {
+          var ref, ref1, ref2, ref3, ref4, ref5;
+          switch (fqname) {
+            case 'fspec.zeros_width':
+              data.zeros = ((ref = (ref1 = data.zeros) != null ? ref1.length : void 0) != null ? ref : 0) > 0;
+              data.width = parseInt(data.width, 10);
+              break;
+            case 'fspec.precision':
+              data.precision = parseInt(data.precision, 10);
+              break;
+            case 'fspec.trim':
+              data.trim = ((ref2 = (ref3 = data.trim) != null ? ref3.length : void 0) != null ? ref2 : 0) > 0;
+              break;
+            case 'fspec.type_unit':
+              data.type = (ref4 = data.type) != null ? ref4 : null;
+              data.unit = (ref5 = data.unit) != null ? ref5 : null;
+          }
+          return null;
+        };
         (() => {          //.....................................................................................................
           var g, lexemes, source, Ωilxt_600, Ωilxt_601, Ωilxt_602, Ωilxt_603, Ωilxt_604, Ωilxt_605, Ωilxt_606, Ωilxt_607;
           g = declare_lexemes(new Grammar({
-            name: 'fspec'
+            name: 'fspec',
+            cast
           }));
           source = ':;';
           // info 'Ωilxt_597', source; g.reset_lnr 1; tabulate_lexemes g.scan source
@@ -5349,7 +5390,8 @@
         (() => {          //.....................................................................................................
           var g, lexemes, source, Ωilxt_611, Ωilxt_612, Ωilxt_613, Ωilxt_614, Ωilxt_615, Ωilxt_616;
           g = declare_lexemes(new Grammar({
-            name: 'fspec'
+            name: 'fspec',
+            cast
           }));
           source = 'not a spec';
           // info 'Ωilxt_608', source; g.reset_lnr 1; tabulate_lexemes g.scan source
@@ -5407,6 +5449,7 @@
           var g, lexemes, source, Ωilxt_620, Ωilxt_621, Ωilxt_622, Ωilxt_623;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
+            cast,
             emit_signals: false
           }));
           source = ':.4;';
@@ -5429,7 +5472,7 @@
             hit: '.4',
             pos: '1:1:3',
             data: {
-              count: '4'
+              precision: 4
             }
           });
           this.eq((Ωilxt_622 = function() {
@@ -5448,6 +5491,7 @@
           var g, lexemes, source, Ωilxt_627, Ωilxt_628, Ωilxt_629, Ωilxt_630, Ωilxt_631;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
+            cast,
             emit_signals: false
           }));
           source = ':.4;rest of text';
@@ -5470,7 +5514,7 @@
             hit: '.4',
             pos: '1:1:3',
             data: {
-              count: '4'
+              precision: 4
             }
           });
           this.eq((Ωilxt_629 = function() {
@@ -5496,6 +5540,7 @@
           var g, lexemes, source, Ωilxt_635, Ωilxt_636, Ωilxt_637, Ωilxt_638, Ωilxt_639, Ωilxt_640;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
+            cast,
             emit_signals: false
           }));
           source = ':.4~;...';
@@ -5518,7 +5563,7 @@
             hit: '.4',
             pos: '1:1:3',
             data: {
-              count: '4'
+              precision: 4
             }
           });
           this.eq((Ωilxt_637 = function() {
@@ -5528,7 +5573,7 @@
             hit: '~',
             pos: '1:3:4',
             data: {
-              trim: '~'
+              trim: true
             }
           });
           this.eq((Ωilxt_638 = function() {
@@ -5554,6 +5599,7 @@
           var g, lexemes, source, Ωilxt_644, Ωilxt_645, Ωilxt_646, Ωilxt_647, Ωilxt_648, Ωilxt_649, Ωilxt_650;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
+            cast,
             emit_signals: false
           }));
           source = ':.4~f;...';
@@ -5576,7 +5622,7 @@
             hit: '.4',
             pos: '1:1:3',
             data: {
-              count: '4'
+              precision: 4
             }
           });
           this.eq((Ωilxt_646 = function() {
@@ -5586,18 +5632,18 @@
             hit: '~',
             pos: '1:3:4',
             data: {
-              trim: '~'
+              trim: true
             }
           });
           this.eq((Ωilxt_647 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'fspec.type',
+            fqname: 'fspec.type_unit',
             hit: 'f',
             pos: '1:4:5',
             data: {
               type: 'f',
-              unit: void 0
+              unit: null
             }
           });
           this.eq((Ωilxt_648 = function() {
@@ -5623,6 +5669,7 @@
           var g, lexemes, source, Ωilxt_654, Ωilxt_655, Ωilxt_656, Ωilxt_657, Ωilxt_658, Ωilxt_659, Ωilxt_660;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
+            cast,
             emit_signals: false
           }));
           source = ':.4~f/µ;...';
@@ -5645,7 +5692,7 @@
             hit: '.4',
             pos: '1:1:3',
             data: {
-              count: '4'
+              precision: 4
             }
           });
           this.eq((Ωilxt_656 = function() {
@@ -5655,13 +5702,13 @@
             hit: '~',
             pos: '1:3:4',
             data: {
-              trim: '~'
+              trim: true
             }
           });
           this.eq((Ωilxt_657 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'fspec.type',
+            fqname: 'fspec.type_unit',
             hit: 'f/µ',
             pos: '1:4:7',
             data: {
@@ -5688,6 +5735,584 @@
           }), null);
           return null;
         })();
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωilxt_664, Ωilxt_665, Ωilxt_666, Ωilxt_667, Ωilxt_668, Ωilxt_669, Ωilxt_670, Ωilxt_671;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = ':20.4~f/µ;...';
+          // info 'Ωilxt_661', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_662', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_663', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_664 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.enter',
+            hit: ':',
+            pos: '1:0:1'
+          });
+          this.eq((Ωilxt_665 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.zeros_width',
+            hit: '20',
+            pos: '1:1:3',
+            data: {
+              zeros: false,
+              width: 20
+            }
+          });
+          this.eq((Ωilxt_666 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.precision',
+            hit: '.4',
+            pos: '1:3:5',
+            data: {
+              precision: 4
+            }
+          });
+          this.eq((Ωilxt_667 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.trim',
+            hit: '~',
+            pos: '1:5:6',
+            data: {
+              trim: true
+            }
+          });
+          this.eq((Ωilxt_668 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.type_unit',
+            hit: 'f/µ',
+            pos: '1:6:9',
+            data: {
+              type: 'f',
+              unit: 'µ'
+            }
+          });
+          this.eq((Ωilxt_669 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.exit',
+            hit: ';',
+            pos: '1:9:10'
+          });
+          this.eq((Ωilxt_670 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.tail',
+            hit: '...',
+            pos: '1:10:13'
+          });
+          this.eq((Ωilxt_671 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωilxt_675, Ωilxt_676, Ωilxt_677, Ωilxt_678, Ωilxt_679, Ωilxt_680, Ωilxt_681, Ωilxt_682;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = ':020.4~f/µ;...';
+          // info 'Ωilxt_672', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_673', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_674', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_675 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.enter',
+            hit: ':',
+            pos: '1:0:1'
+          });
+          this.eq((Ωilxt_676 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.zeros_width',
+            hit: '020',
+            pos: '1:1:4',
+            data: {
+              zeros: true,
+              width: 20
+            }
+          });
+          this.eq((Ωilxt_677 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.precision',
+            hit: '.4',
+            pos: '1:4:6',
+            data: {
+              precision: 4
+            }
+          });
+          this.eq((Ωilxt_678 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.trim',
+            hit: '~',
+            pos: '1:6:7',
+            data: {
+              trim: true
+            }
+          });
+          this.eq((Ωilxt_679 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.type_unit',
+            hit: 'f/µ',
+            pos: '1:7:10',
+            data: {
+              type: 'f',
+              unit: 'µ'
+            }
+          });
+          this.eq((Ωilxt_680 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.exit',
+            hit: ';',
+            pos: '1:10:11'
+          });
+          this.eq((Ωilxt_681 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.tail',
+            hit: '...',
+            pos: '1:11:14'
+          });
+          this.eq((Ωilxt_682 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωilxt_686, Ωilxt_687, Ωilxt_688, Ωilxt_689, Ωilxt_690, Ωilxt_691, Ωilxt_692, Ωilxt_693, Ωilxt_694;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = ':$020.4~f/µ;...';
+          // info 'Ωilxt_683', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_684', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_685', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_686 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.enter',
+            hit: ':',
+            pos: '1:0:1'
+          });
+          this.eq((Ωilxt_687 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.symbol',
+            hit: '$',
+            pos: '1:1:2',
+            data: {
+              symbol: '$'
+            }
+          });
+          this.eq((Ωilxt_688 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.zeros_width',
+            hit: '020',
+            pos: '1:2:5',
+            data: {
+              zeros: true,
+              width: 20
+            }
+          });
+          this.eq((Ωilxt_689 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.precision',
+            hit: '.4',
+            pos: '1:5:7',
+            data: {
+              precision: 4
+            }
+          });
+          this.eq((Ωilxt_690 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.trim',
+            hit: '~',
+            pos: '1:7:8',
+            data: {
+              trim: true
+            }
+          });
+          this.eq((Ωilxt_691 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.type_unit',
+            hit: 'f/µ',
+            pos: '1:8:11',
+            data: {
+              type: 'f',
+              unit: 'µ'
+            }
+          });
+          this.eq((Ωilxt_692 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.exit',
+            hit: ';',
+            pos: '1:11:12'
+          });
+          this.eq((Ωilxt_693 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.tail',
+            hit: '...',
+            pos: '1:12:15'
+          });
+          this.eq((Ωilxt_694 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωilxt_698, Ωilxt_699, Ωilxt_700, Ωilxt_701, Ωilxt_702, Ωilxt_703, Ωilxt_704, Ωilxt_705, Ωilxt_706, Ωilxt_707;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = ': $020.4~f/µ;...';
+          // info 'Ωilxt_695', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_696', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_697', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_698 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.enter',
+            hit: ':',
+            pos: '1:0:1'
+          });
+          this.eq((Ωilxt_699 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.sign',
+            hit: ' ',
+            pos: '1:1:2',
+            data: {
+              sign: ' '
+            }
+          });
+          this.eq((Ωilxt_700 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.symbol',
+            hit: '$',
+            pos: '1:2:3',
+            data: {
+              symbol: '$'
+            }
+          });
+          this.eq((Ωilxt_701 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.zeros_width',
+            hit: '020',
+            pos: '1:3:6',
+            data: {
+              zeros: true,
+              width: 20
+            }
+          });
+          this.eq((Ωilxt_702 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.precision',
+            hit: '.4',
+            pos: '1:6:8',
+            data: {
+              precision: 4
+            }
+          });
+          this.eq((Ωilxt_703 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.trim',
+            hit: '~',
+            pos: '1:8:9',
+            data: {
+              trim: true
+            }
+          });
+          this.eq((Ωilxt_704 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.type_unit',
+            hit: 'f/µ',
+            pos: '1:9:12',
+            data: {
+              type: 'f',
+              unit: 'µ'
+            }
+          });
+          this.eq((Ωilxt_705 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.exit',
+            hit: ';',
+            pos: '1:12:13'
+          });
+          this.eq((Ωilxt_706 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.tail',
+            hit: '...',
+            pos: '1:13:16'
+          });
+          this.eq((Ωilxt_707 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωilxt_711, Ωilxt_712, Ωilxt_713, Ωilxt_714, Ωilxt_715, Ωilxt_716, Ωilxt_717, Ωilxt_718, Ωilxt_719, Ωilxt_720, Ωilxt_721;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = ':>-$020.4~f/µ;...';
+          // info 'Ωilxt_708', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_709', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_710', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_711 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.enter',
+            hit: ':',
+            pos: '1:0:1'
+          });
+          this.eq((Ωilxt_712 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.fill_align',
+            hit: '>',
+            pos: '1:1:2',
+            data: {
+              fill: '',
+              align: '>'
+            }
+          });
+          this.eq((Ωilxt_713 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.sign',
+            hit: '-',
+            pos: '1:2:3',
+            data: {
+              sign: '-'
+            }
+          });
+          this.eq((Ωilxt_714 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.symbol',
+            hit: '$',
+            pos: '1:3:4',
+            data: {
+              symbol: '$'
+            }
+          });
+          this.eq((Ωilxt_715 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.zeros_width',
+            hit: '020',
+            pos: '1:4:7',
+            data: {
+              zeros: true,
+              width: 20
+            }
+          });
+          this.eq((Ωilxt_716 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.precision',
+            hit: '.4',
+            pos: '1:7:9',
+            data: {
+              precision: 4
+            }
+          });
+          this.eq((Ωilxt_717 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.trim',
+            hit: '~',
+            pos: '1:9:10',
+            data: {
+              trim: true
+            }
+          });
+          this.eq((Ωilxt_718 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.type_unit',
+            hit: 'f/µ',
+            pos: '1:10:13',
+            data: {
+              type: 'f',
+              unit: 'µ'
+            }
+          });
+          this.eq((Ωilxt_719 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.exit',
+            hit: ';',
+            pos: '1:13:14'
+          });
+          this.eq((Ωilxt_720 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.tail',
+            hit: '...',
+            pos: '1:14:17'
+          });
+          this.eq((Ωilxt_721 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωilxt_725, Ωilxt_726, Ωilxt_727, Ωilxt_728, Ωilxt_729, Ωilxt_730, Ωilxt_731, Ωilxt_732, Ωilxt_733, Ωilxt_734, Ωilxt_735;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = ':_>-$020.4~f/µ;...';
+          // info 'Ωilxt_722', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_723', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_724', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_725 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.enter',
+            hit: ':',
+            pos: '1:0:1'
+          });
+          this.eq((Ωilxt_726 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.fill_align',
+            hit: '_>',
+            pos: '1:1:3',
+            data: {
+              fill: '_',
+              align: '>'
+            }
+          });
+          this.eq((Ωilxt_727 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.sign',
+            hit: '-',
+            pos: '1:3:4',
+            data: {
+              sign: '-'
+            }
+          });
+          this.eq((Ωilxt_728 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.symbol',
+            hit: '$',
+            pos: '1:4:5',
+            data: {
+              symbol: '$'
+            }
+          });
+          this.eq((Ωilxt_729 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.zeros_width',
+            hit: '020',
+            pos: '1:5:8',
+            data: {
+              zeros: true,
+              width: 20
+            }
+          });
+          this.eq((Ωilxt_730 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.precision',
+            hit: '.4',
+            pos: '1:8:10',
+            data: {
+              precision: 4
+            }
+          });
+          this.eq((Ωilxt_731 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.trim',
+            hit: '~',
+            pos: '1:10:11',
+            data: {
+              trim: true
+            }
+          });
+          this.eq((Ωilxt_732 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'fspec.type_unit',
+            hit: 'f/µ',
+            pos: '1:11:14',
+            data: {
+              type: 'f',
+              unit: 'µ'
+            }
+          });
+          this.eq((Ωilxt_733 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.exit',
+            hit: ';',
+            pos: '1:14:15'
+          });
+          this.eq((Ωilxt_734 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.tail',
+            hit: '...',
+            pos: '1:15:18'
+          });
+          this.eq((Ωilxt_735 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
         //.....................................................................................................
         return null;
       }
@@ -5698,12 +6323,12 @@
   if (module === require.main) {
     await (() => {
       var guytest_cfg;
-      // guytest_cfg = { throw_on_error: true, show_passes: false, report_checks: false, }
       guytest_cfg = {
-        throw_on_error: false,
+        throw_on_error: true,
         show_passes: false,
         report_checks: false
       };
+      // guytest_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
       // guytest_cfg = { throw_on_error: false, show_passes: true, report_checks: true, }
       (new Test(guytest_cfg)).test(this.interlex_tasks);
       // ( new Test guytest_cfg ).test { ghost_tokens: @interlex_tasks.ghost_tokens, }
