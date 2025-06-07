@@ -3113,7 +3113,7 @@
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, matcher, template, Ωilxt_370, Ωilxt_371, Ωilxt_372, Ωilxt_373, Ωilxt_376, Ωilxt_377, Ωilxt_380, Ωilxt_381;
+          var g, matcher, template, Ωilxt_370, Ωilxt_371, Ωilxt_372, Ωilxt_373, Ωilxt_374, Ωilxt_375, Ωilxt_376, Ωilxt_377;
           template = {
             count: 1,
             list: (function() {
@@ -3141,29 +3141,25 @@
           this.eq((Ωilxt_373 = function() {
             return g.cfg.data.list === template.list;
           }), true);
-          debug('Ωilxt_374', g.data);
           g.data.count++;
           g.data.list.push('value');
-          debug('Ωilxt_375', g.data);
-          this.eq((Ωilxt_376 = function() {
+          this.eq((Ωilxt_374 = function() {
             return g.data.count;
           }), 2);
-          this.eq((Ωilxt_377 = function() {
+          this.eq((Ωilxt_375 = function() {
             return g.data.list;
           }), ['value']);
-          debug('Ωilxt_378', g.data);
           g.reset_data();
-          debug('Ωilxt_379', g.data);
-          this.eq((Ωilxt_380 = function() {
+          this.eq((Ωilxt_376 = function() {
             return g.data.count;
           }), matcher.count);
-          this.eq((Ωilxt_381 = function() {
+          this.eq((Ωilxt_377 = function() {
             return g.data.list;
           }), matcher.list);
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, template, Ωilxt_383, Ωilxt_384, Ωilxt_385, Ωilxt_386, Ωilxt_387, Ωilxt_388, Ωilxt_389;
+          var g, template, Ωilxt_379, Ωilxt_380, Ωilxt_381, Ωilxt_382, Ωilxt_383, Ωilxt_384, Ωilxt_385;
           template = {
             count: 1
           };
@@ -3171,38 +3167,38 @@
             data: template
           });
           /* guy_test doesn't currently recognize nested maps, sets so we're doing it the long way */
-          // @eq ( Ωilxt_382 = -> g.data                           ), matcher
-          this.eq((Ωilxt_383 = function() {
+          // @eq ( Ωilxt_378 = -> g.data                           ), matcher
+          this.eq((Ωilxt_379 = function() {
             return g.data.count;
           }), 1);
           g.data.count++;
-          this.eq((Ωilxt_384 = function() {
+          this.eq((Ωilxt_380 = function() {
             return g.data.count;
           }), 2);
           g.reset_data();
-          this.eq((Ωilxt_385 = function() {
+          this.eq((Ωilxt_381 = function() {
             return g.data.count;
           }), 1);
           g.data.count++;
           g.reset_data(false);
-          this.eq((Ωilxt_386 = function() {
+          this.eq((Ωilxt_382 = function() {
             return g.data.count;
           }), 2);
           g.data.count++;
           g.reset_data(true);
-          this.eq((Ωilxt_387 = function() {
+          this.eq((Ωilxt_383 = function() {
             return g.data.count;
           }), 1);
           g.data.count++;
           g.reset_data(null);
-          this.eq((Ωilxt_388 = function() {
+          this.eq((Ωilxt_384 = function() {
             return g.data.count;
           }), 1);
           g.data.count++;
           g.reset_data({
             count: 3
           });
-          this.eq((Ωilxt_389 = function() {
+          this.eq((Ωilxt_385 = function() {
             return g.data.count;
           }), 3);
           return null;
@@ -3210,10 +3206,83 @@
         //.....................................................................................................
         return null;
       },
+      //-------------------------------------------------------------------------------------------------------
+      reset_on_scan: function() {
+        var Grammar;
+        ({Grammar} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          var g, gnd, lexeme, template, text, Ωilxt_387, Ωilxt_388, Ωilxt_389, Ωilxt_390, Ωilxt_393, Ωilxt_394, Ωilxt_395;
+          template = {
+            count: 1
+          };
+          g = new Grammar({
+            data: template,
+            reset_on_scan: false
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          text = gnd.new_token({
+            name: 'text',
+            fit: /.+/
+          });
+          lexeme = g.scan_first('helo');
+          this.eq((Ωilxt_387 = function() {
+            return lexeme.lnr;
+          }), 1);
+          this.eq((Ωilxt_388 = function() {
+            return g.data.count;
+          }), 1);
+          this.eq((Ωilxt_389 = function() {
+            return g.state.lnr;
+          }), 2);
+          g.data.count++;
+          this.eq((Ωilxt_390 = function() {
+            return g.data.count;
+          }), 2);
+          lexeme = g.scan_first('how');
+          this.eq((Ωilxt_393 = function() {
+            return lexeme.lnr;
+          }), 2);
+          this.eq((Ωilxt_394 = function() {
+            return g.state.lnr;
+          }), 3);
+          return this.eq((Ωilxt_395 = function() {
+            return g.data.count;
+          }), 2);
+        })();
+        //   #.....................................................................................................
+        //   do =>
+        //     template  = { count: 1, }
+        //     g         = new Grammar { data: template, reset_on_scan: true, }
+        //     gnd       = g.new_level { name: 'gnd', }
+        //     text      = gnd.new_token { name: 'text', fit: /.+/, }
+        //     @eq ( Ωilxt_396 = -> g.data.count ), 1
+        //     g.data.count++
+        //     @eq ( Ωilxt_397 = -> g.data.count ), 2
+        //     debug 'Ωilxt_398', lexeme = g.scan_first 'helo'
+        //     @eq ( Ωilxt_399 = -> g.data.count ), 1
+        //     @eq ( Ωilxt_400 = -> g.state.lnr  ), 1
+        //     g.data.count++
+        //     @eq ( Ωilxt_401 = -> g.data.count ), 2
+        //     debug 'Ωilxt_402', lexeme = g.scan_first 'how'
+        //     @eq ( Ωilxt_403 = -> g.state.lnr  ), 1
+        //     @eq ( Ωilxt_404 = -> g.data.count ), 1
+        //.....................................................................................................
+        return null;
+      },
+      // #-------------------------------------------------------------------------------------------------------
+      // reset: ->
+      //   { Grammar } = require '../../../apps/interlex'
+      //   #.....................................................................................................
+      //   do =>
+      //     template  = { one: 1, list: [], set: new Set(), }
+      //     g         = new Grammar { data: template, }
+      //     @eq ( Ωilxt_405 = -> g.data                           ), template
+      //   #.....................................................................................................
+      //   return null
       data_casting: function() {},
-      data_absorption: function() {},
-      reset_on_scan: function() {},
-      reset: function() {}
+      data_absorption: function() {}
     },
     // * **`[—]`** `Grammar::reset: ({ lnr: 1, data: null, }) ->`
     // * **`[+]`** `reset_lnr: ( lnr = 1 ) ->`
@@ -3225,38 +3294,38 @@
     signals: {
       //-------------------------------------------------------------------------------------------------------
       cfg_settings: function() {
-        var Grammar, Ωilxt_390, Ωilxt_391, Ωilxt_392, Ωilxt_393, Ωilxt_394, Ωilxt_395, Ωilxt_396, Ωilxt_397;
+        var Grammar, Ωilxt_406, Ωilxt_407, Ωilxt_408, Ωilxt_409, Ωilxt_410, Ωilxt_411, Ωilxt_412, Ωilxt_413;
         ({Grammar} = require('../../../apps/interlex'));
-        this.eq((Ωilxt_390 = function() {
+        this.eq((Ωilxt_406 = function() {
           return (new Grammar({
             emit_signals: false
           })).cfg.emit_signals;
         }), false);
-        this.eq((Ωilxt_391 = function() {
+        this.eq((Ωilxt_407 = function() {
           return (new Grammar({
             emit_signals: true
           })).cfg.emit_signals;
         }), true);
-        this.eq((Ωilxt_392 = function() {
+        this.eq((Ωilxt_408 = function() {
           return (new Grammar({})).cfg.emit_signals;
         }), true);
-        this.eq((Ωilxt_393 = function() {
+        this.eq((Ωilxt_409 = function() {
           return (new Grammar()).cfg.emit_signals;
         }), true);
-        this.eq((Ωilxt_394 = function() {
+        this.eq((Ωilxt_410 = function() {
           return (new Grammar({
             emit_signals: false
           })).cfg.merge_jumps;
         }), false);
-        this.eq((Ωilxt_395 = function() {
+        this.eq((Ωilxt_411 = function() {
           return (new Grammar({
             emit_signals: true
           })).cfg.merge_jumps;
         }), true);
-        this.eq((Ωilxt_396 = function() {
+        this.eq((Ωilxt_412 = function() {
           return (new Grammar({})).cfg.merge_jumps;
         }), true);
-        this.eq((Ωilxt_397 = function() {
+        this.eq((Ωilxt_413 = function() {
           return (new Grammar()).cfg.merge_jumps;
         }), true);
         return null;
@@ -3266,13 +3335,13 @@
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var extract_props, g, level_one, level_two, lexemes, source, Ωilxt_398, Ωilxt_402, Ωilxt_403, Ωilxt_404, Ωilxt_405, Ωilxt_406, Ωilxt_407, Ωilxt_408, Ωilxt_409, Ωilxt_410, Ωilxt_411, Ωilxt_412;
+          var extract_props, g, level_one, level_two, lexemes, source, Ωilxt_414, Ωilxt_418, Ωilxt_419, Ωilxt_420, Ωilxt_421, Ωilxt_422, Ωilxt_423, Ωilxt_424, Ωilxt_425, Ωilxt_426, Ωilxt_427, Ωilxt_428;
           g = new Grammar({
             name: 'g',
             emit_signals: true,
             loop_errors: 'emit'
           });
-          this.eq((Ωilxt_398 = function() {
+          this.eq((Ωilxt_414 = function() {
             return g.cfg.merge_jumps;
           }), true);
           level_one = g.new_level({
@@ -3307,12 +3376,12 @@
           };
           //...................................................................................................
           source = "doesn't matter";
-          // info 'Ωilxt_399', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωilxt_400', source; g.reset_lnr 1; echo extract_props lexeme for lexeme from g.scan source
-          info('Ωilxt_401', source);
+          // info 'Ωilxt_415', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_416', source; g.reset_lnr 1; echo extract_props lexeme for lexeme from g.scan source
+          info('Ωilxt_417', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_402 = function() {
+          this.eq((Ωilxt_418 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.start',
@@ -3321,7 +3390,7 @@
             is_signal: true,
             is_user: false
           });
-          this.eq((Ωilxt_403 = function() {
+          this.eq((Ωilxt_419 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3330,7 +3399,7 @@
             is_signal: true,
             is_user: false
           });
-          this.eq((Ωilxt_404 = function() {
+          this.eq((Ωilxt_420 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'level_one.to_level_two',
@@ -3339,7 +3408,7 @@
             is_signal: false,
             is_user: true
           });
-          this.eq((Ωilxt_405 = function() {
+          this.eq((Ωilxt_421 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3348,7 +3417,7 @@
             is_signal: true,
             is_user: false
           });
-          this.eq((Ωilxt_406 = function() {
+          this.eq((Ωilxt_422 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'level_two.to_level_one',
@@ -3357,7 +3426,7 @@
             is_signal: false,
             is_user: true
           });
-          this.eq((Ωilxt_407 = function() {
+          this.eq((Ωilxt_423 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3366,7 +3435,7 @@
             is_signal: true,
             is_user: false
           });
-          this.eq((Ωilxt_408 = function() {
+          this.eq((Ωilxt_424 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$error.loop',
@@ -3375,7 +3444,7 @@
             is_signal: false,
             is_user: false
           });
-          this.eq((Ωilxt_409 = function() {
+          this.eq((Ωilxt_425 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3384,7 +3453,7 @@
             is_signal: true,
             is_user: false
           });
-          this.eq((Ωilxt_410 = function() {
+          this.eq((Ωilxt_426 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$error.earlystop',
@@ -3393,7 +3462,7 @@
             is_signal: false,
             is_user: false
           });
-          this.eq((Ωilxt_411 = function() {
+          this.eq((Ωilxt_427 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.stop',
@@ -3402,7 +3471,7 @@
             is_signal: true,
             is_user: false
           });
-          this.eq((Ωilxt_412 = function() {
+          this.eq((Ωilxt_428 = function() {
             return extract_props(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
@@ -3416,13 +3485,13 @@
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //-----------------------------------------------------------------------------------------------------
           /* fore jump sticky, back jump sticky */
-          var g, gnd, lexemes, number, source, Ωilxt_413, Ωilxt_416, Ωilxt_417, Ωilxt_418, Ωilxt_419, Ωilxt_420, Ωilxt_421, Ωilxt_422, Ωilxt_423, Ωilxt_424, Ωilxt_425, Ωilxt_426, Ωilxt_427, Ωilxt_428, Ωilxt_429, Ωilxt_430;
+          var g, gnd, lexemes, number, source, Ωilxt_429, Ωilxt_432, Ωilxt_433, Ωilxt_434, Ωilxt_435, Ωilxt_436, Ωilxt_437, Ωilxt_438, Ωilxt_439, Ωilxt_440, Ωilxt_441, Ωilxt_442, Ωilxt_443, Ωilxt_444, Ωilxt_445, Ωilxt_446;
           g = new Grammar({
             name: 'g',
             emit_signals: true,
             merge_jumps: false
           });
-          this.eq((Ωilxt_413 = function() {
+          this.eq((Ωilxt_429 = function() {
             return g.cfg.merge_jumps;
           }), false);
           gnd = g.new_level({
@@ -3457,18 +3526,18 @@
           });
           //...................................................................................................
           source = "99kg23mm";
-          // info 'Ωilxt_414', source; tabulate_lexemes g.scan source
-          info('Ωilxt_415', source);
+          // info 'Ωilxt_430', source; tabulate_lexemes g.scan source
+          info('Ωilxt_431', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_416 = function() {
+          this.eq((Ωilxt_432 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.start',
             hit: '',
             pos: '1:0:0'
           });
-          this.eq((Ωilxt_417 = function() {
+          this.eq((Ωilxt_433 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3478,161 +3547,10 @@
               target: 'gnd'
             }
           });
-          this.eq((Ωilxt_418 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'gnd.before_digits',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_419 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'number'
-            }
-          });
-          this.eq((Ωilxt_420 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.integer',
-            hit: '99',
-            pos: '1:0:2'
-          });
-          this.eq((Ωilxt_421 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.unit',
-            hit: 'kg',
-            pos: '1:2:4'
-          });
-          this.eq((Ωilxt_422 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:4:4',
-            data: {
-              target: 'gnd'
-            }
-          });
-          this.eq((Ωilxt_423 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'gnd.before_digits',
-            hit: '',
-            pos: '1:4:4'
-          });
-          this.eq((Ωilxt_424 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:4:4',
-            data: {
-              target: 'number'
-            }
-          });
-          this.eq((Ωilxt_425 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.integer',
-            hit: '23',
-            pos: '1:4:6'
-          });
-          this.eq((Ωilxt_426 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.unit',
-            hit: 'mm',
-            pos: '1:6:8'
-          });
-          this.eq((Ωilxt_427 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:8:8',
-            data: {
-              target: 'gnd'
-            }
-          });
-          this.eq((Ωilxt_428 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:8:8',
-            data: {
-              target: null
-            }
-          });
-          this.eq((Ωilxt_429 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.stop',
-            hit: '',
-            pos: '1:8:8'
-          });
-          this.eq((Ωilxt_430 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), null);
-          return null;
-        })();
-        (() => {          //.....................................................................................................
-          /* fore jump carry, back jump sticky */
-          var g, gnd, lexemes, number, source, Ωilxt_431, Ωilxt_434, Ωilxt_435, Ωilxt_436, Ωilxt_437, Ωilxt_438, Ωilxt_439, Ωilxt_440, Ωilxt_441, Ωilxt_442, Ωilxt_443, Ωilxt_444, Ωilxt_445, Ωilxt_446, Ωilxt_447, Ωilxt_448;
-          g = new Grammar({
-            name: 'g',
-            emit_signals: true,
-            merge_jumps: false
-          });
-          this.eq((Ωilxt_431 = function() {
-            return g.cfg.merge_jumps;
-          }), false);
-          gnd = g.new_level({
-            name: 'gnd'
-          });
-          number = g.new_level({
-            name: 'number'
-          });
-          //...................................................................................................
-          gnd.new_token({
-            name: 'letters',
-            fit: /[a-zA-Z]+/
-          });
-          gnd.new_token({
-            name: 'before_digits',
-            fit: /(?=[0-9])/,
-            jump: 'number!'
-          });
-          gnd.new_token({
-            name: 'ws',
-            fit: /\s+/
-          });
-          //...................................................................................................
-          number.new_token({
-            name: 'integer',
-            fit: /[0-9]+/
-          });
-          number.new_token({
-            name: 'unit',
-            fit: /[a-zA-Z]+/,
-            jump: '..'
-          });
-          //...................................................................................................
-          source = "99kg23mm";
-          // info 'Ωilxt_432', source; tabulate_lexemes g.scan source
-          info('Ωilxt_433', source);
-          g.reset_lnr(1);
-          lexemes = g.scan(source);
           this.eq((Ωilxt_434 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: '$signal.start',
+            fqname: 'gnd.before_digits',
             hit: '',
             pos: '1:0:0'
           });
@@ -3643,39 +3561,39 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              target: 'gnd'
-            }
-          });
-          this.eq((Ωilxt_436 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
               target: 'number'
             }
           });
-          this.eq((Ωilxt_437 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.before_digits',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_438 = function() {
+          this.eq((Ωilxt_436 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.integer',
             hit: '99',
             pos: '1:0:2'
           });
-          this.eq((Ωilxt_439 = function() {
+          this.eq((Ωilxt_437 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.unit',
             hit: 'kg',
             pos: '1:2:4'
+          });
+          this.eq((Ωilxt_438 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:4:4',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_439 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.before_digits',
+            hit: '',
+            pos: '1:4:4'
           });
           this.eq((Ωilxt_440 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -3684,41 +3602,24 @@
             hit: '',
             pos: '1:4:4',
             data: {
-              target: 'gnd'
-            }
-          });
-          this.eq((Ωilxt_441 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:4:4',
-            data: {
               target: 'number'
             }
           });
-          this.eq((Ωilxt_442 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.before_digits',
-            hit: '',
-            pos: '1:4:4'
-          });
-          this.eq((Ωilxt_443 = function() {
+          this.eq((Ωilxt_441 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.integer',
             hit: '23',
             pos: '1:4:6'
           });
-          this.eq((Ωilxt_444 = function() {
+          this.eq((Ωilxt_442 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.unit',
             hit: 'mm',
             pos: '1:6:8'
           });
-          this.eq((Ωilxt_445 = function() {
+          this.eq((Ωilxt_443 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3728,7 +3629,7 @@
               target: 'gnd'
             }
           });
-          this.eq((Ωilxt_446 = function() {
+          this.eq((Ωilxt_444 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3738,27 +3639,195 @@
               target: null
             }
           });
-          this.eq((Ωilxt_447 = function() {
+          this.eq((Ωilxt_445 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.stop',
             hit: '',
             pos: '1:8:8'
           });
-          this.eq((Ωilxt_448 = function() {
+          this.eq((Ωilxt_446 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          /* fore jump carry, back jump sticky */
+          var g, gnd, lexemes, number, source, Ωilxt_447, Ωilxt_450, Ωilxt_451, Ωilxt_452, Ωilxt_453, Ωilxt_454, Ωilxt_455, Ωilxt_456, Ωilxt_457, Ωilxt_458, Ωilxt_459, Ωilxt_460, Ωilxt_461, Ωilxt_462, Ωilxt_463, Ωilxt_464;
+          g = new Grammar({
+            name: 'g',
+            emit_signals: true,
+            merge_jumps: false
+          });
+          this.eq((Ωilxt_447 = function() {
+            return g.cfg.merge_jumps;
+          }), false);
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          number = g.new_level({
+            name: 'number'
+          });
+          //...................................................................................................
+          gnd.new_token({
+            name: 'letters',
+            fit: /[a-zA-Z]+/
+          });
+          gnd.new_token({
+            name: 'before_digits',
+            fit: /(?=[0-9])/,
+            jump: 'number!'
+          });
+          gnd.new_token({
+            name: 'ws',
+            fit: /\s+/
+          });
+          //...................................................................................................
+          number.new_token({
+            name: 'integer',
+            fit: /[0-9]+/
+          });
+          number.new_token({
+            name: 'unit',
+            fit: /[a-zA-Z]+/,
+            jump: '..'
+          });
+          //...................................................................................................
+          source = "99kg23mm";
+          // info 'Ωilxt_448', source; tabulate_lexemes g.scan source
+          info('Ωilxt_449', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_450 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.start',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_451 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_452 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'number'
+            }
+          });
+          this.eq((Ωilxt_453 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.before_digits',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_454 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.integer',
+            hit: '99',
+            pos: '1:0:2'
+          });
+          this.eq((Ωilxt_455 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.unit',
+            hit: 'kg',
+            pos: '1:2:4'
+          });
+          this.eq((Ωilxt_456 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:4:4',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_457 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:4:4',
+            data: {
+              target: 'number'
+            }
+          });
+          this.eq((Ωilxt_458 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.before_digits',
+            hit: '',
+            pos: '1:4:4'
+          });
+          this.eq((Ωilxt_459 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.integer',
+            hit: '23',
+            pos: '1:4:6'
+          });
+          this.eq((Ωilxt_460 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.unit',
+            hit: 'mm',
+            pos: '1:6:8'
+          });
+          this.eq((Ωilxt_461 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:8:8',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_462 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:8:8',
+            data: {
+              target: null
+            }
+          });
+          this.eq((Ωilxt_463 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.stop',
+            hit: '',
+            pos: '1:8:8'
+          });
+          this.eq((Ωilxt_464 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
         })();
         (() => {          //.....................................................................................................
           /* fore jump carry, back jump carry */
-          var g, gnd, lexemes, number, source, Ωilxt_449, Ωilxt_452, Ωilxt_453, Ωilxt_454, Ωilxt_455, Ωilxt_456, Ωilxt_457, Ωilxt_458, Ωilxt_459, Ωilxt_460, Ωilxt_461, Ωilxt_462, Ωilxt_463, Ωilxt_464, Ωilxt_465, Ωilxt_466;
+          var g, gnd, lexemes, number, source, Ωilxt_465, Ωilxt_468, Ωilxt_469, Ωilxt_470, Ωilxt_471, Ωilxt_472, Ωilxt_473, Ωilxt_474, Ωilxt_475, Ωilxt_476, Ωilxt_477, Ωilxt_478, Ωilxt_479, Ωilxt_480, Ωilxt_481, Ωilxt_482;
           g = new Grammar({
             name: 'g',
             emit_signals: true,
             merge_jumps: false
           });
-          this.eq((Ωilxt_449 = function() {
+          this.eq((Ωilxt_465 = function() {
             return g.cfg.merge_jumps;
           }), false);
           gnd = g.new_level({
@@ -3793,18 +3862,18 @@
           });
           //...................................................................................................
           source = "99kg23mm";
-          // info 'Ωilxt_450', source; tabulate_lexemes g.scan source
-          info('Ωilxt_451', source);
+          // info 'Ωilxt_466', source; tabulate_lexemes g.scan source
+          info('Ωilxt_467', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_452 = function() {
+          this.eq((Ωilxt_468 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.start',
             hit: '',
             pos: '1:0:0'
           });
-          this.eq((Ωilxt_453 = function() {
+          this.eq((Ωilxt_469 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3814,7 +3883,7 @@
               target: 'gnd'
             }
           });
-          this.eq((Ωilxt_454 = function() {
+          this.eq((Ωilxt_470 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3824,21 +3893,21 @@
               target: 'number'
             }
           });
-          this.eq((Ωilxt_455 = function() {
+          this.eq((Ωilxt_471 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.before_digits',
             hit: '',
             pos: '1:0:0'
           });
-          this.eq((Ωilxt_456 = function() {
+          this.eq((Ωilxt_472 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.integer',
             hit: '99',
             pos: '1:0:2'
           });
-          this.eq((Ωilxt_457 = function() {
+          this.eq((Ωilxt_473 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3848,14 +3917,14 @@
               target: 'gnd'
             }
           });
-          this.eq((Ωilxt_458 = function() {
+          this.eq((Ωilxt_474 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.unit',
             hit: 'kg',
             pos: '1:2:4'
           });
-          this.eq((Ωilxt_459 = function() {
+          this.eq((Ωilxt_475 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3865,21 +3934,21 @@
               target: 'number'
             }
           });
-          this.eq((Ωilxt_460 = function() {
+          this.eq((Ωilxt_476 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.before_digits',
             hit: '',
             pos: '1:4:4'
           });
-          this.eq((Ωilxt_461 = function() {
+          this.eq((Ωilxt_477 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.integer',
             hit: '23',
             pos: '1:4:6'
           });
-          this.eq((Ωilxt_462 = function() {
+          this.eq((Ωilxt_478 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3889,14 +3958,14 @@
               target: 'gnd'
             }
           });
-          this.eq((Ωilxt_463 = function() {
+          this.eq((Ωilxt_479 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.unit',
             hit: 'mm',
             pos: '1:6:8'
           });
-          this.eq((Ωilxt_464 = function() {
+          this.eq((Ωilxt_480 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3906,27 +3975,27 @@
               target: null
             }
           });
-          this.eq((Ωilxt_465 = function() {
+          this.eq((Ωilxt_481 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.stop',
             hit: '',
             pos: '1:8:8'
           });
-          this.eq((Ωilxt_466 = function() {
+          this.eq((Ωilxt_482 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
         })();
         (() => {          //.....................................................................................................
           /* fore jump sticky, back jump carry */
-          var g, gnd, lexemes, number, source, Ωilxt_467, Ωilxt_470, Ωilxt_471, Ωilxt_472, Ωilxt_473, Ωilxt_474, Ωilxt_475, Ωilxt_476, Ωilxt_477, Ωilxt_478, Ωilxt_479, Ωilxt_480, Ωilxt_481, Ωilxt_482, Ωilxt_483, Ωilxt_484;
+          var g, gnd, lexemes, number, source, Ωilxt_483, Ωilxt_486, Ωilxt_487, Ωilxt_488, Ωilxt_489, Ωilxt_490, Ωilxt_491, Ωilxt_492, Ωilxt_493, Ωilxt_494, Ωilxt_495, Ωilxt_496, Ωilxt_497, Ωilxt_498, Ωilxt_499, Ωilxt_500;
           g = new Grammar({
             name: 'g',
             emit_signals: true,
             merge_jumps: false
           });
-          this.eq((Ωilxt_467 = function() {
+          this.eq((Ωilxt_483 = function() {
             return g.cfg.merge_jumps;
           }), false);
           gnd = g.new_level({
@@ -3961,18 +4030,18 @@
           });
           //...................................................................................................
           source = "99kg23mm";
-          // info 'Ωilxt_468', source; tabulate_lexemes g.scan source
-          info('Ωilxt_469', source);
+          // info 'Ωilxt_484', source; tabulate_lexemes g.scan source
+          info('Ωilxt_485', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_470 = function() {
+          this.eq((Ωilxt_486 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.start',
             hit: '',
             pos: '1:0:0'
           });
-          this.eq((Ωilxt_471 = function() {
+          this.eq((Ωilxt_487 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -3982,167 +4051,10 @@
               target: 'gnd'
             }
           });
-          this.eq((Ωilxt_472 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'gnd.before_digits',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_473 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'number'
-            }
-          });
-          this.eq((Ωilxt_474 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.integer',
-            hit: '99',
-            pos: '1:0:2'
-          });
-          this.eq((Ωilxt_475 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:2:2',
-            data: {
-              target: 'gnd'
-            }
-          });
-          this.eq((Ωilxt_476 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'gnd.unit',
-            hit: 'kg',
-            pos: '1:2:4'
-          });
-          this.eq((Ωilxt_477 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'gnd.before_digits',
-            hit: '',
-            pos: '1:4:4'
-          });
-          this.eq((Ωilxt_478 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:4:4',
-            data: {
-              target: 'number'
-            }
-          });
-          this.eq((Ωilxt_479 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.integer',
-            hit: '23',
-            pos: '1:4:6'
-          });
-          this.eq((Ωilxt_480 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:6:6',
-            data: {
-              target: 'gnd'
-            }
-          });
-          this.eq((Ωilxt_481 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'gnd.unit',
-            hit: 'mm',
-            pos: '1:6:8'
-          });
-          this.eq((Ωilxt_482 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:8:8',
-            data: {
-              target: null
-            }
-          });
-          this.eq((Ωilxt_483 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.stop',
-            hit: '',
-            pos: '1:8:8'
-          });
-          this.eq((Ωilxt_484 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), null);
-          return null;
-        })();
-        //...................................................................................................
-        return null;
-      },
-      //-------------------------------------------------------------------------------------------------------
-      merge_jump_signals: function() {
-        var Grammar, rx;
-        ({Grammar, rx} = require('../../../apps/interlex'));
-        (() => {          //.....................................................................................................
-          /* fore jump carry, back jump sticky */
-          var g, gnd, lexemes, number, source, Ωilxt_485, Ωilxt_488, Ωilxt_489, Ωilxt_490, Ωilxt_491, Ωilxt_492, Ωilxt_493, Ωilxt_494, Ωilxt_495, Ωilxt_496, Ωilxt_497, Ωilxt_498, Ωilxt_499;
-          g = new Grammar({
-            name: 'g',
-            emit_signals: true
-          });
-          this.eq((Ωilxt_485 = function() {
-            return g.cfg.merge_jumps;
-          }), true);
-          gnd = g.new_level({
-            name: 'gnd'
-          });
-          number = g.new_level({
-            name: 'number'
-          });
-          //...................................................................................................
-          gnd.new_token({
-            name: 'letters',
-            fit: /[a-zA-Z]+/
-          });
-          gnd.new_token({
-            name: 'before_digits',
-            fit: /(?=[0-9])/,
-            jump: 'number!'
-          });
-          gnd.new_token({
-            name: 'ws',
-            fit: /\s+/
-          });
-          //...................................................................................................
-          number.new_token({
-            name: 'integer',
-            fit: /[0-9]+/
-          });
-          number.new_token({
-            name: 'unit',
-            fit: /[a-zA-Z]+/,
-            jump: '..'
-          });
-          //...................................................................................................
-          source = "99kg23mm";
-          // info 'Ωilxt_486', source; tabulate_lexemes g.scan source
-          info('Ωilxt_487', source);
-          g.reset_lnr(1);
-          lexemes = g.scan(source);
           this.eq((Ωilxt_488 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: '$signal.start',
+            fqname: 'gnd.before_digits',
             hit: '',
             pos: '1:0:0'
           });
@@ -4159,25 +4071,35 @@
           this.eq((Ωilxt_490 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'number.before_digits',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_491 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
             fqname: 'number.integer',
             hit: '99',
             pos: '1:0:2'
           });
+          this.eq((Ωilxt_491 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:2:2',
+            data: {
+              target: 'gnd'
+            }
+          });
           this.eq((Ωilxt_492 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'number.unit',
+            fqname: 'gnd.unit',
             hit: 'kg',
             pos: '1:2:4'
           });
           this.eq((Ωilxt_493 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.before_digits',
+            hit: '',
+            pos: '1:4:4'
+          });
+          this.eq((Ωilxt_494 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -4186,13 +4108,6 @@
             data: {
               target: 'number'
             }
-          });
-          this.eq((Ωilxt_494 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'number.before_digits',
-            hit: '',
-            pos: '1:4:4'
           });
           this.eq((Ωilxt_495 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -4204,11 +4119,21 @@
           this.eq((Ωilxt_496 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'number.unit',
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:6:6',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_497 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.unit',
             hit: 'mm',
             pos: '1:6:8'
           });
-          this.eq((Ωilxt_497 = function() {
+          this.eq((Ωilxt_498 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -4218,59 +4143,68 @@
               target: null
             }
           });
-          this.eq((Ωilxt_498 = function() {
+          this.eq((Ωilxt_499 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.stop',
             hit: '',
             pos: '1:8:8'
           });
-          this.eq((Ωilxt_499 = function() {
+          this.eq((Ωilxt_500 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
         })();
         //...................................................................................................
         return null;
-      }
-    },
-    //=========================================================================================================
-    infinite_loops: {
+      },
       //-------------------------------------------------------------------------------------------------------
-      zero_matches_with_jumps_as_exceptions: function() {
+      merge_jump_signals: function() {
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var g, level_one, level_two, lexemes, source, Ωilxt_500, Ωilxt_504, Ωilxt_505, Ωilxt_506, Ωilxt_507, Ωilxt_508, Ωilxt_509;
+          /* fore jump carry, back jump sticky */
+          var g, gnd, lexemes, number, source, Ωilxt_501, Ωilxt_504, Ωilxt_505, Ωilxt_506, Ωilxt_507, Ωilxt_508, Ωilxt_509, Ωilxt_510, Ωilxt_511, Ωilxt_512, Ωilxt_513, Ωilxt_514, Ωilxt_515;
           g = new Grammar({
             name: 'g',
-            emit_signals: true,
-            loop_errors: 'throw'
+            emit_signals: true
           });
-          this.eq((Ωilxt_500 = function() {
+          this.eq((Ωilxt_501 = function() {
             return g.cfg.merge_jumps;
           }), true);
-          level_one = g.new_level({
-            name: 'level_one'
+          gnd = g.new_level({
+            name: 'gnd'
           });
-          level_two = g.new_level({
-            name: 'level_two'
-          });
-          //...................................................................................................
-          level_one.new_token({
-            name: 'to_level_two',
-            fit: /(?=)/,
-            jump: 'level_two'
-          });
-          level_two.new_token({
-            name: 'to_level_one',
-            fit: /|/,
-            jump: 'level_one'
+          number = g.new_level({
+            name: 'number'
           });
           //...................................................................................................
-          source = "doesn't matter";
-          // info 'Ωilxt_501', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωilxt_502', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          gnd.new_token({
+            name: 'letters',
+            fit: /[a-zA-Z]+/
+          });
+          gnd.new_token({
+            name: 'before_digits',
+            fit: /(?=[0-9])/,
+            jump: 'number!'
+          });
+          gnd.new_token({
+            name: 'ws',
+            fit: /\s+/
+          });
+          //...................................................................................................
+          number.new_token({
+            name: 'integer',
+            fit: /[0-9]+/
+          });
+          number.new_token({
+            name: 'unit',
+            fit: /[a-zA-Z]+/,
+            jump: '..'
+          });
+          //...................................................................................................
+          source = "99kg23mm";
+          // info 'Ωilxt_502', source; tabulate_lexemes g.scan source
           info('Ωilxt_503', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
@@ -4288,53 +4222,101 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              target: 'level_one'
+              target: 'number'
             }
           });
           this.eq((Ωilxt_506 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'level_one.to_level_two',
+            fqname: 'number.before_digits',
             hit: '',
             pos: '1:0:0'
           });
           this.eq((Ωilxt_507 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'level_two'
-            }
+            fqname: 'number.integer',
+            hit: '99',
+            pos: '1:0:2'
           });
           this.eq((Ωilxt_508 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
-            fqname: 'level_two.to_level_one',
-            hit: '',
-            pos: '1:0:0'
+            fqname: 'number.unit',
+            hit: 'kg',
+            pos: '1:2:4'
           });
-          this.throws((Ωilxt_509 = function() {
+          this.eq((Ωilxt_509 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), /encountered loop/);
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:4:4',
+            data: {
+              target: 'number'
+            }
+          });
+          this.eq((Ωilxt_510 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.before_digits',
+            hit: '',
+            pos: '1:4:4'
+          });
+          this.eq((Ωilxt_511 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.integer',
+            hit: '23',
+            pos: '1:4:6'
+          });
+          this.eq((Ωilxt_512 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'number.unit',
+            hit: 'mm',
+            pos: '1:6:8'
+          });
+          this.eq((Ωilxt_513 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:8:8',
+            data: {
+              target: null
+            }
+          });
+          this.eq((Ωilxt_514 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.stop',
+            hit: '',
+            pos: '1:8:8'
+          });
+          this.eq((Ωilxt_515 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
           return null;
         })();
         //...................................................................................................
         return null;
-      },
+      }
+    },
+    //=========================================================================================================
+    infinite_loops: {
       //-------------------------------------------------------------------------------------------------------
-      zero_matches_with_jumps_as_error_signals: function() {
+      zero_matches_with_jumps_as_exceptions: function() {
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var g, level_one, level_two, lexemes, source, Ωilxt_510, Ωilxt_514, Ωilxt_515, Ωilxt_516, Ωilxt_517, Ωilxt_518, Ωilxt_519, Ωilxt_520, Ωilxt_521, Ωilxt_522, Ωilxt_523, Ωilxt_524, Ωilxt_525, Ωilxt_526, Ωilxt_527, Ωilxt_528, Ωilxt_529;
+          var g, level_one, level_two, lexemes, source, Ωilxt_516, Ωilxt_520, Ωilxt_521, Ωilxt_522, Ωilxt_523, Ωilxt_524, Ωilxt_525;
           g = new Grammar({
             name: 'g',
             emit_signals: true,
-            loop_errors: 'emit'
+            loop_errors: 'throw'
           });
-          this.eq((Ωilxt_510 = function() {
+          this.eq((Ωilxt_516 = function() {
             return g.cfg.merge_jumps;
           }), true);
           level_one = g.new_level({
@@ -4356,58 +4338,18 @@
           });
           //...................................................................................................
           source = "doesn't matter";
-          // info 'Ωilxt_511', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωilxt_512', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_513', source);
+          // info 'Ωilxt_517', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_518', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_519', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_514 = function() {
-            return g.has_error;
-          }), false);
-          this.eq((Ωilxt_515 = function() {
+          this.eq((Ωilxt_520 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.start',
             hit: '',
             pos: '1:0:0'
           });
-          this.eq((Ωilxt_516 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'level_one'
-            }
-          });
-          this.eq((Ωilxt_517 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'level_one.to_level_two',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_518 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'level_two'
-            }
-          });
-          this.eq((Ωilxt_519 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'level_two.to_level_one',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_520 = function() {
-            return g.has_error;
-          }), false);
           this.eq((Ωilxt_521 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
@@ -4421,6 +4363,133 @@
           this.eq((Ωilxt_522 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
+            fqname: 'level_one.to_level_two',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_523 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'level_two'
+            }
+          });
+          this.eq((Ωilxt_524 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'level_two.to_level_one',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.throws((Ωilxt_525 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), /encountered loop/);
+          return null;
+        })();
+        //...................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      zero_matches_with_jumps_as_error_signals: function() {
+        var Grammar, rx;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          var g, level_one, level_two, lexemes, source, Ωilxt_526, Ωilxt_530, Ωilxt_531, Ωilxt_532, Ωilxt_533, Ωilxt_534, Ωilxt_535, Ωilxt_536, Ωilxt_537, Ωilxt_538, Ωilxt_539, Ωilxt_540, Ωilxt_541, Ωilxt_542, Ωilxt_543, Ωilxt_544, Ωilxt_545;
+          g = new Grammar({
+            name: 'g',
+            emit_signals: true,
+            loop_errors: 'emit'
+          });
+          this.eq((Ωilxt_526 = function() {
+            return g.cfg.merge_jumps;
+          }), true);
+          level_one = g.new_level({
+            name: 'level_one'
+          });
+          level_two = g.new_level({
+            name: 'level_two'
+          });
+          //...................................................................................................
+          level_one.new_token({
+            name: 'to_level_two',
+            fit: /(?=)/,
+            jump: 'level_two'
+          });
+          level_two.new_token({
+            name: 'to_level_one',
+            fit: /|/,
+            jump: 'level_one'
+          });
+          //...................................................................................................
+          source = "doesn't matter";
+          // info 'Ωilxt_527', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_528', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_529', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_530 = function() {
+            return g.has_error;
+          }), false);
+          this.eq((Ωilxt_531 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.start',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_532 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'level_one'
+            }
+          });
+          this.eq((Ωilxt_533 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'level_one.to_level_two',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_534 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'level_two'
+            }
+          });
+          this.eq((Ωilxt_535 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'level_two.to_level_one',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_536 = function() {
+            return g.has_error;
+          }), false);
+          this.eq((Ωilxt_537 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'level_one'
+            }
+          });
+          this.eq((Ωilxt_538 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
             fqname: '$error.loop',
             hit: '',
             pos: '1:0:0',
@@ -4428,10 +4497,10 @@
               message: "encountered loop at position +0 (indicated by '⚠': '⚠doesn\\'t matter')"
             }
           });
-          this.eq((Ωilxt_523 = function() {
+          this.eq((Ωilxt_539 = function() {
             return g.has_error;
           }), true);
-          this.eq((Ωilxt_524 = function() {
+          this.eq((Ωilxt_540 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -4441,7 +4510,7 @@
               target: null
             }
           });
-          this.eq((Ωilxt_525 = function() {
+          this.eq((Ωilxt_541 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$error.earlystop',
@@ -4451,22 +4520,22 @@
               message: 'expected stop at 14, got +0'
             }
           });
-          this.eq((Ωilxt_526 = function() {
+          this.eq((Ωilxt_542 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.stop',
             hit: '',
             pos: '1:0:0'
           });
-          this.eq((Ωilxt_527 = function() {
+          this.eq((Ωilxt_543 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
-          this.eq((Ωilxt_528 = function() {
+          this.eq((Ωilxt_544 = function() {
             return g.has_error;
           }), true);
           lexemes = g.scan(source);
           abbrlxm(lexemes.next().value);
-          this.eq((Ωilxt_529 = function() {
+          this.eq((Ωilxt_545 = function() {
             return g.has_error;
           }), false);
           return null;
@@ -4476,7 +4545,7 @@
       },
       //-------------------------------------------------------------------------------------------------------
       has_errors: function() {
-        var Grammar, g, gnd, lexemes, rx, Ωilxt_530, Ωilxt_531, Ωilxt_532, Ωilxt_533, Ωilxt_534, Ωilxt_535, Ωilxt_536, Ωilxt_537, Ωilxt_538, Ωilxt_539;
+        var Grammar, g, gnd, lexemes, rx, Ωilxt_546, Ωilxt_547, Ωilxt_548, Ωilxt_549, Ωilxt_550, Ωilxt_551, Ωilxt_552, Ωilxt_553, Ωilxt_554, Ωilxt_555;
         ({Grammar, rx} = require('../../../apps/interlex'));
         //.....................................................................................................
         g = new Grammar({
@@ -4487,30 +4556,30 @@
         gnd = g.new_level({
           name: 'gnd'
         });
-        this.eq((Ωilxt_530 = function() {
+        this.eq((Ωilxt_546 = function() {
           return [g.state.errors.length, g.has_error];
         }), [0, false]);
         //.....................................................................................................
         g.state.errors.push(null);
         g.state.errors.push(null);
-        this.eq((Ωilxt_531 = function() {
+        this.eq((Ωilxt_547 = function() {
           return [g.state.errors.length, g.has_error];
         }), [2, true]);
         lexemes = g.scan('ghi');
-        this.eq((Ωilxt_532 = function() {
+        this.eq((Ωilxt_548 = function() {
           return [g.state.errors.length, g.has_error];
         }), [2, true]);
-        this.eq((Ωilxt_533 = function() {
+        this.eq((Ωilxt_549 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.start',
           hit: '',
           pos: '1:0:0'
         });
-        this.eq((Ωilxt_534 = function() {
+        this.eq((Ωilxt_550 = function() {
           return [g.state.errors.length, g.has_error];
         }), [0, false]);
-        this.eq((Ωilxt_535 = function() {
+        this.eq((Ωilxt_551 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.jump',
@@ -4520,7 +4589,7 @@
             target: null
           }
         });
-        this.eq((Ωilxt_536 = function() {
+        this.eq((Ωilxt_552 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$error.earlystop',
@@ -4530,24 +4599,24 @@
             message: 'expected stop at 3, got +0'
           }
         });
-        this.eq((Ωilxt_537 = function() {
+        this.eq((Ωilxt_553 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.stop',
           hit: '',
           pos: '1:0:0'
         });
-        this.eq((Ωilxt_538 = function() {
+        this.eq((Ωilxt_554 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), null);
-        this.eq((Ωilxt_539 = function() {
+        this.eq((Ωilxt_555 = function() {
           return [g.state.errors.length, g.has_error];
         }), [1, true]);
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
       can_throw_earlystop_errors: function() {
-        var Grammar, g, gnd, lexemes, rx, Ωilxt_540, Ωilxt_541, Ωilxt_542, Ωilxt_543, Ωilxt_544, Ωilxt_545;
+        var Grammar, g, gnd, lexemes, rx, Ωilxt_556, Ωilxt_557, Ωilxt_558, Ωilxt_559, Ωilxt_560, Ωilxt_561;
         ({Grammar, rx} = require('../../../apps/interlex'));
         //.....................................................................................................
         g = new Grammar({
@@ -4559,30 +4628,30 @@
         gnd = g.new_level({
           name: 'gnd'
         });
-        this.eq((Ωilxt_540 = function() {
+        this.eq((Ωilxt_556 = function() {
           return [g.state.errors.length, g.has_error];
         }), [0, false]);
         //.....................................................................................................
         g.state.errors.push(null);
         g.state.errors.push(null);
-        this.eq((Ωilxt_541 = function() {
+        this.eq((Ωilxt_557 = function() {
           return [g.state.errors.length, g.has_error];
         }), [2, true]);
         lexemes = g.scan('ghi');
-        this.eq((Ωilxt_542 = function() {
+        this.eq((Ωilxt_558 = function() {
           return [g.state.errors.length, g.has_error];
         }), [2, true]);
-        this.eq((Ωilxt_543 = function() {
+        this.eq((Ωilxt_559 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.start',
           hit: '',
           pos: '1:0:0'
         });
-        this.eq((Ωilxt_544 = function() {
+        this.eq((Ωilxt_560 = function() {
           return [g.state.errors.length, g.has_error];
         }), [0, false]);
-        this.throws((Ωilxt_545 = function() {
+        this.throws((Ωilxt_561 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), /expected stop at 3/);
         return null;
@@ -4592,155 +4661,7 @@
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //.....................................................................................................
-          var g, lexemes, source, tag, text, Ωilxt_546, Ωilxt_550, Ωilxt_551, Ωilxt_552, Ωilxt_553, Ωilxt_554, Ωilxt_555, Ωilxt_556, Ωilxt_557, Ωilxt_558, Ωilxt_559, Ωilxt_560, Ωilxt_561;
-          g = new Grammar({
-            name: 'g',
-            emit_signals: true
-          });
-          this.eq((Ωilxt_546 = function() {
-            return g.cfg.merge_jumps;
-          }), true);
-          text = g.new_level({
-            name: 'text'
-          });
-          tag = g.new_level({
-            name: 'tag'
-          });
-          //...................................................................................................
-          text.new_token({
-            name: 'pretag',
-            fit: /(?=<)/,
-            jump: 'tag'
-          });
-          text.new_token({
-            name: 'text',
-            fit: /.+/,
-            jump: null
-          });
-          tag.new_token({
-            name: 'tag',
-            fit: /<[^>]*>+?/,
-            jump: 'text'
-          });
-          //...................................................................................................
-          // source = "<tag-a><tag-b><tag-c><tag-d>"
-          // source = "<tag-a><tag-b><tag-c>"
-          source = "<tag-a><tag-b>";
-          // source = "<tag-a>"
-          // info 'Ωilxt_547', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωilxt_548', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_549', source);
-          g.reset_lnr(1);
-          lexemes = g.scan(source);
-          this.eq((Ωilxt_550 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.start',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_551 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'text'
-            }
-          });
-          this.eq((Ωilxt_552 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'text.pretag',
-            hit: '',
-            pos: '1:0:0'
-          });
-          this.eq((Ωilxt_553 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:0:0',
-            data: {
-              target: 'tag'
-            }
-          });
-          this.eq((Ωilxt_554 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'tag.tag',
-            hit: '<tag-a>',
-            pos: '1:0:7'
-          });
-          this.eq((Ωilxt_555 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:7:7',
-            data: {
-              target: 'text'
-            }
-          });
-          this.eq((Ωilxt_556 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'text.pretag',
-            hit: '',
-            pos: '1:7:7'
-          });
-          this.eq((Ωilxt_557 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:7:7',
-            data: {
-              target: 'tag'
-            }
-          });
-          this.eq((Ωilxt_558 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'tag.tag',
-            hit: '<tag-b>',
-            pos: '1:7:14'
-          });
-          this.eq((Ωilxt_559 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.jump',
-            hit: '',
-            pos: '1:14:14',
-            data: {
-              target: null
-            }
-          });
-          this.eq((Ωilxt_560 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: '$signal.stop',
-            hit: '',
-            pos: '1:14:14'
-          });
-          this.eq((Ωilxt_561 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), null);
-          return null;
-        })();
-        //...................................................................................................
-        return null;
-      }
-    },
-    //=========================================================================================================
-    ghost_tokens: {
-      //-------------------------------------------------------------------------------------------------------
-      ok_when_levels_back_to_back: function() {
-        var Grammar, rx;
-        ({Grammar, rx} = require('../../../apps/interlex'));
-        (() => {          //.....................................................................................................
-          var g, lexemes, source, tag, text, Ωilxt_562, Ωilxt_566, Ωilxt_567, Ωilxt_568, Ωilxt_569, Ωilxt_570, Ωilxt_571, Ωilxt_572, Ωilxt_573;
+          var g, lexemes, source, tag, text, Ωilxt_562, Ωilxt_566, Ωilxt_567, Ωilxt_568, Ωilxt_569, Ωilxt_570, Ωilxt_571, Ωilxt_572, Ωilxt_573, Ωilxt_574, Ωilxt_575, Ωilxt_576, Ωilxt_577;
           g = new Grammar({
             name: 'g',
             emit_signals: true
@@ -4758,8 +4679,7 @@
           text.new_token({
             name: 'pretag',
             fit: /(?=<)/,
-            jump: 'tag',
-            emit: false
+            jump: 'tag'
           });
           text.new_token({
             name: 'text',
@@ -4795,17 +4715,51 @@
             hit: '',
             pos: '1:0:0',
             data: {
-              target: 'tag'
+              target: 'text'
             }
           });
           this.eq((Ωilxt_568 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'text.pretag',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_569 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'tag'
+            }
+          });
+          this.eq((Ωilxt_570 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'tag.tag',
             hit: '<tag-a>',
             pos: '1:0:7'
           });
-          this.eq((Ωilxt_569 = function() {
+          this.eq((Ωilxt_571 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:7:7',
+            data: {
+              target: 'text'
+            }
+          });
+          this.eq((Ωilxt_572 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'text.pretag',
+            hit: '',
+            pos: '1:7:7'
+          });
+          this.eq((Ωilxt_573 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -4815,14 +4769,14 @@
               target: 'tag'
             }
           });
-          this.eq((Ωilxt_570 = function() {
+          this.eq((Ωilxt_574 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'tag.tag',
             hit: '<tag-b>',
             pos: '1:7:14'
           });
-          this.eq((Ωilxt_571 = function() {
+          this.eq((Ωilxt_575 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.jump',
@@ -4832,14 +4786,129 @@
               target: null
             }
           });
-          this.eq((Ωilxt_572 = function() {
+          this.eq((Ωilxt_576 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$signal.stop',
             hit: '',
             pos: '1:14:14'
           });
-          this.eq((Ωilxt_573 = function() {
+          this.eq((Ωilxt_577 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        //...................................................................................................
+        return null;
+      }
+    },
+    //=========================================================================================================
+    ghost_tokens: {
+      //-------------------------------------------------------------------------------------------------------
+      ok_when_levels_back_to_back: function() {
+        var Grammar, rx;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, tag, text, Ωilxt_578, Ωilxt_582, Ωilxt_583, Ωilxt_584, Ωilxt_585, Ωilxt_586, Ωilxt_587, Ωilxt_588, Ωilxt_589;
+          g = new Grammar({
+            name: 'g',
+            emit_signals: true
+          });
+          this.eq((Ωilxt_578 = function() {
+            return g.cfg.merge_jumps;
+          }), true);
+          text = g.new_level({
+            name: 'text'
+          });
+          tag = g.new_level({
+            name: 'tag'
+          });
+          //...................................................................................................
+          text.new_token({
+            name: 'pretag',
+            fit: /(?=<)/,
+            jump: 'tag',
+            emit: false
+          });
+          text.new_token({
+            name: 'text',
+            fit: /.+/,
+            jump: null
+          });
+          tag.new_token({
+            name: 'tag',
+            fit: /<[^>]*>+?/,
+            jump: 'text'
+          });
+          //...................................................................................................
+          // source = "<tag-a><tag-b><tag-c><tag-d>"
+          // source = "<tag-a><tag-b><tag-c>"
+          source = "<tag-a><tag-b>";
+          // source = "<tag-a>"
+          // info 'Ωilxt_579', source; g.reset_lnr 1; tabulate_lexemes g.scan source
+          // info 'Ωilxt_580', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_581', source);
+          g.reset_lnr(1);
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_582 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.start',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_583 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'tag'
+            }
+          });
+          this.eq((Ωilxt_584 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'tag.tag',
+            hit: '<tag-a>',
+            pos: '1:0:7'
+          });
+          this.eq((Ωilxt_585 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:7:7',
+            data: {
+              target: 'tag'
+            }
+          });
+          this.eq((Ωilxt_586 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'tag.tag',
+            hit: '<tag-b>',
+            pos: '1:7:14'
+          });
+          this.eq((Ωilxt_587 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:14:14',
+            data: {
+              target: null
+            }
+          });
+          this.eq((Ωilxt_588 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.stop',
+            hit: '',
+            pos: '1:14:14'
+          });
+          this.eq((Ωilxt_589 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
@@ -4852,7 +4921,7 @@
     demo: {
       //-------------------------------------------------------------------------------------------------------
       demo_nr_1: function() {
-        var Grammar, g, gnd, lexemes, rx, source, Ωilxt_576, Ωilxt_577, Ωilxt_578, Ωilxt_579, Ωilxt_580, Ωilxt_581, Ωilxt_582, Ωilxt_583, Ωilxt_584, Ωilxt_585, Ωilxt_586, Ωilxt_587, Ωilxt_588, Ωilxt_589, Ωilxt_591, Ωilxt_ACCEPT_590;
+        var Grammar, g, gnd, lexemes, rx, source, Ωilxt_592, Ωilxt_593, Ωilxt_594, Ωilxt_595, Ωilxt_596, Ωilxt_597, Ωilxt_598, Ωilxt_599, Ωilxt_600, Ωilxt_601, Ωilxt_602, Ωilxt_603, Ωilxt_604, Ωilxt_605, Ωilxt_607, Ωilxt_ACCEPT_606;
         ({Grammar, rx} = require('../../../apps/interlex'));
         //=====================================================================================================
         g = new Grammar({
@@ -4888,18 +4957,18 @@
         });
         //.....................................................................................................
         source = "Alice in Cairo 1912 (approximately)";
-        // info 'Ωilxt_574', source; tabulate_lexemes g.scan source
-        info('Ωilxt_575', source);
+        // info 'Ωilxt_590', source; tabulate_lexemes g.scan source
+        info('Ωilxt_591', source);
         g.reset_lnr(1);
         lexemes = g.scan(source);
-        this.eq((Ωilxt_576 = function() {
+        this.eq((Ωilxt_592 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.start',
           hit: '',
           pos: '1:0:0'
         });
-        this.eq((Ωilxt_577 = function() {
+        this.eq((Ωilxt_593 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.jump',
@@ -4909,7 +4978,7 @@
             target: 'gnd'
           }
         });
-        this.eq((Ωilxt_578 = function() {
+        this.eq((Ωilxt_594 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.name',
@@ -4919,28 +4988,28 @@
             initial: 'A'
           }
         });
-        this.eq((Ωilxt_579 = function() {
+        this.eq((Ωilxt_595 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:5:6'
         });
-        this.eq((Ωilxt_580 = function() {
+        this.eq((Ωilxt_596 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.other',
           hit: 'in',
           pos: '1:6:8'
         });
-        this.eq((Ωilxt_581 = function() {
+        this.eq((Ωilxt_597 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:8:9'
         });
-        this.eq((Ωilxt_582 = function() {
+        this.eq((Ωilxt_598 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.name',
@@ -4950,49 +5019,49 @@
             initial: 'C'
           }
         });
-        this.eq((Ωilxt_583 = function() {
+        this.eq((Ωilxt_599 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:14:15'
         });
-        this.eq((Ωilxt_584 = function() {
+        this.eq((Ωilxt_600 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.number',
           hit: '1912',
           pos: '1:15:19'
         });
-        this.eq((Ωilxt_585 = function() {
+        this.eq((Ωilxt_601 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:19:20'
         });
-        this.eq((Ωilxt_586 = function() {
+        this.eq((Ωilxt_602 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.paren_start',
           hit: '(',
           pos: '1:20:21'
         });
-        this.eq((Ωilxt_587 = function() {
+        this.eq((Ωilxt_603 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.other',
           hit: 'approximately',
           pos: '1:21:34'
         });
-        this.eq((Ωilxt_588 = function() {
+        this.eq((Ωilxt_604 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.paren_stop',
           hit: ')',
           pos: '1:34:35'
         });
-        this.eq((Ωilxt_589 = function() {
+        this.eq((Ωilxt_605 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.jump',
@@ -5002,14 +5071,14 @@
             target: null
           }
         });
-        this.eq((Ωilxt_ACCEPT_590 = function() {
+        this.eq((Ωilxt_ACCEPT_606 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.stop',
           hit: '',
           pos: '1:35:35'
         });
-        this.eq((Ωilxt_591 = function() {
+        this.eq((Ωilxt_607 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), null);
         //.....................................................................................................
@@ -5017,7 +5086,7 @@
       },
       //-------------------------------------------------------------------------------------------------------
       demo_nr_2: function() {
-        var Grammar, g, gnd, lexemes, rx, source, string11, Ωilxt_594, Ωilxt_595, Ωilxt_596, Ωilxt_597, Ωilxt_598, Ωilxt_599, Ωilxt_600, Ωilxt_601, Ωilxt_602, Ωilxt_603, Ωilxt_604, Ωilxt_605, Ωilxt_606, Ωilxt_607, Ωilxt_608, Ωilxt_609, Ωilxt_610;
+        var Grammar, g, gnd, lexemes, rx, source, string11, Ωilxt_610, Ωilxt_611, Ωilxt_612, Ωilxt_613, Ωilxt_614, Ωilxt_615, Ωilxt_616, Ωilxt_617, Ωilxt_618, Ωilxt_619, Ωilxt_620, Ωilxt_621, Ωilxt_622, Ωilxt_623, Ωilxt_624, Ωilxt_625, Ωilxt_626;
         ({Grammar, rx} = require('../../../apps/interlex'));
         //=====================================================================================================
         g = new Grammar({
@@ -5067,18 +5136,18 @@
         });
         //.....................................................................................................
         source = "Alice in Cairo 1912 'approximately'";
-        // info 'Ωilxt_592', source; tabulate_lexemes g.scan source
-        info('Ωilxt_593', source);
+        // info 'Ωilxt_608', source; tabulate_lexemes g.scan source
+        info('Ωilxt_609', source);
         g.reset_lnr(1);
         lexemes = g.scan(source);
-        this.eq((Ωilxt_594 = function() {
+        this.eq((Ωilxt_610 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.start',
           hit: '',
           pos: '1:0:0'
         });
-        this.eq((Ωilxt_595 = function() {
+        this.eq((Ωilxt_611 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.jump',
@@ -5088,7 +5157,7 @@
             target: 'gnd'
           }
         });
-        this.eq((Ωilxt_596 = function() {
+        this.eq((Ωilxt_612 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.name',
@@ -5098,28 +5167,28 @@
             initial: 'A'
           }
         });
-        this.eq((Ωilxt_597 = function() {
+        this.eq((Ωilxt_613 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:5:6'
         });
-        this.eq((Ωilxt_598 = function() {
+        this.eq((Ωilxt_614 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.other',
           hit: 'in',
           pos: '1:6:8'
         });
-        this.eq((Ωilxt_599 = function() {
+        this.eq((Ωilxt_615 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:8:9'
         });
-        this.eq((Ωilxt_600 = function() {
+        this.eq((Ωilxt_616 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.name',
@@ -5129,35 +5198,35 @@
             initial: 'C'
           }
         });
-        this.eq((Ωilxt_601 = function() {
+        this.eq((Ωilxt_617 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:14:15'
         });
-        this.eq((Ωilxt_602 = function() {
+        this.eq((Ωilxt_618 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.number',
           hit: '1912',
           pos: '1:15:19'
         });
-        this.eq((Ωilxt_603 = function() {
+        this.eq((Ωilxt_619 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.ws',
           hit: ' ',
           pos: '1:19:20'
         });
-        this.eq((Ωilxt_604 = function() {
+        this.eq((Ωilxt_620 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'gnd.string11_start',
           hit: "'",
           pos: '1:20:21'
         });
-        this.eq((Ωilxt_605 = function() {
+        this.eq((Ωilxt_621 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.jump',
@@ -5167,14 +5236,14 @@
             target: 'string11'
           }
         });
-        this.eq((Ωilxt_606 = function() {
+        this.eq((Ωilxt_622 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: 'string11.text',
           hit: 'approximately',
           pos: '1:21:34'
         });
-        this.eq((Ωilxt_607 = function() {
+        this.eq((Ωilxt_623 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.jump',
@@ -5184,7 +5253,7 @@
             target: null
           }
         });
-        this.eq((Ωilxt_608 = function() {
+        this.eq((Ωilxt_624 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$error.earlystop',
@@ -5194,14 +5263,14 @@
             message: 'expected stop at 35, got 34'
           }
         });
-        this.eq((Ωilxt_609 = function() {
+        this.eq((Ωilxt_625 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), {
           fqname: '$signal.stop',
           hit: '',
           pos: '1:34:34'
         });
-        this.eq((Ωilxt_610 = function() {
+        this.eq((Ωilxt_626 = function() {
           return abbrlxm(tabulate_lexeme(lexemes.next().value));
         }), null);
         return null;
@@ -5236,124 +5305,124 @@
           fit: rx`[0-9]+`
         });
         (() => {          //.....................................................................................................
-          var lexemes, source, Ωilxt_613, Ωilxt_614, Ωilxt_615, Ωilxt_616, Ωilxt_617, Ωilxt_618, Ωilxt_619, Ωilxt_620;
+          var lexemes, source, Ωilxt_629, Ωilxt_630, Ωilxt_631, Ωilxt_632, Ωilxt_633, Ωilxt_634, Ωilxt_635, Ωilxt_636;
           source = "R\\2D\\2 on Charon 3";
-          // info 'Ωilxt_611', source; tabulate_lexemes g.scan source
-          info('Ωilxt_612', source);
+          // info 'Ωilxt_627', source; tabulate_lexemes g.scan source
+          info('Ωilxt_628', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_613 = function() {
+          this.eq((Ωilxt_629 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: 'R',
             pos: '1:0:1'
           });
-          this.eq((Ωilxt_614 = function() {
+          this.eq((Ωilxt_630 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: '\\2',
             pos: '1:1:3'
           });
-          this.eq((Ωilxt_615 = function() {
+          this.eq((Ωilxt_631 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: 'D',
             pos: '1:3:4'
           });
-          this.eq((Ωilxt_616 = function() {
+          this.eq((Ωilxt_632 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: '\\2',
             pos: '1:4:6'
           });
-          this.eq((Ωilxt_617 = function() {
+          this.eq((Ωilxt_633 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: ' on Charon ',
             pos: '1:6:17'
           });
-          this.eq((Ωilxt_618 = function() {
+          this.eq((Ωilxt_634 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.number_start',
             hit: '',
             pos: '1:17:17'
           });
-          this.eq((Ωilxt_619 = function() {
+          this.eq((Ωilxt_635 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.number',
             hit: '3',
             pos: '1:17:18'
           });
-          this.eq((Ωilxt_620 = function() {
+          this.eq((Ωilxt_636 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
         })();
         (() => {          //.....................................................................................................
-          var lexemes, source, Ωilxt_623, Ωilxt_624, Ωilxt_625, Ωilxt_626, Ωilxt_627, Ωilxt_628, Ωilxt_629, Ωilxt_630, Ωilxt_631;
+          var lexemes, source, Ωilxt_639, Ωilxt_640, Ωilxt_641, Ωilxt_642, Ωilxt_643, Ωilxt_644, Ωilxt_645, Ωilxt_646, Ωilxt_647;
           source = "R\\2D\\2 on Charon 3!!";
           // echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_621', source; tabulate_lexemes g.scan source
-          info('Ωilxt_622', source);
+          // info 'Ωilxt_637', source; tabulate_lexemes g.scan source
+          info('Ωilxt_638', source);
           g.reset_lnr(1);
           lexemes = g.scan(source);
-          this.eq((Ωilxt_623 = function() {
+          this.eq((Ωilxt_639 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: 'R',
             pos: '1:0:1'
           });
-          this.eq((Ωilxt_624 = function() {
+          this.eq((Ωilxt_640 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: '\\2',
             pos: '1:1:3'
           });
-          this.eq((Ωilxt_625 = function() {
+          this.eq((Ωilxt_641 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: 'D',
             pos: '1:3:4'
           });
-          this.eq((Ωilxt_626 = function() {
+          this.eq((Ωilxt_642 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: '\\2',
             pos: '1:4:6'
           });
-          this.eq((Ωilxt_627 = function() {
+          this.eq((Ωilxt_643 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.text',
             hit: ' on Charon ',
             pos: '1:6:17'
           });
-          this.eq((Ωilxt_628 = function() {
+          this.eq((Ωilxt_644 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'gnd.number_start',
             hit: '',
             pos: '1:17:17'
           });
-          this.eq((Ωilxt_629 = function() {
+          this.eq((Ωilxt_645 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'number.number',
             hit: '3',
             pos: '1:17:18'
           });
-          this.eq((Ωilxt_630 = function() {
+          this.eq((Ωilxt_646 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: '$error.earlystop',
@@ -5363,7 +5432,7 @@
               message: 'expected stop at 20, got 18'
             }
           });
-          this.eq((Ωilxt_631 = function() {
+          this.eq((Ωilxt_647 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
@@ -5378,37 +5447,37 @@
         var Grammar, rx;
         ({Grammar, rx} = require('../../../apps/interlex'));
         (() => {          //.........................................................................................................
-          var g, Ωilxt_632, Ωilxt_633, Ωilxt_634, Ωilxt_635;
+          var g, Ωilxt_648, Ωilxt_649, Ωilxt_650, Ωilxt_651;
           g = new Grammar();
-          this.eq((Ωilxt_632 = function() {
+          this.eq((Ωilxt_648 = function() {
             return g.cfg.name;
           }), 'g');
-          this.eq((Ωilxt_633 = function() {
+          this.eq((Ωilxt_649 = function() {
             return g.cfg.strategy;
           }), 'first');
-          this.eq((Ωilxt_634 = function() {
+          this.eq((Ωilxt_650 = function() {
             return g.cfg.emit_signals;
           }), true);
-          this.eq((Ωilxt_635 = function() {
+          this.eq((Ωilxt_651 = function() {
             return g.cfg.merge_jumps;
           }), true);
           return null;
         })();
         (() => {          //.........................................................................................................
-          var g, Ωilxt_636, Ωilxt_637, Ωilxt_638, Ωilxt_639;
+          var g, Ωilxt_652, Ωilxt_653, Ωilxt_654, Ωilxt_655;
           g = new Grammar({
             emit_signals: false
           });
-          this.eq((Ωilxt_636 = function() {
+          this.eq((Ωilxt_652 = function() {
             return g.cfg.name;
           }), 'g');
-          this.eq((Ωilxt_637 = function() {
+          this.eq((Ωilxt_653 = function() {
             return g.cfg.strategy;
           }), 'first');
-          this.eq((Ωilxt_638 = function() {
+          this.eq((Ωilxt_654 = function() {
             return g.cfg.emit_signals;
           }), false);
-          this.eq((Ωilxt_639 = function() {
+          this.eq((Ωilxt_655 = function() {
             return g.cfg.merge_jumps;
           }), false);
           return null;
