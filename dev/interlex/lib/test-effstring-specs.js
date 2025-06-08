@@ -137,10 +137,10 @@
             cast
           }));
           source = ':;';
-          // info 'Ωefft___1', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft___2', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft___1', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft___2', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft___3', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft___4 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -212,10 +212,10 @@
             cast
           }));
           source = 'not a spec';
-          // info 'Ωefft__12', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__13', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__12', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__13', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__14', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__15 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -271,10 +271,10 @@
             emit_signals: false
           }));
           source = ':.4;';
-          // info 'Ωefft__21', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__22', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__21', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__22', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__23', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__24 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -313,10 +313,10 @@
             emit_signals: false
           }));
           source = ':.4;rest of text';
-          // info 'Ωefft__28', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__29', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__28', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__29', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__30', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__31 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -362,10 +362,10 @@
             emit_signals: false
           }));
           source = ':.4~;...';
-          // info 'Ωefft__36', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__37', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__36', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__37', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__38', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__39 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -421,10 +421,10 @@
             emit_signals: false
           }));
           source = ':.4~f;...';
-          // info 'Ωefft__45', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__46', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__45', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__46', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__47', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__48 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -491,10 +491,10 @@
             emit_signals: false
           }));
           source = ':.4~f/µ;...';
-          // info 'Ωefft__55', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__56', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__55', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__56', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__57', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__58 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -561,10 +561,10 @@
             emit_signals: false
           }));
           source = ':20.4~f/µ;...';
-          // info 'Ωefft__65', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__66', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__65', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__66', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__67', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__68 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -642,10 +642,10 @@
             emit_signals: false
           }));
           source = ':020.4~f/µ;...';
-          // info 'Ωefft__76', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__77', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__76', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__77', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__78', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__79 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -723,10 +723,10 @@
             emit_signals: false
           }));
           source = ':$020.4~f/µ;...';
-          // info 'Ωefft__87', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft__88', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__87', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft__88', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft__89', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft__90 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -814,10 +814,10 @@
             emit_signals: false
           }));
           source = ': $020.4~f/µ;...';
-          // info 'Ωefft__99', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft_100', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft__99', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft_100', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft_101', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft_102 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -915,10 +915,10 @@
             emit_signals: false
           }));
           source = ':>-$020.4~f/µ;...';
-          // info 'Ωefft_112', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft_113', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft_112', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft_113', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft_114', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft_115 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -1027,10 +1027,10 @@
             emit_signals: false
           }));
           source = ':_>-$020.4~f/µ;...';
-          // info 'Ωefft_126', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft_127', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft_126', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft_127', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft_128', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωefft_129 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
@@ -1167,10 +1167,10 @@
             emit_signals: false
           }));
           source = ':_>-$020.4~f/µ; whatever comes after the fspec';
-          // info 'Ωefft_141', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft_142', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft_141', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft_142', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft_143', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           d = parse_fspec(g, source);
           ref = (Object.keys(d)).sort();
           for (i = 0, len = ref.length; i < len; i++) {
@@ -1343,11 +1343,11 @@
             emit_signals: false
           }));
           source = ':_>-$020,.4~f/µ; whatever comes after the fspec';
-          // info 'Ωefft_147', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-          // info 'Ωefft_148', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+          // info 'Ωefft_147', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωefft_148', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
           info('Ωefft_149', extract(g, source));
           info('Ωefft_150', source);
-          g.reset_lnr(1);
+          g.reset_lnr();
           reset_data.call(g, template);
           show_data(result = extract(g, source));
           this.eq((Ωefft_151 = function() {

@@ -101,9 +101,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, }
         source  = ':;'
-        # info 'Ωefft___1', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft___2', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft___3', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft___1', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft___2', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft___3', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft___4 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start', hit: '',  pos: '1:0:0' }
         @eq ( Ωefft___5 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',  pos: '1:0:0', data: { target: 'outer' } }
         @eq ( Ωefft___6 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',   hit: ':', pos: '1:0:1' }
@@ -117,9 +117,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, }
         source  = 'not a spec'
-        # info 'Ωefft__12', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__13', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__14', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__12', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__13', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__14', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__15 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start', hit: '',           pos: '1:0:0' }
         @eq ( Ωefft__16 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',           pos: '1:0:0', data: { target: 'outer' } }
         @eq ( Ωefft__17 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.tail',    hit: 'not a spec', pos: '1:0:10' }
@@ -131,9 +131,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':.4;'
-        # info 'Ωefft__21', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__22', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__23', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__21', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__22', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__23', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__24 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',     hit: ':',  pos: '1:0:1' }
         @eq ( Ωefft__25 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision', hit: '.4', pos: '1:1:3', data: { precision: 4 } }
         @eq ( Ωefft__26 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.exit',      hit: ';',  pos: '1:3:4' }
@@ -143,9 +143,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':.4;rest of text'
-        # info 'Ωefft__28', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__29', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__30', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__28', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__29', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__30', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__31 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',     hit: ':',            pos: '1:0:1' }
         @eq ( Ωefft__32 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision', hit: '.4',           pos: '1:1:3', data: { precision: 4 } }
         @eq ( Ωefft__33 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.exit',      hit: ';',            pos: '1:3:4' }
@@ -156,9 +156,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':.4~;...'
-        # info 'Ωefft__36', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__37', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__38', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__36', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__37', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__38', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__39 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter', hit: ':', pos: '1:0:1' }
         @eq ( Ωefft__40 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision', hit: '.4', pos: '1:1:3', data: { precision: 4 } }
         @eq ( Ωefft__41 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.trim', hit: '~', pos: '1:3:4', data: { trim: true, } }
@@ -170,9 +170,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':.4~f;...'
-        # info 'Ωefft__45', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__46', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__47', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__45', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__46', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__47', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__48 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',     hit: ':', pos: '1:0:1' }
         @eq ( Ωefft__49 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision', hit: '.4', pos: '1:1:3', data: { precision: 4 } }
         @eq ( Ωefft__50 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.trim',      hit: '~', pos: '1:3:4', data: { trim: true, } }
@@ -185,9 +185,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':.4~f/µ;...'
-        # info 'Ωefft__55', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__56', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__57', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__55', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__56', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__57', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__58 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',     hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft__59 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision', hit: '.4',  pos: '1:1:3', data: { precision: 4 } }
         @eq ( Ωefft__60 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.trim',      hit: '~',   pos: '1:3:4', data: { trim: true } }
@@ -200,9 +200,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':20.4~f/µ;...'
-        # info 'Ωefft__65', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__66', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__67', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__65', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__66', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__67', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__68 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',       hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft__69 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.zeros_width', hit: '20',  pos: '1:1:3', data: { zeros: false, width: 20 } }
         @eq ( Ωefft__70 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision',   hit: '.4',  pos: '1:3:5', data: { precision: 4 } }
@@ -216,9 +216,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':020.4~f/µ;...'
-        # info 'Ωefft__76', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__77', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__78', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__76', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__77', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__78', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__79 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',       hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft__80 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.zeros_width', hit: '020', pos: '1:1:4', data: { zeros: true, width: 20 } }
         @eq ( Ωefft__81 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.precision',   hit: '.4',  pos: '1:4:6', data: { precision: 4 } }
@@ -232,9 +232,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':$020.4~f/µ;...'
-        # info 'Ωefft__87', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft__88', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft__89', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__87', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft__88', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft__89', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft__90 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',       hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft__91 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.symbol',      hit: '$',   pos: '1:1:2', data: { symbol: '$' } }
         @eq ( Ωefft__92 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.zeros_width', hit: '020', pos: '1:2:5', data: { zeros: true, width: 20 } }
@@ -249,9 +249,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ': $020.4~f/µ;...'
-        # info 'Ωefft__99', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft_100', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft_101', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft__99', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft_100', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft_101', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft_102 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',       hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft_103 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.sign',        hit: ' ',   pos: '1:1:2', data: { sign: ' ' } }
         @eq ( Ωefft_104 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.symbol',      hit: '$',   pos: '1:2:3', data: { symbol: '$' } }
@@ -267,9 +267,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':>-$020.4~f/µ;...'
-        # info 'Ωefft_112', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft_113', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft_114', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft_112', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft_113', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft_114', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft_115 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',       hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft_116 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.fill_align',  hit: '>', pos: '1:1:2', data: { fill: '', align: '>' } }
         @eq ( Ωefft_117 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.sign',        hit: '-',   pos: '1:2:3', data: { sign: '-' } }
@@ -286,9 +286,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':_>-$020.4~f/µ;...'
-        # info 'Ωefft_126', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft_127', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft_128', source; g.reset_lnr 1; lexemes = g.scan source
+        # info 'Ωefft_126', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft_127', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft_128', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωefft_129 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.enter',       hit: ':',   pos: '1:0:1' }
         @eq ( Ωefft_130 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.fill_align',  hit: '_>',  pos: '1:1:3', data: { fill: '_', align: '>' } }
         @eq ( Ωefft_131 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'fspec.sign',        hit: '-',   pos: '1:3:4', data: { sign: '-' } }
@@ -321,9 +321,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
         #---------------------------------------------------------------------------------------------------
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':_>-$020.4~f/µ; whatever comes after the fspec'
-        # info 'Ωefft_141', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft_142', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωefft_143', source; g.reset_lnr 1; d = parse_fspec g, source
+        # info 'Ωefft_141', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft_142', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωefft_143', source; g.reset_lnr(); d = parse_fspec g, source
         for key in ( Object.keys d ).sort()
           value = d[ key ]
           help 'Ωefft_144', f"#{key}:<10c; | #{rpr value}"
@@ -416,10 +416,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         extract = ( g, source ) -> g.scan_to_list source; return Object.assign ( Object.create null ), g.data
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         source  = ':_>-$020,.4~f/µ; whatever comes after the fspec'
-        # info 'Ωefft_147', source; g.reset_lnr 1; tabulate_lexemes g.scan source
-        # info 'Ωefft_148', source; g.reset_lnr 1; echo abbrlxm lexeme for lexeme from g.scan source
+        # info 'Ωefft_147', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωefft_148', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
         info 'Ωefft_149', extract g, source
-        info 'Ωefft_150', source; g.reset_lnr 1; reset_data.call g, template; show_data result = extract g, source
+        info 'Ωefft_150', source; g.reset_lnr(); reset_data.call g, template; show_data result = extract g, source
         @eq ( Ωefft_151 = -> result.fill ),       '_'
         @eq ( Ωefft_152 = -> result.align ),      '>'
         @eq ( Ωefft_153 = -> result.sign ),       '-'
