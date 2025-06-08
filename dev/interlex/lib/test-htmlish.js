@@ -39,7 +39,7 @@
         ({Grammar, rx} = require('../../../apps/interlex'));
         //.....................................................................................................
         declare_lexemes = function(g) {
-          var ltag, ncr_cast, outer, rtag, text_re;
+          var ltag, ncr_cast, outer, rtag;
           outer = g.new_level({
             name: 'outer'
           });
@@ -60,6 +60,7 @@
           */
           //...................................................................................................
           ncr_cast = function({fqname, hit, data}) {
+            var ref;
             if ((data.csname == null) || (data.csname === '')) {
               data.csname = 'U';
             }
@@ -73,16 +74,14 @@
                 delete data.dec;
                 break;
               case data.cpname != null:
-                data.cid = {
-                  apos: 0x27
-                }[data.cpname];
+                data.cid = (ref = {
+                  apos: 0x27,
+                  auml: 0xe4
+                }[data.cpname]) != null ? ref : -1;
                 delete data.cpname;
             }
             return null;
           };
-          //...................................................................................................
-          text_re = rx`( (?<bslash> \ ) (?<chr>.) ) |
-  (?<text> [^ < > & \ ]+ )`;
           //...................................................................................................
           outer.new_token({
             name: 'escchr',
@@ -114,12 +113,13 @@
             cast: ncr_cast
           });
           outer.new_token({
-            name: 'text',
-            fit: text_re
+            name: 'illegal',
+            fit: /(?<illegal>[<>&])/,
+            merge: true
           });
           outer.new_token({
-            name: 'illegal',
-            fit: /(?<illegal>[<>&])/
+            name: 'text',
+            fit: /(?<text>[^<>&\\]+)/
           });
           //...................................................................................................
           /* TAINT ltag name is complicated enough for its own level */
@@ -236,7 +236,7 @@
           return null;
         })();
         (() => {          //.....................................................................................................
-          var g, lexemes, source, Ωhsht__15, Ωhsht__16, Ωhsht__17, Ωhsht__18;
+          var g, lexemes, source, Ωhsht__15, Ωhsht__16;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
             cast,
@@ -252,39 +252,19 @@
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), {
             fqname: 'outer.illegal',
-            hit: '>',
-            pos: '1:0:1',
+            hit: '>>&',
+            pos: '1:0:3',
             data: {
-              illegal: '>'
+              illegal: ['>', '>', '&']
             }
           });
           this.eq((Ωhsht__16 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'outer.illegal',
-            hit: '>',
-            pos: '1:1:2',
-            data: {
-              illegal: '>'
-            }
-          });
-          this.eq((Ωhsht__17 = function() {
-            return abbrlxm(tabulate_lexeme(lexemes.next().value));
-          }), {
-            fqname: 'outer.illegal',
-            hit: '&',
-            pos: '1:2:3',
-            data: {
-              illegal: '&'
-            }
-          });
-          this.eq((Ωhsht__18 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
           return null;
         })();
         (() => {          //.....................................................................................................
-          var data, fqn, g, i, j, len, len1, probes_and_matchers, source, Ωhsht__19;
+          var data, fqn, g, i, len, probes_and_matchers, source, Ωhsht__17;
           g = declare_lexemes(new Grammar({
             name: 'fspec',
             cast,
@@ -375,7 +355,7 @@
               '&',
               'outer.illegal',
               {
-                illegal: '&'
+                illegal: ['&']
               }
             ],
             [
@@ -389,36 +369,216 @@
               '&#x98a',
               'outer.illegal',
               {
-                illegal: '&'
+                illegal: ['&']
               }
             ]
           ];
+// echo ( abbrlxm2 source, g.scan_first source ) for [ source, ] in probes_and_matchers
+// [ '\\', 'outer.text',                 { bslash: undefined, chr: undefined, text: '\\' } ]
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
-            [source] = probes_and_matchers[i];
-            // echo abbrlxm2 source, g.scan_first probe for [ probe, matcher, ] in probes_and_matchers
-            // [ '\\', 'outer.text',                 { bslash: undefined, chr: undefined, text: '\\' } ]
-            echo(abbrlxm2(source, g.scan_first(source)));
-          }
-          for (j = 0, len1 = probes_and_matchers.length; j < len1; j++) {
-            [source, fqn, data] = probes_and_matchers[j];
-            this.eq((Ωhsht__19 = function() {
+            [source, fqn, data] = probes_and_matchers[i];
+            this.eq((Ωhsht__17 = function() {
               return abbrlxm2(source, g.scan_first(source));
             }), [source, fqn, data]);
           }
           return null;
         })();
-        // #.....................................................................................................
-        // do =>
-        //   g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
-        //   source  = raw"𠀦𠀧𠀨&apos;𠀦&#1234;&#98a;&#x98a;&#x98A;&#X98A;&#X98a;&big-5#xabf73;𠀧𠀨\&ok\&auml;"
-        //   info 'Ωhsht__20', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        //   info 'Ωhsht__21', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        //   info 'Ωhsht__22', source; g.reset_lnr(); lexemes = g.scan source
-        //   # @eq ( Ωhsht__23 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.illegal', hit: '>', pos: '1:0:1', data: { illegal: '>' } }
-        //   # @eq ( Ωhsht__24 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.illegal', hit: '>', pos: '1:1:2', data: { illegal: '>' } }
-        //   # @eq ( Ωhsht__25 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.illegal', hit: '&', pos: '1:2:3', data: { illegal: '&' } }
-        //   @eq ( Ωhsht__26 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-        //   return null
+        (() => {          //.....................................................................................................
+          var g, lexemes, source, Ωhsht__21, Ωhsht__22, Ωhsht__23, Ωhsht__24, Ωhsht__25, Ωhsht__26, Ωhsht__27, Ωhsht__28, Ωhsht__29, Ωhsht__30, Ωhsht__31, Ωhsht__32, Ωhsht__33, Ωhsht__34, Ωhsht__35, Ωhsht__36, Ωhsht__37, Ωhsht__38;
+          g = declare_lexemes(new Grammar({
+            name: 'fspec',
+            cast,
+            emit_signals: false
+          }));
+          source = raw`𠀦𠀧𠀨&apos;𠀦&#1234;&#98a;&#x98a;&#x98A;&#X98A;&#X98a;&big-5#xabf73;𠀧𠀨\&ok\&auml;&auml;`;
+          // info 'Ωhsht__18', source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωhsht__19', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωhsht__20', source);
+          g.reset_lnr();
+          lexemes = g.scan(source);
+          this.eq((Ωhsht__21 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.text',
+            hit: '𠀦𠀧𠀨',
+            pos: '1:0:6',
+            data: {
+              text: '𠀦𠀧𠀨'
+            }
+          });
+          this.eq((Ωhsht__22 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_named',
+            hit: '&apos;',
+            pos: '1:6:12',
+            data: {
+              csname: 'U',
+              cid: 39
+            }
+          });
+          this.eq((Ωhsht__23 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.text',
+            hit: '𠀦',
+            pos: '1:12:14',
+            data: {
+              text: '𠀦'
+            }
+          });
+          this.eq((Ωhsht__24 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_dec',
+            hit: '&#1234;',
+            pos: '1:14:21',
+            data: {
+              csname: 'U',
+              cid: 1234
+            }
+          });
+          this.eq((Ωhsht__25 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.illegal',
+            hit: '&',
+            pos: '1:21:22',
+            data: {
+              illegal: ['&']
+            }
+          });
+          this.eq((Ωhsht__26 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.text',
+            hit: '#98a;',
+            pos: '1:22:27',
+            data: {
+              text: '#98a;'
+            }
+          });
+          this.eq((Ωhsht__27 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_hex',
+            hit: '&#x98a;',
+            pos: '1:27:34',
+            data: {
+              csname: 'U',
+              cid: 2442
+            }
+          });
+          this.eq((Ωhsht__28 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_hex',
+            hit: '&#x98A;',
+            pos: '1:34:41',
+            data: {
+              csname: 'U',
+              cid: 2442
+            }
+          });
+          this.eq((Ωhsht__29 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_hex',
+            hit: '&#X98A;',
+            pos: '1:41:48',
+            data: {
+              csname: 'U',
+              cid: 2442
+            }
+          });
+          this.eq((Ωhsht__30 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_hex',
+            hit: '&#X98a;',
+            pos: '1:48:55',
+            data: {
+              csname: 'U',
+              cid: 2442
+            }
+          });
+          this.eq((Ωhsht__31 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_hex',
+            hit: '&big-5#xabf73;',
+            pos: '1:55:69',
+            data: {
+              csname: 'big-5',
+              cid: 704371
+            }
+          });
+          this.eq((Ωhsht__32 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.text',
+            hit: '𠀧𠀨',
+            pos: '1:69:73',
+            data: {
+              text: '𠀧𠀨'
+            }
+          });
+          this.eq((Ωhsht__33 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.escchr',
+            hit: '\\&',
+            pos: '1:73:75',
+            data: {
+              chr: '&'
+            }
+          });
+          this.eq((Ωhsht__34 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.text',
+            hit: 'ok',
+            pos: '1:75:77',
+            data: {
+              text: 'ok'
+            }
+          });
+          this.eq((Ωhsht__35 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.escchr',
+            hit: '\\&',
+            pos: '1:77:79',
+            data: {
+              chr: '&'
+            }
+          });
+          this.eq((Ωhsht__36 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.text',
+            hit: 'auml;',
+            pos: '1:79:84',
+            data: {
+              text: 'auml;'
+            }
+          });
+          this.eq((Ωhsht__37 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'outer.ncr_named',
+            hit: '&auml;',
+            pos: '1:84:90',
+            data: {
+              csname: 'U',
+              cid: 228
+            }
+          });
+          this.eq((Ωhsht__38 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
         //.....................................................................................................
         return null;
       }
