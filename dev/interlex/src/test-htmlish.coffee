@@ -57,7 +57,7 @@ abbrlxm2                  = ( source, lxm ) -> if lxm? then [ source, lxm.fqname
         ###
         #...................................................................................................
         ncr_cast = ({ fqname, hit, data, }) ->
-          data.csname = 'U' if ( not data.csname? ) or ( data.csname is '' )
+          data.csn = 'U' if ( not data.csn? ) or ( data.csn is '' )
           switch true
             when data.hex?
               data.cid = parseInt data.hex, 16
@@ -74,8 +74,8 @@ abbrlxm2                  = ( source, lxm ) -> if lxm? then [ source, lxm.fqname
         outer.new_token { name: 'start_rtag',   fit: /(?<lpb><)(?<slash>\/)/, jump: 'rtag!',              }
         outer.new_token { name: 'start_ltag',   fit: /(?<lpb><)/,  jump: 'ltag!',                         }
         outer.new_token { name: 'ncr_named',    fit: /&(?<cpname>[^#;]+);/,                           cast: ncr_cast, }
-        outer.new_token { name: 'ncr_dec',      fit: /&(?<csname>[^#;]*)#(?<dec>[0-9]+);/,            cast: ncr_cast, }
-        outer.new_token { name: 'ncr_hex',      fit: /&(?<csname>[^#;]*)#[xX](?<hex>[0-9a-fA-F]+);/,  cast: ncr_cast, }
+        outer.new_token { name: 'ncr_dec',      fit: /&(?<csn>[^#;]*)#(?<dec>[0-9]+);/,            cast: ncr_cast, }
+        outer.new_token { name: 'ncr_hex',      fit: /&(?<csn>[^#;]*)#[xX](?<hex>[0-9a-fA-F]+);/,  cast: ncr_cast, }
         outer.new_token { name: 'illegal',      fit: /(?<illegal>[<>&])/,                             merge: true,    }
         outer.new_token { name: 'text',         fit: /(?<text>[^<>&\\]+)/,                                             }
         #...................................................................................................
@@ -119,16 +119,16 @@ abbrlxm2                  = ( source, lxm ) -> if lxm? then [ source, lxm.fqname
       do =>
         g       = declare_lexemes new Grammar { name: 'fspec', cast, emit_signals: false, }
         probes_and_matchers = [
-          [ '&apos;',         'outer.ncr_named',  { csname: 'U',     cid: 39     }, ]
-          [ '&#1234;',        'outer.ncr_dec',    { csname: 'U',     cid: 1234   }, ]
-          [ '&jzr#1234;',     'outer.ncr_dec',    { csname: 'jzr',   cid: 1234   }, ]
-          [ '&#x98a;',        'outer.ncr_hex',    { csname: 'U',     cid: 2442   }, ]
-          [ '&#x98A;',        'outer.ncr_hex',    { csname: 'U',     cid: 2442   }, ]
-          [ '&#X98A;',        'outer.ncr_hex',    { csname: 'U',     cid: 2442   }, ]
-          [ '&#X98a;',        'outer.ncr_hex',    { csname: 'U',     cid: 2442   }, ]
-          [ '&gb31#xabf73;',  'outer.ncr_hex',    { csname: 'gb31',  cid: 704371 }, ]
-          [ '&gb31#XABF73;',  'outer.ncr_hex',    { csname: 'gb31',  cid: 704371 }, ]
-          [ '&big-5#xabf73;', 'outer.ncr_hex',    { csname: 'big-5', cid: 704371 }, ]
+          [ '&apos;',         'outer.ncr_named',  { csn: 'U',     cid: 39     }, ]
+          [ '&#1234;',        'outer.ncr_dec',    { csn: 'U',     cid: 1234   }, ]
+          [ '&jzr#1234;',     'outer.ncr_dec',    { csn: 'jzr',   cid: 1234   }, ]
+          [ '&#x98a;',        'outer.ncr_hex',    { csn: 'U',     cid: 2442   }, ]
+          [ '&#x98A;',        'outer.ncr_hex',    { csn: 'U',     cid: 2442   }, ]
+          [ '&#X98A;',        'outer.ncr_hex',    { csn: 'U',     cid: 2442   }, ]
+          [ '&#X98a;',        'outer.ncr_hex',    { csn: 'U',     cid: 2442   }, ]
+          [ '&gb31#xabf73;',  'outer.ncr_hex',    { csn: 'gb31',  cid: 704371 }, ]
+          [ '&gb31#XABF73;',  'outer.ncr_hex',    { csn: 'gb31',  cid: 704371 }, ]
+          [ '&big-5#xabf73;', 'outer.ncr_hex',    { csn: 'big-5', cid: 704371 }, ]
           [ '&',              'outer.illegal',    { illegal: [ '&', ]            }, ]
           [ '\\&',            'outer.escchr',     { chr: '&'                     }, ]
           [ '&#x98a',         'outer.illegal',    { illegal: [ '&', ]            }, ]
@@ -146,22 +146,22 @@ abbrlxm2                  = ( source, lxm ) -> if lxm? then [ source, lxm.fqname
         # info 'Ωhsht__19', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
         info 'Ωhsht__20', source; g.reset_lnr(); lexemes = g.scan source
         @eq ( Ωhsht__21 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.text', hit: '𠀦𠀧𠀨', pos: '1:0:6', data: { text: '𠀦𠀧𠀨' } }
-        @eq ( Ωhsht__22 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_named', hit: '&apos;', pos: '1:6:12', data: { csname: 'U', cid: 39 } }
+        @eq ( Ωhsht__22 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_named', hit: '&apos;', pos: '1:6:12', data: { csn: 'U', cid: 39 } }
         @eq ( Ωhsht__23 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.text', hit: '𠀦', pos: '1:12:14', data: { text: '𠀦' } }
-        @eq ( Ωhsht__24 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_dec', hit: '&#1234;', pos: '1:14:21', data: { csname: 'U', cid: 1234 } }
+        @eq ( Ωhsht__24 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_dec', hit: '&#1234;', pos: '1:14:21', data: { csn: 'U', cid: 1234 } }
         @eq ( Ωhsht__25 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.illegal', hit: '&', pos: '1:21:22', data: { illegal: [ '&' ] } }
         @eq ( Ωhsht__26 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.text', hit: '#98a;', pos: '1:22:27', data: { text: '#98a;' } }
-        @eq ( Ωhsht__27 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#x98a;', pos: '1:27:34', data: { csname: 'U', cid: 2442 } }
-        @eq ( Ωhsht__28 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#x98A;', pos: '1:34:41', data: { csname: 'U', cid: 2442 } }
-        @eq ( Ωhsht__29 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#X98A;', pos: '1:41:48', data: { csname: 'U', cid: 2442 } }
-        @eq ( Ωhsht__30 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#X98a;', pos: '1:48:55', data: { csname: 'U', cid: 2442 } }
-        @eq ( Ωhsht__31 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&big-5#xabf73;', pos: '1:55:69', data: { csname: 'big-5', cid: 704371 } }
+        @eq ( Ωhsht__27 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#x98a;', pos: '1:27:34', data: { csn: 'U', cid: 2442 } }
+        @eq ( Ωhsht__28 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#x98A;', pos: '1:34:41', data: { csn: 'U', cid: 2442 } }
+        @eq ( Ωhsht__29 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#X98A;', pos: '1:41:48', data: { csn: 'U', cid: 2442 } }
+        @eq ( Ωhsht__30 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&#X98a;', pos: '1:48:55', data: { csn: 'U', cid: 2442 } }
+        @eq ( Ωhsht__31 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_hex', hit: '&big-5#xabf73;', pos: '1:55:69', data: { csn: 'big-5', cid: 704371 } }
         @eq ( Ωhsht__32 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.text', hit: '𠀧𠀨', pos: '1:69:73', data: { text: '𠀧𠀨' } }
         @eq ( Ωhsht__33 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.escchr', hit: '\\&', pos: '1:73:75', data: { chr: '&' } }
         @eq ( Ωhsht__34 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.text', hit: 'ok', pos: '1:75:77', data: { text: 'ok' } }
         @eq ( Ωhsht__35 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.escchr', hit: '\\&', pos: '1:77:79', data: { chr: '&' } }
         @eq ( Ωhsht__36 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.text', hit: 'auml;', pos: '1:79:84', data: { text: 'auml;' } }
-        @eq ( Ωhsht__37 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_named', hit: '&auml;', pos: '1:84:90', data: { csname: 'U', cid: 228 } }
+        @eq ( Ωhsht__37 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'outer.ncr_named', hit: '&auml;', pos: '1:84:90', data: { csn: 'U', cid: 228 } }
         @eq ( Ωhsht__38 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       #.....................................................................................................

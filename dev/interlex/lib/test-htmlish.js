@@ -61,8 +61,8 @@
           //...................................................................................................
           ncr_cast = function({fqname, hit, data}) {
             var ref;
-            if ((data.csname == null) || (data.csname === '')) {
-              data.csname = 'U';
+            if ((data.csn == null) || (data.csn === '')) {
+              data.csn = 'U';
             }
             switch (true) {
               case data.hex != null:
@@ -104,12 +104,12 @@
           });
           outer.new_token({
             name: 'ncr_dec',
-            fit: /&(?<csname>[^#;]*)#(?<dec>[0-9]+);/,
+            fit: /&(?<csn>[^#;]*)#(?<dec>[0-9]+);/,
             cast: ncr_cast
           });
           outer.new_token({
             name: 'ncr_hex',
-            fit: /&(?<csname>[^#;]*)#[xX](?<hex>[0-9a-fA-F]+);/,
+            fit: /&(?<csn>[^#;]*)#[xX](?<hex>[0-9a-fA-F]+);/,
             cast: ncr_cast
           });
           outer.new_token({
@@ -275,7 +275,7 @@
               '&apos;',
               'outer.ncr_named',
               {
-                csname: 'U',
+                csn: 'U',
                 cid: 39
               }
             ],
@@ -283,7 +283,7 @@
               '&#1234;',
               'outer.ncr_dec',
               {
-                csname: 'U',
+                csn: 'U',
                 cid: 1234
               }
             ],
@@ -291,7 +291,7 @@
               '&jzr#1234;',
               'outer.ncr_dec',
               {
-                csname: 'jzr',
+                csn: 'jzr',
                 cid: 1234
               }
             ],
@@ -299,7 +299,7 @@
               '&#x98a;',
               'outer.ncr_hex',
               {
-                csname: 'U',
+                csn: 'U',
                 cid: 2442
               }
             ],
@@ -307,7 +307,7 @@
               '&#x98A;',
               'outer.ncr_hex',
               {
-                csname: 'U',
+                csn: 'U',
                 cid: 2442
               }
             ],
@@ -315,7 +315,7 @@
               '&#X98A;',
               'outer.ncr_hex',
               {
-                csname: 'U',
+                csn: 'U',
                 cid: 2442
               }
             ],
@@ -323,7 +323,7 @@
               '&#X98a;',
               'outer.ncr_hex',
               {
-                csname: 'U',
+                csn: 'U',
                 cid: 2442
               }
             ],
@@ -331,7 +331,7 @@
               '&gb31#xabf73;',
               'outer.ncr_hex',
               {
-                csname: 'gb31',
+                csn: 'gb31',
                 cid: 704371
               }
             ],
@@ -339,7 +339,7 @@
               '&gb31#XABF73;',
               'outer.ncr_hex',
               {
-                csname: 'gb31',
+                csn: 'gb31',
                 cid: 704371
               }
             ],
@@ -347,7 +347,7 @@
               '&big-5#xabf73;',
               'outer.ncr_hex',
               {
-                csname: 'big-5',
+                csn: 'big-5',
                 cid: 704371
               }
             ],
@@ -413,7 +413,7 @@
             hit: '&apos;',
             pos: '1:6:12',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 39
             }
           });
@@ -434,7 +434,7 @@
             hit: '&#1234;',
             pos: '1:14:21',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 1234
             }
           });
@@ -465,7 +465,7 @@
             hit: '&#x98a;',
             pos: '1:27:34',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 2442
             }
           });
@@ -476,7 +476,7 @@
             hit: '&#x98A;',
             pos: '1:34:41',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 2442
             }
           });
@@ -487,7 +487,7 @@
             hit: '&#X98A;',
             pos: '1:41:48',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 2442
             }
           });
@@ -498,7 +498,7 @@
             hit: '&#X98a;',
             pos: '1:48:55',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 2442
             }
           });
@@ -509,7 +509,7 @@
             hit: '&big-5#xabf73;',
             pos: '1:55:69',
             data: {
-              csname: 'big-5',
+              csn: 'big-5',
               cid: 704371
             }
           });
@@ -570,7 +570,7 @@
             hit: '&auml;',
             pos: '1:84:90',
             data: {
-              csname: 'U',
+              csn: 'U',
               cid: 228
             }
           });
