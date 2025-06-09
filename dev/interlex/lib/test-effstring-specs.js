@@ -1402,7 +1402,7 @@
     await (() => {
       var guytest_cfg, t;
       guytest_cfg = {
-        throw_on_error: true,
+        throw_on_error: false,
         show_passes: false,
         report_checks: false
       };

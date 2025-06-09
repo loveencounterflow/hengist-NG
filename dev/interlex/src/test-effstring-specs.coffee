@@ -440,6 +440,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true, show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
   ( t = new Test guytest_cfg ).test @effstring_tasks
 

@@ -70,16 +70,16 @@ abbrlxm2                  = ( source, lxm ) -> if lxm? then [ source, lxm.fqname
               delete data.cpname
           return null
         #...................................................................................................
-        outer.new_token { name: 'escchr',       fit: /\\(?<chr>.)/,               }
-        outer.new_token { name: 'start_rtag',   fit: /(?<lpb><)(?<slash>\/)/, jump: 'rtag!',              }
-        outer.new_token { name: 'start_ltag',   fit: /(?<lpb><)/,  jump: 'ltag!',                         }
-        outer.new_token { name: 'ncr_named',    fit: /&(?<cpname>[^#;]+);/,                           cast: ncr_cast, }
-        outer.new_token { name: 'ncr_dec',      fit: /&(?<csn>[^#;]*)#(?<dec>[0-9]+);/,            cast: ncr_cast, }
-        outer.new_token { name: 'ncr_hex',      fit: /&(?<csn>[^#;]*)#[xX](?<hex>[0-9a-fA-F]+);/,  cast: ncr_cast, }
-        outer.new_token { name: 'illegal',      fit: /(?<illegal>[<>&])/,                             merge: true,    }
-        outer.new_token { name: 'text',         fit: /(?<text>[^<>&\\]+)/,                                             }
+        outer.new_token { name: 'escchr',       fit: /\\(?<chr>.)/,                                                }
+        outer.new_token { name: 'start_rtag',   fit: /(?<lpb><)(?<slash>\/)/, jump: 'rtag!',                       }
+        outer.new_token { name: 'start_ltag',   fit: /(?<lpb><)/,             jump: 'ltag!',                       }
+        outer.new_token { name: 'ncr_named',    fit: /&(?<cpname>[^#;]+);/,                       cast: ncr_cast,  }
+        outer.new_token { name: 'ncr_dec',      fit: /&(?<csn>[^#;]*)#(?<dec>[0-9]+);/,           cast: ncr_cast,  }
+        outer.new_token { name: 'ncr_hex',      fit: /&(?<csn>[^#;]*)#[xX](?<hex>[0-9a-fA-F]+);/, cast: ncr_cast,  }
+        outer.new_token { name: 'illegal',      fit: /(?<illegal>[<>&])/,                         merge: true,     }
+        outer.new_token { name: 'text',         fit: /(?<text>[^<>&\\]+)/,                                         }
         #...................................................................................................
-        ### TAINT ltag name is complicated enough for its own level ###
+        ### TAINT is ltag name complicated enough for its own level? ###
         ltag.new_token { name: 'name',          fit: /(?<name>[^\s>\/]+)/,                                }
         ltag.new_token { name: 'stop',          fit: /(?<slash>\/?)(?<rpb>>)/, jump: '..'                 }
         #...................................................................................................

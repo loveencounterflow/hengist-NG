@@ -122,7 +122,7 @@
             fit: /(?<text>[^<>&\\]+)/
           });
           //...................................................................................................
-          /* TAINT ltag name is complicated enough for its own level */
+          /* TAINT is ltag name complicated enough for its own level? */
           ltag.new_token({
             name: 'name',
             fit: /(?<name>[^\s>\/]+)/
