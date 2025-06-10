@@ -1733,7 +1733,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
   user_errors:
 
     #-------------------------------------------------------------------------------------------------------
-    user_error_declared_on_token: ->
+    user_error_declared_on_level: ->
       { Grammar
         rx
         internals } = require '../../../apps/interlex'
@@ -1746,21 +1746,21 @@ GTNG                      = require '../../../apps/guy-test-NG'
         return null
       #.....................................................................................................
       g         = new Grammar { name: 'g', emit_signals: true, }
-      gnd       = g.new_level { name: 'gnd', }
+      gnd       = g.new_level { name: 'gnd', cast, }
       error     = g.new_level { name: 'error', }
       #.....................................................................................................
       name1 = gnd.new_token { name: 'name1',           fit: rx"(?<initial>[A-Z])", merge: true, }
-      name2 = gnd.new_token { name: 'name2',           fit: rx"(?<lower>[a-z])",   merge: true, cast, }
+      name2 = gnd.new_token { name: 'name2',           fit: rx"(?<lower>[a-z])",   merge: true, }
       error.new_token       { name: 'nolikedis',       fit: rx".",                 merge: true, }
       #.....................................................................................................
       @eq ( Ωilxt_525 = -> g.cast               ), null
       @eq ( Ωilxt_526 = -> g.cast_method        ), null
-      @eq ( Ωilxt_527 = -> gnd.cast             ), null
-      @eq ( Ωilxt_528 = -> gnd.cast_method      ), null
+      @eq ( Ωilxt_527 = -> gnd.cast is cast     ), true
+      @eq ( Ωilxt_528 = -> gnd.cast_method      ), 'walk'
       @eq ( Ωilxt_529 = -> error.cast           ), null
       @eq ( Ωilxt_530 = -> error.cast_method    ), null
-      @eq ( Ωilxt_531 = -> name2.cast is cast   ), true
-      @eq ( Ωilxt_532 = -> name2.cast_method    ), 'walk'
+      @eq ( Ωilxt_531 = -> name2.cast           ), null
+      @eq ( Ωilxt_532 = -> name2.cast_method    ), null
       #.....................................................................................................
       source = "Acceptreject"
       # info 'Ωilxt_533', source; tabulate_lexemes g.scan source
@@ -1784,7 +1784,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    user_error_declared_on_level: ->
+    user_error_declared_on_grammar: ->
       { Grammar
         rx
         internals } = require '../../../apps/interlex'
@@ -1796,18 +1796,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
         yield new_lexeme 'error.nolikedis', start, source, { letter: hit, }
         return null
       #.....................................................................................................
-      g         = new Grammar { name: 'g', emit_signals: true, }
-      gnd       = g.new_level { name: 'gnd', cast, }
+      g         = new Grammar { name: 'g', emit_signals: true, cast, }
+      gnd       = g.new_level { name: 'gnd', }
       error     = g.new_level { name: 'error', }
       #.....................................................................................................
       name1 = gnd.new_token { name: 'name1',           fit: rx"(?<initial>[A-Z])", merge: true, }
       name2 = gnd.new_token { name: 'name2',           fit: rx"(?<lower>[a-z])",   merge: true, }
       error.new_token       { name: 'nolikedis',       fit: rx".",                 merge: true, }
       #.....................................................................................................
-      @eq ( Ωilxt_550 = -> g.cast               ), null
-      @eq ( Ωilxt_551 = -> g.cast_method        ), null
-      @eq ( Ωilxt_552 = -> gnd.cast is cast     ), true
-      @eq ( Ωilxt_553 = -> gnd.cast_method      ), 'walk'
+      @eq ( Ωilxt_550 = -> g.cast is cast       ), true
+      @eq ( Ωilxt_551 = -> g.cast_method        ), 'walk'
+      @eq ( Ωilxt_552 = -> gnd.cast             ), null
+      @eq ( Ωilxt_553 = -> gnd.cast_method      ), null
       @eq ( Ωilxt_554 = -> error.cast           ), null
       @eq ( Ωilxt_555 = -> error.cast_method    ), null
       @eq ( Ωilxt_556 = -> name2.cast           ), null

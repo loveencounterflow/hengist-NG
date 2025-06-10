@@ -4360,7 +4360,7 @@
     //=========================================================================================================
     user_errors: {
       //-------------------------------------------------------------------------------------------------------
-      user_error_declared_on_token: function() {
+      user_error_declared_on_level: function() {
         var Grammar, cast, error, g, gnd, internals, lexemes, name1, name2, rx, source, Ωilxt_525, Ωilxt_526, Ωilxt_527, Ωilxt_528, Ωilxt_529, Ωilxt_530, Ωilxt_531, Ωilxt_532, Ωilxt_536, Ωilxt_537, Ωilxt_538, Ωilxt_539, Ωilxt_540, Ωilxt_541, Ωilxt_542, Ωilxt_543, Ωilxt_544, Ωilxt_545, Ωilxt_546, Ωilxt_547, Ωilxt_548, Ωilxt_549;
         ({Grammar, rx, internals} = require('../../../apps/interlex'));
         //=====================================================================================================
@@ -4380,7 +4380,8 @@
           emit_signals: true
         });
         gnd = g.new_level({
-          name: 'gnd'
+          name: 'gnd',
+          cast
         });
         error = g.new_level({
           name: 'error'
@@ -4394,8 +4395,7 @@
         name2 = gnd.new_token({
           name: 'name2',
           fit: rx`(?<lower>[a-z])`,
-          merge: true,
-          cast
+          merge: true
         });
         error.new_token({
           name: 'nolikedis',
@@ -4410,11 +4410,11 @@
           return g.cast_method;
         }), null);
         this.eq((Ωilxt_527 = function() {
-          return gnd.cast;
-        }), null);
+          return gnd.cast === cast;
+        }), true);
         this.eq((Ωilxt_528 = function() {
           return gnd.cast_method;
-        }), null);
+        }), 'walk');
         this.eq((Ωilxt_529 = function() {
           return error.cast;
         }), null);
@@ -4422,11 +4422,11 @@
           return error.cast_method;
         }), null);
         this.eq((Ωilxt_531 = function() {
-          return name2.cast === cast;
-        }), true);
+          return name2.cast;
+        }), null);
         this.eq((Ωilxt_532 = function() {
           return name2.cast_method;
-        }), 'walk');
+        }), null);
         //.....................................................................................................
         source = "Acceptreject";
         // info 'Ωilxt_533', source; tabulate_lexemes g.scan source
@@ -4565,7 +4565,7 @@
         return null;
       },
       //-------------------------------------------------------------------------------------------------------
-      user_error_declared_on_level: function() {
+      user_error_declared_on_grammar: function() {
         var Grammar, cast, error, g, gnd, internals, lexemes, name1, name2, rx, source, Ωilxt_550, Ωilxt_551, Ωilxt_552, Ωilxt_553, Ωilxt_554, Ωilxt_555, Ωilxt_556, Ωilxt_557, Ωilxt_561, Ωilxt_562, Ωilxt_563, Ωilxt_564, Ωilxt_565, Ωilxt_566, Ωilxt_567, Ωilxt_568, Ωilxt_569, Ωilxt_570, Ωilxt_571, Ωilxt_572, Ωilxt_573, Ωilxt_574;
         ({Grammar, rx, internals} = require('../../../apps/interlex'));
         //=====================================================================================================
@@ -4582,11 +4582,11 @@
         //.....................................................................................................
         g = new Grammar({
           name: 'g',
-          emit_signals: true
+          emit_signals: true,
+          cast
         });
         gnd = g.new_level({
-          name: 'gnd',
-          cast
+          name: 'gnd'
         });
         error = g.new_level({
           name: 'error'
@@ -4609,17 +4609,17 @@
         });
         //.....................................................................................................
         this.eq((Ωilxt_550 = function() {
-          return g.cast;
-        }), null);
+          return g.cast === cast;
+        }), true);
         this.eq((Ωilxt_551 = function() {
           return g.cast_method;
-        }), null);
+        }), 'walk');
         this.eq((Ωilxt_552 = function() {
-          return gnd.cast === cast;
-        }), true);
+          return gnd.cast;
+        }), null);
         this.eq((Ωilxt_553 = function() {
           return gnd.cast_method;
-        }), 'walk');
+        }), null);
         this.eq((Ωilxt_554 = function() {
           return error.cast;
         }), null);
