@@ -173,10 +173,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       @eq ( Ωilxt__77 = -> number_tk.name                                                 ), 'number'
       @eq ( Ωilxt__78 = -> number_tk.level                                                ), gnd
       @eq ( Ωilxt__79 = -> number_tk.grammar                                              ), g
-      @eq ( Ωilxt__80 = -> number_tk.fit                                              ), /[0-9]+/dvy
-      @eq ( Ωilxt__81 = -> number_tk.fit.hasIndices                                   ), true
-      @eq ( Ωilxt__82 = -> number_tk.fit.sticky                                       ), true
-      @eq ( Ωilxt__83 = -> number_tk.fit.unicodeSets                                  ), true
+      @eq ( Ωilxt__80 = -> number_tk.fit                                                  ), /[0-9]+/dvy
+      @eq ( Ωilxt__81 = -> number_tk.fit.hasIndices                                       ), true
+      @eq ( Ωilxt__82 = -> number_tk.fit.sticky                                           ), true
+      @eq ( Ωilxt__83 = -> number_tk.fit.unicodeSets                                      ), true
       @eq ( Ωilxt__84 = -> number_tk.jump                                                 ), null
       #.....................................................................................................
       @eq ( Ωilxt__85 = -> ( number_lx = number_tk.match_at 0, '398ä' )?                  ), true
@@ -198,6 +198,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
       @eq ( Ωilxt_100 = -> number_lx.start                                                ), 8
       @eq ( Ωilxt_101 = -> number_lx.stop                                                 ), 13
       #.....................................................................................................
+      @eq ( Ωilxt_102 = -> g.levels.gnd                                                   ), gnd
+      @eq ( Ωilxt_103 = -> g.levels.gnd.tokens.number                                     ), number_tk
+      @eq ( Ωilxt_104 = -> isa std.function, g.token_from_fqname                          ), true
+      @eq ( Ωilxt_105 = -> g.token_from_fqname 'gnd.number'                               ), number_tk
+      @throws ( Ωilxt_106 = -> g.token_from_fqname 'XXX.XXX'                              ), /unknown level 'XXX'/
+      @throws ( Ωilxt_107 = -> g.token_from_fqname 'gnd.XXX'                              ), /unknown token 'XXX'/
+      #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -207,19 +214,19 @@ GTNG                      = require '../../../apps/guy-test-NG'
         internals
         new_regex_tag } = require '../../../apps/interlex'
       #.....................................................................................................
-      @eq ( Ωilxt_102 = -> typeof   new_regex_tag 'dy'                                  ), 'function'
-      @eq ( Ωilxt_103 = -> typeof ( new_regex_tag 'dy'    ).si                          ), 'function'
-      @eq ( Ωilxt_104 = -> ( (      new_regex_tag 'dyis'  )"[a-z]" ) instanceof RegExp  ), true
+      @eq ( Ωilxt_108 = -> typeof   new_regex_tag 'dy'                                  ), 'function'
+      @eq ( Ωilxt_109 = -> typeof ( new_regex_tag 'dy'    ).si                          ), 'function'
+      @eq ( Ωilxt_110 = -> ( (      new_regex_tag 'dyis'  )"[a-z]" ) instanceof RegExp  ), true
       #.....................................................................................................
-      @eq ( Ωilxt_105 = -> ( new_regex_tag 'dyis'  )"[a-z]"     ), /[a-z]/disvy
-      @eq ( Ωilxt_106 = -> ( new_regex_tag 'dy'    ).si"[a-z]"  ), /[a-z]/disvy
-      @eq ( Ωilxt_107 = -> ( new_regex_tag 'dys'   ).si"[a-z]"  ), /[a-z]/disvy
-      @eq ( Ωilxt_108 = -> ( new_regex_tag 'dys'   ).i"[a-z]"   ), /[a-z]/disvy
-      @eq ( Ωilxt_109 = -> ( new_regex_tag 'dysi'  )"[a-z]"     ), /[a-z]/disvy
-      @eq ( Ωilxt_110 = -> ( new_regex_tag 'v'     ).si"[a-z]"  ), /[a-z]/disvy
+      @eq ( Ωilxt_111 = -> ( new_regex_tag 'dyis'  )"[a-z]"     ), /[a-z]/disvy
+      @eq ( Ωilxt_112 = -> ( new_regex_tag 'dy'    ).si"[a-z]"  ), /[a-z]/disvy
+      @eq ( Ωilxt_113 = -> ( new_regex_tag 'dys'   ).si"[a-z]"  ), /[a-z]/disvy
+      @eq ( Ωilxt_114 = -> ( new_regex_tag 'dys'   ).i"[a-z]"   ), /[a-z]/disvy
+      @eq ( Ωilxt_115 = -> ( new_regex_tag 'dysi'  )"[a-z]"     ), /[a-z]/disvy
+      @eq ( Ωilxt_116 = -> ( new_regex_tag 'v'     ).si"[a-z]"  ), /[a-z]/disvy
       #.....................................................................................................
-      @throws ( Ωilxt_111 = -> ( new_regex_tag 'dy'    ).ab"[a-z]"  ), /illegal or duplicate flags/
-      @throws ( Ωilxt_112 = -> ( new_regex_tag 'dyab'  )"[a-z]"     ), /illegal or duplicate flags/
+      @throws ( Ωilxt_117 = -> ( new_regex_tag 'dy'    ).ab"[a-z]"  ), /illegal or duplicate flags/
+      @throws ( Ωilxt_118 = -> ( new_regex_tag 'dyab'  )"[a-z]"     ), /illegal or duplicate flags/
       #.....................................................................................................
       return null
 
@@ -227,24 +234,24 @@ GTNG                      = require '../../../apps/guy-test-NG'
     normalize_regex: ->
       { internals       } = require '../../../apps/interlex'
       { normalize_regex } = internals
-      @eq ( Ωilxt_113 = -> typeof normalize_regex     ), 'function'
-      @eq ( Ωilxt_114 = -> normalize_regex /[a-z]/ig  ), /[a-z]/dgivy
-      @eq ( Ωilxt_115 = -> normalize_regex /[a-z]/i   ), /[a-z]/divy
-      @eq ( Ωilxt_116 = -> normalize_regex /[a-z]/u   ), /[a-z]/dvy
-      @eq ( Ωilxt_117 = -> normalize_regex /[a-z]/gv  ), /[a-z]/dgvy
-      @eq ( Ωilxt_118 = -> normalize_regex /[a-z]/gu  ), /[a-z]/dgvy
-      @eq ( Ωilxt_119 = -> normalize_regex /[a-z]/v   ), /[a-z]/dvy
+      @eq ( Ωilxt_119 = -> typeof normalize_regex     ), 'function'
+      @eq ( Ωilxt_120 = -> normalize_regex /[a-z]/ig  ), /[a-z]/dgivy
+      @eq ( Ωilxt_121 = -> normalize_regex /[a-z]/i   ), /[a-z]/divy
+      @eq ( Ωilxt_122 = -> normalize_regex /[a-z]/u   ), /[a-z]/dvy
+      @eq ( Ωilxt_123 = -> normalize_regex /[a-z]/gv  ), /[a-z]/dgvy
+      @eq ( Ωilxt_124 = -> normalize_regex /[a-z]/gu  ), /[a-z]/dgvy
+      @eq ( Ωilxt_125 = -> normalize_regex /[a-z]/v   ), /[a-z]/dvy
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
     rx_flags: ->
       { rx } = require '../../../apps/interlex'
-      @eq ( Ωilxt_120 = -> ( rx"x"        ).flags ), 'dvy'
-      @eq ( Ωilxt_121 = -> ( rx.si"x"     ).flags ), 'disvy'
-      # @eq ( Ωilxt_122 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
-      @eq ( Ωilxt_123 = -> ( rx.y"x"      ).flags ), 'dvy'
-      @eq ( Ωilxt_124 = -> rpr rx"[abc]+" ), '/[abc]+/dvy'
+      @eq ( Ωilxt_126 = -> ( rx"x"        ).flags ), 'dvy'
+      @eq ( Ωilxt_127 = -> ( rx.si"x"     ).flags ), 'disvy'
+      # @eq ( Ωilxt_128 = -> ( rx.sidvy"x"  ).flags ), 'disvy'
+      @eq ( Ωilxt_129 = -> ( rx.y"x"      ).flags ), 'dvy'
+      @eq ( Ωilxt_130 = -> rpr rx"[abc]+" ), '/[abc]+/dvy'
       #.....................................................................................................
       return null
 
@@ -267,7 +274,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g = new_grammar { emit_signals: false, }
-        @eq ( Ωilxt_125 = -> g.state.lnr ), 1
+        @eq ( Ωilxt_131 = -> g.state.lnr ), 1
         probes_and_matchers = [
           [ "1st line",           1, ]
           [ "2nd line",           2, ]
@@ -275,16 +282,16 @@ GTNG                      = require '../../../apps/guy-test-NG'
           [ "4th line (and EOF)", 4, ] ]
         #...................................................................................................
         for [ probe, fit, ] from probes_and_matchers
-          info 'Ωilxt_126', rpr probe
+          info 'Ωilxt_132', rpr probe
           lexemes = g.scan_to_list probe
-          # urge 'Ωilxt_127', lexemes
-          @eq ( Ωilxt_128 = -> lexemes[ 0 ].lnr ), fit
+          # urge 'Ωilxt_133', lexemes
+          @eq ( Ωilxt_134 = -> lexemes[ 0 ].lnr ), fit
         return null
       #.....................................................................................................
       do =>
         g = new_grammar { lnr: 10, emit_signals: false, }
-        @eq ( Ωilxt_129 = -> g.state.lnr ), 10
-        @throws ( Ωilxt_130 = -> g.reset_lnr 10 ), /does not accept arguments/
+        @eq ( Ωilxt_135 = -> g.state.lnr ), 10
+        @throws ( Ωilxt_136 = -> g.reset_lnr 10 ), /does not accept arguments/
         probes_and_matchers = [
           [ "1st line",           10, ]
           [ "2nd line",           11, ]
@@ -292,9 +299,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
           [ "4th line (and EOF)", 13, ] ]
         #...................................................................................................
         for [ probe, fit, ] from probes_and_matchers
-          info 'Ωilxt_131', rpr probe
+          info 'Ωilxt_137', rpr probe
           lexeme = ( g.scan_to_list probe )[ 0 ]
-          @eq ( Ωilxt_132 = -> lexeme.lnr ), fit
+          @eq ( Ωilxt_138 = -> lexeme.lnr ), fit
         return null
       #.....................................................................................................
       return null
@@ -314,10 +321,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         for [ probe, fit, ] from probes_and_matchers
           g.reset_lnr()
           lexemes = g.scan_to_list probe
-          @eq ( Ωilxt_133 = -> condense_lexemes lexemes ), fit.condensed
-          @eq ( Ωilxt_134 = -> lexemes.length ), fit.length
+          @eq ( Ωilxt_139 = -> condense_lexemes lexemes ), fit.condensed
+          @eq ( Ωilxt_140 = -> lexemes.length ), fit.length
           g.reset_lnr()
-          @eq ( Ωilxt_135 = -> [ ( g.scan probe )..., ] ), lexemes
+          @eq ( Ωilxt_141 = -> [ ( g.scan probe )..., ] ), lexemes
         return null
       #-----------------------------------------------------------------------------------------------------
       do =>
@@ -410,7 +417,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
         #.....................................................................................................
         for [ [ position, source, ], fit, ] in probes_and_matchers
-          @eq ( Ωilxt_136 = -> condense_lexemes first.match_first_at position, source ), fit
+          @eq ( Ωilxt_142 = -> condense_lexemes first.match_first_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -442,7 +449,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
         #.....................................................................................................
         for [ [ position, source, ], fit, ] in probes_and_matchers
-          @eq ( Ωilxt_137 = -> condense_lexemes first.match_first_at position, source ), fit
+          @eq ( Ωilxt_143 = -> condense_lexemes first.match_first_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -474,7 +481,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
         #.....................................................................................................
         for [ [ position, source, ], fit, ] in probes_and_matchers
-          @eq ( Ωilxt_138 = -> condense_lexemes first.match_longest_at position, source ), fit
+          @eq ( Ωilxt_144 = -> condense_lexemes first.match_longest_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -506,7 +513,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first.new_token { name: 'one_letter',     fit: /[a-z]{1}/i, }
         #.....................................................................................................
         for [ [ position, source, ], fit, ] in probes_and_matchers
-          @eq ( Ωilxt_139 = -> condense_lexemes first.match_longest_at position, source ), fit
+          @eq ( Ωilxt_145 = -> condense_lexemes first.match_longest_at position, source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -543,7 +550,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
             first.new_token token_cfg for token_cfg in token_cfgs
             #...............................................................................................
             for [ [ position, source, ], fit, ] in probes_and_matchers
-              @eq ( Ωilxt_140 = -> condense_lexemes first.match_longest_at position, source ), fit
+              @eq ( Ωilxt_146 = -> condense_lexemes first.match_longest_at position, source ), fit
             #...............................................................................................
             return null
         return null
@@ -579,10 +586,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
               { name: 'four_letters',   fit: /[a-z]{4}/i, } ]
             first.new_token token_cfg for token_cfg in token_cfgs
             #...............................................................................................
-            @eq ( Ωilxt_141 = -> g.cfg.strategy ), 'longest'
-            @eq ( Ωilxt_142 = -> first.strategy ), 'longest'
+            @eq ( Ωilxt_147 = -> g.cfg.strategy ), 'longest'
+            @eq ( Ωilxt_148 = -> first.strategy ), 'longest'
             for [ source, fit, ] in probes_and_matchers
-              @eq ( Ωilxt_143 = -> condense_lexemes g.scan_to_list source ), fit
+              @eq ( Ωilxt_149 = -> condense_lexemes g.scan_to_list source ), fit
             #...............................................................................................
             return null
         return null
@@ -607,10 +614,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first.new_token { name: 'four_letters',   fit: /[a-z]{4}/i, }
         first.new_token { name: 'three_letters',  fit: /[a-z]{3}/i, }
         #...................................................................................................
-        @eq ( Ωilxt_144 = -> g.cfg.strategy ), 'first'
-        @eq ( Ωilxt_145 = -> first.strategy ), 'first'
+        @eq ( Ωilxt_150 = -> g.cfg.strategy ), 'first'
+        @eq ( Ωilxt_151 = -> first.strategy ), 'first'
         for [ source, fit, ] in probes_and_matchers
-          @eq ( Ωilxt_146 = -> condense_lexemes g.scan_to_list source ), fit
+          @eq ( Ωilxt_152 = -> condense_lexemes g.scan_to_list source ), fit
         return null
       #.....................................................................................................
       do =>
@@ -633,10 +640,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first.new_token { name: 'two_digits',     fit: /[0-9]{2}/i, }
         first.new_token { name: 'one_digit',      fit: /[0-9]{1}/i, }
         #...................................................................................................
-        @eq ( Ωilxt_147 = -> g.cfg.strategy ), 'first'
-        @eq ( Ωilxt_148 = -> first.strategy ), 'first'
+        @eq ( Ωilxt_153 = -> g.cfg.strategy ), 'first'
+        @eq ( Ωilxt_154 = -> first.strategy ), 'first'
         for [ source, fit, ] in probes_and_matchers
-          @eq ( Ωilxt_149 = -> condense_lexemes g.scan_to_list source ), fit
+          @eq ( Ωilxt_155 = -> condense_lexemes g.scan_to_list source ), fit
         return null
       #.....................................................................................................
       return null
@@ -650,14 +657,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
         gnd = g.new_level { name: 'gnd', }
         gnd.new_token { name: 'a', fit: /a/, }
         gnd.new_token { name: 'b', fit: /(?=b)/, }
-        @throws ( Ωilxt_150 = -> g.scan_to_list "ab" ), /encountered zero-length match/
+        @throws ( Ωilxt_156 = -> g.scan_to_list "ab" ), /encountered zero-length match/
       #.....................................................................................................
       do =>
         g = new Grammar { strategy: 'longest', emit_signals: false, }
         gnd = g.new_level { name: 'gnd', }
         gnd.new_token { name: 'a', fit: /a/, }
         gnd.new_token { name: 'b', fit: /(?=b)/, }
-        @throws ( Ωilxt_151 = -> g.scan_to_list "ab" ), /encountered zero-length match/
+        @throws ( Ωilxt_157 = -> g.scan_to_list "ab" ), /encountered zero-length match/
       #.....................................................................................................
       do =>
         ### We accept the empty match here since while it does get produced as an intermediate value to find
@@ -666,7 +673,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         gnd = g.new_level { name: 'gnd', }
         gnd.new_token { name: 'a', fit: /[ab]/, }
         gnd.new_token { name: 'b', fit: /(?=b)/, }
-        @eq ( Ωilxt_152 = -> condense_lexemes g.scan_to_list "ab" ), "gnd.a'a'|gnd.a'b'"
+        @eq ( Ωilxt_158 = -> condense_lexemes g.scan_to_list "ab" ), "gnd.a'a'|gnd.a'b'"
       #.....................................................................................................
       return null
 
@@ -681,8 +688,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = new Grammar()
         first   = g.new_level { name: 'first', }
-        @throws ( Ωilxt_153 = -> first.new_token { name: 'digit', fit: /[0-9]/, jump: 'first',  } ), /cannot jump to same level/
-        @throws ( Ωilxt_154 = -> first.new_token { name: 'digit', fit: /[0-9]/, jump: 'first!', } ), /cannot jump to same level/
+        @throws ( Ωilxt_159 = -> first.new_token { name: 'digit', fit: /[0-9]/, jump: 'first',  } ), /cannot jump to same level/
+        @throws ( Ωilxt_160 = -> first.new_token { name: 'digit', fit: /[0-9]/, jump: 'first!', } ), /cannot jump to same level/
         return null
       #.....................................................................................................
       return null
@@ -691,29 +698,29 @@ GTNG                      = require '../../../apps/guy-test-NG'
     parse_jumps: ->
       { Token } = require '../../../apps/interlex'
       #.....................................................................................................
-      @eq     ( Ωilxt_155 = -> Token._parse_jump()                                   ), null
-      @eq     ( Ωilxt_156 = -> Token._parse_jump '..'                                ), { spec: '..',       carry: false, action: 'back', target: '..',      }
-      @eq     ( Ωilxt_157 = -> Token._parse_jump 'mylevel'                           ), { spec: 'mylevel',  carry: false, action: 'fore', target: 'mylevel', }
-      @eq     ( Ωilxt_158 = -> Token._parse_jump '..!'                               ), { spec: '..!',      carry: true,  action: 'back', target: '..',      }
-      @eq     ( Ωilxt_159 = -> Token._parse_jump 'mylevel!'                          ), { spec: 'mylevel!', carry: true,  action: 'fore', target: 'mylevel', }
-      @eq     ( Ωilxt_160 = -> Token._parse_jump 'mylevel!', { name: 'otherlevel', } ), { spec: 'mylevel!', carry: true,  action: 'fore', target: 'mylevel', }
-      @throws ( Ωilxt_161 = -> Token._parse_jump '..]'                               ), /encountered illegal jump spec/
-      @throws ( Ωilxt_162 = -> Token._parse_jump ']..'                               ), /encountered illegal jump spec/
-      @throws ( Ωilxt_163 = -> Token._parse_jump '[mylevel'                          ), /encountered illegal jump spec/
-      @throws ( Ωilxt_164 = -> Token._parse_jump 'mylevel['                          ), /encountered illegal jump spec/
-      @throws ( Ωilxt_165 = -> Token._parse_jump 'mylevel[', { name: 'otherlevel', } ), /encountered illegal jump spec/
-      @throws ( Ωilxt_166 = -> Token._parse_jump '[mylevel['                         ), /encountered illegal jump spec/
-      @throws ( Ωilxt_167 = -> Token._parse_jump '[mylevel]'                         ), /encountered illegal jump spec/
-      @throws ( Ωilxt_168 = -> Token._parse_jump ']mylevel'                          ), /encountered illegal jump spec/
-      @throws ( Ωilxt_169 = -> Token._parse_jump '[..'                               ), /encountered illegal jump spec/
-      @throws ( Ωilxt_170 = -> Token._parse_jump '[..]'                              ), /encountered illegal jump spec/
-      @throws ( Ωilxt_171 = -> Token._parse_jump '..['                               ), /encountered illegal jump spec/
-      @throws ( Ωilxt_172 = -> Token._parse_jump '[...'                              ), /encountered illegal jump spec/
-      @throws ( Ωilxt_173 = -> Token._parse_jump '...'                               ), /encountered illegal jump spec/
-      @throws ( Ωilxt_174 = -> Token._parse_jump '%'                                 ), /encountered illegal jump spec/
-      @throws ( Ωilxt_175 = -> Token._parse_jump 'my-name'                           ), /encountered illegal jump spec/
-      @throws ( Ωilxt_176 = -> Token._parse_jump 'mylevel',  { name: 'mylevel', }    ), /cannot jump to same level/
-      @throws ( Ωilxt_177 = -> Token._parse_jump 'mylevel!', { name: 'mylevel', }    ), /cannot jump to same level/
+      @eq     ( Ωilxt_161 = -> Token._parse_jump()                                   ), null
+      @eq     ( Ωilxt_162 = -> Token._parse_jump '..'                                ), { spec: '..',       carry: false, action: 'back', target: '..',      }
+      @eq     ( Ωilxt_163 = -> Token._parse_jump 'mylevel'                           ), { spec: 'mylevel',  carry: false, action: 'fore', target: 'mylevel', }
+      @eq     ( Ωilxt_164 = -> Token._parse_jump '..!'                               ), { spec: '..!',      carry: true,  action: 'back', target: '..',      }
+      @eq     ( Ωilxt_165 = -> Token._parse_jump 'mylevel!'                          ), { spec: 'mylevel!', carry: true,  action: 'fore', target: 'mylevel', }
+      @eq     ( Ωilxt_166 = -> Token._parse_jump 'mylevel!', { name: 'otherlevel', } ), { spec: 'mylevel!', carry: true,  action: 'fore', target: 'mylevel', }
+      @throws ( Ωilxt_167 = -> Token._parse_jump '..]'                               ), /encountered illegal jump spec/
+      @throws ( Ωilxt_168 = -> Token._parse_jump ']..'                               ), /encountered illegal jump spec/
+      @throws ( Ωilxt_169 = -> Token._parse_jump '[mylevel'                          ), /encountered illegal jump spec/
+      @throws ( Ωilxt_170 = -> Token._parse_jump 'mylevel['                          ), /encountered illegal jump spec/
+      @throws ( Ωilxt_171 = -> Token._parse_jump 'mylevel[', { name: 'otherlevel', } ), /encountered illegal jump spec/
+      @throws ( Ωilxt_172 = -> Token._parse_jump '[mylevel['                         ), /encountered illegal jump spec/
+      @throws ( Ωilxt_173 = -> Token._parse_jump '[mylevel]'                         ), /encountered illegal jump spec/
+      @throws ( Ωilxt_174 = -> Token._parse_jump ']mylevel'                          ), /encountered illegal jump spec/
+      @throws ( Ωilxt_175 = -> Token._parse_jump '[..'                               ), /encountered illegal jump spec/
+      @throws ( Ωilxt_176 = -> Token._parse_jump '[..]'                              ), /encountered illegal jump spec/
+      @throws ( Ωilxt_177 = -> Token._parse_jump '..['                               ), /encountered illegal jump spec/
+      @throws ( Ωilxt_178 = -> Token._parse_jump '[...'                              ), /encountered illegal jump spec/
+      @throws ( Ωilxt_179 = -> Token._parse_jump '...'                               ), /encountered illegal jump spec/
+      @throws ( Ωilxt_180 = -> Token._parse_jump '%'                                 ), /encountered illegal jump spec/
+      @throws ( Ωilxt_181 = -> Token._parse_jump 'my-name'                           ), /encountered illegal jump spec/
+      @throws ( Ωilxt_182 = -> Token._parse_jump 'mylevel',  { name: 'mylevel', }    ), /cannot jump to same level/
+      @throws ( Ωilxt_183 = -> Token._parse_jump 'mylevel!', { name: 'mylevel', }    ), /cannot jump to same level/
       #.....................................................................................................
       return null
 
@@ -735,17 +742,17 @@ GTNG                      = require '../../../apps/guy-test-NG'
         number.new_token  { name: 'other',      fit: /[^0-9]/,    jump: '..',       }
         #...................................................................................................
         [ lexeme, ] = g.scan_to_list '5'
-        @eq ( Ωilxt_178 = -> lexeme instanceof Lexeme       ), true
-        @eq ( Ωilxt_179 = -> lexeme.token instanceof Token  ), true
-        @eq ( Ωilxt_180 = -> lexeme.name                    ), 'digit'
-        @eq ( Ωilxt_181 = -> lexeme.level.name              ), 'first'
-        @eq ( Ωilxt_182 = -> lexeme.fqname                  ), 'first.digit'
+        @eq ( Ωilxt_184 = -> lexeme instanceof Lexeme       ), true
+        @eq ( Ωilxt_185 = -> lexeme.token instanceof Token  ), true
+        @eq ( Ωilxt_186 = -> lexeme.name                    ), 'digit'
+        @eq ( Ωilxt_187 = -> lexeme.level.name              ), 'first'
+        @eq ( Ωilxt_188 = -> lexeme.fqname                  ), 'first.digit'
         lexeme.set_level number
-        @eq ( Ωilxt_183 = -> lexeme instanceof Lexeme       ), true
-        @eq ( Ωilxt_184 = -> lexeme.token instanceof Token  ), true
-        @eq ( Ωilxt_185 = -> lexeme.name                    ), 'digit'
-        @eq ( Ωilxt_186 = -> lexeme.level.name              ), 'number'
-        @eq ( Ωilxt_187 = -> lexeme.fqname                  ), 'number.digit'
+        @eq ( Ωilxt_189 = -> lexeme instanceof Lexeme       ), true
+        @eq ( Ωilxt_190 = -> lexeme.token instanceof Token  ), true
+        @eq ( Ωilxt_191 = -> lexeme.name                    ), 'digit'
+        @eq ( Ωilxt_192 = -> lexeme.level.name              ), 'number'
+        @eq ( Ωilxt_193 = -> lexeme.fqname                  ), 'number.digit'
       #.....................................................................................................
       return null
 
@@ -766,18 +773,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
         dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
         dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..'          }
         #...................................................................................................
-        @eq ( Ωilxt_188 = -> first.tokens.dq.name     ), 'dq'
-        @eq ( Ωilxt_189 = -> first.tokens.dq.jump     ), { spec: 'dqstring!', carry: true, action: 'fore', target: 'dqstring', }
-        @eq ( Ωilxt_190 = -> dqstring.tokens.dq.name  ), 'dq'
-        @eq ( Ωilxt_191 = -> dqstring.tokens.dq.jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
+        @eq ( Ωilxt_194 = -> first.tokens.dq.name     ), 'dq'
+        @eq ( Ωilxt_195 = -> first.tokens.dq.jump     ), { spec: 'dqstring!', carry: true, action: 'fore', target: 'dqstring', }
+        @eq ( Ωilxt_196 = -> dqstring.tokens.dq.name  ), 'dq'
+        @eq ( Ωilxt_197 = -> dqstring.tokens.dq.jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.scan 'Bob said "wow".'
-        @eq ( Ωilxt_192 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ',  pos: '1:0:9',   }
-        @eq ( Ωilxt_193 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',          pos: '1:9:10',  }
-        @eq ( Ωilxt_194 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',        pos: '1:10:13', }
-        @eq ( Ωilxt_195 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',          pos: '1:13:14', }
-        @eq ( Ωilxt_196 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',          pos: '1:14:15', }
-        @eq ( Ωilxt_197 = -> lexemes.next().done  ), true
+        @eq ( Ωilxt_198 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ',  pos: '1:0:9',   }
+        @eq ( Ωilxt_199 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',          pos: '1:9:10',  }
+        @eq ( Ωilxt_200 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',        pos: '1:10:13', }
+        @eq ( Ωilxt_201 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',          pos: '1:13:14', }
+        @eq ( Ωilxt_202 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',          pos: '1:14:15', }
+        @eq ( Ωilxt_203 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
       do =>
@@ -792,18 +799,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
         dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
         dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..!'         }
         #...................................................................................................
-        @eq ( Ωilxt_198 = -> first.tokens.dq.name     ), 'dq'
-        @eq ( Ωilxt_199 = -> first.tokens.dq.jump     ), { spec: 'dqstring', carry: false, action: 'fore', target: 'dqstring', }
-        @eq ( Ωilxt_200 = -> dqstring.tokens.dq.name  ), 'dq'
-        @eq ( Ωilxt_201 = -> dqstring.tokens.dq.jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
+        @eq ( Ωilxt_204 = -> first.tokens.dq.name     ), 'dq'
+        @eq ( Ωilxt_205 = -> first.tokens.dq.jump     ), { spec: 'dqstring', carry: false, action: 'fore', target: 'dqstring', }
+        @eq ( Ωilxt_206 = -> dqstring.tokens.dq.name  ), 'dq'
+        @eq ( Ωilxt_207 = -> dqstring.tokens.dq.jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.scan 'Bob said "wow".'
-        @eq ( Ωilxt_202 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '1:0:9',   }
-        @eq ( Ωilxt_203 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:9:10',  }
-        @eq ( Ωilxt_204 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '1:10:13', }
-        @eq ( Ωilxt_205 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:13:14', }
-        @eq ( Ωilxt_206 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '1:14:15', }
-        @eq ( Ωilxt_207 = -> lexemes.next().done  ), true
+        @eq ( Ωilxt_208 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '1:0:9',   }
+        @eq ( Ωilxt_209 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:9:10',  }
+        @eq ( Ωilxt_210 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '1:10:13', }
+        @eq ( Ωilxt_211 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:13:14', }
+        @eq ( Ωilxt_212 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '1:14:15', }
+        @eq ( Ωilxt_213 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
       do =>
@@ -818,18 +825,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
         dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
         dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..!'         }
         #...................................................................................................
-        @eq ( Ωilxt_208 = -> first.tokens.dq.name     ), 'dq'
-        @eq ( Ωilxt_209 = -> first.tokens.dq.jump     ), { spec: 'dqstring!', carry: true, action: 'fore', target: 'dqstring', }
-        @eq ( Ωilxt_210 = -> dqstring.tokens.dq.name  ), 'dq'
-        @eq ( Ωilxt_211 = -> dqstring.tokens.dq.jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
+        @eq ( Ωilxt_214 = -> first.tokens.dq.name     ), 'dq'
+        @eq ( Ωilxt_215 = -> first.tokens.dq.jump     ), { spec: 'dqstring!', carry: true, action: 'fore', target: 'dqstring', }
+        @eq ( Ωilxt_216 = -> dqstring.tokens.dq.name  ), 'dq'
+        @eq ( Ωilxt_217 = -> dqstring.tokens.dq.jump  ), { spec: '..!', carry: true, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.scan 'Bob said "wow".'
-        @eq ( Ωilxt_212 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '1:0:9',   }
-        @eq ( Ωilxt_213 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',         pos: '1:9:10',  }
-        @eq ( Ωilxt_214 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '1:10:13', }
-        @eq ( Ωilxt_215 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:13:14', }
-        @eq ( Ωilxt_216 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '1:14:15', }
-        @eq ( Ωilxt_217 = -> lexemes.next().done  ), true
+        @eq ( Ωilxt_218 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '1:0:9',   }
+        @eq ( Ωilxt_219 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',         pos: '1:9:10',  }
+        @eq ( Ωilxt_220 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '1:10:13', }
+        @eq ( Ωilxt_221 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:13:14', }
+        @eq ( Ωilxt_222 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '1:14:15', }
+        @eq ( Ωilxt_223 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
       do =>
@@ -844,18 +851,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
         dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
         dqstring.new_token  { name: 'dq',         fit: /"/,             jump: '..'          }
         #...................................................................................................
-        @eq ( Ωilxt_218 = -> first.tokens.dq.name     ), 'dq'
-        @eq ( Ωilxt_219 = -> first.tokens.dq.jump     ), { spec: 'dqstring', carry: false, action: 'fore', target: 'dqstring', }
-        @eq ( Ωilxt_220 = -> dqstring.tokens.dq.name  ), 'dq'
-        @eq ( Ωilxt_221 = -> dqstring.tokens.dq.jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
+        @eq ( Ωilxt_224 = -> first.tokens.dq.name     ), 'dq'
+        @eq ( Ωilxt_225 = -> first.tokens.dq.jump     ), { spec: 'dqstring', carry: false, action: 'fore', target: 'dqstring', }
+        @eq ( Ωilxt_226 = -> dqstring.tokens.dq.name  ), 'dq'
+        @eq ( Ωilxt_227 = -> dqstring.tokens.dq.jump  ), { spec: '..', carry: false, action: 'back', target: '..', }
         #...................................................................................................
         lexemes = g.scan 'Bob said "wow".'
-        @eq ( Ωilxt_222 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '1:0:9',   }
-        @eq ( Ωilxt_223 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:9:10',  }
-        @eq ( Ωilxt_224 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '1:10:13', }
-        @eq ( Ωilxt_225 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',         pos: '1:13:14', }
-        @eq ( Ωilxt_226 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '1:14:15', }
-        @eq ( Ωilxt_227 = -> lexemes.next().done  ), true
+        @eq ( Ωilxt_228 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: 'Bob said ', pos: '1:0:9',   }
+        @eq ( Ωilxt_229 = -> abbrlxm lexemes.next().value ), { fqname: 'first.dq',       hit: '"',         pos: '1:9:10',  }
+        @eq ( Ωilxt_230 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.other', hit: 'wow',       pos: '1:10:13', }
+        @eq ( Ωilxt_231 = -> abbrlxm lexemes.next().value ), { fqname: 'dqstring.dq',    hit: '"',         pos: '1:13:14', }
+        @eq ( Ωilxt_232 = -> abbrlxm lexemes.next().value ), { fqname: 'first.other',    hit: '.',         pos: '1:14:15', }
+        @eq ( Ωilxt_233 = -> lexemes.next().done  ), true
         return null
       #.....................................................................................................
       return null
@@ -874,10 +881,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         for [ probe, fit, ] from probes_and_matchers
           g.reset_lnr()
           lexemes = g.scan_to_list probe
-          @eq ( Ωilxt_228 = -> condense_lexemes lexemes ), fit.condensed
-          @eq ( Ωilxt_229 = -> lexemes.length ), fit.length
+          @eq ( Ωilxt_234 = -> condense_lexemes lexemes ), fit.condensed
+          @eq ( Ωilxt_235 = -> lexemes.length ), fit.length
           g.reset_lnr()
-          @eq ( Ωilxt_230 = -> [ ( g.scan probe )..., ] ), lexemes
+          @eq ( Ωilxt_236 = -> [ ( g.scan probe )..., ] ), lexemes
         return null
       #-----------------------------------------------------------------------------------------------------
       do =>
@@ -893,7 +900,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         #...................................................................................................
         test g
         source = probes_and_matchers[ 0 ][ 0 ]
-        info 'Ωilxt_231', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_237', source; g.reset_lnr(); tabulate_lexemes g.scan source
       #.....................................................................................................
       return null
 
@@ -915,14 +922,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
         number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         source = "99kg23mm"
-        info 'Ωilxt_232', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_233 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '1:0:0', }
-        @eq ( Ωilxt_234 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',    hit: '99', pos: '1:0:2', }
-        @eq ( Ωilxt_235 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',       hit: 'kg', pos: '1:2:4', }
-        @eq ( Ωilxt_236 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '1:4:4', }
-        @eq ( Ωilxt_237 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',    hit: '23', pos: '1:4:6', }
-        @eq ( Ωilxt_238 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',       hit: 'mm', pos: '1:6:8', }
-        @eq ( Ωilxt_239 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        info 'Ωilxt_238', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_239 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '1:0:0', }
+        @eq ( Ωilxt_240 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',    hit: '99', pos: '1:0:2', }
+        @eq ( Ωilxt_241 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',       hit: 'kg', pos: '1:2:4', }
+        @eq ( Ωilxt_242 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '1:4:4', }
+        @eq ( Ωilxt_243 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',    hit: '23', pos: '1:4:6', }
+        @eq ( Ωilxt_244 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',       hit: 'mm', pos: '1:6:8', }
+        @eq ( Ωilxt_245 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
       #.....................................................................................................
       return null
 
@@ -936,8 +943,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
         g         = new Grammar { name: 'g', emit_signals: false, }
         gnd       = g.new_level { name: 'gnd', }
         #...................................................................................................
-        @eq     ( Ωilxt_240 = -> ( gnd.new_token { name: 'letters', fit:  /[a-z]+/, } ) instanceof Token ), true
-        @throws ( Ωilxt_241 = ->   gnd.new_token { name: 'letters', fit:  /[A-Z]+/, } ), null
+        @eq     ( Ωilxt_246 = -> ( gnd.new_token { name: 'letters', fit:  /[a-z]+/, } ) instanceof Token ), true
+        @throws ( Ωilxt_247 = ->   gnd.new_token { name: 'letters', fit:  /[A-Z]+/, } ), null
       #.....................................................................................................
       return null
 
@@ -946,52 +953,53 @@ GTNG                      = require '../../../apps/guy-test-NG'
     Levelstack = ( require '../../../apps/interlex' ).internals.Levelstack
     do =>
       stack = new Levelstack()
-      @eq     ( Ωilxt_242 = -> stack.is_empty                   ), true
+      @eq     ( Ωilxt_248 = -> stack.is_empty                   ), true
       stack.push { name: '1', }
-      @eq     ( Ωilxt_243 = -> stack.length                     ), 1
-      @eq     ( Ωilxt_244 = -> stack.peek()                     ), { name: '1', }
-      @eq     ( Ωilxt_245 = -> stack.pop()                      ), { name: '1', }
-      @eq     ( Ωilxt_246 = -> stack.length                     ), 0
+      @eq     ( Ωilxt_249 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_250 = -> stack.peek()                     ), { name: '1', }
+      @eq     ( Ωilxt_251 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_252 = -> stack.length                     ), 0
     do =>
       stack = new Levelstack { name: '1', }
-      @eq     ( Ωilxt_247 = -> stack.length                     ), 1
-      @eq     ( Ωilxt_248 = -> stack.peek()                     ), { name: '1', }
-      @eq     ( Ωilxt_249 = -> stack.pop()                      ), { name: '1', }
-      @eq     ( Ωilxt_250 = -> stack.length                     ), 0
+      @eq     ( Ωilxt_253 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_254 = -> stack.peek()                     ), { name: '1', }
+      @eq     ( Ωilxt_255 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_256 = -> stack.length                     ), 0
     do =>
       stack = new Levelstack { name: '1', }, { name: '2', }
-      @eq     ( Ωilxt_251 = -> stack.length                     ), 2
-      @eq     ( Ωilxt_252 = -> stack.peek()                     ), { name: '2', }
-      @eq     ( Ωilxt_253 = -> stack.popnpeek()                 ), { name: '1', }
-      @eq     ( Ωilxt_254 = -> stack.length                     ), 1
-      @eq     ( Ωilxt_255 = -> stack.peek()                     ), { name: '1', }
-      @eq     ( Ωilxt_256 = -> stack.pop()                      ), { name: '1', }
-      @eq     ( Ωilxt_257 = -> stack.length                     ), 0
+      @eq     ( Ωilxt_257 = -> stack.length                     ), 2
+      @eq     ( Ωilxt_258 = -> stack.peek()                     ), { name: '2', }
+      @eq     ( Ωilxt_259 = -> stack.popnpeek()                 ), { name: '1', }
+      @eq     ( Ωilxt_260 = -> stack.length                     ), 1
+      @eq     ( Ωilxt_261 = -> stack.peek()                     ), { name: '1', }
+      @eq     ( Ωilxt_262 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_263 = -> stack.length                     ), 0
     do =>
       stack = new Levelstack { name: '1', }, { name: '2', }
-      @eq     ( Ωilxt_258 = -> stack.length                     ), 2
-      @eq     ( Ωilxt_259 = -> stack.peek_name()                ), '2'
-      @eq     ( Ωilxt_260 = -> stack.popnpeek_name()            ), '1'
-      @eq     ( Ωilxt_261 = -> stack.length                     ), 1
-      @eq     ( Ωilxt_262 = -> stack.is_empty                   ), false
-      @eq     ( Ωilxt_263 = -> stack.peek_name()                ), '1'
-      @eq     ( Ωilxt_264 = -> stack.pop_name()                 ), '1'
-      @eq     ( Ωilxt_265 = -> stack.length                     ), 0
-      @eq     ( Ωilxt_266 = -> stack.is_empty                   ), true
-    do =>
-      stack = new Levelstack { name: '1', }, { name: '2', }
-      @eq     ( Ωilxt_267 = -> stack.pop()                      ), { name: '2', }
+      @eq     ( Ωilxt_264 = -> stack.length                     ), 2
+      # @eq     ( Ωilxt_265 = -> stack.peek_name()                ), '2'
+      # @eq     ( Ωilxt_266 = -> stack.popnpeek_name()            ), '1'
+      stack.pop()
+      @eq     ( Ωilxt_267 = -> stack.length                     ), 1
       @eq     ( Ωilxt_268 = -> stack.is_empty                   ), false
-      @eq     ( Ωilxt_269 = -> stack.pop()                      ), { name: '1', }
-      @eq     ( Ωilxt_270 = -> stack.is_empty                   ), true
-      @throws ( Ωilxt_271 = -> stack.pop()                      ), /stack is empty/
-      @throws ( Ωilxt_272 = -> stack.popnpeek()                 ), /stack is empty/
-      @throws ( Ωilxt_273 = -> stack.pop_name()                 ), /stack is empty/
-      @throws ( Ωilxt_274 = -> stack.popnpeek_name()            ), /stack is empty/
-      @eq     ( Ωilxt_275 = -> stack.pop            'fallback'  ), 'fallback'
-      @eq     ( Ωilxt_276 = -> stack.popnpeek       'fallback'  ), 'fallback'
-      @eq     ( Ωilxt_277 = -> stack.pop_name       'fallback'  ), 'fallback'
-      @eq     ( Ωilxt_278 = -> stack.popnpeek_name  'fallback'  ), 'fallback'
+      # @eq     ( Ωilxt_269 = -> stack.peek_name()                ), '1'
+      @eq     ( Ωilxt_270 = -> stack.pop_name()                 ), '1'
+      @eq     ( Ωilxt_271 = -> stack.length                     ), 0
+      @eq     ( Ωilxt_272 = -> stack.is_empty                   ), true
+    do =>
+      stack = new Levelstack { name: '1', }, { name: '2', }
+      @eq     ( Ωilxt_273 = -> stack.pop()                      ), { name: '2', }
+      @eq     ( Ωilxt_274 = -> stack.is_empty                   ), false
+      @eq     ( Ωilxt_275 = -> stack.pop()                      ), { name: '1', }
+      @eq     ( Ωilxt_276 = -> stack.is_empty                   ), true
+      @throws ( Ωilxt_277 = -> stack.pop()                      ), /stack is empty/
+      @throws ( Ωilxt_278 = -> stack.popnpeek()                 ), /stack is empty/
+      @throws ( Ωilxt_279 = -> stack.pop_name()                 ), /stack is empty/
+      # @throws ( Ωilxt_280 = -> stack.popnpeek_name()            ), /stack is empty/
+      @eq     ( Ωilxt_281 = -> stack.pop            'fallback'  ), 'fallback'
+      @eq     ( Ωilxt_282 = -> stack.popnpeek       'fallback'  ), 'fallback'
+      @eq     ( Ωilxt_283 = -> stack.pop_name       'fallback'  ), 'fallback'
+      # @eq     ( Ωilxt_284 = -> stack.popnpeek_name  'fallback'  ), 'fallback'
     return null
 
   #=========================================================================================================
@@ -1015,36 +1023,36 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "R\\2D\\2 has 3556.3 Petabytes"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_279', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_280', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_281 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'R', pos: '1:0:1' }
-        @eq ( Ωilxt_282 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: '\\2', pos: '1:1:3' }
-        @eq ( Ωilxt_283 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'D', pos: '1:3:4' }
-        @eq ( Ωilxt_284 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: '\\2', pos: '1:4:6' }
-        @eq ( Ωilxt_285 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ', pos: '1:6:7' }
-        @eq ( Ωilxt_286 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'h', pos: '1:7:8' }
-        @eq ( Ωilxt_287 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'a', pos: '1:8:9' }
-        @eq ( Ωilxt_288 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 's', pos: '1:9:10' }
-        @eq ( Ωilxt_289 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ', pos: '1:10:11' }
-        @eq ( Ωilxt_290 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.number_start',  hit: '', pos: '1:11:11' }
-        @eq ( Ωilxt_291 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '3', pos: '1:11:12' }
-        @eq ( Ωilxt_292 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '5', pos: '1:12:13' }
-        @eq ( Ωilxt_293 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '5', pos: '1:13:14' }
-        @eq ( Ωilxt_294 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '6', pos: '1:14:15' }
-        @eq ( Ωilxt_295 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '.', pos: '1:15:16' }
-        @eq ( Ωilxt_296 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '3', pos: '1:16:17' }
-        @eq ( Ωilxt_297 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number_stop', hit: '', pos: '1:17:17' }
-        @eq ( Ωilxt_298 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ', pos: '1:17:18' }
-        @eq ( Ωilxt_299 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'P', pos: '1:18:19' }
-        @eq ( Ωilxt_300 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'e', pos: '1:19:20' }
-        @eq ( Ωilxt_301 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 't', pos: '1:20:21' }
-        @eq ( Ωilxt_302 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'a', pos: '1:21:22' }
-        @eq ( Ωilxt_303 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'b', pos: '1:22:23' }
-        @eq ( Ωilxt_304 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'y', pos: '1:23:24' }
-        @eq ( Ωilxt_305 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 't', pos: '1:24:25' }
-        @eq ( Ωilxt_306 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'e', pos: '1:25:26' }
-        @eq ( Ωilxt_307 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 's', pos: '1:26:27' }
-        @eq ( Ωilxt_308 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_285', source; tabulate_lexemes g.scan source
+        info 'Ωilxt_286', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_287 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'R', pos: '1:0:1' }
+        @eq ( Ωilxt_288 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: '\\2', pos: '1:1:3' }
+        @eq ( Ωilxt_289 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'D', pos: '1:3:4' }
+        @eq ( Ωilxt_290 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: '\\2', pos: '1:4:6' }
+        @eq ( Ωilxt_291 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ', pos: '1:6:7' }
+        @eq ( Ωilxt_292 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'h', pos: '1:7:8' }
+        @eq ( Ωilxt_293 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'a', pos: '1:8:9' }
+        @eq ( Ωilxt_294 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 's', pos: '1:9:10' }
+        @eq ( Ωilxt_295 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ', pos: '1:10:11' }
+        @eq ( Ωilxt_296 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.number_start',  hit: '', pos: '1:11:11' }
+        @eq ( Ωilxt_297 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '3', pos: '1:11:12' }
+        @eq ( Ωilxt_298 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '5', pos: '1:12:13' }
+        @eq ( Ωilxt_299 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '5', pos: '1:13:14' }
+        @eq ( Ωilxt_300 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '6', pos: '1:14:15' }
+        @eq ( Ωilxt_301 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '.', pos: '1:15:16' }
+        @eq ( Ωilxt_302 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '3', pos: '1:16:17' }
+        @eq ( Ωilxt_303 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number_stop', hit: '', pos: '1:17:17' }
+        @eq ( Ωilxt_304 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ', pos: '1:17:18' }
+        @eq ( Ωilxt_305 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'P', pos: '1:18:19' }
+        @eq ( Ωilxt_306 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'e', pos: '1:19:20' }
+        @eq ( Ωilxt_307 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 't', pos: '1:20:21' }
+        @eq ( Ωilxt_308 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'a', pos: '1:21:22' }
+        @eq ( Ωilxt_309 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'b', pos: '1:22:23' }
+        @eq ( Ωilxt_310 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'y', pos: '1:23:24' }
+        @eq ( Ωilxt_311 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 't', pos: '1:24:25' }
+        @eq ( Ωilxt_312 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'e', pos: '1:25:26' }
+        @eq ( Ωilxt_313 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 's', pos: '1:26:27' }
+        @eq ( Ωilxt_314 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -1065,18 +1073,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "R\\2D\\2 has 3556.3 Petabytes"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_309', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        info 'Ωilxt_310', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_311 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'R\\2D\\2',  pos: '1:0:6' }
-        @eq ( Ωilxt_312 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ',         pos: '1:6:7' }
-        @eq ( Ωilxt_313 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'has',       pos: '1:7:10' }
-        @eq ( Ωilxt_314 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ',         pos: '1:10:11' }
-        @eq ( Ωilxt_315 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.number_start',  hit: '',          pos: '1:11:11' }
-        @eq ( Ωilxt_316 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '3556.3',    pos: '1:11:17' }
-        @eq ( Ωilxt_317 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number_stop', hit: '',          pos: '1:17:17' }
-        @eq ( Ωilxt_318 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ',         pos: '1:17:18' }
-        @eq ( Ωilxt_319 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'Petabytes', pos: '1:18:27' }
-        @eq ( Ωilxt_320 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_315', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_316', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_317 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'R\\2D\\2',  pos: '1:0:6' }
+        @eq ( Ωilxt_318 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ',         pos: '1:6:7' }
+        @eq ( Ωilxt_319 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'has',       pos: '1:7:10' }
+        @eq ( Ωilxt_320 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ',         pos: '1:10:11' }
+        @eq ( Ωilxt_321 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.number_start',  hit: '',          pos: '1:11:11' }
+        @eq ( Ωilxt_322 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.digit',       hit: '3556.3',    pos: '1:11:17' }
+        @eq ( Ωilxt_323 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number_stop', hit: '',          pos: '1:17:17' }
+        @eq ( Ωilxt_324 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.ws',            hit: ' ',         pos: '1:17:18' }
+        @eq ( Ωilxt_325 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.text',          hit: 'Petabytes', pos: '1:18:27' }
+        @eq ( Ωilxt_326 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -1093,10 +1101,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "ArcBoCyDeen"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_321', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        info 'Ωilxt_322', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_323 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { initial: [ 'A', 'B', 'C', 'D' ] }, }
-        @eq ( Ωilxt_324 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_327', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_328', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_329 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { initial: [ 'A', 'B', 'C', 'D' ] }, }
+        @eq ( Ωilxt_330 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -1113,10 +1121,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "ArcBoCyDeen"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_325', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        info 'Ωilxt_326', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_327 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { initial: 'D' }, }
-        @eq ( Ωilxt_328 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_331', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_332', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_333 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { initial: 'D' }, }
+        @eq ( Ωilxt_334 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -1133,10 +1141,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "Arc"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_329', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        info 'Ωilxt_330', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_331 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'Arc', pos: '1:0:3', data: { initial: [ 'A', ] }, }
-        @eq ( Ωilxt_332 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_335', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_336', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_337 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'Arc', pos: '1:0:3', data: { initial: [ 'A', ] }, }
+        @eq ( Ωilxt_338 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -1157,10 +1165,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "ArcBoCyDeen"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_333', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        info 'Ωilxt_334', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_335 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { initial: [ 'A', 'B', 'C', 'D', ], } }
-        @eq ( Ωilxt_336 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_339', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_340', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_341 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { initial: [ 'A', 'B', 'C', 'D', ], } }
+        @eq ( Ωilxt_342 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -1179,10 +1187,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         source = "ArcBoCyDeen"
         # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_337', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        info 'Ωilxt_338', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_339 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { parts: [ 'Arc', 'Bo', 'Cy', 'Deen' ], initials: [ 'A', 'B', 'C', 'D' ] } }
-        @eq ( Ωilxt_340 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_343', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        info 'Ωilxt_344', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_345 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { parts: [ 'Arc', 'Bo', 'Cy', 'Deen' ], initials: [ 'A', 'B', 'C', 'D' ] } }
+        @eq ( Ωilxt_346 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -1197,12 +1205,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
       name  = gnd.new_token { name: 'name', fit: ///
         (?<initial> \p{Uppercase_Letter} ) (?<tail> \p{Lowercase_Letter}* ) ///, }
       lexeme = g.scan_first 'Brobdignac'
-      @eq ( Ωilxt_341 = -> lexeme.groups              ), undefined
-      @eq ( Ωilxt_342 = -> lexeme.data?               ), true
-      @eq ( Ωilxt_343 = -> lexeme.has_data            ), true
-      @eq ( Ωilxt_344 = -> lexeme.data.constructor    ), undefined
-      @eq ( Ωilxt_345 = -> lexeme.data.initial        ), 'B'
-      @eq ( Ωilxt_346 = -> lexeme.data.tail           ), 'robdignac'
+      @eq ( Ωilxt_347 = -> lexeme.groups              ), undefined
+      @eq ( Ωilxt_348 = -> lexeme.data?               ), true
+      @eq ( Ωilxt_349 = -> lexeme.has_data            ), true
+      @eq ( Ωilxt_350 = -> lexeme.data.constructor    ), undefined
+      @eq ( Ωilxt_351 = -> lexeme.data.initial        ), 'B'
+      @eq ( Ωilxt_352 = -> lexeme.data.tail           ), 'robdignac'
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -1212,20 +1220,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         g       = new Grammar()
         g_data  = g.data
-        @eq ( Ωilxt_347 = -> type_of g.reset_data   ), 'function'
-        @eq ( Ωilxt_348 = -> type_of g.assign       ), 'function'
-        @eq ( Ωilxt_349 = -> g.data                 ), {}
-        @eq ( Ωilxt_350 = -> g.data is g_data       ), true
+        @eq ( Ωilxt_353 = -> type_of g.reset_data   ), 'function'
+        @eq ( Ωilxt_354 = -> type_of g.assign       ), 'function'
+        @eq ( Ωilxt_355 = -> g.data                 ), {}
+        @eq ( Ωilxt_356 = -> g.data is g_data       ), true
         g.assign { key: 'value', }
-        @eq ( Ωilxt_351 = -> g.data                 ), { key: 'value', }
-        @eq ( Ωilxt_352 = -> g.data is g_data       ), true
+        @eq ( Ωilxt_357 = -> g.data                 ), { key: 'value', }
+        @eq ( Ωilxt_358 = -> g.data is g_data       ), true
         return null
       #.....................................................................................................
       do =>
         g       = new Grammar()
         g_data  = g.data
         g.assign { key: 'value', }
-        @throws ( Ωilxt_353 = -> g.reset_data false ), /does not accept arguments/
+        @throws ( Ωilxt_359 = -> g.reset_data false ), /does not accept arguments/
         return null
       #.....................................................................................................
       return null
@@ -1237,10 +1245,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         template  = { one: 1, list: [], set: new Set(), }
         g         = new Grammar { data: template, }
-        @eq ( Ωilxt_354 = -> g.data                           ), template
-        @eq ( Ωilxt_355 = -> g.data       is template         ), false
-        @eq ( Ωilxt_356 = -> g.data.list  is template.list    ), true
-        @eq ( Ωilxt_357 = -> g.data.set   is template.set     ), true
+        @eq ( Ωilxt_360 = -> g.data                           ), template
+        @eq ( Ωilxt_361 = -> g.data       is template         ), false
+        @eq ( Ωilxt_362 = -> g.data.list  is template.list    ), true
+        @eq ( Ωilxt_363 = -> g.data.set   is template.set     ), true
         return null
       #.....................................................................................................
       do =>
@@ -1248,12 +1256,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
         matcher   = { one: 1, list: [], set: new Set(), }
         g         = new Grammar { data: template, }
         ### guy_test doesn't currently recognize nested maps, sets so we're doing it the long way ###
-        # @eq ( Ωilxt_358 = -> g.data                           ), matcher
-        @eq ( Ωilxt_359 = -> g.data       is template         ), false
-        @eq ( Ωilxt_360 = -> g.data.list  is template.list    ), false
-        @eq ( Ωilxt_361 = -> g.data.set   is template.set     ), false
-        @eq ( Ωilxt_362 = -> type_of g.data.list              ), 'list'
-        @eq ( Ωilxt_363 = -> type_of g.data.set               ), 'set'
+        # @eq ( Ωilxt_364 = -> g.data                           ), matcher
+        @eq ( Ωilxt_365 = -> g.data       is template         ), false
+        @eq ( Ωilxt_366 = -> g.data.list  is template.list    ), false
+        @eq ( Ωilxt_367 = -> g.data.set   is template.set     ), false
+        @eq ( Ωilxt_368 = -> type_of g.data.list              ), 'list'
+        @eq ( Ωilxt_369 = -> type_of g.data.set               ), 'set'
         return null
       #.....................................................................................................
       do =>
@@ -1261,30 +1269,30 @@ GTNG                      = require '../../../apps/guy-test-NG'
         matcher   = { count: 1, list: (    [] ), }
         g         = new Grammar { data: template, }
         ### guy_test doesn't currently recognize nested maps, sets so we're doing it the long way ###
-        # @eq ( Ωilxt_364 = -> g.data                           ), matcher
-        @eq ( Ωilxt_365 = -> g.data.count                         ), matcher.count
-        @eq ( Ωilxt_366 = -> g.data.list                          ), matcher.list
-        @eq ( Ωilxt_367 = -> g.cfg.data.count is template.count   ), true
-        @eq ( Ωilxt_368 = -> g.cfg.data.list  is g.cfg.data.list  ), false
-        @eq ( Ωilxt_369 = -> isa std.list, g.cfg.data.list        ), true
+        # @eq ( Ωilxt_370 = -> g.data                           ), matcher
+        @eq ( Ωilxt_371 = -> g.data.count                         ), matcher.count
+        @eq ( Ωilxt_372 = -> g.data.list                          ), matcher.list
+        @eq ( Ωilxt_373 = -> g.cfg.data.count is template.count   ), true
+        @eq ( Ωilxt_374 = -> g.cfg.data.list  is g.cfg.data.list  ), false
+        @eq ( Ωilxt_375 = -> isa std.list, g.cfg.data.list        ), true
         g.data.count++
         g.data.list.push 'value'
-        @eq ( Ωilxt_370 = -> g.data.count                         ), 2
-        @eq ( Ωilxt_371 = -> g.data.list                          ), [ 'value', ]
+        @eq ( Ωilxt_376 = -> g.data.count                         ), 2
+        @eq ( Ωilxt_377 = -> g.data.list                          ), [ 'value', ]
         g.reset_data()
-        @eq ( Ωilxt_372 = -> g.data.count                         ), matcher.count
-        @eq ( Ωilxt_373 = -> g.data.list                          ), matcher.list
+        @eq ( Ωilxt_378 = -> g.data.count                         ), matcher.count
+        @eq ( Ωilxt_379 = -> g.data.list                          ), matcher.list
         return null
       #.....................................................................................................
       do =>
         template  = { count: 1, }
         g         = new Grammar { data: template, }
         ### guy_test doesn't currently recognize nested maps, sets so we're doing it the long way ###
-        # @eq ( Ωilxt_374 = -> g.data                           ), matcher
-        @eq (                                 Ωilxt_375 = -> g.data.count ), 1
-        g.data.count++;                 @eq ( Ωilxt_376 = -> g.data.count ), 2
-        g.reset_data();                 @eq ( Ωilxt_377 = -> g.data.count ), 1
-        g.data.count++; g.reset_data(); @eq ( Ωilxt_378 = -> g.data.count ), 1
+        # @eq ( Ωilxt_380 = -> g.data                           ), matcher
+        @eq (                                 Ωilxt_381 = -> g.data.count ), 1
+        g.data.count++;                 @eq ( Ωilxt_382 = -> g.data.count ), 2
+        g.reset_data();                 @eq ( Ωilxt_383 = -> g.data.count ), 1
+        g.data.count++; g.reset_data(); @eq ( Ωilxt_384 = -> g.data.count ), 1
         return null
       #.....................................................................................................
       return null
@@ -1294,31 +1302,31 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Grammar } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        @eq ( Ωilxt_379 = -> ( new Grammar() ).cfg.reset_lnr ), false
+        @eq ( Ωilxt_385 = -> ( new Grammar() ).cfg.reset_lnr ), false
       #.....................................................................................................
       do =>
         g         = new Grammar { reset_lnr: false, }
         gnd       = g.new_level { name: 'gnd', }
         text      = gnd.new_token { name: 'text', fit: /.+/, }
-        @eq ( Ωilxt_380 = -> g.state.lnr  ), 1
+        @eq ( Ωilxt_386 = -> g.state.lnr  ), 1
         lexeme = g.scan_first 'helo'
-        @eq ( Ωilxt_381 = -> lexeme.lnr   ), 1
-        @eq ( Ωilxt_382 = -> g.state.lnr  ), 2
+        @eq ( Ωilxt_387 = -> lexeme.lnr   ), 1
+        @eq ( Ωilxt_388 = -> g.state.lnr  ), 2
         lexeme = g.scan_first 'how'
-        @eq ( Ωilxt_383 = -> lexeme.lnr   ), 2
-        @eq ( Ωilxt_384 = -> g.state.lnr  ), 3
+        @eq ( Ωilxt_389 = -> lexeme.lnr   ), 2
+        @eq ( Ωilxt_390 = -> g.state.lnr  ), 3
       #.....................................................................................................
       do =>
         g         = new Grammar { reset_lnr: true, }
         gnd       = g.new_level { name: 'gnd', }
         text      = gnd.new_token { name: 'text', fit: /.+/, }
-        @eq ( Ωilxt_385 = -> g.state.lnr  ), 1
+        @eq ( Ωilxt_391 = -> g.state.lnr  ), 1
         lexeme = g.scan_first 'helo'
-        @eq ( Ωilxt_386 = -> lexeme.lnr   ), 1
-        @eq ( Ωilxt_387 = -> g.state.lnr  ), 1
+        @eq ( Ωilxt_392 = -> lexeme.lnr   ), 1
+        @eq ( Ωilxt_393 = -> g.state.lnr  ), 1
         lexeme = g.scan_first 'how'
-        @eq ( Ωilxt_388 = -> lexeme.lnr   ), 1
-        @eq ( Ωilxt_389 = -> g.state.lnr  ), 1
+        @eq ( Ωilxt_394 = -> lexeme.lnr   ), 1
+        @eq ( Ωilxt_395 = -> g.state.lnr  ), 1
       #.....................................................................................................
       return null
 
@@ -1327,28 +1335,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Grammar } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        @eq ( Ωilxt_390 = -> ( new Grammar() ).cfg.reset_data ), false
+        @eq ( Ωilxt_396 = -> ( new Grammar() ).cfg.reset_data ), false
       #.....................................................................................................
       do =>
         g         = new Grammar { data: { count: 1, hits: ( -> [] ), }, reset_data: false, }
-        gnd       = g.new_level { name: 'gnd', }
-        text      = gnd.new_token { name: 'text', fit: /.+/, }
-        hits      = g.data.hits
-        @eq ( Ωilxt_391 = -> g.data.count         ), 1
-        g.data.count++
-        lexeme = g.scan_first 'helo'
-        g.data.hits.push lexeme.hit
-        @eq ( Ωilxt_392 = -> g.data.count         ), 2
-        @eq ( Ωilxt_393 = -> g.data.hits          ), [ 'helo', ]
-        g.data.count++
-        lexeme = g.scan_first 'how'
-        g.data.hits.push lexeme.hit
-        @eq ( Ωilxt_394 = -> g.data.count         ), 3
-        @eq ( Ωilxt_395 = -> g.data.hits          ), [ 'helo', 'how', ]
-        @eq ( Ωilxt_396 = -> g.data.hits is hits  ), true
-      #.....................................................................................................
-      do =>
-        g         = new Grammar { data: { count: 1, hits: ( -> [] ), }, reset_data: true, }
         gnd       = g.new_level { name: 'gnd', }
         text      = gnd.new_token { name: 'text', fit: /.+/, }
         hits      = g.data.hits
@@ -1356,14 +1346,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
         g.data.count++
         lexeme = g.scan_first 'helo'
         g.data.hits.push lexeme.hit
-        @eq ( Ωilxt_398 = -> g.data.count         ), 1
+        @eq ( Ωilxt_398 = -> g.data.count         ), 2
         @eq ( Ωilxt_399 = -> g.data.hits          ), [ 'helo', ]
         g.data.count++
         lexeme = g.scan_first 'how'
         g.data.hits.push lexeme.hit
-        @eq ( Ωilxt_400 = -> g.data.count         ), 1
-        @eq ( Ωilxt_401 = -> g.data.hits          ), [ 'how', ]
-        @eq ( Ωilxt_402 = -> g.data.hits is hits  ), false
+        @eq ( Ωilxt_400 = -> g.data.count         ), 3
+        @eq ( Ωilxt_401 = -> g.data.hits          ), [ 'helo', 'how', ]
+        @eq ( Ωilxt_402 = -> g.data.hits is hits  ), true
+      #.....................................................................................................
+      do =>
+        g         = new Grammar { data: { count: 1, hits: ( -> [] ), }, reset_data: true, }
+        gnd       = g.new_level { name: 'gnd', }
+        text      = gnd.new_token { name: 'text', fit: /.+/, }
+        hits      = g.data.hits
+        @eq ( Ωilxt_403 = -> g.data.count         ), 1
+        g.data.count++
+        lexeme = g.scan_first 'helo'
+        g.data.hits.push lexeme.hit
+        @eq ( Ωilxt_404 = -> g.data.count         ), 1
+        @eq ( Ωilxt_405 = -> g.data.hits          ), [ 'helo', ]
+        g.data.count++
+        lexeme = g.scan_first 'how'
+        g.data.hits.push lexeme.hit
+        @eq ( Ωilxt_406 = -> g.data.count         ), 1
+        @eq ( Ωilxt_407 = -> g.data.hits          ), [ 'how', ]
+        @eq ( Ωilxt_408 = -> g.data.hits is hits  ), false
       #.....................................................................................................
       return null
 
@@ -1372,7 +1380,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Grammar } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        @eq ( Ωilxt_403 = -> ( new Grammar() ).cfg.reset_errors ), false
+        @eq ( Ωilxt_409 = -> ( new Grammar() ).cfg.reset_errors ), false
       #.....................................................................................................
       do =>
         g         = new Grammar { data: { count: 1, hits: ( -> [] ), }, reset_errors: false, }
@@ -1380,14 +1388,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
         text      = gnd.new_token { name: 'text', fit: /[0-9]+/, }
         hits      = g.data.hits
         lexeme = g.scan_first 'helo'
-        @eq ( Ωilxt_404 = -> g.state.errors.length    ), 1
-        @eq ( Ωilxt_405 = -> g.has_errors             ), true
+        @eq ( Ωilxt_410 = -> g.state.errors.length    ), 1
+        @eq ( Ωilxt_411 = -> g.has_errors             ), true
         lexeme = g.scan_first 'how'
-        @eq ( Ωilxt_406 = -> g.state.errors.length    ), 2
-        @eq ( Ωilxt_407 = -> g.has_errors             ), true
+        @eq ( Ωilxt_412 = -> g.state.errors.length    ), 2
+        @eq ( Ωilxt_413 = -> g.has_errors             ), true
         lexeme = g.scan_first '753'
-        @eq ( Ωilxt_408 = -> g.state.errors.length    ), 2
-        @eq ( Ωilxt_409 = -> g.has_errors             ), true
+        @eq ( Ωilxt_414 = -> g.state.errors.length    ), 2
+        @eq ( Ωilxt_415 = -> g.has_errors             ), true
       # #.....................................................................................................
       # do =>
       #   g         = new Grammar { data: { count: 1, hits: ( -> [] ), }, reset_errors: true, }
@@ -1395,10 +1403,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #   text      = gnd.new_token { name: 'text', fit: /[0-9]+/, }
       #   hits      = g.data.hits
       #   lexeme = g.scan_first 'helo'
-      #   @eq ( Ωilxt_410 = -> g.data.hits          ), [ 'helo', ]
+      #   @eq ( Ωilxt_416 = -> g.data.hits          ), [ 'helo', ]
       #   lexeme = g.scan_first 'how'
-      #   @eq ( Ωilxt_411 = -> g.data.hits          ), [ 'how', ]
-      #   @eq ( Ωilxt_412 = -> g.data.hits is hits  ), false
+      #   @eq ( Ωilxt_417 = -> g.data.hits          ), [ 'how', ]
+      #   @eq ( Ωilxt_418 = -> g.data.hits is hits  ), false
       #.....................................................................................................
       return null
 
@@ -1409,7 +1417,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #   do =>
     #     template  = { one: 1, list: [], set: new Set(), }
     #     g         = new Grammar { data: template, }
-    #     @eq ( Ωilxt_413 = -> g.data                           ), template
+    #     @eq ( Ωilxt_419 = -> g.data                           ), template
     #   #.....................................................................................................
     #   return null
 
@@ -1430,14 +1438,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #-------------------------------------------------------------------------------------------------------
     cfg_settings: ->
       { Grammar } = require '../../../apps/interlex'
-      @eq ( Ωilxt_414 = -> ( new Grammar { emit_signals: false,         } ).cfg.emit_signals ), false
-      @eq ( Ωilxt_415 = -> ( new Grammar { emit_signals: true,          } ).cfg.emit_signals ), true
-      @eq ( Ωilxt_416 = -> ( new Grammar {}                               ).cfg.emit_signals ), true
-      @eq ( Ωilxt_417 = -> ( new Grammar()                                ).cfg.emit_signals ), true
-      @eq ( Ωilxt_418 = -> ( new Grammar { emit_signals: false,         } ).cfg.merge_jumps  ), false
-      @eq ( Ωilxt_419 = -> ( new Grammar { emit_signals: true,          } ).cfg.merge_jumps  ), true
-      @eq ( Ωilxt_420 = -> ( new Grammar {}                               ).cfg.merge_jumps  ), true
-      @eq ( Ωilxt_421 = -> ( new Grammar()                                ).cfg.merge_jumps  ), true
+      @eq ( Ωilxt_420 = -> ( new Grammar { emit_signals: false,         } ).cfg.emit_signals ), false
+      @eq ( Ωilxt_421 = -> ( new Grammar { emit_signals: true,          } ).cfg.emit_signals ), true
+      @eq ( Ωilxt_422 = -> ( new Grammar {}                               ).cfg.emit_signals ), true
+      @eq ( Ωilxt_423 = -> ( new Grammar()                                ).cfg.emit_signals ), true
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -1447,7 +1451,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g         = new Grammar { name: 'g', emit_signals: true, loop_errors: 'emit', }
-        @eq ( Ωilxt_422 = -> g.cfg.merge_jumps ), true
         level_one = g.new_level { name: 'level_one',  }
         level_two = g.new_level { name: 'level_two',  }
         #...................................................................................................
@@ -1464,163 +1467,19 @@ GTNG                      = require '../../../apps/guy-test-NG'
             is_user:    lexeme.is_user    }
         #...................................................................................................
         source = "doesn't matter"
-        # info 'Ωilxt_423', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        # info 'Ωilxt_424', source; g.reset_lnr(); echo extract_props lexeme for lexeme from g.scan source
-        info 'Ωilxt_425', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_426 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',          is_system: true,  is_error: false, is_signal: true,  is_user: false, }
-        @eq ( Ωilxt_427 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
-        @eq ( Ωilxt_428 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: 'level_one.to_level_two', is_system: false, is_error: false, is_signal: false, is_user: true, }
-        @eq ( Ωilxt_429 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
-        @eq ( Ωilxt_430 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: 'level_two.to_level_one', is_system: false, is_error: false, is_signal: false, is_user: true, }
-        @eq ( Ωilxt_431 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
+        # info 'Ωilxt_424', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωilxt_425', source; g.reset_lnr(); echo extract_props lexeme for lexeme from g.scan source
+        info 'Ωilxt_426', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_427 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',          is_system: true,  is_error: false, is_signal: true,  is_user: false, }
+        @eq ( Ωilxt_428 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
+        @eq ( Ωilxt_429 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: 'level_one.to_level_two', is_system: false, is_error: false, is_signal: false, is_user: true, }
+        @eq ( Ωilxt_430 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
+        @eq ( Ωilxt_431 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: 'level_two.to_level_one', is_system: false, is_error: false, is_signal: false, is_user: true, }
         @eq ( Ωilxt_432 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$error.loop',            is_system: true,  is_error: true,  is_signal: false, is_user: false, }
         @eq ( Ωilxt_433 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
         @eq ( Ωilxt_434 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop',       is_system: true,  is_error: true,  is_signal: false, is_user: false, }
         @eq ( Ωilxt_435 = -> extract_props tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',           is_system: true,  is_error: false, is_signal: true,  is_user: false, }
         @eq ( Ωilxt_436 = -> extract_props tabulate_lexeme lexemes.next().value ), null
-        return null
-        #...................................................................................................
-      return null
-
-    #-------------------------------------------------------------------------------------------------------
-    detailed_jump_signals: ->
-      { Grammar
-        rx      } = require '../../../apps/interlex'
-      #-----------------------------------------------------------------------------------------------------
-      ### fore jump sticky, back jump sticky ###
-      do =>
-        g         = new Grammar { name: 'g', emit_signals: true, merge_jumps: false, }
-        @eq ( Ωilxt_437 = -> g.cfg.merge_jumps ), false
-        gnd       = g.new_level { name: 'gnd',      }
-        number    = g.new_level { name: 'number',   }
-        #...................................................................................................
-        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number',     }
-        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
-        #...................................................................................................
-        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
-        #...................................................................................................
-        source = "99kg23mm"
-        # info 'Ωilxt_438', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_439', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_440 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',     hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_441 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',      hit: '',   pos: '1:0:0', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_442 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_443 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',      hit: '',   pos: '1:0:0', data: { target: 'number' }, }
-        @eq ( Ωilxt_444 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',    hit: '99', pos: '1:0:2' }
-        @eq ( Ωilxt_445 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',       hit: 'kg', pos: '1:2:4' }
-        @eq ( Ωilxt_446 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',      hit: '',   pos: '1:4:4', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_447 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits', hit: '',   pos: '1:4:4' }
-        @eq ( Ωilxt_448 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',      hit: '',   pos: '1:4:4', data: { target: 'number' }, }
-        @eq ( Ωilxt_449 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',    hit: '23', pos: '1:4:6' }
-        @eq ( Ωilxt_450 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',       hit: 'mm', pos: '1:6:8' }
-        @eq ( Ωilxt_451 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',      hit: '',   pos: '1:8:8', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_452 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',      hit: '',   pos: '1:8:8', data: { target: null }, }
-        @eq ( Ωilxt_453 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',      hit: '',   pos: '1:8:8' }
-        @eq ( Ωilxt_454 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-        return null
-      #.....................................................................................................
-      ### fore jump carry, back jump sticky ###
-      do =>
-        g         = new Grammar { name: 'g', emit_signals: true, merge_jumps: false, }
-        @eq ( Ωilxt_455 = -> g.cfg.merge_jumps ), false
-        gnd       = g.new_level { name: 'gnd',      }
-        number    = g.new_level { name: 'number',   }
-        #...................................................................................................
-        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number!',    }
-        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
-        #...................................................................................................
-        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
-        #...................................................................................................
-        source = "99kg23mm"
-        # info 'Ωilxt_456', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_457', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_458 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',        hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_459 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_460 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'number' }, }
-        @eq ( Ωilxt_461 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_462 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '99', pos: '1:0:2' }
-        @eq ( Ωilxt_463 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',          hit: 'kg', pos: '1:2:4' }
-        @eq ( Ωilxt_464 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:4:4', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_465 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:4:4', data: { target: 'number' }, }
-        @eq ( Ωilxt_466 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:4:4' }
-        @eq ( Ωilxt_467 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '23', pos: '1:4:6' }
-        @eq ( Ωilxt_468 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',          hit: 'mm', pos: '1:6:8' }
-        @eq ( Ωilxt_469 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:8:8', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_470 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:8:8', data: { target: null }, }
-        @eq ( Ωilxt_471 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',         hit: '',   pos: '1:8:8' }
-        @eq ( Ωilxt_472 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-        return null
-      #.....................................................................................................
-      ### fore jump carry, back jump carry ###
-      do =>
-        g         = new Grammar { name: 'g', emit_signals: true, merge_jumps: false, }
-        @eq ( Ωilxt_473 = -> g.cfg.merge_jumps ), false
-        gnd       = g.new_level { name: 'gnd',      }
-        number    = g.new_level { name: 'number',   }
-        #...................................................................................................
-        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number!',    }
-        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
-        #...................................................................................................
-        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..!',     }
-        #...................................................................................................
-        source = "99kg23mm"
-        # info 'Ωilxt_474', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_475', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_476 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',        hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_477 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_478 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'number' }, }
-        @eq ( Ωilxt_479 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_480 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '99', pos: '1:0:2' }
-        @eq ( Ωilxt_481 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:2:2', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_482 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.unit',             hit: 'kg', pos: '1:2:4' }
-        @eq ( Ωilxt_483 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:4:4', data: { target: 'number' }, }
-        @eq ( Ωilxt_484 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:4:4' }
-        @eq ( Ωilxt_485 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '23', pos: '1:4:6' }
-        @eq ( Ωilxt_486 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:6:6', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_487 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.unit',             hit: 'mm', pos: '1:6:8' }
-        @eq ( Ωilxt_488 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:8:8', data: { target: null }, }
-        @eq ( Ωilxt_489 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',         hit: '',   pos: '1:8:8' }
-        @eq ( Ωilxt_490 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-        return null
-      #.....................................................................................................
-      ### fore jump sticky, back jump carry ###
-      do =>
-        g         = new Grammar { name: 'g', emit_signals: true, merge_jumps: false, }
-        @eq ( Ωilxt_491 = -> g.cfg.merge_jumps ), false
-        gnd       = g.new_level { name: 'gnd',      }
-        number    = g.new_level { name: 'number',   }
-        #...................................................................................................
-        gnd.new_token     { name: 'letters',          fit:  /[a-zA-Z]+/,                      }
-        gnd.new_token     { name: 'before_digits',    fit:  /(?=[0-9])/,  jump: 'number',     }
-        gnd.new_token     { name: 'ws',               fit:  /\s+/,                            }
-        #...................................................................................................
-        number.new_token  { name: 'integer',          fit:  /[0-9]+/,                         }
-        number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..!',     }
-        #...................................................................................................
-        source = "99kg23mm"
-        # info 'Ωilxt_492', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_493', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_494 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',        hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_495 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_496 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits',    hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_497 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'number' }, }
-        @eq ( Ωilxt_498 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '99', pos: '1:0:2' }
-        @eq ( Ωilxt_499 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:2:2', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_500 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.unit',             hit: 'kg', pos: '1:2:4' }
-        @eq ( Ωilxt_501 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.before_digits',    hit: '',   pos: '1:4:4' }
-        @eq ( Ωilxt_502 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:4:4', data: { target: 'number' }, }
-        @eq ( Ωilxt_503 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '23', pos: '1:4:6' }
-        @eq ( Ωilxt_504 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:6:6', data: { target: 'gnd' }, }
-        @eq ( Ωilxt_505 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.unit',             hit: 'mm', pos: '1:6:8' }
-        @eq ( Ωilxt_506 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:8:8', data: { target: null }, }
-        @eq ( Ωilxt_507 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',         hit: '',   pos: '1:8:8' }
-        @eq ( Ωilxt_508 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
         #...................................................................................................
       return null
@@ -1633,7 +1492,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       ### fore jump carry, back jump sticky ###
       do =>
         g         = new Grammar { name: 'g', emit_signals: true, }
-        @eq ( Ωilxt_509 = -> g.cfg.merge_jumps ), true
         gnd       = g.new_level { name: 'gnd',      }
         number    = g.new_level { name: 'number',   }
         #...................................................................................................
@@ -1645,20 +1503,21 @@ GTNG                      = require '../../../apps/guy-test-NG'
         number.new_token  { name: 'unit',             fit:  /[a-zA-Z]+/,     jump: '..',      }
         #...................................................................................................
         source = "99kg23mm"
-        # info 'Ωilxt_510', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_511', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_512 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',        hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_513 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'number' }, }
-        @eq ( Ωilxt_514 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:0:0' }
-        @eq ( Ωilxt_515 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '99', pos: '1:0:2' }
-        @eq ( Ωilxt_516 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',          hit: 'kg', pos: '1:2:4' }
-        @eq ( Ωilxt_517 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:4:4', data: { target: 'number' }, }
-        @eq ( Ωilxt_518 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:4:4' }
-        @eq ( Ωilxt_519 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '23', pos: '1:4:6' }
-        @eq ( Ωilxt_520 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',          hit: 'mm', pos: '1:6:8' }
-        @eq ( Ωilxt_521 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:8:8', data: { target: null }, }
-        @eq ( Ωilxt_522 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',         hit: '',   pos: '1:8:8' }
-        @eq ( Ωilxt_523 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        info 'Ωilxt_437', source; tabulate_lexemes g.scan source
+        # info 'Ωilxt_438', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_439', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_440 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',        hit: '',   pos: '1:0:0' }
+        @eq ( Ωilxt_441 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:0:0', data: { target: 'number' } }
+        @eq ( Ωilxt_442 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:0:0' }
+        @eq ( Ωilxt_443 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '99', pos: '1:0:2' }
+        @eq ( Ωilxt_444 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',          hit: 'kg', pos: '1:2:4' }
+        @eq ( Ωilxt_445 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:4:4', data: { target: 'number' } }
+        @eq ( Ωilxt_446 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.before_digits', hit: '',   pos: '1:4:4' }
+        @eq ( Ωilxt_447 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.integer',       hit: '23', pos: '1:4:6' }
+        @eq ( Ωilxt_448 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.unit',          hit: 'mm', pos: '1:6:8' }
+        @eq ( Ωilxt_449 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',         hit: '',   pos: '1:8:8', data: { target: null } }
+        @eq ( Ωilxt_450 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',         hit: '',   pos: '1:8:8' }
+        @eq ( Ωilxt_451 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
         #...................................................................................................
       return null
@@ -1673,7 +1532,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g         = new Grammar { name: 'g', emit_signals: true, loop_errors: 'throw', }
-        @eq ( Ωilxt_524 = -> g.cfg.merge_jumps ), true
         level_one = g.new_level { name: 'level_one',  }
         level_two = g.new_level { name: 'level_two',  }
         #...................................................................................................
@@ -1681,15 +1539,15 @@ GTNG                      = require '../../../apps/guy-test-NG'
         level_two.new_token { name: 'to_level_one', fit:  /|/,    jump: 'level_one', }
         #...................................................................................................
         source = "doesn't matter"
-        # info 'Ωilxt_525', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        # info 'Ωilxt_526', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωilxt_527', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_528 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',          hit: '', pos: '1:0:0' }
-        @eq ( Ωilxt_529 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '', pos: '1:0:0', data: { target: 'level_one' } }
-        @eq ( Ωilxt_530 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_one.to_level_two', hit: '', pos: '1:0:0' }
-        @eq ( Ωilxt_531 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '', pos: '1:0:0', data: { target: 'level_two' } }
-        @eq ( Ωilxt_532 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_two.to_level_one', hit: '', pos: '1:0:0' }
-        @throws ( Ωilxt_533 = -> abbrlxm tabulate_lexeme lexemes.next().value ), /encountered loop/
+        # info 'Ωilxt_452', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωilxt_453', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_454', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_455 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',          hit: '', pos: '1:0:0' }
+        @eq ( Ωilxt_456 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '', pos: '1:0:0', data: { target: 'level_one' } }
+        @eq ( Ωilxt_457 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_one.to_level_two', hit: '', pos: '1:0:0' }
+        @eq ( Ωilxt_458 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '', pos: '1:0:0', data: { target: 'level_two' } }
+        @eq ( Ωilxt_459 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_two.to_level_one', hit: '', pos: '1:0:0' }
+        @throws ( Ωilxt_460 = -> abbrlxm tabulate_lexeme lexemes.next().value ), /encountered loop/
         return null
         #...................................................................................................
       return null
@@ -1701,7 +1559,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g         = new Grammar { name: 'g', emit_signals: true, loop_errors: 'emit', }
-        @eq ( Ωilxt_534 = -> g.cfg.merge_jumps ), true
         level_one = g.new_level { name: 'level_one',  }
         level_two = g.new_level { name: 'level_two',  }
         #...................................................................................................
@@ -1709,27 +1566,26 @@ GTNG                      = require '../../../apps/guy-test-NG'
         level_two.new_token { name: 'to_level_one', fit:  /|/,    jump: 'level_one', }
         #...................................................................................................
         source = "doesn't matter"
-        # info 'Ωilxt_535', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        # info 'Ωilxt_536', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωilxt_537', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_538 = -> g.has_errors ), false
-        @eq ( Ωilxt_539 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',          hit: '',               pos: '1:0:0' }
-        @eq ( Ωilxt_540 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: 'level_one' } }
-        @eq ( Ωilxt_541 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_one.to_level_two', hit: '',               pos: '1:0:0' }
-        @eq ( Ωilxt_542 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: 'level_two' } }
-        @eq ( Ωilxt_543 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_two.to_level_one', hit: '',               pos: '1:0:0' }
-        @eq ( Ωilxt_544 = -> g.has_errors ), false
-        @eq ( Ωilxt_545 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: 'level_one' } }
-        @eq ( Ωilxt_546 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.loop',            hit: '',               pos: '1:0:0', data: { message: "encountered loop at position +0 (indicated by '⚠': '⚠doesn\\'t matter')" } }
-        @eq ( Ωilxt_547 = -> g.has_errors ), true
-        @eq ( Ωilxt_548 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: null } }
-        @eq ( Ωilxt_549 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop',       hit: "doesn't matter", pos: '1:0:14', data: { message: 'expected stop at 14, got +0' } }
-        @eq ( Ωilxt_550 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',           hit: '',               pos: '1:0:0' }
-        @eq ( Ωilxt_551 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-        @eq ( Ωilxt_552 = -> g.has_errors ), true
+        # info 'Ωilxt_461', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωilxt_462', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_463', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_464 = -> g.has_errors ), false
+        @eq ( Ωilxt_465 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',          hit: '',               pos: '1:0:0' }
+        @eq ( Ωilxt_466 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: 'level_one' } }
+        @eq ( Ωilxt_467 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_one.to_level_two', hit: '',               pos: '1:0:0' }
+        @eq ( Ωilxt_468 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: 'level_two' } }
+        @eq ( Ωilxt_469 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'level_two.to_level_one', hit: '',               pos: '1:0:0' }
+        @eq ( Ωilxt_470 = -> g.has_errors ), false
+        @eq ( Ωilxt_471 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.loop',            hit: '',               pos: '1:0:0', data: { message: "encountered loop at position +0 (indicated by '⚠': '⚠doesn\\'t matter')" } }
+        @eq ( Ωilxt_472 = -> g.has_errors ), true
+        @eq ( Ωilxt_473 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',           hit: '',               pos: '1:0:0', data: { target: null } }
+        @eq ( Ωilxt_474 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop',       hit: "doesn't matter", pos: '1:0:14', data: { message: 'expected stop at 14, got +0' } }
+        @eq ( Ωilxt_475 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',           hit: '',               pos: '1:0:0' }
+        @eq ( Ωilxt_476 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        @eq ( Ωilxt_477 = -> g.has_errors ), true
         lexemes = g.scan source
         abbrlxm lexemes.next().value
-        @eq ( Ωilxt_553 = -> g.has_errors ), true
+        @eq ( Ωilxt_478 = -> g.has_errors ), true
         return null
         #...................................................................................................
       return null
@@ -1741,20 +1597,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       g         = new Grammar { name: 'g', reset_errors: true, emit_signals: true, loop_errors: 'emit', }
       gnd       = g.new_level { name: 'gnd', }
-      @eq ( Ωilxt_554 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
+      @eq ( Ωilxt_479 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
       #.....................................................................................................
       g.state.errors.push null
       g.state.errors.push null
-      @eq ( Ωilxt_555 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
+      @eq ( Ωilxt_480 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
       lexemes = g.scan 'ghi'
-      @eq ( Ωilxt_556 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
-      @eq ( Ωilxt_557 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',    hit: '',    pos: '1:0:0' }
-      @eq ( Ωilxt_558 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
-      @eq ( Ωilxt_559 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',     hit: '',    pos: '1:0:0', data: { target: null } }
-      @eq ( Ωilxt_560 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop', hit: 'ghi', pos: '1:0:3', data: { message: 'expected stop at 3, got +0' } }
-      @eq ( Ωilxt_561 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',     hit: '',    pos: '1:0:0' }
-      @eq ( Ωilxt_562 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-      @eq ( Ωilxt_563 = -> [ g.state.errors.length, g.has_errors, ] ), [ 1, true ]
+      @eq ( Ωilxt_481 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
+      @eq ( Ωilxt_482 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',    hit: '',    pos: '1:0:0' }
+      @eq ( Ωilxt_483 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
+      @eq ( Ωilxt_484 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',     hit: '',    pos: '1:0:0', data: { target: null } }
+      @eq ( Ωilxt_485 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop', hit: 'ghi', pos: '1:0:3', data: { message: 'expected stop at 3, got +0' } }
+      @eq ( Ωilxt_486 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',     hit: '',    pos: '1:0:0' }
+      @eq ( Ωilxt_487 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+      @eq ( Ωilxt_488 = -> [ g.state.errors.length, g.has_errors, ] ), [ 1, true ]
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -1764,16 +1620,16 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       g         = new Grammar { name: 'g', reset_errors: true, emit_signals: true, loop_errors: 'emit', earlystop_errors: 'throw', }
       gnd       = g.new_level { name: 'gnd', }
-      @eq ( Ωilxt_564 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
+      @eq ( Ωilxt_489 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
       #.....................................................................................................
       g.state.errors.push null
       g.state.errors.push null
-      @eq ( Ωilxt_565 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
+      @eq ( Ωilxt_490 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
       lexemes = g.scan 'ghi'
-      @eq ( Ωilxt_566 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
-      @eq ( Ωilxt_567 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',    hit: '',    pos: '1:0:0' }
-      @eq ( Ωilxt_568 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
-      @throws ( Ωilxt_569 = -> abbrlxm tabulate_lexeme lexemes.next().value ), /expected stop at 3/
+      @eq ( Ωilxt_491 = -> [ g.state.errors.length, g.has_errors, ] ), [ 2, true ]
+      @eq ( Ωilxt_492 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',    hit: '',    pos: '1:0:0' }
+      @eq ( Ωilxt_493 = -> [ g.state.errors.length, g.has_errors, ] ), [ 0, false ]
+      @throws ( Ωilxt_494 = -> abbrlxm tabulate_lexeme lexemes.next().value ), /expected stop at 3/
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -1783,7 +1639,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g         = new Grammar { name: 'g', emit_signals: true, }
-        @eq ( Ωilxt_570 = -> g.cfg.merge_jumps ), true
         text  = g.new_level { name: 'text', }
         tag   = g.new_level { name: 'tag',  }
         #...................................................................................................
@@ -1795,21 +1650,21 @@ GTNG                      = require '../../../apps/guy-test-NG'
         # source = "<tag-a><tag-b><tag-c>"
         source = "<tag-a><tag-b>"
         # source = "<tag-a>"
-        # info 'Ωilxt_571', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        # info 'Ωilxt_572', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωilxt_573', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_574 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start', hit: '',        pos: '1:0:0' }
-        @eq ( Ωilxt_575 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:0:0', data: { target: 'text' } }
-        @eq ( Ωilxt_576 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.pretag',   hit: '',        pos: '1:0:0' }
-        @eq ( Ωilxt_577 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:0:0', data: { target: 'tag' } }
-        @eq ( Ωilxt_578 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-a>', pos: '1:0:7' }
-        @eq ( Ωilxt_579 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:7:7', data: { target: 'text' } }
-        @eq ( Ωilxt_580 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.pretag',   hit: '',        pos: '1:7:7' }
-        @eq ( Ωilxt_581 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:7:7', data: { target: 'tag' } }
-        @eq ( Ωilxt_582 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-b>', pos: '1:7:14' }
-        @eq ( Ωilxt_583 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:14:14', data: { target: null } }
-        @eq ( Ωilxt_584 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',  hit: '',        pos: '1:14:14' }
-        @eq ( Ωilxt_585 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_495', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωilxt_496', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_497', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_498 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start', hit: '',        pos: '1:0:0' }
+        @eq ( Ωilxt_499 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:0:0', data: { target: 'text' } }
+        @eq ( Ωilxt_500 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.pretag',   hit: '',        pos: '1:0:0' }
+        @eq ( Ωilxt_501 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:0:0', data: { target: 'tag' } }
+        @eq ( Ωilxt_502 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-a>', pos: '1:0:7' }
+        @eq ( Ωilxt_503 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:7:7', data: { target: 'text' } }
+        @eq ( Ωilxt_504 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.pretag',   hit: '',        pos: '1:7:7' }
+        @eq ( Ωilxt_505 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:7:7', data: { target: 'tag' } }
+        @eq ( Ωilxt_506 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-b>', pos: '1:7:14' }
+        @eq ( Ωilxt_507 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:14:14', data: { target: null } }
+        @eq ( Ωilxt_508 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',  hit: '',        pos: '1:14:14' }
+        @eq ( Ωilxt_509 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
         #...................................................................................................
       return null
@@ -1824,29 +1679,30 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         g         = new Grammar { name: 'g', emit_signals: true, }
-        @eq ( Ωilxt_586 = -> g.cfg.merge_jumps ), true
         text  = g.new_level { name: 'text', }
         tag   = g.new_level { name: 'tag',  }
         #...................................................................................................
         text.new_token { name: 'pretag',    fit:  /(?=<)/,      jump: 'tag',  emit: false, }
-        text.new_token { name: 'text',      fit:  /.+/,         jump: null,   }
-        tag.new_token  { name: 'tag',       fit:  /<[^>]*>+?/,  jump: 'text', }
+        text.new_token { name: 'text',      fit:  /[^<]+/,      jump: null,   }
+        tag.new_token  { name: 'tag',       fit:  /<[^>]*>+?/,  jump: '..', }
         #...................................................................................................
         # source = "<tag-a><tag-b><tag-c><tag-d>"
         # source = "<tag-a><tag-b><tag-c>"
-        source = "<tag-a><tag-b>"
+        # source = "<tag-a>c<tag-b>"
         # source = "<tag-a>"
-        # info 'Ωilxt_587', source; g.reset_lnr(); tabulate_lexemes g.scan source
-        # info 'Ωilxt_588', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωilxt_589', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_590 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start', hit: '',        pos: '1:0:0' }
-        @eq ( Ωilxt_591 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:0:0', data: { target: 'tag' } }
-        @eq ( Ωilxt_592 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-a>', pos: '1:0:7' }
-        @eq ( Ωilxt_593 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:7:7', data: { target: 'tag' } }
-        @eq ( Ωilxt_594 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-b>', pos: '1:7:14' }
-        @eq ( Ωilxt_595 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:14:14', data: { target: null } }
-        @eq ( Ωilxt_596 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',  hit: '',        pos: '1:14:14' }
-        @eq ( Ωilxt_597 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # source = "text1<tag-a>text2<tag-b>text3"
+        source = "<tag-a><tag-b>"
+        info 'Ωilxt_510', source; g.reset_lnr(); tabulate_lexemes g.scan source
+        # info 'Ωilxt_511', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_512', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_513 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start', hit: '',        pos: '1:0:0' }
+        @eq ( Ωilxt_514 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:0:0', data: { target: 'tag' } }
+        @eq ( Ωilxt_515 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-a>', pos: '1:0:7' }
+        @eq ( Ωilxt_516 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:7:7', data: { target: 'tag' } }
+        @eq ( Ωilxt_517 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'tag.tag',       hit: '<tag-b>', pos: '1:7:14' }
+        @eq ( Ωilxt_518 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',  hit: '',        pos: '1:14:14', data: { target: null } }
+        @eq ( Ωilxt_519 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',  hit: '',        pos: '1:14:14' }
+        @eq ( Ωilxt_520 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
         #...................................................................................................
       return null
@@ -1860,30 +1716,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
         rx
         internals } = require '../../../apps/interlex'
       #=====================================================================================================
-      cast = ({ fqname, hit, data, emit, token }) ->
-        if /[A-Z]+/.test hit
-          debug 'Ωilxt_598', @
-          debug 'Ωilxt_599', token
-          emit { fqname: 'gnd.faux', hit: '', level: { name: 'gnd', }, pos: '/', token: { merge: false, }, data: { nr: 1, } }
-          emit { fqname: 'gnd.faux', hit: '', level: { name: 'gnd', }, pos: '/', token: { merge: false, }, data: { nr: 2, } }
+      cast = ({ fqname, hit, start, data, emit, token, source }) ->
+        # debug 'Ωilxt_521', rpr source
+        # debug 'Ωilxt_522', rpr hit
+        # debug 'Ωilxt_523', @token_from_fqname 'error.nolikedis'
+        emit 'error.nolikedis', start, source, { letter: hit, } if hit is 'c'
+        # emit { fqname: 'gnd.faux', hit: '', level: { name: 'gnd', }, pos: '/', token: { merge: false, }, data: { nr: 1, } }
+        # emit { fqname: 'gnd.faux', hit: '', level: { name: 'gnd', }, pos: '/', token: { merge: false, }, data: { nr: 2, } }
         return null
       #.....................................................................................................
-      g         = new Grammar { name: 'g', emit_signals: false, }
+      g         = new Grammar { name: 'g', emit_signals: true, }
       gnd       = g.new_level { name: 'gnd', cast, }
       error     = g.new_level { name: 'error', }
-      debug 'Ωilxt_600', $error = g.levels.$error
+      debug 'Ωilxt_524', $error = g.levels.$error
       #.....................................................................................................
       gnd.new_token       { name: 'name1',           fit: rx"(?<initial>[A-Z])", merge: true, }
       gnd.new_token       { name: 'name2',           fit: rx"(?<lower>[a-z])",   merge: true, }
-      gnd.new_token       { name: 'name3',           fit: rx"", jump: 'error',  }
-      error.new_token     { name: 'illegal',        fit: rx"(?<illegal>[^A-Za-z]+)", jump: '..', }
-      error.new_token     { name: 'name',           fit: /.*/, jump: '..!'                 }
+      # gnd.new_token       { name: 'name3',           fit: rx"", jump: 'error',  }
+      # error.new_token     { name: 'noletter',        fit: rx"(?<noletter>[^A-Za-z]+)", jump: '..', }
+      error.new_token     { name: 'nolikedis',       fit: rx".", }
+      # error.new_token     { name: 'name',            fit: /.*/, jump: '..!'                 }
       #.....................................................................................................
       source = "Accept7reject"
       source = "Acceptreject"
-      info 'Ωilxt_601', source; tabulate_lexemes g.scan source
-      # info 'Ωilxt_602', source; g.reset_lnr(); lexemes = g.scan source
-      # @eq ( Ωilxt_603 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+      info 'Ωilxt_525', source; tabulate_lexemes g.scan source
+      # info 'Ωilxt_526', source; g.reset_lnr(); lexemes = g.scan source
+      # @eq ( Ωilxt_527 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
       #.....................................................................................................
       return null
 
@@ -1906,24 +1764,24 @@ GTNG                      = require '../../../apps/guy-test-NG'
       gnd.new_token       { name: 'ws',             fit: rx"\s+",                     }
       #.....................................................................................................
       source = "Alice in Cairo 1912 (approximately)"
-      # info 'Ωilxt_604', source; tabulate_lexemes g.scan source
-      info 'Ωilxt_605', source; g.reset_lnr(); lexemes = g.scan source
-      @eq ( Ωilxt_606 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',   hit: '',              pos: '1:0:0' }
-      @eq ( Ωilxt_607 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',    hit: '',              pos: '1:0:0', data: { target: 'gnd' } }
-      @eq ( Ωilxt_608 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',        hit: 'Alice',         pos: '1:0:5', data: { initial: 'A', }, }
-      @eq ( Ωilxt_609 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:5:6' }
-      @eq ( Ωilxt_610 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.other',       hit: 'in',            pos: '1:6:8' }
-      @eq ( Ωilxt_611 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:8:9' }
-      @eq ( Ωilxt_612 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',        hit: 'Cairo',         pos: '1:9:14', data: { initial: 'C', } }
-      @eq ( Ωilxt_613 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:14:15' }
-      @eq ( Ωilxt_614 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number',      hit: '1912',          pos: '1:15:19' }
-      @eq ( Ωilxt_615 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:19:20' }
-      @eq ( Ωilxt_616 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.paren_start', hit: '(',             pos: '1:20:21' }
-      @eq ( Ωilxt_617 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.other',       hit: 'approximately', pos: '1:21:34' }
-      @eq ( Ωilxt_618 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.paren_stop',  hit: ')',             pos: '1:34:35' }
-      @eq ( Ωilxt_619 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',    hit: '',              pos: '1:35:35', data: { target: null } }
-      @eq ( Ωilxt_ACCEPT_620 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',    hit: '',              pos: '1:35:35', }
-      @eq ( Ωilxt_621 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+      # info 'Ωilxt_528', source; tabulate_lexemes g.scan source
+      info 'Ωilxt_529', source; g.reset_lnr(); lexemes = g.scan source
+      @eq ( Ωilxt_530 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',   hit: '',              pos: '1:0:0' }
+      @eq ( Ωilxt_531 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',    hit: '',              pos: '1:0:0', data: { target: 'gnd' } }
+      @eq ( Ωilxt_532 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',        hit: 'Alice',         pos: '1:0:5', data: { initial: 'A', }, }
+      @eq ( Ωilxt_533 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:5:6' }
+      @eq ( Ωilxt_534 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.other',       hit: 'in',            pos: '1:6:8' }
+      @eq ( Ωilxt_535 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:8:9' }
+      @eq ( Ωilxt_536 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',        hit: 'Cairo',         pos: '1:9:14', data: { initial: 'C', } }
+      @eq ( Ωilxt_537 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:14:15' }
+      @eq ( Ωilxt_538 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number',      hit: '1912',          pos: '1:15:19' }
+      @eq ( Ωilxt_539 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',          hit: ' ',             pos: '1:19:20' }
+      @eq ( Ωilxt_540 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.paren_start', hit: '(',             pos: '1:20:21' }
+      @eq ( Ωilxt_541 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.other',       hit: 'approximately', pos: '1:21:34' }
+      @eq ( Ωilxt_542 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.paren_stop',  hit: ')',             pos: '1:34:35' }
+      @eq ( Ωilxt_543 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',    hit: '',              pos: '1:35:35', data: { target: null } }
+      @eq ( Ωilxt_ACCEPT_544 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',    hit: '',              pos: '1:35:35', }
+      @eq ( Ωilxt_545 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
       #.....................................................................................................
       return null
 
@@ -1948,25 +1806,25 @@ GTNG                      = require '../../../apps/guy-test-NG'
       string11.new_token  { name: 'text',           fit: rx"[^']+",                   }
       #.....................................................................................................
       source = "Alice in Cairo 1912 'approximately'"
-      # info 'Ωilxt_622', source; tabulate_lexemes g.scan source
-      info 'Ωilxt_623', source; g.reset_lnr(); lexemes = g.scan source
-      @eq ( Ωilxt_624 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',      hit: '',       pos: '1:0:0' }
-      @eq ( Ωilxt_625 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',       hit: '',       pos: '1:0:0', data: { target: 'gnd' } }
-      @eq ( Ωilxt_626 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',           hit: 'Alice',  pos: '1:0:5', data: { initial: 'A', }, }
-      @eq ( Ωilxt_627 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:5:6' }
-      @eq ( Ωilxt_628 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.other',          hit: 'in',     pos: '1:6:8' }
-      @eq ( Ωilxt_629 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:8:9' }
-      @eq ( Ωilxt_630 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',           hit: 'Cairo',  pos: '1:9:14', data: { initial: 'C', }, }
-      @eq ( Ωilxt_631 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:14:15' }
-      @eq ( Ωilxt_632 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number',         hit: '1912',   pos: '1:15:19' }
-      @eq ( Ωilxt_633 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:19:20' }
-      @eq ( Ωilxt_634 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.string11_start', hit: "'",      pos: '1:20:21' }
-      @eq ( Ωilxt_635 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',       hit: '',       pos: '1:21:21', data: { target: 'string11' } }
-      @eq ( Ωilxt_636 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string11.text',      hit: 'approximately', pos: '1:21:34' }
-      @eq ( Ωilxt_637 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',       hit: '',       pos: '1:34:34', data: { target: null } }
-      @eq ( Ωilxt_638 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop',   hit: "'",      pos: '1:34:35', data: { message: 'expected stop at 35, got 34' } }
-      @eq ( Ωilxt_639 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',       hit: '',       pos: '1:34:34', }
-      @eq ( Ωilxt_640 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+      # info 'Ωilxt_546', source; tabulate_lexemes g.scan source
+      info 'Ωilxt_547', source; g.reset_lnr(); lexemes = g.scan source
+      @eq ( Ωilxt_548 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.start',      hit: '',       pos: '1:0:0' }
+      @eq ( Ωilxt_549 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',       hit: '',       pos: '1:0:0', data: { target: 'gnd' } }
+      @eq ( Ωilxt_550 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',           hit: 'Alice',  pos: '1:0:5', data: { initial: 'A', }, }
+      @eq ( Ωilxt_551 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:5:6' }
+      @eq ( Ωilxt_552 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.other',          hit: 'in',     pos: '1:6:8' }
+      @eq ( Ωilxt_553 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:8:9' }
+      @eq ( Ωilxt_554 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.name',           hit: 'Cairo',  pos: '1:9:14', data: { initial: 'C', }, }
+      @eq ( Ωilxt_555 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:14:15' }
+      @eq ( Ωilxt_556 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number',         hit: '1912',   pos: '1:15:19' }
+      @eq ( Ωilxt_557 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.ws',             hit: ' ',      pos: '1:19:20' }
+      @eq ( Ωilxt_558 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.string11_start', hit: "'",      pos: '1:20:21' }
+      @eq ( Ωilxt_559 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',       hit: '',       pos: '1:21:21', data: { target: 'string11' } }
+      @eq ( Ωilxt_560 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string11.text',      hit: 'approximately', pos: '1:21:34' }
+      @eq ( Ωilxt_561 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.jump',       hit: '',       pos: '1:34:34', data: { target: null } }
+      @eq ( Ωilxt_562 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop',   hit: "'",      pos: '1:34:35', data: { message: 'expected stop at 35, got 34' } }
+      @eq ( Ωilxt_563 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$signal.stop',       hit: '',       pos: '1:34:34', }
+      @eq ( Ωilxt_564 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -1984,32 +1842,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         source = "R\\2D\\2 on Charon 3"
-        # info 'Ωilxt_641', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_642', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_643 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'R',           pos: '1:0:1' }
-        @eq ( Ωilxt_644 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:1:3' }
-        @eq ( Ωilxt_645 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'D',           pos: '1:3:4' }
-        @eq ( Ωilxt_646 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:4:6' }
-        @eq ( Ωilxt_647 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: ' on Charon ', pos: '1:6:17' }
-        @eq ( Ωilxt_648 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number_start', hit: '',            pos: '1:17:17' }
-        @eq ( Ωilxt_649 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number',    hit: '3',           pos: '1:17:18' }
-        @eq ( Ωilxt_650 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_565', source; tabulate_lexemes g.scan source
+        info 'Ωilxt_566', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_567 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'R',           pos: '1:0:1' }
+        @eq ( Ωilxt_568 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:1:3' }
+        @eq ( Ωilxt_569 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'D',           pos: '1:3:4' }
+        @eq ( Ωilxt_570 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:4:6' }
+        @eq ( Ωilxt_571 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: ' on Charon ', pos: '1:6:17' }
+        @eq ( Ωilxt_572 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number_start', hit: '',            pos: '1:17:17' }
+        @eq ( Ωilxt_573 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number',    hit: '3',           pos: '1:17:18' }
+        @eq ( Ωilxt_574 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       #.....................................................................................................
       do =>
         source = "R\\2D\\2 on Charon 3!!"
         # echo abbrlxm lxm for lxm from g.scan source
-        # info 'Ωilxt_651', source; tabulate_lexemes g.scan source
-        info 'Ωilxt_652', source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_653 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'R',           pos: '1:0:1' }
-        @eq ( Ωilxt_654 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:1:3' }
-        @eq ( Ωilxt_655 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'D',           pos: '1:3:4' }
-        @eq ( Ωilxt_656 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:4:6' }
-        @eq ( Ωilxt_657 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: ' on Charon ', pos: '1:6:17' }
-        @eq ( Ωilxt_658 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number_start', hit: '',            pos: '1:17:17' }
-        @eq ( Ωilxt_659 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number',    hit: '3',           pos: '1:17:18' }
-        @eq ( Ωilxt_660 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop', hit: '!!',          pos: '1:18:20', data: { message: 'expected stop at 20, got 18' } }
-        @eq ( Ωilxt_661 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_575', source; tabulate_lexemes g.scan source
+        info 'Ωilxt_576', source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_577 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'R',           pos: '1:0:1' }
+        @eq ( Ωilxt_578 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:1:3' }
+        @eq ( Ωilxt_579 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: 'D',           pos: '1:3:4' }
+        @eq ( Ωilxt_580 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: '\\2',         pos: '1:4:6' }
+        @eq ( Ωilxt_581 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',         hit: ' on Charon ', pos: '1:6:17' }
+        @eq ( Ωilxt_582 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.number_start', hit: '',            pos: '1:17:17' }
+        @eq ( Ωilxt_583 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'number.number',    hit: '3',           pos: '1:17:18' }
+        @eq ( Ωilxt_584 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: '$error.earlystop', hit: '!!',          pos: '1:18:20', data: { message: 'expected stop at 20, got 18' } }
+        @eq ( Ωilxt_585 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       return null
 
@@ -2023,18 +1881,16 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.........................................................................................................
       do =>
         g = new Grammar()
-        @eq ( Ωilxt_662 = -> g.cfg.name           ), 'g'
-        @eq ( Ωilxt_663 = -> g.cfg.strategy       ), 'first'
-        @eq ( Ωilxt_664 = -> g.cfg.emit_signals   ), true
-        @eq ( Ωilxt_665 = -> g.cfg.merge_jumps    ), true
+        @eq ( Ωilxt_586 = -> g.cfg.name           ), 'g'
+        @eq ( Ωilxt_587 = -> g.cfg.strategy       ), 'first'
+        @eq ( Ωilxt_588 = -> g.cfg.emit_signals   ), true
         return null
       #.........................................................................................................
       do =>
         g = new Grammar { emit_signals: false, }
-        @eq ( Ωilxt_666 = -> g.cfg.name           ), 'g'
-        @eq ( Ωilxt_667 = -> g.cfg.strategy       ), 'first'
-        @eq ( Ωilxt_668 = -> g.cfg.emit_signals   ), false
-        @eq ( Ωilxt_669 = -> g.cfg.merge_jumps    ), false
+        @eq ( Ωilxt_589 = -> g.cfg.name           ), 'g'
+        @eq ( Ωilxt_590 = -> g.cfg.strategy       ), 'first'
+        @eq ( Ωilxt_591 = -> g.cfg.emit_signals   ), false
         return null
       #.........................................................................................................
       return null
@@ -2042,12 +1898,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true, show_passes: false, report_checks: false, }
-  # guytest_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
+  # guytest_cfg = { throw_on_error: true, show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
   # guytest_cfg = { throw_on_error: false, show_passes: true, report_checks: true, }
   ( new Test guytest_cfg ).test @interlex_tasks
-  ( new Test guytest_cfg ).test { user_errors: @interlex_tasks.user_errors, }
-  # ( new Test guytest_cfg ).test { ghost_tokens: @interlex_tasks.ghost_tokens, }
+  ( new Test guytest_cfg ).test { ghost_tokens: @interlex_tasks.ghost_tokens, }
+  # ( new Test guytest_cfg ).test { signals: @interlex_tasks.signals, }
+  # ( new Test guytest_cfg ).test { user_errors: @interlex_tasks.user_errors, }
+  # ( new Test guytest_cfg ).test { zero_matches_with_jumps_as_error_signals: @interlex_tasks.infinite_loops.zero_matches_with_jumps_as_error_signals, }
   # ( new Test guytest_cfg ).test { cfg_settings: @interlex_tasks.cfg_settings, }
   # ( new Test guytest_cfg ).test { numbering: @interlex_tasks.basics.numbering, }
   # ( new Test guytest_cfg ).test { stack: @interlex_tasks.stack, }
