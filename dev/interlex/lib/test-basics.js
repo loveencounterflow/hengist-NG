@@ -5537,6 +5537,208 @@
         //.........................................................................................................
         return null;
       }
+    },
+    //=========================================================================================================
+    continuations: {
+      //-------------------------------------------------------------------------------------------------------
+      string_literal_with_line_breaks_non_continuous: function() {
+        var Grammar, g, gnd, rx, string;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        //=====================================================================================================
+        g = new Grammar({
+          emit_signals: false
+        });
+        gnd = g.new_level({
+          name: 'gnd'
+        });
+        string = g.new_level({
+          name: 'string'
+        });
+        //.....................................................................................................
+        gnd.new_token({
+          name: 'dq1',
+          fit: /(?<!\\)"/,
+          jump: 'string!'
+        });
+        gnd.new_token({
+          name: 'text',
+          fit: /(\\"|[^"])+/
+        });
+        string.new_token({
+          name: 'string',
+          fit: /(\\"|[^"])+/
+        });
+        string.new_token({
+          name: 'dq1',
+          fit: /(?<!\\)"/,
+          jump: '..'
+        });
+        (() => {          //.....................................................................................................
+          var lexemes, source, Ωilxt_667, Ωilxt_668, Ωilxt_669, Ωilxt_670, Ωilxt_671, Ωilxt_672;
+          g.reset();
+          source = 'the word "black bird" is the word\n';
+          // info 'Ωilxt_664', source; tabulate_lexemes g.scan source
+          // info 'Ωilxt_665', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_666', source);
+          g.reset_lnr();
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_667 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: 'the word ',
+            pos: '1:0:9'
+          });
+          this.eq((Ωilxt_668 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:9:10'
+          });
+          this.eq((Ωilxt_669 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.string',
+            hit: 'black bird',
+            pos: '1:10:20'
+          });
+          this.eq((Ωilxt_670 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:20:21'
+          });
+          this.eq((Ωilxt_671 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: ' is the word\n',
+            pos: '1:21:34'
+          });
+          this.eq((Ωilxt_672 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var lexemes, source, Ωilxt_676, Ωilxt_677, Ωilxt_678, Ωilxt_679, Ωilxt_680, Ωilxt_681;
+          g.reset();
+          source = 'the word "black\nbird" is the word\n';
+          // info 'Ωilxt_673', source; tabulate_lexemes g.scan source
+          // info 'Ωilxt_674', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_675', source);
+          g.reset_lnr();
+          lexemes = g.scan(source);
+          this.eq((Ωilxt_676 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: 'the word ',
+            pos: '1:0:9'
+          });
+          this.eq((Ωilxt_677 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:9:10'
+          });
+          this.eq((Ωilxt_678 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.string',
+            hit: 'black\nbird',
+            pos: '1:10:20'
+          });
+          this.eq((Ωilxt_679 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:20:21'
+          });
+          this.eq((Ωilxt_680 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: ' is the word\n',
+            pos: '1:21:34'
+          });
+          this.eq((Ωilxt_681 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var lexemes, source1, source2, Ωilxt_685, Ωilxt_686, Ωilxt_687, Ωilxt_688, Ωilxt_692, Ωilxt_693, Ωilxt_694, Ωilxt_695;
+          g.reset();
+          source1 = 'the word "black\n';
+          source2 = 'bird" is the word\n';
+          // info 'Ωilxt_682', source1; tabulate_lexemes g.scan source1
+          // info 'Ωilxt_683', source1; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source1
+          info('Ωilxt_684', source1);
+          g.reset_lnr();
+          lexemes = g.scan(source1);
+          this.eq((Ωilxt_685 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: 'the word ',
+            pos: '1:0:9'
+          });
+          this.eq((Ωilxt_686 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:9:10'
+          });
+          this.eq((Ωilxt_687 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.string',
+            hit: 'black\n',
+            pos: '1:10:16'
+          });
+          this.eq((Ωilxt_688 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          // info 'Ωilxt_689', source2; tabulate_lexemes g.scan source2
+          // info 'Ωilxt_690', source2; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source2
+          info('Ωilxt_691', source2);
+          g.reset_lnr();
+          lexemes = g.scan(source2);
+          this.eq((Ωilxt_692 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: 'bird',
+            pos: '1:0:4'
+          });
+          this.eq((Ωilxt_693 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:4:5'
+          });
+          this.eq((Ωilxt_694 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.string',
+            hit: ' is the word\n',
+            pos: '1:5:18'
+          });
+          this.eq((Ωilxt_695 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          return null;
+        })();
+        //.....................................................................................................
+        return null;
+      }
     }
   };
 
@@ -5552,15 +5754,15 @@
       // guytest_cfg = { throw_on_error: false, show_passes: false, report_checks: false, }
       // guytest_cfg = { throw_on_error: false, show_passes: true, report_checks: true, }
       (new Test(guytest_cfg)).test(this.interlex_tasks);
-      // ( new Test guytest_cfg ).test { ghost_tokens: @interlex_tasks.ghost_tokens, }
-      // ( new Test guytest_cfg ).test { signals: @interlex_tasks.signals, }
       return (new Test(guytest_cfg)).test({
-        user_errors: this.interlex_tasks.user_errors
+        continuations: this.interlex_tasks.continuations
       });
     })();
   }
 
-  // ( new Test guytest_cfg ).test { zero_matches_with_jumps_as_error_signals: @interlex_tasks.infinite_loops.zero_matches_with_jumps_as_error_signals, }
+  // ( new Test guytest_cfg ).test { signals: @interlex_tasks.signals, }
+// ( new Test guytest_cfg ).test { user_errors: @interlex_tasks.user_errors, }
+// ( new Test guytest_cfg ).test { zero_matches_with_jumps_as_error_signals: @interlex_tasks.infinite_loops.zero_matches_with_jumps_as_error_signals, }
 // ( new Test guytest_cfg ).test { cfg_settings: @interlex_tasks.cfg_settings, }
 // ( new Test guytest_cfg ).test { numbering: @interlex_tasks.basics.numbering, }
 // ( new Test guytest_cfg ).test { stack: @interlex_tasks.stack, }

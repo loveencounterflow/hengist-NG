@@ -1,4 +1,26 @@
 
+###
+
+## Glossary of Abbreviations
+
+* **LPB**:      **L**eft **P**ointy **B**racket, `<`
+* **RPB**:      **R**ight **P**ointy **B**racket, `>`
+* **LTAG**:     **L**eft tag: <xxx>, <xxx/>
+* **RTAG**:     **R**ight tag: </xxx>
+* **NONCR**:    Named Or **N**umerical **C**haracter **R**eference, also a '**NON**-**C**ha**R**acter' in
+  many contexts where only a literal character will have a certain function (like literal `<` as opposed
+  to `&lt;` for starting a tag literal in HTML)
+* csn
+* cid
+* chr
+
+
+
+
+
+###
+
+
 'use strict'
 
 
@@ -47,14 +69,6 @@ abbrlxm2                  = ( source, lxm ) -> if lxm? then [ source, lxm.fqname
         ltag    = g.new_level { name: 'ltag', }
         rtag    = g.new_level { name: 'rtag', }
         # ncr   = g.new_level { name: 'ncr', }
-        #...................................................................................................
-        ###
-        names
-          rpb     right pointy bracket
-          ltag    left tag: <xxx>, <xxx/>
-          rtag    right tag: </xxx>
-
-        ###
         #...................................................................................................
         ncr_cast = ({ fqname, hit, data, }) ->
           data.csn = 'U' if ( not data.csn? ) or ( data.csn is '' )
