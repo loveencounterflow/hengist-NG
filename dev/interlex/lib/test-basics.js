@@ -2053,7 +2053,7 @@
           //...................................................................................................
           test(g);
           source = probes_and_matchers[0][0];
-          info('Ωilxt_237', source);
+          info('Ωilxt_237', rpr(source));
           g.reset_lnr();
           return tabulate_lexemes(g.scan(source));
         })();
@@ -2102,7 +2102,7 @@
           });
           //...................................................................................................
           source = "99kg23mm";
-          info('Ωilxt_238', source);
+          info('Ωilxt_238', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_239 = function() {
@@ -2394,8 +2394,8 @@
           var lexemes, source, Ωilxt_287, Ωilxt_288, Ωilxt_289, Ωilxt_290, Ωilxt_291, Ωilxt_292, Ωilxt_293, Ωilxt_294, Ωilxt_295, Ωilxt_296, Ωilxt_297, Ωilxt_298, Ωilxt_299, Ωilxt_300, Ωilxt_301, Ωilxt_302, Ωilxt_303, Ωilxt_304, Ωilxt_305, Ωilxt_306, Ωilxt_307, Ωilxt_308, Ωilxt_309, Ωilxt_310, Ωilxt_311, Ωilxt_312, Ωilxt_313, Ωilxt_314;
           source = "R\\2D\\2 has 3556.3 Petabytes";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_285', source; tabulate_lexemes g.scan source
-          info('Ωilxt_286', source);
+          // info 'Ωilxt_285', rpr source; tabulate_lexemes g.scan source
+          info('Ωilxt_286', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_287 = function() {
@@ -2638,8 +2638,8 @@
           var lexemes, source, Ωilxt_317, Ωilxt_318, Ωilxt_319, Ωilxt_320, Ωilxt_321, Ωilxt_322, Ωilxt_323, Ωilxt_324, Ωilxt_325, Ωilxt_326;
           source = "R\\2D\\2 has 3556.3 Petabytes";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_315', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          info('Ωilxt_316', source);
+          // info 'Ωilxt_315', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          info('Ωilxt_316', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_317 = function() {
@@ -2734,8 +2734,8 @@
           var lexemes, source, Ωilxt_329, Ωilxt_330;
           source = "ArcBoCyDeen";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_327', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          info('Ωilxt_328', source);
+          // info 'Ωilxt_327', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          info('Ωilxt_328', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_329 = function() {
@@ -2777,8 +2777,8 @@
           var lexemes, source, Ωilxt_333, Ωilxt_334;
           source = "ArcBoCyDeen";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_331', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          info('Ωilxt_332', source);
+          // info 'Ωilxt_331', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          info('Ωilxt_332', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_333 = function() {
@@ -2820,8 +2820,8 @@
           var lexemes, source, Ωilxt_337, Ωilxt_338;
           source = "Arc";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_335', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          info('Ωilxt_336', source);
+          // info 'Ωilxt_335', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          info('Ωilxt_336', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_337 = function() {
@@ -2878,8 +2878,8 @@
           var lexemes, source, Ωilxt_341, Ωilxt_342;
           source = "ArcBoCyDeen";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_339', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          info('Ωilxt_340', source);
+          // info 'Ωilxt_339', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          info('Ωilxt_340', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_341 = function() {
@@ -2922,8 +2922,8 @@
           var lexemes, source, Ωilxt_345, Ωilxt_346;
           source = "ArcBoCyDeen";
           // g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_343', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          info('Ωilxt_344', source);
+          // info 'Ωilxt_343', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          info('Ωilxt_344', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_345 = function() {
@@ -2960,8 +2960,8 @@
     //   do =>
     //     source = "ArcBoCyDeen"
     //     # g.reset_lnr(); echo abbrlxm lxm for lxm from g.scan source
-    //     # info 'Ωilxt_347', source; g.reset_lnr(); tabulate_lexemes g.scan source
-    //     info 'Ωilxt_348', source; g.reset_lnr(); lexemes = g.scan source
+    //     # info 'Ωilxt_347', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+    //     info 'Ωilxt_348', rpr source; g.reset_lnr(); lexemes = g.scan source
     //     @eq ( Ωilxt_349 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'text.name', hit: 'ArcBoCyDeen', pos: '1:0:11', data: { parts: [ 'ArcBoCyDeen' ], initials: [ 'ABCD' ] } }
     //     @eq ( Ωilxt_350 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
     //     return null
@@ -3521,9 +3521,9 @@
           };
           //...................................................................................................
           source = "doesn't matter";
-          // info 'Ωilxt_428', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          // info 'Ωilxt_429', source; g.reset_lnr(); echo extract_props lexeme for lexeme from g.scan source
-          info('Ωilxt_430', source);
+          // info 'Ωilxt_428', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωilxt_429', rpr source; g.reset_lnr(); echo extract_props lexeme for lexeme from g.scan source
+          info('Ωilxt_430', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_431 = function() {
@@ -3658,10 +3658,10 @@
           });
           //...................................................................................................
           source = "99kg23mm";
-          info('Ωilxt_441', source);
+          info('Ωilxt_441', rpr(source));
           tabulate_lexemes(g.scan(source));
-          // info 'Ωilxt_442', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_443', source);
+          // info 'Ωilxt_442', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_443', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_444 = function() {
@@ -3791,9 +3791,9 @@
           });
           //...................................................................................................
           source = "doesn't matter";
-          // info 'Ωilxt_456', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          // info 'Ωilxt_457', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_458', source);
+          // info 'Ωilxt_456', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωilxt_457', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_458', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_459 = function() {
@@ -3875,9 +3875,9 @@
           });
           //...................................................................................................
           source = "doesn't matter";
-          // info 'Ωilxt_465', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          // info 'Ωilxt_466', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_467', source);
+          // info 'Ωilxt_465', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωilxt_466', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_467', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_468 = function() {
@@ -4135,9 +4135,9 @@
           // source = "<tag-a><tag-b><tag-c>"
           source = "<tag-a><tag-b>";
           // source = "<tag-a>"
-          // info 'Ωilxt_499', source; g.reset_lnr(); tabulate_lexemes g.scan source
-          // info 'Ωilxt_500', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_501', source);
+          // info 'Ωilxt_499', rpr source; g.reset_lnr(); tabulate_lexemes g.scan source
+          // info 'Ωilxt_500', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_501', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_502 = function() {
@@ -4283,11 +4283,11 @@
           // source = "<tag-a>"
           // source = "text1<tag-a>text2<tag-b>text3"
           source = "<tag-a><tag-b>";
-          info('Ωilxt_514', source);
+          info('Ωilxt_514', rpr(source));
           g.reset_lnr();
           tabulate_lexemes(g.scan(source));
-          // info 'Ωilxt_515', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_516', source);
+          // info 'Ωilxt_515', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_516', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_517 = function() {
@@ -4429,9 +4429,9 @@
         }), 'walk');
         //.....................................................................................................
         source = "Acceptreject";
-        // info 'Ωilxt_533', source; tabulate_lexemes g.scan source
-        // info 'Ωilxt_534', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info('Ωilxt_535', source);
+        // info 'Ωilxt_533', rpr source; tabulate_lexemes g.scan source
+        // info 'Ωilxt_534', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info('Ωilxt_535', rpr(source));
         g.reset_lnr();
         lexemes = g.scan(source);
         this.eq((Ωilxt_536 = function() {
@@ -4634,9 +4634,9 @@
         }), null);
         //.....................................................................................................
         source = "Acceptreject";
-        // info 'Ωilxt_558', source; tabulate_lexemes g.scan source
-        // info 'Ωilxt_559', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info('Ωilxt_560', source);
+        // info 'Ωilxt_558', rpr source; tabulate_lexemes g.scan source
+        // info 'Ωilxt_559', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info('Ωilxt_560', rpr(source));
         g.reset_lnr();
         lexemes = g.scan(source);
         this.eq((Ωilxt_561 = function() {
@@ -4839,9 +4839,9 @@
         }), null);
         //.....................................................................................................
         source = "Acceptreject";
-        // info 'Ωilxt_583', source; tabulate_lexemes g.scan source
-        // info 'Ωilxt_584', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info('Ωilxt_585', source);
+        // info 'Ωilxt_583', rpr source; tabulate_lexemes g.scan source
+        // info 'Ωilxt_584', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info('Ωilxt_585', rpr(source));
         g.reset_lnr();
         lexemes = g.scan(source);
         this.eq((Ωilxt_586 = function() {
@@ -5015,8 +5015,8 @@
         });
         //.....................................................................................................
         source = "Alice in Cairo 1912 (approximately)";
-        // info 'Ωilxt_600', source; tabulate_lexemes g.scan source
-        info('Ωilxt_601', source);
+        // info 'Ωilxt_600', rpr source; tabulate_lexemes g.scan source
+        info('Ωilxt_601', rpr(source));
         g.reset_lnr();
         lexemes = g.scan(source);
         this.eq((Ωilxt_602 = function() {
@@ -5194,8 +5194,8 @@
         });
         //.....................................................................................................
         source = "Alice in Cairo 1912 'approximately'";
-        // info 'Ωilxt_618', source; tabulate_lexemes g.scan source
-        info('Ωilxt_619', source);
+        // info 'Ωilxt_618', rpr source; tabulate_lexemes g.scan source
+        info('Ωilxt_619', rpr(source));
         g.reset_lnr();
         lexemes = g.scan(source);
         this.eq((Ωilxt_620 = function() {
@@ -5365,8 +5365,8 @@
         (() => {          //.....................................................................................................
           var lexemes, source, Ωilxt_639, Ωilxt_640, Ωilxt_641, Ωilxt_642, Ωilxt_643, Ωilxt_644, Ωilxt_645, Ωilxt_646;
           source = "R\\2D\\2 on Charon 3";
-          // info 'Ωilxt_637', source; tabulate_lexemes g.scan source
-          info('Ωilxt_638', source);
+          // info 'Ωilxt_637', rpr source; tabulate_lexemes g.scan source
+          info('Ωilxt_638', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_639 = function() {
@@ -5427,8 +5427,8 @@
           var lexemes, source, Ωilxt_649, Ωilxt_650, Ωilxt_651, Ωilxt_652, Ωilxt_653, Ωilxt_654, Ωilxt_655, Ωilxt_656, Ωilxt_657;
           source = "R\\2D\\2 on Charon 3!!";
           // echo abbrlxm lxm for lxm from g.scan source
-          // info 'Ωilxt_647', source; tabulate_lexemes g.scan source
-          info('Ωilxt_648', source);
+          // info 'Ωilxt_647', rpr source; tabulate_lexemes g.scan source
+          info('Ωilxt_648', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_649 = function() {
@@ -5577,9 +5577,9 @@
           var lexemes, source, Ωilxt_667, Ωilxt_668, Ωilxt_669, Ωilxt_670, Ωilxt_671, Ωilxt_672;
           g.reset();
           source = 'the word "black bird" is the word\n';
-          // info 'Ωilxt_664', source; tabulate_lexemes g.scan source
-          // info 'Ωilxt_665', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_666', source);
+          // info 'Ωilxt_664', rpr source; tabulate_lexemes g.scan source
+          // info 'Ωilxt_665', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_666', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_667 = function() {
@@ -5626,9 +5626,9 @@
           var lexemes, source, Ωilxt_676, Ωilxt_677, Ωilxt_678, Ωilxt_679, Ωilxt_680, Ωilxt_681;
           g.reset();
           source = 'the word "black\nbird" is the word\n';
-          // info 'Ωilxt_673', source; tabulate_lexemes g.scan source
-          // info 'Ωilxt_674', source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-          info('Ωilxt_675', source);
+          // info 'Ωilxt_673', rpr source; tabulate_lexemes g.scan source
+          // info 'Ωilxt_674', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+          info('Ωilxt_675', rpr(source));
           g.reset_lnr();
           lexemes = g.scan(source);
           this.eq((Ωilxt_676 = function() {
@@ -5673,12 +5673,15 @@
         })();
         (() => {          //.....................................................................................................
           var lexemes, source1, source2, Ωilxt_685, Ωilxt_686, Ωilxt_687, Ωilxt_688, Ωilxt_692, Ωilxt_693, Ωilxt_694, Ωilxt_695;
+          /* NOTE we here accept a 'wrong' solution b/c the grammar declaration did not specify a continuous
+                 / legato scan which means that the second line is correctly analyzed as starting on the `text` level
+                 and ending with an unfinished string literal; */
           g.reset();
           source1 = 'the word "black\n';
           source2 = 'bird" is the word\n';
-          // info 'Ωilxt_682', source1; tabulate_lexemes g.scan source1
-          // info 'Ωilxt_683', source1; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source1
-          info('Ωilxt_684', source1);
+          // info 'Ωilxt_682', rpr source1; tabulate_lexemes g.scan source1
+          // info 'Ωilxt_683', rpr source1; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source1
+          info('Ωilxt_684', rpr(source1));
           g.reset_lnr();
           lexemes = g.scan(source1);
           this.eq((Ωilxt_685 = function() {
@@ -5705,9 +5708,9 @@
           this.eq((Ωilxt_688 = function() {
             return abbrlxm(tabulate_lexeme(lexemes.next().value));
           }), null);
-          // info 'Ωilxt_689', source2; tabulate_lexemes g.scan source2
-          // info 'Ωilxt_690', source2; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source2
-          info('Ωilxt_691', source2);
+          // info 'Ωilxt_689', rpr source2; tabulate_lexemes g.scan source2
+          // info 'Ωilxt_690', rpr source2; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source2
+          info('Ωilxt_691', rpr(source2));
           g.reset_lnr();
           lexemes = g.scan(source2);
           this.eq((Ωilxt_692 = function() {
