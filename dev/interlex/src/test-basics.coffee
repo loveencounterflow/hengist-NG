@@ -2105,6 +2105,74 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    string_literal_with_line_breaks_legato: ->
+      { Grammar
+        rx      } = require '../../../apps/interlex'
+      #=====================================================================================================
+      g         = new Grammar { emit_signals: false, }
+      gnd       = g.new_level { name: 'gnd', }
+      string    = g.new_level { name: 'string', }
+      #.....................................................................................................
+      gnd.new_token       { name: 'dq1',            fit: /(?<!\\)"/,          jump: 'string!'        }
+      gnd.new_token       { name: 'text',           fit: /(\\"|[^"])+/,                              }
+      string.new_token    { name: 'string',         fit: /(\\"|[^"])+/,                              }
+      string.new_token    { name: 'dq1',            fit: /(?<!\\)"/,          jump: '..'             }
+      #.....................................................................................................
+      do =>
+        g.reset()
+        source = 'the word "black bird" is the word\n'
+        # info 'Ωilxt_696', rpr source; tabulate_lexemes g.scan source
+        # info 'Ωilxt_697', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_698', rpr source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_699 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'the word ', pos: '1:0:9' }
+        @eq ( Ωilxt_700 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:9:10' }
+        @eq ( Ωilxt_701 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: 'black bird', pos: '1:10:20' }
+        @eq ( Ωilxt_702 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:20:21' }
+        @eq ( Ωilxt_703 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: ' is the word\n', pos: '1:21:34' }
+        @eq ( Ωilxt_704 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        return null
+      #.....................................................................................................
+      do =>
+        g.reset()
+        source = 'the word "black\nbird" is the word\n'
+        # info 'Ωilxt_705', rpr source; tabulate_lexemes g.scan source
+        # info 'Ωilxt_706', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_707', rpr source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_708 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'the word ', pos: '1:0:9' }
+        @eq ( Ωilxt_709 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:9:10' }
+        @eq ( Ωilxt_710 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: 'black\nbird', pos: '1:10:20' }
+        @eq ( Ωilxt_711 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:20:21' }
+        @eq ( Ωilxt_712 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: ' is the word\n', pos: '1:21:34' }
+        @eq ( Ωilxt_713 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        return null
+      #.....................................................................................................
+      do =>
+        ### NOTE we here accept a 'wrong' solution b/c the grammar declaration did not specify a continuous
+        / legato scan which means that the second line is correctly analyzed as starting on the `text` level
+        and ending with an unfinished string literal; ###
+        g.reset()
+        source1 = 'the word "black\n'
+        source2 = 'bird" is the word\n'
+        info 'Ωilxt_714', rpr source1; tabulate_lexemes g.scan source1
+        info 'Ωilxt_715', rpr source2; tabulate_lexemes g._scan_legato source2
+        # # info 'Ωilxt_716', rpr source1; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source1
+        # info 'Ωilxt_717', rpr source1; g.reset_lnr(); lexemes = g.scan source1
+        # @eq ( Ωilxt_718 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text', hit: 'the word ', pos: '1:0:9' }
+        # @eq ( Ωilxt_719 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1', hit: '"', pos: '1:9:10' }
+        # @eq ( Ωilxt_720 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: 'black\n', pos: '1:10:16' }
+        # @eq ( Ωilxt_721 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # # info 'Ωilxt_722', rpr source2; tabulate_lexemes g.scan source2
+        # # info 'Ωilxt_723', rpr source2; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source2
+        # info 'Ωilxt_724', rpr source2; g.reset_lnr(); lexemes = g.scan source2
+        # @eq ( Ωilxt_725 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'bird', pos: '1:0:4' }
+        # @eq ( Ωilxt_726 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:4:5' }
+        # @eq ( Ωilxt_727 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: ' is the word\n', pos: '1:5:18' }
+        # @eq ( Ωilxt_728 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        return null
+      #.....................................................................................................
+      return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
