@@ -2110,41 +2110,46 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Grammar
         rx      } = require '../../../apps/interlex'
       #=====================================================================================================
-      g         = new Grammar { emit_signals: false, }
+      g         = new Grammar { emit_signals: false, reset_stack: false, sticky: true, }
       gnd       = g.new_level { name: 'gnd', }
       string    = g.new_level { name: 'string', }
       #.....................................................................................................
-      gnd.new_token       { name: 'dq1',            fit: /(?<!\\)"/,          jump: 'string!'        }
-      gnd.new_token       { name: 'text',           fit: /(\\"|[^"])+/,                              }
-      string.new_token    { name: 'string',         fit: /(\\"|[^"])+/,                              }
-      string.new_token    { name: 'dq1',            fit: /(?<!\\)"/,          jump: '..'             }
+      gnd.new_token       { name: 'dq1',            fit: /(?<!\\)"/,          jump: 'string!' }
+      gnd.new_token       { name: 'text',           fit: /(\\"|[^"])+/,                       }
+      string.new_token    { name: 'literal',        fit: /(\\"|[^"])+/,                       }
+      string.new_token    { name: 'dq1',            fit: /(?<!\\)"/,          jump: '..'      }
+      @eq ( Ωilxt_696 = -> g.sticky ), false
+      @eq ( Ωilxt_696 = ->       gnd.tokens.dq1.sticky ), undefined
+      @eq ( Ωilxt_697 = ->      gnd.tokens.text.sticky ), undefined
+      @eq ( Ωilxt_698 = -> string.tokens.string.sticky ), undefined
+      @eq ( Ωilxt_699 = ->    string.tokens.dq1.sticky ), undefined
       #.....................................................................................................
       do =>
         g.reset()
         source = 'the word "black bird" is the word\n'
-        # info 'Ωilxt_696', rpr source; tabulate_lexemes g.scan source
-        # info 'Ωilxt_697', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωilxt_698', rpr source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_699 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'the word ', pos: '1:0:9' }
-        @eq ( Ωilxt_700 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:9:10' }
-        @eq ( Ωilxt_701 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: 'black bird', pos: '1:10:20' }
-        @eq ( Ωilxt_702 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:20:21' }
-        @eq ( Ωilxt_703 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: ' is the word\n', pos: '1:21:34' }
-        @eq ( Ωilxt_704 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_700', rpr source; tabulate_lexemes g.scan source
+        # info 'Ωilxt_701', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_702', rpr source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_703 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',       hit: 'the word ',      pos: '1:0:9' }
+        @eq ( Ωilxt_704 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',     hit: '"',              pos: '1:9:10' }
+        @eq ( Ωilxt_705 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.literal', hit: 'black bird',     pos: '1:10:20' }
+        @eq ( Ωilxt_706 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',     hit: '"',              pos: '1:20:21' }
+        @eq ( Ωilxt_707 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',       hit: ' is the word\n', pos: '1:21:34' }
+        @eq ( Ωilxt_708 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       #.....................................................................................................
       do =>
         g.reset()
         source = 'the word "black\nbird" is the word\n'
-        # info 'Ωilxt_705', rpr source; tabulate_lexemes g.scan source
-        # info 'Ωilxt_706', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
-        info 'Ωilxt_707', rpr source; g.reset_lnr(); lexemes = g.scan source
-        @eq ( Ωilxt_708 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'the word ', pos: '1:0:9' }
-        @eq ( Ωilxt_709 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:9:10' }
-        @eq ( Ωilxt_710 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: 'black\nbird', pos: '1:10:20' }
-        @eq ( Ωilxt_711 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:20:21' }
-        @eq ( Ωilxt_712 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: ' is the word\n', pos: '1:21:34' }
-        @eq ( Ωilxt_713 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # info 'Ωilxt_709', rpr source; tabulate_lexemes g.scan source
+        # info 'Ωilxt_710', rpr source; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source
+        info 'Ωilxt_711', rpr source; g.reset_lnr(); lexemes = g.scan source
+        @eq ( Ωilxt_712 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',       hit: 'the word ',      pos: '1:0:9' }
+        @eq ( Ωilxt_713 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',     hit: '"',              pos: '1:9:10' }
+        @eq ( Ωilxt_714 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.literal', hit: 'black\nbird',    pos: '1:10:20' }
+        @eq ( Ωilxt_715 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',     hit: '"',              pos: '1:20:21' }
+        @eq ( Ωilxt_716 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',       hit: ' is the word\n', pos: '1:21:34' }
+        @eq ( Ωilxt_717 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
       #.....................................................................................................
       do =>
@@ -2154,22 +2159,52 @@ GTNG                      = require '../../../apps/guy-test-NG'
         g.reset()
         source1 = 'the word "black\n'
         source2 = 'bird" is the word\n'
-        info 'Ωilxt_714', rpr source1; tabulate_lexemes g.scan source1
-        info 'Ωilxt_715', rpr source2; tabulate_lexemes g._scan_legato source2
-        # # info 'Ωilxt_716', rpr source1; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source1
-        # info 'Ωilxt_717', rpr source1; g.reset_lnr(); lexemes = g.scan source1
-        # @eq ( Ωilxt_718 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text', hit: 'the word ', pos: '1:0:9' }
-        # @eq ( Ωilxt_719 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1', hit: '"', pos: '1:9:10' }
-        # @eq ( Ωilxt_720 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: 'black\n', pos: '1:10:16' }
-        # @eq ( Ωilxt_721 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
-        # # info 'Ωilxt_722', rpr source2; tabulate_lexemes g.scan source2
-        # # info 'Ωilxt_723', rpr source2; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source2
-        # info 'Ωilxt_724', rpr source2; g.reset_lnr(); lexemes = g.scan source2
-        # @eq ( Ωilxt_725 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'bird', pos: '1:0:4' }
-        # @eq ( Ωilxt_726 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:4:5' }
-        # @eq ( Ωilxt_727 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.string', hit: ' is the word\n', pos: '1:5:18' }
-        # @eq ( Ωilxt_728 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        info 'Ωilxt_718', rpr source1; tabulate_lexemes g.scan source1
+        info 'Ωilxt_719', rpr source2; tabulate_lexemes g.scan source2
+        # # info 'Ωilxt_720', rpr source1; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source1
+        # info 'Ωilxt_721', rpr source1; g.reset_lnr(); lexemes = g.scan source1
+        # @eq ( Ωilxt_722 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text', hit: 'the word ', pos: '1:0:9' }
+        # @eq ( Ωilxt_723 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1', hit: '"', pos: '1:9:10' }
+        # @eq ( Ωilxt_724 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.literal', hit: 'black\n', pos: '1:10:16' }
+        # @eq ( Ωilxt_725 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
+        # # info 'Ωilxt_726', rpr source2; tabulate_lexemes g.scan source2
+        # # info 'Ωilxt_727', rpr source2; g.reset_lnr(); echo abbrlxm lexeme for lexeme from g.scan source2
+        # info 'Ωilxt_728', rpr source2; g.reset_lnr(); lexemes = g.scan source2
+        # @eq ( Ωilxt_729 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'gnd.text',      hit: 'bird', pos: '1:0:4' }
+        # @eq ( Ωilxt_730 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.dq1',    hit: '"', pos: '1:4:5' }
+        # @eq ( Ωilxt_731 = -> abbrlxm tabulate_lexeme lexemes.next().value ), { fqname: 'string.literal', hit: ' is the word\n', pos: '1:5:18' }
+        # @eq ( Ωilxt_732 = -> abbrlxm tabulate_lexeme lexemes.next().value ), null
         return null
+      #.....................................................................................................
+      return null
+
+    #-------------------------------------------------------------------------------------------------------
+    legato_with_sticky_continuations: ->
+      { Grammar
+        rx      } = require '../../../apps/interlex'
+      #=====================================================================================================
+      g         = new Grammar { emit_signals: false, reset_stack: false, sticky: true, }
+      gnd       = g.new_level { name: 'gnd', }
+      string    = g.new_level { name: 'string', }
+      #.....................................................................................................
+      # gnd.new_token       { name: 'dq1',            fit: /(?<!\\)"/,          jump: 'string!' }
+      # gnd.new_token       { name: 'text',           fit: /(\\"|[^"])+/,                       }
+      # string.new_token    { name: 'literal',        fit: /(\\"|[^"])+/,                       }
+      # string.new_token    { name: 'dq1',            fit: /(?<!\\)"/,          jump: '..'      }
+      ###
+
+      name_with_digits: /// [a-z]+ [0-9]+ ///i
+      name_no_digits:   /// [a-z]+        ///i
+      integer:          /// [0-9]+        ///i
+      ws:               /// \s+           ///i
+
+      "Persil":       ( name_no_digits )
+      "Persil70":     ( name_with_digits )
+      "Persil", "70": either ( name_no_digits, integer ) or ??? ( name_with_digits )
+      "Persil7", "0": either ( name_with_digits, integer ) or ??? ( name_with_digits )
+      "70Persil":     ( integer, name_no_digits )
+
+      ###
       #.....................................................................................................
       return null
 

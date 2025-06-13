@@ -69,16 +69,17 @@
 
   //-----------------------------------------------------------------------------------------------------------
   tabulate_lexeme = function(lexeme) {
-    var I, alxm, data_rpr, hit_rpr;
+    var I, alxm, data_rpr, hit_rpr, name_rpr;
     if (lexeme == null) {
       urge('Ωilxt___1', lexeme);
     } else {
       alxm = abbrlxm(lexeme);
+      name_rpr = lexeme.fqname + (lexeme.token.sticky ? '🔻' : '');
       hit_rpr = lexeme.hit === '' ? '' : rpr(lexeme.hit);
       data_rpr = lexeme.has_data ? rpr({...lexeme.data}) : '';
       I = GUY.trm.lime('▏');
       // g         = GUY.trm.gold
-      urge('Ωilxt___2', f` ${I} ${lexeme.fqname}:<25c; ${I} ${hit_rpr}:<10c; ${I} ${alxm.pos}:<10c; ${I} ${data_rpr}:<50c; ${I}`);
+      urge('Ωilxt___2', f` ${I} ${name_rpr}:<25c; ${I} ${hit_rpr}:<10c; ${I} ${alxm.pos}:<10c; ${I} ${data_rpr}:<50c; ${I}`);
     }
     return lexeme;
   };

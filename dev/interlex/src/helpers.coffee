@@ -55,12 +55,13 @@ tabulate_lexeme = ( lexeme ) ->
     urge 'Ωilxt___1', lexeme
   else
     alxm      = abbrlxm lexeme
+    name_rpr  = lexeme.fqname + ( if lexeme.token.sticky then '🔻' else '' )
     hit_rpr   = if lexeme.hit is '' then '' else rpr lexeme.hit
     data_rpr  = if lexeme.has_data then rpr { lexeme.data..., } else ''
     I         = GUY.trm.lime '▏'
     # g         = GUY.trm.gold
     urge 'Ωilxt___2', f""" \
-      #{I} #{ lexeme.fqname     }:<25c; \
+      #{I} #{ name_rpr          }:<25c; \
       #{I} #{ hit_rpr           }:<10c; \
       #{I} #{ alxm.pos          }:<10c; \
       #{I} #{ data_rpr          }:<50c; \
