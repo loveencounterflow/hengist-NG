@@ -50,7 +50,7 @@
 
   //===========================================================================================================
   require_cleartype = function() {
-    var Type, float, integer, nonempty_text, quantity, quantity_q, quantity_u, std, text, type;
+    var Type, std, type;
     //===========================================================================================================
     Type = class Type {
       //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@
 
       //---------------------------------------------------------------------------------------------------------
       create(dcl) {
-        /* TAINT check whether there are fields */
+        /* TAINT should check with instanceof */
         var R, create, fields, has_fields, isa, ref;
         fields = {};
         has_fields = (() => {
@@ -79,10 +79,19 @@
         })();
         //.......................................................................................................
         if (dcl.isa != null) {
-          isa = function(x) {
-            return dcl.isa(x);
-          };
+          switch (true) {
+            case (Object.prototype.toString.call(dcl.isa)) === '[object Function]':
+              isa = dcl.isa;
+              break;
+            case (Object.prototype.toString.call(dcl.isa.isa)) === '[object Function]':
+              isa = dcl.isa.isa;
+              break;
+            default:
+              throw new Error('Ω___1');
+          }
         } else {
+          /* TAINT check whether there are fields */
+          //.......................................................................................................
           isa = function(x) {
             var field_name, ref, ref1, subtype;
             if (x == null) {
@@ -98,7 +107,7 @@
                 if (subtype.isa(x[field_name])) {
                   continue;
                 }
-                warn('Ω___1', `x.${field_name} is not a ${subtype.name}`);
+                warn('Ω___2', `x.${field_name} is not a ${subtype.name}`);
                 return false;
               }
             }
@@ -131,8 +140,9 @@
     };
     //-----------------------------------------------------------------------------------------------------------
     type = new Type();
+    std = {};
     //-----------------------------------------------------------------------------------------------------------
-    text = type.create({
+    std.text = type.create({
       name: 'text',
       isa: function(x) {
         return (Object.prototype.toString.call(x)) === '[object String]';
@@ -143,10 +153,10 @@
       }
     });
     //-----------------------------------------------------------------------------------------------------------
-    nonempty_text = type.create({
+    std.nonempty_text = type.create({
       name: 'nonempty_text',
       isa: function(x) {
-        return (text.isa(x)) && (x.length !== 0);
+        return (std.text.isa(x)) && (x.length !== 0);
       },
       create: function(x) {
         var ref;
@@ -154,7 +164,7 @@
       }
     });
     //-----------------------------------------------------------------------------------------------------------
-    float = type.create({
+    std.float = type.create({
       name: 'float',
       isa: function(x) {
         return Number.isFinite(x);
@@ -168,21 +178,17 @@
       }
     });
     //-----------------------------------------------------------------------------------------------------------
-    quantity_q = type.create({
+    std.quantity_q = type.create({
       name: 'q',
-      isa: function(x) {
-        return float.isa(x);
-      }
+      isa: std.float
     });
     //-----------------------------------------------------------------------------------------------------------
-    quantity_u = type.create({
+    std.quantity_u = type.create({
       name: 'u',
-      isa: function(x) {
-        return nonempty_text.isa(x);
-      }
+      isa: std.nonempty_text
     });
     //-----------------------------------------------------------------------------------------------------------
-    quantity = type.create({
+    std.quantity = type.create({
       name: 'quantity',
       create: function(cfg) {
         return {
@@ -192,12 +198,12 @@
         };
       },
       fields: {
-        q: quantity_q,
-        u: quantity_u
+        q: std.quantity_q,
+        u: std.quantity_u
       }
     });
     //-----------------------------------------------------------------------------------------------------------
-    integer = type.create({
+    std.integer = type.create({
       name: 'integer',
       isa: function(x) {
         return Number.isInteger(x);
@@ -210,8 +216,6 @@
         }
       }
     });
-    //===========================================================================================================
-    std = {text, nonempty_text, float, integer, quantity};
     //=========================================================================================================
     return {std, Type};
   };
@@ -221,40 +225,42 @@
     await (() => {
       var Type, std;
       ({Type, std} = require_cleartype());
-      info('Ω___2', std);
+      info('Ω___3', std);
       (() => {
         echo();
-        info('Ω___3', std.integer);
-        info('Ω___4', std.integer.isa(3.141));
-        info('Ω___5', std.integer.isa(3));
-        info('Ω___6', std.integer.create('3'));
-        return info('Ω___7', std.integer.create());
+        info('Ω___4', std.integer);
+        info('Ω___5', std.integer.isa(3.141));
+        info('Ω___6', std.integer.isa(3));
+        info('Ω___7', std.integer.create('3'));
+        return info('Ω___8', std.integer.create());
       })();
       (() => {
         echo();
-        info('Ω___8', std.nonempty_text);
-        info('Ω___9', std.nonempty_text.isa(3.141));
-        info('Ω__10', std.nonempty_text.isa(''));
-        info('Ω__11', std.nonempty_text.isa('d'));
-        info('Ω__12', std.nonempty_text.create());
-        info('Ω__13', std.nonempty_text.create(false));
-        return info('Ω__14', std.nonempty_text.create('d'));
+        info('Ω___9', std.nonempty_text);
+        info('Ω__10', std.nonempty_text.isa(3.141));
+        info('Ω__11', std.nonempty_text.isa(''));
+        info('Ω__12', std.nonempty_text.isa('d'));
+        info('Ω__13', std.nonempty_text.create());
+        info('Ω__14', std.nonempty_text.create(false));
+        return info('Ω__15', std.nonempty_text.create('d'));
       })();
       return (() => {
         echo();
-        info('Ω__15', std.quantity);
-        info('Ω__16', std.quantity.create());
-        info('Ω__17', std.quantity.create({
+        info('Ω__16', std.quantity);
+        info('Ω__17', std.quantity.create());
+        info('Ω__18', std.quantity.create({
           q: 4.3,
           u: 's'
         }));
-        info('Ω__18', std.quantity.isa({
+        info('Ω__19', std.quantity.isa({
           q: 4.3,
           u: 's'
         }));
-        info('Ω__19', std.quantity.fields.q.isa(7));
-        info('Ω__20', std.quantity.fields.q.isa(2e308));
-        return info('Ω__21', std.quantity.fields.u.create('g'));
+        info('Ω__20', std.quantity.fields.q.isa(7));
+        info('Ω__21', std.quantity.fields.q.isa(2e308));
+        info('Ω__22', std.nonempty_text.create('g'));
+        info('Ω__23', std.quantity_u.create('g'));
+        return info('Ω__24', std.quantity.fields.u.create('g'));
       })();
     })();
   }

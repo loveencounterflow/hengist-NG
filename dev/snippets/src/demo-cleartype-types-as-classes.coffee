@@ -80,7 +80,14 @@ require_cleartype = ->
         return count isnt 0
       #.......................................................................................................
       if dcl.isa?
-        isa = ( x ) -> dcl.isa x
+        switch true
+          when ( Object::toString.call dcl.isa ) is '[object Function]'
+            isa = dcl.isa
+          when ( Object::toString.call dcl.isa.isa ) is '[object Function]'
+            ### TAINT should check with instanceof ###
+            isa = dcl.isa.isa
+          else throw new Error 'Ω___1'
+      #.......................................................................................................
       else
         ### TAINT check whether there are fields ###
         isa = ( x ) ->
@@ -89,7 +96,7 @@ require_cleartype = ->
           if has_fields
             for field_name, subtype of dcl.fields
               continue if subtype.isa x[ field_name ]
-              warn 'Ω___1', "x.#{field_name} is not a #{subtype.name}"
+              warn 'Ω___2', "x.#{field_name} is not a #{subtype.name}"
               return false
           return true
       #.......................................................................................................
@@ -114,46 +121,44 @@ require_cleartype = ->
     isa: ( x ) ->
 
   #-----------------------------------------------------------------------------------------------------------
-  type = new Type()
+  type  = new Type()
+  std   = {}
 
   #-----------------------------------------------------------------------------------------------------------
-  text = type.create
+  std.text = type.create
     name:     'text'
     isa:      ( x ) -> ( Object::toString.call x ) is '[object String]'
     create:   ( x ) -> x?.toString() ? ''
   #-----------------------------------------------------------------------------------------------------------
-  nonempty_text = type.create
+  std.nonempty_text = type.create
     name:     'nonempty_text'
-    isa:      ( x ) -> ( text.isa x ) and ( x.length isnt 0 )
+    isa:      ( x ) -> ( std.text.isa x ) and ( x.length isnt 0 )
     create:   ( x ) -> x?.toString() ? ''
   #-----------------------------------------------------------------------------------------------------------
-  float = type.create
+  std.float = type.create
     name:     'float'
     isa:      ( x ) -> Number.isFinite x
     create:   ( n = 0 ) -> if x? then ( parseFloat x ) else 0
   #-----------------------------------------------------------------------------------------------------------
-  quantity_q = type.create
+  std.quantity_q = type.create
     name:     'q'
-    isa:      ( x ) -> float.isa x
+    isa:      std.float
   #-----------------------------------------------------------------------------------------------------------
-  quantity_u = type.create
+  std.quantity_u = type.create
     name:     'u'
-    isa:      ( x ) -> nonempty_text.isa x
+    isa:      std.nonempty_text
   #-----------------------------------------------------------------------------------------------------------
-  quantity = type.create
+  std.quantity = type.create
     name:     'quantity'
     create:   ( cfg ) -> { q: 0, u: 'u', cfg..., }
     fields:
-      q:        quantity_q
-      u:        quantity_u
+      q:        std.quantity_q
+      u:        std.quantity_u
   #-----------------------------------------------------------------------------------------------------------
-  integer = type.create
+  std.integer = type.create
     name:     'integer'
     isa:      ( x ) -> Number.isInteger x
     create:   ( n = 0 ) -> if x? then ( parseInt n, 10 ) else 0
-
-  #===========================================================================================================
-  std = { text, nonempty_text, float, integer, quantity, }
 
   #=========================================================================================================
   return { std, Type, }
@@ -163,30 +168,32 @@ require_cleartype = ->
 if module is require.main then await do =>
   { Type
     std             } = require_cleartype()
-  info 'Ω___2', std
+  info 'Ω___3', std
   do =>
     echo()
-    info 'Ω___3', std.integer
-    info 'Ω___4', std.integer.isa 3.141
-    info 'Ω___5', std.integer.isa 3
-    info 'Ω___6', std.integer.create '3'
-    info 'Ω___7', std.integer.create()
+    info 'Ω___4', std.integer
+    info 'Ω___5', std.integer.isa 3.141
+    info 'Ω___6', std.integer.isa 3
+    info 'Ω___7', std.integer.create '3'
+    info 'Ω___8', std.integer.create()
   do =>
     echo()
-    info 'Ω___8', std.nonempty_text
-    info 'Ω___9', std.nonempty_text.isa 3.141
-    info 'Ω__10', std.nonempty_text.isa ''
-    info 'Ω__11', std.nonempty_text.isa 'd'
-    info 'Ω__12', std.nonempty_text.create()
-    info 'Ω__13', std.nonempty_text.create false
-    info 'Ω__14', std.nonempty_text.create 'd'
+    info 'Ω___9', std.nonempty_text
+    info 'Ω__10', std.nonempty_text.isa 3.141
+    info 'Ω__11', std.nonempty_text.isa ''
+    info 'Ω__12', std.nonempty_text.isa 'd'
+    info 'Ω__13', std.nonempty_text.create()
+    info 'Ω__14', std.nonempty_text.create false
+    info 'Ω__15', std.nonempty_text.create 'd'
   do =>
     echo()
-    info 'Ω__15', std.quantity
-    info 'Ω__16', std.quantity.create()
-    info 'Ω__17', std.quantity.create  { q: 4.3, u: 's', }
-    info 'Ω__18', std.quantity.isa     { q: 4.3, u: 's', }
-    info 'Ω__19', std.quantity.fields.q.isa 7
-    info 'Ω__20', std.quantity.fields.q.isa Infinity
-    info 'Ω__21', std.quantity.fields.u.create 'g'
+    info 'Ω__16', std.quantity
+    info 'Ω__17', std.quantity.create()
+    info 'Ω__18', std.quantity.create  { q: 4.3, u: 's', }
+    info 'Ω__19', std.quantity.isa     { q: 4.3, u: 's', }
+    info 'Ω__20', std.quantity.fields.q.isa 7
+    info 'Ω__21', std.quantity.fields.q.isa Infinity
+    info 'Ω__22', std.nonempty_text.create      'g'
+    info 'Ω__23', std.quantity_u.create         'g'
+    info 'Ω__24', std.quantity.fields.u.create  'g'
 
