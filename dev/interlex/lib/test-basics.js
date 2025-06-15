@@ -6178,6 +6178,273 @@
         })();
         //.....................................................................................................
         return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      grammar_cfg_supply_eol: function() {
+        var Grammar, rx;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        (() => {          //.....................................................................................................
+          var g, Ωilxt_769;
+          g = new Grammar();
+          return this.eq((Ωilxt_769 = function() {
+            return g.cfg.supply_eol;
+          }), false);
+        })();
+        (() => {          //.....................................................................................................
+          var g, Ωilxt_770;
+          g = new Grammar({
+            supply_eol: false
+          });
+          return this.eq((Ωilxt_770 = function() {
+            return g.cfg.supply_eol;
+          }), false);
+        })();
+        (() => {          //.....................................................................................................
+          var g, Ωilxt_771;
+          g = new Grammar({
+            supply_eol: true
+          });
+          return this.eq((Ωilxt_771 = function() {
+            return g.cfg.supply_eol;
+          }), '\n');
+        })();
+        (() => {          //.....................................................................................................
+          var g, Ωilxt_772;
+          g = new Grammar({
+            supply_eol: '\n'
+          });
+          return this.eq((Ωilxt_772 = function() {
+            return g.cfg.supply_eol;
+          }), '\n');
+        })();
+        (() => {          //.....................................................................................................
+          var g, Ωilxt_773;
+          g = new Grammar({
+            supply_eol: '(EOL)'
+          });
+          return this.eq((Ωilxt_773 = function() {
+            return g.cfg.supply_eol;
+          }), '(EOL)');
+        })();
+        //.....................................................................................................
+        return null;
+      },
+      //-------------------------------------------------------------------------------------------------------
+      linked_scanning_with_supply_eol: function() {
+        var Grammar, g, gnd, rx, source1, source2, source3, string;
+        ({Grammar, rx} = require('../../../apps/interlex'));
+        //=====================================================================================================
+        g = new Grammar({
+          emit_signals: true,
+          linking: true,
+          supply_eol: true
+        });
+        gnd = g.new_level({
+          name: 'gnd'
+        });
+        string = g.new_level({
+          name: 'string'
+        });
+        //.....................................................................................................
+        gnd.new_token({
+          name: 'dq1',
+          fit: /(?<!\\)"/,
+          jump: 'string!'
+        });
+        gnd.new_token({
+          name: 'text',
+          fit: /(\\"|[^"])+/
+        });
+        string.new_token({
+          name: 'literal',
+          fit: /(\\"|[^"])+/
+        });
+        string.new_token({
+          name: 'dq1',
+          fit: /(?<!\\)"/,
+          jump: '..'
+        });
+        //.....................................................................................................
+        source1 = 'the word "black';
+        source2 = 'bird" is the word';
+        source3 = 'or so I heard';
+        (() => {          // do =>
+          //   g.reset()
+          //   info 'Ωilxt_774', rpr source1; tabulate_lexemes g.scan source1
+          //   info 'Ωilxt_775', rpr source2; tabulate_lexemes g.scan source2
+          //   info 'Ωilxt_776', rpr source3; tabulate_lexemes g.scan source3
+          //   info 'Ωilxt_777', rpr null; tabulate_lexemes g.scan null
+          //   return null
+          // do =>
+          //   g.reset()
+          //   info 'Ωilxt_778', rpr source1; echo abbrlxm lexeme for lexeme from g.scan source1
+          //   info 'Ωilxt_779', rpr source2; echo abbrlxm lexeme for lexeme from g.scan source2
+          //   info 'Ωilxt_780', rpr source3; echo abbrlxm lexeme for lexeme from g.scan source3
+          //   info 'Ωilxt_781', rpr null; echo abbrlxm lexeme for lexeme from g.scan null
+          //   return null
+          var lexemes, Ωilxt_783, Ωilxt_784, Ωilxt_785, Ωilxt_786, Ωilxt_787, Ωilxt_788, Ωilxt_789, Ωilxt_790, Ωilxt_792, Ωilxt_793, Ωilxt_794, Ωilxt_795, Ωilxt_796, Ωilxt_797, Ωilxt_798, Ωilxt_800, Ωilxt_801, Ωilxt_802, Ωilxt_803, Ωilxt_805, Ωilxt_806, Ωilxt_807;
+          g.reset();
+          info('Ωilxt_782', rpr(source1));
+          lexemes = g.scan(source1);
+          this.eq((Ωilxt_783 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.start',
+            hit: '',
+            pos: '1:0:0'
+          });
+          this.eq((Ωilxt_784 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:0:0',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_785 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: 'the word ',
+            pos: '1:0:9'
+          });
+          this.eq((Ωilxt_786 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '1:9:9',
+            data: {
+              target: 'string'
+            }
+          });
+          this.eq((Ωilxt_787 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '1:9:10'
+          });
+          this.eq((Ωilxt_788 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.literal',
+            hit: 'black\n',
+            pos: '1:10:16'
+          });
+          this.eq((Ωilxt_789 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.pause',
+            hit: '',
+            pos: '1:16:16'
+          });
+          this.eq((Ωilxt_790 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          info('Ωilxt_791', rpr(source2));
+          lexemes = g.scan(source2);
+          this.eq((Ωilxt_792 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.resume',
+            hit: '',
+            pos: '2:0:0'
+          });
+          this.eq((Ωilxt_793 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.literal',
+            hit: 'bird',
+            pos: '2:0:4'
+          });
+          this.eq((Ωilxt_794 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'string.dq1',
+            hit: '"',
+            pos: '2:4:5'
+          });
+          this.eq((Ωilxt_795 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '2:5:5',
+            data: {
+              target: 'gnd'
+            }
+          });
+          this.eq((Ωilxt_796 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: ' is the word\n',
+            pos: '2:5:18'
+          });
+          this.eq((Ωilxt_797 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.pause',
+            hit: '',
+            pos: '2:18:18'
+          });
+          this.eq((Ωilxt_798 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          info('Ωilxt_799', rpr(source3));
+          lexemes = g.scan(source3);
+          this.eq((Ωilxt_800 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.resume',
+            hit: '',
+            pos: '3:0:0'
+          });
+          this.eq((Ωilxt_801 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: 'gnd.text',
+            hit: 'or so I heard\n',
+            pos: '3:0:14'
+          });
+          this.eq((Ωilxt_802 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.pause',
+            hit: '',
+            pos: '3:14:14'
+          });
+          this.eq((Ωilxt_803 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+          info('Ωilxt_804', rpr(null));
+          lexemes = g.scan(null);
+          this.eq((Ωilxt_805 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.jump',
+            hit: '',
+            pos: '4:0:0',
+            data: {
+              target: null
+            }
+          });
+          this.eq((Ωilxt_806 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), {
+            fqname: '$signal.stop',
+            hit: '',
+            pos: '4:0:0'
+          });
+          return this.eq((Ωilxt_807 = function() {
+            return abbrlxm(tabulate_lexeme(lexemes.next().value));
+          }), null);
+        })();
+        //.....................................................................................................
+        return null;
       }
     }
   };
