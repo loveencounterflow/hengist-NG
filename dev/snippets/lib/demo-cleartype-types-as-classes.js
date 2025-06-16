@@ -111,7 +111,8 @@
                 if (subtype.isa(x[field_name])) {
                   continue;
                 }
-                warn('Ω___4', `x.${field_name} is not a ${subtype.name}`);
+                // warn 'Ω___4', "x.#{field_name}: #{rpr x[ field_name ]} is not a #{subtype.name}"
+                warn('Ω___4', `expected a ${subtype.name} for field ${field_name}, got ${rpr(x[field_name])}`);
                 return false;
               }
             }
@@ -132,6 +133,8 @@
           var _Class;
 
           _Class = class extends this.constructor {};
+
+          _Class.prototype.name = dcl.name;
 
           _Class.prototype.isa = isa; // .bind clasz
 
@@ -204,12 +207,12 @@
     });
     //-----------------------------------------------------------------------------------------------------------
     std.quantity_q = type.create({
-      name: 'q',
+      name: 'quantity_q',
       isa: std.float
     });
     //-----------------------------------------------------------------------------------------------------------
     std.quantity_u = type.create({
-      name: 'u',
+      name: 'quantity_u',
       isa: std.nonempty_text
     });
     //-----------------------------------------------------------------------------------------------------------
@@ -292,7 +295,24 @@
         help('Ω__27', std.quantity);
         help('Ω__28', std.quantity.constructor);
         help('Ω__29', std.quantity.constructor.name);
-        return help('Ω__30', std.quantity.isa);
+        help('Ω__30', std.quantity.isa);
+        help('Ω__31', std.quantity.isa({}));
+        help('Ω__32', std.quantity.isa({
+          u: 7,
+          q: 3
+        }));
+        help('Ω__33', std.quantity.isa({
+          u: '7',
+          q: 3
+        }));
+        help('Ω__34', std.quantity.isa({
+          u: '7',
+          q: 2e308
+        }));
+        help('Ω__35', std.quantity.name);
+        help('Ω__36', std.integer.name);
+        help('Ω__37', std.quantity_q.name);
+        return help('Ω__38', std.quantity_u.name);
       })();
     })();
   }

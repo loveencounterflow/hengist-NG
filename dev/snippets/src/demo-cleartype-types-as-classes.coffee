@@ -100,7 +100,8 @@ require_cleartype = ->
           if has_fields
             for field_name, subtype of dcl.fields
               continue if subtype.isa x[ field_name ]
-              warn 'Ω___4', "x.#{field_name} is not a #{subtype.name}"
+              # warn 'Ω___4', "x.#{field_name}: #{rpr x[ field_name ]} is not a #{subtype.name}"
+              warn 'Ω___4', "expected a #{subtype.name} for field #{field_name}, got #{rpr x[ field_name ]}"
               return false
           return true
       #.......................................................................................................
@@ -114,6 +115,7 @@ require_cleartype = ->
 
       #.......................................................................................................
       clasz = class extends @constructor
+        name:         dcl.name
         isa:          isa # .bind clasz
         create:       create # .bind clasz
         fields:       fields
@@ -151,11 +153,11 @@ require_cleartype = ->
     create:   ( n = 0 ) -> if x? then ( parseFloat x ) else 0
   #-----------------------------------------------------------------------------------------------------------
   std.quantity_q = type.create
-    name:     'q'
+    name:     'quantity_q'
     isa:      std.float
   #-----------------------------------------------------------------------------------------------------------
   std.quantity_u = type.create
-    name:     'u'
+    name:     'quantity_u'
     isa:      std.nonempty_text
   #-----------------------------------------------------------------------------------------------------------
   std.quantity = type.create
@@ -212,4 +214,12 @@ if module is require.main then await do =>
     help 'Ω__28', std.quantity.constructor
     help 'Ω__29', std.quantity.constructor.name
     help 'Ω__30', std.quantity.isa
+    help 'Ω__31', std.quantity.isa {}
+    help 'Ω__32', std.quantity.isa { u: 7, q: 3, }
+    help 'Ω__33', std.quantity.isa { u: '7', q: 3, }
+    help 'Ω__34', std.quantity.isa { u: '7', q: Infinity, }
+    help 'Ω__35', std.quantity.name
+    help 'Ω__36', std.integer.name
+    help 'Ω__37', std.quantity_q.name
+    help 'Ω__38', std.quantity_u.name
 
