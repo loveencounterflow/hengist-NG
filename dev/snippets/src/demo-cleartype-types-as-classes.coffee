@@ -69,22 +69,33 @@ require_cleartype = ->
   class Type
 
     #---------------------------------------------------------------------------------------------------------
-    constructor: ->
+    constructor: ( dcl = null ) ->
+      throw new Error "Ω___1 not allowed" if dcl?
       # H.bind_instance_methods @
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
-    create: ( dcl ) ->
+    create: ( dcl ) -> @constructor.from_declaration dcl
+
+    #---------------------------------------------------------------------------------------------------------
+    @populate_typespace: ( typespace ) ->
+      for typename, dcl of typespace
+        continue if dcl instanceof @
+        typespace[ typename ] = @from_declaration dcl
+      return typespace
+
+    #---------------------------------------------------------------------------------------------------------
+    @from_declaration: ( dcl ) ->
       fields = {}
       #.......................................................................................................
       if dcl.refines?
-        unless ( dcl.refines instanceof @constructor )
-          throw new Error "Ω___1 dcl.refines must be instanceof #{rpr @constructor}"
+        unless ( dcl.refines instanceof @ )
+          throw new Error "Ω___2 dcl.refines must be instanceof #{rpr @}"
         is_extension  = true
         extension     = dcl.refines.constructor
       else
         is_extension  = false
-        extension     = @constructor
+        extension     = @
       #.......................................................................................................
       has_fields = do =>
         return false unless dcl.fields?
@@ -96,11 +107,11 @@ require_cleartype = ->
       #.......................................................................................................
       if dcl.isa?
         switch true
-          when dcl.isa instanceof @constructor
+          when dcl.isa instanceof @
             per_se_isa = do ( isa = dcl.isa.isa ) -> ( x ) -> isa x
           when ( Object::toString.call dcl.isa ) is '[object Function]'
             per_se_isa = dcl.isa
-          else throw new Error 'Ω___4'
+          else throw new Error 'Ω___3'
       #.......................................................................................................
       else
         ### TAINT check whether there are fields ###
@@ -112,7 +123,7 @@ require_cleartype = ->
               continue if subtype.isa x[ field_name ]
               ### TAINT use type_of ###
               rejection = "expected a #{subtype.name} for field #{rpr field_name}, got #{rpr x[ field_name ]}"
-              warn 'Ω___6', rejection
+              warn 'Ω___4', rejection
               return false
           return true
       #.......................................................................................................
@@ -142,6 +153,7 @@ require_cleartype = ->
     #---------------------------------------------------------------------------------------------------------
     @classname_from_typename = ( typename = null ) ->
       R = ( typename ? 'anonymous' )
+      ### TAINT not Unicode-compliant ###
       return ( R[ 0 ] ).toUpperCase() + R[ 1 .. ]
 
     #---------------------------------------------------------------------------------------------------------
@@ -152,7 +164,7 @@ require_cleartype = ->
     #---------------------------------------------------------------------------------------------------------
     validate: ( x ) ->
       return x if @isa x
-      throw new Error "Ω___7 Cleartype_validation_error"
+      throw new Error "Ω___5 Cleartype_validation_error"
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( x ) -> x instanceof @constructor
@@ -207,67 +219,67 @@ require_cleartype = ->
   basics: ->
     { Type
       std             } = require_cleartype()
-    info 'Ω___8', std
+    info 'Ω___6', std
     do =>
       echo()
-      info 'Ω___9', std.integer
-      info 'Ω__10', std.integer.isa 3.141
-      info 'Ω__11', std.integer.isa 3
-      info 'Ω__12', std.integer.create '3'
-      info 'Ω__13', std.integer.create()
+      info 'Ω___7', std.integer
+      info 'Ω___8', std.integer.isa 3.141
+      info 'Ω___9', std.integer.isa 3
+      info 'Ω__10', std.integer.create '3'
+      info 'Ω__11', std.integer.create()
     do =>
       echo()
-      info 'Ω__14', std.nonempty_text
-      @eq ( Ωcltt__15 = -> std.nonempty_text.isa 3.141                  ), false
-      @eq ( Ωcltt__16 = -> std.nonempty_text.isa ''                     ), false
-      @eq ( Ωcltt__17 = -> std.nonempty_text.isa 'd'                    ), true
-      @eq ( Ωcltt__18 = -> std.nonempty_text.create()                   ), ''
-      @eq ( Ωcltt__19 = -> std.nonempty_text.create false               ), 'false'
-      @eq ( Ωcltt__20 = -> std.nonempty_text.create 'd'                 ), 'd'
+      info 'Ω__12', std.nonempty_text
+      @eq ( Ωcltt__13 = -> std.nonempty_text.isa 3.141                  ), false
+      @eq ( Ωcltt__14 = -> std.nonempty_text.isa ''                     ), false
+      @eq ( Ωcltt__15 = -> std.nonempty_text.isa 'd'                    ), true
+      @eq ( Ωcltt__16 = -> std.nonempty_text.create()                   ), ''
+      @eq ( Ωcltt__17 = -> std.nonempty_text.create false               ), 'false'
+      @eq ( Ωcltt__18 = -> std.nonempty_text.create 'd'                 ), 'd'
     do =>
       echo()
-      info 'Ω__21', std.quantity
-      @eq ( Ωcltt__22 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
-      @eq ( Ωcltt__23 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
-      @eq ( Ωcltt__24 = -> std.quantity.isa       { q: 4.3, u: 's', }   ), true
-      @eq ( Ωcltt__25 = -> std.quantity.validate  { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
-      @eq ( Ωcltt__26 = -> std.quantity.fields.q.isa 7                  ), true
-      @eq ( Ωcltt__27 = -> std.quantity.fields.q.isa Infinity           ), false
-      info 'Ω__28', std.nonempty_text.create      'g'
-      info 'Ω__29', std.quantity_u.create         'g'
-      info 'Ω__30', std.quantity.fields.u.create  'g'
+      info 'Ω__19', std.quantity
+      @eq ( Ωcltt__20 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
+      @eq ( Ωcltt__21 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
+      @eq ( Ωcltt__22 = -> std.quantity.isa       { q: 4.3, u: 's', }   ), true
+      @eq ( Ωcltt__23 = -> std.quantity.validate  { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
+      @eq ( Ωcltt__24 = -> std.quantity.fields.q.isa 7                  ), true
+      @eq ( Ωcltt__25 = -> std.quantity.fields.q.isa Infinity           ), false
+      info 'Ω__26', std.nonempty_text.create      'g'
+      info 'Ω__27', std.quantity_u.create         'g'
+      info 'Ω__28', std.quantity.fields.u.create  'g'
     do =>
       echo()
-      help 'Ω__31', std.quantity
-      help 'Ω__32', std.quantity.constructor
-      help 'Ω__33', std.quantity.constructor.name
-      help 'Ω__34', std.quantity.isa
-      help 'Ω__35', std.quantity.isa {}
-      help 'Ω__36', std.quantity.isa { u: 7, q: 3, }
-      help 'Ω__37', std.quantity.isa { u: '7', q: 3, }
-      help 'Ω__38', std.quantity.isa { u: '7', q: Infinity, }
-      @eq ( Ωcltt__39 = -> std.quantity.name                    ), 'quantity'
-      @eq ( Ωcltt__40 = -> std.integer.name                     ), 'integer'
-      @eq ( Ωcltt__41 = -> std.quantity_q.name                  ), 'quantity_q'
-      @eq ( Ωcltt__42 = -> std.quantity_u.name                  ), 'quantity_u'
+      help 'Ω__29', std.quantity
+      help 'Ω__30', std.quantity.constructor
+      help 'Ω__31', std.quantity.constructor.name
+      help 'Ω__32', std.quantity.isa
+      help 'Ω__33', std.quantity.isa {}
+      help 'Ω__34', std.quantity.isa { u: 7, q: 3, }
+      help 'Ω__35', std.quantity.isa { u: '7', q: 3, }
+      help 'Ω__36', std.quantity.isa { u: '7', q: Infinity, }
+      @eq ( Ωcltt__37 = -> std.quantity.name                    ), 'quantity'
+      @eq ( Ωcltt__38 = -> std.integer.name                     ), 'integer'
+      @eq ( Ωcltt__39 = -> std.quantity_q.name                  ), 'quantity_q'
+      @eq ( Ωcltt__40 = -> std.quantity_u.name                  ), 'quantity_u'
       echo()
-      help 'Ω__43', std.text.isa
-      help 'Ω__44', std.text.isa 'abc'
-      help 'Ω__45', std.text.isa Array.from 'abc'
+      help 'Ω__41', std.text.isa
+      help 'Ω__42', std.text.isa 'abc'
+      help 'Ω__43', std.text.isa Array.from 'abc'
       echo()
-      help 'Ω__46', std.nonempty_text
-      help 'Ω__47', std.nonempty_text.isa
-      @eq ( Ωcltt__48 = -> std.nonempty_text.isa 'abc'            ), true
-      @eq ( Ωcltt__49 = -> std.nonempty_text.isa Array.from 'abc' ), false
+      help 'Ω__44', std.nonempty_text
+      help 'Ω__45', std.nonempty_text.isa
+      @eq ( Ωcltt__46 = -> std.nonempty_text.isa 'abc'            ), true
+      @eq ( Ωcltt__47 = -> std.nonempty_text.isa Array.from 'abc' ), false
       return null
     do =>
       echo()
       for typename, type of std
-        @eq ( Ωcltt__51 = -> type.isa.name ), "isa_#{typename}"
+        @eq ( Ωcltt__48 = -> type.isa.name ), "isa_#{typename}"
       return null
     #.......................................................................................................
     for typename, type of std
-      urge 'Ω__52', f"#{typename}:<20c; #{type.constructor.name}:<20c; #{type.isa.name}:<20c;"
+      urge 'Ω__49', f"#{typename}:<20c; #{type.constructor.name}:<20c; #{type.isa.name}:<20c;"
     return null
 
 #===========================================================================================================
