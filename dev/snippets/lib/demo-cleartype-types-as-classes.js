@@ -50,18 +50,20 @@
 
   //===========================================================================================================
   require_cleartype = function() {
-    var Type, std, type;
+    var H, Type, std, type;
+    H = require('../../../apps/cleartype/lib/helpers');
     //===========================================================================================================
     Type = class Type {
       //---------------------------------------------------------------------------------------------------------
       constructor() {
+        H.bind_instance_methods(this);
         return void 0;
       }
 
       //---------------------------------------------------------------------------------------------------------
       create(dcl) {
         /* TAINT should check with instanceof */
-        var R, create, fields, has_fields, isa, ref;
+        var clasz, create, fields, has_fields, isa, ref;
         fields = {};
         has_fields = (() => {
           var count, ref, subtype, subtype_name;
@@ -79,6 +81,8 @@
         })();
         //.......................................................................................................
         if (dcl.isa != null) {
+          debug('Ω___1', dcl instanceof this.constructor);
+          debug('Ω___2', this.isa(dcl));
           switch (true) {
             case (Object.prototype.toString.call(dcl.isa)) === '[object Function]':
               isa = dcl.isa;
@@ -87,7 +91,7 @@
               isa = dcl.isa.isa;
               break;
             default:
-              throw new Error('Ω___1');
+              throw new Error('Ω___3');
           }
         } else {
           /* TAINT check whether there are fields */
@@ -107,7 +111,7 @@
                 if (subtype.isa(x[field_name])) {
                   continue;
                 }
-                warn('Ω___2', `x.${field_name} is not a ${subtype.name}`);
+                warn('Ω___4', `x.${field_name} is not a ${subtype.name}`);
                 return false;
               }
             }
@@ -124,18 +128,39 @@
         //   for field_name, dsc of Object.getOwnPropertyDescriptors dcl
 
         //.......................................................................................................
-        R = {};
-        R.isa = isa.bind(R);
-        R.create = create.bind(R);
-        R.fields = fields;
-        R.has_fields = has_fields;
-        return R;
+        clasz = (function() {
+          var _Class;
+
+          _Class = class extends this.constructor {};
+
+          _Class.prototype.isa = isa; // .bind clasz
+
+          _Class.prototype.create = create; // .bind clasz
+
+          _Class.prototype.fields = fields;
+
+          _Class.prototype.has_fields = has_fields;
+
+          return _Class;
+
+        }).call(this);
+        nameit(clasz.classname_from_typename(dcl.name), clasz);
+        return new clasz();
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      static classname_from_typename(classname = null) {
+        var R;
+        R = classname != null ? classname : 'anonymous';
+        return R[0].toUpperCase() + R.slice(1);
       }
 
       //---------------------------------------------------------------------------------------------------------
       validate(x) {}
 
-      isa(x) {}
+      isa(x) {
+        return x instanceof this.constructor;
+      }
 
     };
     //-----------------------------------------------------------------------------------------------------------
@@ -225,42 +250,49 @@
     await (() => {
       var Type, std;
       ({Type, std} = require_cleartype());
-      info('Ω___3', std);
+      info('Ω___5', std);
       (() => {
         echo();
-        info('Ω___4', std.integer);
-        info('Ω___5', std.integer.isa(3.141));
-        info('Ω___6', std.integer.isa(3));
-        info('Ω___7', std.integer.create('3'));
-        return info('Ω___8', std.integer.create());
+        info('Ω___6', std.integer);
+        info('Ω___7', std.integer.isa(3.141));
+        info('Ω___8', std.integer.isa(3));
+        info('Ω___9', std.integer.create('3'));
+        return info('Ω__10', std.integer.create());
       })();
       (() => {
         echo();
-        info('Ω___9', std.nonempty_text);
-        info('Ω__10', std.nonempty_text.isa(3.141));
-        info('Ω__11', std.nonempty_text.isa(''));
-        info('Ω__12', std.nonempty_text.isa('d'));
-        info('Ω__13', std.nonempty_text.create());
-        info('Ω__14', std.nonempty_text.create(false));
-        return info('Ω__15', std.nonempty_text.create('d'));
+        info('Ω__11', std.nonempty_text);
+        info('Ω__12', std.nonempty_text.isa(3.141));
+        info('Ω__13', std.nonempty_text.isa(''));
+        info('Ω__14', std.nonempty_text.isa('d'));
+        info('Ω__15', std.nonempty_text.create());
+        info('Ω__16', std.nonempty_text.create(false));
+        return info('Ω__17', std.nonempty_text.create('d'));
+      })();
+      (() => {
+        echo();
+        info('Ω__18', std.quantity);
+        info('Ω__19', std.quantity.create());
+        info('Ω__20', std.quantity.create({
+          q: 4.3,
+          u: 's'
+        }));
+        info('Ω__21', std.quantity.isa({
+          q: 4.3,
+          u: 's'
+        }));
+        info('Ω__22', std.quantity.fields.q.isa(7));
+        info('Ω__23', std.quantity.fields.q.isa(2e308));
+        info('Ω__24', std.nonempty_text.create('g'));
+        info('Ω__25', std.quantity_u.create('g'));
+        return info('Ω__26', std.quantity.fields.u.create('g'));
       })();
       return (() => {
         echo();
-        info('Ω__16', std.quantity);
-        info('Ω__17', std.quantity.create());
-        info('Ω__18', std.quantity.create({
-          q: 4.3,
-          u: 's'
-        }));
-        info('Ω__19', std.quantity.isa({
-          q: 4.3,
-          u: 's'
-        }));
-        info('Ω__20', std.quantity.fields.q.isa(7));
-        info('Ω__21', std.quantity.fields.q.isa(2e308));
-        info('Ω__22', std.nonempty_text.create('g'));
-        info('Ω__23', std.quantity_u.create('g'));
-        return info('Ω__24', std.quantity.fields.u.create('g'));
+        help('Ω__27', std.quantity);
+        help('Ω__28', std.quantity.constructor);
+        help('Ω__29', std.quantity.constructor.name);
+        return help('Ω__30', std.quantity.isa);
       })();
     })();
   }

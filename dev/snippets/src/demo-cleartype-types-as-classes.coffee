@@ -60,12 +60,14 @@ GUY                       = require 'guy'
 
 #===========================================================================================================
 require_cleartype = ->
+  H = require '../../../apps/cleartype/lib/helpers'
 
   #===========================================================================================================
   class Type
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ->
+      H.bind_instance_methods @
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
@@ -80,13 +82,15 @@ require_cleartype = ->
         return count isnt 0
       #.......................................................................................................
       if dcl.isa?
+        debug 'Ω___1', dcl instanceof @constructor
+        debug 'Ω___2', @isa dcl
         switch true
           when ( Object::toString.call dcl.isa ) is '[object Function]'
             isa = dcl.isa
           when ( Object::toString.call dcl.isa.isa ) is '[object Function]'
             ### TAINT should check with instanceof ###
             isa = dcl.isa.isa
-          else throw new Error 'Ω___1'
+          else throw new Error 'Ω___3'
       #.......................................................................................................
       else
         ### TAINT check whether there are fields ###
@@ -96,7 +100,7 @@ require_cleartype = ->
           if has_fields
             for field_name, subtype of dcl.fields
               continue if subtype.isa x[ field_name ]
-              warn 'Ω___2', "x.#{field_name} is not a #{subtype.name}"
+              warn 'Ω___4', "x.#{field_name} is not a #{subtype.name}"
               return false
           return true
       #.......................................................................................................
@@ -109,16 +113,22 @@ require_cleartype = ->
       #   for field_name, dsc of Object.getOwnPropertyDescriptors dcl
 
       #.......................................................................................................
-      R             = {}
-      R.isa         =    isa.bind R
-      R.create      = create.bind R
-      R.fields      = fields
-      R.has_fields  = has_fields
-      return R
+      clasz = class extends @constructor
+        isa:          isa # .bind clasz
+        create:       create # .bind clasz
+        fields:       fields
+        has_fields:   has_fields
+      nameit ( clasz.classname_from_typename dcl.name ), clasz
+      return new clasz()
+
+    #---------------------------------------------------------------------------------------------------------
+    @classname_from_typename = ( classname = null ) ->
+      R = ( classname ? 'anonymous' )
+      return ( R[ 0 ] ).toUpperCase() + R[ 1 .. ]
 
     #---------------------------------------------------------------------------------------------------------
     validate: ( x ) ->
-    isa: ( x ) ->
+    isa: ( x ) -> x instanceof @constructor
 
   #-----------------------------------------------------------------------------------------------------------
   type  = new Type()
@@ -168,32 +178,38 @@ require_cleartype = ->
 if module is require.main then await do =>
   { Type
     std             } = require_cleartype()
-  info 'Ω___3', std
+  info 'Ω___5', std
   do =>
     echo()
-    info 'Ω___4', std.integer
-    info 'Ω___5', std.integer.isa 3.141
-    info 'Ω___6', std.integer.isa 3
-    info 'Ω___7', std.integer.create '3'
-    info 'Ω___8', std.integer.create()
+    info 'Ω___6', std.integer
+    info 'Ω___7', std.integer.isa 3.141
+    info 'Ω___8', std.integer.isa 3
+    info 'Ω___9', std.integer.create '3'
+    info 'Ω__10', std.integer.create()
   do =>
     echo()
-    info 'Ω___9', std.nonempty_text
-    info 'Ω__10', std.nonempty_text.isa 3.141
-    info 'Ω__11', std.nonempty_text.isa ''
-    info 'Ω__12', std.nonempty_text.isa 'd'
-    info 'Ω__13', std.nonempty_text.create()
-    info 'Ω__14', std.nonempty_text.create false
-    info 'Ω__15', std.nonempty_text.create 'd'
+    info 'Ω__11', std.nonempty_text
+    info 'Ω__12', std.nonempty_text.isa 3.141
+    info 'Ω__13', std.nonempty_text.isa ''
+    info 'Ω__14', std.nonempty_text.isa 'd'
+    info 'Ω__15', std.nonempty_text.create()
+    info 'Ω__16', std.nonempty_text.create false
+    info 'Ω__17', std.nonempty_text.create 'd'
   do =>
     echo()
-    info 'Ω__16', std.quantity
-    info 'Ω__17', std.quantity.create()
-    info 'Ω__18', std.quantity.create  { q: 4.3, u: 's', }
-    info 'Ω__19', std.quantity.isa     { q: 4.3, u: 's', }
-    info 'Ω__20', std.quantity.fields.q.isa 7
-    info 'Ω__21', std.quantity.fields.q.isa Infinity
-    info 'Ω__22', std.nonempty_text.create      'g'
-    info 'Ω__23', std.quantity_u.create         'g'
-    info 'Ω__24', std.quantity.fields.u.create  'g'
+    info 'Ω__18', std.quantity
+    info 'Ω__19', std.quantity.create()
+    info 'Ω__20', std.quantity.create  { q: 4.3, u: 's', }
+    info 'Ω__21', std.quantity.isa     { q: 4.3, u: 's', }
+    info 'Ω__22', std.quantity.fields.q.isa 7
+    info 'Ω__23', std.quantity.fields.q.isa Infinity
+    info 'Ω__24', std.nonempty_text.create      'g'
+    info 'Ω__25', std.quantity_u.create         'g'
+    info 'Ω__26', std.quantity.fields.u.create  'g'
+  do =>
+    echo()
+    help 'Ω__27', std.quantity
+    help 'Ω__28', std.quantity.constructor
+    help 'Ω__29', std.quantity.constructor.name
+    help 'Ω__30', std.quantity.isa
 
