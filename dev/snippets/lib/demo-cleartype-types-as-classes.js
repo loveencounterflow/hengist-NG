@@ -33,7 +33,7 @@
 
    */
   'use strict';
-  var GTNG, GUY, Test, alert, bold, debug, echo, help, hide, info, inspect, log, nameit, plain, praise, require_cleartype, reverse, rpr, urge, warn, whisper;
+  var GTNG, GUY, Test, alert, bold, debug, echo, f, help, hide, info, inspect, log, nameit, plain, praise, require_cleartype, reverse, rpr, urge, warn, whisper;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -47,6 +47,8 @@
   ({
     props: {nameit}
   } = require('../../../apps/webguy'));
+
+  ({f} = require('../../../apps/effstring'));
 
   GTNG = require('../../../apps/guy-test-NG');
 
@@ -160,7 +162,7 @@
 
           _Class.prototype.name = dcl.name;
 
-          _Class.prototype.isa = nameit(`isa_${dcl.name}`, isa);
+          _Class.prototype.isa = nameit(_Class.isaname_from_typename(dcl.name), isa);
 
           _Class.prototype.create = create;
 
@@ -176,10 +178,17 @@
       }
 
       //---------------------------------------------------------------------------------------------------------
-      static classname_from_typename(classname = null) {
+      static classname_from_typename(typename = null) {
         var R;
-        R = classname != null ? classname : 'anonymous';
+        R = typename != null ? typename : 'anonymous';
         return R[0].toUpperCase() + R.slice(1);
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      static isaname_from_typename(typename = null) {
+        var R;
+        R = typename != null ? typename : 'anonymous';
+        return `isa_${typename}`;
       }
 
       //---------------------------------------------------------------------------------------------------------
@@ -283,7 +292,7 @@
   //===========================================================================================================
   this.cleartype_tasks = {
     basics: function() {
-      var Type, std;
+      var Type, std, type, typename;
       ({Type, std} = require_cleartype());
       info('Ω___8', std);
       (() => {
@@ -409,17 +418,22 @@
         return null;
       })();
       (() => {
-        var type, type_name, Ωcltt__51;
+        var type, typename, Ωcltt__51;
         echo();
-        for (type_name in std) {
-          type = std[type_name];
-          debug('Ω__50', rpr(type_name), rpr(type.isa.name), rpr(`isa_${type_name}`));
+        for (typename in std) {
+          type = std[typename];
+          debug('Ω__50', rpr(typename), rpr(type.isa.name), rpr(`isa_${typename}`));
           this.eq((Ωcltt__51 = function() {
             return type.isa.name;
-          }), `isa_${type_name}`);
+          }), `isa_${typename}`);
         }
         return null;
       })();
+//.......................................................................................................
+      for (typename in std) {
+        type = std[typename];
+        urge('Ω__52', f`${typename}:<20c; ${type.constructor.name}:<20c; ${type.isa.name}:<20c;`);
+      }
       return null;
     }
   };

@@ -56,6 +56,7 @@ GUY                       = require 'guy'
 { hide }                  = GUY.props
 { props: {
     nameit } }            = require '../../../apps/webguy'
+{ f }                     = require '../../../apps/effstring'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 
@@ -133,7 +134,7 @@ require_cleartype = ->
       #.......................................................................................................
       clasz = class extends extension
         name:         dcl.name
-        isa:          nameit "isa_#{dcl.name}", isa
+        isa:          nameit ( @isaname_from_typename dcl.name ), isa
         create:       create
         fields:       fields
         has_fields:   has_fields
@@ -141,9 +142,14 @@ require_cleartype = ->
       return new clasz()
 
     #---------------------------------------------------------------------------------------------------------
-    @classname_from_typename = ( classname = null ) ->
-      R = ( classname ? 'anonymous' )
+    @classname_from_typename = ( typename = null ) ->
+      R = ( typename ? 'anonymous' )
       return ( R[ 0 ] ).toUpperCase() + R[ 1 .. ]
+
+    #---------------------------------------------------------------------------------------------------------
+    @isaname_from_typename = ( typename = null ) ->
+      R = ( typename ? 'anonymous' )
+      return "isa_#{typename}"
 
     #---------------------------------------------------------------------------------------------------------
     validate: ( x ) ->
@@ -258,10 +264,13 @@ require_cleartype = ->
       return null
     do =>
       echo()
-      for type_name, type of std
-        debug 'Ω__50', ( rpr type_name ), ( rpr type.isa.name ), ( rpr "isa_#{type_name}" )
-        @eq ( Ωcltt__51 = -> type.isa.name ), "isa_#{type_name}"
+      for typename, type of std
+        debug 'Ω__50', ( rpr typename ), ( rpr type.isa.name ), ( rpr "isa_#{typename}" )
+        @eq ( Ωcltt__51 = -> type.isa.name ), "isa_#{typename}"
       return null
+    #.......................................................................................................
+    for typename, type of std
+      urge 'Ω__52', f"#{typename}:<20c; #{type.constructor.name}:<20c; #{type.isa.name}:<20c;"
     return null
 
 #===========================================================================================================
