@@ -95,14 +95,11 @@ require_cleartype = ->
         return count isnt 0
       #.......................................................................................................
       if dcl.isa?
-        # debug 'Ω___2', dcl instanceof @constructor
-        # debug 'Ω___3', @isa dcl
         switch true
+          when dcl.isa instanceof @constructor
+            per_se_isa = do ( isa = dcl.isa.isa ) -> ( x ) -> isa x
           when ( Object::toString.call dcl.isa ) is '[object Function]'
             per_se_isa = dcl.isa
-          when ( Object::toString.call dcl.isa.isa ) is '[object Function]'
-            ### TAINT should check with instanceof ###
-            per_se_isa = dcl.isa.isa
           else throw new Error 'Ω___4'
       #.......................................................................................................
       else
@@ -113,8 +110,9 @@ require_cleartype = ->
           if has_fields
             for field_name, subtype of dcl.fields
               continue if subtype.isa x[ field_name ]
-              # warn 'Ω___5', "x.#{field_name}: #{rpr x[ field_name ]} is not a #{subtype.name}"
-              warn 'Ω___6', "expected a #{subtype.name} for field #{field_name}, got #{rpr x[ field_name ]}"
+              ### TAINT use type_of ###
+              rejection = "expected a #{subtype.name} for field #{rpr field_name}, got #{rpr x[ field_name ]}"
+              warn 'Ω___6', rejection
               return false
           return true
       #.......................................................................................................
@@ -124,7 +122,7 @@ require_cleartype = ->
       else
         isa = per_se_isa
       #.......................................................................................................
-      create = dcl.create ? ->
+      create = dcl.create ? ( x ) -> x
       # if dcl.create?
       #   create = ( x ) -> dcl.create x
       # else
@@ -265,7 +263,6 @@ require_cleartype = ->
     do =>
       echo()
       for typename, type of std
-        debug 'Ω__50', ( rpr typename ), ( rpr type.isa.name ), ( rpr "isa_#{typename}" )
         @eq ( Ωcltt__51 = -> type.isa.name ), "isa_#{typename}"
       return null
     #.......................................................................................................

@@ -69,7 +69,6 @@
       //---------------------------------------------------------------------------------------------------------
       create(dcl) {
         /* TAINT review use of dcl.refines here */
-        /* TAINT should check with instanceof */
         var clasz, create, extension, fields, has_fields, is_extension, isa, per_se_isa, ref;
         fields = {};
         //.......................................................................................................
@@ -100,14 +99,16 @@
         })();
         //.......................................................................................................
         if (dcl.isa != null) {
-          // debug 'Ω___2', dcl instanceof @constructor
-          // debug 'Ω___3', @isa dcl
           switch (true) {
+            case dcl.isa instanceof this.constructor:
+              per_se_isa = (function(isa) {
+                return function(x) {
+                  return isa(x);
+                };
+              })(dcl.isa.isa);
+              break;
             case (Object.prototype.toString.call(dcl.isa)) === '[object Function]':
               per_se_isa = dcl.isa;
-              break;
-            case (Object.prototype.toString.call(dcl.isa.isa)) === '[object Function]':
-              per_se_isa = dcl.isa.isa;
               break;
             default:
               throw new Error('Ω___4');
@@ -116,7 +117,8 @@
           /* TAINT check whether there are fields */
           //.......................................................................................................
           per_se_isa = function(x) {
-            var field_name, ref, ref1, subtype;
+            /* TAINT use type_of */
+            var field_name, ref, ref1, rejection, subtype;
             if (x == null) {
               return false;
             }
@@ -130,8 +132,8 @@
                 if (subtype.isa(x[field_name])) {
                   continue;
                 }
-                // warn 'Ω___5', "x.#{field_name}: #{rpr x[ field_name ]} is not a #{subtype.name}"
-                warn('Ω___6', `expected a ${subtype.name} for field ${field_name}, got ${rpr(x[field_name])}`);
+                rejection = `expected a ${subtype.name} for field ${rpr(field_name)}, got ${rpr(x[field_name])}`;
+                warn('Ω___6', rejection);
                 return false;
               }
             }
@@ -147,7 +149,9 @@
           isa = per_se_isa;
         }
         //.......................................................................................................
-        create = (ref = dcl.create) != null ? ref : function() {};
+        create = (ref = dcl.create) != null ? ref : function(x) {
+          return x;
+        };
         // if dcl.create?
         //   create = ( x ) -> dcl.create x
         // else
@@ -422,7 +426,6 @@
         echo();
         for (typename in std) {
           type = std[typename];
-          debug('Ω__50', rpr(typename), rpr(type.isa.name), rpr(`isa_${typename}`));
           this.eq((Ωcltt__51 = function() {
             return type.isa.name;
           }), `isa_${typename}`);
