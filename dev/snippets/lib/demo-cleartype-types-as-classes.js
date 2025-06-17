@@ -128,19 +128,19 @@
               throw new Error('Ω___3');
           }
         } else {
-          /* TAINT check whether there are fields */
           //.......................................................................................................
-          per_se_isa = function(x) {
-            /* TAINT use type_of */
-            var field_name, ref, ref1, rejection, subtype;
-            if (x == null) {
-              return false;
-            }
-            if ((ref = x.constructor) !== Object && ref !== (void 0)) {
-              return false;
-            }
-            if (/* stad.pod.isa x */has_fields) {
-              ref1 = dcl.fields;
+          /* TAINT decomplect logic */
+          if (has_fields) {
+            per_se_isa = function(x) {
+              /* TAINT use type_of */
+              var field_name, ref, ref1, rejection, subtype;
+              if (x == null) {
+                return false;
+              }
+              if ((ref = x.constructor) !== Object && ref !== (void 0)) {
+                return false;
+              }
+/* stad.pod.isa x */              ref1 = dcl.fields;
               for (field_name in ref1) {
                 subtype = ref1[field_name];
                 if (subtype.isa(x[field_name])) {
@@ -150,9 +150,16 @@
                 warn('Ω___4', rejection);
                 return false;
               }
+              return true;
+            };
+          } else {
+            if (!is_extension) {
+              throw new Error("Ω___1 type declaration must have one of 'fields', 'isa' or 'refines' properties, got none");
             }
-            return true;
-          };
+            per_se_isa = function(x) {
+              return true;
+            };
+          }
         }
         //.......................................................................................................
         if (is_extension) {
@@ -308,8 +315,11 @@
       //.........................................................................................................
       quantity_q: {
         refines: std.float
-      },
-      // isa: std.float.isa
+      }
+    });
+    // isa: std.float.isa
+    //-----------------------------------------------------------------------------------------------------------
+    std.add_types({
       //.........................................................................................................
       quantity_u: {
         refines: std.nonempty_text

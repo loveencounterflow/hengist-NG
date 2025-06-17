@@ -111,19 +111,23 @@ require_cleartype = ->
             per_se_isa = dcl.isa
           else throw new Error 'Ω___3'
       #.......................................................................................................
+      ### TAINT decomplect logic ###
       else
-        ### TAINT check whether there are fields ###
-        per_se_isa = ( x ) ->
-          return false unless x?
-          return false unless x.constructor in [ Object, undefined, ] ### stad.pod.isa x ###
-          if has_fields
+        if has_fields
+          per_se_isa = ( x ) ->
+            return false unless x?
+            return false unless x.constructor in [ Object, undefined, ] ### stad.pod.isa x ###
             for field_name, subtype of dcl.fields
               continue if subtype.isa x[ field_name ]
               ### TAINT use type_of ###
               rejection = "expected a #{subtype.name} for field #{rpr field_name}, got #{rpr x[ field_name ]}"
               warn 'Ω___4', rejection
               return false
-          return true
+            return true
+        else
+          unless is_extension
+            throw new Error "Ω___1 type declaration must have one of 'fields', 'isa' or 'refines' properties, got none"
+          per_se_isa = ( x ) -> true
       #.......................................................................................................
       if is_extension
         ### TAINT review use of dcl.refines here ###
@@ -216,6 +220,8 @@ require_cleartype = ->
     quantity_q:
       refines:  std.float
       # isa: std.float.isa
+  #-----------------------------------------------------------------------------------------------------------
+  std.add_types
     #.........................................................................................................
     quantity_u:
       refines:  std.nonempty_text
