@@ -76,7 +76,6 @@
 
       //---------------------------------------------------------------------------------------------------------
       static from_declaration(typename, dcl) {
-        /* TAINT review use of dcl.refines here */
         var clasz, create, extension, fields, has_fields, is_extension, isa, per_se_isa, ref;
         if (dcl instanceof this) {
           /* TAINT should wrap b/c of names? */
@@ -85,9 +84,11 @@
         //.......................................................................................................
         fields = {};
         //.......................................................................................................
-        if (dcl.refines != null) {
+        /* TAINT condition should use API like 'has_property_but_value_isnt_null()' (?name?) */
+        if ((Reflect.has(dcl, 'refines')) && (dcl.refines !== null)) {
           if (!(dcl.refines instanceof this)) {
-            throw new Error(`Ω___2 dcl.refines must be instanceof ${rpr(this)}`);
+            /* TAINT use `type_of()` */
+            throw new Error(`Ω___2 dcl.refines must be instanceof ${rpr(this)}, got ${rpr(dcl.refines)}`);
           }
           is_extension = true;
           extension = dcl.refines.constructor;
@@ -155,6 +156,8 @@
         }
         //.......................................................................................................
         if (is_extension) {
+          /* TAINT review use of dcl.refines here */
+          debug('Ωcltt___5', typename, dcl.refines, dcl.refines.isa);
           isa = function(x) {
             return (dcl.refines.isa(x)) && (per_se_isa(x));
           };
@@ -214,7 +217,7 @@
         if (this.isa(x)) {
           return x;
         }
-        throw new Error("Ω___5 Cleartype_validation_error");
+        throw new Error("Ω___6 Cleartype_validation_error");
       }
 
       //---------------------------------------------------------------------------------------------------------
@@ -232,7 +235,7 @@
         for (typename in dcls) {
           dcl = dcls[typename];
           if (Reflect.has(this, typename)) {
-            throw new Error(`Ω___6 name collision: type / property ${rpr(typename)} already declared`);
+            throw new Error(`Ω___7 name collision: type / property ${rpr(typename)} already declared`);
           }
           this[typename] = Type.from_declaration(typename, dcl);
         }
@@ -284,6 +287,12 @@
     });
     //-----------------------------------------------------------------------------------------------------------
     std.add_types({
+      /*
+      nonempty_text:
+        isa:      std.text
+        refine:   ( x ) -> ( x.length isnt 0 )
+        create:   ( x ) -> x?.toString() ? ''
+      */
       //.........................................................................................................
       nonempty_text: {
         refines: std.text,
@@ -300,6 +309,7 @@
       quantity_q: {
         refines: std.float
       },
+      // isa: std.float.isa
       //.........................................................................................................
       quantity_u: {
         refines: std.nonempty_text
@@ -323,7 +333,7 @@
       }
     });
     //=========================================================================================================
-    return {std, Type};
+    return {std, Type, Typespace};
   };
 
   //===========================================================================================================
@@ -331,132 +341,156 @@
     basics: function() {
       var Type, std, std2, type, typename;
       ({Type, std2, std} = require_cleartype());
-      info('Ω___7', std);
+      info('Ω___8', std);
       (() => {
         echo();
-        info('Ω___8', std.integer);
-        info('Ω___9', std.integer.isa(3.141));
-        info('Ω__10', std.integer.isa(3));
-        info('Ω__11', std.integer.create('3'));
-        return info('Ω__12', std.integer.create());
+        info('Ω___9', std.integer);
+        info('Ω__10', std.integer.isa(3.141));
+        info('Ω__11', std.integer.isa(3));
+        info('Ω__12', std.integer.create('3'));
+        return info('Ω__13', std.integer.create());
       })();
       (() => {
-        var Ωcltt__13, Ωcltt__14, Ωcltt__15, Ωcltt__16, Ωcltt__17, Ωcltt__18, Ωcltt__19;
-        this.eq((Ωcltt__13 = function() {
+        var Ωcltt__14, Ωcltt__15, Ωcltt__16, Ωcltt__17, Ωcltt__18, Ωcltt__19, Ωcltt__20;
+        this.eq((Ωcltt__14 = function() {
           return std.text instanceof Type;
         }), true);
-        this.eq((Ωcltt__14 = function() {
+        this.eq((Ωcltt__15 = function() {
           return std.float instanceof Type;
         }), true);
-        this.eq((Ωcltt__15 = function() {
+        this.eq((Ωcltt__16 = function() {
           return std.integer instanceof Type;
         }), true);
-        this.eq((Ωcltt__16 = function() {
+        this.eq((Ωcltt__17 = function() {
           return std.nonempty_text instanceof Type;
         }), true);
-        this.eq((Ωcltt__17 = function() {
+        this.eq((Ωcltt__18 = function() {
           return std.quantity_q instanceof Type;
         }), true);
-        this.eq((Ωcltt__18 = function() {
+        this.eq((Ωcltt__19 = function() {
           return std.quantity_u instanceof Type;
         }), true);
-        return this.eq((Ωcltt__19 = function() {
+        return this.eq((Ωcltt__20 = function() {
           return std.quantity instanceof Type;
         }), true);
       })();
       (() => {
-        var Ωcltt__20, Ωcltt__21, Ωcltt__22, Ωcltt__23, Ωcltt__24, Ωcltt__25, Ωcltt__26;
-        this.eq((Ωcltt__20 = function() {
+        var Ωcltt__21, Ωcltt__22, Ωcltt__23, Ωcltt__24, Ωcltt__25, Ωcltt__26, Ωcltt__27;
+        this.eq((Ωcltt__21 = function() {
           return std.text.constructor.name;
         }), 'Text');
-        this.eq((Ωcltt__21 = function() {
+        this.eq((Ωcltt__22 = function() {
           return std.float.constructor.name;
         }), 'Float');
-        this.eq((Ωcltt__22 = function() {
+        this.eq((Ωcltt__23 = function() {
           return std.integer.constructor.name;
         }), 'Integer');
-        this.eq((Ωcltt__23 = function() {
+        this.eq((Ωcltt__24 = function() {
           return std.nonempty_text.constructor.name;
         }), 'Nonempty_text');
-        this.eq((Ωcltt__24 = function() {
+        this.eq((Ωcltt__25 = function() {
           return std.quantity_q.constructor.name;
         }), 'Quantity_q');
-        this.eq((Ωcltt__25 = function() {
+        this.eq((Ωcltt__26 = function() {
           return std.quantity_u.constructor.name;
         }), 'Quantity_u');
-        return this.eq((Ωcltt__26 = function() {
+        return this.eq((Ωcltt__27 = function() {
           return std.quantity.constructor.name;
         }), 'Quantity');
       })();
       (() => {
-        var Ωcltt__27, Ωcltt__28, Ωcltt__29, Ωcltt__30, Ωcltt__31, Ωcltt__32, Ωcltt__33;
-        this.eq((Ωcltt__27 = function() {
+        var Ωcltt__28, Ωcltt__29, Ωcltt__30, Ωcltt__31, Ωcltt__32, Ωcltt__33, Ωcltt__34;
+        this.eq((Ωcltt__28 = function() {
           return std.text.isa.name;
         }), 'isa_text');
-        this.eq((Ωcltt__28 = function() {
+        this.eq((Ωcltt__29 = function() {
           return std.float.isa.name;
         }), 'isa_float');
-        this.eq((Ωcltt__29 = function() {
+        this.eq((Ωcltt__30 = function() {
           return std.integer.isa.name;
         }), 'isa_integer');
-        this.eq((Ωcltt__30 = function() {
+        this.eq((Ωcltt__31 = function() {
           return std.nonempty_text.isa.name;
         }), 'isa_nonempty_text');
-        this.eq((Ωcltt__31 = function() {
+        this.eq((Ωcltt__32 = function() {
           return std.quantity_q.isa.name;
         }), 'isa_quantity_q');
-        this.eq((Ωcltt__32 = function() {
+        this.eq((Ωcltt__33 = function() {
           return std.quantity_u.isa.name;
         }), 'isa_quantity_u');
-        return this.eq((Ωcltt__33 = function() {
+        return this.eq((Ωcltt__34 = function() {
           return std.quantity.isa.name;
         }), 'isa_quantity');
       })();
       (() => {
-        var Ωcltt__34, Ωcltt__35, Ωcltt__36, Ωcltt__37, Ωcltt__38, Ωcltt__39, Ωcltt__40;
-        this.eq((Ωcltt__34 = function() {
+        var Ωcltt__35, Ωcltt__36, Ωcltt__37, Ωcltt__38, Ωcltt__39, Ωcltt__40, Ωcltt__41;
+        this.eq((Ωcltt__35 = function() {
           return std.text.isa(null);
         }), false);
-        this.eq((Ωcltt__35 = function() {
+        this.eq((Ωcltt__36 = function() {
           return std.float.isa(null);
         }), false);
-        this.eq((Ωcltt__36 = function() {
+        this.eq((Ωcltt__37 = function() {
           return std.integer.isa(null);
         }), false);
-        this.eq((Ωcltt__37 = function() {
+        this.eq((Ωcltt__38 = function() {
           return std.nonempty_text.isa(null);
         }), false);
-        this.eq((Ωcltt__38 = function() {
+        this.eq((Ωcltt__39 = function() {
           return std.quantity_q.isa(null);
         }), false);
-        this.eq((Ωcltt__39 = function() {
+        this.eq((Ωcltt__40 = function() {
           return std.quantity_u.isa(null);
         }), false);
-        return this.eq((Ωcltt__40 = function() {
+        return this.eq((Ωcltt__41 = function() {
           return std.quantity.isa(null);
         }), false);
       })();
       (() => {
-        var Ωcltt__41, Ωcltt__42, Ωcltt__43, Ωcltt__44, Ωcltt__45, Ωcltt__46, Ωcltt__47;
-        this.eq((Ωcltt__41 = function() {
+        var Ωcltt__42, Ωcltt__43, Ωcltt__44, Ωcltt__45, Ωcltt__46, Ωcltt__47, Ωcltt__48;
+        this.eq((Ωcltt__42 = function() {
+          return std.text.isa(2e308);
+        }), false);
+        this.eq((Ωcltt__43 = function() {
+          return std.float.isa(2e308);
+        }), false);
+        this.eq((Ωcltt__44 = function() {
+          return std.integer.isa(2e308);
+        }), false);
+        this.eq((Ωcltt__45 = function() {
+          return std.nonempty_text.isa(2e308);
+        }), false);
+        this.eq((Ωcltt__46 = function() {
+          return std.quantity_q.isa(2e308);
+        }), false);
+        this.eq((Ωcltt__47 = function() {
+          return std.quantity_u.isa(2e308);
+        }), false);
+        return this.eq((Ωcltt__48 = function() {
+          return std.quantity.isa(2e308);
+        }), false);
+      })();
+      (() => {
+        var Ωcltt__49, Ωcltt__50, Ωcltt__51, Ωcltt__52, Ωcltt__56, Ωcltt__57, Ωcltt__58;
+        this.eq((Ωcltt__49 = function() {
           return std.text.isa('');
         }), true);
-        this.eq((Ωcltt__42 = function() {
+        this.eq((Ωcltt__50 = function() {
           return std.float.isa(7.56);
         }), true);
-        this.eq((Ωcltt__43 = function() {
+        this.eq((Ωcltt__51 = function() {
           return std.integer.isa(9);
         }), true);
-        this.eq((Ωcltt__44 = function() {
+        this.eq((Ωcltt__52 = function() {
           return std.nonempty_text.isa('www');
         }), true);
-        this.eq((Ωcltt__45 = function() {
+        this.eq((Ωcltt__56 = function() {
           return std.quantity_q.isa(1.5e32);
         }), true);
-        this.eq((Ωcltt__46 = function() {
+        this.eq((Ωcltt__57 = function() {
           return std.quantity_u.isa('km');
         }), true);
-        return this.eq((Ωcltt__47 = function() {
+        return this.eq((Ωcltt__58 = function() {
           return std.quantity.isa({
             q: 1.5e32,
             u: 'km'
@@ -464,39 +498,39 @@
         }), true);
       })();
       (() => {
-        var Ωcltt__49, Ωcltt__50, Ωcltt__51, Ωcltt__52, Ωcltt__53, Ωcltt__54;
+        var Ωcltt__60, Ωcltt__61, Ωcltt__62, Ωcltt__63, Ωcltt__64, Ωcltt__65;
         echo();
-        info('Ω__48', std.nonempty_text);
-        this.eq((Ωcltt__49 = function() {
+        info('Ω__59', std.nonempty_text);
+        this.eq((Ωcltt__60 = function() {
           return std.nonempty_text.isa(3.141);
         }), false);
-        this.eq((Ωcltt__50 = function() {
+        this.eq((Ωcltt__61 = function() {
           return std.nonempty_text.isa('');
         }), false);
-        this.eq((Ωcltt__51 = function() {
+        this.eq((Ωcltt__62 = function() {
           return std.nonempty_text.isa('d');
         }), true);
-        this.eq((Ωcltt__52 = function() {
+        this.eq((Ωcltt__63 = function() {
           return std.nonempty_text.create();
         }), '');
-        this.eq((Ωcltt__53 = function() {
+        this.eq((Ωcltt__64 = function() {
           return std.nonempty_text.create(false);
         }), 'false');
-        return this.eq((Ωcltt__54 = function() {
+        return this.eq((Ωcltt__65 = function() {
           return std.nonempty_text.create('d');
         }), 'd');
       })();
       (() => {
-        var Ωcltt__56, Ωcltt__57, Ωcltt__58, Ωcltt__60, Ωcltt__61;
+        var Ωcltt__67, Ωcltt__68;
         echo();
-        info('Ω__55', std.quantity);
-        this.eq((Ωcltt__56 = function() {
+        info('Ω__66', std.quantity);
+        this.eq((Ωcltt__67 = function() {
           return std.quantity.create();
         }), {
           q: 0,
           u: 'u'
         });
-        this.eq((Ωcltt__57 = function() {
+        this.eq((Ωcltt__68 = function() {
           return std.quantity.create({
             q: 4.3,
             u: 's'
@@ -505,76 +539,63 @@
           q: 4.3,
           u: 's'
         });
-        this.eq((Ωcltt__58 = function() {
-          return std.quantity.isa({
-            q: 4.3,
-            u: 's'
-          });
-        }), true);
-        // @eq ( Ωcltt__59 = -> std.quantity.validate  { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
-        this.eq((Ωcltt__60 = function() {
-          return std.quantity.fields.q.isa(7);
-        }), true);
-        this.eq((Ωcltt__61 = function() {
-          return std.quantity.fields.q.isa(2e308);
-        }), false);
-        info('Ω__62', std.nonempty_text.create('g'));
-        info('Ω__63', std.quantity_u.create('g'));
-        return info('Ω__64', std.quantity.fields.u.create('g'));
+        info('Ω__69', std.nonempty_text.create('g'));
+        info('Ω__70', std.quantity_u.create('g'));
+        return info('Ω__71', std.quantity.fields.u.create('g'));
       })();
       (() => {
-        var Ωcltt__73, Ωcltt__74, Ωcltt__75, Ωcltt__76, Ωcltt__82, Ωcltt__83;
+        var Ωcltt__80, Ωcltt__81, Ωcltt__82, Ωcltt__83, Ωcltt__89, Ωcltt__90;
         echo();
-        help('Ω__65', std.quantity);
-        help('Ω__66', std.quantity.constructor);
-        help('Ω__67', std.quantity.constructor.name);
-        help('Ω__68', std.quantity.isa);
-        help('Ω__69', std.quantity.isa({}));
-        help('Ω__70', std.quantity.isa({
+        help('Ω__72', std.quantity);
+        help('Ω__73', std.quantity.constructor);
+        help('Ω__74', std.quantity.constructor.name);
+        help('Ω__75', std.quantity.isa);
+        help('Ω__76', std.quantity.isa({}));
+        help('Ω__77', std.quantity.isa({
           u: 7,
           q: 3
         }));
-        help('Ω__71', std.quantity.isa({
+        help('Ω__78', std.quantity.isa({
           u: '7',
           q: 3
         }));
-        help('Ω__72', std.quantity.isa({
+        help('Ω__79', std.quantity.isa({
           u: '7',
           q: 2e308
         }));
-        this.eq((Ωcltt__73 = function() {
+        this.eq((Ωcltt__80 = function() {
           return std.quantity.name;
         }), 'quantity');
-        this.eq((Ωcltt__74 = function() {
+        this.eq((Ωcltt__81 = function() {
           return std.integer.name;
         }), 'integer');
-        this.eq((Ωcltt__75 = function() {
+        this.eq((Ωcltt__82 = function() {
           return std.quantity_q.name;
         }), 'quantity_q');
-        this.eq((Ωcltt__76 = function() {
+        this.eq((Ωcltt__83 = function() {
           return std.quantity_u.name;
         }), 'quantity_u');
         echo();
-        help('Ω__77', std.text.isa);
-        help('Ω__78', std.text.isa('abc'));
-        help('Ω__79', std.text.isa(Array.from('abc')));
+        help('Ω__84', std.text.isa);
+        help('Ω__85', std.text.isa('abc'));
+        help('Ω__86', std.text.isa(Array.from('abc')));
         echo();
-        help('Ω__80', std.nonempty_text);
-        help('Ω__81', std.nonempty_text.isa);
-        this.eq((Ωcltt__82 = function() {
+        help('Ω__87', std.nonempty_text);
+        help('Ω__88', std.nonempty_text.isa);
+        this.eq((Ωcltt__89 = function() {
           return std.nonempty_text.isa('abc');
         }), true);
-        this.eq((Ωcltt__83 = function() {
+        this.eq((Ωcltt__90 = function() {
           return std.nonempty_text.isa(Array.from('abc'));
         }), false);
         return null;
       })();
       (() => {
-        var type, typename, Ωcltt__84;
+        var type, typename, Ωcltt__91;
         echo();
         for (typename in std) {
           type = std[typename];
-          this.eq((Ωcltt__84 = function() {
+          this.eq((Ωcltt__91 = function() {
             return type.isa.name;
           }), `isa_${typename}`);
         }
@@ -583,7 +604,7 @@
 //.......................................................................................................
       for (typename in std) {
         type = std[typename];
-        urge('Ω__85', f`${typename}:<20c; ${type.constructor.name}:<20c; ${type.isa.name}:<20c;`);
+        urge('Ω__92', f`${typename}:<20c; ${type.constructor.name}:<20c; ${type.isa.name}:<20c;`);
       }
       return null;
     }

@@ -84,9 +84,11 @@ require_cleartype = ->
       #.......................................................................................................
       fields = {}
       #.......................................................................................................
-      if dcl.refines?
+      ### TAINT condition should use API like 'has_property_but_value_isnt_null()' (?name?) ###
+      if ( Reflect.has dcl, 'refines' ) and ( dcl.refines isnt null )
         unless ( dcl.refines instanceof @ )
-          throw new Error "Ω___2 dcl.refines must be instanceof #{rpr @}"
+          ### TAINT use `type_of()` ###
+          throw new Error "Ω___2 dcl.refines must be instanceof #{rpr @}, got #{rpr dcl.refines}"
         is_extension  = true
         extension     = dcl.refines.constructor
       else
@@ -125,6 +127,7 @@ require_cleartype = ->
       #.......................................................................................................
       if is_extension
         ### TAINT review use of dcl.refines here ###
+        debug 'Ωcltt___5', typename, dcl.refines, dcl.refines.isa
         isa = ( x ) -> ( dcl.refines.isa x ) and ( per_se_isa x )
       else
         isa = per_se_isa
@@ -160,7 +163,7 @@ require_cleartype = ->
     #---------------------------------------------------------------------------------------------------------
     validate: ( x ) ->
       return x if @isa x
-      throw new Error "Ω___5 Cleartype_validation_error"
+      throw new Error "Ω___6 Cleartype_validation_error"
 
     #---------------------------------------------------------------------------------------------------------
     isa: ( x ) -> x instanceof @constructor
@@ -173,7 +176,7 @@ require_cleartype = ->
       ### TAINT name collisions possible ###
       for typename, dcl of dcls
         if Reflect.has @, typename
-          throw new Error "Ω___6 name collision: type / property #{rpr typename} already declared"
+          throw new Error "Ω___7 name collision: type / property #{rpr typename} already declared"
         @[ typename ] = Type.from_declaration typename, dcl
       return null
 
@@ -197,6 +200,12 @@ require_cleartype = ->
       create:   ( n = 0 ) -> if x? then ( parseInt n, 10 ) else 0
   #-----------------------------------------------------------------------------------------------------------
   std.add_types
+    ###
+    nonempty_text:
+      isa:      std.text
+      refine:   ( x ) -> ( x.length isnt 0 )
+      create:   ( x ) -> x?.toString() ? ''
+    ###
     #.........................................................................................................
     nonempty_text:
       refines:  std.text
@@ -206,6 +215,7 @@ require_cleartype = ->
     #.........................................................................................................
     quantity_q:
       refines:  std.float
+      # isa: std.float.isa
     #.........................................................................................................
     quantity_u:
       refines:  std.nonempty_text
@@ -219,7 +229,7 @@ require_cleartype = ->
         u:      std.quantity_u
 
   #=========================================================================================================
-  return { std, Type, }
+  return { std, Type, Typespace, }
 
 #===========================================================================================================
 @cleartype_tasks =
@@ -227,107 +237,111 @@ require_cleartype = ->
     { Type
       std2
       std             } = require_cleartype()
-    info 'Ω___7', std
+    info 'Ω___8', std
     do =>
       echo()
-      info 'Ω___8', std.integer
-      info 'Ω___9', std.integer.isa 3.141
-      info 'Ω__10', std.integer.isa 3
-      info 'Ω__11', std.integer.create '3'
-      info 'Ω__12', std.integer.create()
+      info 'Ω___9', std.integer
+      info 'Ω__10', std.integer.isa 3.141
+      info 'Ω__11', std.integer.isa 3
+      info 'Ω__12', std.integer.create '3'
+      info 'Ω__13', std.integer.create()
     do =>
-      @eq ( Ωcltt__13 = -> std.text           instanceof Type ), true
-      @eq ( Ωcltt__14 = -> std.float          instanceof Type ), true
-      @eq ( Ωcltt__15 = -> std.integer        instanceof Type ), true
-      @eq ( Ωcltt__16 = -> std.nonempty_text  instanceof Type ), true
-      @eq ( Ωcltt__17 = -> std.quantity_q     instanceof Type ), true
-      @eq ( Ωcltt__18 = -> std.quantity_u     instanceof Type ), true
-      @eq ( Ωcltt__19 = -> std.quantity       instanceof Type ), true
+      @eq ( Ωcltt__14 = -> std.text           instanceof Type ), true
+      @eq ( Ωcltt__15 = -> std.float          instanceof Type ), true
+      @eq ( Ωcltt__16 = -> std.integer        instanceof Type ), true
+      @eq ( Ωcltt__17 = -> std.nonempty_text  instanceof Type ), true
+      @eq ( Ωcltt__18 = -> std.quantity_q     instanceof Type ), true
+      @eq ( Ωcltt__19 = -> std.quantity_u     instanceof Type ), true
+      @eq ( Ωcltt__20 = -> std.quantity       instanceof Type ), true
     do =>
-      @eq ( Ωcltt__20 = -> std.text.constructor.name          ), 'Text'
-      @eq ( Ωcltt__21 = -> std.float.constructor.name         ), 'Float'
-      @eq ( Ωcltt__22 = -> std.integer.constructor.name       ), 'Integer'
-      @eq ( Ωcltt__23 = -> std.nonempty_text.constructor.name ), 'Nonempty_text'
-      @eq ( Ωcltt__24 = -> std.quantity_q.constructor.name    ), 'Quantity_q'
-      @eq ( Ωcltt__25 = -> std.quantity_u.constructor.name    ), 'Quantity_u'
-      @eq ( Ωcltt__26 = -> std.quantity.constructor.name      ), 'Quantity'
+      @eq ( Ωcltt__21 = -> std.text.constructor.name          ), 'Text'
+      @eq ( Ωcltt__22 = -> std.float.constructor.name         ), 'Float'
+      @eq ( Ωcltt__23 = -> std.integer.constructor.name       ), 'Integer'
+      @eq ( Ωcltt__24 = -> std.nonempty_text.constructor.name ), 'Nonempty_text'
+      @eq ( Ωcltt__25 = -> std.quantity_q.constructor.name    ), 'Quantity_q'
+      @eq ( Ωcltt__26 = -> std.quantity_u.constructor.name    ), 'Quantity_u'
+      @eq ( Ωcltt__27 = -> std.quantity.constructor.name      ), 'Quantity'
     do =>
-      @eq ( Ωcltt__27 = -> std.text.isa.name                  ), 'isa_text'
-      @eq ( Ωcltt__28 = -> std.float.isa.name                 ), 'isa_float'
-      @eq ( Ωcltt__29 = -> std.integer.isa.name               ), 'isa_integer'
-      @eq ( Ωcltt__30 = -> std.nonempty_text.isa.name         ), 'isa_nonempty_text'
-      @eq ( Ωcltt__31 = -> std.quantity_q.isa.name            ), 'isa_quantity_q'
-      @eq ( Ωcltt__32 = -> std.quantity_u.isa.name            ), 'isa_quantity_u'
-      @eq ( Ωcltt__33 = -> std.quantity.isa.name              ), 'isa_quantity'
+      @eq ( Ωcltt__28 = -> std.text.isa.name                  ), 'isa_text'
+      @eq ( Ωcltt__29 = -> std.float.isa.name                 ), 'isa_float'
+      @eq ( Ωcltt__30 = -> std.integer.isa.name               ), 'isa_integer'
+      @eq ( Ωcltt__31 = -> std.nonempty_text.isa.name         ), 'isa_nonempty_text'
+      @eq ( Ωcltt__32 = -> std.quantity_q.isa.name            ), 'isa_quantity_q'
+      @eq ( Ωcltt__33 = -> std.quantity_u.isa.name            ), 'isa_quantity_u'
+      @eq ( Ωcltt__34 = -> std.quantity.isa.name              ), 'isa_quantity'
     do =>
-      @eq ( Ωcltt__34 = -> std.text.isa                  null ), false
-      @eq ( Ωcltt__35 = -> std.float.isa                 null ), false
-      @eq ( Ωcltt__36 = -> std.integer.isa               null ), false
-      @eq ( Ωcltt__37 = -> std.nonempty_text.isa         null ), false
-      @eq ( Ωcltt__38 = -> std.quantity_q.isa            null ), false
-      @eq ( Ωcltt__39 = -> std.quantity_u.isa            null ), false
-      @eq ( Ωcltt__40 = -> std.quantity.isa              null ), false
+      @eq ( Ωcltt__35 = -> std.text.isa                  null ), false
+      @eq ( Ωcltt__36 = -> std.float.isa                 null ), false
+      @eq ( Ωcltt__37 = -> std.integer.isa               null ), false
+      @eq ( Ωcltt__38 = -> std.nonempty_text.isa         null ), false
+      @eq ( Ωcltt__39 = -> std.quantity_q.isa            null ), false
+      @eq ( Ωcltt__40 = -> std.quantity_u.isa            null ), false
+      @eq ( Ωcltt__41 = -> std.quantity.isa              null ), false
     do =>
-      @eq ( Ωcltt__41 = -> std.text.isa           ''                        ), true
-      @eq ( Ωcltt__42 = -> std.float.isa          7.56                      ), true
-      @eq ( Ωcltt__43 = -> std.integer.isa        9                         ), true
-      @eq ( Ωcltt__44 = -> std.nonempty_text.isa  'www'                     ), true
-      @eq ( Ωcltt__45 = -> std.quantity_q.isa     1.5e32                    ), true
-      @eq ( Ωcltt__46 = -> std.quantity_u.isa     'km'                      ), true
-      @eq ( Ωcltt__47 = -> std.quantity.isa       { q: 1.5e32, u: 'km', }   ), true
+      @eq ( Ωcltt__42 = -> std.text.isa                  Infinity ), false
+      @eq ( Ωcltt__43 = -> std.float.isa                 Infinity ), false
+      @eq ( Ωcltt__44 = -> std.integer.isa               Infinity ), false
+      @eq ( Ωcltt__45 = -> std.nonempty_text.isa         Infinity ), false
+      @eq ( Ωcltt__46 = -> std.quantity_q.isa            Infinity ), false
+      @eq ( Ωcltt__47 = -> std.quantity_u.isa            Infinity ), false
+      @eq ( Ωcltt__48 = -> std.quantity.isa              Infinity ), false
     do =>
-      echo()
-      info 'Ω__48', std.nonempty_text
-      @eq ( Ωcltt__49 = -> std.nonempty_text.isa 3.141                  ), false
-      @eq ( Ωcltt__50 = -> std.nonempty_text.isa ''                     ), false
-      @eq ( Ωcltt__51 = -> std.nonempty_text.isa 'd'                    ), true
-      @eq ( Ωcltt__52 = -> std.nonempty_text.create()                   ), ''
-      @eq ( Ωcltt__53 = -> std.nonempty_text.create false               ), 'false'
-      @eq ( Ωcltt__54 = -> std.nonempty_text.create 'd'                 ), 'd'
-    do =>
-      echo()
-      info 'Ω__55', std.quantity
-      @eq ( Ωcltt__56 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
-      @eq ( Ωcltt__57 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
-      @eq ( Ωcltt__58 = -> std.quantity.isa       { q: 4.3, u: 's', }   ), true
-      # @eq ( Ωcltt__59 = -> std.quantity.validate  { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
-      @eq ( Ωcltt__60 = -> std.quantity.fields.q.isa 7                  ), true
-      @eq ( Ωcltt__61 = -> std.quantity.fields.q.isa Infinity           ), false
-      info 'Ω__62', std.nonempty_text.create      'g'
-      info 'Ω__63', std.quantity_u.create         'g'
-      info 'Ω__64', std.quantity.fields.u.create  'g'
+      @eq ( Ωcltt__49 = -> std.text.isa           ''                        ), true
+      @eq ( Ωcltt__50 = -> std.float.isa          7.56                      ), true
+      @eq ( Ωcltt__51 = -> std.integer.isa        9                         ), true
+      @eq ( Ωcltt__52 = -> std.nonempty_text.isa  'www'                     ), true
+      @eq ( Ωcltt__56 = -> std.quantity_q.isa     1.5e32                    ), true
+      @eq ( Ωcltt__57 = -> std.quantity_u.isa     'km'                      ), true
+      @eq ( Ωcltt__58 = -> std.quantity.isa       { q: 1.5e32, u: 'km', }   ), true
     do =>
       echo()
-      help 'Ω__65', std.quantity
-      help 'Ω__66', std.quantity.constructor
-      help 'Ω__67', std.quantity.constructor.name
-      help 'Ω__68', std.quantity.isa
-      help 'Ω__69', std.quantity.isa {}
-      help 'Ω__70', std.quantity.isa { u: 7, q: 3, }
-      help 'Ω__71', std.quantity.isa { u: '7', q: 3, }
-      help 'Ω__72', std.quantity.isa { u: '7', q: Infinity, }
-      @eq ( Ωcltt__73 = -> std.quantity.name                    ), 'quantity'
-      @eq ( Ωcltt__74 = -> std.integer.name                     ), 'integer'
-      @eq ( Ωcltt__75 = -> std.quantity_q.name                  ), 'quantity_q'
-      @eq ( Ωcltt__76 = -> std.quantity_u.name                  ), 'quantity_u'
+      info 'Ω__59', std.nonempty_text
+      @eq ( Ωcltt__60 = -> std.nonempty_text.isa 3.141                  ), false
+      @eq ( Ωcltt__61 = -> std.nonempty_text.isa ''                     ), false
+      @eq ( Ωcltt__62 = -> std.nonempty_text.isa 'd'                    ), true
+      @eq ( Ωcltt__63 = -> std.nonempty_text.create()                   ), ''
+      @eq ( Ωcltt__64 = -> std.nonempty_text.create false               ), 'false'
+      @eq ( Ωcltt__65 = -> std.nonempty_text.create 'd'                 ), 'd'
+    do =>
       echo()
-      help 'Ω__77', std.text.isa
-      help 'Ω__78', std.text.isa 'abc'
-      help 'Ω__79', std.text.isa Array.from 'abc'
+      info 'Ω__66', std.quantity
+      @eq ( Ωcltt__67 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
+      @eq ( Ωcltt__68 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
+      info 'Ω__69', std.nonempty_text.create      'g'
+      info 'Ω__70', std.quantity_u.create         'g'
+      info 'Ω__71', std.quantity.fields.u.create  'g'
+    do =>
       echo()
-      help 'Ω__80', std.nonempty_text
-      help 'Ω__81', std.nonempty_text.isa
-      @eq ( Ωcltt__82 = -> std.nonempty_text.isa 'abc'            ), true
-      @eq ( Ωcltt__83 = -> std.nonempty_text.isa Array.from 'abc' ), false
+      help 'Ω__72', std.quantity
+      help 'Ω__73', std.quantity.constructor
+      help 'Ω__74', std.quantity.constructor.name
+      help 'Ω__75', std.quantity.isa
+      help 'Ω__76', std.quantity.isa {}
+      help 'Ω__77', std.quantity.isa { u: 7, q: 3, }
+      help 'Ω__78', std.quantity.isa { u: '7', q: 3, }
+      help 'Ω__79', std.quantity.isa { u: '7', q: Infinity, }
+      @eq ( Ωcltt__80 = -> std.quantity.name                    ), 'quantity'
+      @eq ( Ωcltt__81 = -> std.integer.name                     ), 'integer'
+      @eq ( Ωcltt__82 = -> std.quantity_q.name                  ), 'quantity_q'
+      @eq ( Ωcltt__83 = -> std.quantity_u.name                  ), 'quantity_u'
+      echo()
+      help 'Ω__84', std.text.isa
+      help 'Ω__85', std.text.isa 'abc'
+      help 'Ω__86', std.text.isa Array.from 'abc'
+      echo()
+      help 'Ω__87', std.nonempty_text
+      help 'Ω__88', std.nonempty_text.isa
+      @eq ( Ωcltt__89 = -> std.nonempty_text.isa 'abc'            ), true
+      @eq ( Ωcltt__90 = -> std.nonempty_text.isa Array.from 'abc' ), false
       return null
     do =>
       echo()
       for typename, type of std
-        @eq ( Ωcltt__84 = -> type.isa.name ), "isa_#{typename}"
+        @eq ( Ωcltt__91 = -> type.isa.name ), "isa_#{typename}"
       return null
     #.......................................................................................................
     for typename, type of std
-      urge 'Ω__85', f"#{typename}:<20c; #{type.constructor.name}:<20c; #{type.isa.name}:<20c;"
+      urge 'Ω__92', f"#{typename}:<20c; #{type.constructor.name}:<20c; #{type.isa.name}:<20c;"
     return null
 
 #===========================================================================================================
