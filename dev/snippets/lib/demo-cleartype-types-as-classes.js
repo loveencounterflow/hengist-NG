@@ -33,7 +33,7 @@
 
    */
   'use strict';
-  var GTNG, GUY, Test, alert, bold, debug, echo, f, help, hide, info, inspect, log, nameit, plain, praise, require_cleartype, reverse, rpr, urge, warn, whisper;
+  var GTNG, GUY, Test, alert, bold, debug, demo_new_returns_instance_of_new_class, echo, f, help, hide, info, inspect, log, nameit, plain, praise, require_cleartype, reverse, rpr, urge, warn, whisper;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -154,7 +154,7 @@
             };
           } else {
             if (!is_extension) {
-              throw new Error("Ω___1 type declaration must have one of 'fields', 'isa' or 'refines' properties, got none");
+              throw new Error("Ω___5 type declaration must have one of 'fields', 'isa' or 'refines' properties, got none");
             }
             per_se_isa = function(x) {
               return true;
@@ -164,7 +164,7 @@
         //.......................................................................................................
         if (is_extension) {
           /* TAINT review use of dcl.refines here */
-          debug('Ωcltt___5', typename, dcl.refines, dcl.refines.isa);
+          debug('Ωcltt___6', typename, dcl.refines, dcl.refines.isa);
           isa = function(x) {
             return (dcl.refines.isa(x)) && (per_se_isa(x));
           };
@@ -224,7 +224,7 @@
         if (this.isa(x)) {
           return x;
         }
-        throw new Error("Ω___6 Cleartype_validation_error");
+        throw new Error("Ω___7 Cleartype_validation_error");
       }
 
       //---------------------------------------------------------------------------------------------------------
@@ -242,7 +242,7 @@
         for (typename in dcls) {
           dcl = dcls[typename];
           if (Reflect.has(this, typename)) {
-            throw new Error(`Ω___7 name collision: type / property ${rpr(typename)} already declared`);
+            throw new Error(`Ω___8 name collision: type / property ${rpr(typename)} already declared`);
           }
           this[typename] = Type.from_declaration(typename, dcl);
         }
@@ -351,156 +351,156 @@
     basics: function() {
       var Type, std, std2, type, typename;
       ({Type, std2, std} = require_cleartype());
-      info('Ω___8', std);
+      info('Ω___9', std);
       (() => {
         echo();
-        info('Ω___9', std.integer);
-        info('Ω__10', std.integer.isa(3.141));
-        info('Ω__11', std.integer.isa(3));
-        info('Ω__12', std.integer.create('3'));
-        return info('Ω__13', std.integer.create());
+        info('Ω__10', std.integer);
+        info('Ω__11', std.integer.isa(3.141));
+        info('Ω__12', std.integer.isa(3));
+        info('Ω__13', std.integer.create('3'));
+        return info('Ω__14', std.integer.create());
       })();
       (() => {
-        var Ωcltt__14, Ωcltt__15, Ωcltt__16, Ωcltt__17, Ωcltt__18, Ωcltt__19, Ωcltt__20;
-        this.eq((Ωcltt__14 = function() {
+        var Ωcltt__15, Ωcltt__16, Ωcltt__17, Ωcltt__18, Ωcltt__19, Ωcltt__20, Ωcltt__21;
+        this.eq((Ωcltt__15 = function() {
           return std.text instanceof Type;
         }), true);
-        this.eq((Ωcltt__15 = function() {
+        this.eq((Ωcltt__16 = function() {
           return std.float instanceof Type;
         }), true);
-        this.eq((Ωcltt__16 = function() {
+        this.eq((Ωcltt__17 = function() {
           return std.integer instanceof Type;
         }), true);
-        this.eq((Ωcltt__17 = function() {
+        this.eq((Ωcltt__18 = function() {
           return std.nonempty_text instanceof Type;
         }), true);
-        this.eq((Ωcltt__18 = function() {
+        this.eq((Ωcltt__19 = function() {
           return std.quantity_q instanceof Type;
         }), true);
-        this.eq((Ωcltt__19 = function() {
+        this.eq((Ωcltt__20 = function() {
           return std.quantity_u instanceof Type;
         }), true);
-        return this.eq((Ωcltt__20 = function() {
+        return this.eq((Ωcltt__21 = function() {
           return std.quantity instanceof Type;
         }), true);
       })();
       (() => {
-        var Ωcltt__21, Ωcltt__22, Ωcltt__23, Ωcltt__24, Ωcltt__25, Ωcltt__26, Ωcltt__27;
-        this.eq((Ωcltt__21 = function() {
+        var Ωcltt__22, Ωcltt__23, Ωcltt__24, Ωcltt__25, Ωcltt__26, Ωcltt__27, Ωcltt__28;
+        this.eq((Ωcltt__22 = function() {
           return std.text.constructor.name;
         }), 'Text');
-        this.eq((Ωcltt__22 = function() {
+        this.eq((Ωcltt__23 = function() {
           return std.float.constructor.name;
         }), 'Float');
-        this.eq((Ωcltt__23 = function() {
+        this.eq((Ωcltt__24 = function() {
           return std.integer.constructor.name;
         }), 'Integer');
-        this.eq((Ωcltt__24 = function() {
+        this.eq((Ωcltt__25 = function() {
           return std.nonempty_text.constructor.name;
         }), 'Nonempty_text');
-        this.eq((Ωcltt__25 = function() {
+        this.eq((Ωcltt__26 = function() {
           return std.quantity_q.constructor.name;
         }), 'Quantity_q');
-        this.eq((Ωcltt__26 = function() {
+        this.eq((Ωcltt__27 = function() {
           return std.quantity_u.constructor.name;
         }), 'Quantity_u');
-        return this.eq((Ωcltt__27 = function() {
+        return this.eq((Ωcltt__28 = function() {
           return std.quantity.constructor.name;
         }), 'Quantity');
       })();
       (() => {
-        var Ωcltt__28, Ωcltt__29, Ωcltt__30, Ωcltt__31, Ωcltt__32, Ωcltt__33, Ωcltt__34;
-        this.eq((Ωcltt__28 = function() {
+        var Ωcltt__29, Ωcltt__30, Ωcltt__31, Ωcltt__32, Ωcltt__33, Ωcltt__34, Ωcltt__35;
+        this.eq((Ωcltt__29 = function() {
           return std.text.isa.name;
         }), 'isa_text');
-        this.eq((Ωcltt__29 = function() {
+        this.eq((Ωcltt__30 = function() {
           return std.float.isa.name;
         }), 'isa_float');
-        this.eq((Ωcltt__30 = function() {
+        this.eq((Ωcltt__31 = function() {
           return std.integer.isa.name;
         }), 'isa_integer');
-        this.eq((Ωcltt__31 = function() {
+        this.eq((Ωcltt__32 = function() {
           return std.nonempty_text.isa.name;
         }), 'isa_nonempty_text');
-        this.eq((Ωcltt__32 = function() {
+        this.eq((Ωcltt__33 = function() {
           return std.quantity_q.isa.name;
         }), 'isa_quantity_q');
-        this.eq((Ωcltt__33 = function() {
+        this.eq((Ωcltt__34 = function() {
           return std.quantity_u.isa.name;
         }), 'isa_quantity_u');
-        return this.eq((Ωcltt__34 = function() {
+        return this.eq((Ωcltt__35 = function() {
           return std.quantity.isa.name;
         }), 'isa_quantity');
       })();
       (() => {
-        var Ωcltt__35, Ωcltt__36, Ωcltt__37, Ωcltt__38, Ωcltt__39, Ωcltt__40, Ωcltt__41;
-        this.eq((Ωcltt__35 = function() {
+        var Ωcltt__36, Ωcltt__37, Ωcltt__38, Ωcltt__39, Ωcltt__40, Ωcltt__41, Ωcltt__42;
+        this.eq((Ωcltt__36 = function() {
           return std.text.isa(null);
         }), false);
-        this.eq((Ωcltt__36 = function() {
+        this.eq((Ωcltt__37 = function() {
           return std.float.isa(null);
         }), false);
-        this.eq((Ωcltt__37 = function() {
+        this.eq((Ωcltt__38 = function() {
           return std.integer.isa(null);
         }), false);
-        this.eq((Ωcltt__38 = function() {
+        this.eq((Ωcltt__39 = function() {
           return std.nonempty_text.isa(null);
         }), false);
-        this.eq((Ωcltt__39 = function() {
+        this.eq((Ωcltt__40 = function() {
           return std.quantity_q.isa(null);
         }), false);
-        this.eq((Ωcltt__40 = function() {
+        this.eq((Ωcltt__41 = function() {
           return std.quantity_u.isa(null);
         }), false);
-        return this.eq((Ωcltt__41 = function() {
+        return this.eq((Ωcltt__42 = function() {
           return std.quantity.isa(null);
         }), false);
       })();
       (() => {
-        var Ωcltt__42, Ωcltt__43, Ωcltt__44, Ωcltt__45, Ωcltt__46, Ωcltt__47, Ωcltt__48;
-        this.eq((Ωcltt__42 = function() {
+        var Ωcltt__43, Ωcltt__44, Ωcltt__45, Ωcltt__46, Ωcltt__47, Ωcltt__48, Ωcltt__49;
+        this.eq((Ωcltt__43 = function() {
           return std.text.isa(2e308);
         }), false);
-        this.eq((Ωcltt__43 = function() {
+        this.eq((Ωcltt__44 = function() {
           return std.float.isa(2e308);
         }), false);
-        this.eq((Ωcltt__44 = function() {
+        this.eq((Ωcltt__45 = function() {
           return std.integer.isa(2e308);
         }), false);
-        this.eq((Ωcltt__45 = function() {
+        this.eq((Ωcltt__46 = function() {
           return std.nonempty_text.isa(2e308);
         }), false);
-        this.eq((Ωcltt__46 = function() {
+        this.eq((Ωcltt__47 = function() {
           return std.quantity_q.isa(2e308);
         }), false);
-        this.eq((Ωcltt__47 = function() {
+        this.eq((Ωcltt__48 = function() {
           return std.quantity_u.isa(2e308);
         }), false);
-        return this.eq((Ωcltt__48 = function() {
+        return this.eq((Ωcltt__49 = function() {
           return std.quantity.isa(2e308);
         }), false);
       })();
       (() => {
-        var Ωcltt__49, Ωcltt__50, Ωcltt__51, Ωcltt__52, Ωcltt__56, Ωcltt__57, Ωcltt__58;
-        this.eq((Ωcltt__49 = function() {
+        var Ωcltt__50, Ωcltt__51, Ωcltt__52, Ωcltt__53, Ωcltt__54, Ωcltt__55, Ωcltt__56;
+        this.eq((Ωcltt__50 = function() {
           return std.text.isa('');
         }), true);
-        this.eq((Ωcltt__50 = function() {
+        this.eq((Ωcltt__51 = function() {
           return std.float.isa(7.56);
         }), true);
-        this.eq((Ωcltt__51 = function() {
+        this.eq((Ωcltt__52 = function() {
           return std.integer.isa(9);
         }), true);
-        this.eq((Ωcltt__52 = function() {
+        this.eq((Ωcltt__53 = function() {
           return std.nonempty_text.isa('www');
         }), true);
-        this.eq((Ωcltt__56 = function() {
+        this.eq((Ωcltt__54 = function() {
           return std.quantity_q.isa(1.5e32);
         }), true);
-        this.eq((Ωcltt__57 = function() {
+        this.eq((Ωcltt__55 = function() {
           return std.quantity_u.isa('km');
         }), true);
-        return this.eq((Ωcltt__58 = function() {
+        return this.eq((Ωcltt__56 = function() {
           return std.quantity.isa({
             q: 1.5e32,
             u: 'km'
@@ -508,39 +508,39 @@
         }), true);
       })();
       (() => {
-        var Ωcltt__60, Ωcltt__61, Ωcltt__62, Ωcltt__63, Ωcltt__64, Ωcltt__65;
+        var Ωcltt__58, Ωcltt__59, Ωcltt__60, Ωcltt__61, Ωcltt__62, Ωcltt__63;
         echo();
-        info('Ω__59', std.nonempty_text);
-        this.eq((Ωcltt__60 = function() {
+        info('Ω__57', std.nonempty_text);
+        this.eq((Ωcltt__58 = function() {
           return std.nonempty_text.isa(3.141);
         }), false);
-        this.eq((Ωcltt__61 = function() {
+        this.eq((Ωcltt__59 = function() {
           return std.nonempty_text.isa('');
         }), false);
-        this.eq((Ωcltt__62 = function() {
+        this.eq((Ωcltt__60 = function() {
           return std.nonempty_text.isa('d');
         }), true);
-        this.eq((Ωcltt__63 = function() {
+        this.eq((Ωcltt__61 = function() {
           return std.nonempty_text.create();
         }), '');
-        this.eq((Ωcltt__64 = function() {
+        this.eq((Ωcltt__62 = function() {
           return std.nonempty_text.create(false);
         }), 'false');
-        return this.eq((Ωcltt__65 = function() {
+        return this.eq((Ωcltt__63 = function() {
           return std.nonempty_text.create('d');
         }), 'd');
       })();
       (() => {
-        var Ωcltt__67, Ωcltt__68;
+        var Ωcltt__65, Ωcltt__66;
         echo();
-        info('Ω__66', std.quantity);
-        this.eq((Ωcltt__67 = function() {
+        info('Ω__64', std.quantity);
+        this.eq((Ωcltt__65 = function() {
           return std.quantity.create();
         }), {
           q: 0,
           u: 'u'
         });
-        this.eq((Ωcltt__68 = function() {
+        this.eq((Ωcltt__66 = function() {
           return std.quantity.create({
             q: 4.3,
             u: 's'
@@ -549,63 +549,63 @@
           q: 4.3,
           u: 's'
         });
-        info('Ω__69', std.nonempty_text.create('g'));
-        info('Ω__70', std.quantity_u.create('g'));
-        return info('Ω__71', std.quantity.fields.u.create('g'));
+        info('Ω__67', std.nonempty_text.create('g'));
+        info('Ω__68', std.quantity_u.create('g'));
+        return info('Ω__69', std.quantity.fields.u.create('g'));
       })();
       (() => {
-        var Ωcltt__80, Ωcltt__81, Ωcltt__82, Ωcltt__83, Ωcltt__89, Ωcltt__90;
+        var Ωcltt__78, Ωcltt__79, Ωcltt__80, Ωcltt__81, Ωcltt__87, Ωcltt__88;
         echo();
-        help('Ω__72', std.quantity);
-        help('Ω__73', std.quantity.constructor);
-        help('Ω__74', std.quantity.constructor.name);
-        help('Ω__75', std.quantity.isa);
-        help('Ω__76', std.quantity.isa({}));
-        help('Ω__77', std.quantity.isa({
+        help('Ω__70', std.quantity);
+        help('Ω__71', std.quantity.constructor);
+        help('Ω__72', std.quantity.constructor.name);
+        help('Ω__73', std.quantity.isa);
+        help('Ω__74', std.quantity.isa({}));
+        help('Ω__75', std.quantity.isa({
           u: 7,
           q: 3
         }));
-        help('Ω__78', std.quantity.isa({
+        help('Ω__76', std.quantity.isa({
           u: '7',
           q: 3
         }));
-        help('Ω__79', std.quantity.isa({
+        help('Ω__77', std.quantity.isa({
           u: '7',
           q: 2e308
         }));
-        this.eq((Ωcltt__80 = function() {
+        this.eq((Ωcltt__78 = function() {
           return std.quantity.name;
         }), 'quantity');
-        this.eq((Ωcltt__81 = function() {
+        this.eq((Ωcltt__79 = function() {
           return std.integer.name;
         }), 'integer');
-        this.eq((Ωcltt__82 = function() {
+        this.eq((Ωcltt__80 = function() {
           return std.quantity_q.name;
         }), 'quantity_q');
-        this.eq((Ωcltt__83 = function() {
+        this.eq((Ωcltt__81 = function() {
           return std.quantity_u.name;
         }), 'quantity_u');
         echo();
-        help('Ω__84', std.text.isa);
-        help('Ω__85', std.text.isa('abc'));
-        help('Ω__86', std.text.isa(Array.from('abc')));
+        help('Ω__82', std.text.isa);
+        help('Ω__83', std.text.isa('abc'));
+        help('Ω__84', std.text.isa(Array.from('abc')));
         echo();
-        help('Ω__87', std.nonempty_text);
-        help('Ω__88', std.nonempty_text.isa);
-        this.eq((Ωcltt__89 = function() {
+        help('Ω__85', std.nonempty_text);
+        help('Ω__86', std.nonempty_text.isa);
+        this.eq((Ωcltt__87 = function() {
           return std.nonempty_text.isa('abc');
         }), true);
-        this.eq((Ωcltt__90 = function() {
+        this.eq((Ωcltt__88 = function() {
           return std.nonempty_text.isa(Array.from('abc'));
         }), false);
         return null;
       })();
       (() => {
-        var type, typename, Ωcltt__91;
+        var type, typename, Ωcltt__89;
         echo();
         for (typename in std) {
           type = std[typename];
-          this.eq((Ωcltt__91 = function() {
+          this.eq((Ωcltt__89 = function() {
             return type.isa.name;
           }), `isa_${typename}`);
         }
@@ -614,10 +614,75 @@
 //.......................................................................................................
       for (typename in std) {
         type = std[typename];
-        urge('Ω__92', f`${typename}:<20c; ${type.constructor.name}:<20c; ${type.isa.name}:<20c;`);
+        urge('Ω__90', f`${typename}:<20c; ${type.constructor.name}:<20c; ${type.isa.name}:<20c;`);
       }
       return null;
     }
+  };
+
+  //===========================================================================================================
+  demo_new_returns_instance_of_new_class = function() {
+    var A, POD, a, b, d;
+    //=========================================================================================================
+    A = class A {
+      // #-------------------------------------------------------------------------------------------------------
+      // constructor: ( name ) ->
+      //   @name = "A*#{name}*"
+      //   return @create name
+      get_names_A() {
+        return [this.name, this.constructor.name];
+      }
+
+      //-------------------------------------------------------------------------------------------------------
+      create(name) {
+        var clasz;
+        clasz = class extends this.constructor {
+          constructor() {
+            super();
+            this.name = name;
+            return void 0;
+          }
+
+          get_names_B() {
+            return [this.name, clasz.name, this.constructor.name];
+          }
+
+        };
+        nameit(name, clasz);
+        return new clasz();
+      }
+
+    };
+    //=========================================================================================================
+    a = new A();
+    debug('Ωcltt__91', A);
+    debug('Ωcltt__92', a);
+    debug('Ωcltt__93', b = a.create('b'));
+    debug('Ωcltt__94', b.get_names_A());
+    debug('Ωcltt__95', b.get_names_B());
+    /*
+    d = new D(); <=> ( d instanceof D ) ^ ( d.constructor is D )
+    */
+    //=========================================================================================================
+    POD = class POD {
+      constructor(cfg) {
+        var R;
+        R = Object.create(null);
+        Object.assign(R, cfg);
+        return R;
+      }
+
+      isa() {}
+
+    };
+    d = new POD({
+      x: 76
+    });
+    debug('Ωcltt__96', d);
+    debug('Ωcltt__97', d.constructor);
+    debug('Ωcltt__98', d.isa);
+    //=========================================================================================================
+    return null;
   };
 
   //===========================================================================================================
@@ -629,7 +694,8 @@
         show_passes: false,
         report_checks: false
       };
-      return (new Test(guytest_cfg)).test(this.cleartype_tasks);
+      (new Test(guytest_cfg)).test(this.cleartype_tasks);
+      return demo_new_returns_instance_of_new_class();
     })();
   }
 
