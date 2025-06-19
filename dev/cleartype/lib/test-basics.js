@@ -193,8 +193,8 @@
   this.cleartype_tasks = {
     //=========================================================================================================
     basics: function() {
-      var Type, std, std2, type, typename;
-      ({Type, std2, std} = require('../../../apps/cleartype'));
+      var Type, std, type, typename;
+      ({Type, std} = require('../../../apps/cleartype'));
       info('Ω___1', std);
       (() => {
         echo();
@@ -503,6 +503,34 @@
         type = std[typename];
         urge('Ω__92', f`${typename}:<20c; ${type.constructor.name}:<20c; ${type.isa.name}:<20c;`);
       }
+      //.......................................................................................................
+      debug('Ω__93', 'integer                 template  ', std.integer.template);
+      debug('Ω__94', 'integer                 fields    ', std.integer.fields);
+      debug('Ω__95', 'quantity                template  ', std.quantity.template);
+      debug('Ω__96', 'quantity                fields    ', std.quantity.fields);
+      debug('Ω__97', 'quantity_with_template  template  ', std.quantity_with_template.template);
+      debug('Ω__98', 'quantity_with_template  fields    ', std.quantity_with_template.fields);
+      //.......................................................................................................
+      return null;
+    },
+    //=========================================================================================================
+    templates: function() {
+      var Type, internals, std;
+      ({Type, internals, std} = require('../../../apps/cleartype'));
+      (() => {
+        var Ωcltt_100, Ωcltt_101, Ωcltt_102;
+        this.eq((Ωcltt_100 = function() {
+          return std.text.template != null;
+        }), true);
+        this.eq((Ωcltt_101 = function() {
+          return internals.gnd.function.isa(std.text.template);
+        }), true);
+        this.eq((Ωcltt_102 = function() {
+          return std.text.template();
+        }), '');
+        return null;
+      })();
+      //.......................................................................................................
       return null;
     },
     // #=========================================================================================================
@@ -519,16 +547,16 @@
     //       validate
     //       validate_optional } = require '../../../apps/cleartype'
     //     #.....................................................................................................
-    //     @eq (     Ωctt__93 = -> isa               lt_types.lt_constructor_cfg, 337465             ), false
-    //     @eq (     Ωctt__94 = -> isa_optional      lt_types.lt_constructor_cfg, 337465             ), false
-    //     @eq (     Ωctt__95 = -> isa_optional      lt_types.lt_constructor_cfg, null               ), true
-    //     @eq (     Ωctt__96 = -> create            lt_types.lt_constructor_cfg, undefined          ), { loners: true, }
-    //     @throws ( Ωctt__97 = -> create            lt_types.lt_constructor_cfg, { loners: 7, }     ), /validation error/
-    //     @eq (     Ωctt__98 = -> validate_optional lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
-    //     @eq (     Ωctt__99 = -> validate_optional lt_types.lt_constructor_cfg, null               ), null
-    //     @eq (     Ωctt_100 = -> validate          lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
-    //     @throws ( Ωctt_101 = -> validate          lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
-    //     @throws ( Ωctt_102 = -> validate_optional lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
+    //     @eq (     Ωctt_103 = -> isa               lt_types.lt_constructor_cfg, 337465             ), false
+    //     @eq (     Ωctt_104 = -> isa_optional      lt_types.lt_constructor_cfg, 337465             ), false
+    //     @eq (     Ωctt_105 = -> isa_optional      lt_types.lt_constructor_cfg, null               ), true
+    //     @eq (     Ωctt_106 = -> create            lt_types.lt_constructor_cfg, undefined          ), { loners: true, }
+    //     @throws ( Ωctt_107 = -> create            lt_types.lt_constructor_cfg, { loners: 7, }     ), /validation error/
+    //     @eq (     Ωctt_108 = -> validate_optional lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
+    //     @eq (     Ωctt_109 = -> validate_optional lt_types.lt_constructor_cfg, null               ), null
+    //     @eq (     Ωctt_110 = -> validate          lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
+    //     @throws ( Ωctt_111 = -> validate          lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
+    //     @throws ( Ωctt_112 = -> validate_optional lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
     //     #.....................................................................................................
     //     return null
 
@@ -543,19 +571,19 @@
     //       validate
     //       validate_optional } = require '../../../apps/cleartype'
     //     #.....................................................................................................
-    //     @eq (     Ωctt_103 = -> isa               lt_types.lt_nodelist, 337465              ), false
-    //     @eq (     Ωctt_104 = -> isa               lt_types.lt_nodelist, []                  ), true
-    //     @eq (     Ωctt_105 = -> isa               lt_types.lt_nodelist, [ 'name', ]         ), true
-    //     @eq (     Ωctt_106 = -> isa               lt_types.lt_nodelist, [ 'name', 3, ]      ), false
-    //     @eq (     Ωctt_107 = -> isa_optional      lt_types.lt_nodelist, 337465              ), false
-    //     @eq (     Ωctt_108 = -> isa_optional      lt_types.lt_nodelist, null                ), true
-    //     @eq (     Ωctt_109 = -> create            lt_types.lt_nodelist, undefined           ), []
-    //     @throws ( Ωctt_110 = -> create            lt_types.lt_nodelist, { loners: 7, }      ), /validation error/
-    //     @eq (     Ωctt_111 = -> validate_optional lt_types.lt_nodelist, []                  ), []
-    //     @eq (     Ωctt_112 = -> validate_optional lt_types.lt_nodelist, null                ), null
-    //     # @eq (     Ωctt_113 = -> validate          lt_types.lt_nodelist, { loners: true, }  ), { loners: true, }
-    //     # @throws ( Ωctt_114 = -> validate          lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
-    //     # @throws ( Ωctt_115 = -> validate_optional lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
+    //     @eq (     Ωctt_113 = -> isa               lt_types.lt_nodelist, 337465              ), false
+    //     @eq (     Ωctt_114 = -> isa               lt_types.lt_nodelist, []                  ), true
+    //     @eq (     Ωctt_115 = -> isa               lt_types.lt_nodelist, [ 'name', ]         ), true
+    //     @eq (     Ωctt_116 = -> isa               lt_types.lt_nodelist, [ 'name', 3, ]      ), false
+    //     @eq (     Ωctt_117 = -> isa_optional      lt_types.lt_nodelist, 337465              ), false
+    //     @eq (     Ωctt_118 = -> isa_optional      lt_types.lt_nodelist, null                ), true
+    //     @eq (     Ωctt_119 = -> create            lt_types.lt_nodelist, undefined           ), []
+    //     @throws ( Ωctt_120 = -> create            lt_types.lt_nodelist, { loners: 7, }      ), /validation error/
+    //     @eq (     Ωctt_121 = -> validate_optional lt_types.lt_nodelist, []                  ), []
+    //     @eq (     Ωctt_122 = -> validate_optional lt_types.lt_nodelist, null                ), null
+    //     # @eq (     Ωctt_123 = -> validate          lt_types.lt_nodelist, { loners: true, }  ), { loners: true, }
+    //     # @throws ( Ωctt_124 = -> validate          lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
+    //     # @throws ( Ωctt_125 = -> validate_optional lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
     //     #.....................................................................................................
     //     return null
 
@@ -570,33 +598,33 @@
     //       validate
     //       validate_optional } = require '../../../apps/cleartype'
     //     #.....................................................................................................
-    //     @eq (     Ωctt_116 = -> isa               lt_types.lt_add_cfg.name, 337465              ), false
-    //     @eq (     Ωctt_117 = -> isa               lt_types.lt_add_cfg.name, ''                  ), false
-    //     @eq (     Ωctt_118 = -> isa               lt_types.lt_add_cfg.name, 'foo'               ), true
-    //     @eq (     Ωctt_119 = -> isa               lt_types.lt_add_cfg.needs, 337465             ), false
-    //     @eq (     Ωctt_120 = -> isa               lt_types.lt_add_cfg.needs, [ 337465, ]        ), false
-    //     @eq (     Ωctt_121 = -> isa               lt_types.lt_add_cfg.needs, [ '337465', ]      ), true
-    //     @eq (     Ωctt_122 = -> isa               lt_types.lt_add_cfg.needs, []                 ), true
-    //     @eq (     Ωctt_123 = -> isa               lt_types.lt_add_cfg.precedes, 337465          ), false
-    //     @eq (     Ωctt_124 = -> isa               lt_types.lt_add_cfg.precedes, [ 337465, ]     ), false
-    //     @eq (     Ωctt_125 = -> isa               lt_types.lt_add_cfg.precedes, []              ), true
-    //     @eq (     Ωctt_126 = -> isa               lt_types.lt_add_cfg.precedes, [ '337465', ]   ), true
-    //     @eq (     Ωctt_127 = -> isa               lt_types.lt_add_cfg, 337465                   ), false
-    //     @eq (     Ωctt_128 = -> isa               lt_types.lt_add_cfg, {}                       ), false
-    //     @eq (     Ωctt_129 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: null, needs: null     }    ), true
-    //     @eq (     Ωctt_130 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), true
-    //     @eq (     Ωctt_131 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', 3, ]  }    ), false
-    //     @eq (     Ωctt_132 = -> create            lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), { name: 'g', precedes: [], needs: [ 'name', ]  }
-    //     @eq (     Ωctt_133 = -> create            lt_types.lt_add_cfg, { name: 'g',                                      }    ), { name: 'g', precedes: null, needs: null  }
-    //     # @eq (     Ωctt_134 = -> isa_optional      lt_types.lt_add_cfg, 337465              ), false
-    //     # @eq (     Ωctt_135 = -> isa_optional      lt_types.lt_add_cfg, null                ), true
-    //     # @eq (     Ωctt_136 = -> create            lt_types.lt_add_cfg, undefined           ), []
-    //     # @throws ( Ωctt_137 = -> create            lt_types.lt_add_cfg, { loners: 7, }      ), /validation error/
-    //     # @eq (     Ωctt_138 = -> validate_optional lt_types.lt_add_cfg, []                  ), []
-    //     # @eq (     Ωctt_139 = -> validate_optional lt_types.lt_add_cfg, null                ), null
-    //     # @eq (     Ωctt_140 = -> validate          lt_types.lt_add_cfg, { loners: true, }  ), { loners: true, }
-    //     # @throws ( Ωctt_141 = -> validate          lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
-    //     # @throws ( Ωctt_142 = -> validate_optional lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
+    //     @eq (     Ωctt_126 = -> isa               lt_types.lt_add_cfg.name, 337465              ), false
+    //     @eq (     Ωctt_127 = -> isa               lt_types.lt_add_cfg.name, ''                  ), false
+    //     @eq (     Ωctt_128 = -> isa               lt_types.lt_add_cfg.name, 'foo'               ), true
+    //     @eq (     Ωctt_129 = -> isa               lt_types.lt_add_cfg.needs, 337465             ), false
+    //     @eq (     Ωctt_130 = -> isa               lt_types.lt_add_cfg.needs, [ 337465, ]        ), false
+    //     @eq (     Ωctt_131 = -> isa               lt_types.lt_add_cfg.needs, [ '337465', ]      ), true
+    //     @eq (     Ωctt_132 = -> isa               lt_types.lt_add_cfg.needs, []                 ), true
+    //     @eq (     Ωctt_133 = -> isa               lt_types.lt_add_cfg.precedes, 337465          ), false
+    //     @eq (     Ωctt_134 = -> isa               lt_types.lt_add_cfg.precedes, [ 337465, ]     ), false
+    //     @eq (     Ωctt_135 = -> isa               lt_types.lt_add_cfg.precedes, []              ), true
+    //     @eq (     Ωctt_136 = -> isa               lt_types.lt_add_cfg.precedes, [ '337465', ]   ), true
+    //     @eq (     Ωctt_137 = -> isa               lt_types.lt_add_cfg, 337465                   ), false
+    //     @eq (     Ωctt_138 = -> isa               lt_types.lt_add_cfg, {}                       ), false
+    //     @eq (     Ωctt_139 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: null, needs: null     }    ), true
+    //     @eq (     Ωctt_140 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), true
+    //     @eq (     Ωctt_141 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', 3, ]  }    ), false
+    //     @eq (     Ωctt_142 = -> create            lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), { name: 'g', precedes: [], needs: [ 'name', ]  }
+    //     @eq (     Ωctt_143 = -> create            lt_types.lt_add_cfg, { name: 'g',                                      }    ), { name: 'g', precedes: null, needs: null  }
+    //     # @eq (     Ωctt_144 = -> isa_optional      lt_types.lt_add_cfg, 337465              ), false
+    //     # @eq (     Ωctt_145 = -> isa_optional      lt_types.lt_add_cfg, null                ), true
+    //     # @eq (     Ωctt_146 = -> create            lt_types.lt_add_cfg, undefined           ), []
+    //     # @throws ( Ωctt_147 = -> create            lt_types.lt_add_cfg, { loners: 7, }      ), /validation error/
+    //     # @eq (     Ωctt_148 = -> validate_optional lt_types.lt_add_cfg, []                  ), []
+    //     # @eq (     Ωctt_149 = -> validate_optional lt_types.lt_add_cfg, null                ), null
+    //     # @eq (     Ωctt_150 = -> validate          lt_types.lt_add_cfg, { loners: true, }  ), { loners: true, }
+    //     # @throws ( Ωctt_151 = -> validate          lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
+    //     # @throws ( Ωctt_152 = -> validate_optional lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
     //     #.....................................................................................................
     //     return null
 
@@ -611,15 +639,15 @@
     //       validate
     //       validate_optional } = require '../../../apps/cleartype'
     //     #.....................................................................................................
-    //     @eq (     Ωctt_143 = -> isa               lt_types.lt_linearize_cfg, 337465                   ), false
-    //     @eq (     Ωctt_144 = -> isa               lt_types.lt_linearize_cfg, {}                       ), false
-    //     @eq (     Ωctt_145 = -> isa               lt_types.lt_linearize_cfg, { groups: 5, }           ), false
-    //     @eq (     Ωctt_146 = -> isa               lt_types.lt_linearize_cfg, { groups: true, }        ), true
-    //     @eq (     Ωctt_147 = -> isa               lt_types.lt_linearize_cfg, { groups: false, }       ), true
-    //     @eq (     Ωctt_148 = -> create            lt_types.lt_linearize_cfg, { groups: true,  }       ), { groups: true, }
-    //     @eq (     Ωctt_149 = -> create            lt_types.lt_linearize_cfg, { groups: false, }       ), { groups: false, }
-    //     @eq (     Ωctt_150 = -> create            lt_types.lt_linearize_cfg, {}                       ), { groups: false, }
-    //     @eq (     Ωctt_151 = -> create            lt_types.lt_linearize_cfg, null                     ), { groups: false, }
+    //     @eq (     Ωctt_153 = -> isa               lt_types.lt_linearize_cfg, 337465                   ), false
+    //     @eq (     Ωctt_154 = -> isa               lt_types.lt_linearize_cfg, {}                       ), false
+    //     @eq (     Ωctt_155 = -> isa               lt_types.lt_linearize_cfg, { groups: 5, }           ), false
+    //     @eq (     Ωctt_156 = -> isa               lt_types.lt_linearize_cfg, { groups: true, }        ), true
+    //     @eq (     Ωctt_157 = -> isa               lt_types.lt_linearize_cfg, { groups: false, }       ), true
+    //     @eq (     Ωctt_158 = -> create            lt_types.lt_linearize_cfg, { groups: true,  }       ), { groups: true, }
+    //     @eq (     Ωctt_159 = -> create            lt_types.lt_linearize_cfg, { groups: false, }       ), { groups: false, }
+    //     @eq (     Ωctt_160 = -> create            lt_types.lt_linearize_cfg, {}                       ), { groups: false, }
+    //     @eq (     Ωctt_161 = -> create            lt_types.lt_linearize_cfg, null                     ), { groups: false, }
     //     #.....................................................................................................
     //     return null
 
@@ -627,42 +655,42 @@
     standard_basic_methods: {
       //-------------------------------------------------------------------------------------------------------
       type_of: function() {
-        var type_of, Ωctt_152, Ωctt_153, Ωctt_154, Ωctt_155, Ωctt_156, Ωctt_157, Ωctt_158, Ωctt_159, Ωctt_160, Ωctt_161, Ωctt_162, Ωctt_163;
+        var type_of, Ωctt_162, Ωctt_163, Ωctt_164, Ωctt_165, Ωctt_166, Ωctt_167, Ωctt_168, Ωctt_169, Ωctt_170, Ωctt_171, Ωctt_172, Ωctt_173;
         ({type_of} = require('../../../apps/cleartype'));
-        this.eq((Ωctt_152 = function() {
+        this.eq((Ωctt_162 = function() {
           return type_of(null);
         }), 'null');
-        this.eq((Ωctt_153 = function() {
+        this.eq((Ωctt_163 = function() {
           return type_of(void 0);
         }), 'undefined');
-        this.eq((Ωctt_154 = function() {
+        this.eq((Ωctt_164 = function() {
           return type_of(+2e308);
         }), 'infinity');
-        this.eq((Ωctt_155 = function() {
+        this.eq((Ωctt_165 = function() {
           return type_of(-2e308);
         }), 'infinity');
-        this.eq((Ωctt_156 = function() {
+        this.eq((Ωctt_166 = function() {
           return type_of(true);
         }), 'boolean');
-        this.eq((Ωctt_157 = function() {
+        this.eq((Ωctt_167 = function() {
           return type_of(false);
         }), 'boolean');
-        this.eq((Ωctt_158 = function() {
+        this.eq((Ωctt_168 = function() {
           return type_of(0/0);
         }), 'nan');
-        this.eq((Ωctt_159 = function() {
+        this.eq((Ωctt_169 = function() {
           return type_of(8);
         }), 'float');
-        this.eq((Ωctt_160 = function() {
+        this.eq((Ωctt_170 = function() {
           return type_of(/xxx/);
         }), 'regex');
-        this.eq((Ωctt_161 = function() {
+        this.eq((Ωctt_171 = function() {
           return type_of('xyz');
         }), 'text');
-        this.eq((Ωctt_162 = function() {
+        this.eq((Ωctt_172 = function() {
           return type_of(['xyz']);
         }), 'list');
-        this.eq((Ωctt_163 = function() {
+        this.eq((Ωctt_173 = function() {
           return type_of({});
         }), 'object');
         //.....................................................................................................
@@ -676,12 +704,12 @@
     await (() => {
       var guytest_cfg;
       guytest_cfg = {
-        throw_on_error: false,
+        throw_on_error: true,
         show_passes: false,
         report_checks: false
       };
       guytest_cfg = {
-        throw_on_error: true,
+        throw_on_error: false,
         show_passes: false,
         report_checks: false
       };

@@ -141,7 +141,6 @@ get_typespaces = ->
   #=========================================================================================================
   basics: ->
     { Type
-      std2
       std             } = require '../../../apps/cleartype'
     info 'Ω___1', std
     do =>
@@ -258,8 +257,28 @@ get_typespaces = ->
     #.......................................................................................................
     for typename, type of std
       urge 'Ω__92', f"#{typename}:<20c; #{type.constructor.name}:<20c; #{type.isa.name}:<20c;"
+    #.......................................................................................................
+    debug 'Ω__93', 'integer                 template  ', std.integer.template
+    debug 'Ω__94', 'integer                 fields    ', std.integer.fields
+    debug 'Ω__95', 'quantity                template  ', std.quantity.template
+    debug 'Ω__96', 'quantity                fields    ', std.quantity.fields
+    debug 'Ω__97', 'quantity_with_template  template  ', std.quantity_with_template.template
+    debug 'Ω__98', 'quantity_with_template  fields    ', std.quantity_with_template.fields
+    #.......................................................................................................
     return null
 
+  #=========================================================================================================
+  templates: ->
+    { Type
+      internals
+      std             } = require '../../../apps/cleartype'
+    do =>
+      @eq ( Ωcltt_100 = -> std.text.template?                             ), true
+      @eq ( Ωcltt_101 = -> internals.gnd.function.isa std.text.template   ), true
+      @eq ( Ωcltt_102 = -> std.text.template()                            ), ''
+      return null
+    #.......................................................................................................
+    return null
 
 
   # #=========================================================================================================
@@ -276,16 +295,16 @@ get_typespaces = ->
   #       validate
   #       validate_optional } = require '../../../apps/cleartype'
   #     #.....................................................................................................
-  #     @eq (     Ωctt__93 = -> isa               lt_types.lt_constructor_cfg, 337465             ), false
-  #     @eq (     Ωctt__94 = -> isa_optional      lt_types.lt_constructor_cfg, 337465             ), false
-  #     @eq (     Ωctt__95 = -> isa_optional      lt_types.lt_constructor_cfg, null               ), true
-  #     @eq (     Ωctt__96 = -> create            lt_types.lt_constructor_cfg, undefined          ), { loners: true, }
-  #     @throws ( Ωctt__97 = -> create            lt_types.lt_constructor_cfg, { loners: 7, }     ), /validation error/
-  #     @eq (     Ωctt__98 = -> validate_optional lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
-  #     @eq (     Ωctt__99 = -> validate_optional lt_types.lt_constructor_cfg, null               ), null
-  #     @eq (     Ωctt_100 = -> validate          lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
-  #     @throws ( Ωctt_101 = -> validate          lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
-  #     @throws ( Ωctt_102 = -> validate_optional lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
+  #     @eq (     Ωctt_103 = -> isa               lt_types.lt_constructor_cfg, 337465             ), false
+  #     @eq (     Ωctt_104 = -> isa_optional      lt_types.lt_constructor_cfg, 337465             ), false
+  #     @eq (     Ωctt_105 = -> isa_optional      lt_types.lt_constructor_cfg, null               ), true
+  #     @eq (     Ωctt_106 = -> create            lt_types.lt_constructor_cfg, undefined          ), { loners: true, }
+  #     @throws ( Ωctt_107 = -> create            lt_types.lt_constructor_cfg, { loners: 7, }     ), /validation error/
+  #     @eq (     Ωctt_108 = -> validate_optional lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
+  #     @eq (     Ωctt_109 = -> validate_optional lt_types.lt_constructor_cfg, null               ), null
+  #     @eq (     Ωctt_110 = -> validate          lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
+  #     @throws ( Ωctt_111 = -> validate          lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
+  #     @throws ( Ωctt_112 = -> validate_optional lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
   #     #.....................................................................................................
   #     return null
 
@@ -300,19 +319,19 @@ get_typespaces = ->
   #       validate
   #       validate_optional } = require '../../../apps/cleartype'
   #     #.....................................................................................................
-  #     @eq (     Ωctt_103 = -> isa               lt_types.lt_nodelist, 337465              ), false
-  #     @eq (     Ωctt_104 = -> isa               lt_types.lt_nodelist, []                  ), true
-  #     @eq (     Ωctt_105 = -> isa               lt_types.lt_nodelist, [ 'name', ]         ), true
-  #     @eq (     Ωctt_106 = -> isa               lt_types.lt_nodelist, [ 'name', 3, ]      ), false
-  #     @eq (     Ωctt_107 = -> isa_optional      lt_types.lt_nodelist, 337465              ), false
-  #     @eq (     Ωctt_108 = -> isa_optional      lt_types.lt_nodelist, null                ), true
-  #     @eq (     Ωctt_109 = -> create            lt_types.lt_nodelist, undefined           ), []
-  #     @throws ( Ωctt_110 = -> create            lt_types.lt_nodelist, { loners: 7, }      ), /validation error/
-  #     @eq (     Ωctt_111 = -> validate_optional lt_types.lt_nodelist, []                  ), []
-  #     @eq (     Ωctt_112 = -> validate_optional lt_types.lt_nodelist, null                ), null
-  #     # @eq (     Ωctt_113 = -> validate          lt_types.lt_nodelist, { loners: true, }  ), { loners: true, }
-  #     # @throws ( Ωctt_114 = -> validate          lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
-  #     # @throws ( Ωctt_115 = -> validate_optional lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
+  #     @eq (     Ωctt_113 = -> isa               lt_types.lt_nodelist, 337465              ), false
+  #     @eq (     Ωctt_114 = -> isa               lt_types.lt_nodelist, []                  ), true
+  #     @eq (     Ωctt_115 = -> isa               lt_types.lt_nodelist, [ 'name', ]         ), true
+  #     @eq (     Ωctt_116 = -> isa               lt_types.lt_nodelist, [ 'name', 3, ]      ), false
+  #     @eq (     Ωctt_117 = -> isa_optional      lt_types.lt_nodelist, 337465              ), false
+  #     @eq (     Ωctt_118 = -> isa_optional      lt_types.lt_nodelist, null                ), true
+  #     @eq (     Ωctt_119 = -> create            lt_types.lt_nodelist, undefined           ), []
+  #     @throws ( Ωctt_120 = -> create            lt_types.lt_nodelist, { loners: 7, }      ), /validation error/
+  #     @eq (     Ωctt_121 = -> validate_optional lt_types.lt_nodelist, []                  ), []
+  #     @eq (     Ωctt_122 = -> validate_optional lt_types.lt_nodelist, null                ), null
+  #     # @eq (     Ωctt_123 = -> validate          lt_types.lt_nodelist, { loners: true, }  ), { loners: true, }
+  #     # @throws ( Ωctt_124 = -> validate          lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
+  #     # @throws ( Ωctt_125 = -> validate_optional lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
   #     #.....................................................................................................
   #     return null
 
@@ -327,33 +346,33 @@ get_typespaces = ->
   #       validate
   #       validate_optional } = require '../../../apps/cleartype'
   #     #.....................................................................................................
-  #     @eq (     Ωctt_116 = -> isa               lt_types.lt_add_cfg.name, 337465              ), false
-  #     @eq (     Ωctt_117 = -> isa               lt_types.lt_add_cfg.name, ''                  ), false
-  #     @eq (     Ωctt_118 = -> isa               lt_types.lt_add_cfg.name, 'foo'               ), true
-  #     @eq (     Ωctt_119 = -> isa               lt_types.lt_add_cfg.needs, 337465             ), false
-  #     @eq (     Ωctt_120 = -> isa               lt_types.lt_add_cfg.needs, [ 337465, ]        ), false
-  #     @eq (     Ωctt_121 = -> isa               lt_types.lt_add_cfg.needs, [ '337465', ]      ), true
-  #     @eq (     Ωctt_122 = -> isa               lt_types.lt_add_cfg.needs, []                 ), true
-  #     @eq (     Ωctt_123 = -> isa               lt_types.lt_add_cfg.precedes, 337465          ), false
-  #     @eq (     Ωctt_124 = -> isa               lt_types.lt_add_cfg.precedes, [ 337465, ]     ), false
-  #     @eq (     Ωctt_125 = -> isa               lt_types.lt_add_cfg.precedes, []              ), true
-  #     @eq (     Ωctt_126 = -> isa               lt_types.lt_add_cfg.precedes, [ '337465', ]   ), true
-  #     @eq (     Ωctt_127 = -> isa               lt_types.lt_add_cfg, 337465                   ), false
-  #     @eq (     Ωctt_128 = -> isa               lt_types.lt_add_cfg, {}                       ), false
-  #     @eq (     Ωctt_129 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: null, needs: null     }    ), true
-  #     @eq (     Ωctt_130 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), true
-  #     @eq (     Ωctt_131 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', 3, ]  }    ), false
-  #     @eq (     Ωctt_132 = -> create            lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), { name: 'g', precedes: [], needs: [ 'name', ]  }
-  #     @eq (     Ωctt_133 = -> create            lt_types.lt_add_cfg, { name: 'g',                                      }    ), { name: 'g', precedes: null, needs: null  }
-  #     # @eq (     Ωctt_134 = -> isa_optional      lt_types.lt_add_cfg, 337465              ), false
-  #     # @eq (     Ωctt_135 = -> isa_optional      lt_types.lt_add_cfg, null                ), true
-  #     # @eq (     Ωctt_136 = -> create            lt_types.lt_add_cfg, undefined           ), []
-  #     # @throws ( Ωctt_137 = -> create            lt_types.lt_add_cfg, { loners: 7, }      ), /validation error/
-  #     # @eq (     Ωctt_138 = -> validate_optional lt_types.lt_add_cfg, []                  ), []
-  #     # @eq (     Ωctt_139 = -> validate_optional lt_types.lt_add_cfg, null                ), null
-  #     # @eq (     Ωctt_140 = -> validate          lt_types.lt_add_cfg, { loners: true, }  ), { loners: true, }
-  #     # @throws ( Ωctt_141 = -> validate          lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
-  #     # @throws ( Ωctt_142 = -> validate_optional lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
+  #     @eq (     Ωctt_126 = -> isa               lt_types.lt_add_cfg.name, 337465              ), false
+  #     @eq (     Ωctt_127 = -> isa               lt_types.lt_add_cfg.name, ''                  ), false
+  #     @eq (     Ωctt_128 = -> isa               lt_types.lt_add_cfg.name, 'foo'               ), true
+  #     @eq (     Ωctt_129 = -> isa               lt_types.lt_add_cfg.needs, 337465             ), false
+  #     @eq (     Ωctt_130 = -> isa               lt_types.lt_add_cfg.needs, [ 337465, ]        ), false
+  #     @eq (     Ωctt_131 = -> isa               lt_types.lt_add_cfg.needs, [ '337465', ]      ), true
+  #     @eq (     Ωctt_132 = -> isa               lt_types.lt_add_cfg.needs, []                 ), true
+  #     @eq (     Ωctt_133 = -> isa               lt_types.lt_add_cfg.precedes, 337465          ), false
+  #     @eq (     Ωctt_134 = -> isa               lt_types.lt_add_cfg.precedes, [ 337465, ]     ), false
+  #     @eq (     Ωctt_135 = -> isa               lt_types.lt_add_cfg.precedes, []              ), true
+  #     @eq (     Ωctt_136 = -> isa               lt_types.lt_add_cfg.precedes, [ '337465', ]   ), true
+  #     @eq (     Ωctt_137 = -> isa               lt_types.lt_add_cfg, 337465                   ), false
+  #     @eq (     Ωctt_138 = -> isa               lt_types.lt_add_cfg, {}                       ), false
+  #     @eq (     Ωctt_139 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: null, needs: null     }    ), true
+  #     @eq (     Ωctt_140 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), true
+  #     @eq (     Ωctt_141 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', 3, ]  }    ), false
+  #     @eq (     Ωctt_142 = -> create            lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), { name: 'g', precedes: [], needs: [ 'name', ]  }
+  #     @eq (     Ωctt_143 = -> create            lt_types.lt_add_cfg, { name: 'g',                                      }    ), { name: 'g', precedes: null, needs: null  }
+  #     # @eq (     Ωctt_144 = -> isa_optional      lt_types.lt_add_cfg, 337465              ), false
+  #     # @eq (     Ωctt_145 = -> isa_optional      lt_types.lt_add_cfg, null                ), true
+  #     # @eq (     Ωctt_146 = -> create            lt_types.lt_add_cfg, undefined           ), []
+  #     # @throws ( Ωctt_147 = -> create            lt_types.lt_add_cfg, { loners: 7, }      ), /validation error/
+  #     # @eq (     Ωctt_148 = -> validate_optional lt_types.lt_add_cfg, []                  ), []
+  #     # @eq (     Ωctt_149 = -> validate_optional lt_types.lt_add_cfg, null                ), null
+  #     # @eq (     Ωctt_150 = -> validate          lt_types.lt_add_cfg, { loners: true, }  ), { loners: true, }
+  #     # @throws ( Ωctt_151 = -> validate          lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
+  #     # @throws ( Ωctt_152 = -> validate_optional lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
   #     #.....................................................................................................
   #     return null
 
@@ -368,15 +387,15 @@ get_typespaces = ->
   #       validate
   #       validate_optional } = require '../../../apps/cleartype'
   #     #.....................................................................................................
-  #     @eq (     Ωctt_143 = -> isa               lt_types.lt_linearize_cfg, 337465                   ), false
-  #     @eq (     Ωctt_144 = -> isa               lt_types.lt_linearize_cfg, {}                       ), false
-  #     @eq (     Ωctt_145 = -> isa               lt_types.lt_linearize_cfg, { groups: 5, }           ), false
-  #     @eq (     Ωctt_146 = -> isa               lt_types.lt_linearize_cfg, { groups: true, }        ), true
-  #     @eq (     Ωctt_147 = -> isa               lt_types.lt_linearize_cfg, { groups: false, }       ), true
-  #     @eq (     Ωctt_148 = -> create            lt_types.lt_linearize_cfg, { groups: true,  }       ), { groups: true, }
-  #     @eq (     Ωctt_149 = -> create            lt_types.lt_linearize_cfg, { groups: false, }       ), { groups: false, }
-  #     @eq (     Ωctt_150 = -> create            lt_types.lt_linearize_cfg, {}                       ), { groups: false, }
-  #     @eq (     Ωctt_151 = -> create            lt_types.lt_linearize_cfg, null                     ), { groups: false, }
+  #     @eq (     Ωctt_153 = -> isa               lt_types.lt_linearize_cfg, 337465                   ), false
+  #     @eq (     Ωctt_154 = -> isa               lt_types.lt_linearize_cfg, {}                       ), false
+  #     @eq (     Ωctt_155 = -> isa               lt_types.lt_linearize_cfg, { groups: 5, }           ), false
+  #     @eq (     Ωctt_156 = -> isa               lt_types.lt_linearize_cfg, { groups: true, }        ), true
+  #     @eq (     Ωctt_157 = -> isa               lt_types.lt_linearize_cfg, { groups: false, }       ), true
+  #     @eq (     Ωctt_158 = -> create            lt_types.lt_linearize_cfg, { groups: true,  }       ), { groups: true, }
+  #     @eq (     Ωctt_159 = -> create            lt_types.lt_linearize_cfg, { groups: false, }       ), { groups: false, }
+  #     @eq (     Ωctt_160 = -> create            lt_types.lt_linearize_cfg, {}                       ), { groups: false, }
+  #     @eq (     Ωctt_161 = -> create            lt_types.lt_linearize_cfg, null                     ), { groups: false, }
   #     #.....................................................................................................
   #     return null
 
@@ -386,24 +405,24 @@ get_typespaces = ->
     #-------------------------------------------------------------------------------------------------------
     type_of: ->
       { type_of } = require '../../../apps/cleartype'
-      @eq ( Ωctt_152 = -> type_of null                  ), 'null'
-      @eq ( Ωctt_153 = -> type_of undefined             ), 'undefined'
-      @eq ( Ωctt_154 = -> type_of +Infinity             ), 'infinity'
-      @eq ( Ωctt_155 = -> type_of -Infinity             ), 'infinity'
-      @eq ( Ωctt_156 = -> type_of true                  ), 'boolean'
-      @eq ( Ωctt_157 = -> type_of false                 ), 'boolean'
-      @eq ( Ωctt_158 = -> type_of NaN                   ), 'nan'
-      @eq ( Ωctt_159 = -> type_of 8                     ), 'float'
-      @eq ( Ωctt_160 = -> type_of /xxx/                 ), 'regex'
-      @eq ( Ωctt_161 = -> type_of 'xyz'                 ), 'text'
-      @eq ( Ωctt_162 = -> type_of [ 'xyz', ]            ), 'list'
-      @eq ( Ωctt_163 = -> type_of {}                    ), 'object'
+      @eq ( Ωctt_162 = -> type_of null                  ), 'null'
+      @eq ( Ωctt_163 = -> type_of undefined             ), 'undefined'
+      @eq ( Ωctt_164 = -> type_of +Infinity             ), 'infinity'
+      @eq ( Ωctt_165 = -> type_of -Infinity             ), 'infinity'
+      @eq ( Ωctt_166 = -> type_of true                  ), 'boolean'
+      @eq ( Ωctt_167 = -> type_of false                 ), 'boolean'
+      @eq ( Ωctt_168 = -> type_of NaN                   ), 'nan'
+      @eq ( Ωctt_169 = -> type_of 8                     ), 'float'
+      @eq ( Ωctt_170 = -> type_of /xxx/                 ), 'regex'
+      @eq ( Ωctt_171 = -> type_of 'xyz'                 ), 'text'
+      @eq ( Ωctt_172 = -> type_of [ 'xyz', ]            ), 'list'
+      @eq ( Ωctt_173 = -> type_of {}                    ), 'object'
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @cleartype_tasks
