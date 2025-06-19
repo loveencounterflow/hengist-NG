@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Test, alert, debug, echo, f, get_typespaces, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
+  var GTNG, GUY, Test, alert, debug, echo, f, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -14,178 +14,6 @@
   ({Test} = GTNG);
 
   ({f} = require('../../../apps/effstring'));
-
-  /*
-
-   * from `ltsort` which uses an outdated version of `intertype`:
-
-  get_base_types = ->
-    return base_types if base_types?
-    #.........................................................................................................
-    base_types                = new Cleartype()
-    { declare }               = base_types
-    #.........................................................................................................
-    declare.lt_nodelist 'list.of.nonempty.text'
-    #.........................................................................................................
-    declare.lt_constructor_cfg
-      fields:
-        loners:     'boolean'
-      default:
-        loners:     true
-    #.........................................................................................................
-    declare.lt_add_cfg
-      fields:
-        name:       'nonempty.text'
-        precedes:   'lt_nodelist'
-        needs:      'lt_nodelist'
-      default:
-        name:       null
-        precedes:     null
-        needs:      null
-      create: ( x ) ->
-        R           = x ? {}
-        return R unless @isa.object R
-        R.needs      ?= []
-        R.precedes   ?= []
-        R.needs       = [ R.needs,    ] unless @isa.list R.needs
-        R.precedes    = [ R.precedes, ] unless @isa.list R.precedes
-        return R
-    #.........................................................................................................
-    declare.lt_linearize_cfg
-      fields:
-        groups:     'boolean'
-      default:
-        groups:     false
-    #.........................................................................................................
-    return base_types
-
-   */
-  //===========================================================================================================
-  get_typespaces = function() {
-    var CT, lt_types, std;
-    ({CT, std} = require('../../../apps/cleartype'));
-    //.........................................................................................................
-    lt_types = {
-      //.........................................................................................................
-      lt_nodelist: {
-        $isa: function(x) {
-          if (!this.ct.isa(std.list, x)) {
-            // 'list.of.nonempty.text'
-            return false;
-          }
-          return x.every((e) => {
-            return this.ct.isa(std.nonempty_text, e);
-          });
-        },
-        $create: function(x) {
-          if (x != null) {
-            return x;
-          }
-          return [];
-        }
-      },
-      //.........................................................................................................
-      lt_constructor_cfg: {
-        $isa: function(x) {
-          if (!this.ct.isa(std.object, x)) {
-            return false;
-          }
-          if (!this.ct.isa(this.me.loners, x.loners)) {
-            return false;
-          }
-          return true;
-        },
-        loners: {
-          $isa: function(x) {
-            return this.ct.isa(std.boolean, x);
-          }
-        },
-        $template: {
-          loners: true
-        },
-        $create: function(x) {
-          if (!this.ct.isa_optional(std.object, x)) {
-            return x;
-          }
-          return {...this.me.$template, ...x};
-        }
-      },
-      //.........................................................................................................
-      lt_add_cfg: {
-        $isa: function(x) {
-          if (!this.ct.isa(std.object, x)) {
-            return false;
-          }
-          if (!this.ct.isa(this.me.name, x.name)) {
-            return false;
-          }
-          if (!this.ct.isa(this.me.precedes, x.precedes)) {
-            return false;
-          }
-          if (!this.ct.isa(this.me.needs, x.needs)) {
-            return false;
-          }
-          return true;
-        },
-        $create: function(x) {
-          if (!this.ct.isa_optional(std.object, x)) {
-            return x;
-          }
-          return {...this.me.$template, ...x};
-        },
-        //.....................................................................................................
-        name: {
-          $isa: function(x) {
-            return this.ct.isa(std.nonempty_text, x);
-          }
-        },
-        precedes: {
-          $isa: function(x) {
-            return this.ct.isa_optional(lt_types.lt_nodelist, x);
-          }
-        },
-        needs: {
-          $isa: function(x) {
-            return this.ct.isa_optional(lt_types.lt_nodelist, x);
-          }
-        },
-        $template: {
-          name: null,
-          precedes: null,
-          needs: null
-        }
-      },
-      //.........................................................................................................
-      lt_linearize_cfg: {
-        $isa: function(x) {
-          if (!this.ct.isa(std.object, x)) {
-            return false;
-          }
-          if (!this.ct.isa(this.me.groups, x.groups)) {
-            return false;
-          }
-          return true;
-        },
-        $create: function(x) {
-          if (!this.ct.isa_optional(std.object, x)) {
-            return x;
-          }
-          return {...this.me.$template, ...x};
-        },
-        //.....................................................................................................
-        groups: {
-          $isa: function(x) {
-            return this.ct.isa(std.boolean, x);
-          }
-        },
-        $template: {
-          groups: false
-        }
-      }
-    };
-    //.........................................................................................................
-    return {lt_types};
-  };
 
   //###########################################################################################################
 
@@ -390,24 +218,11 @@
         }), 'd');
       })();
       (() => {
-        var Ωcltt__62, Ωcltt__63, Ωcltt__64, Ωcltt__65, Ωcltt__66, Ωcltt__67;
+        var Ωcltt__64, Ωcltt__65, Ωcltt__66, Ωcltt__67;
         echo();
         info('Ω__61', std.quantity);
-        this.eq((Ωcltt__62 = function() {
-          return std.quantity.create();
-        }), {
-          q: 0,
-          u: 'u'
-        });
-        this.eq((Ωcltt__63 = function() {
-          return std.quantity.create({
-            q: 4.3,
-            u: 's'
-          });
-        }), {
-          q: 4.3,
-          u: 's'
-        });
+        // @eq ( Ωcltt__62 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
+        // @eq ( Ωcltt__63 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
         this.eq((Ωcltt__64 = function() {
           return std.nonempty_text.create('g');
         }), 'g');
@@ -518,179 +333,89 @@
       var Type, internals, std;
       ({Type, internals, std} = require('../../../apps/cleartype'));
       (() => {
-        var Ωcltt_100, Ωcltt_101, Ωcltt_102;
-        this.eq((Ωcltt_100 = function() {
+        var Ωcltt_100, Ωcltt_101, Ωcltt__99;
+        this.eq((Ωcltt__99 = function() {
           return std.text.template != null;
         }), true);
-        this.eq((Ωcltt_101 = function() {
+        this.eq((Ωcltt_100 = function() {
           return internals.gnd.function.isa(std.text.template);
+        }), false);
+        this.eq((Ωcltt_100 = function() {
+          return internals.gnd.function.isa(std.text.get_template);
         }), true);
-        this.eq((Ωcltt_102 = function() {
-          return std.text.template();
+        this.eq((Ωcltt_101 = function() {
+          return std.text.template;
         }), '');
+        this.eq((Ωcltt_101 = function() {
+          return std.text.get_template();
+        }), '');
+        return null;
+      })();
+      (() => {
+        var Ωcltt_100, Ωcltt_101, Ωcltt__99;
+        this.eq((Ωcltt__99 = function() {
+          return std.list.template != null;
+        }), true);
+        this.eq((Ωcltt_100 = function() {
+          return internals.gnd.function.isa(std.list.template);
+        }), true);
+        this.eq((Ωcltt_100 = function() {
+          return internals.gnd.function.isa(std.list.get_template);
+        }), true);
+        this.eq((Ωcltt_101 = function() {
+          return std.list.template();
+        }), []);
+        this.eq((Ωcltt_101 = function() {
+          return std.list.get_template();
+        }), []);
+        this.eq((Ωcltt_101 = function() {
+          return std.list.get_template() === std.list.get_template();
+        }), false);
         return null;
       })();
       //.......................................................................................................
       return null;
     },
-    // #=========================================================================================================
-    // lt_types:
-
-    //   #-------------------------------------------------------------------------------------------------------
-    //   lt_constructor_cfg: ->
-    //     { Cleartype
-    //       std } = require '../../../apps/cleartype'
-    //     { lt_types }  = get_typespaces()
-    //     { isa
-    //       isa_optional
-    //       create
-    //       validate
-    //       validate_optional } = require '../../../apps/cleartype'
-    //     #.....................................................................................................
-    //     @eq (     Ωctt_103 = -> isa               lt_types.lt_constructor_cfg, 337465             ), false
-    //     @eq (     Ωctt_104 = -> isa_optional      lt_types.lt_constructor_cfg, 337465             ), false
-    //     @eq (     Ωctt_105 = -> isa_optional      lt_types.lt_constructor_cfg, null               ), true
-    //     @eq (     Ωctt_106 = -> create            lt_types.lt_constructor_cfg, undefined          ), { loners: true, }
-    //     @throws ( Ωctt_107 = -> create            lt_types.lt_constructor_cfg, { loners: 7, }     ), /validation error/
-    //     @eq (     Ωctt_108 = -> validate_optional lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
-    //     @eq (     Ωctt_109 = -> validate_optional lt_types.lt_constructor_cfg, null               ), null
-    //     @eq (     Ωctt_110 = -> validate          lt_types.lt_constructor_cfg, { loners: true, }  ), { loners: true, }
-    //     @throws ( Ωctt_111 = -> validate          lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
-    //     @throws ( Ωctt_112 = -> validate_optional lt_types.lt_constructor_cfg, { loners: 8, }     ), /validation error/
-    //     #.....................................................................................................
-    //     return null
-
-    //   #-------------------------------------------------------------------------------------------------------
-    //   lt_nodelist: ->
-    //     { Cleartype
-    //       std } = require '../../../apps/cleartype'
-    //     { lt_types }  = get_typespaces()
-    //     { isa
-    //       isa_optional
-    //       create
-    //       validate
-    //       validate_optional } = require '../../../apps/cleartype'
-    //     #.....................................................................................................
-    //     @eq (     Ωctt_113 = -> isa               lt_types.lt_nodelist, 337465              ), false
-    //     @eq (     Ωctt_114 = -> isa               lt_types.lt_nodelist, []                  ), true
-    //     @eq (     Ωctt_115 = -> isa               lt_types.lt_nodelist, [ 'name', ]         ), true
-    //     @eq (     Ωctt_116 = -> isa               lt_types.lt_nodelist, [ 'name', 3, ]      ), false
-    //     @eq (     Ωctt_117 = -> isa_optional      lt_types.lt_nodelist, 337465              ), false
-    //     @eq (     Ωctt_118 = -> isa_optional      lt_types.lt_nodelist, null                ), true
-    //     @eq (     Ωctt_119 = -> create            lt_types.lt_nodelist, undefined           ), []
-    //     @throws ( Ωctt_120 = -> create            lt_types.lt_nodelist, { loners: 7, }      ), /validation error/
-    //     @eq (     Ωctt_121 = -> validate_optional lt_types.lt_nodelist, []                  ), []
-    //     @eq (     Ωctt_122 = -> validate_optional lt_types.lt_nodelist, null                ), null
-    //     # @eq (     Ωctt_123 = -> validate          lt_types.lt_nodelist, { loners: true, }  ), { loners: true, }
-    //     # @throws ( Ωctt_124 = -> validate          lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
-    //     # @throws ( Ωctt_125 = -> validate_optional lt_types.lt_nodelist, { loners: 8, }     ), /validation error/
-    //     #.....................................................................................................
-    //     return null
-
-    //   #-------------------------------------------------------------------------------------------------------
-    //   lt_add_cfg: ->
-    //     { Cleartype
-    //       std } = require '../../../apps/cleartype'
-    //     { lt_types }  = get_typespaces()
-    //     { isa
-    //       isa_optional
-    //       create
-    //       validate
-    //       validate_optional } = require '../../../apps/cleartype'
-    //     #.....................................................................................................
-    //     @eq (     Ωctt_126 = -> isa               lt_types.lt_add_cfg.name, 337465              ), false
-    //     @eq (     Ωctt_127 = -> isa               lt_types.lt_add_cfg.name, ''                  ), false
-    //     @eq (     Ωctt_128 = -> isa               lt_types.lt_add_cfg.name, 'foo'               ), true
-    //     @eq (     Ωctt_129 = -> isa               lt_types.lt_add_cfg.needs, 337465             ), false
-    //     @eq (     Ωctt_130 = -> isa               lt_types.lt_add_cfg.needs, [ 337465, ]        ), false
-    //     @eq (     Ωctt_131 = -> isa               lt_types.lt_add_cfg.needs, [ '337465', ]      ), true
-    //     @eq (     Ωctt_132 = -> isa               lt_types.lt_add_cfg.needs, []                 ), true
-    //     @eq (     Ωctt_133 = -> isa               lt_types.lt_add_cfg.precedes, 337465          ), false
-    //     @eq (     Ωctt_134 = -> isa               lt_types.lt_add_cfg.precedes, [ 337465, ]     ), false
-    //     @eq (     Ωctt_135 = -> isa               lt_types.lt_add_cfg.precedes, []              ), true
-    //     @eq (     Ωctt_136 = -> isa               lt_types.lt_add_cfg.precedes, [ '337465', ]   ), true
-    //     @eq (     Ωctt_137 = -> isa               lt_types.lt_add_cfg, 337465                   ), false
-    //     @eq (     Ωctt_138 = -> isa               lt_types.lt_add_cfg, {}                       ), false
-    //     @eq (     Ωctt_139 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: null, needs: null     }    ), true
-    //     @eq (     Ωctt_140 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), true
-    //     @eq (     Ωctt_141 = -> isa               lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', 3, ]  }    ), false
-    //     @eq (     Ωctt_142 = -> create            lt_types.lt_add_cfg, { name: 'g', precedes: [], needs: [ 'name', ]     }    ), { name: 'g', precedes: [], needs: [ 'name', ]  }
-    //     @eq (     Ωctt_143 = -> create            lt_types.lt_add_cfg, { name: 'g',                                      }    ), { name: 'g', precedes: null, needs: null  }
-    //     # @eq (     Ωctt_144 = -> isa_optional      lt_types.lt_add_cfg, 337465              ), false
-    //     # @eq (     Ωctt_145 = -> isa_optional      lt_types.lt_add_cfg, null                ), true
-    //     # @eq (     Ωctt_146 = -> create            lt_types.lt_add_cfg, undefined           ), []
-    //     # @throws ( Ωctt_147 = -> create            lt_types.lt_add_cfg, { loners: 7, }      ), /validation error/
-    //     # @eq (     Ωctt_148 = -> validate_optional lt_types.lt_add_cfg, []                  ), []
-    //     # @eq (     Ωctt_149 = -> validate_optional lt_types.lt_add_cfg, null                ), null
-    //     # @eq (     Ωctt_150 = -> validate          lt_types.lt_add_cfg, { loners: true, }  ), { loners: true, }
-    //     # @throws ( Ωctt_151 = -> validate          lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
-    //     # @throws ( Ωctt_152 = -> validate_optional lt_types.lt_add_cfg, { loners: 8, }     ), /validation error/
-    //     #.....................................................................................................
-    //     return null
-
-    //   #-------------------------------------------------------------------------------------------------------
-    //   lt_linearize_cfg: ->
-    //     { Cleartype
-    //       std } = require '../../../apps/cleartype'
-    //     { lt_types }  = get_typespaces()
-    //     { isa
-    //       isa_optional
-    //       create
-    //       validate
-    //       validate_optional } = require '../../../apps/cleartype'
-    //     #.....................................................................................................
-    //     @eq (     Ωctt_153 = -> isa               lt_types.lt_linearize_cfg, 337465                   ), false
-    //     @eq (     Ωctt_154 = -> isa               lt_types.lt_linearize_cfg, {}                       ), false
-    //     @eq (     Ωctt_155 = -> isa               lt_types.lt_linearize_cfg, { groups: 5, }           ), false
-    //     @eq (     Ωctt_156 = -> isa               lt_types.lt_linearize_cfg, { groups: true, }        ), true
-    //     @eq (     Ωctt_157 = -> isa               lt_types.lt_linearize_cfg, { groups: false, }       ), true
-    //     @eq (     Ωctt_158 = -> create            lt_types.lt_linearize_cfg, { groups: true,  }       ), { groups: true, }
-    //     @eq (     Ωctt_159 = -> create            lt_types.lt_linearize_cfg, { groups: false, }       ), { groups: false, }
-    //     @eq (     Ωctt_160 = -> create            lt_types.lt_linearize_cfg, {}                       ), { groups: false, }
-    //     @eq (     Ωctt_161 = -> create            lt_types.lt_linearize_cfg, null                     ), { groups: false, }
-    //     #.....................................................................................................
-    //     return null
-
     //=========================================================================================================
     standard_basic_methods: {
       //-------------------------------------------------------------------------------------------------------
       type_of: function() {
-        var type_of, Ωctt_162, Ωctt_163, Ωctt_164, Ωctt_165, Ωctt_166, Ωctt_167, Ωctt_168, Ωctt_169, Ωctt_170, Ωctt_171, Ωctt_172, Ωctt_173;
+        var type_of, Ωctt_102, Ωctt_103, Ωctt_104, Ωctt_105, Ωctt_106, Ωctt_107, Ωctt_108, Ωctt_109, Ωctt_110, Ωctt_111, Ωctt_112, Ωctt_113;
         ({type_of} = require('../../../apps/cleartype'));
-        this.eq((Ωctt_162 = function() {
+        this.eq((Ωctt_102 = function() {
           return type_of(null);
         }), 'null');
-        this.eq((Ωctt_163 = function() {
+        this.eq((Ωctt_103 = function() {
           return type_of(void 0);
         }), 'undefined');
-        this.eq((Ωctt_164 = function() {
+        this.eq((Ωctt_104 = function() {
           return type_of(+2e308);
         }), 'infinity');
-        this.eq((Ωctt_165 = function() {
+        this.eq((Ωctt_105 = function() {
           return type_of(-2e308);
         }), 'infinity');
-        this.eq((Ωctt_166 = function() {
+        this.eq((Ωctt_106 = function() {
           return type_of(true);
         }), 'boolean');
-        this.eq((Ωctt_167 = function() {
+        this.eq((Ωctt_107 = function() {
           return type_of(false);
         }), 'boolean');
-        this.eq((Ωctt_168 = function() {
+        this.eq((Ωctt_108 = function() {
           return type_of(0/0);
         }), 'nan');
-        this.eq((Ωctt_169 = function() {
+        this.eq((Ωctt_109 = function() {
           return type_of(8);
         }), 'float');
-        this.eq((Ωctt_170 = function() {
+        this.eq((Ωctt_110 = function() {
           return type_of(/xxx/);
         }), 'regex');
-        this.eq((Ωctt_171 = function() {
+        this.eq((Ωctt_111 = function() {
           return type_of('xyz');
         }), 'text');
-        this.eq((Ωctt_172 = function() {
+        this.eq((Ωctt_112 = function() {
           return type_of(['xyz']);
         }), 'list');
-        this.eq((Ωctt_173 = function() {
+        this.eq((Ωctt_113 = function() {
           return type_of({});
         }), 'object');
         //.....................................................................................................
