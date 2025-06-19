@@ -105,8 +105,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
     do =>
       echo()
       info 'Ω__61', std.quantity
-      # @eq ( Ωcltt__62 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
-      # @eq ( Ωcltt__63 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
+      @eq ( Ωcltt__62 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
+      @eq ( Ωcltt__63 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
       @eq ( Ωcltt__64 = -> std.nonempty_text.create      'g'            ), 'g'
       @eq ( Ωcltt__65 = -> std.quantity_u.create         'g'            ), 'g'
       @eq ( Ωcltt__66 = -> std.quantity.fields.u.create  'g'            ), 'g'
@@ -163,19 +163,19 @@ GTNG                      = require '../../../apps/guy-test-NG'
       internals
       std             } = require '../../../apps/cleartype'
     do =>
-      @eq ( Ωcltt__99 = -> std.text.template?                             ), true
-      @eq ( Ωcltt_100 = -> internals.gnd.function.isa std.text.template   ), false
-      @eq ( Ωcltt_100 = -> internals.gnd.function.isa std.text.get_template   ), true
-      @eq ( Ωcltt_101 = -> std.text.template                        ), ''
-      @eq ( Ωcltt_101 = -> std.text.get_template()                        ), ''
+      @eq ( Ωcltt__99 = -> std.text.template?                                     ), true
+      @eq ( Ωcltt_100 = -> internals.gnd.function.isa std.text.template           ), false
+      @eq ( Ωcltt_101 = -> internals.gnd.function.isa std.text.get_template       ), true
+      @eq ( Ωcltt_102 = -> std.text.template                                      ), ''
+      @eq ( Ωcltt_103 = -> std.text.get_template()                                ), ''
       return null
     do =>
-      @eq ( Ωcltt__99 = -> std.list.template?                                     ), true
-      @eq ( Ωcltt_100 = -> internals.gnd.function.isa std.list.template           ), true
-      @eq ( Ωcltt_100 = -> internals.gnd.function.isa std.list.get_template       ), true
-      @eq ( Ωcltt_101 = -> std.list.template()                                    ), []
-      @eq ( Ωcltt_101 = -> std.list.get_template()                                ), []
-      @eq ( Ωcltt_101 = -> std.list.get_template() is std.list.get_template()     ), false
+      @eq ( Ωcltt_104 = -> std.list.template?                                     ), true
+      @eq ( Ωcltt_105 = -> internals.gnd.function.isa std.list.template           ), true
+      @eq ( Ωcltt_106 = -> internals.gnd.function.isa std.list.get_template       ), true
+      @eq ( Ωcltt_107 = -> std.list.template()                                    ), []
+      @eq ( Ωcltt_108 = -> std.list.get_template()                                ), []
+      @eq ( Ωcltt_109 = -> std.list.get_template() is std.list.get_template()     ), false
       return null
     #.......................................................................................................
     return null
@@ -186,18 +186,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #-------------------------------------------------------------------------------------------------------
     type_of: ->
       { type_of } = require '../../../apps/cleartype'
-      @eq ( Ωctt_102 = -> type_of null                  ), 'null'
-      @eq ( Ωctt_103 = -> type_of undefined             ), 'undefined'
-      @eq ( Ωctt_104 = -> type_of +Infinity             ), 'infinity'
-      @eq ( Ωctt_105 = -> type_of -Infinity             ), 'infinity'
-      @eq ( Ωctt_106 = -> type_of true                  ), 'boolean'
-      @eq ( Ωctt_107 = -> type_of false                 ), 'boolean'
-      @eq ( Ωctt_108 = -> type_of NaN                   ), 'nan'
-      @eq ( Ωctt_109 = -> type_of 8                     ), 'float'
-      @eq ( Ωctt_110 = -> type_of /xxx/                 ), 'regex'
-      @eq ( Ωctt_111 = -> type_of 'xyz'                 ), 'text'
-      @eq ( Ωctt_112 = -> type_of [ 'xyz', ]            ), 'list'
-      @eq ( Ωctt_113 = -> type_of {}                    ), 'object'
+      @eq ( Ωctt_110 = -> type_of null                  ), 'null'
+      @eq ( Ωctt_111 = -> type_of undefined             ), 'undefined'
+      @eq ( Ωctt_112 = -> type_of +Infinity             ), 'infinity'
+      @eq ( Ωctt_113 = -> type_of -Infinity             ), 'infinity'
+      @eq ( Ωctt_114 = -> type_of true                  ), 'boolean'
+      @eq ( Ωctt_115 = -> type_of false                 ), 'boolean'
+      @eq ( Ωctt_116 = -> type_of NaN                   ), 'nan'
+      @eq ( Ωctt_117 = -> type_of 8                     ), 'float'
+      @eq ( Ωctt_118 = -> type_of /xxx/                 ), 'regex'
+      @eq ( Ωctt_119 = -> type_of 'xyz'                 ), 'text'
+      @eq ( Ωctt_120 = -> type_of [ 'xyz', ]            ), 'list'
+      @eq ( Ωctt_121 = -> type_of {}                    ), 'object'
       #.....................................................................................................
       return null
 

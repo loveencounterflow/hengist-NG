@@ -218,11 +218,24 @@
         }), 'd');
       })();
       (() => {
-        var Ωcltt__64, Ωcltt__65, Ωcltt__66, Ωcltt__67;
+        var Ωcltt__62, Ωcltt__63, Ωcltt__64, Ωcltt__65, Ωcltt__66, Ωcltt__67;
         echo();
         info('Ω__61', std.quantity);
-        // @eq ( Ωcltt__62 = -> std.quantity.create()                        ), { q: 0, u: 'u', }
-        // @eq ( Ωcltt__63 = -> std.quantity.create    { q: 4.3, u: 's', }   ), { q: 4.3, u: 's', }
+        this.eq((Ωcltt__62 = function() {
+          return std.quantity.create();
+        }), {
+          q: 0,
+          u: 'u'
+        });
+        this.eq((Ωcltt__63 = function() {
+          return std.quantity.create({
+            q: 4.3,
+            u: 's'
+          });
+        }), {
+          q: 4.3,
+          u: 's'
+        });
         this.eq((Ωcltt__64 = function() {
           return std.nonempty_text.create('g');
         }), 'g');
@@ -333,42 +346,42 @@
       var Type, internals, std;
       ({Type, internals, std} = require('../../../apps/cleartype'));
       (() => {
-        var Ωcltt_100, Ωcltt_101, Ωcltt__99;
+        var Ωcltt_100, Ωcltt_101, Ωcltt_102, Ωcltt_103, Ωcltt__99;
         this.eq((Ωcltt__99 = function() {
           return std.text.template != null;
         }), true);
         this.eq((Ωcltt_100 = function() {
           return internals.gnd.function.isa(std.text.template);
         }), false);
-        this.eq((Ωcltt_100 = function() {
+        this.eq((Ωcltt_101 = function() {
           return internals.gnd.function.isa(std.text.get_template);
         }), true);
-        this.eq((Ωcltt_101 = function() {
+        this.eq((Ωcltt_102 = function() {
           return std.text.template;
         }), '');
-        this.eq((Ωcltt_101 = function() {
+        this.eq((Ωcltt_103 = function() {
           return std.text.get_template();
         }), '');
         return null;
       })();
       (() => {
-        var Ωcltt_100, Ωcltt_101, Ωcltt__99;
-        this.eq((Ωcltt__99 = function() {
+        var Ωcltt_104, Ωcltt_105, Ωcltt_106, Ωcltt_107, Ωcltt_108, Ωcltt_109;
+        this.eq((Ωcltt_104 = function() {
           return std.list.template != null;
         }), true);
-        this.eq((Ωcltt_100 = function() {
+        this.eq((Ωcltt_105 = function() {
           return internals.gnd.function.isa(std.list.template);
         }), true);
-        this.eq((Ωcltt_100 = function() {
+        this.eq((Ωcltt_106 = function() {
           return internals.gnd.function.isa(std.list.get_template);
         }), true);
-        this.eq((Ωcltt_101 = function() {
+        this.eq((Ωcltt_107 = function() {
           return std.list.template();
         }), []);
-        this.eq((Ωcltt_101 = function() {
+        this.eq((Ωcltt_108 = function() {
           return std.list.get_template();
         }), []);
-        this.eq((Ωcltt_101 = function() {
+        this.eq((Ωcltt_109 = function() {
           return std.list.get_template() === std.list.get_template();
         }), false);
         return null;
@@ -380,42 +393,42 @@
     standard_basic_methods: {
       //-------------------------------------------------------------------------------------------------------
       type_of: function() {
-        var type_of, Ωctt_102, Ωctt_103, Ωctt_104, Ωctt_105, Ωctt_106, Ωctt_107, Ωctt_108, Ωctt_109, Ωctt_110, Ωctt_111, Ωctt_112, Ωctt_113;
+        var type_of, Ωctt_110, Ωctt_111, Ωctt_112, Ωctt_113, Ωctt_114, Ωctt_115, Ωctt_116, Ωctt_117, Ωctt_118, Ωctt_119, Ωctt_120, Ωctt_121;
         ({type_of} = require('../../../apps/cleartype'));
-        this.eq((Ωctt_102 = function() {
+        this.eq((Ωctt_110 = function() {
           return type_of(null);
         }), 'null');
-        this.eq((Ωctt_103 = function() {
+        this.eq((Ωctt_111 = function() {
           return type_of(void 0);
         }), 'undefined');
-        this.eq((Ωctt_104 = function() {
+        this.eq((Ωctt_112 = function() {
           return type_of(+2e308);
         }), 'infinity');
-        this.eq((Ωctt_105 = function() {
+        this.eq((Ωctt_113 = function() {
           return type_of(-2e308);
         }), 'infinity');
-        this.eq((Ωctt_106 = function() {
+        this.eq((Ωctt_114 = function() {
           return type_of(true);
         }), 'boolean');
-        this.eq((Ωctt_107 = function() {
+        this.eq((Ωctt_115 = function() {
           return type_of(false);
         }), 'boolean');
-        this.eq((Ωctt_108 = function() {
+        this.eq((Ωctt_116 = function() {
           return type_of(0/0);
         }), 'nan');
-        this.eq((Ωctt_109 = function() {
+        this.eq((Ωctt_117 = function() {
           return type_of(8);
         }), 'float');
-        this.eq((Ωctt_110 = function() {
+        this.eq((Ωctt_118 = function() {
           return type_of(/xxx/);
         }), 'regex');
-        this.eq((Ωctt_111 = function() {
+        this.eq((Ωctt_119 = function() {
           return type_of('xyz');
         }), 'text');
-        this.eq((Ωctt_112 = function() {
+        this.eq((Ωctt_120 = function() {
           return type_of(['xyz']);
         }), 'list');
-        this.eq((Ωctt_113 = function() {
+        this.eq((Ωctt_121 = function() {
           return type_of({});
         }), 'object');
         //.....................................................................................................
