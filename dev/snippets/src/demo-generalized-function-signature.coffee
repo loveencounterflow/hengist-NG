@@ -176,7 +176,7 @@ demo_generalized_signature = ->
 demo_call_styles = ->
   f = ( first, second, also ) ->
     # info()
-    info 'Ω__10', arguments.length, ( gold [ arguments..., ] ), ( blue { first, second, also, } )
+    info 'Ω__19', arguments.length, ( gold [ arguments..., ] ), ( blue { first, second, also, } )
   f 'one'
   f 'one', { second: 'two', also: 'three', }
   f 'one', 'two'
@@ -186,25 +186,72 @@ demo_call_styles = ->
 #-----------------------------------------------------------------------------------------------------------
 demo_get_parameter_names = ->
   get_fn_args = ( require 'fn-args' ).default
+  get_signature = ( f ) ->
+    debug()
+    body    = f.toString()
+    kernel  = body.replace /// ^ [^ \( ]* \( \s* ( [^ \) ]* ) \s* \) .* $ ///sv, '$1'
+    parts   = kernel.split /// , \s* ///sv
+    # urge 'Ω__20', rpr body
+    urge 'Ω__21', rpr kernel
+    urge 'Ω__22', rpr parts
+    $names  = []
+    # R       = { $names, }
+    R       = {}
+    for part in parts
+      switch true
+        when ( match = part.match /// ^ [.]{3} \s* (?<name> \S+ ) \s* $ ///sv )?
+          name          = match.groups.name
+          disposition   = 'soak'
+        when ( match = part.match /// ^ (?<name> \S+ ) \s* = \s* optional $///sv )?
+          name          = match.groups.name
+          disposition   = 'optional'
+        else
+          name          = part
+          disposition   = 'bare'
+      info 'Ω__24', ( rpr part ), { name, disposition, }
+      R[ name ] = disposition
+      # R[ name ] = { name, disposition, }
+      $names.push name
+    return R
+  optional = Symbol 'optional'
+  #.........................................................................................................
+  # do =>
+  #   ```
+  #   const f = function (
+  #     a,
+  #     b = ', e = 7,',
+  #     /* d = 9, */
+  #     c = 8,
+  #     ...P
+  #     ) {}
+  #   ```
+  #   debug 'Ω__25', get_signature f
+  #   debug 'Ω__26', get_fn_args f
+  #   return null
+  # #.........................................................................................................
+  # do =>
+  #   f = ( a, b = 4 * ( sqrt 8 ), c = ( foo bar ) ) ->
+  #   debug 'Ω__27', get_signature f
+  #   debug 'Ω__28', get_fn_args f
+  #   return null
   #.........................................................................................................
   do =>
-    ```
-    const f = function (
-      a,
-      b = ', e = 7,',
-      /* d = 9, */
-      c = 8,
-      ...P
-      ) {}
-    ```
-    debug 'Ω__19', f.toString()
-    debug 'Ω__20', get_fn_args f
+    f = ( a, b = optional, c = optional ) -> { $A: [ arguments..., ], a, b, c, }
+    help 'Ω__29', get_signature f
+    help 'Ω__30', get_fn_args f
+    help 'Ω__31', f 1
+    help 'Ω__32', f 1, 2
+    help 'Ω__33', f 1, 2, 3
     return null
   #.........................................................................................................
   do =>
-    f = ( a, b = 4 * ( sqrt 8 ), c = ( foo bar ) ) ->
-    debug 'Ω__21', f.toString()
-    debug 'Ω__22', get_fn_args f
+    f = ( a, b=optional, c... ) -> { $A: [ arguments..., ], a, b, c, }
+    help 'Ω__34', get_signature f
+    help 'Ω__35', get_fn_args f
+    help 'Ω__36', f 1
+    help 'Ω__37', f 1, 2
+    help 'Ω__38', f 1, 2, 3
+    return null
   return null
 
 
@@ -214,9 +261,9 @@ if module is require.main then await do =>
   # guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test @cleartype_tasks
   # # ( new Test guytest_cfg ).test @cleartype_tasks.builtins
-  demo_generalized_signature()
+  # demo_generalized_signature()
   demo_get_parameter_names()
-  demo_call_styles()
+  # demo_call_styles()
   # ```f = ( a, b, ...P, cfg ) => {}```
 
 

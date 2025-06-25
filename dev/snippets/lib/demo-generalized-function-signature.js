@@ -216,7 +216,7 @@
   demo_call_styles = function() {
     f = function(first, second, also) {
       // info()
-      return info('Ω__10', arguments.length, gold([...arguments]), blue({first, second, also}));
+      return info('Ω__19', arguments.length, gold([...arguments]), blue({first, second, also}));
     };
     f('one');
     f('one', {
@@ -232,26 +232,94 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_get_parameter_names = function() {
-    var get_fn_args;
+    var get_fn_args, get_signature, optional;
     get_fn_args = (require('fn-args')).default;
+    get_signature = function(f) {
+      var $names, R, body, disposition, i, kernel, len, match, name, part, parts;
+      debug();
+      body = f.toString();
+      kernel = body.replace(/^[^\(]*\(\s*([^\)]*)\s*\).*$/sv, '$1');
+      parts = kernel.split(/,\s*/sv);
+      // urge 'Ω__20', rpr body
+      urge('Ω__21', rpr(kernel));
+      urge('Ω__22', rpr(parts));
+      $names = [];
+      // R       = { $names, }
+      R = {};
+      for (i = 0, len = parts.length; i < len; i++) {
+        part = parts[i];
+        switch (true) {
+          case (match = part.match(/^[.]{3}\s*(?<name>\S+)\s*$/sv)) != null:
+            name = match.groups.name;
+            disposition = 'soak';
+            break;
+          case (match = part.match(/^(?<name>\S+)\s*=\s*optional$/sv)) != null:
+            name = match.groups.name;
+            disposition = 'optional';
+            break;
+          default:
+            name = part;
+            disposition = 'bare';
+        }
+        info('Ω__24', rpr(part), {name, disposition});
+        R[name] = disposition;
+        // R[ name ] = { name, disposition, }
+        $names.push(name);
+      }
+      return R;
+    };
+    optional = Symbol('optional');
     (() => {      //.........................................................................................................
-      
-    const f = function (
-      a,
-      b = ', e = 7,',
-      /* d = 9, */
-      c = 8,
-      ...P
-      ) {}
-    ;
-      debug('Ω__19', f.toString());
-      debug('Ω__20', get_fn_args(f));
+      // do =>
+      //   ```
+      //   const f = function (
+      //     a,
+      //     b = ', e = 7,',
+      //     /* d = 9, */
+      //     c = 8,
+      //     ...P
+      //     ) {}
+      //   ```
+      //   debug 'Ω__25', get_signature f
+      //   debug 'Ω__26', get_fn_args f
+      //   return null
+      // #.........................................................................................................
+      // do =>
+      //   f = ( a, b = 4 * ( sqrt 8 ), c = ( foo bar ) ) ->
+      //   debug 'Ω__27', get_signature f
+      //   debug 'Ω__28', get_fn_args f
+      //   return null
+      //.........................................................................................................
+      f = function(a, b = optional, c = optional) {
+        return {
+          $A: [...arguments],
+          a,
+          b,
+          c
+        };
+      };
+      help('Ω__29', get_signature(f));
+      help('Ω__30', get_fn_args(f));
+      help('Ω__31', f(1));
+      help('Ω__32', f(1, 2));
+      help('Ω__33', f(1, 2, 3));
       return null;
     })();
     (() => {      //.........................................................................................................
-      f = function(a, b = 4 * (sqrt(8)), c = foo(bar)) {};
-      debug('Ω__21', f.toString());
-      return debug('Ω__22', get_fn_args(f));
+      f = function(a, b = optional, ...c) {
+        return {
+          $A: [...arguments],
+          a,
+          b,
+          c
+        };
+      };
+      help('Ω__34', get_signature(f));
+      help('Ω__35', get_fn_args(f));
+      help('Ω__36', f(1));
+      help('Ω__37', f(1, 2));
+      help('Ω__38', f(1, 2, 3));
+      return null;
     })();
     return null;
   };
@@ -263,13 +331,13 @@
       // guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
       // ( new Test guytest_cfg ).test @cleartype_tasks
       // # ( new Test guytest_cfg ).test @cleartype_tasks.builtins
-      demo_generalized_signature();
-      demo_get_parameter_names();
-      return demo_call_styles();
+      // demo_generalized_signature()
+      return demo_get_parameter_names();
     })();
   }
 
-  // ```f = ( a, b, ...P, cfg ) => {}```
+  // demo_call_styles()
+// ```f = ( a, b, ...P, cfg ) => {}```
 
 }).call(this);
 
