@@ -20,6 +20,12 @@
 
   /*
 
+   * Restriction
+
+  In order to avoid having to integrate a JS expression parser, we restrict eligible functions to those whose
+  signatures consists of nothing but bare parameter names, parameter names with spread (soak) symbol '...',
+  and parameter names with the symbolic default 'optional' which must be spelled out in those same letters.
+
    * CFG Resolution Strategies
 
   * demand fixed number positional
