@@ -20,18 +20,91 @@ GUY                       = require 'guy'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 { f }                     = require '../../../apps/effstring'
+{ gold
+  blue
+  reverse
+  bold                  } = GUY.trm
 
+###
 
+# CFG Resolution Strategies
+
+* demand fixed number positional
+* demand last one named
+* signature has *p* ∈ ℕ₀ positional parameters (named in signature)
+* signature has *q* ∈ [ 0, 1 ] PODs for named parameters (i.e. has one or none)
+* signature has *p* + *q* = *b* ∈ ℕ₀ parameters
+* signature has *s* ∈ [ 0, 1 ] splats (i.e. has one or none)
+* function call has *a* ∈ ℕ₀ arguments
+  * pre-check strategies:
+    * **PCS1**: reject if *b* ≠ *p*
+    * **PCS2**: reject if *b* > *p* (Note: can/will not apply if any parameter is declared as a rest (or
+      soak) parameter (i.e. with `...`); in that case, assume *b* = *p*)
+* recognition of CFG:
+  * all strategies / invariants:
+    * CFG may only be last parameter and therefore last argument
+    * CFG must be a POD
+  * CFG recognition strategies:
+    * **CRS1** CFG must be at position of CFG in parameters, arguments[ b - 1 ]
+    * **CRS2** CFG must be at last position of arguments, arguments[ a - 1 ]
+Given a function `f = ( a, b, c, cfg ) ->` that is called as follows:
+
+* **p0_n0**: f()
+* **p1_n0**: f 1
+* **p2_n0**: f 1, 2
+* **p3_n0**: f 1, 2, 3
+* **p0_n1**: f          { a: 4, d: 5, }
+* **p1_n1**: f 1,       { a: 4, d: 5, }
+* **p2_n1**: f 1, 2,    { a: 4, d: 5, }
+* **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }
+* **p4_n0**: f 1, 2, 3, 4
+
+* **NN**: demand 4 arguments, last one must be a POD
+  * **p0_n0**: f()                          # ERROR
+  * **p1_n0**: f 1                          # ERROR
+  * **p2_n0**: f 1, 2                       # ERROR
+  * **p3_n0**: f 1, 2, 3                    # ERROR
+  * **p0_n1**: f          { a: 4, d: 5, }   # ERROR
+  * **p1_n1**: f 1,       { a: 4, d: 5, }   # ERROR
+  * **p2_n1**: f 1, 2,    { a: 4, d: 5, }   # ERROR
+  * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }   # depends on Name Clash Resolution Strategy
+  * **p4_n0**: f 1, 2, 3, 4                 # ERROR
+
+* **NN**: assign positional arguments that appear in signature, last must be a POD
+  * **p0_n0**: f()                          # ERROR
+  * **p1_n0**: f 1                          # ERROR
+  * **p2_n0**: f 1, 2                       # ERROR
+  * **p3_n0**: f 1, 2, 3                    # ERROR
+  * **p0_n1**: f          { a: 4, d: 5, }   # { a: 4, d: 5, }
+  * **p1_n1**: f 1,       { a: 4, d: 5, }   # {       d: 5, }, `a` depends on Name Clash Resolution Strategy
+  * **p2_n1**: f 1, 2,    { a: 4, d: 5, }   # {       d: 5, }, `a` depends on Name Clash Resolution Strategy
+  * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }   # {       d: 5, }, `a` depends on Name Clash Resolution Strategy
+  * **p4_n0**: f 1, 2, 3, 4                 # ERROR
+
+* **NN**: assign positional arguments that appear in signature, last may be a POD (udf: `undefined`)
+  * **p0_n0**: f()                          # { a: 4, b: udf, c: udf, }
+  * **p1_n0**: f 1                          # { a: 4, b: udf, c: udf, }
+  * **p2_n0**: f 1, 2                       # { a: 4, b: udf, c: udf, }
+  * **p3_n0**: f 1, 2, 3                    # { a: 4, b: udf, c: udf, }
+  * **p0_n1**: f          { a: 4, d: 5, }   # { a: 4, b: udf, c: udf, d: 5, }
+  * **p1_n1**: f 1,       { a: 4, d: 5, }   # {       b: udf, c: udf, d: 5, }, `a` depends on Name Clash Resolution Strategy
+  * **p2_n1**: f 1, 2,    { a: 4, d: 5, }   # {       b: udf, c: udf, d: 5, }, `a` depends on Name Clash Resolution Strategy
+  * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }   # {       b: udf, c: udf, d: 5, }, `a` depends on Name Clash Resolution Strategy
+  * **p4_n0**: f 1, 2, 3, 4                 # ERROR
+
+###
 
 #===========================================================================================================
 demo_generalized_signature = ->
+  get_fn_args = ( require 'fn-args' ).default
+  # functionArguments
   do =>
     d      = []
     d[ 0 ] = 7
     d.k    = 6
     d[ 1 ] = 5
-    urge 'Ω_152', Object.keys d                 # [ '0', '1', 'k' ]
-    urge 'Ω_153', [ ( Object.entries d )..., ]  # [ [ '0', 7 ], [ '1', 5 ], [ 'k', 6 ] ]
+    urge 'Ω___1', Object.keys d                 # [ '0', '1', 'k' ]
+    urge 'Ω___2', [ ( Object.entries d )..., ]  # [ [ '0', 7 ], [ '1', 5 ], [ 'k', 6 ] ]
     return null
   do =>
     #.......................................................................................................
@@ -39,65 +112,99 @@ demo_generalized_signature = ->
     gnd =
       pod: isa: ( x ) -> x? and ( Object.getPrototypeOf x ) in pod_prototypes
     #.......................................................................................................
-    get_arguments = ( positional, args, fallback = null ) ->
+    get_arguments_poscfg = ( names, argvments, fallback = null ) ->
       help()
-      args = [ args..., ]
-      info 'Ω_154', { positional, args, fallback, }
+      # argvments = [ argvments..., ]
+      positional_names      = names[      0 .. names.length     - 2 ]
+      named_name            =     names.at -1
+      info 'Ω___3', { positional_names, named_name, positional_argvments, named_argvment, fallback, }
       R = {}
       #.....................................................................................................
-      if gnd.pod.isa args.at -1 then  named_args = args.pop()
-      else                            named_args = null
+      if gnd.pod.isa argvments.at -1
+        positional_argvments  = argvments[  0 .. argvments.length - 2 ]
+        named_argvment        = argvments.at -1
+      else
+        positional_argvments  = argvments[  ..                        ]
+        named_argvment        = null
       #.....................................................................................................
-      last_arg_idx = args.length - 1
-      for name, idx in positional
+      last_arg_idx = positional_argvments.length - 1
+      for name, idx in names
         if idx <= last_arg_idx
-          help 'Ω_155', name, rpr args[ idx ]
-          R[ name ] = args[ idx ]
+          help 'Ω___4', name, rpr positional_argvments[ idx ]
+          R[ name ] = positional_argvments[ idx ]
         else
-          urge 'Ω_156', "fallback for positional argument @#{idx} = #{rpr args[ idx ]}"
+          urge 'Ω___5', "fallback for positional argument @#{idx} = #{rpr argvments[ idx ]}"
           R[ name ] = fallback
       #.....................................................................................................
-      if named_args?
-        help 'Ω_157', "named args #{rpr named_args}"
-        for name, value of named_args
+      if named_argvment?
+        help 'Ω___6', "named_argvment #{rpr named_argvment}"
+        for name, value of named_argvment
           if Reflect.has R, name
-            warn 'Ω_158', "repeated named argument { #{name}: #{rpr value}, }"
+            warn 'Ω___7', "repeated named argument { #{name}: #{rpr value}, }"
             # apply one of strategy = [ 'error', 'named_wins', 'positional_wins', ]
             R[ name ] = value
           else
             R[ name ] = value
       else
-        urge 'Ω_159', "no named args"
+        urge 'Ω___8', "no named argvments"
       #.....................................................................................................
       return R
     #.......................................................................................................
-    ```
-    const g = function (
-      a,
-      b,
-      c,
-      ) {}
-    ```
-    debug 'Ω_160', g.toString()
     f = ( a, b, Q ) ->
       # cfg = Object.assign ( Object.create null ), { a, b, }, Q...
       cfg = Object.assign {}, { a, b, }, Q...
-      # info 'Ω_161', f"#{GUY.trm.gold [ arguments..., ]}:>30c;", GUY.trm.blue { a, b, cfg, }
-      info 'Ω_162', ( GUY.trm.gold [ arguments..., ] ), GUY.trm.blue { a, b, cfg, }
+      # info 'Ω___9', f"#{GUY.trm.gold [ arguments..., ]}:>30c;", GUY.trm.blue { a, b, cfg, }
+      info 'Ω__10', ( GUY.trm.gold [ arguments..., ] ), GUY.trm.blue { a, b, cfg, }
     #.......................................................................................................
-    debug 'Ω_163', ( f.toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
-    # debug 'Ω_164', ( ( ( a, b = ')', c ) -> ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
-    # debug 'Ω_165', ( ( ( a, b ### = ) ###, c, Q... ) => ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
-    info 'Ω_166', get_arguments [ 'a', 'b', ], [ 1, ]
-    info 'Ω_167', get_arguments [ 'a', 'b', ], [ 1, k: 'K', ]
-    info 'Ω_168', get_arguments [ 'a', 'b', ], [ 1, 2, k: 'K', ]
-    info 'Ω_169', get_arguments [ 'a', 'b', ], [ 1, 2, 3, k: 'K', ]
-    info 'Ω_170', get_arguments [ 'a', 'b', ], [ 1, 2, k: 'K', a: 'A', ]
+    debug 'Ω__11', ( f.toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
+    # debug 'Ω__12', ( ( ( a, b = ')', c ) -> ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
+    # debug 'Ω__13', ( ( ( a, b ### = ) ###, c, Q... ) => ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
+    unset = Symbol 'unset'
+    info 'Ω__14', get_arguments_poscfg [ 'a', 'b', 'cfg', ], [ 1,                    ], unset
+    info 'Ω__15', get_arguments_poscfg [ 'a', 'b', 'cfg', ], [ 1, k: 'K',            ], unset
+    info 'Ω__16', get_arguments_poscfg [ 'a', 'b', 'cfg', ], [ 1, 2, k: 'K',         ], unset
+    info 'Ω__17', get_arguments_poscfg [ 'a', 'b', 'cfg', ], [ 1, 2, 3, k: 'K',      ], unset
+    info 'Ω__18', get_arguments_poscfg [ 'a', 'b', 'cfg', ], [ 1, 2, k: 'K', a: 'A', ], unset
     # f 1
     # f 1, 2, 3
     # f 1, 2, k: 'K'
     # f 1, 2, k: 'K', 9, m: 'M'
     return null
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+demo_call_styles = ->
+  f = ( first, second, also ) ->
+    # info()
+    info 'Ω__10', arguments.length, ( gold [ arguments..., ] ), ( blue { first, second, also, } )
+  f 'one'
+  f 'one', { second: 'two', also: 'three', }
+  f 'one', 'two'
+  f 'one', 'two', { also: 'three', }
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+demo_get_parameter_names = ->
+  get_fn_args = ( require 'fn-args' ).default
+  #.........................................................................................................
+  do =>
+    ```
+    const f = function (
+      a,
+      b = ', e = 7,',
+      /* d = 9, */
+      c = 8,
+      ...P
+      ) {}
+    ```
+    debug 'Ω__19', f.toString()
+    debug 'Ω__20', get_fn_args f
+    return null
+  #.........................................................................................................
+  do =>
+    f = ( a, b = 4 * ( sqrt 8 ), c = ( foo bar ) ) ->
+    debug 'Ω__21', f.toString()
+    debug 'Ω__22', get_fn_args f
   return null
 
 
@@ -108,3 +215,9 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test @cleartype_tasks
   # # ( new Test guytest_cfg ).test @cleartype_tasks.builtins
   demo_generalized_signature()
+  demo_get_parameter_names()
+  demo_call_styles()
+  # ```f = ( a, b, ...P, cfg ) => {}```
+
+
+

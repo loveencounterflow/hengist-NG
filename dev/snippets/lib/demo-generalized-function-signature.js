@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Test, alert, debug, demo_generalized_signature, echo, f, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper,
+  var GTNG, GUY, Test, alert, blue, bold, debug, demo_call_styles, demo_generalized_signature, demo_get_parameter_names, echo, f, gold, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper,
     indexOf = [].indexOf;
 
   GUY = require('guy');
@@ -16,20 +16,92 @@
 
   ({f} = require('../../../apps/effstring'));
 
+  ({gold, blue, reverse, bold} = GUY.trm);
+
+  /*
+
+   * CFG Resolution Strategies
+
+  * demand fixed number positional
+  * demand last one named
+  * signature has *p* ∈ ℕ₀ positional parameters (named in signature)
+  * signature has *q* ∈ [ 0, 1 ] PODs for named parameters (i.e. has one or none)
+  * signature has *p* + *q* = *b* ∈ ℕ₀ parameters
+  * signature has *s* ∈ [ 0, 1 ] splats (i.e. has one or none)
+  * function call has *a* ∈ ℕ₀ arguments
+    * pre-check strategies:
+      * **PCS1**: reject if *b* ≠ *p*
+      * **PCS2**: reject if *b* > *p* (Note: can/will not apply if any parameter is declared as a rest (or
+        soak) parameter (i.e. with `...`); in that case, assume *b* = *p*)
+  * recognition of CFG:
+    * all strategies / invariants:
+      * CFG may only be last parameter and therefore last argument
+      * CFG must be a POD
+    * CFG recognition strategies:
+      * **CRS1** CFG must be at position of CFG in parameters, arguments[ b - 1 ]
+      * **CRS2** CFG must be at last position of arguments, arguments[ a - 1 ]
+  Given a function `f = ( a, b, c, cfg ) ->` that is called as follows:
+
+  * **p0_n0**: f()
+  * **p1_n0**: f 1
+  * **p2_n0**: f 1, 2
+  * **p3_n0**: f 1, 2, 3
+  * **p0_n1**: f          { a: 4, d: 5, }
+  * **p1_n1**: f 1,       { a: 4, d: 5, }
+  * **p2_n1**: f 1, 2,    { a: 4, d: 5, }
+  * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }
+  * **p4_n0**: f 1, 2, 3, 4
+
+  * **NN**: demand 4 arguments, last one must be a POD
+    * **p0_n0**: f()                          # ERROR
+    * **p1_n0**: f 1                          # ERROR
+    * **p2_n0**: f 1, 2                       # ERROR
+    * **p3_n0**: f 1, 2, 3                    # ERROR
+    * **p0_n1**: f          { a: 4, d: 5, }   # ERROR
+    * **p1_n1**: f 1,       { a: 4, d: 5, }   # ERROR
+    * **p2_n1**: f 1, 2,    { a: 4, d: 5, }   # ERROR
+    * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }   # depends on Name Clash Resolution Strategy
+    * **p4_n0**: f 1, 2, 3, 4                 # ERROR
+
+  * **NN**: assign positional arguments that appear in signature, last must be a POD
+    * **p0_n0**: f()                          # ERROR
+    * **p1_n0**: f 1                          # ERROR
+    * **p2_n0**: f 1, 2                       # ERROR
+    * **p3_n0**: f 1, 2, 3                    # ERROR
+    * **p0_n1**: f          { a: 4, d: 5, }   # { a: 4, d: 5, }
+    * **p1_n1**: f 1,       { a: 4, d: 5, }   # {       d: 5, }, `a` depends on Name Clash Resolution Strategy
+    * **p2_n1**: f 1, 2,    { a: 4, d: 5, }   # {       d: 5, }, `a` depends on Name Clash Resolution Strategy
+    * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }   # {       d: 5, }, `a` depends on Name Clash Resolution Strategy
+    * **p4_n0**: f 1, 2, 3, 4                 # ERROR
+
+  * **NN**: assign positional arguments that appear in signature, last may be a POD (udf: `undefined`)
+    * **p0_n0**: f()                          # { a: 4, b: udf, c: udf, }
+    * **p1_n0**: f 1                          # { a: 4, b: udf, c: udf, }
+    * **p2_n0**: f 1, 2                       # { a: 4, b: udf, c: udf, }
+    * **p3_n0**: f 1, 2, 3                    # { a: 4, b: udf, c: udf, }
+    * **p0_n1**: f          { a: 4, d: 5, }   # { a: 4, b: udf, c: udf, d: 5, }
+    * **p1_n1**: f 1,       { a: 4, d: 5, }   # {       b: udf, c: udf, d: 5, }, `a` depends on Name Clash Resolution Strategy
+    * **p2_n1**: f 1, 2,    { a: 4, d: 5, }   # {       b: udf, c: udf, d: 5, }, `a` depends on Name Clash Resolution Strategy
+    * **p3_n1**: f 1, 2, 3, { a: 4, d: 5, }   # {       b: udf, c: udf, d: 5, }, `a` depends on Name Clash Resolution Strategy
+    * **p4_n0**: f 1, 2, 3, 4                 # ERROR
+
+   */
   //===========================================================================================================
   demo_generalized_signature = function() {
-    (() => {
+    var get_fn_args;
+    get_fn_args = (require('fn-args')).default;
+    (() => {      // functionArguments
       var d;
       d = [];
       d[0] = 7;
       d.k = 6;
       d[1] = 5;
-      urge('Ω_152', Object.keys(d)); // [ '0', '1', 'k' ]
-      urge('Ω_153', [...(Object.entries(d))]); // [ [ '0', 7 ], [ '1', 5 ], [ 'k', 6 ] ]
+      urge('Ω___1', Object.keys(d)); // [ '0', '1', 'k' ]
+      urge('Ω___2', [...(Object.entries(d))]); // [ [ '0', 7 ], [ '1', 5 ], [ 'k', 6 ] ]
       return null;
     })();
     (() => {
-      var get_arguments, gnd, pod_prototypes;
+      var get_arguments_poscfg, gnd, pod_prototypes, unset;
       //.......................................................................................................
       pod_prototypes = Object.freeze([null, Object.getPrototypeOf({})]);
       gnd = {
@@ -41,37 +113,41 @@
         }
       };
       //.......................................................................................................
-      get_arguments = function(positional, args, fallback = null) {
-        var R, i, idx, last_arg_idx, len, name, named_args, value;
+      get_arguments_poscfg = function(names, argvments, fallback = null) {
+        var R, i, idx, last_arg_idx, len, name, named_argvment, named_name, positional_argvments, positional_names, value;
         help();
-        args = [...args];
-        info('Ω_154', {positional, args, fallback});
+        // argvments = [ argvments..., ]
+        positional_names = names.slice(0, +(names.length - 2) + 1 || 9e9);
+        named_name = names.at(-1);
+        info('Ω___3', {positional_names, named_name, positional_argvments, named_argvment, fallback});
         R = {};
         //.....................................................................................................
-        if (gnd.pod.isa(args.at(-1))) {
-          named_args = args.pop();
+        if (gnd.pod.isa(argvments.at(-1))) {
+          positional_argvments = argvments.slice(0, +(argvments.length - 2) + 1 || 9e9);
+          named_argvment = argvments.at(-1);
         } else {
-          named_args = null;
+          positional_argvments = argvments.slice(0);
+          named_argvment = null;
         }
         //.....................................................................................................
-        last_arg_idx = args.length - 1;
-        for (idx = i = 0, len = positional.length; i < len; idx = ++i) {
-          name = positional[idx];
+        last_arg_idx = positional_argvments.length - 1;
+        for (idx = i = 0, len = names.length; i < len; idx = ++i) {
+          name = names[idx];
           if (idx <= last_arg_idx) {
-            help('Ω_155', name, rpr(args[idx]));
-            R[name] = args[idx];
+            help('Ω___4', name, rpr(positional_argvments[idx]));
+            R[name] = positional_argvments[idx];
           } else {
-            urge('Ω_156', `fallback for positional argument @${idx} = ${rpr(args[idx])}`);
+            urge('Ω___5', `fallback for positional argument @${idx} = ${rpr(argvments[idx])}`);
             R[name] = fallback;
           }
         }
         //.....................................................................................................
-        if (named_args != null) {
-          help('Ω_157', `named args ${rpr(named_args)}`);
-          for (name in named_args) {
-            value = named_args[name];
+        if (named_argvment != null) {
+          help('Ω___6', `named_argvment ${rpr(named_argvment)}`);
+          for (name in named_argvment) {
+            value = named_argvment[name];
             if (Reflect.has(R, name)) {
-              warn('Ω_158', `repeated named argument { ${name}: ${rpr(value)}, }`);
+              warn('Ω___7', `repeated named argument { ${name}: ${rpr(value)}, }`);
               // apply one of strategy = [ 'error', 'named_wins', 'positional_wins', ]
               R[name] = value;
             } else {
@@ -79,66 +155,103 @@
             }
           }
         } else {
-          urge('Ω_159', "no named args");
+          urge('Ω___8', "no named argvments");
         }
         //.....................................................................................................
         return R;
       };
-      
-    const g = function (
-      a,
-      b,
-      c,
-      ) {}
-    //.......................................................................................................
-    ;
-      debug('Ω_160', g.toString());
+      //.......................................................................................................
       f = function(a, b, Q) {
         var cfg;
         // cfg = Object.assign ( Object.create null ), { a, b, }, Q...
         cfg = Object.assign({}, {a, b}, ...Q);
-        // info 'Ω_161', f"#{GUY.trm.gold [ arguments..., ]}:>30c;", GUY.trm.blue { a, b, cfg, }
-        return info('Ω_162', GUY.trm.gold([...arguments]), GUY.trm.blue({a, b, cfg}));
+        // info 'Ω___9', f"#{GUY.trm.gold [ arguments..., ]}:>30c;", GUY.trm.blue { a, b, cfg, }
+        return info('Ω__10', GUY.trm.gold([...arguments]), GUY.trm.blue({a, b, cfg}));
       };
       //.......................................................................................................
-      debug('Ω_163', (f.toString().split('\n'))[0].replace(/^.*function\(\s*/, ''));
-      // debug 'Ω_164', ( ( ( a, b = ')', c ) -> ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
-      // debug 'Ω_165', ( ( ( a, b ### = ) ###, c, Q... ) => ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
-      info('Ω_166', get_arguments(['a', 'b'], [1]));
-      info('Ω_167', get_arguments(['a', 'b'], [
+      debug('Ω__11', (f.toString().split('\n'))[0].replace(/^.*function\(\s*/, ''));
+      // debug 'Ω__12', ( ( ( a, b = ')', c ) -> ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
+      // debug 'Ω__13', ( ( ( a, b ### = ) ###, c, Q... ) => ).toString().split '\n' )[ 0 ].replace /^.*function\(\s*/, ''
+      unset = Symbol('unset');
+      info('Ω__14', get_arguments_poscfg(['a', 'b', 'cfg'], [1], unset));
+      info('Ω__15', get_arguments_poscfg(['a', 'b', 'cfg'], [
         1,
         {
           k: 'K'
         }
-      ]));
-      info('Ω_168', get_arguments(['a', 'b'], [
+      ], unset));
+      info('Ω__16', get_arguments_poscfg(['a', 'b', 'cfg'], [
         1,
         2,
         {
           k: 'K'
         }
-      ]));
-      info('Ω_169', get_arguments(['a', 'b'], [
+      ], unset));
+      info('Ω__17', get_arguments_poscfg(['a', 'b', 'cfg'], [
         1,
         2,
         3,
         {
           k: 'K'
         }
-      ]));
-      info('Ω_170', get_arguments(['a', 'b'], [
+      ], unset));
+      info('Ω__18', get_arguments_poscfg(['a', 'b', 'cfg'], [
         1,
         2,
         {
           k: 'K',
           a: 'A'
         }
-      ]));
+      ], unset));
       // f 1
       // f 1, 2, 3
       // f 1, 2, k: 'K'
       // f 1, 2, k: 'K', 9, m: 'M'
       return null;
+    })();
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  demo_call_styles = function() {
+    f = function(first, second, also) {
+      // info()
+      return info('Ω__10', arguments.length, gold([...arguments]), blue({first, second, also}));
+    };
+    f('one');
+    f('one', {
+      second: 'two',
+      also: 'three'
+    });
+    f('one', 'two');
+    f('one', 'two', {
+      also: 'three'
+    });
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  demo_get_parameter_names = function() {
+    var get_fn_args;
+    get_fn_args = (require('fn-args')).default;
+    (() => {      //.........................................................................................................
+      
+    const f = function (
+      a,
+      b = ', e = 7,',
+      /* d = 9, */
+      c = 8,
+      ...P
+      ) {}
+    ;
+      debug('Ω__19', f.toString());
+      debug('Ω__20', get_fn_args(f));
+      return null;
+    })();
+    (() => {      //.........................................................................................................
+      f = function(a, b = 4 * (sqrt(8)), c = foo(bar)) {};
+      debug('Ω__21', f.toString());
+      return debug('Ω__22', get_fn_args(f));
     })();
     return null;
   };
@@ -150,9 +263,13 @@
       // guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
       // ( new Test guytest_cfg ).test @cleartype_tasks
       // # ( new Test guytest_cfg ).test @cleartype_tasks.builtins
-      return demo_generalized_signature();
+      demo_generalized_signature();
+      demo_get_parameter_names();
+      return demo_call_styles();
     })();
   }
+
+  // ```f = ( a, b, ...P, cfg ) => {}```
 
 }).call(this);
 
