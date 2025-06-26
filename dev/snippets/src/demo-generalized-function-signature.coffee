@@ -356,17 +356,17 @@ demo_nfa = ->
 
   ## To Do
 
-  * **`[—]`** implement class `Template`, argument `template`
-  * **`[—]`** implement validation
+  * **`[—]`** implement class `Template`, argument `template` as `nfa { template, }, fn`
+  * **`[—]`** implement validation as `nfa { isa, }, fn`
+  * **`[—]`** integrate ClearType as `nfa type, fn`
 
   ###
-  nfa = ( f ) ->
-    signature         = get_signature f
+  nfa = ( fn ) ->
+    signature         = get_signature fn
     names             = Object.keys signature
-    pos_names  = names[ .. names.length - 2 ]
+    pos_names         = names[ .. names.length - 2 ]
     arity             = names.length
     dispositions      = ( signature[ name ] for name in names )
-    debug 'Ω__64', signature
     #.......................................................................................................
     for disposition, idx in dispositions
       continue if disposition is 'bare'
@@ -389,7 +389,7 @@ demo_nfa = ->
       while P.length < arity
         P.splice P.length - 1, 0, undefined
       #.....................................................................................................
-      ### TAINT use Q = P.pop(), f.call @, P..., Q ###
+      ### TAINT use Q = P.pop(), fn.call @, P..., Q ###
       Q = P.at -1
       for name, idx in pos_names
         pos_value = P[ idx  ]
@@ -405,30 +405,30 @@ demo_nfa = ->
             # P[ idx  ] = nme_value                                           # strategy: 'named'
             Q[ name ] = pos_value                                             # strategy: 'positional'
       #.....................................................................................................
-      return f.call @, P...
+      return fn.call @, P...
   #=========================================================================================================
-  f = nfa ( a, b, c, cfg ) -> { a, b, c, cfg, }
-  # f = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
-  # help 'Ω__69', get_fn_args f
+  fn = nfa ( a, b, c, cfg ) -> { a, b, c, cfg, }
+  # fn = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
+  # help 'Ω__69', get_fn_args fn
   # if signature?
   #.........................................................................................................
   echo()
-  info 'Ω__70', f 1
-  info 'Ω__71', f 1, 2
-  info 'Ω__72', f 1, 2, 3
-  info 'Ω__73', try f 1, 2, 3, 4 catch e then red reverse e.message
+  info 'Ω__70', fn 1
+  info 'Ω__71', fn 1, 2
+  info 'Ω__72', fn 1, 2, 3
+  info 'Ω__73', try fn 1, 2, 3, 4 catch e then red reverse e.message
   #.........................................................................................................
   echo()
-  info 'Ω__74', f 1, {}
-  info 'Ω__75', f 1, 2, {}
-  info 'Ω__76', f 1, 2, 3, {}
-  info 'Ω__77', try f 1, 2, 3, 4, {} catch e then red reverse e.message
+  info 'Ω__74', fn 1, {}
+  info 'Ω__75', fn 1, 2, {}
+  info 'Ω__76', fn 1, 2, 3, {}
+  info 'Ω__77', try fn 1, 2, 3, 4, {} catch e then red reverse e.message
   #.........................................................................................................
   echo()
-  info 'Ω__78', f 1, { b: 88, }
-  info 'Ω__79', f 1, 2, { b: 88, }
-  info 'Ω__80', f 1, 2, 3, { b: 88, }
-  info 'Ω__81', try f 1, 2, 3, 4, { b: 88, } catch e then red reverse e.message
+  info 'Ω__78', fn 1, { b: 88, }
+  info 'Ω__79', fn 1, 2, { b: 88, }
+  info 'Ω__80', fn 1, 2, 3, { b: 88, }
+  info 'Ω__81', try fn 1, 2, 3, 4, { b: 88, } catch e then red reverse e.message
   #.........................................................................................................
   return null
 

@@ -479,7 +479,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_nfa = function() {
-    var Arity_error, Not_implemented_error, Value_mismatch_error, e, get_signature, gnd, nfa, optional, pod_prototypes;
+    var Arity_error, Not_implemented_error, Value_mismatch_error, e, fn, get_signature, gnd, nfa, optional, pod_prototypes;
     optional = Symbol('optional');
     pod_prototypes = Object.freeze([null, Object.getPrototypeOf({})]);
     gnd = {
@@ -539,13 +539,14 @@
 
     ## To Do
 
-    * **`[—]`** implement class `Template`, argument `template`
-    * **`[—]`** implement validation
+    * **`[—]`** implement class `Template`, argument `template` as `nfa { template, }, fn`
+    * **`[—]`** implement validation as `nfa { isa, }, fn`
+    * **`[—]`** integrate ClearType as `nfa type, fn`
 
      */
-    nfa = function(f) {
+    nfa = function(fn) {
       var arity, disposition, dispositions, i, idx, len, name, names, pos_names, signature;
-      signature = get_signature(f);
+      signature = get_signature(fn);
       names = Object.keys(signature);
       pos_names = names.slice(0, +(names.length - 2) + 1 || 9e9);
       arity = names.length;
@@ -558,7 +559,6 @@
         }
         return results;
       })();
-      debug('Ω__64', signature);
 //.......................................................................................................
       for (idx = i = 0, len = dispositions.length; i < len; idx = ++i) {
         disposition = dispositions[idx];
@@ -590,7 +590,7 @@
           P.splice(P.length - 1, 0, void 0);
         }
         //.....................................................................................................
-        /* TAINT use Q = P.pop(), f.call @, P..., Q */
+        /* TAINT use Q = P.pop(), fn.call @, P..., Q */
         Q = P.at(-1);
         for (idx = j = 0, len1 = pos_names.length; j < len1; idx = ++j) {
           name = pos_names[idx];
@@ -615,24 +615,24 @@
           }
         }
         //.....................................................................................................
-        return f.call(this, ...P);
+        return fn.call(this, ...P);
       };
     };
     //=========================================================================================================
-    f = nfa(function(a, b, c, cfg) {
+    fn = nfa(function(a, b, c, cfg) {
       return {a, b, c, cfg};
     });
-    // f = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
-    // help 'Ω__69', get_fn_args f
+    // fn = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
+    // help 'Ω__69', get_fn_args fn
     // if signature?
     //.........................................................................................................
     echo();
-    info('Ω__70', f(1));
-    info('Ω__71', f(1, 2));
-    info('Ω__72', f(1, 2, 3));
+    info('Ω__70', fn(1));
+    info('Ω__71', fn(1, 2));
+    info('Ω__72', fn(1, 2, 3));
     info('Ω__73', (function() {
       try {
-        return f(1, 2, 3, 4);
+        return fn(1, 2, 3, 4);
       } catch (error) {
         e = error;
         return red(reverse(e.message));
@@ -640,12 +640,12 @@
     })());
     //.........................................................................................................
     echo();
-    info('Ω__74', f(1, {}));
-    info('Ω__75', f(1, 2, {}));
-    info('Ω__76', f(1, 2, 3, {}));
+    info('Ω__74', fn(1, {}));
+    info('Ω__75', fn(1, 2, {}));
+    info('Ω__76', fn(1, 2, 3, {}));
     info('Ω__77', (function() {
       try {
-        return f(1, 2, 3, 4, {});
+        return fn(1, 2, 3, 4, {});
       } catch (error) {
         e = error;
         return red(reverse(e.message));
@@ -653,18 +653,18 @@
     })());
     //.........................................................................................................
     echo();
-    info('Ω__78', f(1, {
+    info('Ω__78', fn(1, {
       b: 88
     }));
-    info('Ω__79', f(1, 2, {
+    info('Ω__79', fn(1, 2, {
       b: 88
     }));
-    info('Ω__80', f(1, 2, 3, {
+    info('Ω__80', fn(1, 2, 3, {
       b: 88
     }));
     info('Ω__81', (function() {
       try {
-        return f(1, 2, 3, 4, {
+        return fn(1, 2, 3, 4, {
           b: 88
         });
       } catch (error) {
