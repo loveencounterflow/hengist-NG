@@ -26,65 +26,132 @@
       ({nfa} = NFA);
       ({red, reverse} = GUY.trm);
       (() => {        //.......................................................................................................
-        var e, fn, Ωcltt__48;
+        var fn, Ωnfat__10, Ωnfat__11, Ωnfat__12, Ωnfat__13, Ωnfat___2, Ωnfat___3, Ωnfat___4, Ωnfat___5, Ωnfat___6, Ωnfat___7, Ωnfat___8, Ωnfat___9;
         fn = nfa(function(a, b, c, cfg) {
           return {a, b, c, cfg};
         });
         // fn = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
-        // help 'Ω__69', get_fn_args fn
+        // help 'Ω___1', get_fn_args fn
         // if signature?
         //.....................................................................................................
-        echo();
-        info('Ω__70', fn(1));
-        info('Ω__71', fn(1, 2));
-        info('Ω__72', fn(1, 2, 3));
-        info('Ω__73', (function() {
-          try {
-            return fn(1, 2, 3, 4);
-          } catch (error) {
-            e = error;
-            return red(reverse(e.message));
+        this.eq((Ωnfat___2 = function() {
+          return fn(1);
+        }), {
+          a: 1,
+          b: void 0,
+          c: void 0,
+          cfg: {
+            a: 1
           }
-        })());
-        //.....................................................................................................
-        echo();
-        info('Ω__74', fn(1, {}));
-        info('Ω__75', fn(1, 2, {}));
-        info('Ω__76', fn(1, 2, 3, {}));
-        info('Ω__77', (function() {
-          try {
-            return fn(1, 2, 3, 4, {});
-          } catch (error) {
-            e = error;
-            return red(reverse(e.message));
+        });
+        this.eq((Ωnfat___3 = function() {
+          return fn(1, 2);
+        }), {
+          a: 1,
+          b: 2,
+          c: void 0,
+          cfg: {
+            a: 1,
+            b: 2
           }
-        })());
-        //.....................................................................................................
-        echo();
-        info('Ω__78', fn(1, {
-          b: 88
-        }));
-        info('Ω__79', fn(1, 2, {
-          b: 88
-        }));
-        info('Ω__80', fn(1, 2, 3, {
-          b: 88
-        }));
-        info('Ω__81', (function() {
-          try {
-            return fn(1, 2, 3, 4, {
-              b: 88
-            });
-          } catch (error) {
-            e = error;
-            return red(reverse(e.message));
+        });
+        this.eq((Ωnfat___4 = function() {
+          return fn(1, 2, 3);
+        }), {
+          a: 1,
+          b: 2,
+          c: 3,
+          cfg: {
+            a: 1,
+            b: 2,
+            c: 3
           }
-        })());
+        });
+        this.throws((Ωnfat___5 = function() {
+          return fn(1, 2, 3, 4);
+        }), /expected up to 3 positional arguments plus one POD, got 4 positional arguments/);
+        this.eq((Ωnfat___6 = function() {
+          return fn(1, {});
+        }), {
+          a: 1,
+          b: void 0,
+          c: void 0,
+          cfg: {
+            a: 1
+          }
+        });
+        this.eq((Ωnfat___7 = function() {
+          return fn(1, 2, {});
+        }), {
+          a: 1,
+          b: 2,
+          c: void 0,
+          cfg: {
+            a: 1,
+            b: 2
+          }
+        });
+        this.eq((Ωnfat___8 = function() {
+          return fn(1, 2, 3, {});
+        }), {
+          a: 1,
+          b: 2,
+          c: 3,
+          cfg: {
+            a: 1,
+            b: 2,
+            c: 3
+          }
+        });
+        this.throws((Ωnfat___9 = function() {
+          return fn(1, 2, 3, 4, {});
+        }), /expected up to 4 arguments, got 5/);
+        this.eq((Ωnfat__10 = function() {
+          return fn(1, {
+            b: 88
+          });
+        }), {
+          a: 1,
+          b: 88,
+          c: void 0,
+          cfg: {
+            b: 88,
+            a: 1
+          }
+        });
+        this.eq((Ωnfat__11 = function() {
+          return fn(1, 2, {
+            b: 88
+          });
+        }), {
+          a: 1,
+          b: 2,
+          c: void 0,
+          cfg: {
+            b: 2,
+            a: 1
+          }
+        });
+        this.eq((Ωnfat__12 = function() {
+          return fn(1, 2, 3, {
+            b: 88
+          });
+        }), {
+          a: 1,
+          b: 2,
+          c: 3,
+          cfg: {
+            b: 2,
+            a: 1,
+            c: 3
+          }
+        });
+        this.throws((Ωnfat__13 = function() {
+          return fn(1, 2, 3, 4, {
+            b: 88
+          });
+        }), /expected up to 4 arguments, got 5/);
         //.....................................................................................................
-        return null;
-        this.eq((Ωcltt__48 = function() {
-          return std.text.isa('');
-        }), true);
         return null;
       })();
       //.......................................................................................................
