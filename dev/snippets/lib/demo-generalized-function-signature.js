@@ -479,7 +479,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_nfa = function() {
-    var Arity_error, Not_implemented_error, get_signature, gnd, nfa, optional, pod_prototypes;
+    var Arity_error, Not_implemented_error, Value_mismatch_error, e, get_signature, gnd, nfa, optional, pod_prototypes;
     optional = Symbol('optional');
     pod_prototypes = Object.freeze([null, Object.getPrototypeOf({})]);
     gnd = {
@@ -493,6 +493,7 @@
     //=========================================================================================================
     Arity_error = class Arity_error extends Error {};
     Not_implemented_error = class Not_implemented_error extends Error {};
+    Value_mismatch_error = class Value_mismatch_error extends Error {};
     //=========================================================================================================
     get_signature = function(f) {
       /* thx to https://github.com/sindresorhus/identifier-regex */
@@ -543,10 +544,10 @@
 
      */
     nfa = function(f) {
-      var arity, disposition, dispositions, i, idx, len, name, names, positional_names, signature;
+      var arity, disposition, dispositions, i, idx, len, name, names, pos_names, signature;
       signature = get_signature(f);
       names = Object.keys(signature);
-      positional_names = names.slice(0, +(names.length - 2) + 1 || 9e9);
+      pos_names = names.slice(0, +(names.length - 2) + 1 || 9e9);
       arity = names.length;
       dispositions = (function() {
         var i, len, results;
@@ -568,30 +569,49 @@
       }
       //.......................................................................................................
       return function(...P) {
-        var cfg, j, len1, value;
+        var Q, j, len1, nme_value, pos_value;
         //.....................................................................................................
         if (P.length > arity) {
-          throw new Arity_error(`Ω__67 expected up to ${arity} arguments, got ${P.length}`);
+          throw new Arity_error(`Ω__66 expected up to ${arity} arguments, got ${P.length}`);
         }
         //.....................................................................................................
         if (!gnd.pod.isa(P.at(-1))) {
           if (P.length > arity - 1) {
-            throw new Arity_error(`Ω__68 expected up to ${arity - 1} positional arguments plus one POD`);
+            throw new Arity_error(`Ω__67 expected up to ${arity - 1} positional arguments plus one POD, got ${P.length} positional arguments`);
           }
           P.push({}); // Object.create null
+        } else {
+          /* NOTE copy object so we can modify it */
+          // P[ P.length - 1 ] = Object.assign ( Object.create null ), P.at -1
+          P[P.length - 1] = Object.assign({}, P.at(-1));
         }
         //.....................................................................................................
         while (P.length < arity) {
           P.splice(P.length - 1, 0, void 0);
         }
         //.....................................................................................................
-        cfg = P.at(-1);
-        for (idx = j = 0, len1 = positional_names.length; j < len1; idx = ++j) {
-          name = positional_names[idx];
-          if ((P[idx] === void 0) && ((value = cfg[name]) !== void 0)) {
-            P[idx] = value;
-          } else if ((cfg[name] === void 0) && ((value = P[idx]) !== void 0)) {
-            cfg[name] = value;
+        /* TAINT use Q = P.pop(), f.call @, P..., Q */
+        Q = P.at(-1);
+        for (idx = j = 0, len1 = pos_names.length; j < len1; idx = ++j) {
+          name = pos_names[idx];
+          pos_value = P[idx];
+          nme_value = Q[name];
+          switch (true) {
+            case (pos_value === void 0) && (nme_value === void 0):
+              null;
+              break;
+            case (pos_value === void 0) && (nme_value !== void 0):
+              P[idx] = nme_value;
+              break;
+            case (pos_value !== void 0) && (nme_value === void 0):
+              Q[name] = pos_value;
+              break;
+            default:
+              /* TAINT treat acc to value mismatch resolution strategy */
+              // unless pos_value is nme_value                                   # strategy: 'error'
+              //   throw new Value_mismatch_error "Ω__68"
+              // P[ idx  ] = nme_value                                           # strategy: 'named'
+              Q[name] = pos_value; // strategy: 'positional'
           }
         }
         //.....................................................................................................
@@ -603,11 +623,55 @@
       return {a, b, c, cfg};
     });
     // f = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
-    // help 'Ω__70', get_fn_args f
+    // help 'Ω__69', get_fn_args f
     // if signature?
-    info('Ω__71', f(1));
-    info('Ω__72', f(1, 2));
-    info('Ω__73', f(1, 2, 3));
+    //.........................................................................................................
+    echo();
+    info('Ω__70', f(1));
+    info('Ω__71', f(1, 2));
+    info('Ω__72', f(1, 2, 3));
+    info('Ω__73', (function() {
+      try {
+        return f(1, 2, 3, 4);
+      } catch (error) {
+        e = error;
+        return red(reverse(e.message));
+      }
+    })());
+    //.........................................................................................................
+    echo();
+    info('Ω__74', f(1, {}));
+    info('Ω__75', f(1, 2, {}));
+    info('Ω__76', f(1, 2, 3, {}));
+    info('Ω__77', (function() {
+      try {
+        return f(1, 2, 3, 4, {});
+      } catch (error) {
+        e = error;
+        return red(reverse(e.message));
+      }
+    })());
+    //.........................................................................................................
+    echo();
+    info('Ω__78', f(1, {
+      b: 88
+    }));
+    info('Ω__79', f(1, 2, {
+      b: 88
+    }));
+    info('Ω__80', f(1, 2, 3, {
+      b: 88
+    }));
+    info('Ω__81', (function() {
+      try {
+        return f(1, 2, 3, 4, {
+          b: 88
+        });
+      } catch (error) {
+        e = error;
+        return red(reverse(e.message));
+      }
+    })());
     //.........................................................................................................
     return null;
   };
