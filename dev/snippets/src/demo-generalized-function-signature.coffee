@@ -22,6 +22,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { f }                     = require '../../../apps/effstring'
 { gold
   blue
+  red
   reverse
   bold                  } = GUY.trm
 
@@ -193,13 +194,15 @@ demo_call_styles = ->
 demo_get_parameter_names = ->
   get_fn_args = ( require 'fn-args' ).default
   get_signature = ( f ) ->
+    ### thx to https://github.com/sindresorhus/identifier-regex ###
+    jsid_re              = /// ^ [ $ _ \p{ID_Start} ] [ $ _ \u200C \u200D \p{ID_Continue} ]* $ ///sv
     debug()
     body    = f.toString()
     kernel  = body.replace /// ^ [^ \( ]* \( \s* ( [^ \) ]* ) \s* \) .* $ ///sv, '$1'
     parts   = kernel.split /// , \s* ///sv
     # urge 'Ω__20', rpr body
-    urge 'Ω__21', rpr kernel
-    urge 'Ω__22', rpr parts
+    # urge 'Ω__21', rpr kernel
+    # urge 'Ω__22', rpr parts
     $names  = []
     # R       = { $names, }
     R       = {}
@@ -212,52 +215,192 @@ demo_get_parameter_names = ->
           name          = match.groups.name
           disposition   = 'optional'
         else
+          unless ( part.match jsid_re )?
+            throw new Error "Ω__23 not compliant: #{rpr part} in #{rpr kernel}"
           name          = part
           disposition   = 'bare'
-      info 'Ω__24', ( rpr part ), { name, disposition, }
+      # info 'Ω__24', ( rpr part ), { name, disposition, }
       R[ name ] = disposition
       # R[ name ] = { name, disposition, }
       $names.push name
     return R
   optional = Symbol 'optional'
   #.........................................................................................................
-  # do =>
-  #   ```
-  #   const f = function (
-  #     a,
-  #     b = ', e = 7,',
-  #     /* d = 9, */
-  #     c = 8,
-  #     ...P
-  #     ) {}
-  #   ```
-  #   debug 'Ω__25', get_signature f
-  #   debug 'Ω__26', get_fn_args f
-  #   return null
-  # #.........................................................................................................
-  # do =>
-  #   f = ( a, b = 4 * ( sqrt 8 ), c = ( foo bar ) ) ->
-  #   debug 'Ω__27', get_signature f
-  #   debug 'Ω__28', get_fn_args f
-  #   return null
+  do =>
+    ```
+    const f = function (
+      a,
+      b = ', e = 7,',
+      /* d = 9, */
+      c = 8,
+      ...P
+      ) {}
+    ```
+    debug 'Ω__25', try get_signature f catch e then (red reverse e.message )
+    # debug 'Ω__26', get_fn_args f
+    return null
+  #.........................................................................................................
+  do =>
+    f = ( a, b = 4 * ( sqrt 8 ), c = ( foo bar ) ) ->
+    debug 'Ω__27', try get_signature f catch e then (red reverse e.message )
+    # debug 'Ω__28', get_fn_args f
+    return null
+  #.........................................................................................................
+  do =>
+    f = ( a, b, c ) -> { $A: [ arguments..., ], a, b, c, }
+    help 'Ω__29', try signature = get_signature f catch e then (red reverse e.message )
+    # help 'Ω__30', get_fn_args f
+    if signature?
+      info 'Ω__31', f 1
+      info 'Ω__32', f 1, 2
+      info 'Ω__33', f 1, 2, 3
+    return null
+  #.........................................................................................................
+  do =>
+    f = ( a, b, c = optional ) -> { $A: [ arguments..., ], a, b, c, }
+    help 'Ω__34', try signature = get_signature f catch e then (red reverse e.message )
+    # help 'Ω__35', get_fn_args f
+    if signature?
+      info 'Ω__36', f 1
+      info 'Ω__37', f 1, 2
+      info 'Ω__38', f 1, 2, 3
+    return null
+  #.........................................................................................................
+  do =>
+    f = ( a, b = optional, c ) -> { $A: [ arguments..., ], a, b, c, }
+    help 'Ω__39', try signature = get_signature f catch e then (red reverse e.message )
+    # help 'Ω__40', get_fn_args f
+    if signature?
+      info 'Ω__41', f 1
+      info 'Ω__42', f 1, 2
+      info 'Ω__43', f 1, 2, 3
+    return null
   #.........................................................................................................
   do =>
     f = ( a, b = optional, c = optional ) -> { $A: [ arguments..., ], a, b, c, }
-    help 'Ω__29', get_signature f
-    help 'Ω__30', get_fn_args f
-    help 'Ω__31', f 1
-    help 'Ω__32', f 1, 2
-    help 'Ω__33', f 1, 2, 3
+    help 'Ω__44', try signature = get_signature f catch e then (red reverse e.message )
+    # help 'Ω__45', get_fn_args f
+    if signature?
+      info 'Ω__46', f 1
+      info 'Ω__47', f 1, 2
+      info 'Ω__48', f 1, 2, 3
     return null
   #.........................................................................................................
   do =>
     f = ( a, b=optional, c... ) -> { $A: [ arguments..., ], a, b, c, }
-    help 'Ω__34', get_signature f
-    help 'Ω__35', get_fn_args f
-    help 'Ω__36', f 1
-    help 'Ω__37', f 1, 2
-    help 'Ω__38', f 1, 2, 3
+    help 'Ω__49', try signature = get_signature f catch e then (red reverse e.message )
+    # help 'Ω__50', get_fn_args f
+    if signature?
+      info 'Ω__51', f 1
+      info 'Ω__52', f 1, 2
+      info 'Ω__53', f 1, 2, 3
     return null
+  #.........................................................................................................
+  do =>
+    optionall = 0
+    f = ( a, b = optionall, c... ) -> { $A: [ arguments..., ], a, b, c, }
+    help 'Ω__54', try signature = get_signature f catch e then (red reverse e.message )
+    # help 'Ω__55', get_fn_args f
+    if signature?
+      info 'Ω__56', f 1
+      info 'Ω__57', f 1, 2
+      info 'Ω__58', f 1, 2, 3
+    return null
+  #.........................................................................................................
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+demo_nfa = ->
+  optional        = Symbol 'optional'
+  pod_prototypes  = Object.freeze [ null, ( Object.getPrototypeOf {} ), ]
+  gnd             =
+    pod: isa: ( x ) -> x? and ( Object.getPrototypeOf x ) in pod_prototypes
+  #=========================================================================================================
+  class Arity_error extends Error
+  class Not_implemented_error extends Error
+  #=========================================================================================================
+  get_signature = ( f ) ->
+    ### thx to https://github.com/sindresorhus/identifier-regex ###
+    jsid_re              = /// ^ [ $ _ \p{ID_Start} ] [ $ _ \u200C \u200D \p{ID_Continue} ]* $ ///sv
+    debug()
+    body    = f.toString()
+    kernel  = body.replace /// ^ [^ \( ]* \( \s* ( [^ \) ]* ) \s* \) .* $ ///sv, '$1'
+    parts   = kernel.split /// , \s* ///sv
+    # urge 'Ω__59', rpr body
+    # urge 'Ω__60', rpr kernel
+    # urge 'Ω__61', rpr parts
+    $names  = []
+    # R       = { $names, }
+    R       = {}
+    for part in parts
+      switch true
+        when ( match = part.match /// ^ [.]{3} \s* (?<name> \S+ ) \s* $ ///sv )?
+          name          = match.groups.name
+          disposition   = 'soak'
+        when ( match = part.match /// ^ (?<name> \S+ ) \s* = \s* optional $///sv )?
+          name          = match.groups.name
+          disposition   = 'optional'
+        else
+          unless ( part.match jsid_re )?
+            throw new Error "Ω__62 not compliant: #{rpr part} in #{rpr kernel}"
+          name          = part
+          disposition   = 'bare'
+      # info 'Ω__63', ( rpr part ), { name, disposition, }
+      R[ name ] = disposition
+      # R[ name ] = { name, disposition, }
+      $names.push name
+    return R
+  #=========================================================================================================
+  ### Normalize Function Arguments
+
+  ## To Do
+
+  * **`[—]`** implement class `Template`, argument `template`
+  * **`[—]`** implement validation
+
+  ###
+  nfa = ( f ) ->
+    signature         = get_signature f
+    names             = Object.keys signature
+    positional_names  = names[ .. names.length - 2 ]
+    arity             = names.length
+    dispositions      = ( signature[ name ] for name in names )
+    debug 'Ω__64', signature
+    #.......................................................................................................
+    for disposition, idx in dispositions
+      continue if disposition is 'bare'
+      throw new Not_implemented_error "Ω__65 encountered unimplemented disposition #{rpr disposition} for parameter #names[ idx ]"
+    #.......................................................................................................
+    return ( P... ) ->
+      #.....................................................................................................
+      if P.length > arity
+        throw new Arity_error "Ω__67 expected up to #{arity} arguments, got #{P.length}"
+      #.....................................................................................................
+      unless gnd.pod.isa P.at -1
+        if P.length > arity - 1
+          throw new Arity_error "Ω__68 expected up to #{arity - 1} positional arguments plus one POD"
+        P.push {} # Object.create null
+      #.....................................................................................................
+      while P.length < arity
+        P.splice P.length - 1, 0, undefined
+      #.....................................................................................................
+      cfg = P.at -1
+      for name, idx in positional_names
+        if      ( P[ idx ]    is undefined ) and ( ( value = cfg[ name ] ) isnt undefined )
+          P[ idx ] = value
+        else if ( cfg[ name ] is undefined ) and ( ( value =   P[ idx ]  ) isnt undefined )
+          cfg[ name ] = value
+      #.....................................................................................................
+      return f.call @, P...
+  #=========================================================================================================
+  f = nfa ( a, b, c, cfg ) -> { a, b, c, cfg, }
+  # f = ( a, b, c, cfg ) -> { $A: [ arguments..., ], a, b, c, cfg, }
+  # help 'Ω__70', get_fn_args f
+  # if signature?
+  info 'Ω__71', f 1
+  info 'Ω__72', f 1, 2
+  info 'Ω__73', f 1, 2, 3
+  #.........................................................................................................
   return null
 
 
@@ -268,7 +411,8 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test @cleartype_tasks
   # # ( new Test guytest_cfg ).test @cleartype_tasks.builtins
   # demo_generalized_signature()
-  demo_get_parameter_names()
+  # demo_get_parameter_names()
+  demo_nfa()
   # demo_call_styles()
   # ```f = ( a, b, ...P, cfg ) => {}```
 
