@@ -20,6 +20,8 @@ GUY                       = require 'guy'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 { f }                     = require '../../../apps/effstring'
+{ red
+  reverse               } = GUY.trm
 
 
 
@@ -33,8 +35,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
     NFA = require '../../../apps/normalize-function-arguments'
     { nfa
       get_signature } = NFA
-    { red
-      reverse } = GUY.trm
     #.......................................................................................................
     do =>
       fn = nfa ( a, b, c, cfg ) -> { a, b, c, cfg, }
@@ -79,36 +79,117 @@ GTNG                      = require '../../../apps/guy-test-NG'
       return null
     #.......................................................................................................
     do =>
-      fn = nfa () -> {}
-      frz = Object.freeze
-      #.....................................................................................................
-      @eq     ( Ωnfat__29 = -> fn()                           ), {}
-      @throws ( Ωnfat__30 = -> fn 1, 2, 3, 4                  ), /expected up to 0 positional arguments, got 4/
-      @throws ( Ωnfat__31 = -> fn                 {}          ), /expected up to 0 named arguments objects, got 1/
-      @throws ( Ωnfat__32 = -> fn 1, 2, 3, 4,     {}          ), /expected up to 0 named arguments objects, got 1/
-      @throws ( Ωnfat__33 = -> fn                 { b: 88, }  ), /expected up to 0 named arguments objects, got 1/
-      @throws ( Ωnfat__34 = -> fn 1, 2, 3, 4,     { b: 88, }  ), /expected up to 0 named arguments objects, got 1/
-      @throws ( Ωnfat__35 = -> fn             frz { b: 88, }  ), /expected up to 0 named arguments objects, got 1/
-      @throws ( Ωnfat__36 = -> fn 1, 2, 3, 4, frz { b: 88, }  ), /expected up to 0 named arguments objects, got 1/
-      #.....................................................................................................
+      @throws ( Ωnfat__29 = -> nfa () -> {} ), /not compliant/
       return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  get_signature: ->
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      get_signature } = NFA
     #.......................................................................................................
     do =>
       optional = null
       ```
       const empty_fn = function (
 
+        cfg
+
         ) {};
       ```
-      @eq     ( Ωnfat__37 = -> get_signature ( a                        ) ->  ), { a: 'bare', }
-      @throws ( Ωnfat__38 = -> get_signature ( a = optional             ) ->  ), /not compliant/
-      @eq     ( Ωnfat__39 = -> get_signature empty_fn                         ), {}
-      @eq     ( Ωnfat__40 = -> get_signature                              ->  ), {}
-      @eq     ( Ωnfat__41 = -> get_signature ( a, b, c                        ) ->  ), { a: 'bare', b: 'bare', c: 'bare', }
+      @eq     ( Ωnfat__30 = -> get_signature ( a, cfg             ) ->  ), { a: 'bare', cfg: 'bare', }
+      @throws ( Ωnfat__31 = -> get_signature ( a = optional, cfg  ) ->  ), /not compliant/
+      @throws ( Ωnfat__32 = -> get_signature ( a                  ) ->  ), /not compliant/
+      @eq     ( Ωnfat__33 = -> get_signature empty_fn                   ), { cfg: 'bare', }
+      @eq     ( Ωnfat__34 = -> get_signature ( cfg )                ->  ), { cfg: 'bare', }
+      @eq     ( Ωnfat__35 = -> get_signature ( a, b, c, cfg       ) ->  ), { a: 'bare', b: 'bare', c: 'bare', cfg: 'bare', }
       # ### TAINT limitation of CoffeeScript: signature runs up to soak, trailing paramters handled inside function body ###
-      # @eq     ( Ωnfat__42 = -> get_signature ( a, b..., c               ) ->  ), { a: 'bare', b: 'soak', }
-      @throws ( Ωnfat__43 = -> get_signature ( a, b..., c               ) ->  ), /not compliant/
-      @throws ( Ωnfat__44 = -> get_signature ( a, b = null              ) ->  ), /not compliant/
+      # @eq     ( Ωnfat__36 = -> get_signature ( a, b..., c       ) ->  ), { a: 'bare', b: 'soak', }
+      @throws ( Ωnfat__37 = -> get_signature ( a, b..., c, cfg    ) ->  ), /not compliant/
+      @throws ( Ωnfat__38 = -> get_signature ( a, b = null, cfg   ) ->  ), /not compliant/
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  template_class: ->
+    NFA = require '../../../apps/normalize-function-arguments'
+    { Template } = NFA
+    #.......................................................................................................
+    do =>
+      @eq     ( Ωnfat__40 = -> new Template { arc: 10, bo: 11, cy: 12, din: 13; eps: 14, foo: 15, } ), { arc: 10, bo: 11, cy: 12, din: 13; eps: 14, foo: 15, }
+    #.......................................................................................................
+    do =>
+      mylist_1      = []
+      mylist_2      = []
+      t = new Template
+        mylist_1:     mylist_1
+        mylist_2:     -> mylist_2
+        mylist_3:     -> []
+      mylist_31 = t.mylist_3
+      mylist_32 = t.mylist_3
+      @eq     ( Ωnfat__42 = -> t ), { mylist_1: [], mylist_2: [], mylist_3: [], }
+      @eq     ( Ωnfat__43 = -> t.mylist_1   is    mylist_1  ), true
+      @eq     ( Ωnfat__44 = -> t.mylist_2   is    mylist_2  ), true
+      @eq     ( Ωnfat__45 = -> t.mylist_1   isnt  mylist_2  ), true
+      @eq     ( Ωnfat__46 = -> t.mylist_31  isnt  mylist_32 ), true
+      mylist_1.push 'A'
+      mylist_2.push 'B'
+      mylist_31.push 'C'
+      @eq     ( Ωnfat__47 = -> t ), { mylist_1: [ 'A', ], mylist_2: [ 'B', ], mylist_3: [], }
+      return null
+    #.......................................................................................................
+    do =>
+      cfg =
+        name:
+          first:    'John'
+          last:     'Doe'
+      t_1 = new Template cfg
+      t_2 = new Template cfg
+      @eq     ( Ωnfat__49 = -> t_1                        ), { name: { first: 'John', last: 'Doe', }, }
+      @eq     ( Ωnfat__50 = -> t_1.name isnt cfg.name     ), true
+      @eq     ( Ωnfat__51 = -> t_1                        ), { name: { first: 'John', last: 'Doe', }, }
+      @eq     ( Ωnfat__52 = -> t_2.name isnt cfg.name     ), true
+      @eq     ( Ωnfat__53 = -> t_1.name isnt t_2.name     ), true
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  template_setting: ->
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      internals } = NFA
+    # #.......................................................................................................
+    # ### NOTE for later: preserve managed properties? ###
+    # do =>
+    #   template =
+    #     arc:      10
+    #     bo:       11
+    #     cy:       12
+    #     sum:      -> @arc + @bo + @cy
+    #   fn = nfa { template, }, ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, sum: cfg.sum, }
+    #   # fn = nfa ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, sum: cfg.sum, }
+    #   debug 'Ωnfat__54', internals.gnd.nfa_cfg
+    #   debug 'Ωnfat__55', internals.gnd.nfa_cfg.template
+    #   debug 'Ωnfat__56', fn 1, 2, 3, {}
+    #   @eq     ( Ωnfat__57 = -> fn 1, 2, 3, {} ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
+    #   @eq     ( Ωnfat__58 = -> fn 1, 2, 3     ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
+    #   return null
+    #.......................................................................................................
+    do =>
+      template =
+        arc:      10
+        bo:       11
+        cy:       12
+      fn = nfa { template, }, ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, }
+      @eq     ( Ωnfat__60 = -> fn 20, 21, 22, {} ), { arc: 20, bo: 21, cy: 22, cfg: { arc: 20, bo: 21, cy: 22, }, }
+      @eq     ( Ωnfat__61 = -> fn()              ), { arc: 10, bo: 11, cy: 12, cfg: { arc: 10, bo: 11, cy: 12, }, }
+      @eq     ( Ωnfat__62 = -> fn 20             ), { arc: 20, bo: 11, cy: 12, cfg: { arc: 20, bo: 11, cy: 12, }, }
+      @eq     ( Ωnfat__63 = -> fn 20, 21         ), { arc: 20, bo: 21, cy: 12, cfg: { arc: 20, bo: 21, cy: 12, }, }
+      @eq     ( Ωnfat__64 = -> fn 20, 21, 22     ), { arc: 20, bo: 21, cy: 22, cfg: { arc: 20, bo: 21, cy: 22, }, }
+      return null
     #.......................................................................................................
     return null
 
