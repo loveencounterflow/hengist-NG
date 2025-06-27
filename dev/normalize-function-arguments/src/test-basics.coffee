@@ -113,12 +113,39 @@ GTNG                      = require '../../../apps/guy-test-NG'
     return null
 
   #---------------------------------------------------------------------------------------------------------
+  get_signature: ->
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      get_signature } = NFA
+    #.......................................................................................................
+    do =>
+      optional = null
+      ```
+      const empty_fn = function (
+
+        cfg
+
+        ) {};
+      ```
+      @eq     ( Ωnfat__39 = -> get_signature ( a, cfg             ) ->  ), { names: [ 'a', 'cfg' ], q_idx: 1 }
+      @throws ( Ωnfat__40 = -> get_signature ( a = optional, cfg  ) ->  ), /not compliant/
+      @throws ( Ωnfat__41 = -> get_signature ( a                  ) ->  ), /not compliant/
+      @eq     ( Ωnfat__42 = -> get_signature empty_fn                   ), { names: [ 'cfg' ], q_idx: 0 }
+      @eq     ( Ωnfat__43 = -> get_signature ( cfg )                ->  ), { names: [ 'cfg' ], q_idx: 0 }
+      @eq     ( Ωnfat__44 = -> get_signature ( a, b, c, cfg       ) ->  ), { names: [ 'a', 'b', 'c', 'cfg' ], q_idx: 3 }
+      # ### TAINT limitation of CoffeeScript: signature runs up to soak, trailing paramters handled inside function body ###
+      # @eq     ( Ωnfat__45 = -> get_signature ( a, b..., c       ) ->  ), { a: 'bare', b: 'soak', }
+      @throws ( Ωnfat__46 = -> get_signature ( a, b..., c, cfg    ) ->  ), /not compliant/
+      @throws ( Ωnfat__47 = -> get_signature ( a, b = null, cfg   ) ->  ), /not compliant/
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   template_class: ->
     NFA = require '../../../apps/normalize-function-arguments'
     { Template } = NFA
     #.......................................................................................................
     do =>
-      @eq     ( Ωnfat__40 = -> new Template { arc: 10, bo: 11, cy: 12, din: 13; eps: 14, foo: 15, } ), { arc: 10, bo: 11, cy: 12, din: 13; eps: 14, foo: 15, }
+      @eq     ( Ωnfat__48 = -> new Template { arc: 10, bo: 11, cy: 12, din: 13; eps: 14, foo: 15, } ), { arc: 10, bo: 11, cy: 12, din: 13; eps: 14, foo: 15, }
     #.......................................................................................................
     do =>
       mylist_1      = []
@@ -129,15 +156,15 @@ GTNG                      = require '../../../apps/guy-test-NG'
         mylist_3:     -> []
       mylist_31 = t.mylist_3
       mylist_32 = t.mylist_3
-      @eq     ( Ωnfat__42 = -> t ), { mylist_1: [], mylist_2: [], mylist_3: [], }
-      @eq     ( Ωnfat__43 = -> t.mylist_1   is    mylist_1  ), true
-      @eq     ( Ωnfat__44 = -> t.mylist_2   is    mylist_2  ), true
-      @eq     ( Ωnfat__45 = -> t.mylist_1   isnt  mylist_2  ), true
-      @eq     ( Ωnfat__46 = -> t.mylist_31  isnt  mylist_32 ), true
+      @eq     ( Ωnfat__49 = -> t ), { mylist_1: [], mylist_2: [], mylist_3: [], }
+      @eq     ( Ωnfat__50 = -> t.mylist_1   is    mylist_1  ), true
+      @eq     ( Ωnfat__51 = -> t.mylist_2   is    mylist_2  ), true
+      @eq     ( Ωnfat__52 = -> t.mylist_1   isnt  mylist_2  ), true
+      @eq     ( Ωnfat__53 = -> t.mylist_31  isnt  mylist_32 ), true
       mylist_1.push 'A'
       mylist_2.push 'B'
       mylist_31.push 'C'
-      @eq     ( Ωnfat__47 = -> t ), { mylist_1: [ 'A', ], mylist_2: [ 'B', ], mylist_3: [], }
+      @eq     ( Ωnfat__54 = -> t ), { mylist_1: [ 'A', ], mylist_2: [ 'B', ], mylist_3: [], }
       return null
     #.......................................................................................................
     do =>
@@ -147,11 +174,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
           last:     'Doe'
       t_1 = new Template cfg
       t_2 = new Template cfg
-      @eq     ( Ωnfat__49 = -> t_1                        ), { name: { first: 'John', last: 'Doe', }, }
-      @eq     ( Ωnfat__50 = -> t_1.name isnt cfg.name     ), true
-      @eq     ( Ωnfat__51 = -> t_1                        ), { name: { first: 'John', last: 'Doe', }, }
-      @eq     ( Ωnfat__52 = -> t_2.name isnt cfg.name     ), true
-      @eq     ( Ωnfat__53 = -> t_1.name isnt t_2.name     ), true
+      @eq     ( Ωnfat__55 = -> t_1                        ), { name: { first: 'John', last: 'Doe', }, }
+      @eq     ( Ωnfat__56 = -> t_1.name isnt cfg.name     ), true
+      @eq     ( Ωnfat__57 = -> t_1                        ), { name: { first: 'John', last: 'Doe', }, }
+      @eq     ( Ωnfat__58 = -> t_2.name isnt cfg.name     ), true
+      @eq     ( Ωnfat__59 = -> t_1.name isnt t_2.name     ), true
       return null
     #.......................................................................................................
     return null
@@ -171,11 +198,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #     sum:      -> @arc + @bo + @cy
     #   fn = nfa { template, }, ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, sum: cfg.sum, }
     #   # fn = nfa ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, sum: cfg.sum, }
-    #   debug 'Ωnfat__54', internals.gnd.nfa_cfg
-    #   debug 'Ωnfat__55', internals.gnd.nfa_cfg.template
-    #   debug 'Ωnfat__56', fn 1, 2, 3, {}
-    #   @eq     ( Ωnfat__57 = -> fn 1, 2, 3, {} ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
-    #   @eq     ( Ωnfat__58 = -> fn 1, 2, 3     ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
+    #   debug 'Ωnfat__60', internals.gnd.nfa_cfg
+    #   debug 'Ωnfat__61', internals.gnd.nfa_cfg.template
+    #   debug 'Ωnfat__62', fn 1, 2, 3, {}
+    #   @eq     ( Ωnfat__63 = -> fn 1, 2, 3, {} ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
+    #   @eq     ( Ωnfat__64 = -> fn 1, 2, 3     ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
     #   return null
     #.......................................................................................................
     do =>
@@ -184,11 +211,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
         bo:       11
         cy:       12
       fn = nfa { template, }, ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, }
-      @eq     ( Ωnfat__60 = -> fn 20, 21, 22, {} ), { arc: 20, bo: 21, cy: 22, cfg: { arc: 20, bo: 21, cy: 22, }, }
-      @eq     ( Ωnfat__61 = -> fn()              ), { arc: 10, bo: 11, cy: 12, cfg: { arc: 10, bo: 11, cy: 12, }, }
-      @eq     ( Ωnfat__62 = -> fn 20             ), { arc: 20, bo: 11, cy: 12, cfg: { arc: 20, bo: 11, cy: 12, }, }
-      @eq     ( Ωnfat__63 = -> fn 20, 21         ), { arc: 20, bo: 21, cy: 12, cfg: { arc: 20, bo: 21, cy: 12, }, }
-      @eq     ( Ωnfat__64 = -> fn 20, 21, 22     ), { arc: 20, bo: 21, cy: 22, cfg: { arc: 20, bo: 21, cy: 22, }, }
+      @eq     ( Ωnfat__65 = -> fn 20, 21, 22, {} ), { arc: 20, bo: 21, cy: 22, cfg: { arc: 20, bo: 21, cy: 22, }, }
+      @eq     ( Ωnfat__66 = -> fn()              ), { arc: 10, bo: 11, cy: 12, cfg: { arc: 10, bo: 11, cy: 12, }, }
+      @eq     ( Ωnfat__67 = -> fn 20             ), { arc: 20, bo: 11, cy: 12, cfg: { arc: 20, bo: 11, cy: 12, }, }
+      @eq     ( Ωnfat__68 = -> fn 20, 21         ), { arc: 20, bo: 21, cy: 12, cfg: { arc: 20, bo: 21, cy: 12, }, }
+      @eq     ( Ωnfat__69 = -> fn 20, 21, 22     ), { arc: 20, bo: 21, cy: 22, cfg: { arc: 20, bo: 21, cy: 22, }, }
       return null
     #.......................................................................................................
     return null
@@ -197,7 +224,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 if module is require.main then await do =>
+  guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @nfa_tasks
-  # ( new Test guytest_cfg ).test @nfa_tasks.builtins
+  ( new Test guytest_cfg ).test { get_signature: @nfa_tasks.get_signature }
