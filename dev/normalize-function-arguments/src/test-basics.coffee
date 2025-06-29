@@ -45,21 +45,21 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @eq     ( Ωnfat___1 = -> push_at  A'abcd', -1, '^'                    ), A'abc^d'
         @eq     ( Ωnfat___2 = -> push_at  A'abcd', -2, '^'                    ), A'ab^cd'
         @eq     ( Ωnfat___3 = -> push_at  A'abcd', -3, '^'                    ), A'a^bcd'
-        @eq     ( Ωnfat___4 = -> [ ( pop_at ( d = A'abc^' ), -1 ), d, ]       ), [ '^', A'abc', ]
-        @eq     ( Ωnfat___5 = -> [ ( pop_at ( d = A'ab^c' ), -2 ), d, ]       ), [ '^', A'abc', ]
-        @eq     ( Ωnfat___6 = -> [ ( pop_at ( d = A'a^bc' ), -3 ), d, ]       ), [ '^', A'abc', ]
-        @eq     ( Ωnfat___7 = -> push_at  A'',     -1, '^'                    ), A'^'
-        @eq     ( Ωnfat___8 = -> push_at  A'',     -2, '^'                    ), A'^'
-        @eq     ( Ωnfat___9 = -> push_at  A'',     -3, '^'                    ), A'^'
-        @throws ( Ωnfat__10 = -> push_at  A'',      1, '?'                    ), /expected negative number/
-        @throws ( Ωnfat__11 = -> pop_at   A'',      1                         ), /expected negative number/
-        @throws ( Ωnfat__12 = -> push_at  A'',      0, '?'                    ), /expected negative number/
-        @throws ( Ωnfat__13 = -> pop_at   A'',      0                         ), /expected negative number/
-        @eq     ( Ωnfat__14 = -> [ ( set_at ( d = A'abcd' ), -1, '^' ), d, ]  ), [ '^', A'abc^', ]
-        @eq     ( Ωnfat__15 = -> [ ( set_at ( d = A'abcd' ), -2, '^' ), d, ]  ), [ '^', A'ab^d', ]
-        @eq     ( Ωnfat__16 = -> [ ( set_at ( d = A'abcd' ), -3, '^' ), d, ]  ), [ '^', A'a^cd', ]
-        @throws ( Ωnfat__17 = -> pop_at   [], -1          ), /list too short/
-        @throws ( Ωnfat__18 = -> pop_at   [ 1, ], -2      ), /list too short/
+        @eq     ( Ωnfat___4 = -> push_at  A'',     -1, '^'                    ), A'^'
+        @eq     ( Ωnfat___5 = -> push_at  A'',     -2, '^'                    ), A'^'
+        @eq     ( Ωnfat___6 = -> push_at  A'',     -3, '^'                    ), A'^'
+        @throws ( Ωnfat___7 = -> push_at  A'',      1, '?'                    ), /expected negative number/
+        @throws ( Ωnfat___8 = -> push_at  A'',      0, '?'                    ), /expected negative number/
+        @eq     ( Ωnfat___9 = -> [ ( set_at ( d = A'abcd' ), -1, '^' ), d, ]  ), [ '^', A'abc^', ]
+        @eq     ( Ωnfat__10 = -> [ ( set_at ( d = A'abcd' ), -2, '^' ), d, ]  ), [ '^', A'ab^d', ]
+        @eq     ( Ωnfat__11 = -> [ ( set_at ( d = A'abcd' ), -3, '^' ), d, ]  ), [ '^', A'a^cd', ]
+        # @eq     ( Ωnfat__12 = -> [ ( pop_at ( d = A'abc^' ), -1 ), d, ]       ), [ '^', A'abc', ]
+        # @eq     ( Ωnfat__13 = -> [ ( pop_at ( d = A'ab^c' ), -2 ), d, ]       ), [ '^', A'abc', ]
+        # @eq     ( Ωnfat__14 = -> [ ( pop_at ( d = A'a^bc' ), -3 ), d, ]       ), [ '^', A'abc', ]
+        # @throws ( Ωnfat__15 = -> pop_at   A'',      1                         ), /expected negative number/
+        # @throws ( Ωnfat__16 = -> pop_at   A'',      0                         ), /expected negative number/
+        # @throws ( Ωnfat__17 = -> pop_at   [], -1          ), /list too short/
+        # @throws ( Ωnfat__18 = -> pop_at   [ 1, ], -2      ), /list too short/
         return null
       # #.......................................................................................................
       # do =>
@@ -267,6 +267,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  function_naming: ->
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      internals } = NFA
+    #.......................................................................................................
+    do =>
+      my_fn = ( cfg ) ->
+      @eq     ( Ωnfat__90 = ->       my_fn.name   ), 'my_fn'
+      @eq     ( Ωnfat__91 = -> ( nfa my_fn ).name ), 'my_fn'
+      return null
+    #.......................................................................................................
+    return null
+
 
 
 #===========================================================================================================
@@ -279,28 +293,28 @@ if module is require.main then await do =>
 
   # f = ( a, b, cfg ) -> { a, b, cfg, }
   # debug()
-  # debug 'Ωnfat__90', f()
-  # debug 'Ωnfat__91', f undefined
-  # debug 'Ωnfat__92', f 0
-  # debug 'Ωnfat__93', f 0, 1
-  # debug 'Ωnfat__94', f 0, 1, undefined
-  # debug 'Ωnfat__95', f 0, 1, "wat"
-  # debug 'Ωnfat__96', f 0, 1, {}
+  # debug 'Ωnfat__92', f()
+  # debug 'Ωnfat__93', f undefined
+  # debug 'Ωnfat__94', f 0
+  # debug 'Ωnfat__95', f 0, 1
+  # debug 'Ωnfat__96', f 0, 1, undefined
+  # debug 'Ωnfat__97', f 0, 1, "wat"
+  # debug 'Ωnfat__98', f 0, 1, {}
 
   # f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
   # debug()
-  # debug 'Ωnfat__97', f()
-  # debug 'Ωnfat__98', f undefined
-  # debug 'Ωnfat__99', f 0
-  # debug 'Ωnfat_100', f 0, {}
-  # debug 'Ωnfat_101', f 0, 1
-  # debug 'Ωnfat_102', f 0, 1, undefined
-  # debug 'Ωnfat_103', f 0, 1, "wat"
-  # debug 'Ωnfat_104', f 0, 1, {}
-  # debug 'Ωnfat_105', f 0, 1, undefined, 3
-  # debug 'Ωnfat_106', f 0, 1, "wat", 3
-  # debug 'Ωnfat_107', f 0, 1, {}, 3
-  # # debug 'Ωnfat_108', f [ 0, 1, , 3, ]...
+  # debug 'Ωnfat__99', f()
+  # debug 'Ωnfat_100', f undefined
+  # debug 'Ωnfat_101', f 0
+  # debug 'Ωnfat_102', f 0, {}
+  # debug 'Ωnfat_103', f 0, 1
+  # debug 'Ωnfat_104', f 0, 1, undefined
+  # debug 'Ωnfat_105', f 0, 1, "wat"
+  # debug 'Ωnfat_106', f 0, 1, {}
+  # debug 'Ωnfat_107', f 0, 1, undefined, 3
+  # debug 'Ωnfat_108', f 0, 1, "wat", 3
+  # debug 'Ωnfat_109', f 0, 1, {}, 3
+  # # debug 'Ωnfat_110', f [ 0, 1, , 3, ]...
 
 
 

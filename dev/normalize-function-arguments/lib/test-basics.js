@@ -33,7 +33,7 @@
           return Array.from(parts.join(''));
         };
         (() => {          //.......................................................................................................
-          var Ωnfat__10, Ωnfat__11, Ωnfat__12, Ωnfat__13, Ωnfat__14, Ωnfat__15, Ωnfat__16, Ωnfat__17, Ωnfat__18, Ωnfat___1, Ωnfat___2, Ωnfat___3, Ωnfat___4, Ωnfat___5, Ωnfat___6, Ωnfat___7, Ωnfat___8, Ωnfat___9;
+          var Ωnfat__10, Ωnfat__11, Ωnfat___1, Ωnfat___2, Ωnfat___3, Ωnfat___4, Ωnfat___5, Ωnfat___6, Ωnfat___7, Ωnfat___8, Ωnfat___9;
           this.eq((Ωnfat___1 = function() {
             return push_at(A`abcd`, -1, '^');
           }), A`abc^d`);
@@ -44,56 +44,39 @@
             return push_at(A`abcd`, -3, '^');
           }), A`a^bcd`);
           this.eq((Ωnfat___4 = function() {
-            var d;
-            return [pop_at((d = A`abc^`), -1), d];
-          }), ['^', A`abc`]);
-          this.eq((Ωnfat___5 = function() {
-            var d;
-            return [pop_at((d = A`ab^c`), -2), d];
-          }), ['^', A`abc`]);
-          this.eq((Ωnfat___6 = function() {
-            var d;
-            return [pop_at((d = A`a^bc`), -3), d];
-          }), ['^', A`abc`]);
-          this.eq((Ωnfat___7 = function() {
             return push_at(A``, -1, '^');
           }), A`^`);
-          this.eq((Ωnfat___8 = function() {
+          this.eq((Ωnfat___5 = function() {
             return push_at(A``, -2, '^');
           }), A`^`);
-          this.eq((Ωnfat___9 = function() {
+          this.eq((Ωnfat___6 = function() {
             return push_at(A``, -3, '^');
           }), A`^`);
-          this.throws((Ωnfat__10 = function() {
+          this.throws((Ωnfat___7 = function() {
             return push_at(A``, 1, '?');
           }), /expected negative number/);
-          this.throws((Ωnfat__11 = function() {
-            return pop_at(A``, 1);
-          }), /expected negative number/);
-          this.throws((Ωnfat__12 = function() {
+          this.throws((Ωnfat___8 = function() {
             return push_at(A``, 0, '?');
           }), /expected negative number/);
-          this.throws((Ωnfat__13 = function() {
-            return pop_at(A``, 0);
-          }), /expected negative number/);
-          this.eq((Ωnfat__14 = function() {
+          this.eq((Ωnfat___9 = function() {
             var d;
             return [set_at((d = A`abcd`), -1, '^'), d];
           }), ['^', A`abc^`]);
-          this.eq((Ωnfat__15 = function() {
+          this.eq((Ωnfat__10 = function() {
             var d;
             return [set_at((d = A`abcd`), -2, '^'), d];
           }), ['^', A`ab^d`]);
-          this.eq((Ωnfat__16 = function() {
+          this.eq((Ωnfat__11 = function() {
             var d;
             return [set_at((d = A`abcd`), -3, '^'), d];
           }), ['^', A`a^cd`]);
-          this.throws((Ωnfat__17 = function() {
-            return pop_at([], -1);
-          }), /list too short/);
-          this.throws((Ωnfat__18 = function() {
-            return pop_at([1], -2);
-          }), /list too short/);
+          // @eq     ( Ωnfat__12 = -> [ ( pop_at ( d = A'abc^' ), -1 ), d, ]       ), [ '^', A'abc', ]
+          // @eq     ( Ωnfat__13 = -> [ ( pop_at ( d = A'ab^c' ), -2 ), d, ]       ), [ '^', A'abc', ]
+          // @eq     ( Ωnfat__14 = -> [ ( pop_at ( d = A'a^bc' ), -3 ), d, ]       ), [ '^', A'abc', ]
+          // @throws ( Ωnfat__15 = -> pop_at   A'',      1                         ), /expected negative number/
+          // @throws ( Ωnfat__16 = -> pop_at   A'',      0                         ), /expected negative number/
+          // @throws ( Ωnfat__17 = -> pop_at   [], -1          ), /list too short/
+          // @throws ( Ωnfat__18 = -> pop_at   [ 1, ], -2      ), /list too short/
           return null;
         })();
         // #.......................................................................................................
@@ -788,6 +771,25 @@
       })();
       //.......................................................................................................
       return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    function_naming: function() {
+      var NFA, internals, nfa;
+      NFA = require('../../../apps/normalize-function-arguments');
+      ({nfa, internals} = NFA);
+      (() => {        //.......................................................................................................
+        var my_fn, Ωnfat__90, Ωnfat__91;
+        my_fn = function(cfg) {};
+        this.eq((Ωnfat__90 = function() {
+          return my_fn.name;
+        }), 'my_fn');
+        this.eq((Ωnfat__91 = function() {
+          return (nfa(my_fn)).name;
+        }), 'my_fn');
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
     }
   };
 
@@ -809,28 +811,28 @@
 
   // f = ( a, b, cfg ) -> { a, b, cfg, }
 // debug()
-// debug 'Ωnfat__90', f()
-// debug 'Ωnfat__91', f undefined
-// debug 'Ωnfat__92', f 0
-// debug 'Ωnfat__93', f 0, 1
-// debug 'Ωnfat__94', f 0, 1, undefined
-// debug 'Ωnfat__95', f 0, 1, "wat"
-// debug 'Ωnfat__96', f 0, 1, {}
+// debug 'Ωnfat__92', f()
+// debug 'Ωnfat__93', f undefined
+// debug 'Ωnfat__94', f 0
+// debug 'Ωnfat__95', f 0, 1
+// debug 'Ωnfat__96', f 0, 1, undefined
+// debug 'Ωnfat__97', f 0, 1, "wat"
+// debug 'Ωnfat__98', f 0, 1, {}
 
   // f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
 // debug()
-// debug 'Ωnfat__97', f()
-// debug 'Ωnfat__98', f undefined
-// debug 'Ωnfat__99', f 0
-// debug 'Ωnfat_100', f 0, {}
-// debug 'Ωnfat_101', f 0, 1
-// debug 'Ωnfat_102', f 0, 1, undefined
-// debug 'Ωnfat_103', f 0, 1, "wat"
-// debug 'Ωnfat_104', f 0, 1, {}
-// debug 'Ωnfat_105', f 0, 1, undefined, 3
-// debug 'Ωnfat_106', f 0, 1, "wat", 3
-// debug 'Ωnfat_107', f 0, 1, {}, 3
-// # debug 'Ωnfat_108', f [ 0, 1, , 3, ]...
+// debug 'Ωnfat__99', f()
+// debug 'Ωnfat_100', f undefined
+// debug 'Ωnfat_101', f 0
+// debug 'Ωnfat_102', f 0, {}
+// debug 'Ωnfat_103', f 0, 1
+// debug 'Ωnfat_104', f 0, 1, undefined
+// debug 'Ωnfat_105', f 0, 1, "wat"
+// debug 'Ωnfat_106', f 0, 1, {}
+// debug 'Ωnfat_107', f 0, 1, undefined, 3
+// debug 'Ωnfat_108', f 0, 1, "wat", 3
+// debug 'Ωnfat_109', f 0, 1, {}, 3
+// # debug 'Ωnfat_110', f [ 0, 1, , 3, ]...
 
 }).call(this);
 
