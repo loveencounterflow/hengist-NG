@@ -790,6 +790,63 @@
       })();
       //.......................................................................................................
       return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    use_isa_setting: function() {
+      var NFA, float, gnd, internals, nfa, nonempty_text, text;
+      NFA = require('../../../apps/normalize-function-arguments');
+      ({nfa, internals} = NFA);
+      ({gnd} = internals);
+      //.......................................................................................................
+      float = {
+        isa: function(x) {
+          return Number.isFinite(x);
+        }
+      };
+      text = {
+        isa: function(x) {
+          return (typeof x) === 'string';
+        }
+      };
+      nonempty_text = {
+        isa: function(x) {
+          return (text.isa(x)) && x.length > 0;
+        }
+      };
+      (() => {        //.......................................................................................................
+        var fn, isa, quantity_create, template, Ωnfat__92, Ωnfat__93;
+        template = {
+          q: 0,
+          u: 'u'
+        };
+        isa = function(x) {
+          if (!gnd.pod.isa(x)) {
+            return false;
+          }
+          if (!float.isa(x.q)) {
+            return false;
+          }
+          if (!nonempty_text.isa(x.u)) {
+            return false;
+          }
+          return true;
+        };
+        fn = nfa({isa, template}, quantity_create = function(q, u, cfg) {
+          return cfg;
+        });
+        this.eq((Ωnfat__92 = function() {
+          return fn(3, 's');
+        }), {
+          q: 3,
+          u: 's'
+        });
+        this.throws((Ωnfat__93 = function() {
+          return fn(3, '');
+        }), /validation error: expected a quantity_create_cfg/);
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
     }
   };
 
@@ -797,12 +854,12 @@
   if (module === require.main) {
     await (() => {
       var guytest_cfg;
-      // guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
       guytest_cfg = {
-        throw_on_error: false,
-        show_passes: false,
+        throw_on_error: true,
+        show_passes: true,
         report_checks: false
       };
+      // guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
       return (new Test(guytest_cfg)).test(this.nfa_tasks);
     })();
   }
@@ -811,28 +868,28 @@
 
   // f = ( a, b, cfg ) -> { a, b, cfg, }
 // debug()
-// debug 'Ωnfat__92', f()
-// debug 'Ωnfat__93', f undefined
-// debug 'Ωnfat__94', f 0
-// debug 'Ωnfat__95', f 0, 1
-// debug 'Ωnfat__96', f 0, 1, undefined
-// debug 'Ωnfat__97', f 0, 1, "wat"
-// debug 'Ωnfat__98', f 0, 1, {}
+// debug 'Ωnfat__94', f()
+// debug 'Ωnfat__95', f undefined
+// debug 'Ωnfat__96', f 0
+// debug 'Ωnfat__97', f 0, 1
+// debug 'Ωnfat__98', f 0, 1, undefined
+// debug 'Ωnfat__99', f 0, 1, "wat"
+// debug 'Ωnfat_100', f 0, 1, {}
 
   // f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
 // debug()
-// debug 'Ωnfat__99', f()
-// debug 'Ωnfat_100', f undefined
-// debug 'Ωnfat_101', f 0
-// debug 'Ωnfat_102', f 0, {}
-// debug 'Ωnfat_103', f 0, 1
-// debug 'Ωnfat_104', f 0, 1, undefined
-// debug 'Ωnfat_105', f 0, 1, "wat"
-// debug 'Ωnfat_106', f 0, 1, {}
-// debug 'Ωnfat_107', f 0, 1, undefined, 3
-// debug 'Ωnfat_108', f 0, 1, "wat", 3
-// debug 'Ωnfat_109', f 0, 1, {}, 3
-// # debug 'Ωnfat_110', f [ 0, 1, , 3, ]...
+// debug 'Ωnfat_101', f()
+// debug 'Ωnfat_102', f undefined
+// debug 'Ωnfat_103', f 0
+// debug 'Ωnfat_104', f 0, {}
+// debug 'Ωnfat_105', f 0, 1
+// debug 'Ωnfat_106', f 0, 1, undefined
+// debug 'Ωnfat_107', f 0, 1, "wat"
+// debug 'Ωnfat_108', f 0, 1, {}
+// debug 'Ωnfat_109', f 0, 1, undefined, 3
+// debug 'Ωnfat_110', f 0, 1, "wat", 3
+// debug 'Ωnfat_111', f 0, 1, {}, 3
+// # debug 'Ωnfat_112', f [ 0, 1, , 3, ]...
 
 }).call(this);
 
