@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Test, alert, debug, echo, f, help, info, inspect, log, plain, praise, red, reverse, rpr, urge, warn, whisper,
+  var GTNG, GUY, Test, alert, debug, demo_isa_with_reason, echo, f, help, info, inspect, log, plain, praise, red, reverse, rpr, urge, warn, whisper,
     splice = [].splice;
 
   GUY = require('guy');
@@ -851,6 +851,95 @@
   };
 
   //===========================================================================================================
+  demo_isa_with_reason = function() {
+    var NFA, att, em, float, get_messages, gnd, internals, messages, nfa, nonempty_text, nope, quantity, text;
+    NFA = require('../../../apps/normalize-function-arguments');
+    ({nfa, internals} = NFA);
+    ({gnd} = internals);
+    em = function(...P) {
+      return GUY.trm.reverse(GUY.trm.gold(GUY.trm.bold('', ...P, '')));
+    };
+    att = function(...P) {
+      return GUY.trm.reverse(GUY.trm.red(GUY.trm.bold('', ...P, '')));
+    };
+    //.......................................................................................................
+    float = {
+      isa: function(x, nope = function() {
+          return false;
+        }) {
+        if (!Number.isFinite(x)) {
+          return nope("Number.isFinite x");
+        }
+        return true;
+      }
+    };
+    text = {
+      isa: function(x, nope = function() {
+          return false;
+        }) {
+        if ((typeof x) !== 'string') {
+          return nope("( typeof x ) is 'string'");
+        }
+        return true;
+      }
+    };
+    nonempty_text = {
+      isa: function(x, nope = function() {
+          return false;
+        }) {
+        if (!text.isa(x, nope)) {
+          return nope("text.isa x");
+        }
+        if (!(x.length > 0)) {
+          return nope("x.length > 0");
+        }
+        return true;
+      }
+    };
+    //.......................................................................................................
+    quantity = {
+      isa: function(x, nope = function() {
+          return false;
+        }) {
+        if (!gnd.pod.isa(x, nope)) {
+          return nope("gnd.pod.isa       x  ");
+        }
+        if (!float.isa(x.q, nope)) {
+          return nope("float.isa         x.q");
+        }
+        if (!nonempty_text.isa(x.u, nope)) {
+          return nope("nonempty_text.isa x.u");
+        }
+        return true;
+      }
+    };
+    messages = [];
+    nope = function(message) {
+      return false; // discarding messages
+    };
+    nope = function(message) {
+      messages.push(message);
+      return false; // collecting messages
+    };
+    get_messages = function() {
+      var R;
+      R = (messages.join('; ')).replace(/\s+/g, ' ');
+      messages = [];
+      return R;
+    };
+    info('Ωnfat__94', quantity.isa({}, nope), att("failed"), em(get_messages()));
+    info('Ωnfat__95', text.isa(null, nope), att("failed"), em(get_messages()));
+    info('Ωnfat__94', quantity.isa({
+      q: 8.1
+    }, nope), att("failed"), em(get_messages()));
+    info('Ωnfat__94', quantity.isa({
+      q: 8.1,
+      u: ''
+    }, nope), att("failed"), em(get_messages()));
+    return null;
+  };
+
+  //===========================================================================================================
   if (module === require.main) {
     await (() => {
       var guytest_cfg;
@@ -860,36 +949,36 @@
         report_checks: false
       };
       // guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-      return (new Test(guytest_cfg)).test(this.nfa_tasks);
+      (new Test(guytest_cfg)).test(this.nfa_tasks);
+      // ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
+      return demo_isa_with_reason();
     })();
   }
 
-  // ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
-
   // f = ( a, b, cfg ) -> { a, b, cfg, }
 // debug()
-// debug 'Ωnfat__94', f()
-// debug 'Ωnfat__95', f undefined
-// debug 'Ωnfat__96', f 0
-// debug 'Ωnfat__97', f 0, 1
-// debug 'Ωnfat__98', f 0, 1, undefined
-// debug 'Ωnfat__99', f 0, 1, "wat"
-// debug 'Ωnfat_100', f 0, 1, {}
+// debug 'Ωnfat__96', f()
+// debug 'Ωnfat__97', f undefined
+// debug 'Ωnfat__98', f 0
+// debug 'Ωnfat__99', f 0, 1
+// debug 'Ωnfat_100', f 0, 1, undefined
+// debug 'Ωnfat_101', f 0, 1, "wat"
+// debug 'Ωnfat_102', f 0, 1, {}
 
   // f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
 // debug()
-// debug 'Ωnfat_101', f()
-// debug 'Ωnfat_102', f undefined
-// debug 'Ωnfat_103', f 0
-// debug 'Ωnfat_104', f 0, {}
-// debug 'Ωnfat_105', f 0, 1
-// debug 'Ωnfat_106', f 0, 1, undefined
-// debug 'Ωnfat_107', f 0, 1, "wat"
-// debug 'Ωnfat_108', f 0, 1, {}
-// debug 'Ωnfat_109', f 0, 1, undefined, 3
-// debug 'Ωnfat_110', f 0, 1, "wat", 3
-// debug 'Ωnfat_111', f 0, 1, {}, 3
-// # debug 'Ωnfat_112', f [ 0, 1, , 3, ]...
+// debug 'Ωnfat_103', f()
+// debug 'Ωnfat_104', f undefined
+// debug 'Ωnfat_105', f 0
+// debug 'Ωnfat_106', f 0, {}
+// debug 'Ωnfat_107', f 0, 1
+// debug 'Ωnfat_108', f 0, 1, undefined
+// debug 'Ωnfat_109', f 0, 1, "wat"
+// debug 'Ωnfat_110', f 0, 1, {}
+// debug 'Ωnfat_111', f 0, 1, undefined, 3
+// debug 'Ωnfat_112', f 0, 1, "wat", 3
+// debug 'Ωnfat_113', f 0, 1, {}, 3
+// # debug 'Ωnfat_114', f [ 0, 1, , 3, ]...
 
 }).call(this);
 
