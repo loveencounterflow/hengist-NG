@@ -332,50 +332,96 @@ demo_isa_with_reason = ->
     return nope "float.isa         x.q" unless float.isa         x.q,  nope
     return nope "nonempty_text.isa x.u" unless nonempty_text.isa x.u,  nope
     return true
+  #.......................................................................................................
+  nonempty_text_2 = isa:
+    text_isa_x:           ( x ) -> text.isa x, nope
+    x_length_gt_0:        ( x ) -> x.length > 0
+  #.......................................................................................................
+  quantity_2 = isa:
+    gnd_pod_isa_x:            ( x ) -> gnd.pod.isa         x
+    float_isa_x_q:            ( x ) -> float.isa           x.q
+    nonempty_text_2_isa_x_u:  ( x ) -> nonempty_text_2.isa x.u
+  #.......................................................................................................
+  info 'Ωnfat__94', quantity_2.isa.gnd_pod_isa_x.toString()
+  info 'Ωnfat__94', quantity_2.isa.float_isa_x_q.toString()
+  info 'Ωnfat__94', quantity_2.isa.nonempty_text_2_isa_x_u.toString()
+  quantity_2.isa = do ( isas = quantity_2.isa ) =>
+    return ( x ) ->
+      for key, isa of isas
+        return nope key unless isa x
+      return true
+  #.......................................................................................................
+  nonempty_text_2.isa = do ( isas = nonempty_text_2.isa ) =>
+    return ( x ) ->
+      for key, isa of isas
+        return nope key unless isa x
+      return true
+
   messages = []
   nope = ( message ) -> false                         # discarding messages
   nope = ( message ) -> messages.push message; false  # collecting messages
   get_messages = -> R = ( ( "#{att 'not'}#{em m}" for m in messages ).join reverse ' ▶ ' ).replace /\s+/g, ' '; messages = []; R
   info 'Ωnfat__94', ( quantity.isa {},                nope  ), ( att "failed" ), em get_messages()
   info 'Ωnfat__95', ( text.isa     null,              nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__94', ( quantity.isa { q: 8.1, },       nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__94', ( quantity.isa { q: 8.1, u: '' }, nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__94', ( quantity.isa { q: 8.1, u: 0  }, nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__96', ( quantity.isa { q: 8.1, },       nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__97', ( quantity.isa { q: 8.1, u: '' }, nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__98', ( quantity.isa { q: 8.1, u: 0  }, nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__99', ( quantity_2.isa { q: 8.1, u: 0  }  ), ( att "failed" ), em get_messages()
   return null
 
+#===========================================================================================================
+demo_types_as_functions = ->
+  ###
+
+  * a 'type' is a / is implemented as a function that accepts one argument `x` and returns `undefined`,
+    `null` or `true` if `x` is considered to be an element of the type / a value conforming to the type;
+    otherwise, it must return a string that identifies the test that `x` did not pass; so for example,
+    a type `empty` described as the set of all values that have a property `x.length` whose value is `0`:
+
+    empty = ( x ) -> return "x.length is 0" unless x? and ( x.length is 0 )
+
+  ###
+  isa = ( expectation = undefined ) -> return ( not expectation? ) or ( expectation is true )
+  ts =
+    # text: ( x ) -> if ( typeof x ) is 'string' then true else "( typeof x ) is 'string'"
+    text: ( x ) -> return "( typeof x ) is 'string'" unless ( typeof x ) is 'string'
+  debug 'Ωnfat__94', ( rpr ts.text '' ), ( isa ts.text '' )
+  debug 'Ωnfat__94', ( rpr ts.text 34 ), ( isa ts.text 34 )
+  return null
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
-  # guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test @nfa_tasks
-  # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
+  # guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
+  # # guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  # ( new Test guytest_cfg ).test @nfa_tasks
+  # # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
   demo_isa_with_reason()
+  demo_types_as_functions()
 
   # f = ( a, b, cfg ) -> { a, b, cfg, }
   # debug()
-  # debug 'Ωnfat__96', f()
-  # debug 'Ωnfat__97', f undefined
-  # debug 'Ωnfat__98', f 0
-  # debug 'Ωnfat__99', f 0, 1
-  # debug 'Ωnfat_100', f 0, 1, undefined
-  # debug 'Ωnfat_101', f 0, 1, "wat"
-  # debug 'Ωnfat_102', f 0, 1, {}
+  # debug 'Ωnfat_100', f()
+  # debug 'Ωnfat_101', f undefined
+  # debug 'Ωnfat_102', f 0
+  # debug 'Ωnfat_103', f 0, 1
+  # debug 'Ωnfat_104', f 0, 1, undefined
+  # debug 'Ωnfat_105', f 0, 1, "wat"
+  # debug 'Ωnfat_106', f 0, 1, {}
 
   # f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
   # debug()
-  # debug 'Ωnfat_103', f()
-  # debug 'Ωnfat_104', f undefined
-  # debug 'Ωnfat_105', f 0
-  # debug 'Ωnfat_106', f 0, {}
-  # debug 'Ωnfat_107', f 0, 1
-  # debug 'Ωnfat_108', f 0, 1, undefined
-  # debug 'Ωnfat_109', f 0, 1, "wat"
-  # debug 'Ωnfat_110', f 0, 1, {}
-  # debug 'Ωnfat_111', f 0, 1, undefined, 3
-  # debug 'Ωnfat_112', f 0, 1, "wat", 3
-  # debug 'Ωnfat_113', f 0, 1, {}, 3
-  # # debug 'Ωnfat_114', f [ 0, 1, , 3, ]...
+  # debug 'Ωnfat_107', f()
+  # debug 'Ωnfat_108', f undefined
+  # debug 'Ωnfat_109', f 0
+  # debug 'Ωnfat_110', f 0, {}
+  # debug 'Ωnfat_111', f 0, 1
+  # debug 'Ωnfat_112', f 0, 1, undefined
+  # debug 'Ωnfat_113', f 0, 1, "wat"
+  # debug 'Ωnfat_114', f 0, 1, {}
+  # debug 'Ωnfat_115', f 0, 1, undefined, 3
+  # debug 'Ωnfat_116', f 0, 1, "wat", 3
+  # debug 'Ωnfat_117', f 0, 1, {}, 3
+  # # debug 'Ωnfat_118', f [ 0, 1, , 3, ]...
 
 
 
