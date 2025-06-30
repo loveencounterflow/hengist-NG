@@ -335,11 +335,12 @@ demo_isa_with_reason = ->
   messages = []
   nope = ( message ) -> false                         # discarding messages
   nope = ( message ) -> messages.push message; false  # collecting messages
-  get_messages = -> R = ( messages.join '; ' ).replace /\s+/g, ' '; messages = []; R
+  get_messages = -> R = ( ( "#{att 'not'}#{em m}" for m in messages ).join reverse ' ▶ ' ).replace /\s+/g, ' '; messages = []; R
   info 'Ωnfat__94', ( quantity.isa {},                nope  ), ( att "failed" ), em get_messages()
   info 'Ωnfat__95', ( text.isa     null,              nope  ), ( att "failed" ), em get_messages()
   info 'Ωnfat__94', ( quantity.isa { q: 8.1, },       nope  ), ( att "failed" ), em get_messages()
   info 'Ωnfat__94', ( quantity.isa { q: 8.1, u: '' }, nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__94', ( quantity.isa { q: 8.1, u: 0  }, nope  ), ( att "failed" ), em get_messages()
   return null
 
 

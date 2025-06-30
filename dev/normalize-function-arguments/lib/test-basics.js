@@ -922,8 +922,16 @@
       return false; // collecting messages
     };
     get_messages = function() {
-      var R;
-      R = (messages.join('; ')).replace(/\s+/g, ' ');
+      var R, m;
+      R = (((function() {
+        var i, len, results;
+        results = [];
+        for (i = 0, len = messages.length; i < len; i++) {
+          m = messages[i];
+          results.push(`${att('not')}${em(m)}`);
+        }
+        return results;
+      })()).join(reverse(' ▶ '))).replace(/\s+/g, ' ');
       messages = [];
       return R;
     };
@@ -935,6 +943,10 @@
     info('Ωnfat__94', quantity.isa({
       q: 8.1,
       u: ''
+    }, nope), att("failed"), em(get_messages()));
+    info('Ωnfat__94', quantity.isa({
+      q: 8.1,
+      u: 0
     }, nope), att("failed"), em(get_messages()));
     return null;
   };
