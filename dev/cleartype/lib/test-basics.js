@@ -566,12 +566,12 @@
     await (() => {
       var guytest_cfg;
       guytest_cfg = {
-        throw_on_error: false,
+        throw_on_error: true,
         show_passes: false,
         report_checks: false
       };
       guytest_cfg = {
-        throw_on_error: true,
+        throw_on_error: false,
         show_passes: false,
         report_checks: false
       };

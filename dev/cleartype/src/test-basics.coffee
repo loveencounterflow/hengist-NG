@@ -247,9 +247,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
       return null
 
 
+
+
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @cleartype_tasks
   # ( new Test guytest_cfg ).test @cleartype_tasks.builtins
