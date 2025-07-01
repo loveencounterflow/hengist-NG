@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Test, abbrlxm, alert, condense_lexemes, debug, echo, f, help, info, inspect, isa, log, plain, praise, reverse, rpr, std, tabulate_lexeme, tabulate_lexemes, type_of, urge, warn, whisper;
+  var GTNG, GUY, Test, abbrlxm, alert, condense_lexemes, ct_internals, debug, echo, f, help, info, inspect, isa, log, plain, praise, reverse, rpr, std, tabulate_lexeme, tabulate_lexemes, type_of, urge, warn, whisper;
 
   GUY = require('guy');
 
@@ -17,7 +17,12 @@
 
   ({condense_lexemes, abbrlxm, tabulate_lexemes, tabulate_lexeme} = require('./helpers'));
 
-  ({isa, std, type_of} = require('../../../apps/cleartype'));
+  ({
+    internals: ct_internals,
+    isa,
+    std,
+    type_of
+  } = require('../../../apps/cleartype'));
 
   //###########################################################################################################
 
@@ -291,7 +296,7 @@
     basics: {
       //-------------------------------------------------------------------------------------------------------
       simple_1: function() {
-        var Grammar, ILX, Level, Lexeme, Token, g, gnd, internals, k, number_lx, number_tk, number_tk_matcher, rx, Ωilxt_100, Ωilxt_101, Ωilxt_102, Ωilxt_103, Ωilxt_104, Ωilxt_108, Ωilxt_109, Ωilxt_110, Ωilxt__64, Ωilxt__65, Ωilxt__66, Ωilxt__67, Ωilxt__68, Ωilxt__69, Ωilxt__70, Ωilxt__71, Ωilxt__72, Ωilxt__73, Ωilxt__74, Ωilxt__75, Ωilxt__76, Ωilxt__77, Ωilxt__78, Ωilxt__79, Ωilxt__80, Ωilxt__81, Ωilxt__82, Ωilxt__83, Ωilxt__84, Ωilxt__85, Ωilxt__86, Ωilxt__87, Ωilxt__88, Ωilxt__89, Ωilxt__90, Ωilxt__91, Ωilxt__92, Ωilxt__93, Ωilxt__94, Ωilxt__95, Ωilxt__96, Ωilxt__97, Ωilxt__98, Ωilxt__99;
+        var Grammar, ILX, Level, Lexeme, Token, g, gnd, internals, number_lx, number_tk, number_tk_matcher, rx, Ωilxt_100, Ωilxt_101, Ωilxt_102, Ωilxt_103, Ωilxt_104, Ωilxt_108, Ωilxt_109, Ωilxt_110, Ωilxt__64, Ωilxt__65, Ωilxt__66, Ωilxt__67, Ωilxt__68, Ωilxt__69, Ωilxt__70, Ωilxt__71, Ωilxt__72, Ωilxt__73, Ωilxt__74, Ωilxt__75, Ωilxt__76, Ωilxt__77, Ωilxt__78, Ωilxt__79, Ωilxt__80, Ωilxt__81, Ωilxt__82, Ωilxt__83, Ωilxt__84, Ωilxt__85, Ωilxt__86, Ωilxt__87, Ωilxt__88, Ωilxt__89, Ωilxt__90, Ωilxt__91, Ωilxt__92, Ωilxt__93, Ωilxt__94, Ωilxt__95, Ωilxt__96, Ωilxt__97, Ωilxt__98, Ωilxt__99;
         ILX = require('../../../apps/interlex');
         ({Grammar, Level, Token, Lexeme, rx, internals} = ILX);
         //===========================================================================================================
@@ -434,20 +439,8 @@
           return g.levels.gnd.tokens.number;
         }), number_tk);
         this.eq((Ωilxt_104 = function() {
-          return isa(std.function, g.token_from_fqname);
+          return ct_internals.gnd.function.isa(g.token_from_fqname);
         }), true);
-        debug('Ωilxt_105', 'isa                 ', rpr(isa));
-        debug('Ωilxt_106', 'std.function        ', rpr(std.function));
-        debug('Ωilxt_106', '( k for k of std )        ', rpr((function() {
-          var results;
-          results = [];
-          for (k in std) {
-            results.push(k);
-          }
-          return results;
-        })()));
-        debug('Ωilxt_107', 'g.token_from_fqname ', rpr(g.token_from_fqname));
-        process.exit(111);
         this.eq((Ωilxt_108 = function() {
           return g.token_from_fqname('gnd.number');
         }), number_tk);
@@ -1056,7 +1049,7 @@
           shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
           for (_ = i = 1; i <= 100; _ = ++i) {
             (() => {
-              var first, fit, g, j, l, len, len1, position, source, token_cfg, token_cfgs, Ωilxt_149;
+              var first, fit, g, j, k, len, len1, position, source, token_cfg, token_cfgs, Ωilxt_149;
               g = new Grammar();
               first = g.new_level({
                 name: 'first'
@@ -1100,8 +1093,8 @@
                 first.new_token(token_cfg);
               }
 //...............................................................................................
-              for (l = 0, len1 = probes_and_matchers.length; l < len1; l++) {
-                [[position, source], fit] = probes_and_matchers[l];
+              for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
+                [[position, source], fit] = probes_and_matchers[k];
                 this.eq((Ωilxt_149 = function() {
                   return condense_lexemes(first.match_longest_at(position, source));
                 }), fit);
@@ -1127,7 +1120,7 @@
           shuffle = GUY.rnd.get_shuffle(0.9876, 0.3456);
           for (_ = i = 1; i <= 100; _ = ++i) {
             (() => {
-              var first, fit, g, j, l, len, len1, source, token_cfg, token_cfgs, Ωilxt_150, Ωilxt_151, Ωilxt_152;
+              var first, fit, g, j, k, len, len1, source, token_cfg, token_cfgs, Ωilxt_150, Ωilxt_151, Ωilxt_152;
               g = new Grammar({
                 strategy: 'longest',
                 emit_signals: false
@@ -1180,8 +1173,8 @@
               this.eq((Ωilxt_151 = function() {
                 return first.strategy;
               }), 'longest');
-              for (l = 0, len1 = probes_and_matchers.length; l < len1; l++) {
-                [source, fit] = probes_and_matchers[l];
+              for (k = 0, len1 = probes_and_matchers.length; k < len1; k++) {
+                [source, fit] = probes_and_matchers[k];
                 this.eq((Ωilxt_152 = function() {
                   return condense_lexemes(g.scan_to_list(source));
                 }), fit);
@@ -3158,7 +3151,7 @@
             return g.cfg.data.list === g.cfg.data.list;
           }), false);
           this.eq((Ωilxt_382 = function() {
-            return isa(std.list, g.cfg.data.list);
+            return std.list.isa(g.cfg.data.list);
           }), true);
           g.data.count++;
           g.data.list.push('value');

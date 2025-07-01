@@ -26,7 +26,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
   abbrlxm
   tabulate_lexemes
   tabulate_lexeme       } = require './helpers'
-{ isa
+{ internals: ct_internals
+  isa
   std
   type_of               } = require '../../../apps/cleartype'
 
@@ -202,12 +203,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       @eq ( Ωilxt_102 = -> g.levels.gnd                                                   ), gnd
       @eq ( Ωilxt_103 = -> g.levels.gnd.tokens.number                                     ), number_tk
-      @eq ( Ωilxt_104 = -> isa std.function, g.token_from_fqname                          ), true
-      debug 'Ωilxt_105', 'isa                 ', rpr isa
-      debug 'Ωilxt_106', 'std.function        ', rpr std.function
-      debug 'Ωilxt_106', '( k for k of std )        ', rpr ( k for k of std )
-      debug 'Ωilxt_107', 'g.token_from_fqname ', rpr g.token_from_fqname
-      process.exit 111
+      @eq ( Ωilxt_104 = -> ct_internals.gnd.function.isa g.token_from_fqname              ), true
       @eq ( Ωilxt_108 = -> g.token_from_fqname 'gnd.number'                               ), number_tk
       @throws ( Ωilxt_109 = -> g.token_from_fqname 'XXX.XXX'                              ), /unknown level 'XXX'/
       @throws ( Ωilxt_110 = -> g.token_from_fqname 'gnd.XXX'                              ), /unknown token 'XXX'/
@@ -1303,7 +1299,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @eq ( Ωilxt_379 = -> g.data.list                          ), matcher.list
         @eq ( Ωilxt_380 = -> g.cfg.data.count is template.count   ), true
         @eq ( Ωilxt_381 = -> g.cfg.data.list  is g.cfg.data.list  ), false
-        @eq ( Ωilxt_382 = -> isa std.list, g.cfg.data.list        ), true
+        @eq ( Ωilxt_382 = -> std.list.isa g.cfg.data.list         ), true
         g.data.count++
         g.data.list.push 'value'
         @eq ( Ωilxt_383 = -> g.data.count                         ), 2
