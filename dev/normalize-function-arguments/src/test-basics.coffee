@@ -21,6 +21,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 { f }                     = require '../../../apps/effstring'
 { red
+  gold
+  bold
   reverse               } = GUY.trm
 
 
@@ -343,8 +345,8 @@ demo_isa_with_reason = ->
     nonempty_text_2_isa_x_u:  ( x ) -> nonempty_text_2.isa x.u
   #.......................................................................................................
   info 'Ωnfat__94', quantity_2.isa.gnd_pod_isa_x.toString()
-  info 'Ωnfat__94', quantity_2.isa.float_isa_x_q.toString()
-  info 'Ωnfat__94', quantity_2.isa.nonempty_text_2_isa_x_u.toString()
+  info 'Ωnfat__95', quantity_2.isa.float_isa_x_q.toString()
+  info 'Ωnfat__96', quantity_2.isa.nonempty_text_2_isa_x_u.toString()
   quantity_2.isa = do ( isas = quantity_2.isa ) =>
     return ( x ) ->
       for key, isa of isas
@@ -361,12 +363,12 @@ demo_isa_with_reason = ->
   nope = ( message ) -> false                         # discarding messages
   nope = ( message ) -> messages.push message; false  # collecting messages
   get_messages = -> R = ( ( "#{att 'not'}#{em m}" for m in messages ).join reverse ' ▶ ' ).replace /\s+/g, ' '; messages = []; R
-  info 'Ωnfat__94', ( quantity.isa {},                nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__95', ( text.isa     null,              nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__96', ( quantity.isa { q: 8.1, },       nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__97', ( quantity.isa { q: 8.1, u: '' }, nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__98', ( quantity.isa { q: 8.1, u: 0  }, nope  ), ( att "failed" ), em get_messages()
-  info 'Ωnfat__99', ( quantity_2.isa { q: 8.1, u: 0  }  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__97', ( quantity.isa {},                nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__98', ( text.isa     null,              nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat__99', ( quantity.isa { q: 8.1, },       nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat_100', ( quantity.isa { q: 8.1, u: '' }, nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat_101', ( quantity.isa { q: 8.1, u: 0  }, nope  ), ( att "failed" ), em get_messages()
+  info 'Ωnfat_102', ( quantity_2.isa { q: 8.1, u: 0  }  ), ( att "failed" ), em get_messages()
   return null
 
 #===========================================================================================================
@@ -385,8 +387,46 @@ demo_types_as_functions = ->
   ts =
     # text: ( x ) -> if ( typeof x ) is 'string' then true else "( typeof x ) is 'string'"
     text: ( x ) -> return "( typeof x ) is 'string'" unless ( typeof x ) is 'string'
-  debug 'Ωnfat__94', ( rpr ts.text '' ), ( isa ts.text '' )
-  debug 'Ωnfat__94', ( rpr ts.text 34 ), ( isa ts.text 34 )
+  debug 'Ωnfat_103', ( rpr ts.text '' ), ( isa ts.text '' )
+  debug 'Ωnfat_104', ( rpr ts.text 34 ), ( isa ts.text 34 )
+  return null
+
+#===========================================================================================================
+demo_parse_return_value = ->
+  em = ( P... ) -> reverse red bold '', P..., ''
+  class Unparsable_function_body extends Error
+  #.........................................................................................................
+  get_return_value_source = ( fn ) ->
+    source = fn.toString().replace /// \s+ ///gsv, '\x20'
+    unless ( match = source.match ///^ .* \b return \s (?<rvexpr> [^ ; ]+ ) .* $///sv )?
+      throw new Unparsable_function_body "Ωnfat_105 unable to parse function #{rpr source}"
+    R = match.groups.rvexpr
+    return R
+  #.........................................................................................................
+  normalize_rvexpr = ( fn ) ->
+    R = get_return_value_source fn
+    R = R.replace ///  !==     ///gsv, 'isnt'
+    R = R.replace ///  &&      ///gsv, 'and'
+    R = R.replace ///  \|\|    ///gsv, 'or'
+    R = R.replace ///  !       ///gsv, 'not'
+    return R
+  #.........................................................................................................
+  fn_name_from_rvexpr = ( fn ) ->
+    R = normalize_rvexpr fn
+    R = R.replace /// [^ a-z A-Z 0-9 _ ]+ ///gsv, '_'
+    R = R.replace ///^ _* (?<center> .*? ) _* $ ///gsv, '$<center>'
+    return R
+  #.........................................................................................................
+  functions = [
+    ( x ) -> ( gnd.text.isa x ) and ( x.length isnt 0 )
+    ( x ) -> true
+    ]
+  #.........................................................................................................
+  for fn in functions
+    try urge 'Ωnfat_106', rpr get_return_value_source fn catch e then warn 'Ωnfat_107', em e.message
+    try info 'Ωnfat_108', rpr normalize_rvexpr        fn catch e then warn 'Ωnfat_109', em e.message
+    try help 'Ωnfat_108', rpr fn_name_from_rvexpr     fn catch e then warn 'Ωnfat_109', em e.message
+  #.........................................................................................................
   return null
 
 #===========================================================================================================
@@ -397,31 +437,32 @@ if module is require.main then await do =>
   # # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
   demo_isa_with_reason()
   demo_types_as_functions()
+  demo_parse_return_value()
 
   # f = ( a, b, cfg ) -> { a, b, cfg, }
   # debug()
-  # debug 'Ωnfat_100', f()
-  # debug 'Ωnfat_101', f undefined
-  # debug 'Ωnfat_102', f 0
-  # debug 'Ωnfat_103', f 0, 1
-  # debug 'Ωnfat_104', f 0, 1, undefined
-  # debug 'Ωnfat_105', f 0, 1, "wat"
-  # debug 'Ωnfat_106', f 0, 1, {}
+  # debug 'Ωnfat_110', f()
+  # debug 'Ωnfat_111', f undefined
+  # debug 'Ωnfat_112', f 0
+  # debug 'Ωnfat_113', f 0, 1
+  # debug 'Ωnfat_114', f 0, 1, undefined
+  # debug 'Ωnfat_115', f 0, 1, "wat"
+  # debug 'Ωnfat_116', f 0, 1, {}
 
   # f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
   # debug()
-  # debug 'Ωnfat_107', f()
-  # debug 'Ωnfat_108', f undefined
-  # debug 'Ωnfat_109', f 0
-  # debug 'Ωnfat_110', f 0, {}
-  # debug 'Ωnfat_111', f 0, 1
-  # debug 'Ωnfat_112', f 0, 1, undefined
-  # debug 'Ωnfat_113', f 0, 1, "wat"
-  # debug 'Ωnfat_114', f 0, 1, {}
-  # debug 'Ωnfat_115', f 0, 1, undefined, 3
-  # debug 'Ωnfat_116', f 0, 1, "wat", 3
-  # debug 'Ωnfat_117', f 0, 1, {}, 3
-  # # debug 'Ωnfat_118', f [ 0, 1, , 3, ]...
+  # debug 'Ωnfat_117', f()
+  # debug 'Ωnfat_118', f undefined
+  # debug 'Ωnfat_119', f 0
+  # debug 'Ωnfat_120', f 0, {}
+  # debug 'Ωnfat_121', f 0, 1
+  # debug 'Ωnfat_122', f 0, 1, undefined
+  # debug 'Ωnfat_123', f 0, 1, "wat"
+  # debug 'Ωnfat_124', f 0, 1, {}
+  # debug 'Ωnfat_125', f 0, 1, undefined, 3
+  # debug 'Ωnfat_126', f 0, 1, "wat", 3
+  # debug 'Ωnfat_127', f 0, 1, {}, 3
+  # # debug 'Ωnfat_128', f [ 0, 1, , 3, ]...
 
 
 

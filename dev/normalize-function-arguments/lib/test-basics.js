@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Test, alert, debug, demo_isa_with_reason, demo_types_as_functions, echo, f, help, info, inspect, log, plain, praise, red, reverse, rpr, urge, warn, whisper,
+  var GTNG, GUY, Test, alert, bold, debug, demo_isa_with_reason, demo_parse_return_value, demo_types_as_functions, echo, f, gold, help, info, inspect, log, plain, praise, red, reverse, rpr, urge, warn, whisper,
     splice = [].splice;
 
   GUY = require('guy');
@@ -16,7 +16,7 @@
 
   ({f} = require('../../../apps/effstring'));
 
-  ({red, reverse} = GUY.trm);
+  ({red, gold, bold, reverse} = GUY.trm);
 
   //###########################################################################################################
 
@@ -940,8 +940,8 @@
     };
     //.......................................................................................................
     info('Ωnfat__94', quantity_2.isa.gnd_pod_isa_x.toString());
-    info('Ωnfat__94', quantity_2.isa.float_isa_x_q.toString());
-    info('Ωnfat__94', quantity_2.isa.nonempty_text_2_isa_x_u.toString());
+    info('Ωnfat__95', quantity_2.isa.float_isa_x_q.toString());
+    info('Ωnfat__96', quantity_2.isa.nonempty_text_2_isa_x_u.toString());
     quantity_2.isa = ((isas) => {
       return function(x) {
         var isa, key;
@@ -989,20 +989,20 @@
       messages = [];
       return R;
     };
-    info('Ωnfat__94', quantity.isa({}, nope), att("failed"), em(get_messages()));
-    info('Ωnfat__95', text.isa(null, nope), att("failed"), em(get_messages()));
-    info('Ωnfat__96', quantity.isa({
+    info('Ωnfat__97', quantity.isa({}, nope), att("failed"), em(get_messages()));
+    info('Ωnfat__98', text.isa(null, nope), att("failed"), em(get_messages()));
+    info('Ωnfat__99', quantity.isa({
       q: 8.1
     }, nope), att("failed"), em(get_messages()));
-    info('Ωnfat__97', quantity.isa({
+    info('Ωnfat_100', quantity.isa({
       q: 8.1,
       u: ''
     }, nope), att("failed"), em(get_messages()));
-    info('Ωnfat__98', quantity.isa({
+    info('Ωnfat_101', quantity.isa({
       q: 8.1,
       u: 0
     }, nope), att("failed"), em(get_messages()));
-    info('Ωnfat__99', quantity_2.isa({
+    info('Ωnfat_102', quantity_2.isa({
       q: 8.1,
       u: 0
     }), att("failed"), em(get_messages()));
@@ -1033,8 +1033,78 @@
         }
       }
     };
-    debug('Ωnfat__94', rpr(ts.text('')), isa(ts.text('')));
-    debug('Ωnfat__94', rpr(ts.text(34)), isa(ts.text(34)));
+    debug('Ωnfat_103', rpr(ts.text('')), isa(ts.text('')));
+    debug('Ωnfat_104', rpr(ts.text(34)), isa(ts.text(34)));
+    return null;
+  };
+
+  //===========================================================================================================
+  demo_parse_return_value = function() {
+    var Unparsable_function_body, e, em, fn, fn_name_from_rvexpr, functions, get_return_value_source, i, len, normalize_rvexpr;
+    em = function(...P) {
+      return reverse(red(bold('', ...P, '')));
+    };
+    Unparsable_function_body = class Unparsable_function_body extends Error {};
+    //.........................................................................................................
+    get_return_value_source = function(fn) {
+      var R, match, source;
+      source = fn.toString().replace(/\s+/gsv, '\x20');
+      if ((match = source.match(/^.*\breturn\s(?<rvexpr>[^;]+).*$/sv)) == null) {
+        throw new Unparsable_function_body(`Ωnfat_105 unable to parse function ${rpr(source)}`);
+      }
+      R = match.groups.rvexpr;
+      return R;
+    };
+    //.........................................................................................................
+    normalize_rvexpr = function(fn) {
+      var R;
+      R = get_return_value_source(fn);
+      R = R.replace(/!==/gsv, 'isnt');
+      R = R.replace(/&&/gsv, 'and');
+      R = R.replace(/\|\|/gsv, 'or');
+      R = R.replace(/!/gsv, 'not');
+      return R;
+    };
+    //.........................................................................................................
+    fn_name_from_rvexpr = function(fn) {
+      var R;
+      R = normalize_rvexpr(fn);
+      R = R.replace(/[^a-zA-Z0-9_]+/gsv, '_');
+      R = R.replace(/^_*(?<center>.*?)_*$/gsv, '$<center>');
+      return R;
+    };
+    //.........................................................................................................
+    functions = [
+      function(x) {
+        return (gnd.text.isa(x)) && (x.length !== 0);
+      },
+      function(x) {
+        return true;
+      }
+    ];
+//.........................................................................................................
+    for (i = 0, len = functions.length; i < len; i++) {
+      fn = functions[i];
+      try {
+        urge('Ωnfat_106', rpr(get_return_value_source(fn)));
+      } catch (error) {
+        e = error;
+        warn('Ωnfat_107', em(e.message));
+      }
+      try {
+        info('Ωnfat_108', rpr(normalize_rvexpr(fn)));
+      } catch (error) {
+        e = error;
+        warn('Ωnfat_109', em(e.message));
+      }
+      try {
+        help('Ωnfat_108', rpr(fn_name_from_rvexpr(fn)));
+      } catch (error) {
+        e = error;
+        warn('Ωnfat_109', em(e.message));
+      }
+    }
+    //.........................................................................................................
     return null;
   };
 
@@ -1046,34 +1116,35 @@
       // ( new Test guytest_cfg ).test @nfa_tasks
       // # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
       demo_isa_with_reason();
-      return demo_types_as_functions();
+      demo_types_as_functions();
+      return demo_parse_return_value();
     })();
   }
 
   // f = ( a, b, cfg ) -> { a, b, cfg, }
 // debug()
-// debug 'Ωnfat_100', f()
-// debug 'Ωnfat_101', f undefined
-// debug 'Ωnfat_102', f 0
-// debug 'Ωnfat_103', f 0, 1
-// debug 'Ωnfat_104', f 0, 1, undefined
-// debug 'Ωnfat_105', f 0, 1, "wat"
-// debug 'Ωnfat_106', f 0, 1, {}
+// debug 'Ωnfat_110', f()
+// debug 'Ωnfat_111', f undefined
+// debug 'Ωnfat_112', f 0
+// debug 'Ωnfat_113', f 0, 1
+// debug 'Ωnfat_114', f 0, 1, undefined
+// debug 'Ωnfat_115', f 0, 1, "wat"
+// debug 'Ωnfat_116', f 0, 1, {}
 
   // f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
 // debug()
-// debug 'Ωnfat_107', f()
-// debug 'Ωnfat_108', f undefined
-// debug 'Ωnfat_109', f 0
-// debug 'Ωnfat_110', f 0, {}
-// debug 'Ωnfat_111', f 0, 1
-// debug 'Ωnfat_112', f 0, 1, undefined
-// debug 'Ωnfat_113', f 0, 1, "wat"
-// debug 'Ωnfat_114', f 0, 1, {}
-// debug 'Ωnfat_115', f 0, 1, undefined, 3
-// debug 'Ωnfat_116', f 0, 1, "wat", 3
-// debug 'Ωnfat_117', f 0, 1, {}, 3
-// # debug 'Ωnfat_118', f [ 0, 1, , 3, ]...
+// debug 'Ωnfat_117', f()
+// debug 'Ωnfat_118', f undefined
+// debug 'Ωnfat_119', f 0
+// debug 'Ωnfat_120', f 0, {}
+// debug 'Ωnfat_121', f 0, 1
+// debug 'Ωnfat_122', f 0, 1, undefined
+// debug 'Ωnfat_123', f 0, 1, "wat"
+// debug 'Ωnfat_124', f 0, 1, {}
+// debug 'Ωnfat_125', f 0, 1, undefined, 3
+// debug 'Ωnfat_126', f 0, 1, "wat", 3
+// debug 'Ωnfat_127', f 0, 1, {}, 3
+// # debug 'Ωnfat_128', f [ 0, 1, , 3, ]...
 
 }).call(this);
 
