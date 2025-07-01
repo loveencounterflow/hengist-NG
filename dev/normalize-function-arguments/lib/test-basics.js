@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Test, alert, bold, debug, demo_isa_with_reason, demo_parse_return_value, demo_types_as_functions, echo, f, gold, help, info, inspect, log, plain, praise, red, reverse, rpr, urge, warn, whisper,
+  var GTNG, GUY, Test, alert, bold, debug, demo_isa_with_reason, demo_parse_return_value, demo_types_as_functions, echo, f, gold, help, info, inspect, log, plain, praise, red, reverse, rpr, urge, warn, whisper, white,
     splice = [].splice;
 
   GUY = require('guy');
@@ -16,7 +16,7 @@
 
   ({f} = require('../../../apps/effstring'));
 
-  ({red, gold, bold, reverse} = GUY.trm);
+  ({red, gold, bold, white, reverse} = GUY.trm);
 
   //###########################################################################################################
 
@@ -862,7 +862,7 @@
     att = function(...P) {
       return GUY.trm.reverse(GUY.trm.red(GUY.trm.bold('', ...P, '')));
     };
-    //.......................................................................................................
+    //.........................................................................................................
     float = {
       isa: function(x, nope = function() {
           return false;
@@ -896,7 +896,7 @@
         return true;
       }
     };
-    //.......................................................................................................
+    //.........................................................................................................
     quantity = {
       isa: function(x, nope = function() {
           return false;
@@ -913,7 +913,7 @@
         return true;
       }
     };
-    //.......................................................................................................
+    //.........................................................................................................
     nonempty_text_2 = {
       isa: {
         text_isa_x: function(x) {
@@ -924,7 +924,7 @@
         }
       }
     };
-    //.......................................................................................................
+    //.........................................................................................................
     quantity_2 = {
       isa: {
         gnd_pod_isa_x: function(x) {
@@ -938,7 +938,7 @@
         }
       }
     };
-    //.......................................................................................................
+    //.........................................................................................................
     info('Ωnfat__94', quantity_2.isa.gnd_pod_isa_x.toString());
     info('Ωnfat__95', quantity_2.isa.float_isa_x_q.toString());
     info('Ωnfat__96', quantity_2.isa.nonempty_text_2_isa_x_u.toString());
@@ -954,7 +954,7 @@
         return true;
       };
     })(quantity_2.isa);
-    //.......................................................................................................
+    //.........................................................................................................
     nonempty_text_2.isa = ((isas) => {
       return function(x) {
         var isa, key;
@@ -967,6 +967,7 @@
         return true;
       };
     })(nonempty_text_2.isa);
+    //.........................................................................................................
     messages = [];
     nope = function(message) {
       return false; // discarding messages
@@ -1040,23 +1041,34 @@
 
   //===========================================================================================================
   demo_parse_return_value = function() {
-    var Unparsable_function_body, e, em, fn, fn_name_from_rvexpr, functions, get_return_value_source, i, len, normalize_rvexpr;
+    var NFA, RVX, Unparsable_function_body, dcl, e, em, fn, get_return_value_source, gnd, i, internals, len, name_from_fn_revalex, name_from_revalex, nameit, nfa, normalize_revalex, probes, rvx, ts, typename;
+    NFA = require('../../../apps/normalize-function-arguments');
+    ({nfa, internals} = NFA);
+    ({gnd, nameit} = internals);
+    //.........................................................................................................
     em = function(...P) {
       return reverse(red(bold('', ...P, '')));
     };
     Unparsable_function_body = class Unparsable_function_body extends Error {};
     //.........................................................................................................
     get_return_value_source = function(fn) {
+      /* TAINT use JS tokenizer */
+      /* NOTE restrictions:
+         * catches only last `return` statement, even if unreachable
+         * may misinterpret string literals, comments as source code
+          */
       var R, match, source;
       source = fn.toString().replace(/\s+/gsv, '\x20');
-      if ((match = source.match(/^.*\breturn\s(?<rvexpr>[^;]+).*$/sv)) == null) {
+      if ((match = source.match(/^.*\breturn\s(?<revalex>[^;]+).*$/sv)) == null) {
         throw new Unparsable_function_body(`Ωnfat_105 unable to parse function ${rpr(source)}`);
       }
-      R = match.groups.rvexpr;
+      R = match.groups.revalex;
       return R;
     };
     //.........................................................................................................
-    normalize_rvexpr = function(fn) {
+    normalize_revalex = function(fn) {
+      /* NOTE `revalex` short for '**RE**turn **VA**Lue **EX**pression' */
+      /* TAINT use JS tokenizer */
       var R;
       R = get_return_value_source(fn);
       R = R.replace(/!==/gsv, 'isnt');
@@ -1066,44 +1078,93 @@
       return R;
     };
     //.........................................................................................................
-    fn_name_from_rvexpr = function(fn) {
+    name_from_fn_revalex = function(fn) {
+      return name_from_revalex(normalize_revalex(fn));
+    };
+    name_from_revalex = function(revalex) {
       var R;
-      R = normalize_rvexpr(fn);
-      R = R.replace(/[^a-zA-Z0-9_]+/gsv, '_');
+      R = revalex.replace(/[^a-zA-Z0-9_]+/gsv, '_');
       R = R.replace(/^_*(?<center>.*?)_*$/gsv, '$<center>');
       return R;
     };
     //.........................................................................................................
-    functions = [
+    probes = [
       function(x) {
+        return (gnd.text.isa(x)) && (x.length !== 0);
+      },
+      (x) => {
         return (gnd.text.isa(x)) && (x.length !== 0);
       },
       function(x) {
         return true;
+      },
+      (x) => {
+        return true;
+      },
+      (x) => {
+        if (!gnd.isa.float(x)) {
+          return false;
+        }
+        if (!((0 < x && x < 1))) {
+          return false;
+        }
+        return true;
+      },
+      function(x) {
+        return gnd.isa.float(x);
+        // return false unless 0 < x < 1
+        return gnd.isa.text(x);
+      },
+      function(x) {
+        return gnd.isa.float(x);
       }
     ];
 //.........................................................................................................
-    for (i = 0, len = functions.length; i < len; i++) {
-      fn = functions[i];
+/* return false unless 0 < x < 1 */
+    for (i = 0, len = probes.length; i < len; i++) {
+      fn = probes[i];
+      whisper('Ωnfat_106', reverse(bold(white(rpr(fn.toString().replace(/\s+/gsv, '\x20'))))));
       try {
-        urge('Ωnfat_106', rpr(get_return_value_source(fn)));
+        urge('Ωnfat_107', rpr(get_return_value_source(fn)));
       } catch (error) {
         e = error;
-        warn('Ωnfat_107', em(e.message));
+        warn('Ωnfat_108', em(e.message));
       }
       try {
-        info('Ωnfat_108', rpr(normalize_rvexpr(fn)));
+        info('Ωnfat_109', rpr(normalize_revalex(fn)));
       } catch (error) {
         e = error;
-        warn('Ωnfat_109', em(e.message));
+        warn('Ωnfat_110', em(e.message));
       }
       try {
-        help('Ωnfat_108', rpr(fn_name_from_rvexpr(fn)));
+        help('Ωnfat_111', rpr(name_from_fn_revalex(fn)));
       } catch (error) {
         e = error;
-        warn('Ωnfat_109', em(e.message));
+        warn('Ωnfat_112', em(e.message));
       }
     }
+    //.........................................................................................................
+    RVX = Symbol('RVX');
+    // rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; ( nameit ( name_from_fn_revalex fn ), fn ); fn
+    rvx = function(fn) {
+      fn[RVX] = normalize_revalex(fn);
+      return fn;
+    };
+    ts = {
+      id: {
+        isa: rvx(function(x) {
+          return (text.isa(x)) && (/^[a-b]+$/.test(x));
+        })
+      }
+    };
+    for (typename in ts) {
+      dcl = ts[typename];
+      nameit(`isa_${typename}`, dcl.isa);
+    }
+    urge('Ωnfat_113', rpr(ts));
+    urge('Ωnfat_114', rpr(ts.id));
+    urge('Ωnfat_115', rpr(ts.id.isa[RVX]));
+    urge('Ωnfat_116', rpr(ts.id.isa.name));
     //.........................................................................................................
     return null;
   };
@@ -1111,10 +1172,15 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      // guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
-      // # guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-      // ( new Test guytest_cfg ).test @nfa_tasks
-      // # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
+      var guytest_cfg;
+      guytest_cfg = {
+        throw_on_error: true,
+        show_passes: true,
+        report_checks: false
+      };
+      // guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+      (new Test(guytest_cfg)).test(this.nfa_tasks);
+      // ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
       demo_isa_with_reason();
       demo_types_as_functions();
       return demo_parse_return_value();
@@ -1123,28 +1189,28 @@
 
   // f = ( a, b, cfg ) -> { a, b, cfg, }
 // debug()
-// debug 'Ωnfat_110', f()
-// debug 'Ωnfat_111', f undefined
-// debug 'Ωnfat_112', f 0
-// debug 'Ωnfat_113', f 0, 1
-// debug 'Ωnfat_114', f 0, 1, undefined
-// debug 'Ωnfat_115', f 0, 1, "wat"
-// debug 'Ωnfat_116', f 0, 1, {}
-
-  // f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
-// debug()
 // debug 'Ωnfat_117', f()
 // debug 'Ωnfat_118', f undefined
 // debug 'Ωnfat_119', f 0
-// debug 'Ωnfat_120', f 0, {}
-// debug 'Ωnfat_121', f 0, 1
-// debug 'Ωnfat_122', f 0, 1, undefined
-// debug 'Ωnfat_123', f 0, 1, "wat"
-// debug 'Ωnfat_124', f 0, 1, {}
-// debug 'Ωnfat_125', f 0, 1, undefined, 3
-// debug 'Ωnfat_126', f 0, 1, "wat", 3
-// debug 'Ωnfat_127', f 0, 1, {}, 3
-// # debug 'Ωnfat_128', f [ 0, 1, , 3, ]...
+// debug 'Ωnfat_120', f 0, 1
+// debug 'Ωnfat_121', f 0, 1, undefined
+// debug 'Ωnfat_122', f 0, 1, "wat"
+// debug 'Ωnfat_123', f 0, 1, {}
+
+  // f = ( a, b, cfg, u ) -> { a, b, cfg, u, }
+// debug()
+// debug 'Ωnfat_124', f()
+// debug 'Ωnfat_125', f undefined
+// debug 'Ωnfat_126', f 0
+// debug 'Ωnfat_127', f 0, {}
+// debug 'Ωnfat_128', f 0, 1
+// debug 'Ωnfat_129', f 0, 1, undefined
+// debug 'Ωnfat_130', f 0, 1, "wat"
+// debug 'Ωnfat_131', f 0, 1, {}
+// debug 'Ωnfat_132', f 0, 1, undefined, 3
+// debug 'Ωnfat_133', f 0, 1, "wat", 3
+// debug 'Ωnfat_134', f 0, 1, {}, 3
+// # debug 'Ωnfat_135', f [ 0, 1, , 3, ]...
 
 }).call(this);
 
