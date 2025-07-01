@@ -472,7 +472,6 @@
             fit: number_tk_matcher
           });
           number_lx = g.scan_first('9753');
-          debug('Ωilxt_108', number_lx);
           this.eq((Ωilxt_109 = function() {
             return number_tk.name;
           }), 'number');
@@ -494,7 +493,25 @@
             fit: number_tk_matcher
           });
           number_lx = g.scan_first('9753');
-          debug('Ωilxt_111', number_lx);
+          this.eq((Ωilxt_112 = function() {
+            return number_tk.name;
+          }), 'number');
+          this.eq((Ωilxt_113 = function() {
+            return number_lx.token;
+          }), number_tk);
+          return null;
+        })();
+        (() => {          //.....................................................................................................
+          var g, gnd, number_lx, number_tk, number_tk_matcher, Ωilxt_112, Ωilxt_113;
+          g = new Grammar({
+            name: 'g'
+          });
+          gnd = g.new_level({
+            name: 'gnd'
+          });
+          number_tk_matcher = rx`[0-9]+`;
+          number_tk = gnd.new_token('number', number_tk_matcher);
+          number_lx = g.scan_first('9753');
           this.eq((Ωilxt_112 = function() {
             return number_tk.name;
           }), 'number');

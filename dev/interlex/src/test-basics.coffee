@@ -226,7 +226,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
         number_tk_matcher = rx"[0-9]+"
         number_tk         = gnd.new_token { name: 'number', fit: number_tk_matcher, }
         number_lx         = g.scan_first '9753'
-        debug 'Ωilxt_108', number_lx
         @eq ( Ωilxt_109 = -> number_tk.name               ), 'number'
         @eq ( Ωilxt_110 = -> number_lx.token              ), number_tk
         return null
@@ -237,7 +236,16 @@ GTNG                      = require '../../../apps/guy-test-NG'
         number_tk_matcher = rx"[0-9]+"
         number_tk         = gnd.new_token 'number', { fit: number_tk_matcher, }
         number_lx         = g.scan_first '9753'
-        debug 'Ωilxt_111', number_lx
+        @eq ( Ωilxt_112 = -> number_tk.name               ), 'number'
+        @eq ( Ωilxt_113 = -> number_lx.token              ), number_tk
+        return null
+      #.....................................................................................................
+      do =>
+        g                 = new Grammar { name: 'g', }
+        gnd               = g.new_level { name: 'gnd', }
+        number_tk_matcher = rx"[0-9]+"
+        number_tk         = gnd.new_token 'number', number_tk_matcher
+        number_lx         = g.scan_first '9753'
         @eq ( Ωilxt_112 = -> number_tk.name               ), 'number'
         @eq ( Ωilxt_113 = -> number_lx.token              ), number_tk
         return null
