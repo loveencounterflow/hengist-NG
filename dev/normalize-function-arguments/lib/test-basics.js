@@ -396,12 +396,93 @@
       return null;
     },
     //---------------------------------------------------------------------------------------------------------
+    names_in_cfg_are_created: function() {
+      var NFA, nfa;
+      NFA = require('../../../apps/normalize-function-arguments');
+      ({nfa} = NFA);
+      (() => {        //.......................................................................................................
+        var fn, frz, Ωnfat__51, Ωnfat__52, Ωnfat__53, Ωnfat__54, Ωnfat__55, Ωnfat__56, Ωnfat__57, Ωnfat__58, Ωnfat__59;
+        fn = nfa(function(first_name, last_name, cfg) {
+          return cfg;
+        });
+        frz = Object.freeze;
+        //.....................................................................................................
+        this.eq((Ωnfat__51 = function() {
+          return fn();
+        }), {
+          first_name: void 0,
+          last_name: void 0
+        });
+        this.eq((Ωnfat__52 = function() {
+          return fn('Alice');
+        }), {
+          first_name: 'Alice',
+          last_name: void 0
+        });
+        this.eq((Ωnfat__53 = function() {
+          return fn('Alice', 'McMillan');
+        }), {
+          first_name: 'Alice',
+          last_name: 'McMillan'
+        });
+        this.eq((Ωnfat__54 = function() {
+          return fn({});
+        }), {
+          first_name: void 0,
+          last_name: void 0
+        });
+        this.eq((Ωnfat__55 = function() {
+          return fn('Alice', {});
+        }), {
+          first_name: 'Alice',
+          last_name: void 0
+        });
+        this.eq((Ωnfat__56 = function() {
+          return fn('Alice', 'McMillan', {});
+        }), {
+          first_name: 'Alice',
+          last_name: 'McMillan'
+        });
+        this.eq((Ωnfat__57 = function() {
+          return fn({
+            city: 'Seoul'
+          });
+        }), {
+          first_name: void 0,
+          last_name: void 0,
+          city: 'Seoul'
+        });
+        this.eq((Ωnfat__58 = function() {
+          return fn('Alice', {
+            city: 'Seoul'
+          });
+        }), {
+          first_name: 'Alice',
+          last_name: void 0,
+          city: 'Seoul'
+        });
+        this.eq((Ωnfat__59 = function() {
+          return fn('Alice', 'McMillan', {
+            city: 'Seoul'
+          });
+        }), {
+          first_name: 'Alice',
+          last_name: 'McMillan',
+          city: 'Seoul'
+        });
+        //.....................................................................................................
+        return null;
+      })();
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
     get_signature: function() {
       var NFA, get_signature, nfa;
       NFA = require('../../../apps/normalize-function-arguments');
       ({nfa, get_signature} = NFA);
       (() => {        //.......................................................................................................
-        var optional, Ωnfat__51, Ωnfat__52, Ωnfat__53, Ωnfat__54, Ωnfat__55, Ωnfat__56, Ωnfat__58, Ωnfat__59;
+        var optional, Ωnfat__69, Ωnfat__70, Ωnfat__71, Ωnfat__72, Ωnfat__73, Ωnfat__74, Ωnfat__76, Ωnfat__77;
         optional = null;
         
       const empty_fn = function (
@@ -410,34 +491,34 @@
 
         ) {};
       ;
-        this.eq((Ωnfat__51 = function() {
+        this.eq((Ωnfat__69 = function() {
           return get_signature(function(a, cfg) {});
         }), {
           names: ['a', 'cfg'],
           q_idx: 1,
           q_ridx: -1
         });
-        this.throws((Ωnfat__52 = function() {
+        this.throws((Ωnfat__70 = function() {
           return get_signature(function(a = optional, cfg) {});
         }), /not compliant/);
-        this.throws((Ωnfat__53 = function() {
+        this.throws((Ωnfat__71 = function() {
           return get_signature(function(a) {});
         }), /not compliant/);
-        this.eq((Ωnfat__54 = function() {
+        this.eq((Ωnfat__72 = function() {
           return get_signature(empty_fn);
         }), {
           names: ['cfg'],
           q_idx: 0,
           q_ridx: -1
         });
-        this.eq((Ωnfat__55 = function() {
+        this.eq((Ωnfat__73 = function() {
           return get_signature(function(cfg) {});
         }), {
           names: ['cfg'],
           q_idx: 0,
           q_ridx: -1
         });
-        this.eq((Ωnfat__56 = function() {
+        this.eq((Ωnfat__74 = function() {
           return get_signature(function(a, b, c, cfg) {});
         }), {
           names: ['a', 'b', 'c', 'cfg'],
@@ -445,24 +526,24 @@
           q_ridx: -1
         });
         // ### TAINT limitation of CoffeeScript: signature runs up to soak, trailing paramters handled inside function body ###
-        // @eq     ( Ωnfat__57 = -> get_signature ( a, b..., c       ) ->  ), { a: 'bare', b: 'soak', }
-        this.throws((Ωnfat__58 = function() {
+        // @eq     ( Ωnfat__75 = -> get_signature ( a, b..., c       ) ->  ), { a: 'bare', b: 'soak', }
+        this.throws((Ωnfat__76 = function() {
           return get_signature(function(a, ...b) {
             var c, cfg, ref;
             ref = b, [...b] = ref, [c, cfg] = splice.call(b, -2);
           });
         }), /not compliant/);
-        this.throws((Ωnfat__59 = function() {
+        this.throws((Ωnfat__77 = function() {
           return get_signature(function(a, b = null, cfg) {});
         }), /not compliant/);
         return null;
       })();
       (() => {        //.......................................................................................................
-        var Ωnfat__60, Ωnfat__61;
-        this.throws((Ωnfat__60 = function() {
+        var Ωnfat__78, Ωnfat__79;
+        this.throws((Ωnfat__78 = function() {
           return get_signature(function(a, b, cfg, c, g) {});
         }), /not compliant/);
-        this.eq((Ωnfat__61 = function() {
+        this.eq((Ωnfat__79 = function() {
           return get_signature(function(a, b, c, cfg, g) {});
         }), {
           names: ['a', 'b', 'c', 'cfg', 'g'],
@@ -480,8 +561,8 @@
       NFA = require('../../../apps/normalize-function-arguments');
       ({Template} = NFA);
       (() => {        //.......................................................................................................
-        var Ωnfat__62;
-        return this.eq((Ωnfat__62 = function() {
+        var Ωnfat__80;
+        return this.eq((Ωnfat__80 = function() {
           return new Template({
             arc: 10,
             bo: 11,
@@ -500,7 +581,7 @@
         });
       })();
       (() => {        //.......................................................................................................
-        var mylist_1, mylist_2, mylist_31, mylist_32, t, Ωnfat__63, Ωnfat__64, Ωnfat__65, Ωnfat__66, Ωnfat__67, Ωnfat__68;
+        var mylist_1, mylist_2, mylist_31, mylist_32, t, Ωnfat__81, Ωnfat__82, Ωnfat__83, Ωnfat__84, Ωnfat__85, Ωnfat__86;
         mylist_1 = [];
         mylist_2 = [];
         t = new Template({
@@ -514,29 +595,29 @@
         });
         mylist_31 = t.mylist_3;
         mylist_32 = t.mylist_3;
-        this.eq((Ωnfat__63 = function() {
+        this.eq((Ωnfat__81 = function() {
           return t;
         }), {
           mylist_1: [],
           mylist_2: [],
           mylist_3: []
         });
-        this.eq((Ωnfat__64 = function() {
+        this.eq((Ωnfat__82 = function() {
           return t.mylist_1 === mylist_1;
         }), true);
-        this.eq((Ωnfat__65 = function() {
+        this.eq((Ωnfat__83 = function() {
           return t.mylist_2 === mylist_2;
         }), true);
-        this.eq((Ωnfat__66 = function() {
+        this.eq((Ωnfat__84 = function() {
           return t.mylist_1 !== mylist_2;
         }), true);
-        this.eq((Ωnfat__67 = function() {
+        this.eq((Ωnfat__85 = function() {
           return t.mylist_31 !== mylist_32;
         }), true);
         mylist_1.push('A');
         mylist_2.push('B');
         mylist_31.push('C');
-        this.eq((Ωnfat__68 = function() {
+        this.eq((Ωnfat__86 = function() {
           return t;
         }), {
           mylist_1: ['A'],
@@ -546,7 +627,7 @@
         return null;
       })();
       (() => {        //.......................................................................................................
-        var cfg, t_1, t_2, Ωnfat__69, Ωnfat__70, Ωnfat__71, Ωnfat__72, Ωnfat__73;
+        var cfg, t_1, t_2, Ωnfat__87, Ωnfat__88, Ωnfat__89, Ωnfat__90, Ωnfat__91;
         cfg = {
           name: {
             first: 'John',
@@ -555,7 +636,7 @@
         };
         t_1 = new Template(cfg);
         t_2 = new Template(cfg);
-        this.eq((Ωnfat__69 = function() {
+        this.eq((Ωnfat__87 = function() {
           return t_1;
         }), {
           name: {
@@ -563,10 +644,10 @@
             last: 'Doe'
           }
         });
-        this.eq((Ωnfat__70 = function() {
+        this.eq((Ωnfat__88 = function() {
           return t_1.name !== cfg.name;
         }), true);
-        this.eq((Ωnfat__71 = function() {
+        this.eq((Ωnfat__89 = function() {
           return t_1;
         }), {
           name: {
@@ -574,10 +655,10 @@
             last: 'Doe'
           }
         });
-        this.eq((Ωnfat__72 = function() {
+        this.eq((Ωnfat__90 = function() {
           return t_2.name !== cfg.name;
         }), true);
-        this.eq((Ωnfat__73 = function() {
+        this.eq((Ωnfat__91 = function() {
           return t_1.name !== t_2.name;
         }), true);
         return null;
@@ -600,14 +681,14 @@
         //     sum:      -> @arc + @bo + @cy
         //   fn = nfa { template, }, ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, sum: cfg.sum, }
         //   # fn = nfa ( arc, bo, cy, cfg ) -> { arc, bo, cy, cfg, sum: cfg.sum, }
-        //   debug 'Ωnfat__74', internals.gnd.nfa_cfg
-        //   debug 'Ωnfat__75', internals.gnd.nfa_cfg.template
-        //   debug 'Ωnfat__76', fn 1, 2, 3, {}
-        //   @eq     ( Ωnfat__77 = -> fn 1, 2, 3, {} ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
-        //   @eq     ( Ωnfat__78 = -> fn 1, 2, 3     ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
+        //   debug 'Ωnfat__92', internals.gnd.nfa_cfg
+        //   debug 'Ωnfat__93', internals.gnd.nfa_cfg.template
+        //   debug 'Ωnfat__94', fn 1, 2, 3, {}
+        //   @eq     ( Ωnfat__95 = -> fn 1, 2, 3, {} ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
+        //   @eq     ( Ωnfat__96 = -> fn 1, 2, 3     ), { arc: 1, bo: 2, cy: 3, cfg: { arc: 1, bo: 2, cy: 3, sum: 6, }, sum: 6, }
         //   return null
         //.......................................................................................................
-        var fn, template, Ωnfat__79, Ωnfat__80, Ωnfat__81, Ωnfat__82, Ωnfat__83;
+        var fn, template, Ωnfat_100, Ωnfat_101, Ωnfat__97, Ωnfat__98, Ωnfat__99;
         template = {
           arc: 10,
           bo: 11,
@@ -616,7 +697,7 @@
         fn = nfa({template}, function(arc, bo, cy, cfg) {
           return {arc, bo, cy, cfg};
         });
-        this.eq((Ωnfat__79 = function() {
+        this.eq((Ωnfat__97 = function() {
           return fn(20, 21, 22, {});
         }), {
           arc: 20,
@@ -628,7 +709,7 @@
             cy: 22
           }
         });
-        this.eq((Ωnfat__80 = function() {
+        this.eq((Ωnfat__98 = function() {
           return fn();
         }), {
           arc: 10,
@@ -640,7 +721,7 @@
             cy: 12
           }
         });
-        this.eq((Ωnfat__81 = function() {
+        this.eq((Ωnfat__99 = function() {
           return fn(20);
         }), {
           arc: 20,
@@ -652,7 +733,7 @@
             cy: 12
           }
         });
-        this.eq((Ωnfat__82 = function() {
+        this.eq((Ωnfat_100 = function() {
           return fn(20, 21);
         }), {
           arc: 20,
@@ -664,7 +745,7 @@
             cy: 12
           }
         });
-        this.eq((Ωnfat__83 = function() {
+        this.eq((Ωnfat_101 = function() {
           return fn(20, 21, 22);
         }), {
           arc: 20,
@@ -687,14 +768,14 @@
       NFA = require('../../../apps/normalize-function-arguments');
       ({nfa, internals} = NFA);
       (() => {        //.......................................................................................................
-        var fn, template, Ωnfat__84, Ωnfat__85;
+        var fn, template, Ωnfat_102, Ωnfat_103;
         template = {
           name: null
         };
         fn = nfa({template}, function(name, cfg) {
           return {name, cfg};
         });
-        this.eq((Ωnfat__84 = function() {
+        this.eq((Ωnfat_102 = function() {
           return fn();
         }), {
           name: null,
@@ -702,7 +783,7 @@
             name: null
           }
         });
-        this.eq((Ωnfat__85 = function() {
+        this.eq((Ωnfat_103 = function() {
           return fn('alice', {
             name: 'bob'
           });
@@ -715,7 +796,7 @@
         return null;
       })();
       (() => {        //.......................................................................................................
-        var F, fn, template, Ωnfat__86, Ωnfat__87, Ωnfat__88, Ωnfat__89;
+        var F, fn, template, Ωnfat_104, Ωnfat_105, Ωnfat_106, Ωnfat_107;
         template = {
           name: 'carl'
         };
@@ -723,7 +804,7 @@
         fn = nfa({template}, function(name, cfg, f) {
           return {name, f, cfg};
         });
-        this.eq((Ωnfat__86 = function() {
+        this.eq((Ωnfat_104 = function() {
           return fn();
         }), {
           name: 'carl',
@@ -733,7 +814,7 @@
             f: void 0
           }
         });
-        this.eq((Ωnfat__87 = function() {
+        this.eq((Ωnfat_105 = function() {
           return fn({
             name: 'bob'
           }, F);
@@ -745,7 +826,7 @@
             f: F
           }
         });
-        this.eq((Ωnfat__88 = function() {
+        this.eq((Ωnfat_106 = function() {
           return fn('alice', {
             name: 'bob'
           }, F);
@@ -757,7 +838,7 @@
             f: F
           }
         });
-        this.eq((Ωnfat__89 = function() {
+        this.eq((Ωnfat_107 = function() {
           return fn({}, F);
         }), {
           name: 'carl',
@@ -778,12 +859,12 @@
       NFA = require('../../../apps/normalize-function-arguments');
       ({nfa, internals} = NFA);
       (() => {        //.......................................................................................................
-        var my_fn, Ωnfat__90, Ωnfat__91;
+        var my_fn, Ωnfat_108, Ωnfat_109;
         my_fn = function(cfg) {};
-        this.eq((Ωnfat__90 = function() {
+        this.eq((Ωnfat_108 = function() {
           return my_fn.name;
         }), 'my_fn');
-        this.eq((Ωnfat__91 = function() {
+        this.eq((Ωnfat_109 = function() {
           return (nfa(my_fn)).name;
         }), 'my_fn');
         return null;
@@ -814,7 +895,7 @@
         }
       };
       (() => {        //.......................................................................................................
-        var fn, isa, quantity_create, template, Ωnfat__92, Ωnfat__93;
+        var fn, isa, quantity_create, template, Ωnfat_110, Ωnfat_111;
         template = {
           q: 0,
           u: 'u'
@@ -834,19 +915,19 @@
         fn = nfa({isa, template}, quantity_create = function(q, u, cfg) {
           return cfg;
         });
-        this.eq((Ωnfat__92 = function() {
+        this.eq((Ωnfat_110 = function() {
           return fn(3, 's');
         }), {
           q: 3,
           u: 's'
         });
-        this.throws((Ωnfat__93 = function() {
+        this.throws((Ωnfat_111 = function() {
           return fn(3, '');
         }), /validation error: expected a quantity_create_cfg/);
         return null;
       })();
       (() => {        //.......................................................................................................
-        var fn, quantity_create, ts, Ωnfat__94, Ωnfat__95, Ωnfat__96;
+        var fn, quantity_create, ts, Ωnfat_112, Ωnfat_113, Ωnfat_114;
         ts = {
           quantity: {
             template: {
@@ -870,13 +951,13 @@
         fn = nfa(ts.quantity, quantity_create = function(q, u, cfg) {
           return cfg;
         });
-        this.eq((Ωnfat__94 = function() {
+        this.eq((Ωnfat_112 = function() {
           return fn(3, 's');
         }), {
           q: 3,
           u: 's'
         });
-        this.eq((Ωnfat__95 = function() {
+        this.eq((Ωnfat_113 = function() {
           return fn(3, 's', {
             q: 0,
             u: 'u'
@@ -885,7 +966,7 @@
           q: 3,
           u: 's'
         });
-        this.throws((Ωnfat__96 = function() {
+        this.throws((Ωnfat_114 = function() {
           return fn(3, '');
         }), /validation error: expected a quantity_create_cfg/);
         return null;
