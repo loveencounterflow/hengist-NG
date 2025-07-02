@@ -385,16 +385,17 @@
 
   //===========================================================================================================
   if (module === require.main) {
-    await (() => {})();
+    await (() => {
+      // guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
+      // # guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+      // ( new Test guytest_cfg ).test @nfa_tasks
+      // # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
+      demo_isa_with_reason();
+      demo_types_as_functions();
+      demo_parse_return_value();
+      return demo_set_prototype_to_obtain_callable_class_instance();
+    })();
   }
-
-  // guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
-// # guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-// ( new Test guytest_cfg ).test @nfa_tasks
-// # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
-// demo_isa_with_reason()
-// demo_types_as_functions()
-// demo_parse_return_value()
 
 }).call(this);
 
