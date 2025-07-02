@@ -13,14 +13,15 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_1 = function() {
-    var Grammar, ILX, Level, Lexeme, SLR, Token, cs, data, error, gnd, hit, indentation_cast, indentation_re, internals, jsid_re, quote11_lit, rol_comment, rx, source, token;
+    var Grammar, ILX, Level, Lexeme, SLR, Token, cs, data, error, gnd, hit, indentation_cast, indentation_re, internals, jsid_re, other_cast, other_re, quote11_lit, rol_comment, rx, source, tilde_jsid_re, token;
     ILX = require('../../../apps/interlex');
     ({Grammar, Level, Token, Lexeme, rx, internals} = ILX);
     SLR = internals.slevithan_regex;
     jsid_re = SLR.regex` [ $ _ \p{ID_Start} ] [ $ _ \u200C \u200D \p{ID_Continue} ]* `;
+    tilde_jsid_re = SLR.regex` ~ ${jsid_re} `;
     //.........................................................................................................
     cs = new Grammar({
-      emit_signals: false,
+      emit_signals: true,
       supply_eol: true
     });
     gnd = cs.new_level({
@@ -51,14 +52,29 @@
       return null;
     };
     //.........................................................................................................
+    other_re = /./;
+    other_cast = function*({hit, start, source, new_lexeme, lexeme}) {
+      yield new_lexeme('error.illegal', start, source); //, { length: hit.length, }
+      // yield lexeme
+      return null;
+    };
+    //.........................................................................................................
+    gnd.new_token('if', 'if');
+    gnd.new_token('then', 'then');
+    gnd.new_token('else', 'else');
+    gnd.new_token('x_tildeidentifier', tilde_jsid_re);
     gnd.new_token('identifier', jsid_re);
     gnd.new_token('slimarrow', '->');
     gnd.new_token('fatarrow', '=>');
+    gnd.new_token('x_slimarrow', '<->');
+    gnd.new_token('x_fatarrow', '<=>');
     gnd.new_token('at', '@');
     gnd.new_token('nl', '\n');
     gnd.new_token('equals', '=');
     gnd.new_token('minus', '-');
     gnd.new_token('plus', '+');
+    gnd.new_token('power', '**');
+    gnd.new_token('times', '*');
     gnd.new_token('comma', ',');
     gnd.new_token('semicolon', ';');
     gnd.new_token('hash', '#', {
@@ -70,6 +86,7 @@
     gnd.new_token('closebracket', ']');
     gnd.new_token('opencurly', '{');
     gnd.new_token('closecurly', '}');
+    gnd.new_token('x_return', '<-');
     gnd.new_token('indentation', indentation_re, {
       cast: indentation_cast
     });
@@ -79,10 +96,17 @@
     });
     gnd.new_token('quote23', '"""');
     gnd.new_token('quote21', '"');
-    gnd.new_token('ws', /(?<!\n)\s+/);
-    gnd.new_token('other', /[^\x00-\/:-\@]/, {
+    gnd.new_token('digits', /[0-9]/, {
       merge: true
     });
+    gnd.new_token('dot', '.');
+    gnd.new_token('ws', /(?<!\n)\s+/);
+    gnd.new_token('other', other_re, {
+      cast: other_cast,
+      merge: true
+    });
+    // gnd.new_token 'other',              /// [^ \x00-\/ :-\@ ] ///, { merge: true, }
+    // gnd.new_token 'other',              /// . ///, { error: true, merge: true, }
     //.........................................................................................................
     quote11_lit.new_token('quote11', "'", {
       jump: '..'
@@ -94,11 +118,16 @@
       jump: '..!'
     });
     //.........................................................................................................
-    error.new_token('odd_indentation', indentation_re); //, { merge: true, }
+    error.new_token('illegal', other_re, {
+      merge: true
+    });
+    error.new_token('odd_indentation', indentation_re);
     //.........................................................................................................
     source = "f = ( arc, bo ) -> '(' + arc + ', ' + bo + ')'; g = => # comment";
     source = "f = ->\n  @some_method humm # comment\n  @other_method()";
     source = "f = ->\n  @some_method humm, '\n' # comment\n   @other_method()";
+    source = "d.f = ( arc, bo ) ->\n  <- arc * bo\ncube = ( x ) <=> x ** 3.00";
+    source = "x = 45 ~mul 31; ??? z = 0 if x ~equals y; id = 'x-96'";
 //.........................................................................................................
     for (token of cs.scan(source)) {
       if (token.fqname === 'gnd.ws') {
@@ -107,9 +136,9 @@
       data = (data != null) && (Object.keys(token.data)).length > 0 ? rpr({...token.data}) : '';
       hit = token.hit === '' ? '' : reverse(bold((rpr(token.hit)).replace(/^['"](.*)['"]$/gsv, '$1')));
       if (token.is_error) {
-        warn('Ω___9', f`${white(token.fqname)}:<40c; | ${red(reverse(bold(hit)))}:<70c; | ${blue(data)}`);
+        warn('Ω___1', f`${white(token.fqname)}:<40c; | ${red(reverse(bold(hit)))}:<70c; | ${blue(data)}`);
       } else {
-        help('Ω___9', f`${white(token.fqname)}:<40c; | ${gold(hit)}:<70c; | ${blue(data)}`);
+        help('Ω___2', f`${white(token.fqname)}:<40c; | ${gold(hit)}:<70c; | ${blue(data)}`);
       }
     }
     return null;
@@ -125,7 +154,7 @@
   // re      = /// (?<= a ) b ///y
 // source  = '01b3ab6'
 // for idx in [ 0 .. 7 ]
-//   re.lastIndex = idx; debug 'Ω___9', idx, ( rpr source[ idx ... ] ), source.match re
+//   re.lastIndex = idx; debug 'Ω___3', idx, ( rpr source[ idx ... ] ), source.match re
 
 }).call(this);
 
