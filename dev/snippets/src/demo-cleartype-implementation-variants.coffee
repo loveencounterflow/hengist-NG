@@ -29,6 +29,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 demo_isa_with_reason = ->
+  whisper '—'.repeat 108
   NFA = require '../../../apps/normalize-function-arguments'
   { nfa
     internals } = NFA
@@ -91,6 +92,7 @@ demo_isa_with_reason = ->
 
 #===========================================================================================================
 demo_types_as_functions = ->
+  whisper '—'.repeat 108
   ###
 
   * a 'type' is a / is implemented as a function that accepts one argument `x` and returns `undefined`,
@@ -111,6 +113,7 @@ demo_types_as_functions = ->
 
 #===========================================================================================================
 demo_parse_return_value = ->
+  whisper '—'.repeat 108
   NFA = require '../../../apps/normalize-function-arguments'
   { nfa
     internals } = NFA
@@ -190,35 +193,72 @@ demo_parse_return_value = ->
 
 #===========================================================================================================
 demo_set_prototype_to_obtain_callable_class_instances = ->
-  class E
-    constructor: ->
-      @eps = 'E::eps'
-    blah: -> 'E::blah'
+  whisper '—'.repeat 108
+  do ->
+    class E
+      constructor: ->
+        @eps = 'E::eps'
+      blah: -> 'E::blah'
 
-  class F extends E
-    constructor: ->
-      super()
-      @foo = 'F::foo'
-    blah: -> 'F::blah'
+    class F extends E
+      constructor: ->
+        super()
+        @foo = 'F::foo'
+      blah: -> 'F::blah'
 
-  f = new F()
-  debug 'Ωnfat__24', f
-  debug 'Ωnfat__25', f.constructor is F
-  # debug 'Ωnfat__26', f::
-  debug 'Ωnfat__27', f.__proto__ instanceof E
-  debug 'Ωnfat__28', ( Object.getPrototypeOf f ) instanceof E
-  debug 'Ωnfat__29'
-  d = -> 'D'
-  # d.__proto__ = new F()
-  Object.setPrototypeOf d, new F()
-  debug 'Ωnfat__30', 'd                         ', d
-  debug 'Ωnfat__31', 'd.prototype               ', d.prototype
-  debug 'Ωnfat__32', 'd::                       ', d::
-  debug 'Ωnfat__33', 'Object.getPrototypeOf d   ', Object.getPrototypeOf d
-  debug 'Ωnfat__34', 'd instanceof F            ', d instanceof F
-  debug 'Ωnfat__35', 'd instanceof E            ', d instanceof E
-  debug 'Ωnfat__36', 'd.foo                     ', d.foo
-  debug 'Ωnfat__38', 'd()                       ', d()
+    f = new F()
+    debug 'Ωnfat__24', f
+    debug 'Ωnfat__25', f.constructor is F
+    # debug 'Ωnfat__26', f::
+    debug 'Ωnfat__27', f.__proto__ instanceof E
+    debug 'Ωnfat__28', ( Object.getPrototypeOf f ) instanceof E
+    debug 'Ωnfat__29'
+    my_callable = -> 'D'
+    # my_callable.__proto__ = new F()
+    Object.setPrototypeOf my_callable, new F()
+    debug 'Ωnfat__30', 'rpr my_callable                         ', rpr my_callable
+    debug 'Ωnfat__31', 'rpr my_callable.prototype               ', rpr my_callable.prototype
+    debug 'Ωnfat__32', 'rpr my_callable::                       ', rpr my_callable::
+    debug 'Ωnfat__33', 'rpr Object.getPrototypeOf my_callable   ', rpr Object.getPrototypeOf my_callable
+    debug 'Ωnfat__34', 'rpr my_callable instanceof F            ', rpr my_callable instanceof F
+    debug 'Ωnfat__35', 'rpr my_callable instanceof E            ', rpr my_callable instanceof E
+    debug 'Ωnfat__36', 'rpr my_callable.foo                     ', rpr my_callable.foo
+    debug 'Ωnfat__37', 'rpr my_callable()                       ', rpr my_callable()
+    debug 'Ωnfat__38', 'rpr my_callable.constructor             ', rpr my_callable.constructor
+    debug 'Ωnfat__39', 'rpr my_callable.constructor.name        ', rpr my_callable.constructor.name
+    return null
+  #.........................................................................................................
+  whisper '—'.repeat 108
+  do ->
+    #.......................................................................................................
+    class E
+      constructor: ( callable ) ->
+        Object.setPrototypeOf callable, @
+        @eps = 'E::eps'
+        return callable
+      blah: -> 'E::blah'
+    #.......................................................................................................
+    class F extends E
+      constructor: ( callable ) ->
+        super callable
+        @foo = 'F::foo'
+        return callable
+      blah: -> 'F::blah'
+    #.......................................................................................................
+    my_callable = new F ( Desire = -> "an function named Desire" )
+    debug 'Ωnfat__40', 'rpr my_callable                         ', rpr my_callable
+    debug 'Ωnfat__41', 'rpr my_callable.prototype               ', rpr my_callable.prototype
+    debug 'Ωnfat__42', 'rpr my_callable::                       ', rpr my_callable::
+    debug 'Ωnfat__43', 'rpr Object.getPrototypeOf my_callable   ', rpr Object.getPrototypeOf my_callable
+    debug 'Ωnfat__44', 'rpr my_callable instanceof F            ', rpr my_callable instanceof F
+    debug 'Ωnfat__45', 'rpr my_callable instanceof E            ', rpr my_callable instanceof E
+    debug 'Ωnfat__46', 'rpr my_callable.foo                     ', rpr my_callable.foo
+    debug 'Ωnfat__47', 'rpr my_callable.eps                     ', rpr my_callable.eps
+    debug 'Ωnfat__48', 'rpr my_callable()                       ', rpr my_callable()
+    debug 'Ωnfat__49', 'rpr my_callable.blah()                  ', rpr my_callable.blah()
+    debug 'Ωnfat__50', 'rpr my_callable.constructor             ', rpr my_callable.constructor
+    debug 'Ωnfat__51', 'rpr my_callable.constructor.name        ', rpr my_callable.constructor.name
+    return null
   return null
 
 #===========================================================================================================
@@ -230,4 +270,4 @@ if module is require.main then await do =>
   demo_isa_with_reason()
   demo_types_as_functions()
   demo_parse_return_value()
-  demo_set_prototype_to_obtain_callable_class_instance()
+  demo_set_prototype_to_obtain_callable_class_instances()

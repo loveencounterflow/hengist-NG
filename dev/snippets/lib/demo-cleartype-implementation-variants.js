@@ -20,6 +20,7 @@
   //===========================================================================================================
   demo_isa_with_reason = function() {
     var NFA, att, em, float, get_messages, gnd, internals, messages, nfa, nonempty_text, nonempty_text_2, nope, quantity, quantity_2, text;
+    whisper('—'.repeat(108));
     NFA = require('../../../apps/normalize-function-arguments');
     ({nfa, internals} = NFA);
     ({gnd} = internals);
@@ -190,6 +191,7 @@
 
      */
     var isa, ts;
+    whisper('—'.repeat(108));
     isa = function(expectation = void 0) {
       return (expectation == null) || (expectation === true);
     };
@@ -209,6 +211,7 @@
   //===========================================================================================================
   demo_parse_return_value = function() {
     var NFA, RVX, Unparsable_function_body, dcl, e, em, fn, get_return_value_source, gnd, i, internals, len, name_from_fn_revalex, name_from_revalex, nameit, nfa, normalize_revalex, probes, rvx, ts, typename;
+    whisper('—'.repeat(108));
     NFA = require('../../../apps/normalize-function-arguments');
     ({nfa, internals} = NFA);
     ({gnd, nameit} = internals);
@@ -338,48 +341,102 @@
 
   //===========================================================================================================
   demo_set_prototype_to_obtain_callable_class_instances = function() {
-    var E, F, d;
-    E = class E {
-      constructor() {
-        this.eps = 'E::eps';
-      }
+    whisper('—'.repeat(108));
+    (function() {
+      var E, F, my_callable;
+      E = class E {
+        constructor() {
+          this.eps = 'E::eps';
+        }
 
-      blah() {
-        return 'E::blah';
-      }
+        blah() {
+          return 'E::blah';
+        }
 
-    };
-    F = class F extends E {
-      constructor() {
-        super();
-        this.foo = 'F::foo';
-      }
+      };
+      F = class F extends E {
+        constructor() {
+          super();
+          this.foo = 'F::foo';
+        }
 
-      blah() {
-        return 'F::blah';
-      }
+        blah() {
+          return 'F::blah';
+        }
 
-    };
-    f = new F();
-    debug('Ωnfat__24', f);
-    debug('Ωnfat__25', f.constructor === F);
-    // debug 'Ωnfat__26', f::
-    debug('Ωnfat__27', f.__proto__ instanceof E);
-    debug('Ωnfat__28', (Object.getPrototypeOf(f)) instanceof E);
-    debug('Ωnfat__29');
-    d = function() {
-      return 'D';
-    };
-    // d.__proto__ = new F()
-    Object.setPrototypeOf(d, new F());
-    debug('Ωnfat__30', 'd                         ', d);
-    debug('Ωnfat__31', 'd.prototype               ', d.prototype);
-    debug('Ωnfat__32', 'd::                       ', d.prototype);
-    debug('Ωnfat__33', 'Object.getPrototypeOf d   ', Object.getPrototypeOf(d));
-    debug('Ωnfat__34', 'd instanceof F            ', d instanceof F);
-    debug('Ωnfat__35', 'd instanceof E            ', d instanceof E);
-    debug('Ωnfat__36', 'd.foo                     ', d.foo);
-    debug('Ωnfat__38', 'd()                       ', d());
+      };
+      f = new F();
+      debug('Ωnfat__24', f);
+      debug('Ωnfat__25', f.constructor === F);
+      // debug 'Ωnfat__26', f::
+      debug('Ωnfat__27', f.__proto__ instanceof E);
+      debug('Ωnfat__28', (Object.getPrototypeOf(f)) instanceof E);
+      debug('Ωnfat__29');
+      my_callable = function() {
+        return 'D';
+      };
+      // my_callable.__proto__ = new F()
+      Object.setPrototypeOf(my_callable, new F());
+      debug('Ωnfat__30', 'rpr my_callable                         ', rpr(my_callable));
+      debug('Ωnfat__31', 'rpr my_callable.prototype               ', rpr(my_callable.prototype));
+      debug('Ωnfat__32', 'rpr my_callable::                       ', rpr(my_callable.prototype));
+      debug('Ωnfat__33', 'rpr Object.getPrototypeOf my_callable   ', rpr(Object.getPrototypeOf(my_callable)));
+      debug('Ωnfat__34', 'rpr my_callable instanceof F            ', rpr(my_callable instanceof F));
+      debug('Ωnfat__35', 'rpr my_callable instanceof E            ', rpr(my_callable instanceof E));
+      debug('Ωnfat__36', 'rpr my_callable.foo                     ', rpr(my_callable.foo));
+      debug('Ωnfat__37', 'rpr my_callable()                       ', rpr(my_callable()));
+      debug('Ωnfat__38', 'rpr my_callable.constructor             ', rpr(my_callable.constructor));
+      debug('Ωnfat__39', 'rpr my_callable.constructor.name        ', rpr(my_callable.constructor.name));
+      return null;
+    })();
+    //.........................................................................................................
+    whisper('—'.repeat(108));
+    (function() {
+      var Desire, E, F, my_callable;
+      //.......................................................................................................
+      E = class E {
+        constructor(callable) {
+          Object.setPrototypeOf(callable, this);
+          this.eps = 'E::eps';
+          return callable;
+        }
+
+        blah() {
+          return 'E::blah';
+        }
+
+      };
+      //.......................................................................................................
+      F = class F extends E {
+        constructor(callable) {
+          super(callable);
+          this.foo = 'F::foo';
+          return callable;
+        }
+
+        blah() {
+          return 'F::blah';
+        }
+
+      };
+      //.......................................................................................................
+      my_callable = new F((Desire = function() {
+        return "an function named Desire";
+      }));
+      debug('Ωnfat__40', 'rpr my_callable                         ', rpr(my_callable));
+      debug('Ωnfat__41', 'rpr my_callable.prototype               ', rpr(my_callable.prototype));
+      debug('Ωnfat__42', 'rpr my_callable::                       ', rpr(my_callable.prototype));
+      debug('Ωnfat__43', 'rpr Object.getPrototypeOf my_callable   ', rpr(Object.getPrototypeOf(my_callable)));
+      debug('Ωnfat__44', 'rpr my_callable instanceof F            ', rpr(my_callable instanceof F));
+      debug('Ωnfat__45', 'rpr my_callable instanceof E            ', rpr(my_callable instanceof E));
+      debug('Ωnfat__46', 'rpr my_callable.foo                     ', rpr(my_callable.foo));
+      debug('Ωnfat__47', 'rpr my_callable.eps                     ', rpr(my_callable.eps));
+      debug('Ωnfat__48', 'rpr my_callable()                       ', rpr(my_callable()));
+      debug('Ωnfat__49', 'rpr my_callable.blah()                  ', rpr(my_callable.blah()));
+      debug('Ωnfat__50', 'rpr my_callable.constructor             ', rpr(my_callable.constructor));
+      debug('Ωnfat__51', 'rpr my_callable.constructor.name        ', rpr(my_callable.constructor.name));
+      return null;
+    })();
     return null;
   };
 
@@ -393,7 +450,7 @@
       demo_isa_with_reason();
       demo_types_as_functions();
       demo_parse_return_value();
-      return demo_set_prototype_to_obtain_callable_class_instance();
+      return demo_set_prototype_to_obtain_callable_class_instances();
     })();
   }
 
