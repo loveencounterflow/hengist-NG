@@ -193,7 +193,7 @@
     for (typename in ts) {
       dcl = ts[typename];
       ndcl = normalize_declaration(ts, typename, dcl);
-      echo(f`${gold(typename)}:<30c; | ${white(rpr(dcl))}:<70c; | ${rpr(ndcl)}:<20c;`);
+      echo(f`${gold(typename)}:<15c; | ${white(rpr(dcl))}:<60c; | ${rpr(ndcl)}:<60c;`);
     }
     return null;
     //.......................................................................................................
