@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, RVX, Revalex, Test, Type, Typespace, Unparsable_function_body, alert, bold, debug, demo_turning_lists_of_functions_into_objects_with_sensible_names, echo, f, gnd, gold, help, info, inspect, lime, log, plain, pod_prototypes, praise, red, reverse, rpr, urge, warn, whisper, white,
+  var GTNG, GUY, RVX, Revalex, Test, Type, Typespace, Unparsable_function_body, alert, bold, debug, demo_turning_lists_of_functions_into_objects_with_sensible_names, echo, f, gnd, gold, help, hide, info, inspect, lime, log, nameit, plain, pod_prototypes, praise, red, reverse, rpr, truth, urge, warn, whisper, white,
     indexOf = [].indexOf;
 
   //===========================================================================================================
@@ -22,7 +22,11 @@
   //...........................................................................................................
   ({red, gold, bold, white, lime, reverse} = GUY.trm);
 
-  //...........................................................................................................
+  truth = function(x) {
+    return GUY.trm.truth(x);
+  };
+
+  //===========================================================================================================
   pod_prototypes = Object.freeze([null, Object.getPrototypeOf({})]);
 
   gnd = {
@@ -49,13 +53,22 @@
     }
   };
 
+  //...........................................................................................................
+  ({hide} = GUY.props);
+
+  nameit = function(name, f) {
+    return Object.defineProperty(f, 'name', {
+      value: name
+    });
+  };
+
   //===========================================================================================================
   Unparsable_function_body = class Unparsable_function_body extends Error {};
 
   //===========================================================================================================
   Revalex = class Revalex {
     //---------------------------------------------------------------------------------------------------------
-    get_return_value_source(fn) {
+    revalex_from_function(fn) {
       /* TAINT use JS tokenizer */
       /* NOTE restrictions:
          * catches only last `return` statement, even if unreachable
@@ -75,7 +88,11 @@
       /* NOTE `revalex` short for '**RE**turn **VA**Lue **EX**pression' */
       /* TAINT use JS tokenizer */
       var R;
-      R = this.get_return_value_source(fn);
+      R = this.revalex_from_function(fn);
+      R = R.replace(/<=/gsv, 'lteq');
+      R = R.replace(/>=/gsv, 'gteq');
+      R = R.replace(/</gsv, 'lt');
+      R = R.replace(/>/gsv, 'gt');
       R = R.replace(/!==/gsv, 'isnt');
       R = R.replace(/&&/gsv, 'and');
       R = R.replace(/\|\|/gsv, 'or');
@@ -84,8 +101,8 @@
     }
 
     //---------------------------------------------------------------------------------------------------------
-    name_from_fn_revalex(fn) {
-      return this.name_from_revalex(normalize_revalex(fn));
+    name_from_function(fn) {
+      return this.name_from_revalex(this.normalize_revalex(fn));
     }
 
     //---------------------------------------------------------------------------------------------------------
@@ -106,49 +123,92 @@
   //===========================================================================================================
   Type = class Type {
     //---------------------------------------------------------------------------------------------------------
-    constructor(cfg = null) {
+    constructor(typespace, typename, dcl) {
+      hide(this, 'typespace', typespace);
+      hide(this, 'dcl', dcl);
+      this.name = typename;
+      this._normalize_dcl();
+      nameit(`isa_${typename}`, this.isa);
       return void 0;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    isa(x) {
+      var i, isa_clause, len, ref;
+      ref = this.isa_clauses;
+      /* TAINT add reporting */
+      for (i = 0, len = ref.length; i < len; i++) {
+        isa_clause = ref[i];
+        if (!isa_clause(x)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    _normalize_dcl() {
+      var dcl;
+      /* Convert 'isa-only' declarations into objects with explicit `isa`: */
+      if (gnd.pod.isa(this.dcl)) {
+        dcl = {...this.dcl};
+      } else {
+        dcl = {
+          isa: this.dcl
+        };
+      }
+      /* Convert singular `isa` declarations into list of clauses: */
+      if (gnd.list.isa(dcl.isa)) {
+        this.isa_clauses = [...dcl.isa];
+      } else {
+        this.isa_clauses = [dcl.isa];
+      }
+      this._normalize_isa_clauses();
+      return dcl;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    _normalize_isa_clauses() {
+      var i, idx, isa_clause, len, ref;
+      ref = this.isa_clauses;
+      for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
+        isa_clause = ref[idx];
+        ((isa_clause, idx) => {
+          // debug 'Ωtt___2', @name, idx, ( rpr isa_clause )
+          //.................................................................................................
+          /* De-reference referenced type: */
+          if (gnd.text.isa(isa_clause)) {
+            return this.isa_clauses[idx] = ((ref_typename) => {
+              var ref_type;
+              if (!Reflect.has(this.typespace, ref_typename)) {
+                throw new Error(`Ωtt___3 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(this.name)}`);
+              }
+              ref_type = this.typespace[ref_typename];
+              // debug 'Ωtt___4', @name, '->', ref_typename, rpr ref_type
+              // return nameit "ref_#{ref_type.isa.name}", ( x ) -> ref_type.isa x
+              return nameit(`ref_isa_${ref_typename}`, function(x) {
+                return ref_type.isa(x);
+              });
+            })(isa_clause);
+          //.................................................................................................
+          } else if (gnd.function.isa(isa_clause)) {
+            if (isa_clause.name === '') {
+              return nameit(RVX.revalex_from_function(isa_clause), isa_clause);
+            }
+          } else {
+            // nameit ( RVX.name_from_function isa_clause ), isa_clause
+            throw new Error("Ωtt___6 unexpected type in ISA clause");
+          }
+        })(isa_clause, idx);
+      }
+      return null;
     }
 
   };
 
-  // do =>
-  //     rvx = ( fn ) -> normalize_revalex fn
-  //     ts =
-  //       id:
-  //         isa: [
-  //           ( x ) -> ( typeof x ) is 'string'
-  //           ( x ) -> ( /^[a-z][a-z0-9]*$/.test x )
-  //           ]
-  //     for typename, dcl of ts
-  //       unless Array.isArray dcl.isa
-  //         throw new Error "Ωtt___2 expected a list"
-  //       isa_parts = {}
-  //       for fn in dcl.isa
-  //         unless gnd.function.isa fn
-  //           throw new Error "Ωtt___3 expected a function, got #{rpr fn}"
-  //         revalex               = normalize_revalex fn
-  //         fn[RVX]               = revalex
-  //         test_name             = "#{typename}[#{rpr revalex}]"
-  //         # debug 'Ωtt___4', ( rpr ( -> ).name ), fn
-  //         # debug 'Ωtt___5', ( rpr ( => ).name ), fn
-  //         # debug 'Ωtt___6', ( rpr fn.name ), fn
-  //         nameit test_name, fn if fn.name is ''
-  //         isa_parts[ test_name ] = fn
-  //       for name, fn of isa_parts
-  //         help 'Ωtt___7', f"#{rpr name}:<30c; | #{fn}"
-  //       isa = do ( typename, isa_parts ) -> ( x, record = null ) ->
-  //         for name, partial of isa_parts
-  //           unless partial.call null, x
-  //             if record?
-  //               # record typename
-  //               record name
-  //             return false
-  //         return true
-
   //===========================================================================================================
   demo_turning_lists_of_functions_into_objects_with_sensible_names = function() {
-    var compile_typespace, dcl, failed_tests, ndcl, normalize_declaration, record, ts, typename;
+    var ts;
     //.........................................................................................................
     ts = {
       //.......................................................................................................
@@ -171,7 +231,7 @@
       nonempty_text: [
         'text',
         function(x) {
-          return /^[a-z][a-z0-9]*$/.test(x);
+          return x.length > 0;
         }
       ],
       //.......................................................................................................
@@ -188,116 +248,85 @@
             return /^[a-z][a-z0-9]*$/.test(x);
           }
         ]
-      }
+      },
+      //.......................................................................................................
+      foo: 'spork',
+      bar: 'foo',
+      baz: 'bar'
     };
-    //.......................................................................................................
-    debug('Ωtt___8', gnd.pod.isa({}));
-    debug('Ωtt___9', gnd.pod.isa(Object.create(null)));
-    normalize_declaration = function(ts, typename, dcl) {
-      var dcl_isa;
-      if (!gnd.pod.isa(dcl)) {
-        dcl = ((function(isa) {
-          return {isa};
-        })(dcl));
-      }
-      if (!gnd.list.isa(dcl.isa)) {
-        /* Convert singular `isa` declarations into list of clauses: */
-        dcl.isa = ((function(isa) {
-          return [isa];
-        })(dcl.isa));
-      }
-      dcl_isa = dcl.isa;
-      return dcl;
-    };
-//.......................................................................................................
-    for (typename in ts) {
-      dcl = ts[typename];
-      ndcl = normalize_declaration(ts, typename, dcl);
-      echo(f`${gold(typename)}:<15c; | ${white(rpr(dcl))}:<60c; | ${lime(rpr(ndcl))}:<60c;`);
-    }
-    return null;
-    //.......................................................................................................
-    compile_typespace = function(ts) {
-      var dcl_isa_clause, i, isa_clauses, len, results, revalex, test_name;
-      results = [];
+    (() => {      //.......................................................................................................
+      var dcl, type, typename;
       for (typename in ts) {
         dcl = ts[typename];
-        isa_clauses = {};
-        //...................................................................................................
-        debug('Ωtt__10', 'dcl_isa', rpr(dcl_isa));
-        for (i = 0, len = dcl_isa.length; i < len; i++) {
-          dcl_isa_clause = dcl_isa[i];
-          debug('Ωtt__11', 'dcl_isa_clause', rpr(dcl_isa_clause));
-          //.................................................................................................
-          /* De-reference referenced type: */
-          if (gnd.text.isa(dcl_isa_clause)) {
-            dcl_isa_clause = (function(ref_typename) {
-              if (!Reflect.has(ts, ref_typename)) {
-                throw new Error(`Ωtt__12 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(typename)}`);
-              }
-              return ts[ref_typename].isa;
-            })(dcl_isa_clause);
-          }
-          //.................................................................................................
-          if (!gnd.function.isa(dcl_isa_clause)) {
-            throw new Error(`Ωtt__13 expected a function, got ${rpr(dcl_isa_clause)}`);
-          }
-          //.................................................................................................
-          revalex = RVX.normalize_revalex(dcl_isa_clause);
-          // dcl_isa_clause[RVX] = revalex
-          test_name = `${typename}[${rpr(revalex)}]`;
-          if (dcl_isa_clause.name === '') {
-            nameit(test_name, dcl_isa_clause);
-          }
-          isa_clauses[test_name] = dcl_isa_clause;
-        }
-        //...................................................................................................
-        results.push(ts[typename].isa = (function(typename, isa_clauses) {
-          return function(x, record = null) {
-            var isa_clause, name;
-            for (name in isa_clauses) {
-              isa_clause = isa_clauses[name];
-              if (!isa_clause.call(null, x, record)) {
-                if (record != null) {
-                  record(name);
-                }
-                return false;
-              }
-            }
-            return true;
-          };
-        })(typename, isa_clauses));
+        ts[typename] = type = new Type(ts, typename, dcl);
+        echo(f`${gold(typename)}:<15c; | ${white(rpr(dcl))}:<60c; | ${lime(rpr(type.isa_clauses))}:<60c;`);
       }
-      return results;
-    };
-    //.......................................................................................................
-    compile_typespace(ts);
-    for (typename in ts) {
-      dcl = ts[typename];
-      info('Ωtt__14', typename, dcl.isa);
-    }
-    // for name, dcl_isa_clause of isa_clauses
-    //   help 'Ωtt__15', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
-    //.......................................................................................................
-    info('Ωtt__16', ts.id.isa('abc'));
-    info('Ωtt__17', ts.id.isa('123'));
-    info('Ωtt__18', ts.id.isa('abc123'));
-    failed_tests = [];
-    record = function(name) {
-      return failed_tests.push(name);
-    };
-    info('Ωtt__19', ts.id.isa('abc', record));
-    urge('Ωtt__20', failed_tests);
-    failed_tests.length = 0;
-    info('Ωtt__21', ts.id.isa('123', record));
-    urge('Ωtt__22', failed_tests);
-    failed_tests.length = 0;
-    info('Ωtt__23', ts.id.isa(123, record));
-    urge('Ωtt__24', failed_tests);
-    failed_tests.length = 0;
-    info('Ωtt__25', ts.id.isa('abc123', record));
-    urge('Ωtt__26', failed_tests);
-    failed_tests.length = 0;
+      // echo f"#{gold typename}:<15c; | #{white rpr dcl}:<60c; | #{lime rpr type}:<60c; | #{gold rpr type.isa}:<60c;"
+      return null;
+    })();
+    info('Ωtt___7', "ts.text                  ", ts.text);
+    info('Ωtt___8', "ts.spork                 ", ts.spork);
+    info();
+    info('Ωtt___9', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
+    info('Ωtt__10', "ts.text.isa 87           ", truth(ts.text.isa(87)));
+    info();
+    info('Ωtt__11', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
+    info('Ωtt__12', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
+    info();
+    info('Ωtt__13', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
+    info('Ωtt__14', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
+    info('Ωtt__15', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
+    info();
+    info('Ωtt__16', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
+    info('Ωtt__17', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
+    info();
+    info('Ωtt__18', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
+    info('Ωtt__19', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
+    info('Ωtt__20', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
+    info('Ωtt__21', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
+    info('Ωtt__22', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
+    info('Ωtt__23', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
+    return null;
+    // #.......................................................................................................
+    // compile_typespace = ( ts ) ->
+    //   for typename, dcl of ts
+    //     isa_clauses = {}
+    //     #...................................................................................................
+    //     debug 'Ωtt__24', 'dcl_isa', rpr dcl_isa
+    //     for dcl_isa_clause in dcl_isa
+    //       debug 'Ωtt__25', 'dcl_isa_clause', rpr dcl_isa_clause
+    //       #.................................................................................................
+    //       unless gnd.function.isa dcl_isa_clause
+    //         throw new Error "Ωtt__26 expected a function, got #{rpr dcl_isa_clause}"
+    //       #.................................................................................................
+    //       revalex             = RVX.normalize_revalex dcl_isa_clause
+    //       # dcl_isa_clause[RVX] = revalex
+    //       test_name           = "#{typename}[#{rpr revalex}]"
+    //       nameit test_name, dcl_isa_clause if dcl_isa_clause.name is ''
+    //       isa_clauses[ test_name ] = dcl_isa_clause
+    //     #...................................................................................................
+    //     ts[ typename ].isa = do ( typename, isa_clauses ) -> ( x, record = null ) ->
+    //       for name, isa_clause of isa_clauses
+    //         unless isa_clause.call null, x, record
+    //           record name if record?
+    //           return false
+    //       return true
+    // #.......................................................................................................
+    // compile_typespace ts
+    // for typename, dcl of ts
+    //   info 'Ωtt__27', typename, dcl.isa
+    //   # for name, dcl_isa_clause of isa_clauses
+    //   #   help 'Ωtt__28', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
+    // #.......................................................................................................
+    // info 'Ωtt__29', ts.id.isa 'abc'
+    // info 'Ωtt__30', ts.id.isa '123'
+    // info 'Ωtt__31', ts.id.isa 'abc123'
+    // failed_tests = []
+    // record = ( name ) -> failed_tests.push name
+    // info 'Ωtt__32', ts.id.isa 'abc',    record; urge 'Ωtt__33', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__34', ts.id.isa '123',    record; urge 'Ωtt__35', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__36', ts.id.isa 123,      record; urge 'Ωtt__37', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__38', ts.id.isa 'abc123', record; urge 'Ωtt__39', failed_tests; failed_tests.length = 0
     return null;
   };
 

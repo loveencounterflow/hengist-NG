@@ -30,13 +30,18 @@ GTNG                      = require '../../../apps/guy-test-NG'
   white
   lime
   reverse               } = GUY.trm
-#...........................................................................................................
+truth                     = ( x ) -> GUY.trm.truth x
+
+#===========================================================================================================
 pod_prototypes = Object.freeze [ null, ( Object.getPrototypeOf {} ), ]
 gnd =
   text:       isa: ( x ) -> ( typeof x ) is 'string'
   function:   isa: ( x ) -> ( typeof x ) is 'function'
   pod:        isa: ( x ) -> x? and ( Object.getPrototypeOf x ) in pod_prototypes
   list:       isa: ( x ) -> Array.isArray x
+#...........................................................................................................
+{ hide }  = GUY.props
+nameit    = ( name, f ) -> Object.defineProperty f, 'name', { value: name, }
 
 
 #===========================================================================================================
@@ -47,7 +52,7 @@ class Unparsable_function_body extends Error
 class Revalex
 
   #---------------------------------------------------------------------------------------------------------
-  get_return_value_source: ( fn ) ->
+  revalex_from_function: ( fn ) ->
     ### TAINT use JS tokenizer ###
     ### NOTE restrictions:
     * catches only last `return` statement, even if unreachable
@@ -63,7 +68,11 @@ class Revalex
   normalize_revalex: ( fn ) ->
     ### NOTE `revalex` short for '**RE**turn **VA**Lue **EX**pression' ###
     ### TAINT use JS tokenizer ###
-    R = @get_return_value_source fn
+    R = @revalex_from_function fn
+    R = R.replace ///  <=      ///gsv, 'lteq'
+    R = R.replace ///  >=      ///gsv, 'gteq'
+    R = R.replace ///  <       ///gsv, 'lt'
+    R = R.replace ///  >       ///gsv, 'gt'
     R = R.replace ///  !==     ///gsv, 'isnt'
     R = R.replace ///  &&      ///gsv, 'and'
     R = R.replace ///  \|\|    ///gsv, 'or'
@@ -71,7 +80,7 @@ class Revalex
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  name_from_fn_revalex: ( fn ) -> @name_from_revalex normalize_revalex fn
+  name_from_function: ( fn ) -> @name_from_revalex @normalize_revalex fn
 
   #---------------------------------------------------------------------------------------------------------
   name_from_revalex: ( revalex ) ->
@@ -89,42 +98,55 @@ class Typespace
 class Type
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ( cfg = null ) ->
+  constructor: ( typespace, typename, dcl ) ->
+    hide @, 'typespace',  typespace
+    hide @, 'dcl',        dcl
+    @name       = typename
+    @_normalize_dcl()
+    nameit "isa_#{typename}", @isa
     return undefined
 
-# do =>
-#     rvx = ( fn ) -> normalize_revalex fn
-#     ts =
-#       id:
-#         isa: [
-#           ( x ) -> ( typeof x ) is 'string'
-#           ( x ) -> ( /^[a-z][a-z0-9]*$/.test x )
-#           ]
-#     for typename, dcl of ts
-#       unless Array.isArray dcl.isa
-#         throw new Error "Ωtt___2 expected a list"
-#       isa_parts = {}
-#       for fn in dcl.isa
-#         unless gnd.function.isa fn
-#           throw new Error "Ωtt___3 expected a function, got #{rpr fn}"
-#         revalex               = normalize_revalex fn
-#         fn[RVX]               = revalex
-#         test_name             = "#{typename}[#{rpr revalex}]"
-#         # debug 'Ωtt___4', ( rpr ( -> ).name ), fn
-#         # debug 'Ωtt___5', ( rpr ( => ).name ), fn
-#         # debug 'Ωtt___6', ( rpr fn.name ), fn
-#         nameit test_name, fn if fn.name is ''
-#         isa_parts[ test_name ] = fn
-#       for name, fn of isa_parts
-#         help 'Ωtt___7', f"#{rpr name}:<30c; | #{fn}"
-#       isa = do ( typename, isa_parts ) -> ( x, record = null ) ->
-#         for name, partial of isa_parts
-#           unless partial.call null, x
-#             if record?
-#               # record typename
-#               record name
-#             return false
-#         return true
+  #---------------------------------------------------------------------------------------------------------
+  isa: ( x ) ->
+    ### TAINT add reporting ###
+    for isa_clause in @isa_clauses
+      return false unless isa_clause x
+    return true
+
+  #---------------------------------------------------------------------------------------------------------
+  _normalize_dcl: ->
+    ### Convert 'isa-only' declarations into objects with explicit `isa`: ###
+    if gnd.pod.isa @dcl     then  dcl             = {       @dcl...,  }
+    else                          dcl             = { isa:  @dcl,     }
+    ### Convert singular `isa` declarations into list of clauses: ###
+    if gnd.list.isa dcl.isa then  @isa_clauses    = [ dcl.isa..., ]
+    else                          @isa_clauses    = [ dcl.isa,    ]
+    @_normalize_isa_clauses()
+    return dcl
+
+  #---------------------------------------------------------------------------------------------------------
+  _normalize_isa_clauses: ->
+    for isa_clause, idx in @isa_clauses then do ( isa_clause, idx ) =>
+      # debug 'Ωtt___2', @name, idx, ( rpr isa_clause )
+      #.................................................................................................
+      ### De-reference referenced type: ###
+      if ( gnd.text.isa isa_clause )
+        @isa_clauses[ idx ] = do ( ref_typename = isa_clause ) =>
+          unless Reflect.has @typespace, ref_typename
+            throw new Error "Ωtt___3 unable to resolve #{rpr ref_typename} referenced by #{rpr @name}"
+          ref_type = @typespace[ ref_typename ]
+          # debug 'Ωtt___4', @name, '->', ref_typename, rpr ref_type
+          # return nameit "ref_#{ref_type.isa.name}", ( x ) -> ref_type.isa x
+          return nameit "ref_isa_#{ref_typename}", ( x ) -> ref_type.isa x
+      #.................................................................................................
+      else if ( gnd.function.isa isa_clause )
+        if isa_clause.name is ''
+          nameit ( RVX.revalex_from_function isa_clause ), isa_clause
+          # nameit ( RVX.name_from_function isa_clause ), isa_clause
+      else
+        throw new Error "Ωtt___6 unexpected type in ISA clause"
+    return null
+
 
 
 #===========================================================================================================
@@ -144,8 +166,7 @@ demo_turning_lists_of_functions_into_objects_with_sensible_names = ->
     ### Declare by 'immediate' list of clauses: ###
     nonempty_text: [
         'text'
-        ( x ) -> ( /^[a-z][a-z0-9]*$/.test x )
-        ]
+        ( x ) -> x.length > 0 ]
     #.......................................................................................................
     ### Declare by DCL object whose `isa` property is a reference to name of existing type: ###
     spork: { isa: 'nonempty_text', }
@@ -157,68 +178,80 @@ demo_turning_lists_of_functions_into_objects_with_sensible_names = ->
         ( x ) -> ( /^[a-z][a-z0-9]*$/.test x )
         ]
       }
+    #.......................................................................................................
+    foo: 'spork'
+    bar: 'foo'
+    baz: 'bar'
   #.......................................................................................................
-  debug 'Ωtt___8', gnd.pod.isa {}
-  debug 'Ωtt___9', gnd.pod.isa Object.create null
-  normalize_declaration = ( ts, typename, dcl ) ->
-    ### Convert 'isa-only' declarations into objects with explicit `isa`: ###
-    dcl         = ( do ( isa = dcl ) -> { isa, } ) unless gnd.pod.isa dcl
-    ### Convert singular `isa` declarations into list of clauses: ###
-    dcl.isa     = ( do ( isa = dcl.isa ) -> [ isa, ] ) unless gnd.list.isa dcl.isa
-    dcl_isa     = dcl.isa
-    return dcl
-  #.......................................................................................................
-  for typename, dcl of ts
-    ndcl = normalize_declaration ts, typename, dcl
-    echo f"#{gold typename}:<15c; | #{white rpr dcl}:<60c; | #{lime rpr ndcl}:<60c;"
-  return null
-  #.......................................................................................................
-  compile_typespace = ( ts ) ->
+  do =>
     for typename, dcl of ts
-      isa_clauses = {}
-      #...................................................................................................
-      debug 'Ωtt__10', 'dcl_isa', rpr dcl_isa
-      for dcl_isa_clause in dcl_isa
-        debug 'Ωtt__11', 'dcl_isa_clause', rpr dcl_isa_clause
-        #.................................................................................................
-        ### De-reference referenced type: ###
-        if ( gnd.text.isa dcl_isa_clause )
-          dcl_isa_clause = do ( ref_typename = dcl_isa_clause ) ->
-            unless Reflect.has ts, ref_typename
-              throw new Error "Ωtt__12 unable to resolve #{rpr ref_typename} referenced by #{rpr typename}"
-            return ts[ ref_typename ].isa
-        #.................................................................................................
-        unless gnd.function.isa dcl_isa_clause
-          throw new Error "Ωtt__13 expected a function, got #{rpr dcl_isa_clause}"
-        #.................................................................................................
-        revalex             = RVX.normalize_revalex dcl_isa_clause
-        # dcl_isa_clause[RVX] = revalex
-        test_name           = "#{typename}[#{rpr revalex}]"
-        nameit test_name, dcl_isa_clause if dcl_isa_clause.name is ''
-        isa_clauses[ test_name ] = dcl_isa_clause
-      #...................................................................................................
-      ts[ typename ].isa = do ( typename, isa_clauses ) -> ( x, record = null ) ->
-        for name, isa_clause of isa_clauses
-          unless isa_clause.call null, x, record
-            record name if record?
-            return false
-        return true
-  #.......................................................................................................
-  compile_typespace ts
-  for typename, dcl of ts
-    info 'Ωtt__14', typename, dcl.isa
-    # for name, dcl_isa_clause of isa_clauses
-    #   help 'Ωtt__15', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
-  #.......................................................................................................
-  info 'Ωtt__16', ts.id.isa 'abc'
-  info 'Ωtt__17', ts.id.isa '123'
-  info 'Ωtt__18', ts.id.isa 'abc123'
-  failed_tests = []
-  record = ( name ) -> failed_tests.push name
-  info 'Ωtt__19', ts.id.isa 'abc',    record; urge 'Ωtt__20', failed_tests; failed_tests.length = 0
-  info 'Ωtt__21', ts.id.isa '123',    record; urge 'Ωtt__22', failed_tests; failed_tests.length = 0
-  info 'Ωtt__23', ts.id.isa 123,      record; urge 'Ωtt__24', failed_tests; failed_tests.length = 0
-  info 'Ωtt__25', ts.id.isa 'abc123', record; urge 'Ωtt__26', failed_tests; failed_tests.length = 0
+      ts[ typename ] = type = new Type ts, typename, dcl
+      echo f"#{gold typename}:<15c; | #{white rpr dcl}:<60c; | #{lime rpr type.isa_clauses}:<60c;"
+      # echo f"#{gold typename}:<15c; | #{white rpr dcl}:<60c; | #{lime rpr type}:<60c; | #{gold rpr type.isa}:<60c;"
+    return null
+  info 'Ωtt___7', "ts.text                  ", ts.text
+  info 'Ωtt___8', "ts.spork                 ", ts.spork
+  info()
+  info 'Ωtt___9', "ts.text.isa 'pop'        ", truth ts.text.isa 'pop'
+  info 'Ωtt__10', "ts.text.isa 87           ", truth ts.text.isa 87
+  info()
+  info 'Ωtt__11', "ts.spork.isa 'pop'       ", truth ts.spork.isa 'pop'
+  info 'Ωtt__12', "ts.spork.isa 87          ", truth ts.spork.isa 87
+  info()
+  info 'Ωtt__13', "ts.id.isa 'pop'          ", truth ts.id.isa 'pop'
+  info 'Ωtt__14', "ts.id.isa '3pop'         ", truth ts.id.isa '3pop'
+  info 'Ωtt__15', "ts.id.isa 'pop3'         ", truth ts.id.isa 'pop3'
+  info()
+  info 'Ωtt__16', "ts.spork.isa ''          ", truth ts.spork.isa ''
+  info 'Ωtt__17', "ts.spork.isa 'A'         ", truth ts.spork.isa 'A'
+  info()
+  info 'Ωtt__18', "ts.foo.isa ''            ", truth ts.foo.isa ''
+  info 'Ωtt__19', "ts.bar.isa ''            ", truth ts.bar.isa ''
+  info 'Ωtt__20', "ts.baz.isa ''            ", truth ts.baz.isa ''
+  info 'Ωtt__21', "ts.foo.isa 'A'           ", truth ts.foo.isa 'A'
+  info 'Ωtt__22', "ts.bar.isa 'A'           ", truth ts.bar.isa 'A'
+  info 'Ωtt__23', "ts.baz.isa 'A'           ", truth ts.baz.isa 'A'
+  return null
+  # #.......................................................................................................
+  # compile_typespace = ( ts ) ->
+  #   for typename, dcl of ts
+  #     isa_clauses = {}
+  #     #...................................................................................................
+  #     debug 'Ωtt__24', 'dcl_isa', rpr dcl_isa
+  #     for dcl_isa_clause in dcl_isa
+  #       debug 'Ωtt__25', 'dcl_isa_clause', rpr dcl_isa_clause
+  #       #.................................................................................................
+  #       unless gnd.function.isa dcl_isa_clause
+  #         throw new Error "Ωtt__26 expected a function, got #{rpr dcl_isa_clause}"
+  #       #.................................................................................................
+  #       revalex             = RVX.normalize_revalex dcl_isa_clause
+  #       # dcl_isa_clause[RVX] = revalex
+  #       test_name           = "#{typename}[#{rpr revalex}]"
+  #       nameit test_name, dcl_isa_clause if dcl_isa_clause.name is ''
+  #       isa_clauses[ test_name ] = dcl_isa_clause
+  #     #...................................................................................................
+  #     ts[ typename ].isa = do ( typename, isa_clauses ) -> ( x, record = null ) ->
+  #       for name, isa_clause of isa_clauses
+  #         unless isa_clause.call null, x, record
+  #           record name if record?
+  #           return false
+  #       return true
+  # #.......................................................................................................
+  # compile_typespace ts
+  # for typename, dcl of ts
+  #   info 'Ωtt__27', typename, dcl.isa
+  #   # for name, dcl_isa_clause of isa_clauses
+  #   #   help 'Ωtt__28', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
+  # #.......................................................................................................
+  # info 'Ωtt__29', ts.id.isa 'abc'
+  # info 'Ωtt__30', ts.id.isa '123'
+  # info 'Ωtt__31', ts.id.isa 'abc123'
+  # failed_tests = []
+  # record = ( name ) -> failed_tests.push name
+  # info 'Ωtt__32', ts.id.isa 'abc',    record; urge 'Ωtt__33', failed_tests; failed_tests.length = 0
+  # info 'Ωtt__34', ts.id.isa '123',    record; urge 'Ωtt__35', failed_tests; failed_tests.length = 0
+  # info 'Ωtt__36', ts.id.isa 123,      record; urge 'Ωtt__37', failed_tests; failed_tests.length = 0
+  # info 'Ωtt__38', ts.id.isa 'abc123', record; urge 'Ωtt__39', failed_tests; failed_tests.length = 0
   return null
 
 
