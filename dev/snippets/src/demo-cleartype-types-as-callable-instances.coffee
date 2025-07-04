@@ -161,7 +161,7 @@ demo_turning_lists_of_functions_into_objects_with_sensible_names = ->
   #.......................................................................................................
   for typename, dcl of ts
     ndcl = normalize_declaration ts, typename, dcl
-    echo f"#{gold typename}:<15c; | #{white rpr dcl}:<60c; | #{rpr ndcl}:<60c;"
+    echo f"#{reverse gold typename}:<15c; | #{white rpr dcl}:<60c; | #{rpr ndcl}:<60c;"
   return null
   #.......................................................................................................
   compile_typespace = ( ts ) ->
