@@ -210,7 +210,7 @@
 
   //===========================================================================================================
   demo_parse_return_value = function() {
-    var NFA, RVX, Unparsable_function_body, dcl, e, em, fn, get_return_value_source, gnd, i, internals, len, name_from_fn_revalex, name_from_revalex, nameit, nfa, normalize_revalex, probes, rvx, ts, typename;
+    var NFA, Unparsable_function_body, em, get_return_value_source, gnd, internals, name_from_fn_revalex, name_from_revalex, nameit, nfa, normalize_revalex;
     whisper('—'.repeat(108));
     NFA = require('../../../apps/normalize-function-arguments');
     ({nfa, internals} = NFA);
@@ -258,83 +258,227 @@
       return R;
     };
     //.........................................................................................................
-    probes = [
-      function(x) {
-        return (gnd.text.isa(x)) && (x.length !== 0);
-      },
-      (x) => {
-        return (gnd.text.isa(x)) && (x.length !== 0);
-      },
-      function(x) {
-        return true;
-      },
-      (x) => {
-        return true;
-      },
-      (x) => {
-        if (!gnd.isa.float(x)) {
-          return false;
-        }
-        if (!((0 < x && x < 1))) {
-          return false;
-        }
-        return true;
-      },
-      function(x) {
-        return gnd.isa.float(x);
-        // return false unless 0 < x < 1
-        return gnd.isa.text(x);
-      },
-      function(x) {
-        return gnd.isa.float(x);
-      }
-    ];
+    if (false) {
+      (function() {
+        var e, fn, i, len, probes, results;
+        probes = [
+          function(x) {
+            return (gnd.text.isa(x)) && (x.length !== 0);
+          },
+          (x) => {
+            return (gnd.text.isa(x)) && (x.length !== 0);
+          },
+          function(x) {
+            return true;
+          },
+          (x) => {
+            return true;
+          },
+          (x) => {
+            if (!gnd.isa.float(x)) {
+              return false;
+            }
+            if (!((0 < x && x < 1))) {
+              return false;
+            }
+            return true;
+          },
+          function(x) {
+            return gnd.isa.float(x);
+            // return false unless 0 < x < 1
+            return gnd.isa.text(x);
+          },
+          function(x) {
+            return gnd.isa.float(x);
+          }
+        ];
 //.........................................................................................................
 /* return false unless 0 < x < 1 */
-    for (i = 0, len = probes.length; i < len; i++) {
-      fn = probes[i];
-      whisper('Ωnfat__13', reverse(bold(white(rpr(fn.toString().replace(/\s+/gsv, '\x20'))))));
-      try {
-        urge('Ωnfat__14', rpr(get_return_value_source(fn)));
-      } catch (error) {
-        e = error;
-        warn('Ωnfat__15', em(e.message));
-      }
-      try {
-        info('Ωnfat__16', rpr(normalize_revalex(fn)));
-      } catch (error) {
-        e = error;
-        warn('Ωnfat__17', em(e.message));
-      }
-      try {
-        help('Ωnfat__18', rpr(name_from_fn_revalex(fn)));
-      } catch (error) {
-        e = error;
-        warn('Ωnfat__19', em(e.message));
-      }
+        results = [];
+        for (i = 0, len = probes.length; i < len; i++) {
+          fn = probes[i];
+          whisper('Ωnfat__13', reverse(bold(white(rpr(fn.toString().replace(/\s+/gsv, '\x20'))))));
+          try {
+            urge('Ωnfat__14', rpr(get_return_value_source(fn)));
+          } catch (error) {
+            e = error;
+            warn('Ωnfat__15', em(e.message));
+          }
+          try {
+            info('Ωnfat__16', rpr(normalize_revalex(fn)));
+          } catch (error) {
+            e = error;
+            warn('Ωnfat__17', em(e.message));
+          }
+          try {
+            results.push(help('Ωnfat__18', rpr(name_from_fn_revalex(fn))));
+          } catch (error) {
+            e = error;
+            results.push(warn('Ωnfat__19', em(e.message)));
+          }
+        }
+        return results;
+      })();
     }
     //.........................................................................................................
-    RVX = Symbol('RVX');
-    // rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; ( nameit ( name_from_fn_revalex fn ), fn ); fn
-    rvx = function(fn) {
-      fn[RVX] = normalize_revalex(fn);
-      return fn;
-    };
-    ts = {
-      id: {
-        isa: rvx(function(x) {
-          return (text.isa(x)) && (/^[a-b]+$/.test(x));
-        })
-      }
-    };
-    for (typename in ts) {
-      dcl = ts[typename];
-      nameit(`isa_${typename}`, dcl.isa);
+    if (false) {
+      (function() {
+        var RVX, dcl, rvx, ts, typename;
+        RVX = Symbol('RVX');
+        // rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; ( nameit ( name_from_fn_revalex fn ), fn ); fn
+        rvx = function(fn) {
+          fn[RVX] = normalize_revalex(fn);
+          return fn;
+        };
+        ts = {
+          id: {
+            isa: rvx(function(x) {
+              return (text.isa(x)) && (/^[a-b]+$/.test(x));
+            })
+          }
+        };
+        for (typename in ts) {
+          dcl = ts[typename];
+          nameit(`isa_${typename}`, dcl.isa);
+        }
+        urge('Ωnfat__20', rpr(ts));
+        urge('Ωnfat__21', rpr(ts.id));
+        urge('Ωnfat__22', rpr(ts.id.isa[RVX]));
+        urge('Ωnfat__23', rpr(ts.id.isa.name));
+        return null;
+      })();
     }
-    urge('Ωnfat__20', rpr(ts));
-    urge('Ωnfat__21', rpr(ts.id));
-    urge('Ωnfat__22', rpr(ts.id.isa[RVX]));
-    urge('Ωnfat__23', rpr(ts.id.isa.name));
+    (function() {      //.........................................................................................................
+      var RVX, compile_typespace, dcl, failed_tests, record, rvx, ts, typename;
+      debug('Ωnfat__24', "turning lists of functions into objects with sensible names");
+      RVX = Symbol.for('RVX');
+      rvx = function(fn) {
+        return normalize_revalex(fn);
+      };
+      if (gnd.text == null) {
+        gnd.text = {
+          isa: function(x) {
+            return (typeof x) === 'string';
+          }
+        };
+      }
+      if (gnd.function == null) {
+        gnd.function = {
+          isa: function(x) {
+            return (typeof x) === 'function';
+          }
+        };
+      }
+      //.......................................................................................................
+      ts = {
+        text: function(x) {
+          return (typeof x) === 'string';
+        },
+        id: {
+          isa: [
+            'text',
+            function(x) {
+              return /^[a-z][a-z0-9]*$/.test(x);
+            }
+          ]
+        }
+      };
+      //.......................................................................................................
+      compile_typespace = function(ts) {
+        /* Convert 'isa-only' declarations into objects with explicit `isa`: */
+        /* Convert singular `isa` declarations into list of clauses: */
+        var dcl, dcl_isa, dcl_isa_clause, i, isa_clauses, len, results, revalex, test_name, typename;
+        results = [];
+        for (typename in ts) {
+          dcl = ts[typename];
+          if (!gnd.pod.isa(dcl)) {
+            dcl = ((function(isa) {
+              return {isa};
+            })(dcl));
+          }
+          dcl_isa = dcl.isa;
+          if (!Array.isArray(dcl_isa)) {
+            dcl_isa = ((function(isa) {
+              return [isa];
+            })(dcl_isa));
+          }
+          isa_clauses = {};
+          //...................................................................................................
+          debug('Ωnfat__25', 'dcl_isa', rpr(dcl_isa));
+          for (i = 0, len = dcl_isa.length; i < len; i++) {
+            dcl_isa_clause = dcl_isa[i];
+            //.................................................................................................
+            /* De-reference referenced type: */
+            if (gnd.text.isa(dcl_isa_clause)) {
+              dcl_isa_clause = (function(ref_typename) {
+                if (!Reflect.has(ts, ref_typename)) {
+                  throw new Error(`Ωnfat__26 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(typename)}`);
+                }
+                return ts[ref_typename].isa;
+              })(dcl_isa_clause);
+            }
+            //.................................................................................................
+            if (!gnd.function.isa(dcl_isa_clause)) {
+              throw new Error(`Ωnfat__27 expected a function, got ${rpr(dcl_isa_clause)}`);
+            }
+            //.................................................................................................
+            revalex = normalize_revalex(dcl_isa_clause);
+            // dcl_isa_clause[RVX] = revalex
+            test_name = `${typename}[${rpr(revalex)}]`;
+            if (dcl_isa_clause.name === '') {
+              nameit(test_name, dcl_isa_clause);
+            }
+            isa_clauses[test_name] = dcl_isa_clause;
+          }
+          //...................................................................................................
+          results.push(ts[typename].isa = (function(typename, isa_clauses) {
+            return function(x, record = null) {
+              var isa_clause, name;
+              for (name in isa_clauses) {
+                isa_clause = isa_clauses[name];
+                if (!isa_clause.call(null, x, record)) {
+                  if (record != null) {
+                    record(name);
+                  }
+                  return false;
+                }
+              }
+              return true;
+            };
+          })(typename, isa_clauses));
+        }
+        return results;
+      };
+      //.......................................................................................................
+      compile_typespace(ts);
+      for (typename in ts) {
+        dcl = ts[typename];
+        info('Ωnfat__29', typename, dcl.isa);
+      }
+      // for name, dcl_isa_clause of isa_clauses
+      //   help 'Ωnfat__30', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
+      //.......................................................................................................
+      info('Ωnfat__31', ts.id.isa('abc'));
+      info('Ωnfat__32', ts.id.isa('123'));
+      info('Ωnfat__33', ts.id.isa('abc123'));
+      failed_tests = [];
+      record = function(name) {
+        return failed_tests.push(name);
+      };
+      info('Ωnfat__34', ts.id.isa('abc', record));
+      urge('Ωnfat__35', failed_tests);
+      failed_tests.length = 0;
+      info('Ωnfat__36', ts.id.isa('123', record));
+      urge('Ωnfat__37', failed_tests);
+      failed_tests.length = 0;
+      info('Ωnfat__38', ts.id.isa(123, record));
+      urge('Ωnfat__39', failed_tests);
+      failed_tests.length = 0;
+      info('Ωnfat__40', ts.id.isa('abc123', record));
+      urge('Ωnfat__41', failed_tests);
+      failed_tests.length = 0;
+      return null;
+    })();
     //.........................................................................................................
     return null;
   };
@@ -366,27 +510,27 @@
 
       };
       f = new F();
-      debug('Ωnfat__24', f);
-      debug('Ωnfat__25', f.constructor === F);
-      // debug 'Ωnfat__26', f::
-      debug('Ωnfat__27', f.__proto__ instanceof E);
-      debug('Ωnfat__28', (Object.getPrototypeOf(f)) instanceof E);
-      debug('Ωnfat__29');
+      debug('Ωnfat__42', f);
+      debug('Ωnfat__43', f.constructor === F);
+      // debug 'Ωnfat__44', f::
+      debug('Ωnfat__45', f.__proto__ instanceof E);
+      debug('Ωnfat__46', (Object.getPrototypeOf(f)) instanceof E);
+      debug('Ωnfat__47');
       my_callable = function() {
         return 'D';
       };
       // my_callable.__proto__ = new F()
       Object.setPrototypeOf(my_callable, new F());
-      debug('Ωnfat__30', 'rpr my_callable                         ', rpr(my_callable));
-      debug('Ωnfat__31', 'rpr my_callable.prototype               ', rpr(my_callable.prototype));
-      debug('Ωnfat__32', 'rpr my_callable::                       ', rpr(my_callable.prototype));
-      debug('Ωnfat__33', 'rpr Object.getPrototypeOf my_callable   ', rpr(Object.getPrototypeOf(my_callable)));
-      debug('Ωnfat__34', 'rpr my_callable instanceof F            ', rpr(my_callable instanceof F));
-      debug('Ωnfat__35', 'rpr my_callable instanceof E            ', rpr(my_callable instanceof E));
-      debug('Ωnfat__36', 'rpr my_callable.foo                     ', rpr(my_callable.foo));
-      debug('Ωnfat__37', 'rpr my_callable()                       ', rpr(my_callable()));
-      debug('Ωnfat__38', 'rpr my_callable.constructor             ', rpr(my_callable.constructor));
-      debug('Ωnfat__39', 'rpr my_callable.constructor.name        ', rpr(my_callable.constructor.name));
+      debug('Ωnfat__48', 'rpr my_callable                         ', rpr(my_callable));
+      debug('Ωnfat__49', 'rpr my_callable.prototype               ', rpr(my_callable.prototype));
+      debug('Ωnfat__50', 'rpr my_callable::                       ', rpr(my_callable.prototype));
+      debug('Ωnfat__51', 'rpr Object.getPrototypeOf my_callable   ', rpr(Object.getPrototypeOf(my_callable)));
+      debug('Ωnfat__52', 'rpr my_callable instanceof F            ', rpr(my_callable instanceof F));
+      debug('Ωnfat__53', 'rpr my_callable instanceof E            ', rpr(my_callable instanceof E));
+      debug('Ωnfat__54', 'rpr my_callable.foo                     ', rpr(my_callable.foo));
+      debug('Ωnfat__55', 'rpr my_callable()                       ', rpr(my_callable()));
+      debug('Ωnfat__56', 'rpr my_callable.constructor             ', rpr(my_callable.constructor));
+      debug('Ωnfat__57', 'rpr my_callable.constructor.name        ', rpr(my_callable.constructor.name));
       return null;
     })();
     //.........................................................................................................
@@ -423,18 +567,18 @@
       my_callable = new F((Desire = function() {
         return "an function named Desire";
       }));
-      debug('Ωnfat__40', 'rpr my_callable                         ', rpr(my_callable));
-      debug('Ωnfat__41', 'rpr my_callable.prototype               ', rpr(my_callable.prototype));
-      debug('Ωnfat__42', 'rpr my_callable::                       ', rpr(my_callable.prototype));
-      debug('Ωnfat__43', 'rpr Object.getPrototypeOf my_callable   ', rpr(Object.getPrototypeOf(my_callable)));
-      debug('Ωnfat__44', 'rpr my_callable instanceof F            ', rpr(my_callable instanceof F));
-      debug('Ωnfat__45', 'rpr my_callable instanceof E            ', rpr(my_callable instanceof E));
-      debug('Ωnfat__46', 'rpr my_callable.foo                     ', rpr(my_callable.foo));
-      debug('Ωnfat__47', 'rpr my_callable.eps                     ', rpr(my_callable.eps));
-      debug('Ωnfat__48', 'rpr my_callable()                       ', rpr(my_callable()));
-      debug('Ωnfat__49', 'rpr my_callable.blah()                  ', rpr(my_callable.blah()));
-      debug('Ωnfat__50', 'rpr my_callable.constructor             ', rpr(my_callable.constructor));
-      debug('Ωnfat__51', 'rpr my_callable.constructor.name        ', rpr(my_callable.constructor.name));
+      debug('Ωnfat__58', 'rpr my_callable                         ', rpr(my_callable));
+      debug('Ωnfat__59', 'rpr my_callable.prototype               ', rpr(my_callable.prototype));
+      debug('Ωnfat__60', 'rpr my_callable::                       ', rpr(my_callable.prototype));
+      debug('Ωnfat__61', 'rpr Object.getPrototypeOf my_callable   ', rpr(Object.getPrototypeOf(my_callable)));
+      debug('Ωnfat__62', 'rpr my_callable instanceof F            ', rpr(my_callable instanceof F));
+      debug('Ωnfat__63', 'rpr my_callable instanceof E            ', rpr(my_callable instanceof E));
+      debug('Ωnfat__64', 'rpr my_callable.foo                     ', rpr(my_callable.foo));
+      debug('Ωnfat__65', 'rpr my_callable.eps                     ', rpr(my_callable.eps));
+      debug('Ωnfat__66', 'rpr my_callable()                       ', rpr(my_callable()));
+      debug('Ωnfat__67', 'rpr my_callable.blah()                  ', rpr(my_callable.blah()));
+      debug('Ωnfat__68', 'rpr my_callable.constructor             ', rpr(my_callable.constructor));
+      debug('Ωnfat__69', 'rpr my_callable.constructor.name        ', rpr(my_callable.constructor.name));
       return null;
     })();
     return null;
@@ -449,10 +593,11 @@
       // # ( new Test guytest_cfg ).test { push_pop_set_at: @nfa_tasks.internals.push_pop_set_at }
       demo_isa_with_reason();
       demo_types_as_functions();
-      demo_parse_return_value();
-      return demo_set_prototype_to_obtain_callable_class_instances();
+      return demo_parse_return_value();
     })();
   }
+
+  // demo_set_prototype_to_obtain_callable_class_instances()
 
 }).call(this);
 

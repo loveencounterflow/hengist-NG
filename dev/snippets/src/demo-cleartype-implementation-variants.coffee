@@ -151,42 +151,112 @@ demo_parse_return_value = ->
     R = R.replace       ///^ _* (?<center> .*? ) _* $   ///gsv, '$<center>'
     return R
   #.........................................................................................................
-  probes = [
-    ( x ) -> ( gnd.text.isa x ) and ( x.length isnt 0 )
-    ( x ) => ( gnd.text.isa x ) and ( x.length isnt 0 )
-    ( x ) -> true
-    ( x ) => true
-    ( x ) =>
-      return false unless gnd.isa.float x
-      return false unless 0 < x < 1
-      return true
-    ( x ) ->
-      return gnd.isa.float x
-      # return false unless 0 < x < 1
-      return gnd.isa.text x
-    ( x ) ->
-      return gnd.isa.float x
-      ### return false unless 0 < x < 1 ###
-    ]
+  if false then do ->
+    probes = [
+      ( x ) -> ( gnd.text.isa x ) and ( x.length isnt 0 )
+      ( x ) => ( gnd.text.isa x ) and ( x.length isnt 0 )
+      ( x ) -> true
+      ( x ) => true
+      ( x ) =>
+        return false unless gnd.isa.float x
+        return false unless 0 < x < 1
+        return true
+      ( x ) ->
+        return gnd.isa.float x
+        # return false unless 0 < x < 1
+        return gnd.isa.text x
+      ( x ) ->
+        return gnd.isa.float x
+        ### return false unless 0 < x < 1 ###
+      ]
+    #.........................................................................................................
+    for fn in probes
+      whisper 'Ωnfat__13', reverse bold white rpr fn.toString().replace /\s+/gsv, '\x20'
+      try urge 'Ωnfat__14', rpr get_return_value_source   fn catch e then warn 'Ωnfat__15', em e.message
+      try info 'Ωnfat__16', rpr normalize_revalex         fn catch e then warn 'Ωnfat__17', em e.message
+      try help 'Ωnfat__18', rpr name_from_fn_revalex      fn catch e then warn 'Ωnfat__19', em e.message
   #.........................................................................................................
-  for fn in probes
-    whisper 'Ωnfat__13', reverse bold white rpr fn.toString().replace /\s+/gsv, '\x20'
-    try urge 'Ωnfat__14', rpr get_return_value_source   fn catch e then warn 'Ωnfat__15', em e.message
-    try info 'Ωnfat__16', rpr normalize_revalex         fn catch e then warn 'Ωnfat__17', em e.message
-    try help 'Ωnfat__18', rpr name_from_fn_revalex      fn catch e then warn 'Ωnfat__19', em e.message
+  if false then do ->
+    RVX = Symbol 'RVX'
+    # rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; ( nameit ( name_from_fn_revalex fn ), fn ); fn
+    rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; fn
+    ts =
+      id:
+        isa: rvx ( x ) -> ( text.isa x ) and ( /^[a-b]+$/.test x )
+    for typename, dcl of ts
+      nameit "isa_#{typename}", dcl.isa
+    urge 'Ωnfat__20', rpr ts
+    urge 'Ωnfat__21', rpr ts.id
+    urge 'Ωnfat__22', rpr ts.id.isa[RVX]
+    urge 'Ωnfat__23', rpr ts.id.isa.name
+    return null
   #.........................................................................................................
-  RVX = Symbol 'RVX'
-  # rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; ( nameit ( name_from_fn_revalex fn ), fn ); fn
-  rvx = ( fn ) -> fn[RVX] = normalize_revalex fn; fn
-  ts =
-    id:
-      isa: rvx ( x ) -> ( text.isa x ) and ( /^[a-b]+$/.test x )
-  for typename, dcl of ts
-    nameit "isa_#{typename}", dcl.isa
-  urge 'Ωnfat__20', rpr ts
-  urge 'Ωnfat__21', rpr ts.id
-  urge 'Ωnfat__22', rpr ts.id.isa[RVX]
-  urge 'Ωnfat__23', rpr ts.id.isa.name
+  do ->
+    debug 'Ωnfat__24', "turning lists of functions into objects with sensible names"
+    RVX = Symbol.for 'RVX'
+    rvx = ( fn ) -> normalize_revalex fn
+    gnd.text      ?= isa: ( x ) -> ( typeof x ) is 'string'
+    gnd.function  ?= isa: ( x ) -> ( typeof x ) is 'function'
+    #.......................................................................................................
+    ts =
+      text: ( x ) -> ( typeof x ) is 'string'
+      id:
+        isa: [
+          'text'
+          ( x ) -> ( /^[a-z][a-z0-9]*$/.test x )
+          ]
+    #.......................................................................................................
+    compile_typespace = ( ts ) ->
+      for typename, dcl of ts
+        ### Convert 'isa-only' declarations into objects with explicit `isa`: ###
+        dcl         = ( do ( isa = dcl ) -> { isa, } ) unless gnd.pod.isa dcl
+        dcl_isa     = dcl.isa
+        ### Convert singular `isa` declarations into list of clauses: ###
+        dcl_isa     = ( do ( isa = dcl_isa ) -> [ isa, ] ) unless Array.isArray dcl_isa
+        isa_clauses = {}
+        #...................................................................................................
+        debug 'Ωnfat__25', 'dcl_isa', rpr dcl_isa
+        for dcl_isa_clause in dcl_isa
+          #.................................................................................................
+          ### De-reference referenced type: ###
+          if ( gnd.text.isa dcl_isa_clause )
+            dcl_isa_clause = do ( ref_typename = dcl_isa_clause ) ->
+              unless Reflect.has ts, ref_typename
+                throw new Error "Ωnfat__26 unable to resolve #{rpr ref_typename} referenced by #{rpr typename}"
+              return ts[ ref_typename ].isa
+          #.................................................................................................
+          unless gnd.function.isa dcl_isa_clause
+            throw new Error "Ωnfat__27 expected a function, got #{rpr dcl_isa_clause}"
+          #.................................................................................................
+          revalex             = normalize_revalex dcl_isa_clause
+          # dcl_isa_clause[RVX] = revalex
+          test_name           = "#{typename}[#{rpr revalex}]"
+          nameit test_name, dcl_isa_clause if dcl_isa_clause.name is ''
+          isa_clauses[ test_name ] = dcl_isa_clause
+        #...................................................................................................
+        ts[ typename ].isa = do ( typename, isa_clauses ) -> ( x, record = null ) ->
+          for name, isa_clause of isa_clauses
+            unless isa_clause.call null, x, record
+              record name if record?
+              return false
+          return true
+    #.......................................................................................................
+    compile_typespace ts
+    for typename, dcl of ts
+      info 'Ωnfat__29', typename, dcl.isa
+      # for name, dcl_isa_clause of isa_clauses
+      #   help 'Ωnfat__30', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
+    #.......................................................................................................
+    info 'Ωnfat__31', ts.id.isa 'abc'
+    info 'Ωnfat__32', ts.id.isa '123'
+    info 'Ωnfat__33', ts.id.isa 'abc123'
+    failed_tests = []
+    record = ( name ) -> failed_tests.push name
+    info 'Ωnfat__34', ts.id.isa 'abc',    record; urge 'Ωnfat__35', failed_tests; failed_tests.length = 0
+    info 'Ωnfat__36', ts.id.isa '123',    record; urge 'Ωnfat__37', failed_tests; failed_tests.length = 0
+    info 'Ωnfat__38', ts.id.isa 123,      record; urge 'Ωnfat__39', failed_tests; failed_tests.length = 0
+    info 'Ωnfat__40', ts.id.isa 'abc123', record; urge 'Ωnfat__41', failed_tests; failed_tests.length = 0
+    return null
   #.........................................................................................................
   return null
 
@@ -207,25 +277,25 @@ demo_set_prototype_to_obtain_callable_class_instances = ->
       blah: -> 'F::blah'
 
     f = new F()
-    debug 'Ωnfat__24', f
-    debug 'Ωnfat__25', f.constructor is F
-    # debug 'Ωnfat__26', f::
-    debug 'Ωnfat__27', f.__proto__ instanceof E
-    debug 'Ωnfat__28', ( Object.getPrototypeOf f ) instanceof E
-    debug 'Ωnfat__29'
+    debug 'Ωnfat__42', f
+    debug 'Ωnfat__43', f.constructor is F
+    # debug 'Ωnfat__44', f::
+    debug 'Ωnfat__45', f.__proto__ instanceof E
+    debug 'Ωnfat__46', ( Object.getPrototypeOf f ) instanceof E
+    debug 'Ωnfat__47'
     my_callable = -> 'D'
     # my_callable.__proto__ = new F()
     Object.setPrototypeOf my_callable, new F()
-    debug 'Ωnfat__30', 'rpr my_callable                         ', rpr my_callable
-    debug 'Ωnfat__31', 'rpr my_callable.prototype               ', rpr my_callable.prototype
-    debug 'Ωnfat__32', 'rpr my_callable::                       ', rpr my_callable::
-    debug 'Ωnfat__33', 'rpr Object.getPrototypeOf my_callable   ', rpr Object.getPrototypeOf my_callable
-    debug 'Ωnfat__34', 'rpr my_callable instanceof F            ', rpr my_callable instanceof F
-    debug 'Ωnfat__35', 'rpr my_callable instanceof E            ', rpr my_callable instanceof E
-    debug 'Ωnfat__36', 'rpr my_callable.foo                     ', rpr my_callable.foo
-    debug 'Ωnfat__37', 'rpr my_callable()                       ', rpr my_callable()
-    debug 'Ωnfat__38', 'rpr my_callable.constructor             ', rpr my_callable.constructor
-    debug 'Ωnfat__39', 'rpr my_callable.constructor.name        ', rpr my_callable.constructor.name
+    debug 'Ωnfat__48', 'rpr my_callable                         ', rpr my_callable
+    debug 'Ωnfat__49', 'rpr my_callable.prototype               ', rpr my_callable.prototype
+    debug 'Ωnfat__50', 'rpr my_callable::                       ', rpr my_callable::
+    debug 'Ωnfat__51', 'rpr Object.getPrototypeOf my_callable   ', rpr Object.getPrototypeOf my_callable
+    debug 'Ωnfat__52', 'rpr my_callable instanceof F            ', rpr my_callable instanceof F
+    debug 'Ωnfat__53', 'rpr my_callable instanceof E            ', rpr my_callable instanceof E
+    debug 'Ωnfat__54', 'rpr my_callable.foo                     ', rpr my_callable.foo
+    debug 'Ωnfat__55', 'rpr my_callable()                       ', rpr my_callable()
+    debug 'Ωnfat__56', 'rpr my_callable.constructor             ', rpr my_callable.constructor
+    debug 'Ωnfat__57', 'rpr my_callable.constructor.name        ', rpr my_callable.constructor.name
     return null
   #.........................................................................................................
   whisper '—'.repeat 108
@@ -246,18 +316,18 @@ demo_set_prototype_to_obtain_callable_class_instances = ->
       blah: -> 'F::blah'
     #.......................................................................................................
     my_callable = new F ( Desire = -> "an function named Desire" )
-    debug 'Ωnfat__40', 'rpr my_callable                         ', rpr my_callable
-    debug 'Ωnfat__41', 'rpr my_callable.prototype               ', rpr my_callable.prototype
-    debug 'Ωnfat__42', 'rpr my_callable::                       ', rpr my_callable::
-    debug 'Ωnfat__43', 'rpr Object.getPrototypeOf my_callable   ', rpr Object.getPrototypeOf my_callable
-    debug 'Ωnfat__44', 'rpr my_callable instanceof F            ', rpr my_callable instanceof F
-    debug 'Ωnfat__45', 'rpr my_callable instanceof E            ', rpr my_callable instanceof E
-    debug 'Ωnfat__46', 'rpr my_callable.foo                     ', rpr my_callable.foo
-    debug 'Ωnfat__47', 'rpr my_callable.eps                     ', rpr my_callable.eps
-    debug 'Ωnfat__48', 'rpr my_callable()                       ', rpr my_callable()
-    debug 'Ωnfat__49', 'rpr my_callable.blah()                  ', rpr my_callable.blah()
-    debug 'Ωnfat__50', 'rpr my_callable.constructor             ', rpr my_callable.constructor
-    debug 'Ωnfat__51', 'rpr my_callable.constructor.name        ', rpr my_callable.constructor.name
+    debug 'Ωnfat__58', 'rpr my_callable                         ', rpr my_callable
+    debug 'Ωnfat__59', 'rpr my_callable.prototype               ', rpr my_callable.prototype
+    debug 'Ωnfat__60', 'rpr my_callable::                       ', rpr my_callable::
+    debug 'Ωnfat__61', 'rpr Object.getPrototypeOf my_callable   ', rpr Object.getPrototypeOf my_callable
+    debug 'Ωnfat__62', 'rpr my_callable instanceof F            ', rpr my_callable instanceof F
+    debug 'Ωnfat__63', 'rpr my_callable instanceof E            ', rpr my_callable instanceof E
+    debug 'Ωnfat__64', 'rpr my_callable.foo                     ', rpr my_callable.foo
+    debug 'Ωnfat__65', 'rpr my_callable.eps                     ', rpr my_callable.eps
+    debug 'Ωnfat__66', 'rpr my_callable()                       ', rpr my_callable()
+    debug 'Ωnfat__67', 'rpr my_callable.blah()                  ', rpr my_callable.blah()
+    debug 'Ωnfat__68', 'rpr my_callable.constructor             ', rpr my_callable.constructor
+    debug 'Ωnfat__69', 'rpr my_callable.constructor.name        ', rpr my_callable.constructor.name
     return null
   return null
 
@@ -270,4 +340,4 @@ if module is require.main then await do =>
   demo_isa_with_reason()
   demo_types_as_functions()
   demo_parse_return_value()
-  demo_set_prototype_to_obtain_callable_class_instances()
+  # demo_set_prototype_to_obtain_callable_class_instances()

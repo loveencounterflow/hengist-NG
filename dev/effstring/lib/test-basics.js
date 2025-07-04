@@ -1071,6 +1071,111 @@
       })();
       //.......................................................................................................
       return null;
+    },
+    //=========================================================================================================
+    ansi_escapes_and_widths: {
+      //-------------------------------------------------------------------------------------------------------
+      ansi_escapes_dont_count_for_widths: function() {
+        var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, bold, f, new_ftag, red, string_width, strip_ansi, to_width, width_of, Ωfstr_202, Ωfstr_203, Ωfstr_204, Ωfstr_205, Ωfstr_206, Ωfstr_207, Ωfstr_208, Ωfstr_209, Ωfstr_210, Ωfstr_211, Ωfstr_212, Ωfstr_213, Ωfstr_214, Ωfstr_215, Ωfstr_216, Ωfstr_217, Ωfstr_218, Ωfstr_219, Ωfstr_220, Ωfstr_221, Ωfstr_222, Ωfstr_223, Ωfstr_224, Ωfstr_225, Ωfstr_226;
+        ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
+        ({to_width, width_of} = require('../../../apps/to-width'));
+        ({
+          default: strip_ansi
+        } = require('strip-ansi'));
+        ({
+          default: string_width
+        } = require('../../../apps/effstring/node_modules/string-width'));
+        ({red, reverse, bold} = GUY.trm);
+        //.....................................................................................................
+        this.eq((Ωfstr_202 = function() {
+          return width_of('abc');
+        }), 3);
+        this.eq((Ωfstr_203 = function() {
+          return width_of(red('abc'));
+        }), 3);
+        this.eq((Ωfstr_204 = function() {
+          return width_of(reverse('abc'));
+        }), 3);
+        this.eq((Ωfstr_205 = function() {
+          return width_of(bold('abc'));
+        }), 3);
+        this.eq((Ωfstr_206 = function() {
+          return width_of(red(reverse(bold('abc'))));
+        }), 3);
+        this.eq((Ωfstr_207 = function() {
+          return string_width('abc');
+        }), 3);
+        this.eq((Ωfstr_208 = function() {
+          return string_width(red('abc'));
+        }), 3);
+        this.eq((Ωfstr_209 = function() {
+          return string_width(reverse('abc'));
+        }), 3);
+        this.eq((Ωfstr_210 = function() {
+          return string_width(bold('abc'));
+        }), 3);
+        this.eq((Ωfstr_211 = function() {
+          return string_width(red(reverse(bold('abc'))));
+        }), 3);
+        //.....................................................................................................
+        this.eq((Ωfstr_212 = function() {
+          return f`[${'abc'}:<20c;]`;
+        }), '[abc                 ]');
+        this.eq((Ωfstr_213 = function() {
+          return strip_ansi(f`[${red('abc')}:<20c;]`);
+        }), '[abc                 ]');
+        this.eq((Ωfstr_214 = function() {
+          return strip_ansi(f`[${reverse('abc')}:<20c;]`);
+        }), '[abc                 ]');
+        this.eq((Ωfstr_215 = function() {
+          return strip_ansi(f`[${bold('abc')}:<20c;]`);
+        }), '[abc                 ]');
+        this.eq((Ωfstr_216 = function() {
+          return strip_ansi(f`[${red(reverse(bold('abc')))}:<20c;]`);
+        }), '[abc                 ]');
+        //.....................................................................................................
+        this.eq((Ωfstr_217 = function() {
+          return f`[${'abc'}:>20c;]`;
+        }), '[                 abc]');
+        this.eq((Ωfstr_218 = function() {
+          return strip_ansi(f`[${red('abc')}:>20c;]`);
+        }), '[                 abc]');
+        this.eq((Ωfstr_219 = function() {
+          return strip_ansi(f`[${reverse('abc')}:>20c;]`);
+        }), '[                 abc]');
+        this.eq((Ωfstr_220 = function() {
+          return strip_ansi(f`[${bold('abc')}:>20c;]`);
+        }), '[                 abc]');
+        this.eq((Ωfstr_221 = function() {
+          return strip_ansi(f`[${red(reverse(bold('abc')))}:>20c;]`);
+        }), '[                 abc]');
+        //.....................................................................................................
+        this.eq((Ωfstr_222 = function() {
+          return f`[${'abc'}:^20c;]`;
+        }), '[        abc         ]');
+        this.eq((Ωfstr_223 = function() {
+          return strip_ansi(f`[${red('abc')}:^20c;]`);
+        }), '[        abc         ]');
+        this.eq((Ωfstr_224 = function() {
+          return strip_ansi(f`[${reverse('abc')}:^20c;]`);
+        }), '[        abc         ]');
+        this.eq((Ωfstr_225 = function() {
+          return strip_ansi(f`[${bold('abc')}:^20c;]`);
+        }), '[        abc         ]');
+        this.eq((Ωfstr_226 = function() {
+          return strip_ansi(f`[${red(reverse(bold('abc')))}:^20c;]`);
+        }), '[        abc         ]');
+        //.....................................................................................................
+        this.eq((Ωfstr_222 = function() {
+          return f`[${'abc'}:=20c;]`;
+        }), '[                 abc]');
+        // @eq ( Ωfstr_223 = -> strip_ansi f"[#{ red              'abc' }:=20c;]"  ), '[        abc         ]'
+        // @eq ( Ωfstr_224 = -> strip_ansi f"[#{ reverse          'abc' }:=20c;]"  ), '[        abc         ]'
+        // @eq ( Ωfstr_225 = -> strip_ansi f"[#{ bold             'abc' }:=20c;]"  ), '[        abc         ]'
+        // @eq ( Ωfstr_226 = -> strip_ansi f"[#{ red reverse bold 'abc' }:=20c;]"  ), '[        abc         ]'
+        //.....................................................................................................
+        return null;
+      }
     }
   };
 
@@ -1080,18 +1185,16 @@
   this.future_intertype_tasks = {
     //---------------------------------------------------------------------------------------------------------
     handle_nonnumeric_values: function() {
-      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, Ωfstr_202, Ωfstr_204, Ωfstr_206;
+      var _d3_format, _default_locale, _hint_as_locale_cfg, _locale_cfg_from_bcp47, _locale_cfg_from_hints, f, new_ftag, Ωfstr_227, Ωfstr_229;
       ({f, new_ftag, _default_locale, _d3_format, _locale_cfg_from_bcp47, _locale_cfg_from_hints, _hint_as_locale_cfg} = require('../../../apps/effstring'));
       //.......................................................................................................
-      this.eq((Ωfstr_202 = function() {
-        return urge('Ωfstr_203', rpr(f`d = ${"helo"}:60.40f/k;m`));
+      this.eq((Ωfstr_227 = function() {
+        return urge('Ωfstr_228', rpr(f`d = ${"helo"}:60.40f/k;m`));
       }), null);
-      this.eq((Ωfstr_204 = function() {
-        return urge('Ωfstr_205', rpr(f`d = ${true}:60.40f/k;m`));
+      this.eq((Ωfstr_229 = function() {
+        return urge('Ωfstr_230', rpr(f`d = ${true}:60.40f/k;m`));
       }), null);
-      this.eq((Ωfstr_206 = function() {
-        return urge('Ωfstr_207', rpr(f`d = ${123456789n}:60.40f/k;m`));
-      }), null);
+      // @eq ( Ωfstr_231 = -> urge 'Ωfstr_232', rpr f"d = #{123456789n}:60.40f/k;m" ), null
       //.......................................................................................................
       return null;
     }
@@ -1104,13 +1207,13 @@
       ({f, new_ftag, _d3_format} = require('../../../apps/effstring'));
       echo();
       (() => {
-        // info 'Ωfstr_208', f"——#{1234}:$#20x;——"
-        info('Ωfstr_209', f`——${1234}:;>20;——`);
-        info('Ωfstr_210', f`——${1234}:#>20.3e;——`);
-        info('Ωfstr_211', f`——${1234}:#>20.3f;——`);
-        info('Ωfstr_212', f`——${1234}:#>20.3s;——`);
-        info('Ωfstr_213', f`——${1234}:#>20.3n;——`);
-        return info('Ωfstr_214', f`——${2e308}:#>20.3n;——`);
+        // info 'Ωfstr_233', f"——#{1234}:$#20x;——"
+        info('Ωfstr_234', f`——${1234}:;>20;——`);
+        info('Ωfstr_235', f`——${1234}:#>20.3e;——`);
+        info('Ωfstr_236', f`——${1234}:#>20.3f;——`);
+        info('Ωfstr_237', f`——${1234}:#>20.3s;——`);
+        info('Ωfstr_238', f`——${1234}:#>20.3n;——`);
+        return info('Ωfstr_239', f`——${2e308}:#>20.3n;——`);
       })();
       (() => {
         var f_en, f_ja, ja_jp_cfg;
@@ -1219,97 +1322,97 @@
           var ff;
           echo();
           ff = _d3_format.formatPrefix("_>15,.3~", 1e-6);
-          info('Ωfstr_215', ff(0.00000042));
-          info('Ωfstr_216', ff(0.0000042));
-          info('Ωfstr_217', ff(0.000042));
-          info('Ωfstr_218', ff(0.00042));
-          info('Ωfstr_219', ff(0.0042));
-          info('Ωfstr_220', ff(0.042));
-          info('Ωfstr_221', ff(0.42));
+          info('Ωfstr_240', ff(0.00000042));
+          info('Ωfstr_241', ff(0.0000042));
+          info('Ωfstr_242', ff(0.000042));
+          info('Ωfstr_243', ff(0.00042));
+          info('Ωfstr_244', ff(0.0042));
+          info('Ωfstr_245', ff(0.042));
+          info('Ωfstr_246', ff(0.42));
           return null;
         })();
         (() => {
           var ff;
           echo();
           ff = _d3_format.formatPrefix("_>15,.3~s", 1e-6);
-          info('Ωfstr_222', ff(0.00000042));
-          info('Ωfstr_223', ff(0.0000042));
-          info('Ωfstr_224', ff(0.000042));
-          info('Ωfstr_225', ff(0.00042));
-          info('Ωfstr_226', ff(0.0042));
-          info('Ωfstr_227', ff(0.042));
-          info('Ωfstr_228', ff(0.42));
+          info('Ωfstr_247', ff(0.00000042));
+          info('Ωfstr_248', ff(0.0000042));
+          info('Ωfstr_249', ff(0.000042));
+          info('Ωfstr_250', ff(0.00042));
+          info('Ωfstr_251', ff(0.0042));
+          info('Ωfstr_252', ff(0.042));
+          info('Ωfstr_253', ff(0.42));
           return null;
         })();
         (() => {
           var ff;
           echo();
           ff = _d3_format.formatPrefix("_>15,.3~f", 1e-6);
-          info('Ωfstr_229', ff(0.00000042));
-          info('Ωfstr_230', ff(0.0000042));
-          info('Ωfstr_231', ff(0.000042));
-          info('Ωfstr_232', ff(0.00042));
-          info('Ωfstr_233', ff(0.0042));
-          info('Ωfstr_234', ff(0.042));
-          info('Ωfstr_235', ff(0.42));
+          info('Ωfstr_254', ff(0.00000042));
+          info('Ωfstr_255', ff(0.0000042));
+          info('Ωfstr_256', ff(0.000042));
+          info('Ωfstr_257', ff(0.00042));
+          info('Ωfstr_258', ff(0.0042));
+          info('Ωfstr_259', ff(0.042));
+          info('Ωfstr_260', ff(0.42));
           return null;
         })();
         (() => {
           echo();
-          info('Ωfstr_236', f`${0.00000042}:_>15,.3f/µ;`);
-          info('Ωfstr_237', f`${0.0000042}:_>15,.3f/µ;`);
-          info('Ωfstr_238', f`${0.000042}:_>15,.3f/µ;`);
-          info('Ωfstr_239', f`${0.00042}:_>15,.3f/µ;`);
-          info('Ωfstr_240', f`${0.0042}:_>15,.3f/µ;`);
-          info('Ωfstr_241', f`${0.042}:_>15,.3f/µ;`);
-          info('Ωfstr_242', f`${0.42}:_>15,.3f/µ;`);
+          info('Ωfstr_261', f`${0.00000042}:_>15,.3f/µ;`);
+          info('Ωfstr_262', f`${0.0000042}:_>15,.3f/µ;`);
+          info('Ωfstr_263', f`${0.000042}:_>15,.3f/µ;`);
+          info('Ωfstr_264', f`${0.00042}:_>15,.3f/µ;`);
+          info('Ωfstr_265', f`${0.0042}:_>15,.3f/µ;`);
+          info('Ωfstr_266', f`${0.042}:_>15,.3f/µ;`);
+          info('Ωfstr_267', f`${0.42}:_>15,.3f/µ;`);
           return null;
         })();
         (() => {
           echo();
-          info('Ωfstr_243', f`${123000}:_>9,.3f/k;m`);
-          info('Ωfstr_244', f`${7000}:_>9,.3f/k;m`);
-          info('Ωfstr_245', f`${500}:_>9,.3f/k;m`);
-          info('Ωfstr_246', f`${99}:_>9,.3f/k;m`);
+          info('Ωfstr_268', f`${123000}:_>9,.3f/k;m`);
+          info('Ωfstr_269', f`${7000}:_>9,.3f/k;m`);
+          info('Ωfstr_270', f`${500}:_>9,.3f/k;m`);
+          info('Ωfstr_271', f`${99}:_>9,.3f/k;m`);
           return null;
         })();
         (() => {
           var ff;
           echo();
           ff = _d3_format.formatPrefix("_>15,.3f", 1e-3);
-          info('Ωfstr_247', ff(0.00089));
-          info('Ωfstr_248', ff(0.0089));
-          info('Ωfstr_249', ff(0.089));
-          info('Ωfstr_250', ff(0.89));
-          info('Ωfstr_251', ff(8.9));
-          info('Ωfstr_252', ff(89));
-          info('Ωfstr_253', ff(890));
+          info('Ωfstr_272', ff(0.00089));
+          info('Ωfstr_273', ff(0.0089));
+          info('Ωfstr_274', ff(0.089));
+          info('Ωfstr_275', ff(0.89));
+          info('Ωfstr_276', ff(8.9));
+          info('Ωfstr_277', ff(89));
+          info('Ωfstr_278', ff(890));
           return null;
         })();
         (() => {
           var ff;
           echo();
           ff = _d3_format.formatPrefix("_>15,.3f", 1e-2);
-          info('Ωfstr_254', ff(0.00089));
-          info('Ωfstr_255', ff(0.0089));
-          info('Ωfstr_256', ff(0.089));
-          info('Ωfstr_257', ff(0.89));
-          info('Ωfstr_258', ff(8.9));
-          info('Ωfstr_259', ff(89));
-          info('Ωfstr_260', ff(890));
+          info('Ωfstr_279', ff(0.00089));
+          info('Ωfstr_280', ff(0.0089));
+          info('Ωfstr_281', ff(0.089));
+          info('Ωfstr_282', ff(0.89));
+          info('Ωfstr_283', ff(8.9));
+          info('Ωfstr_284', ff(89));
+          info('Ωfstr_285', ff(890));
           return null;
         })();
         (() => {
           var ff;
           echo();
           ff = _d3_format.formatPrefix("_>15,.3f", 1e-1);
-          info('Ωfstr_261', ff(0.00089));
-          info('Ωfstr_262', ff(0.0089));
-          info('Ωfstr_263', ff(0.089));
-          info('Ωfstr_264', ff(0.89));
-          info('Ωfstr_265', ff(8.9));
-          info('Ωfstr_266', ff(89));
-          info('Ωfstr_267', ff(890));
+          info('Ωfstr_286', ff(0.00089));
+          info('Ωfstr_287', ff(0.0089));
+          info('Ωfstr_288', ff(0.089));
+          info('Ωfstr_289', ff(0.89));
+          info('Ωfstr_290', ff(8.9));
+          info('Ωfstr_291', ff(89));
+          info('Ωfstr_292', ff(890));
           return null;
         })();
         return (() => {
@@ -1317,13 +1420,13 @@
           echo();
           ff = _d3_format.formatPrefix("_>15,.3f", 1e0);
           scale = 1 / 1e-2;
-          info('Ωfstr_268', ff(0.00089 * scale));
-          info('Ωfstr_269', ff(0.0089 * scale));
-          info('Ωfstr_270', ff(0.089 * scale));
-          info('Ωfstr_271', ff(0.89 * scale));
-          info('Ωfstr_272', ff(8.9 * scale));
-          info('Ωfstr_273', ff(89 * scale));
-          info('Ωfstr_274', ff(890 * scale));
+          info('Ωfstr_293', ff(0.00089 * scale));
+          info('Ωfstr_294', ff(0.0089 * scale));
+          info('Ωfstr_295', ff(0.089 * scale));
+          info('Ωfstr_296', ff(0.89 * scale));
+          info('Ωfstr_297', ff(8.9 * scale));
+          info('Ωfstr_298', ff(89 * scale));
+          info('Ωfstr_299', ff(890 * scale));
           return null;
         })();
       })();
@@ -1337,20 +1440,20 @@
       ({
         reverse: rvs
       } = GUY.trm);
-      debug('Ωfstr_275', 1234567891234567891);
-      debug('Ωfstr_276', f`${1234567891234567891}:<30.3f;`);
-      // debug 'Ωfstr_277', f"#{1234567891234567891n}:<30.3f;"
-      debug('Ωfstr_278', f`${'1234567891234567891'}:<30.3f;`);
+      debug('Ωfstr_300', 1234567891234567891);
+      debug('Ωfstr_301', f`${1234567891234567891}:<30.3f;`);
+      // debug 'Ωfstr_302', f"#{1234567891234567891n}:<30.3f;"
+      debug('Ωfstr_303', f`${'1234567891234567891'}:<30.3f;`);
       (() => {
         var i, len, locale, ref, results, type, value;
         locale = new Intl.NumberFormat('en-US'); //, { style: 'currency', currency: 'USD', }
-        help('Ωfstr_279', locale.resolvedOptions());
-        urge('Ωfstr_280', locale.format(9876543210));
+        help('Ωfstr_304', locale.resolvedOptions());
+        urge('Ωfstr_305', locale.format(9876543210));
         ref = locale.formatToParts(9876543210);
         results = [];
         for (i = 0, len = ref.length; i < len; i++) {
           ({type, value} = ref[i]);
-          results.push(debug('Ωfstr_281', f`${type}:15c;`, rvs(rpr(value))));
+          results.push(debug('Ωfstr_306', f`${type}:15c;`, rvs(rpr(value))));
         }
         return results;
       })();
@@ -1359,9 +1462,9 @@
         var de_DE, en_US, number;
         number = 123456.789;
         de_DE = new Intl.NumberFormat('de-DE');
-        urge('Ωfstr_282', rvs(rpr(de_DE.format(number))));
+        urge('Ωfstr_307', rvs(rpr(de_DE.format(number))));
         en_US = new Intl.NumberFormat('en-US');
-        urge('Ωfstr_283', rvs(rpr(en_US.format(number))));
+        urge('Ωfstr_308', rvs(rpr(en_US.format(number))));
         return null;
       })();
       // You can also specify additional options such as the style of formatting (decimal, currency, or
@@ -1374,7 +1477,7 @@
           style: 'currency',
           currency: 'USD'
         });
-        return info('Ωfstr_284', rvs(rpr(numberFormat.format(amount))));
+        return info('Ωfstr_309', rvs(rpr(numberFormat.format(amount))));
       })();
       (() => {
         var numberFormat;
@@ -1382,8 +1485,8 @@
           style: 'percent',
           currency: 'USD'
         });
-        info('Ωfstr_285', rvs(rpr(numberFormat.format(amount))));
-        return info('Ωfstr_286', rvs(rpr(numberFormat.format(0.756789))));
+        info('Ωfstr_310', rvs(rpr(numberFormat.format(amount))));
+        return info('Ωfstr_311', rvs(rpr(numberFormat.format(0.756789))));
       })();
       (() => {
         var numberFormat;
@@ -1392,24 +1495,24 @@
           currency: 'USD',
           maximumSignificantDigits: 2
         });
-        info('Ωfstr_287', rvs(rpr(numberFormat.format(amount))));
-        return info('Ωfstr_288', rvs(rpr(numberFormat.format(0.756789))));
+        info('Ωfstr_312', rvs(rpr(numberFormat.format(amount))));
+        return info('Ωfstr_313', rvs(rpr(numberFormat.format(0.756789))));
       })();
       (() => {
         // the nu extension key requests a numbering system, e.g. Chinese decimal
-        help('Ωfstr_289', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec')).format(123456.789))));
-        help('Ωfstr_290', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hans')).format(123456.789))));
-        help('Ωfstr_291', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hansfin')).format(123456.789))));
-        help('Ωfstr_292', rvs(rpr((new Intl.NumberFormat('zh-Hant-TW-u-nu-hant')).format(123456.789))));
-        help('Ωfstr_293', rvs(rpr((new Intl.NumberFormat('zh-Hant-TW-u-nu-hantfin')).format(123456.789))));
-        return help('Ωfstr_294', rvs(rpr((new Intl.NumberFormat('roman')).format(123456.789))));
+        help('Ωfstr_314', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec')).format(123456.789))));
+        help('Ωfstr_315', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hans')).format(123456.789))));
+        help('Ωfstr_316', rvs(rpr((new Intl.NumberFormat('zh-Hans-CN-u-nu-hansfin')).format(123456.789))));
+        help('Ωfstr_317', rvs(rpr((new Intl.NumberFormat('zh-Hant-TW-u-nu-hant')).format(123456.789))));
+        help('Ωfstr_318', rvs(rpr((new Intl.NumberFormat('zh-Hant-TW-u-nu-hantfin')).format(123456.789))));
+        return help('Ωfstr_319', rvs(rpr((new Intl.NumberFormat('roman')).format(123456.789))));
       })();
       (() => {
         var numberFormat;
         // Additionally, you can use the format method of an Intl.NumberFormat instance to format a number
         // according to the locale and formatting options of the object
         numberFormat = new Intl.NumberFormat('en-US');
-        return info('Ωfstr_295', rvs(rpr(numberFormat.format(123456.789)))); // "123,456.789"
+        return info('Ωfstr_320', rvs(rpr(numberFormat.format(123456.789)))); // "123,456.789"
       })();
       return null;
     },
@@ -1431,27 +1534,27 @@
       };
       d = 123_456_789.123456789;
       e = d * 1e18;
-      debug('Ωfstr_296', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_321', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d * 1e12;
-      debug('Ωfstr_297', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_322', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d * 1e09;
-      debug('Ωfstr_298', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_323', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d * 1e06;
-      debug('Ωfstr_299', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_324', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d * 1e03;
-      debug('Ωfstr_300', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_325', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d;
-      debug('Ωfstr_301', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_326', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d / 1e03;
-      debug('Ωfstr_302', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_327', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d / 1e06;
-      debug('Ωfstr_303', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_328', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d / 1e09;
-      debug('Ωfstr_304', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_329', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d / 1e12;
-      debug('Ωfstr_305', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_330', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       e = d / 1e18;
-      debug('Ωfstr_306', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
+      debug('Ωfstr_331', f`${e}:34,.17;`, get_mantissa_and_exponent(e));
       formatter = new Intl.NumberFormat('en-US', {
         useGrouping: false,
         // minimumFractionDigits:    40,
@@ -1460,82 +1563,82 @@
         maximumSignificantDigits: 16 // max allowed value is 21
       });
       e = d * 1e200;
-      help('Ωfstr_307', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_332', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e100;
-      help('Ωfstr_308', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_333', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e50;
-      help('Ωfstr_309', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_334', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e44;
-      help('Ωfstr_310', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_335', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e41;
-      help('Ωfstr_311', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_336', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e39;
-      help('Ωfstr_312', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_337', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e36;
-      help('Ωfstr_313', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_338', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e33;
-      help('Ωfstr_314', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_339', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e30;
-      help('Ωfstr_315', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_340', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e27;
-      help('Ωfstr_316', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_341', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e24;
-      help('Ωfstr_317', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_342', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e21;
-      help('Ωfstr_318', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_343', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e18;
-      help('Ωfstr_319', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_344', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e15;
-      help('Ωfstr_320', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_345', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e12;
-      help('Ωfstr_321', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_346', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e09;
-      help('Ωfstr_322', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_347', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e06;
-      help('Ωfstr_323', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_348', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d * 1e03;
-      help('Ωfstr_324', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_349', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       echo();
       e = d;
-      help('Ωfstr_325', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_350', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       echo();
       e = d / 1e03;
-      help('Ωfstr_326', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_351', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e06;
-      help('Ωfstr_327', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_352', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e09;
-      help('Ωfstr_328', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_353', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e12;
-      help('Ωfstr_329', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_354', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e15;
-      help('Ωfstr_330', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_355', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e18;
-      help('Ωfstr_331', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_356', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e21;
-      help('Ωfstr_332', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_357', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e24;
-      help('Ωfstr_333', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_358', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e27;
-      help('Ωfstr_334', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_359', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e30;
-      help('Ωfstr_335', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_360', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e33;
-      help('Ωfstr_336', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_361', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e36;
-      help('Ωfstr_337', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_362', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e39;
-      help('Ωfstr_338', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_363', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e41;
-      help('Ωfstr_339', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_364', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e44;
-      help('Ωfstr_340', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_365', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e100;
-      help('Ωfstr_341', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_366', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       e = d / 1e200;
-      help('Ωfstr_342', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_367', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       echo();
       e = 0.1 + 0.1 + 0.1;
-      help('Ωfstr_343', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
+      help('Ωfstr_368', f`${formatter.format(e)}:>60c;`.replace(/0/g, '*'));
       return null;
     },
     //=========================================================================================================
@@ -1562,16 +1665,16 @@
         return [0, ',', 3, ',', 2, '-', 1, ':', 1];
       };
       //-------------------------------------------------------------------------------------------------------
-      urge('Ωfstr_344', f`${group_digits('1')}:>20c;`);
-      urge('Ωfstr_345', f`${group_digits('12')}:>20c;`);
-      urge('Ωfstr_346', f`${group_digits('123')}:>20c;`);
-      urge('Ωfstr_347', f`${group_digits('1234')}:>20c;`);
-      urge('Ωfstr_348', f`${group_digits('12345')}:>20c;`);
-      urge('Ωfstr_349', f`${group_digits('123456')}:>20c;`);
-      urge('Ωfstr_350', f`${group_digits('1234567')}:>20c;`);
-      urge('Ωfstr_351', f`${group_digits('12345678')}:>20c;`);
-      urge('Ωfstr_352', f`${group_digits('123456789')}:>20c;`);
-      urge('Ωfstr_353', f`${group_digits('1234567890')}:>20c;`);
+      urge('Ωfstr_369', f`${group_digits('1')}:>20c;`);
+      urge('Ωfstr_370', f`${group_digits('12')}:>20c;`);
+      urge('Ωfstr_371', f`${group_digits('123')}:>20c;`);
+      urge('Ωfstr_372', f`${group_digits('1234')}:>20c;`);
+      urge('Ωfstr_373', f`${group_digits('12345')}:>20c;`);
+      urge('Ωfstr_374', f`${group_digits('123456')}:>20c;`);
+      urge('Ωfstr_375', f`${group_digits('1234567')}:>20c;`);
+      urge('Ωfstr_376', f`${group_digits('12345678')}:>20c;`);
+      urge('Ωfstr_377', f`${group_digits('123456789')}:>20c;`);
+      urge('Ωfstr_378', f`${group_digits('1234567890')}:>20c;`);
       //-------------------------------------------------------------------------------------------------------
       TOBEDONE_Error = class TOBEDONE_Error extends Error {};
       //-------------------------------------------------------------------------------------------------------
@@ -1612,24 +1715,23 @@
       };
       //-------------------------------------------------------------------------------------------------------
       demo_grouping = function(text, grouping_cfg) {
-        var chrs, insertion, ref;
+        var chrs, insertion;
         // [...new Intl.Segmenter().segment( text )].map(s => s.segment)
-        urge('Ωfstr_356', rpr(grouping_cfg.join('')));
+        urge('Ωfstr_379', rpr(grouping_cfg.join('')));
         chrs = Array.from(text);
-        ref = walk_group_steps(grouping_cfg, chrs.length);
-        for (insertion of ref) {
+        for (insertion of walk_group_steps(grouping_cfg, chrs.length)) {
           chrs.splice(insertion.chr_idx, 0, insertion.marker);
         }
         return chrs.join('');
       };
       (() => {        //-------------------------------------------------------------------------------------------------------
-        info('Ωfstr_358', demo_grouping('98765432109876543210', [',', 3, ',', 2, '-', 1, ':', 1]));
-        info('Ωfstr_358', demo_grouping('98765432109876543210', [0, ',', 3, ',', 2, '-', 1, ':', 1]));
-        info('Ωfstr_358', demo_grouping('98765432109876543210', [',', 1]));
-        info('Ωfstr_358', demo_grouping('98765432109876543210', [',', 2]));
-        info('Ωfstr_358', demo_grouping('98765432109876543210', [',', 3]));
-        info('Ωfstr_358', demo_grouping('98765432109876543210', [',', 4]));
-        return info('Ωfstr_358', demo_grouping('98765432109876543210', [',', 5]));
+        info('Ωfstr_380', demo_grouping('98765432109876543210', [',', 3, ',', 2, '-', 1, ':', 1]));
+        info('Ωfstr_381', demo_grouping('98765432109876543210', [0, ',', 3, ',', 2, '-', 1, ':', 1]));
+        info('Ωfstr_382', demo_grouping('98765432109876543210', [',', 1]));
+        info('Ωfstr_383', demo_grouping('98765432109876543210', [',', 2]));
+        info('Ωfstr_384', demo_grouping('98765432109876543210', [',', 3]));
+        info('Ωfstr_385', demo_grouping('98765432109876543210', [',', 4]));
+        return info('Ωfstr_386', demo_grouping('98765432109876543210', [',', 5]));
       })();
       //-------------------------------------------------------------------------------------------------------
       return null;
@@ -1639,16 +1741,38 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      // ( new Test { throw_on_error: true, } ).test @intertype_tasks
-      // ( new Test { throw_on_error: false, } ).test @intertype_tasks
-      // ( new Test { throw_on_error: false, } ).test { si_units_format_specifier: @intertype_tasks.si_units_format_specifier, }
-      // ( new Test() ).test demo
-      // demo.README()
-      // demo.intl_number()
-      // demo.mantissa_exponent()
-      return demo.grouping();
+      var all_tasks, guytest_cfg;
+      guytest_cfg = {
+        throw_on_error: false,
+        show_passes: false,
+        report_checks: false
+      };
+      guytest_cfg = {
+        throw_on_error: true,
+        show_passes: false,
+        report_checks: false
+      };
+      all_tasks = {
+        intertype_tasks: this.intertype_tasks,
+        future_intertype_tasks: this.future_intertype_tasks
+      };
+      // ( new Test guytest_cfg ).test all_tasks
+      (new Test(guytest_cfg)).test(this.intertype_tasks);
+      return (new Test(guytest_cfg)).test({
+        ansi_escapes_and_widths: this.intertype_tasks.ansi_escapes_and_widths
+      });
     })();
   }
+
+  // ( new Test guytest_cfg ).test @future_intertype_tasks
+// ( new Test { throw_on_error: true, } ).test @intertype_tasks
+// ( new Test { throw_on_error: false, } ).test @intertype_tasks
+// ( new Test { throw_on_error: false, } ).test { si_units_format_specifier: @intertype_tasks.si_units_format_specifier, }
+// ( new Test() ).test demo
+// demo.README()
+// demo.intl_number()
+// demo.mantissa_exponent()
+// demo.grouping()
 
 }).call(this);
 
