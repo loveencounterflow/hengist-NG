@@ -123,7 +123,31 @@
   RVX = new Revalex();
 
   //===========================================================================================================
-  Typespace = class Typespace {};
+  Typespace = class Typespace {
+    //---------------------------------------------------------------------------------------------------------
+    constructor(tsname, dcls = null) {
+      var dcl, typename;
+      this.name = tsname;
+      if (dcls != null) {
+        for (typename in dcls) {
+          dcl = dcls[typename];
+          this.add_type(typename, dcl);
+        }
+      }
+      return void 0;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    add_type(typename, dcl) {
+      var R;
+      if (Reflect.has(this, typename)) {
+        throw new Error(`Ωtt___2 name clash ${rpr(typename)}`);
+      }
+      this[typename] = R = new Type(this, typename, dcl);
+      return R;
+    }
+
+  };
 
   //===========================================================================================================
   Type = class Type {
@@ -179,17 +203,17 @@
       for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
         isa_clause = ref[idx];
         ((isa_clause, idx) => {
-          // debug 'Ωtt___2', @name, idx, ( rpr isa_clause )
+          // debug 'Ωtt___3', @name, idx, ( rpr isa_clause )
           //.................................................................................................
           /* De-reference referenced type: */
           if (gnd.text.isa(isa_clause)) {
             return this.isa_clauses[idx] = ((ref_typename) => {
               var ref_type;
               if (!Reflect.has(this.typespace, ref_typename)) {
-                throw new Error(`Ωtt___3 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(this.name)}`);
+                throw new Error(`Ωtt___4 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(this.name)}`);
               }
               ref_type = this.typespace[ref_typename];
-              // debug 'Ωtt___4', @name, '->', ref_typename, rpr ref_type
+              // debug 'Ωtt___5', @name, '->', ref_typename, rpr ref_type
               // return nameit "ref_#{ref_type.isa.name}", ( x ) -> ref_type.isa x
               return nameit(`ref_isa_${ref_typename}`, function(x) {
                 return ref_type.isa(x);
@@ -212,7 +236,7 @@
             })(isa_clause);
           } else {
             //.................................................................................................
-            throw new Error("Ωtt___5 unexpected type in ISA clause");
+            throw new Error("Ωtt___6 unexpected type in ISA clause");
           }
         })(isa_clause, idx);
       }
@@ -303,47 +327,47 @@
     };
     TMP_compile_typespace(ts);
     //.......................................................................................................
-    info('Ωtt___6', "ts.text                  ", ts.text);
-    info('Ωtt___7', "ts.spork                 ", ts.spork);
+    info('Ωtt___7', "ts.text                  ", ts.text);
+    info('Ωtt___8', "ts.spork                 ", ts.spork);
     info();
-    info('Ωtt___8', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
-    info('Ωtt___9', "ts.text.isa 87           ", truth(ts.text.isa(87)));
+    info('Ωtt___9', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
+    info('Ωtt__10', "ts.text.isa 87           ", truth(ts.text.isa(87)));
     info();
-    info('Ωtt__10', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
-    info('Ωtt__11', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
+    info('Ωtt__11', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
+    info('Ωtt__12', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
     info();
-    info('Ωtt__12', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
-    info('Ωtt__13', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
-    info('Ωtt__14', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
+    info('Ωtt__13', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
+    info('Ωtt__14', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
+    info('Ωtt__15', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
     info();
-    info('Ωtt__15', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
-    info('Ωtt__16', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
+    info('Ωtt__16', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
+    info('Ωtt__17', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
     info();
-    info('Ωtt__17', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
-    info('Ωtt__18', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
-    info('Ωtt__19', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
-    info('Ωtt__20', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
-    info('Ωtt__21', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
-    info('Ωtt__22', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
+    info('Ωtt__18', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
+    info('Ωtt__19', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
+    info('Ωtt__20', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
+    info('Ωtt__21', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
+    info('Ωtt__22', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
+    info('Ωtt__23', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
     info();
-    info('Ωtt__23', "ts.pod_1.isa {}          ", truth(ts.pod_1.isa({})));
-    info('Ωtt__24', "ts.pod_2.isa {}          ", truth(ts.pod_2.isa({})));
+    info('Ωtt__24', "ts.pod_1.isa {}          ", truth(ts.pod_1.isa({})));
+    info('Ωtt__25', "ts.pod_2.isa {}          ", truth(ts.pod_2.isa({})));
     info();
-    info('Ωtt__25', "ts.length.isa {}         ", truth(ts.length.isa({})));
-    info('Ωtt__26', "ts.length.isa -3.5       ", truth(ts.length.isa(-3.5)));
-    info('Ωtt__27', "ts.length.isa +3.5       ", truth(ts.length.isa(+3.5)));
+    info('Ωtt__26', "ts.length.isa {}         ", truth(ts.length.isa({})));
+    info('Ωtt__27', "ts.length.isa -3.5       ", truth(ts.length.isa(-3.5)));
+    info('Ωtt__28', "ts.length.isa +3.5       ", truth(ts.length.isa(+3.5)));
     return null;
     // #.......................................................................................................
     // compile_typespace = ( ts ) ->
     //   for typename, dcl of ts
     //     isa_clauses = {}
     //     #...................................................................................................
-    //     debug 'Ωtt__28', 'dcl_isa', rpr dcl_isa
+    //     debug 'Ωtt__29', 'dcl_isa', rpr dcl_isa
     //     for dcl_isa_clause in dcl_isa
-    //       debug 'Ωtt__29', 'dcl_isa_clause', rpr dcl_isa_clause
+    //       debug 'Ωtt__30', 'dcl_isa_clause', rpr dcl_isa_clause
     //       #.................................................................................................
     //       unless gnd.function.isa dcl_isa_clause
-    //         throw new Error "Ωtt__30 expected a function, got #{rpr dcl_isa_clause}"
+    //         throw new Error "Ωtt__31 expected a function, got #{rpr dcl_isa_clause}"
     //       #.................................................................................................
     //       revalex             = RVX.normalize_revalex dcl_isa_clause
     //       # dcl_isa_clause[RVX] = revalex
@@ -360,19 +384,19 @@
     // #.......................................................................................................
     // compile_typespace ts
     // for typename, dcl of ts
-    //   info 'Ωtt__31', typename, dcl.isa
+    //   info 'Ωtt__32', typename, dcl.isa
     //   # for name, dcl_isa_clause of isa_clauses
-    //   #   help 'Ωtt__32', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
+    //   #   help 'Ωtt__33', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
     // #.......................................................................................................
-    // info 'Ωtt__33', ts.id.isa 'abc'
-    // info 'Ωtt__34', ts.id.isa '123'
-    // info 'Ωtt__35', ts.id.isa 'abc123'
+    // info 'Ωtt__34', ts.id.isa 'abc'
+    // info 'Ωtt__35', ts.id.isa '123'
+    // info 'Ωtt__36', ts.id.isa 'abc123'
     // failed_tests = []
     // record = ( name ) -> failed_tests.push name
-    // info 'Ωtt__36', ts.id.isa 'abc',    record; urge 'Ωtt__37', failed_tests; failed_tests.length = 0
-    // info 'Ωtt__38', ts.id.isa '123',    record; urge 'Ωtt__39', failed_tests; failed_tests.length = 0
-    // info 'Ωtt__40', ts.id.isa 123,      record; urge 'Ωtt__41', failed_tests; failed_tests.length = 0
-    // info 'Ωtt__42', ts.id.isa 'abc123', record; urge 'Ωtt__43', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__37', ts.id.isa 'abc',    record; urge 'Ωtt__38', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__39', ts.id.isa '123',    record; urge 'Ωtt__40', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__41', ts.id.isa 123,      record; urge 'Ωtt__42', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__43', ts.id.isa 'abc123', record; urge 'Ωtt__44', failed_tests; failed_tests.length = 0
     return null;
   };
 
