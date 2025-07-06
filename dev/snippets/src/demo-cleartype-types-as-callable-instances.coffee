@@ -120,7 +120,8 @@ class Typespace
     @name = tsname
     hide @, types_sym, []
     if dcls?
-      @add_type typename, dcl for typename, dcl of dcls
+      for typename, dcl of dcls
+        @add_type typename, dcl
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -140,12 +141,13 @@ class Type
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( typespace, typename, dcl ) ->
-    hide @, 'typespace',  typespace
-    hide @, 'dcl',        dcl
-    @name = typename
+    @name                     = typename
+    hide @, 'typespace',        typespace
+    hide @, 'dcl',              dcl
+    hide_getter @, 'fqname', => "#{@typespace.name}.#{@name}"
     @_normalize_dcl()
-    nameit "isa_#{typename}", @isa
-    set_getter @, 'fqname',   => "#{@typespace.name}.#{@name}"
+    hide @, 'isa_clauses',      @isa_clauses
+    # nameit "#{typename}.isa()", @isa
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -169,33 +171,33 @@ class Type
   #---------------------------------------------------------------------------------------------------------
   _normalize_isa_clauses: ->
     for isa_clause, idx in @isa_clauses then do ( isa_clause, idx ) =>
-      # debug 'Ωtt___3', @name, idx, ( rpr isa_clause )
-      #.................................................................................................
+      #.....................................................................................................
       ### De-reference referenced type: ###
       if ( gnd.text.isa isa_clause )
         @isa_clauses[ idx ] = do ( ref_typename = isa_clause ) =>
           unless Reflect.has @typespace, ref_typename
             throw new Error "Ωtt___4 unable to resolve #{rpr ref_typename} referenced by #{rpr @name}"
           ref_type = @typespace[ ref_typename ]
-          # debug 'Ωtt___5', @name, '->', ref_typename, rpr ref_type
-          # return nameit "ref_#{ref_type.isa.name}", ( x ) -> ref_type.isa x
-          return nameit "ref_isa_#{ref_typename}", ( x ) -> ref_type.isa x
-      #.................................................................................................
+          return nameit "#{ref_type.fqname}", ( x ) -> ref_type.isa x
+      #.....................................................................................................
       else if ( gnd.function.isa isa_clause )
-        if isa_clause.name is ''
-          nameit ( RVX.revalex_from_function isa_clause ), isa_clause
-          # nameit ( RVX.name_from_function isa_clause ), isa_clause
-      #.................................................................................................
+        null
+        # if isa_clause.name is ''
+        # nameit ( "#{@fqname}[#{rpr revalex}]" ), isa_clause
+        revalex = RVX.revalex_from_function isa_clause
+        nameit ( rpr revalex ), isa_clause
+      #.....................................................................................................
       else if ( gnd.type.isa isa_clause )
-        ### TAINT fill in `otherts` ###
-        ### TAINT use `type.fqname` ###
         @isa_clauses[ idx ] = do ( type = isa_clause ) =>
-          nameit "otherts.isa_#{type.name}", ( x ) -> type.isa x
-      #.................................................................................................
+          nameit "#{type.fqname}", ( x ) -> type.isa x
+      #.....................................................................................................
+      else if ( isa_clause? ) and ( Reflect.has isa_clause, 'isa' ) and ( gnd.function.isa isa_clause.isa )
+        @isa_clauses[ idx ] = do ( type = isa_clause ) =>
+          nameit "#{type.fqname}", ( x ) -> type.isa x
+      #.....................................................................................................
       else
-        throw new Error "Ωtt___6 unexpected type in ISA clause"
+        throw new Error "Ωtt___5 unexpected type in ISA clause: #{rpr isa_clause}"
     return null
-
 
 
 #===========================================================================================================
@@ -237,85 +239,48 @@ demo_turning_lists_of_functions_into_objects_with_sensible_names = ->
     baz: 'bar'
     #.......................................................................................................
     pod_1: gnd.pod
-    pod_2: ref_isa_gnd_pod = ( x ) -> gnd.pod.isa x
+    pod_2: [ gnd.pod, ]
+    # pod_2: [ 'pod_1', ]
+    pod_3: ( x ) -> gnd.pod.isa x
   #.......................................................................................................
   show_type = ( type ) ->
-    echo f"#{gold type.fqname}:<15c; | #{white rpr type.dcl}:<60c; | #{lime rpr type.isa_clauses}:<60c;"
+    # echo f"#{gold type.fqname}:<15c; | #{white rpr type.dcl}:<60c; | #{lime rpr type.isa_clauses}:<60c;"
+    echo f"#{gold type.fqname}:<20c; | #{white rpr type}:<25c; | #{lime rpr type.isa_clauses}:<60c;"
     return null
   for typespace in [ one, ts, ]
     for type from typespace
       show_type type
   #.......................................................................................................
-  info 'Ωtt__12', "ts.text                  ", ts.text
-  info 'Ωtt__13', "ts.spork                 ", ts.spork
+  info 'Ωtt___6', "ts.text                  ", ts.text
+  info 'Ωtt___7', "ts.spork                 ", ts.spork
   info()
-  info 'Ωtt__14', "ts.text.isa 'pop'        ", truth ts.text.isa 'pop'
-  info 'Ωtt__15', "ts.text.isa 87           ", truth ts.text.isa 87
+  info 'Ωtt___8', "ts.text.isa 'pop'        ", truth ts.text.isa 'pop'
+  info 'Ωtt___9', "ts.text.isa 87           ", truth ts.text.isa 87
   info()
-  info 'Ωtt__16', "ts.spork.isa 'pop'       ", truth ts.spork.isa 'pop'
-  info 'Ωtt__17', "ts.spork.isa 87          ", truth ts.spork.isa 87
+  info 'Ωtt__10', "ts.spork.isa 'pop'       ", truth ts.spork.isa 'pop'
+  info 'Ωtt__11', "ts.spork.isa 87          ", truth ts.spork.isa 87
   info()
-  info 'Ωtt__18', "ts.id.isa 'pop'          ", truth ts.id.isa 'pop'
-  info 'Ωtt__19', "ts.id.isa '3pop'         ", truth ts.id.isa '3pop'
-  info 'Ωtt__20', "ts.id.isa 'pop3'         ", truth ts.id.isa 'pop3'
+  info 'Ωtt__12', "ts.id.isa 'pop'          ", truth ts.id.isa 'pop'
+  info 'Ωtt__13', "ts.id.isa '3pop'         ", truth ts.id.isa '3pop'
+  info 'Ωtt__14', "ts.id.isa 'pop3'         ", truth ts.id.isa 'pop3'
   info()
-  info 'Ωtt__21', "ts.spork.isa ''          ", truth ts.spork.isa ''
-  info 'Ωtt__22', "ts.spork.isa 'A'         ", truth ts.spork.isa 'A'
+  info 'Ωtt__15', "ts.spork.isa ''          ", truth ts.spork.isa ''
+  info 'Ωtt__16', "ts.spork.isa 'A'         ", truth ts.spork.isa 'A'
   info()
-  info 'Ωtt__23', "ts.foo.isa ''            ", truth ts.foo.isa ''
-  info 'Ωtt__24', "ts.bar.isa ''            ", truth ts.bar.isa ''
-  info 'Ωtt__25', "ts.baz.isa ''            ", truth ts.baz.isa ''
-  info 'Ωtt__26', "ts.foo.isa 'A'           ", truth ts.foo.isa 'A'
-  info 'Ωtt__27', "ts.bar.isa 'A'           ", truth ts.bar.isa 'A'
-  info 'Ωtt__28', "ts.baz.isa 'A'           ", truth ts.baz.isa 'A'
+  info 'Ωtt__17', "ts.foo.isa ''            ", truth ts.foo.isa ''
+  info 'Ωtt__18', "ts.bar.isa ''            ", truth ts.bar.isa ''
+  info 'Ωtt__19', "ts.baz.isa ''            ", truth ts.baz.isa ''
+  info 'Ωtt__20', "ts.foo.isa 'A'           ", truth ts.foo.isa 'A'
+  info 'Ωtt__21', "ts.bar.isa 'A'           ", truth ts.bar.isa 'A'
+  info 'Ωtt__22', "ts.baz.isa 'A'           ", truth ts.baz.isa 'A'
   info()
-  info 'Ωtt__29', "ts.pod_1.isa {}          ", truth ts.pod_1.isa {}
-  info 'Ωtt__30', "ts.pod_2.isa {}          ", truth ts.pod_2.isa {}
+  info 'Ωtt__23', "ts.pod_1.isa {}          ", truth ts.pod_1.isa {}
+  info 'Ωtt__24', "ts.pod_2.isa {}          ", truth ts.pod_2.isa {}
   info()
-  info 'Ωtt__31', "ts.length.isa {}         ", truth ts.length.isa {}
-  info 'Ωtt__32', "ts.length.isa -3.5       ", truth ts.length.isa -3.5
-  info 'Ωtt__33', "ts.length.isa +3.5       ", truth ts.length.isa +3.5
-  return null
-  # #.......................................................................................................
-  # compile_typespace = ( ts ) ->
-  #   for typename, dcl of ts
-  #     isa_clauses = {}
-  #     #...................................................................................................
-  #     debug 'Ωtt__34', 'dcl_isa', rpr dcl_isa
-  #     for dcl_isa_clause in dcl_isa
-  #       debug 'Ωtt__35', 'dcl_isa_clause', rpr dcl_isa_clause
-  #       #.................................................................................................
-  #       unless gnd.function.isa dcl_isa_clause
-  #         throw new Error "Ωtt__36 expected a function, got #{rpr dcl_isa_clause}"
-  #       #.................................................................................................
-  #       revalex             = RVX.normalize_revalex dcl_isa_clause
-  #       # dcl_isa_clause[RVX] = revalex
-  #       test_name           = "#{typename}[#{rpr revalex}]"
-  #       nameit test_name, dcl_isa_clause if dcl_isa_clause.name is ''
-  #       isa_clauses[ test_name ] = dcl_isa_clause
-  #     #...................................................................................................
-  #     ts[ typename ].isa = do ( typename, isa_clauses ) -> ( x, record = null ) ->
-  #       for name, isa_clause of isa_clauses
-  #         unless isa_clause.call null, x, record
-  #           record name if record?
-  #           return false
-  #       return true
-  # #.......................................................................................................
-  # compile_typespace ts
-  # for typename, dcl of ts
-  #   info 'Ωtt__37', typename, dcl.isa
-  #   # for name, dcl_isa_clause of isa_clauses
-  #   #   help 'Ωtt__38', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
-  # #.......................................................................................................
-  # info 'Ωtt__39', ts.id.isa 'abc'
-  # info 'Ωtt__40', ts.id.isa '123'
-  # info 'Ωtt__41', ts.id.isa 'abc123'
-  # failed_tests = []
-  # record = ( name ) -> failed_tests.push name
-  # info 'Ωtt__42', ts.id.isa 'abc',    record; urge 'Ωtt__43', failed_tests; failed_tests.length = 0
-  # info 'Ωtt__44', ts.id.isa '123',    record; urge 'Ωtt__45', failed_tests; failed_tests.length = 0
-  # info 'Ωtt__46', ts.id.isa 123,      record; urge 'Ωtt__47', failed_tests; failed_tests.length = 0
-  # info 'Ωtt__48', ts.id.isa 'abc123', record; urge 'Ωtt__49', failed_tests; failed_tests.length = 0
+  info 'Ωtt__25', "ts.length.isa {}         ", truth ts.length.isa {}
+  info 'Ωtt__26', "ts.length.isa -3.5       ", truth ts.length.isa -3.5
+  info 'Ωtt__27', "ts.length.isa +3.5       ", truth ts.length.isa +3.5
+  #.........................................................................................................
   return null
 
 
