@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, RVX, Revalex, Test, Type, Typespace, Unparsable_function_body, alert, bold, debug, demo_turning_lists_of_functions_into_objects_with_sensible_names, echo, f, gnd, gold, help, hide, info, inspect, lime, log, nameit, plain, pod_prototypes, praise, red, reverse, rpr, truth, urge, warn, whisper, white,
+  var GTNG, GUY, RVX, Revalex, Test, Type, Typespace, Unparsable_function_body, alert, bold, debug, demo_turning_lists_of_functions_into_objects_with_sensible_names, echo, f, gnd, gold, help, hide, hide_getter, info, inspect, lime, log, nameit, plain, pod_prototypes, praise, red, reverse, rpr, set_getter, truth, types_sym, urge, warn, whisper, white,
     indexOf = [].indexOf;
 
   //===========================================================================================================
@@ -59,11 +59,38 @@
   };
 
   //...........................................................................................................
-  ({hide} = GUY.props);
-
+  // { hide }  = GUY.props
   nameit = function(name, f) {
     return Object.defineProperty(f, 'name', {
       value: name
+    });
+  };
+
+  //===========================================================================================================
+  hide = (object, name, value) => {
+    return Object.defineProperty(object, name, {
+      enumerable: false,
+      writable: true,
+      configurable: true,
+      value: value
+    });
+  };
+
+  //===========================================================================================================
+  hide_getter = (object, name, getter) => {
+    return Object.defineProperty(object, name, {
+      enumerable: false,
+      configurable: true,
+      get: getter
+    });
+  };
+
+  //===========================================================================================================
+  set_getter = (object, name, getter) => {
+    return Object.defineProperty(object, name, {
+      enumerable: true,
+      configurable: true,
+      get: getter
     });
   };
 
@@ -122,12 +149,15 @@
 
   RVX = new Revalex();
 
+  types_sym = Symbol.for('types');
+
   //===========================================================================================================
   Typespace = class Typespace {
     //---------------------------------------------------------------------------------------------------------
     constructor(tsname, dcls = null) {
       var dcl, typename;
       this.name = tsname;
+      hide(this, types_sym, []);
       if (dcls != null) {
         for (typename in dcls) {
           dcl = dcls[typename];
@@ -144,7 +174,13 @@
         throw new Error(`Ωtt___2 name clash ${rpr(typename)}`);
       }
       this[typename] = R = new Type(this, typename, dcl);
+      this[types_sym].push(R);
       return R;
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+    * [Symbol.iterator]() {
+      return (yield* this[types_sym]);
     }
 
   };
@@ -158,6 +194,9 @@
       this.name = typename;
       this._normalize_dcl();
       nameit(`isa_${typename}`, this.isa);
+      set_getter(this, 'fqname', () => {
+        return `${this.typespace.name}.${this.name}`;
+      });
       return void 0;
     }
 
@@ -247,27 +286,15 @@
 
   //===========================================================================================================
   demo_turning_lists_of_functions_into_objects_with_sensible_names = function() {
-    var TMP_compile_typespace, one, ref_isa_gnd_pod, ts;
-    //.......................................................................................................
-    TMP_compile_typespace = function(ts) {
-      var dcl, type, typename;
-      for (typename in ts) {
-        dcl = ts[typename];
-        ts[typename] = type = new Type(ts, typename, dcl);
-        echo(f`${gold(typename)}:<15c; | ${white(rpr(type.dcl))}:<60c; | ${lime(rpr(type.isa_clauses))}:<60c;`);
-      }
-      // echo f"#{gold typename}:<15c; | #{white rpr dcl}:<60c; | #{lime rpr type}:<60c; | #{gold rpr type.isa}:<60c;"
-      return null;
-    };
+    var i, len, one, ref, ref_isa_gnd_pod, show_type, ts, type, typespace;
     //.........................................................................................................
-    one = {
+    one = new Typespace('one', {
       float: function(x) {
         return Number.isFinite(x);
       }
-    };
-    TMP_compile_typespace(one);
+    });
     //.........................................................................................................
-    ts = {
+    ts = new Typespace('ts', {
       //.......................................................................................................
       /* Declare by DCL object whose `isa` property is a function: */
       function: {
@@ -324,50 +351,61 @@
       pod_2: ref_isa_gnd_pod = function(x) {
         return gnd.pod.isa(x);
       }
-    };
-    TMP_compile_typespace(ts);
+    });
     //.......................................................................................................
-    info('Ωtt___7', "ts.text                  ", ts.text);
-    info('Ωtt___8', "ts.spork                 ", ts.spork);
+    show_type = function(type) {
+      echo(f`${gold(type.fqname)}:<15c; | ${white(rpr(type.dcl))}:<60c; | ${lime(rpr(type.isa_clauses))}:<60c;`);
+      return null;
+    };
+    ref = [one, ts];
+    for (i = 0, len = ref.length; i < len; i++) {
+      typespace = ref[i];
+      for (type of typespace) {
+        show_type(type);
+      }
+    }
+    //.......................................................................................................
+    info('Ωtt__12', "ts.text                  ", ts.text);
+    info('Ωtt__13', "ts.spork                 ", ts.spork);
     info();
-    info('Ωtt___9', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
-    info('Ωtt__10', "ts.text.isa 87           ", truth(ts.text.isa(87)));
+    info('Ωtt__14', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
+    info('Ωtt__15', "ts.text.isa 87           ", truth(ts.text.isa(87)));
     info();
-    info('Ωtt__11', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
-    info('Ωtt__12', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
+    info('Ωtt__16', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
+    info('Ωtt__17', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
     info();
-    info('Ωtt__13', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
-    info('Ωtt__14', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
-    info('Ωtt__15', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
+    info('Ωtt__18', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
+    info('Ωtt__19', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
+    info('Ωtt__20', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
     info();
-    info('Ωtt__16', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
-    info('Ωtt__17', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
+    info('Ωtt__21', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
+    info('Ωtt__22', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
     info();
-    info('Ωtt__18', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
-    info('Ωtt__19', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
-    info('Ωtt__20', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
-    info('Ωtt__21', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
-    info('Ωtt__22', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
-    info('Ωtt__23', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
+    info('Ωtt__23', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
+    info('Ωtt__24', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
+    info('Ωtt__25', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
+    info('Ωtt__26', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
+    info('Ωtt__27', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
+    info('Ωtt__28', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
     info();
-    info('Ωtt__24', "ts.pod_1.isa {}          ", truth(ts.pod_1.isa({})));
-    info('Ωtt__25', "ts.pod_2.isa {}          ", truth(ts.pod_2.isa({})));
+    info('Ωtt__29', "ts.pod_1.isa {}          ", truth(ts.pod_1.isa({})));
+    info('Ωtt__30', "ts.pod_2.isa {}          ", truth(ts.pod_2.isa({})));
     info();
-    info('Ωtt__26', "ts.length.isa {}         ", truth(ts.length.isa({})));
-    info('Ωtt__27', "ts.length.isa -3.5       ", truth(ts.length.isa(-3.5)));
-    info('Ωtt__28', "ts.length.isa +3.5       ", truth(ts.length.isa(+3.5)));
+    info('Ωtt__31', "ts.length.isa {}         ", truth(ts.length.isa({})));
+    info('Ωtt__32', "ts.length.isa -3.5       ", truth(ts.length.isa(-3.5)));
+    info('Ωtt__33', "ts.length.isa +3.5       ", truth(ts.length.isa(+3.5)));
     return null;
     // #.......................................................................................................
     // compile_typespace = ( ts ) ->
     //   for typename, dcl of ts
     //     isa_clauses = {}
     //     #...................................................................................................
-    //     debug 'Ωtt__29', 'dcl_isa', rpr dcl_isa
+    //     debug 'Ωtt__34', 'dcl_isa', rpr dcl_isa
     //     for dcl_isa_clause in dcl_isa
-    //       debug 'Ωtt__30', 'dcl_isa_clause', rpr dcl_isa_clause
+    //       debug 'Ωtt__35', 'dcl_isa_clause', rpr dcl_isa_clause
     //       #.................................................................................................
     //       unless gnd.function.isa dcl_isa_clause
-    //         throw new Error "Ωtt__31 expected a function, got #{rpr dcl_isa_clause}"
+    //         throw new Error "Ωtt__36 expected a function, got #{rpr dcl_isa_clause}"
     //       #.................................................................................................
     //       revalex             = RVX.normalize_revalex dcl_isa_clause
     //       # dcl_isa_clause[RVX] = revalex
@@ -384,19 +422,19 @@
     // #.......................................................................................................
     // compile_typespace ts
     // for typename, dcl of ts
-    //   info 'Ωtt__32', typename, dcl.isa
+    //   info 'Ωtt__37', typename, dcl.isa
     //   # for name, dcl_isa_clause of isa_clauses
-    //   #   help 'Ωtt__33', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
+    //   #   help 'Ωtt__38', f"#{rpr name}:<30c; | #{dcl_isa_clause}"
     // #.......................................................................................................
-    // info 'Ωtt__34', ts.id.isa 'abc'
-    // info 'Ωtt__35', ts.id.isa '123'
-    // info 'Ωtt__36', ts.id.isa 'abc123'
+    // info 'Ωtt__39', ts.id.isa 'abc'
+    // info 'Ωtt__40', ts.id.isa '123'
+    // info 'Ωtt__41', ts.id.isa 'abc123'
     // failed_tests = []
     // record = ( name ) -> failed_tests.push name
-    // info 'Ωtt__37', ts.id.isa 'abc',    record; urge 'Ωtt__38', failed_tests; failed_tests.length = 0
-    // info 'Ωtt__39', ts.id.isa '123',    record; urge 'Ωtt__40', failed_tests; failed_tests.length = 0
-    // info 'Ωtt__41', ts.id.isa 123,      record; urge 'Ωtt__42', failed_tests; failed_tests.length = 0
-    // info 'Ωtt__43', ts.id.isa 'abc123', record; urge 'Ωtt__44', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__42', ts.id.isa 'abc',    record; urge 'Ωtt__43', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__44', ts.id.isa '123',    record; urge 'Ωtt__45', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__46', ts.id.isa 123,      record; urge 'Ωtt__47', failed_tests; failed_tests.length = 0
+    // info 'Ωtt__48', ts.id.isa 'abc123', record; urge 'Ωtt__49', failed_tests; failed_tests.length = 0
     return null;
   };
 
