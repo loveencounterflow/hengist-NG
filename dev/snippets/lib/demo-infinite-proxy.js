@@ -91,7 +91,7 @@
   //===========================================================================================================
   demo_colorful_proxy = function() {
     /* Building the chain: */
-    var TMP_error, base, chain, new_infiniproxy, p, resolve, stack, template;
+    var TMP_error, base, chain, extension, new_infiniproxy, p, resolve, stack, template;
     TMP_error = class TMP_error extends Error {};
     stack = [];
     //.........................................................................................................
@@ -140,21 +140,53 @@
     };
     //.........................................................................................................
     base = function(...P) {
-      var method;
-      method = resolve(C, stack);
-      return method(P[0]);
+      var R, key;
+      // method = resolve C, stack
+      // return method P[ 0 ]
+      R = P[0];
+      while (stack.length > 0) {
+        key = stack.pop();
+        R = C[key](R);
+      }
+      return R;
+    };
+    //.........................................................................................................
+    // @blink                    = "\x1b[5m"
+    // @bold                     = "\x1b[1m"
+    // @reverse                  = "\x1b[7m"
+    // @underline                = "\x1b[4m"
+
+    // #-----------------------------------------------------------------------------------------------------------
+    // # Effects Off
+    // #...........................................................................................................
+    // @no_blink                 = "\x1b[25m"
+    // @no_bold                  = "\x1b[22m"
+    // @no_reverse               = "\x1b[27m"
+    // @no_underline             = "\x1b[24m"
+    //.........................................................................................................
+    // C =
+    //   blink: ( x ) ->
+    //     debug 'Ω__15', rpr x
+    //     return '---'
+    // Object.setPrototypeOf C, C
+    extension = {
+      blink: function(x) {
+        debug('Ω__16', rpr(x));
+        return '---';
+      }
     };
     //.........................................................................................................
     p = new_infiniproxy(C, base, {
       is_initial: true
     });
-    info('Ω__14', p.green.bold.inverse.hidden(" holy moly "));
+    info('Ω__17', p.green.bold.inverse(" holy moly "));
+    // info 'Ω__18', p.green.bold.inverse.blink " holy moly "
     //.........................................................................................................
-    info('Ω__15', p.yellow.italic`some text`);
-    info('Ω__16', p.green.bold.inverse.underline`some text`);
+    info('Ω__19', p.yellow.italic`some text`);
+    info('Ω__20', p.green.bold.inverse.underline`some text`);
     chain = p.cyan.bold;
     chain.underline;
-    info('Ω__17', p("finally, a call"));
+    info('Ω__21', p("finally, a call"));
     return null;
   };
 
