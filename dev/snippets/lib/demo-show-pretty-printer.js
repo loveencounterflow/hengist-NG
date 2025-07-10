@@ -491,7 +491,8 @@
     yellow: '#ffff00',
     yellowgreen: '#9acd32',
     //.........................................................................................................
-    FANCYRED: '#fd5230'
+    FANCYRED: '#fd5230',
+    FANCYORANGE: '#fd6d30'
   });
 
   // oomph: ( x ) -> debug 'Ω___2', x; return "~~~ #{x} ~~~"
@@ -521,16 +522,16 @@
       return COLOR.inverse.bold.italic.lime(x);
     },
     false: function(x) {
-      return COLOR.inverse.bold.italic.orange(x);
+      return COLOR.inverse.bold.italic.FANCYORANGE(x);
     },
     undefined: function(x) {
-      return COLOR.inverse.bold.italic.blue(x);
+      return COLOR.inverse.bold.italic.magenta(x);
     },
     null: function(x) {
-      return COLOR.inverse.bold.italic.deeppink(x);
+      return COLOR.inverse.bold.italic.blue(x);
     },
     nan: function(x) {
-      return COLOR.inverse.bold.italic.turquoise(x);
+      return COLOR.inverse.bold.italic.magenta(x);
     },
     other: function(x) {
       return COLOR.inverse.red(x);

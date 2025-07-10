@@ -392,22 +392,23 @@ COLOR = new C.Ansis().extend
   yellowgreen:                '#9acd32'
   #.........................................................................................................
   FANCYRED:                   '#fd5230'
+  FANCYORANGE:                '#fd6d30'
   # oomph: ( x ) -> debug 'Ω___2', x; return "~~~ #{x} ~~~"
 
 colors =
-  pod:        ( x ) -> COLOR.gold                           x
-  map:        ( x ) -> COLOR.gold                           x
-  list:       ( x ) -> COLOR.gold                           x
-  set:        ( x ) -> COLOR.gold                           x
-  text:       ( x ) -> COLOR.wheat                          x
-  float:      ( x ) -> COLOR.FANCYRED                       x
-  regex:      ( x ) -> COLOR.plum                           x
-  true:       ( x ) -> COLOR.inverse.bold.italic.lime       x
-  false:      ( x ) -> COLOR.inverse.bold.italic.orange     x
-  undefined:  ( x ) -> COLOR.inverse.bold.italic.blue       x
-  null:       ( x ) -> COLOR.inverse.bold.italic.deeppink   x
-  nan:        ( x ) -> COLOR.inverse.bold.italic.turquoise  x
-  other:      ( x ) -> COLOR.inverse.red                    x
+  pod:        ( x ) -> COLOR.gold                             x
+  map:        ( x ) -> COLOR.gold                             x
+  list:       ( x ) -> COLOR.gold                             x
+  set:        ( x ) -> COLOR.gold                             x
+  text:       ( x ) -> COLOR.wheat                            x
+  float:      ( x ) -> COLOR.FANCYRED                         x
+  regex:      ( x ) -> COLOR.plum                             x
+  true:       ( x ) -> COLOR.inverse.bold.italic.lime         x
+  false:      ( x ) -> COLOR.inverse.bold.italic.FANCYORANGE  x
+  undefined:  ( x ) -> COLOR.inverse.bold.italic.magenta      x
+  null:       ( x ) -> COLOR.inverse.bold.italic.blue         x
+  nan:        ( x ) -> COLOR.inverse.bold.italic.magenta      x
+  other:      ( x ) -> COLOR.inverse.red                      x
 
 #===========================================================================================================
 show = new Show()
