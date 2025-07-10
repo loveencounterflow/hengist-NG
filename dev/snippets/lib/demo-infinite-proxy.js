@@ -28,7 +28,7 @@
           if ((typeof key) === 'symbol') {
             return target[key];
           }
-          debug('Ω___1', A.green.inverse.bold(' B '), {target, key}, stack);
+          // debug 'Ω___1', ( A.green.inverse.bold ' B ' ), { target, key, }, stack
           stack.push(key);
           return R;
         }
@@ -43,7 +43,7 @@
           if ((typeof key) === 'symbol') {
             return target[key];
           }
-          debug('Ω___1', A.red.inverse.bold(' A '), {target, key}, stack);
+          // debug 'Ω___2', ( A.red.inverse.bold ' A ' ), { target, key, }, stack
           stack.length = 0;
           stack.push(key);
           return R;
@@ -54,22 +54,28 @@
     //.........................................................................................................
     base = function(...P) {
       var R;
-      debug('Ω___2', P);
+      // debug 'Ω___3', P
       R = `${stack.join('.')}::${rpr(P)}`;
       stack.length = 0;
       return R;
     };
     p = new_infiniprox(base);
-    info('Ω___3', p);
-    info('Ω___4', p.arc);
-    // info 'Ω___5', p.arc.bo
-    // info 'Ω___6', p.arc.bo.cy
-    info('Ω___7', p.arc.bo.cy(8));
-    info('Ω___8', p.ooops);
-    info('Ω___9', p.wat);
-    info('Ω___9', p.nö);
-    info('Ω__10', p.arc.bo.cy`some text`);
-    info('Ω__10', p.arc.bo.cy.dean.blah`some text`);
+    debug('Ω___4', p);
+    debug('Ω___5', p.arc);
+    // debug 'Ω___6', p.arc.bo
+    // debug 'Ω___7', p.arc.bo.cy
+    info('Ω___8', p.arc.bo.cy(8));
+    //.........................................................................................................
+    /* These calls will be `stack`ed but then get thrown away as soon as any property of `p` is used: */
+    debug('Ω___9', p.ooops);
+    debug('Ω__10', p.wat);
+    debug('Ω__11', p.nö);
+    debug('Ω__12', stack);
+    info('Ω__13', p`some text`);
+    debug('Ω__14', stack);
+    //.........................................................................................................
+    info('Ω__15', p.arc.bo.cy`some text`);
+    info('Ω__16', p.arc.bo.cy.dean.blah`some text`);
     return null;
   };
 
