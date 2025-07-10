@@ -96,15 +96,7 @@ demo_colorful_proxy = ->
     else                R = proxy
     return proxy
   #.........................................................................................................
-  resolve = ( bearer, stack ) ->
-    R = bearer
-    while stack.length > 0
-      R = R[ stack.pop() ]
-    return R
-  #.........................................................................................................
   base = ( P... ) ->
-    # method = resolve C, stack
-    # return method P[ 0 ]
     R = P[ 0 ]
     while stack.length > 0
       key = stack.pop()
@@ -126,24 +118,62 @@ demo_colorful_proxy = ->
   #.........................................................................................................
   # C =
   #   blink: ( x ) ->
-  #     debug 'Ω__15', rpr x
+  #     debug 'Ω__14', rpr x
   #     return '---'
   # Object.setPrototypeOf C, C
   extension =
     blink: ( x ) ->
-      debug 'Ω__16', rpr x
+      debug 'Ω__15', rpr x
       return '---'
   #.........................................................................................................
   p = new_infiniproxy C, base, { is_initial: true, }
-  info 'Ω__17', p.green.bold.inverse " holy moly "
-  # info 'Ω__18', p.green.bold.inverse.blink " holy moly "
+  info 'Ω__16', p.green.bold.inverse " holy moly "
+  # info 'Ω__17', p.green.bold.inverse.blink " holy moly "
   #.........................................................................................................
-  info 'Ω__19', p.yellow.italic"some text"
-  info 'Ω__20', p.green.bold.inverse.underline"some text"
+  info 'Ω__18', p.yellow.italic"some text"
+  info 'Ω__19', p.green.bold.inverse.underline"some text"
   ### Building the chain: ###
   chain = p.cyan.bold
   chain.underline
-  info 'Ω__21', p "finally, a call"
+  info 'Ω__20', p "finally, a call"
+  return null
+
+
+#===========================================================================================================
+demo_commutator = ->
+  class TMP_no_such_key_error extends Error
+  misfit = Symbol 'misfit'
+  #===========================================================================================================
+  class Commutator
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ->
+      @bearers  = []
+      @cache    = new Map()
+      return undefined
+
+    #---------------------------------------------------------------------------------------------------------
+    add_bearer: ( x ) -> @bearers.unshift x; return null
+
+    #---------------------------------------------------------------------------------------------------------
+    get: ( key, fallback = misfit ) ->
+      return R if ( R = @cache.get key )?
+      for bearer in @bearers
+        continue unless Reflect.has bearer, key
+        @cache.set key, R = { bearer, value: bearer[ key ], }
+        return R
+      return fallback unless fallback is misfit
+      throw new TMP_no_such_key_error "Ω__21 unknown key #{rpr key}"
+
+  #===========================================================================================================
+  a = { k: 'K', l: 'not this', }
+  b = { l: 'L', }
+  c = new Commutator()
+  c.add_bearer a
+  c.add_bearer b
+  debug 'Ω__22', c.get 'ttt', null
+  debug 'Ω__23', c.get 'k'
+  debug 'Ω__24', c.get 'l'
   return null
 
 
@@ -153,5 +183,7 @@ if module is require.main then await do =>
   echo '——————————————————————————————————————————————————————————————————————————————'
   echo()
   demo_colorful_proxy()
+  echo()
+  demo_commutator()
   echo()
 

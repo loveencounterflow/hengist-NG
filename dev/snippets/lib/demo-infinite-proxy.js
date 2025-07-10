@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var C, GUY, alert, debug, demo_colorful_proxy, demo_proxy, echo, f, gold, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GUY, alert, debug, demo_colorful_proxy, demo_commutator, demo_proxy, echo, f, gold, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -91,7 +91,7 @@
   //===========================================================================================================
   demo_colorful_proxy = function() {
     /* Building the chain: */
-    var TMP_error, base, chain, extension, new_infiniproxy, p, resolve, stack, template;
+    var TMP_error, base, chain, extension, new_infiniproxy, p, stack, template;
     TMP_error = class TMP_error extends Error {};
     stack = [];
     //.........................................................................................................
@@ -130,19 +130,8 @@
       return proxy;
     });
     //.........................................................................................................
-    resolve = function(bearer, stack) {
-      var R;
-      R = bearer;
-      while (stack.length > 0) {
-        R = R[stack.pop()];
-      }
-      return R;
-    };
-    //.........................................................................................................
     base = function(...P) {
       var R, key;
-      // method = resolve C, stack
-      // return method P[ 0 ]
       R = P[0];
       while (stack.length > 0) {
         key = stack.pop();
@@ -166,12 +155,12 @@
     //.........................................................................................................
     // C =
     //   blink: ( x ) ->
-    //     debug 'Ω__15', rpr x
+    //     debug 'Ω__14', rpr x
     //     return '---'
     // Object.setPrototypeOf C, C
     extension = {
       blink: function(x) {
-        debug('Ω__16', rpr(x));
+        debug('Ω__15', rpr(x));
         return '---';
       }
     };
@@ -179,14 +168,76 @@
     p = new_infiniproxy(C, base, {
       is_initial: true
     });
-    info('Ω__17', p.green.bold.inverse(" holy moly "));
-    // info 'Ω__18', p.green.bold.inverse.blink " holy moly "
+    info('Ω__16', p.green.bold.inverse(" holy moly "));
+    // info 'Ω__17', p.green.bold.inverse.blink " holy moly "
     //.........................................................................................................
-    info('Ω__19', p.yellow.italic`some text`);
-    info('Ω__20', p.green.bold.inverse.underline`some text`);
+    info('Ω__18', p.yellow.italic`some text`);
+    info('Ω__19', p.green.bold.inverse.underline`some text`);
     chain = p.cyan.bold;
     chain.underline;
-    info('Ω__21', p("finally, a call"));
+    info('Ω__20', p("finally, a call"));
+    return null;
+  };
+
+  //===========================================================================================================
+  demo_commutator = function() {
+    var Commutator, TMP_no_such_key_error, a, b, c, misfit;
+    TMP_no_such_key_error = class TMP_no_such_key_error extends Error {};
+    misfit = Symbol('misfit');
+    //===========================================================================================================
+    Commutator = class Commutator {
+      //---------------------------------------------------------------------------------------------------------
+      constructor() {
+        this.bearers = [];
+        this.cache = new Map();
+        return void 0;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      add_bearer(x) {
+        this.bearers.unshift(x);
+        return null;
+      }
+
+      //---------------------------------------------------------------------------------------------------------
+      get(key, fallback = misfit) {
+        var R, bearer, i, len, ref;
+        if ((R = this.cache.get(key)) != null) {
+          return R;
+        }
+        ref = this.bearers;
+        for (i = 0, len = ref.length; i < len; i++) {
+          bearer = ref[i];
+          if (!Reflect.has(bearer, key)) {
+            continue;
+          }
+          this.cache.set(key, R = {
+            bearer,
+            value: bearer[key]
+          });
+          return R;
+        }
+        if (fallback !== misfit) {
+          return fallback;
+        }
+        throw new TMP_no_such_key_error(`Ω__21 unknown key ${rpr(key)}`);
+      }
+
+    };
+    //===========================================================================================================
+    a = {
+      k: 'K',
+      l: 'not this'
+    };
+    b = {
+      l: 'L'
+    };
+    c = new Commutator();
+    c.add_bearer(a);
+    c.add_bearer(b);
+    debug('Ω__22', c.get('ttt', null));
+    debug('Ω__23', c.get('k'));
+    debug('Ω__24', c.get('l'));
     return null;
   };
 
@@ -197,6 +248,8 @@
       echo('——————————————————————————————————————————————————————————————————————————————');
       echo();
       demo_colorful_proxy();
+      echo();
+      demo_commutator();
       return echo();
     })();
   }
