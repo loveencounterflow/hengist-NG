@@ -108,7 +108,8 @@ class Revalex
     R = R.replace       ///^ _* (?<center> .*? ) _* $   ///gsv, '$<center>'
     return R
 
-RVX = new Revalex()
+RVX       = new Revalex()
+rvx_of    = RVX.revalex_from_function.bind RVX
 types_sym = Symbol.for 'types'
 
 
@@ -176,27 +177,28 @@ class Type
       if ( gnd.text.isa isa_clause )
         @isa_clauses[ idx ] = do ( ref_typename = isa_clause ) =>
           unless Reflect.has @typespace, ref_typename
-            throw new Error "Ωtt___4 unable to resolve #{rpr ref_typename} referenced by #{rpr @name}"
+            throw new Error "Ωtt___3 unable to resolve #{rpr ref_typename} referenced by #{rpr @name}"
           ref_type = @typespace[ ref_typename ]
-          return nameit "#{ref_type.fqname}", ( x ) -> ref_type.isa x
+          return nameit "Ωtt___4 #{ref_type.fqname}", ( x ) -> ref_type.isa x
       #.....................................................................................................
       else if ( gnd.function.isa isa_clause )
         null
         # if isa_clause.name is ''
         # nameit ( "#{@fqname}[#{rpr revalex}]" ), isa_clause
-        revalex = RVX.revalex_from_function isa_clause
-        nameit ( rpr revalex ), isa_clause
+        revalex = rpr rvx_of isa_clause
+        nameit "Ωtt___5 #{revalex}", isa_clause
       #.....................................................................................................
       else if ( gnd.type.isa isa_clause )
         @isa_clauses[ idx ] = do ( type = isa_clause ) =>
-          nameit "#{type.fqname}", ( x ) -> type.isa x
+          nameit "Ωtt___6 #{type.fqname}", ( x ) -> type.isa x
       #.....................................................................................................
       else if ( isa_clause? ) and ( Reflect.has isa_clause, 'isa' ) and ( gnd.function.isa isa_clause.isa )
         @isa_clauses[ idx ] = do ( type = isa_clause ) =>
-          nameit "#{type.fqname}", ( x ) -> type.isa x
+          fqname = type.fqname ? "?.#{type.name ? rpr rvx_of type.isa}"
+          nameit "Ωtt___7 #{fqname}", ( x ) -> type.isa x
       #.....................................................................................................
       else
-        throw new Error "Ωtt___5 unexpected type in ISA clause: #{rpr isa_clause}"
+        throw new Error "Ωtt___8 unexpected type in ISA clause: #{rpr isa_clause}"
     return null
 
 
@@ -239,9 +241,9 @@ demo_turning_lists_of_functions_into_objects_with_sensible_names = ->
     baz: 'bar'
     #.......................................................................................................
     pod_1: gnd.pod
-    pod_2: [ gnd.pod, ]
-    # pod_2: [ 'pod_1', ]
-    pod_3: ( x ) -> gnd.pod.isa x
+    pod_2: ( x ) -> gnd.pod.isa x
+    pod_3: [ ( ( x ) -> gnd.pod.isa x ), ]
+    pod_4: [ gnd.pod, ]
   #.......................................................................................................
   show_type = ( type ) ->
     # echo f"#{gold type.fqname}:<15c; | #{white rpr type.dcl}:<60c; | #{lime rpr type.isa_clauses}:<60c;"
@@ -251,35 +253,35 @@ demo_turning_lists_of_functions_into_objects_with_sensible_names = ->
     for type from typespace
       show_type type
   #.......................................................................................................
-  info 'Ωtt___6', "ts.text                  ", ts.text
-  info 'Ωtt___7', "ts.spork                 ", ts.spork
+  info 'Ωtt___9', "ts.text                  ", ts.text
+  info 'Ωtt__10', "ts.spork                 ", ts.spork
   info()
-  info 'Ωtt___8', "ts.text.isa 'pop'        ", truth ts.text.isa 'pop'
-  info 'Ωtt___9', "ts.text.isa 87           ", truth ts.text.isa 87
+  info 'Ωtt__11', "ts.text.isa 'pop'        ", truth ts.text.isa 'pop'
+  info 'Ωtt__12', "ts.text.isa 87           ", truth ts.text.isa 87
   info()
-  info 'Ωtt__10', "ts.spork.isa 'pop'       ", truth ts.spork.isa 'pop'
-  info 'Ωtt__11', "ts.spork.isa 87          ", truth ts.spork.isa 87
+  info 'Ωtt__13', "ts.spork.isa 'pop'       ", truth ts.spork.isa 'pop'
+  info 'Ωtt__14', "ts.spork.isa 87          ", truth ts.spork.isa 87
   info()
-  info 'Ωtt__12', "ts.id.isa 'pop'          ", truth ts.id.isa 'pop'
-  info 'Ωtt__13', "ts.id.isa '3pop'         ", truth ts.id.isa '3pop'
-  info 'Ωtt__14', "ts.id.isa 'pop3'         ", truth ts.id.isa 'pop3'
+  info 'Ωtt__15', "ts.id.isa 'pop'          ", truth ts.id.isa 'pop'
+  info 'Ωtt__16', "ts.id.isa '3pop'         ", truth ts.id.isa '3pop'
+  info 'Ωtt__17', "ts.id.isa 'pop3'         ", truth ts.id.isa 'pop3'
   info()
-  info 'Ωtt__15', "ts.spork.isa ''          ", truth ts.spork.isa ''
-  info 'Ωtt__16', "ts.spork.isa 'A'         ", truth ts.spork.isa 'A'
+  info 'Ωtt__18', "ts.spork.isa ''          ", truth ts.spork.isa ''
+  info 'Ωtt__19', "ts.spork.isa 'A'         ", truth ts.spork.isa 'A'
   info()
-  info 'Ωtt__17', "ts.foo.isa ''            ", truth ts.foo.isa ''
-  info 'Ωtt__18', "ts.bar.isa ''            ", truth ts.bar.isa ''
-  info 'Ωtt__19', "ts.baz.isa ''            ", truth ts.baz.isa ''
-  info 'Ωtt__20', "ts.foo.isa 'A'           ", truth ts.foo.isa 'A'
-  info 'Ωtt__21', "ts.bar.isa 'A'           ", truth ts.bar.isa 'A'
-  info 'Ωtt__22', "ts.baz.isa 'A'           ", truth ts.baz.isa 'A'
+  info 'Ωtt__20', "ts.foo.isa ''            ", truth ts.foo.isa ''
+  info 'Ωtt__21', "ts.bar.isa ''            ", truth ts.bar.isa ''
+  info 'Ωtt__22', "ts.baz.isa ''            ", truth ts.baz.isa ''
+  info 'Ωtt__23', "ts.foo.isa 'A'           ", truth ts.foo.isa 'A'
+  info 'Ωtt__24', "ts.bar.isa 'A'           ", truth ts.bar.isa 'A'
+  info 'Ωtt__25', "ts.baz.isa 'A'           ", truth ts.baz.isa 'A'
   info()
-  info 'Ωtt__23', "ts.pod_1.isa {}          ", truth ts.pod_1.isa {}
-  info 'Ωtt__24', "ts.pod_2.isa {}          ", truth ts.pod_2.isa {}
+  info 'Ωtt__26', "ts.pod_1.isa {}          ", truth ts.pod_1.isa {}
+  info 'Ωtt__27', "ts.pod_2.isa {}          ", truth ts.pod_2.isa {}
   info()
-  info 'Ωtt__25', "ts.length.isa {}         ", truth ts.length.isa {}
-  info 'Ωtt__26', "ts.length.isa -3.5       ", truth ts.length.isa -3.5
-  info 'Ωtt__27', "ts.length.isa +3.5       ", truth ts.length.isa +3.5
+  info 'Ωtt__28', "ts.length.isa {}         ", truth ts.length.isa {}
+  info 'Ωtt__29', "ts.length.isa -3.5       ", truth ts.length.isa -3.5
+  info 'Ωtt__30', "ts.length.isa +3.5       ", truth ts.length.isa +3.5
   #.........................................................................................................
   return null
 
@@ -290,3 +292,14 @@ if module is require.main then await do =>
   # # guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test @nfa_tasks
   demo_turning_lists_of_functions_into_objects_with_sensible_names()
+
+###
+
+## To Do
+
+* **`[—]`** create `Type_base` class that types are really derived from so they don't inherit methods like
+  `_isaname_from_typename()` and so on
+* **`[—]`** implement `dcl.base`
+
+
+###

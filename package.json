@@ -12,6 +12,7 @@
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "@iarna/toml": "^2.2.5",
+    "ansis": "^4.1.0",
     "d3-format": "^3.1.0",
     "execa": "^9.4.0",
     "exifr": "^7.1.3",

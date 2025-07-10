@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, RVX, Revalex, Test, Type, Typespace, Unparsable_function_body, alert, bold, debug, demo_turning_lists_of_functions_into_objects_with_sensible_names, echo, f, gnd, gold, help, hide, hide_getter, info, inspect, lime, log, nameit, plain, pod_prototypes, praise, red, reverse, rpr, set_getter, truth, types_sym, urge, warn, whisper, white,
+  var GTNG, GUY, RVX, Revalex, Test, Type, Typespace, Unparsable_function_body, alert, bold, debug, demo_turning_lists_of_functions_into_objects_with_sensible_names, echo, f, gnd, gold, help, hide, hide_getter, info, inspect, lime, log, nameit, plain, pod_prototypes, praise, red, reverse, rpr, rvx_of, set_getter, truth, types_sym, urge, warn, whisper, white,
     indexOf = [].indexOf;
 
   //===========================================================================================================
@@ -149,6 +149,8 @@
 
   RVX = new Revalex();
 
+  rvx_of = RVX.revalex_from_function.bind(RVX);
+
   types_sym = Symbol.for('types');
 
   //===========================================================================================================
@@ -250,10 +252,10 @@
             return this.isa_clauses[idx] = ((ref_typename) => {
               var ref_type;
               if (!Reflect.has(this.typespace, ref_typename)) {
-                throw new Error(`Ωtt___4 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(this.name)}`);
+                throw new Error(`Ωtt___3 unable to resolve ${rpr(ref_typename)} referenced by ${rpr(this.name)}`);
               }
               ref_type = this.typespace[ref_typename];
-              return nameit(`${ref_type.fqname}`, function(x) {
+              return nameit(`Ωtt___4 ${ref_type.fqname}`, function(x) {
                 return ref_type.isa(x);
               });
             })(isa_clause);
@@ -262,25 +264,27 @@
             null;
             // if isa_clause.name is ''
             // nameit ( "#{@fqname}[#{rpr revalex}]" ), isa_clause
-            revalex = RVX.revalex_from_function(isa_clause);
-            return nameit(rpr(revalex), isa_clause);
+            revalex = rpr(rvx_of(isa_clause));
+            return nameit(`Ωtt___5 ${revalex}`, isa_clause);
           //.....................................................................................................
           } else if (gnd.type.isa(isa_clause)) {
             return this.isa_clauses[idx] = ((type) => {
-              return nameit(`${type.fqname}`, function(x) {
+              return nameit(`Ωtt___6 ${type.fqname}`, function(x) {
                 return type.isa(x);
               });
             })(isa_clause);
           //.....................................................................................................
           } else if ((isa_clause != null) && (Reflect.has(isa_clause, 'isa')) && (gnd.function.isa(isa_clause.isa))) {
             return this.isa_clauses[idx] = ((type) => {
-              return nameit(`${type.fqname}`, function(x) {
+              var fqname, ref1, ref2;
+              fqname = (ref1 = type.fqname) != null ? ref1 : `?.${(ref2 = type.name) != null ? ref2 : rpr(rvx_of(type.isa))}`;
+              return nameit(`Ωtt___7 ${fqname}`, function(x) {
                 return type.isa(x);
               });
             })(isa_clause);
           } else {
             //.....................................................................................................
-            throw new Error(`Ωtt___5 unexpected type in ISA clause: ${rpr(isa_clause)}`);
+            throw new Error(`Ωtt___8 unexpected type in ISA clause: ${rpr(isa_clause)}`);
           }
         })(isa_clause, idx);
       }
@@ -353,11 +357,15 @@
       baz: 'bar',
       //.......................................................................................................
       pod_1: gnd.pod,
-      pod_2: [gnd.pod],
-      // pod_2: [ 'pod_1', ]
-      pod_3: function(x) {
+      pod_2: function(x) {
         return gnd.pod.isa(x);
-      }
+      },
+      pod_3: [
+        (function(x) {
+          return gnd.pod.isa(x);
+        })
+      ],
+      pod_4: [gnd.pod]
     });
     //.......................................................................................................
     show_type = function(type) {
@@ -373,35 +381,35 @@
       }
     }
     //.......................................................................................................
-    info('Ωtt___6', "ts.text                  ", ts.text);
-    info('Ωtt___7', "ts.spork                 ", ts.spork);
+    info('Ωtt___9', "ts.text                  ", ts.text);
+    info('Ωtt__10', "ts.spork                 ", ts.spork);
     info();
-    info('Ωtt___8', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
-    info('Ωtt___9', "ts.text.isa 87           ", truth(ts.text.isa(87)));
+    info('Ωtt__11', "ts.text.isa 'pop'        ", truth(ts.text.isa('pop')));
+    info('Ωtt__12', "ts.text.isa 87           ", truth(ts.text.isa(87)));
     info();
-    info('Ωtt__10', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
-    info('Ωtt__11', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
+    info('Ωtt__13', "ts.spork.isa 'pop'       ", truth(ts.spork.isa('pop')));
+    info('Ωtt__14', "ts.spork.isa 87          ", truth(ts.spork.isa(87)));
     info();
-    info('Ωtt__12', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
-    info('Ωtt__13', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
-    info('Ωtt__14', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
+    info('Ωtt__15', "ts.id.isa 'pop'          ", truth(ts.id.isa('pop')));
+    info('Ωtt__16', "ts.id.isa '3pop'         ", truth(ts.id.isa('3pop')));
+    info('Ωtt__17', "ts.id.isa 'pop3'         ", truth(ts.id.isa('pop3')));
     info();
-    info('Ωtt__15', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
-    info('Ωtt__16', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
+    info('Ωtt__18', "ts.spork.isa ''          ", truth(ts.spork.isa('')));
+    info('Ωtt__19', "ts.spork.isa 'A'         ", truth(ts.spork.isa('A')));
     info();
-    info('Ωtt__17', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
-    info('Ωtt__18', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
-    info('Ωtt__19', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
-    info('Ωtt__20', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
-    info('Ωtt__21', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
-    info('Ωtt__22', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
+    info('Ωtt__20', "ts.foo.isa ''            ", truth(ts.foo.isa('')));
+    info('Ωtt__21', "ts.bar.isa ''            ", truth(ts.bar.isa('')));
+    info('Ωtt__22', "ts.baz.isa ''            ", truth(ts.baz.isa('')));
+    info('Ωtt__23', "ts.foo.isa 'A'           ", truth(ts.foo.isa('A')));
+    info('Ωtt__24', "ts.bar.isa 'A'           ", truth(ts.bar.isa('A')));
+    info('Ωtt__25', "ts.baz.isa 'A'           ", truth(ts.baz.isa('A')));
     info();
-    info('Ωtt__23', "ts.pod_1.isa {}          ", truth(ts.pod_1.isa({})));
-    info('Ωtt__24', "ts.pod_2.isa {}          ", truth(ts.pod_2.isa({})));
+    info('Ωtt__26', "ts.pod_1.isa {}          ", truth(ts.pod_1.isa({})));
+    info('Ωtt__27', "ts.pod_2.isa {}          ", truth(ts.pod_2.isa({})));
     info();
-    info('Ωtt__25', "ts.length.isa {}         ", truth(ts.length.isa({})));
-    info('Ωtt__26', "ts.length.isa -3.5       ", truth(ts.length.isa(-3.5)));
-    info('Ωtt__27', "ts.length.isa +3.5       ", truth(ts.length.isa(+3.5)));
+    info('Ωtt__28', "ts.length.isa {}         ", truth(ts.length.isa({})));
+    info('Ωtt__29', "ts.length.isa -3.5       ", truth(ts.length.isa(-3.5)));
+    info('Ωtt__30', "ts.length.isa +3.5       ", truth(ts.length.isa(+3.5)));
     //.........................................................................................................
     return null;
   };
@@ -415,6 +423,16 @@
       return demo_turning_lists_of_functions_into_objects_with_sensible_names();
     })();
   }
+
+  /*
+
+## To Do
+
+* **`[—]`** create `Type_base` class that types are really derived from so they don't inherit methods like
+  `_isaname_from_typename()` and so on
+* **`[—]`** implement `dcl.base`
+
+ */
 
 }).call(this);
 
