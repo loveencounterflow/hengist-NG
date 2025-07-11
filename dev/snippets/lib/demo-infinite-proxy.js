@@ -250,16 +250,18 @@
       // info 'Ω__28', rpr C.yellow"█▒█"
       // info 'Ω__29', rpr C.yellow"█#{ C.green"▒" }█"
       info('Ω__30', rpr(C.red`█${C.green`▒`}█${C.green('GREEN')}###`));
+      info('Ω__31', C.red`████${C.green`████${C.yellow`████`}████`}████`);
+      info('Ω__32', rpr(C.red`████${C.green`████${C.yellow`████`}████`}████`));
       return null;
     })();
     (() => {      // do =>
       //   P = require 'picocolors'
-      //   info 'Ω__31',     P.yellow"█▒█"
-      //   info 'Ω__32',     P.yellow"█#{ P.green"▒" }█"
-      //   info 'Ω__33',     P.red"█#{    P.green"▒" }█"
-      //   info 'Ω__34', rpr P.yellow"█▒█"
-      //   info 'Ω__35', rpr P.yellow"█#{ P.green"▒" }█"
-      //   info 'Ω__36', rpr P.red"█#{    P.green"▒" }█"
+      //   info 'Ω__33',     P.yellow"█▒█"
+      //   info 'Ω__34',     P.yellow"█#{ P.green"▒" }█"
+      //   info 'Ω__35',     P.red"█#{    P.green"▒" }█"
+      //   info 'Ω__36', rpr P.yellow"█▒█"
+      //   info 'Ω__37', rpr P.yellow"█#{ P.green"▒" }█"
+      //   info 'Ω__38', rpr P.red"█#{    P.green"▒" }█"
       //   return null
       var H, color_off, green_on, hcolor, inner_on, outer_on, red_on;
       H = (require('chalk')).default;
@@ -278,18 +280,52 @@
         }
         return R + color_off;
       };
-      // info 'Ω__37',     hcolor"█"
-      // info 'Ω__38',     hcolor"█#{'▒'}"
-      info('Ω__39', hcolor`█${'▒'}█${'GREEN'}###`);
-      // info 'Ω__40', rpr hcolor"█"
-      // info 'Ω__41', rpr hcolor"█#{'▒'}"
-      info('Ω__42', rpr(hcolor`█${'▒'}█${'GREEN'}###`));
-      // info 'Ω__43',     H.yellow"█▒█"
-      // info 'Ω__44',     H.yellow"█#{ H.green"▒" }█"
-      // info 'Ω__45',     H.red"█#{    H.green"▒" }█"
-      // info 'Ω__46', rpr H.yellow"█▒█"
-      // info 'Ω__47', rpr H.yellow"█#{ H.green"▒" }█"
-      // info 'Ω__48', rpr H.red"█#{    H.green"▒" }█"
+      // info 'Ω__39',     hcolor"█"
+      // info 'Ω__40',     hcolor"█#{'▒'}"
+      info('Ω__41', hcolor`█${'▒'}█${'GREEN'}###`);
+      // info 'Ω__42', rpr hcolor"█"
+      // info 'Ω__43', rpr hcolor"█#{'▒'}"
+      info('Ω__44', rpr(hcolor`█${'▒'}█${'GREEN'}###`));
+      // info 'Ω__45',     H.yellow"█▒█"
+      // info 'Ω__46',     H.yellow"█#{ H.green"▒" }█"
+      // info 'Ω__47',     H.red"█#{    H.green"▒" }█"
+      // info 'Ω__48', rpr H.yellow"█▒█"
+      // info 'Ω__49', rpr H.yellow"█#{ H.green"▒" }█"
+      // info 'Ω__50', rpr H.red"█#{    H.green"▒" }█"
+      return null;
+    })();
+    (() => {
+      var color_codes, color_off, colorizer_from_color_code, green, yellow;
+      //-----------------------------------------------------------------------------------------------------------
+      color_codes = {
+        red: '\x1B[31m',
+        green: '\x1B[32m',
+        yellow: '\x1B[33m'
+      };
+      color_off = '\x1B[39m';
+      //.......................................................................................................
+      colorizer_from_color_code = function(color_code) {
+        var R;
+        R = function(parts, ...expressions) {
+          var expression, i, idx, inner, len;
+          R = color_code + parts[0];
+          for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
+            expression = expressions[idx];
+            inner = expression.toString().replace(/\x1B\[39m$/, '');
+            R += inner + (color_code + parts[idx + 1]);
+          }
+          return R + color_off;
+        };
+        return R;
+      };
+      //.......................................................................................................
+      red = colorizer_from_color_code(color_codes.red);
+      green = colorizer_from_color_code(color_codes.green);
+      yellow = colorizer_from_color_code(color_codes.yellow);
+      // info 'Ω__41',     red"█#{'▒'}█#{ 'GREEN' }###"
+      // info 'Ω__44', rpr red"█#{'▒'}█#{ 'GREEN' }###"
+      info('Ω__31', red`████${green`████${yellow`████`}████`}████`);
+      info('Ω__31', rpr(red`████${green`████${yellow`████`}████`}████`));
       return null;
     })();
     return null;
