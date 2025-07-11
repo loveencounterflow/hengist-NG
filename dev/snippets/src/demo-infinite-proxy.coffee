@@ -178,6 +178,62 @@ demo_commutator = ->
 
 
 #===========================================================================================================
+demo_picocolors_chalk = ->
+  do =>
+    # info 'Ω__25',     C.yellow"█▒█"
+    # info 'Ω__26',     C.yellow"█#{ C.green"▒" }█"
+    info 'Ω__27',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+    # info 'Ω__28', rpr C.yellow"█▒█"
+    # info 'Ω__29', rpr C.yellow"█#{ C.green"▒" }█"
+    info 'Ω__30', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+    return null
+  # do =>
+  #   P = require 'picocolors'
+  #   info 'Ω__31',     P.yellow"█▒█"
+  #   info 'Ω__32',     P.yellow"█#{ P.green"▒" }█"
+  #   info 'Ω__33',     P.red"█#{    P.green"▒" }█"
+  #   info 'Ω__34', rpr P.yellow"█▒█"
+  #   info 'Ω__35', rpr P.yellow"█#{ P.green"▒" }█"
+  #   info 'Ω__36', rpr P.red"█#{    P.green"▒" }█"
+  #   return null
+  do =>
+    H = ( require 'chalk' ).default
+    #-----------------------------------------------------------------------------------------------------------
+    red_on    = '\x1B[31m'
+    green_on  = '\x1B[32m'
+    color_off = '\x1B[39m'
+    outer_on  = red_on
+    inner_on  = green_on
+    hcolor = ( parts, expressions... ) ->
+      R = outer_on + parts[ 0 ]
+      for expression, idx in expressions
+        R += ( inner_on + expression.toString() ) + ( outer_on + parts[ idx + 1 ] )
+      return R + color_off
+    # info 'Ω__37',     hcolor"█"
+    # info 'Ω__38',     hcolor"█#{'▒'}"
+    info 'Ω__39',     hcolor"█#{'▒'}█#{ 'GREEN' }###"
+    # info 'Ω__40', rpr hcolor"█"
+    # info 'Ω__41', rpr hcolor"█#{'▒'}"
+    info 'Ω__42', rpr hcolor"█#{'▒'}█#{ 'GREEN' }###"
+    # info 'Ω__43',     H.yellow"█▒█"
+    # info 'Ω__44',     H.yellow"█#{ H.green"▒" }█"
+    # info 'Ω__45',     H.red"█#{    H.green"▒" }█"
+    # info 'Ω__46', rpr H.yellow"█▒█"
+    # info 'Ω__47', rpr H.yellow"█#{ H.green"▒" }█"
+    # info 'Ω__48', rpr H.red"█#{    H.green"▒" }█"
+    return null
+  return null
+
+# { Chalk: [class Chalk], __esModule: true,
+#   backgroundColorNames: [ 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
+#   backgroundColors: [ 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
+#   chalkStderr: { [Function: chalk] createChalk level: 3 },
+#   colorNames: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright', 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
+#   colors: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright', 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
+#   default: { [Function: chalk] createChalk level: 3 }, foregroundColorNames: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright' ], foregroundColors: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright' ], modifierNames: [ 'reset', 'bold', 'dim', 'italic', 'underline', 'overline', 'inverse', 'hidden', 'strikethrough' ], modifiers: [ 'reset', 'bold', 'dim', 'italic', 'underline', 'overline', 'inverse', 'hidden', 'strikethrough' ], supportsColor: { level: 3, hasBasic: true, has256: true, has16m: true }, supportsColorStderr: { level: 3, hasBasic: true, has256: true, has16m: true } }
+
+
+#===========================================================================================================
 if module is require.main then await do =>
   demo_proxy()
   echo '——————————————————————————————————————————————————————————————————————————————'
@@ -185,5 +241,7 @@ if module is require.main then await do =>
   demo_colorful_proxy()
   echo()
   demo_commutator()
+  echo()
+  demo_picocolors_chalk()
   echo()
 
