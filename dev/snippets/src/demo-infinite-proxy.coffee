@@ -200,14 +200,6 @@ demo_colorful_proxy = ->
 
 #===========================================================================================================
 demo_proxy_as_html_producer = ->
-  ### NOTE in order for nested calls to properly work, it looks like we need a stack of stacks;
-  currently
-  ```
-  H.div"this stuff is #{H.span"cool!"}"
-  ```
-  returns an empty string.
-  ###
-  # stack         = []
   stackofstacks   = []
   get_stack       = -> stackofstacks.at -1
   push_new_stack  = -> stackofstacks.push []; get_stack()
@@ -243,6 +235,7 @@ demo_proxy_as_html_producer = ->
   #.........................................................................................................
   do =>
     echo '——————————————————————————————————————————————————————————————————————————————'
+    append = ( list, P... ) -> list.splice list.length, 0, P...
     #.......................................................................................................
     class Raw
       constructor: ( text ) ->
@@ -289,27 +282,20 @@ demo_proxy_as_html_producer = ->
         else
           class_rpr   = ''
         #...................................................................................................
-        R.push "<"
-        R.push tag_name
-        R.push class_rpr
+        append R, "<", tag_name, class_rpr
         #...................................................................................................
         ### properties: ###
-        p = do =>
+        atrs_rpr = do =>
           return '' if properties.size is 0
-          _p = []
+          _atrs = []
           for [ property_name, property_value, ] from properties.entries()
             ### TAINT must escape, quote value ###
             property_value_rpr = property_value.replace /'/g, '&apos;'
-            _p.push "#{property_name}='#{property_value_rpr}'"
+            _atrs.push "#{property_name}='#{property_value_rpr}'"
           properties.clear()
-          return ' ' + _p.join ' '
+          return ' ' + _atrs.join ' '
         #...................................................................................................
-        R.push p
-        R.push ">"
-        R.push text
-        R.push "</"
-        R.push tag_name
-        R.push ">"
+        append R, atrs_rpr, ">", text, "</", tag_name, ">"
       #.....................................................................................................
       stack.length = 0
       urge 'Ω__36', R
@@ -330,9 +316,9 @@ demo_proxy_as_html_producer = ->
     # info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
     # info 'Ω__41', H.span"cool!"
     # info 'Ω__42', H.div"this stuff is #{"cool!"}"
-    info 'Ω__43', H.div.outer"this stuff is #{H.span.inner"cool!"}"
-    info 'Ω__44', button = new Raw H.button.on_click'send_form'.red"cool!"
-    info 'Ω__45', H.div.outer"press here: #{button}"
+    info 'Ω__43', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
+    info 'Ω__44', white bold reverse button = new Raw H.button.on_click'send_form'.red"cool!"
+    info 'Ω__45', white bold reverse H.div.outer"press here: #{button}"
     # info 'Ω__46', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
     # info 'Ω__47', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
     return null

@@ -251,14 +251,6 @@
   //===========================================================================================================
   demo_proxy_as_html_producer = function() {
     var get_proxy, get_stack, new_infiniproxy, pop_old_stack, properties, push_new_stack, stackofstacks, template;
-    /* NOTE in order for nested calls to properly work, it looks like we need a stack of stacks;
-     currently
-     ```
-     H.div"this stuff is #{H.span"cool!"}"
-     ```
-     returns an empty string.
-     */
-    // stack         = []
     stackofstacks = [];
     get_stack = function() {
       return stackofstacks.at(-1);
@@ -323,8 +315,11 @@
       return proxy;
     });
     (() => {      //.........................................................................................................
-      var H, Raw, button, escape_html_text, render_html, tag_function;
+      var H, Raw, append, button, escape_html_text, render_html, tag_function;
       echo('——————————————————————————————————————————————————————————————————————————————');
+      append = function(list, ...P) {
+        return list.splice(list.length, 0, ...P);
+      };
       //.......................................................................................................
       Raw = class Raw {
         constructor(text) {
@@ -363,7 +358,7 @@
       };
       //.......................................................................................................
       render_html = function(...P) {
-        var R, class_names, class_rpr, is_template_call, p, stack, tag_name, text;
+        var R, atrs_rpr, class_names, class_rpr, is_template_call, stack, tag_name, text;
         stack = get_stack();
         pop_old_stack();
         urge('Ω__33', gold(reverse(bold({stack}))));
@@ -394,33 +389,26 @@
             class_rpr = '';
           }
           //...................................................................................................
-          R.push("<");
-          R.push(tag_name);
-          R.push(class_rpr);
+          append(R, "<", tag_name, class_rpr);
           //...................................................................................................
           /* properties: */
-          p = (() => {
+          atrs_rpr = (() => {
             /* TAINT must escape, quote value */
-            var _p, property_name, property_value, property_value_rpr, x;
+            var _atrs, property_name, property_value, property_value_rpr, x;
             if (properties.size === 0) {
               return '';
             }
-            _p = [];
+            _atrs = [];
             for (x of properties.entries()) {
               [property_name, property_value] = x;
               property_value_rpr = property_value.replace(/'/g, '&apos;');
-              _p.push(`${property_name}='${property_value_rpr}'`);
+              _atrs.push(`${property_name}='${property_value_rpr}'`);
             }
             properties.clear();
-            return ' ' + _p.join(' ');
+            return ' ' + _atrs.join(' ');
           })();
           //...................................................................................................
-          R.push(p);
-          R.push(">");
-          R.push(text);
-          R.push("</");
-          R.push(tag_name);
-          R.push(">");
+          append(R, atrs_rpr, ">", text, "</", tag_name, ">");
         }
         //.....................................................................................................
         stack.length = 0;
@@ -448,9 +436,9 @@
       // info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
       // info 'Ω__41', H.span"cool!"
       // info 'Ω__42', H.div"this stuff is #{"cool!"}"
-      info('Ω__43', H.div.outer`this stuff is ${H.span.inner`cool!`}`);
-      info('Ω__44', button = new Raw(H.button.on_click`send_form`.red`cool!`));
-      info('Ω__45', H.div.outer`press here: ${button}`);
+      info('Ω__43', white(bold(reverse(H.div.outer`this stuff is ${H.span.inner`cool!`}`))));
+      info('Ω__44', white(bold(reverse(button = new Raw(H.button.on_click`send_form`.red`cool!`)))));
+      info('Ω__45', white(bold(reverse(H.div.outer`press here: ${button}`))));
       // info 'Ω__46', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
       // info 'Ω__47', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
       return null;
