@@ -448,6 +448,7 @@
       // info 'Ω__41', H.span"cool!"
       // info 'Ω__42', H.div"this stuff is #{"cool!"}"
       info('Ω__43', H.div.outer`this stuff is ${H.span.inner`cool!`}`);
+      info('Ω__43', H.div.outer`press here: ${H.button.on_click`send_form`.red`cool!`}`);
       // info 'Ω__44', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
       // info 'Ω__45', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
       return null;
