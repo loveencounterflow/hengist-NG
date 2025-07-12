@@ -187,13 +187,12 @@ demo_colorful_proxy = ->
 
 
 #===========================================================================================================
-demo_proxy_as_html_producer = ->
-  stackofstacks   = []
-  get_stack       = -> stackofstacks.at -1
-  push_new_stack  = -> stackofstacks.push []; get_stack()
-  pop_old_stack   = -> stackofstacks.pop()
-  # push_new_stack()
-  properties    = new Map()
+get_infiniproxy = ( base ) ->
+  stackofstacks     = []
+  get_stack         = -> stackofstacks.at -1
+  push_new_stack    = -> stackofstacks.push []; get_stack()
+  pop_old_stack     = -> stackofstacks.pop()
+  get_stack_length  = -> stackofstacks.length
   get_proxy     = Symbol 'get_proxy'
   #.........................................................................................................
   template =
@@ -201,118 +200,124 @@ demo_proxy_as_html_producer = ->
     is_initial:               true
     empty_stack_on_new_chain: true
   #.........................................................................................................
-  new_infiniproxy = nfa { template, }, ( base, is_initial, cfg ) ->
+  new_doublestack_infiniproxy = nfa { template, }, ( base, is_initial, cfg ) ->
     is_initial = false unless cfg.empty_stack_on_new_chain
     proxy = new Proxy base,
       get: ( target, key ) ->
         return new_infiniproxy { base, is_initial: false, } if key is get_proxy
         return target[ key ] if ( typeof key ) is 'symbol'
         return target[ key ] if Reflect.has target, key
-        XXX_before = ( get_stack() ? [] )[ .. ]
+        # XXX_before = ( get_stack() ? [] )[ .. ]
         if is_initial
-          # stack.length = 0
           push_new_stack()
         get_stack().push key
-        XXX_mark = if is_initial then ( reverse red bold ' I ' ) else ( reverse white bold ' S ' )
-        XXX_stack = ( get_stack() ? [] )[ .. ]
-        debug 'Ω__31', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
+        # XXX_mark = if is_initial then ( reverse red bold ' I ' ) else ( reverse white bold ' S ' )
+        # XXX_stack = ( get_stack() ? [] )[ .. ]
+        # debug 'Ω__31', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
         return R
-    if is_initial then  R = new_infiniproxy { base, is_initial: false, }
+    if is_initial then  R = new_doublestack_infiniproxy { base, is_initial: false, }
     else                R = proxy
     return proxy
   #.........................................................................................................
-  do =>
-    echo '——————————————————————————————————————————————————————————————————————————————'
-    append = ( list, P... ) -> list.splice list.length, 0, P...
-    #.......................................................................................................
-    class Raw
-      constructor: ( text ) ->
-        @data = text
-        return undefined
-      toString: -> @data
-    #.......................................................................................................
-    escape_html_text = ( text ) ->
-      R = text
-      R = R.replace /&/g, '&amp;'
-      R = R.replace /</g, '&lt;'
-      R = R.replace />/g, '&gt;'
-      return R
-    #.......................................................................................................
-    tag_function = ( parts, expressions... ) ->
-      debug 'Ω__32', expressions
-      R = parts[ 0 ]
-      for expression, idx in expressions
-        expression_rpr  = expression.toString()
-        expression_rpr  = escape_html_text expression_rpr unless expression instanceof Raw
-        R += expression_rpr + parts[ idx + 1 ]
-      return R
-    #.......................................................................................................
-    render_html = ( P... ) ->
-      stack = get_stack()
-      pop_old_stack()
-      urge 'Ω__33', gold reverse bold { stack, }
-      is_template_call = ( Array.isArray P[ 0 ] ) and ( Object.isFrozen P[ 0 ] ) and ( P[ 0 ].raw? )
-      if is_template_call
-        text = tag_function P...
-      else
-        switch true
-          when P.length is 0 then text = ''
-          when P.length is 1 then text = tag_function P
-          else throw new Error "Ω__34 more than one argument not allowed"
-      # debug 'Ω__35', { is_template_call, text, }
-      #.....................................................................................................
-      R = []
+  return { proxy: ( new_doublestack_infiniproxy base ),
+    get_stack, push_new_stack, pop_old_stack, get_proxy, get_stack_length,  }
+
+#-----------------------------------------------------------------------------------------------------------
+demo_proxy_as_html_producer = ->
+  #.........................................................................................................
+  echo '——————————————————————————————————————————————————————————————————————————————'
+  append = ( list, P... ) -> list.splice list.length, 0, P...
+  #.......................................................................................................
+  class Raw
+    constructor: ( text ) ->
+      @data = text
+      return undefined
+    toString: -> @data
+  #.......................................................................................................
+  escape_html_text = ( text ) ->
+    R = text
+    R = R.replace /&/g, '&amp;'
+    R = R.replace /</g, '&lt;'
+    R = R.replace />/g, '&gt;'
+    return R
+  #.......................................................................................................
+  text_from_tagged_template_call = ( parts, expressions... ) ->
+    # debug 'Ω__32', expressions
+    R = parts[ 0 ]
+    for expression, idx in expressions
+      expression_rpr  = expression.toString()
+      expression_rpr  = escape_html_text expression_rpr unless expression instanceof Raw
+      R += expression_rpr + parts[ idx + 1 ]
+    return R
+  #.......................................................................................................
+  render_html = ( P... ) ->
+    stack = XXX.get_stack()
+    XXX.pop_old_stack()
+    # urge 'Ω__33', gold reverse bold { stack, }
+    is_template_call = ( Array.isArray P[ 0 ] ) and ( Object.isFrozen P[ 0 ] ) and ( P[ 0 ].raw? )
+    if is_template_call
+      text = text_from_tagged_template_call P...
+    else
+      switch true
+        when P.length is 0 then text = ''
+        when P.length is 1 then text = text_from_tagged_template_call P
+        else throw new Error "Ω__34 more than one argument not allowed"
+    # debug 'Ω__35', { is_template_call, text, }
+    #.....................................................................................................
+    R = []
+    if stack.length > 0
+      tag_name    = stack.shift()
       if stack.length > 0
-        tag_name    = stack.shift()
-        if stack.length > 0
-          class_names = stack.join ' '
-          class_rpr   = " class='#{class_names}'"
-        else
-          class_rpr   = ''
-        #...................................................................................................
-        append R, "<", tag_name, class_rpr
-        #...................................................................................................
-        ### properties: ###
-        atrs_rpr = do =>
-          return '' if properties.size is 0
-          _atrs = []
-          for [ property_name, property_value, ] from properties.entries()
-            ### TAINT must escape, quote value ###
-            property_value_rpr = property_value.replace /'/g, '&apos;'
-            _atrs.push "#{property_name}='#{property_value_rpr}'"
-          properties.clear()
-          return ' ' + _atrs.join ' '
-        #...................................................................................................
-        append R, atrs_rpr, ">", text, "</", tag_name, ">"
-      #.....................................................................................................
-      stack.length = 0
-      urge 'Ω__36', R
-      R = R.join ''
-      R = new Raw R if stackofstacks.length isnt 0
-      # R = new Raw R
-      return R
-    #.......................................................................................................
-    render_html.on_click = ( action ) ->
-      action = action[ 0 ] if Array.isArray action
-      properties.set 'on_click', action
-      return @
-    #.......................................................................................................
-    H   = new_infiniproxy render_html
-    # info 'Ω__37', H.div.big.important"some <arbitrary> text"
-    # info 'Ω__38', H.div.big.important "some <arbitrary> text"
-    # info 'Ω__39', H.on_click'send_form()'.xxx ### TAINT wrong result ###
-    # info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
-    # info 'Ω__41', H.span"cool!"
-    # info 'Ω__42', H.div"this stuff is #{"cool!"}"
-    info 'Ω__43', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
-    info 'Ω__44', white bold reverse button = new Raw H.button.on_click'send_form'.red"cool!"
-    info 'Ω__45', white bold reverse H.div.outer"press here: #{button}"
-    @eq ( Ω__46 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
-    @eq ( Ω__47 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
-    @eq ( Ω__48 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
-    # info 'Ω__49', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
-    # info 'Ω__50', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
-    return null
+        class_names = stack.join ' '
+        class_rpr   = " class='#{class_names}'"
+      else
+        class_rpr   = ''
+      #...................................................................................................
+      append R, "<", tag_name, class_rpr
+      #...................................................................................................
+      ### properties: ###
+      atrs_rpr = do =>
+        return '' if properties.size is 0
+        _atrs = []
+        for [ property_name, property_value, ] from properties.entries()
+          ### TAINT must escape, quote value ###
+          property_value_rpr = property_value.replace /'/g, '&apos;'
+          _atrs.push "#{property_name}='#{property_value_rpr}'"
+        properties.clear()
+        return ' ' + _atrs.join ' '
+      #...................................................................................................
+      append R, atrs_rpr, ">", text, "</", tag_name, ">"
+    #.....................................................................................................
+    stack.length = 0
+    urge 'Ω__36', R
+    R = R.join ''
+    R = new Raw R if XXX.get_stack_length() isnt 0
+    # R = new Raw R
+    return R
+  #.......................................................................................................
+  render_html.on_click = ( action ) ->
+    action = action[ 0 ] if Array.isArray action
+    properties.set 'on_click', action
+    return @
+  #.......................................................................................................
+  properties  = new Map()
+  XXX         = get_infiniproxy render_html
+  H           = XXX.proxy
+  # info 'Ω__37', H.div.big.important"some <arbitrary> text"
+  # info 'Ω__38', H.div.big.important "some <arbitrary> text"
+  # info 'Ω__39', H.on_click'send_form()'.xxx ### TAINT wrong result ###
+  # info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
+  # info 'Ω__41', H.span"cool!"
+  # info 'Ω__42', H.div"this stuff is #{"cool!"}"
+  button = new Raw H.button.on_click'send_form'.red"cool!"
+  #.........................................................................................................
+  info 'Ω__43', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
+  info 'Ω__44', white bold reverse new Raw H.button.on_click'send_form'.red"cool!"
+  info 'Ω__45', white bold reverse H.div.outer"press here: #{button}"
+  #.........................................................................................................
+  @eq ( Ω__46 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
+  @eq ( Ω__47 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
+  @eq ( Ω__48 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
   return null
 
 # # # # ###
@@ -323,6 +328,6 @@ demo_proxy_as_html_producer = ->
 if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
