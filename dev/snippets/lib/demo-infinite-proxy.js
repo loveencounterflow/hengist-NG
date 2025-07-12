@@ -317,7 +317,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_proxy_as_html_producer = function() {
-    var H, Raw, XXX, append, button, escape_html_text, properties, render_html, text_from_tagged_template_call, Ω__46, Ω__47, Ω__48;
+    var H, Raw, XXX, append, button, escape_html_text, properties, render_html, text_from_tagged_template_call, Ω__48, Ω__49, Ω__50;
     //.........................................................................................................
     echo('——————————————————————————————————————————————————————————————————————————————');
     append = function(list, ...P) {
@@ -351,7 +351,7 @@
       R = parts[0];
       for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
         expression = expressions[idx];
-        expression_rpr = expression.toString();
+        expression_rpr = `${expression}`;
         if (!(expression instanceof Raw)) {
           expression_rpr = escape_html_text(expression_rpr);
         }
@@ -446,16 +446,18 @@
     info('Ω__43', white(bold(reverse(H.div.outer`this stuff is ${H.span.inner`cool!`}`))));
     info('Ω__44', white(bold(reverse(new Raw(H.button.on_click`send_form`.red`cool!`)))));
     info('Ω__45', white(bold(reverse(H.div.outer`press here: ${button}`))));
+    info('Ω__46', white(bold(reverse(H.div.outer`press here: ${null}`))));
+    info('Ω__47', white(bold(reverse(H.div.outer`press here: ${void 0}`))));
     //.........................................................................................................
-    this.eq((Ω__46 = function() {
+    this.eq((Ω__48 = function() {
       return H.div.outer`this stuff is ${H.span.inner`cool!`}`;
     }), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>");
-    this.eq((Ω__47 = function() {
+    this.eq((Ω__49 = function() {
       return new Raw(H.button.on_click`send_form`.red`cool!`);
     }), {
       data: "<button class='red' on_click='send_form'>cool!</button>"
     });
-    this.eq((Ω__48 = function() {
+    this.eq((Ω__50 = function() {
       return H.div.outer`press here: ${button}`;
     }), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>");
     return null;

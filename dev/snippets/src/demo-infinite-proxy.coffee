@@ -245,7 +245,7 @@ demo_proxy_as_html_producer = ->
     # debug 'Ω__32', expressions
     R = parts[ 0 ]
     for expression, idx in expressions
-      expression_rpr  = expression.toString()
+      expression_rpr  = "#{expression}"
       expression_rpr  = escape_html_text expression_rpr unless expression instanceof Raw
       R += expression_rpr + parts[ idx + 1 ]
     return R
@@ -314,10 +314,12 @@ demo_proxy_as_html_producer = ->
   info 'Ω__43', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
   info 'Ω__44', white bold reverse new Raw H.button.on_click'send_form'.red"cool!"
   info 'Ω__45', white bold reverse H.div.outer"press here: #{button}"
+  info 'Ω__46', white bold reverse H.div.outer"press here: #{null}"
+  info 'Ω__47', white bold reverse H.div.outer"press here: #{undefined}"
   #.........................................................................................................
-  @eq ( Ω__46 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
-  @eq ( Ω__47 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
-  @eq ( Ω__48 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
+  @eq ( Ω__48 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
+  @eq ( Ω__49 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
+  @eq ( Ω__50 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
   return null
 
 # # # # ###
