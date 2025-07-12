@@ -338,6 +338,9 @@ demo_proxy_as_html_producer = ->
     return null
   return null
 
+# # # # ###
+# # # # SQL.insert.into.employees('id','name').values(id,name)
+# # # # ###
 
 #===========================================================================================================
 if module is require.main then await do =>
