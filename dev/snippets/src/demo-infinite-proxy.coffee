@@ -1,18 +1,4 @@
 
-  #.........................................................................................................
-# @blink                    = "\x1b[5m"
-# @bold                     = "\x1b[1m"
-# @reverse                  = "\x1b[7m"
-# @underline                = "\x1b[4m"
-
-# #-----------------------------------------------------------------------------------------------------------
-# # Effects Off
-# #...........................................................................................................
-# @no_blink                 = "\x1b[25m"
-# @no_bold                  = "\x1b[22m"
-# @no_reverse               = "\x1b[27m"
-# @no_underline             = "\x1b[24m"
-
 
 'use strict'
 
@@ -42,6 +28,8 @@ GUY                       = require 'guy'
 write                     = ( p ) -> process.stdout.write p
 C                         = require 'ansis'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
+GTNG                      = require '../../../apps/guy-test-NG'
+{ Test                  } = GTNG
 
 
 #===========================================================================================================
@@ -319,8 +307,11 @@ demo_proxy_as_html_producer = ->
     info 'Ω__43', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
     info 'Ω__44', white bold reverse button = new Raw H.button.on_click'send_form'.red"cool!"
     info 'Ω__45', white bold reverse H.div.outer"press here: #{button}"
-    # info 'Ω__46', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
-    # info 'Ω__47', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
+    @eq ( Ω__46 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
+    @eq ( Ω__47 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
+    @eq ( Ω__48 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
+    # info 'Ω__49', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
+    # info 'Ω__50', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
     return null
   return null
 
@@ -332,6 +323,6 @@ demo_proxy_as_html_producer = ->
 if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
-  demo_proxy_as_html_producer()
-  echo()
-
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }

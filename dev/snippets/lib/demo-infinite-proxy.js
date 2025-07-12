@@ -1,19 +1,6 @@
 (async function() {
-  //.........................................................................................................
-  // @blink                    = "\x1b[5m"
-  // @bold                     = "\x1b[1m"
-  // @reverse                  = "\x1b[7m"
-  // @underline                = "\x1b[4m"
-
-  // #-----------------------------------------------------------------------------------------------------------
-  // # Effects Off
-  // #...........................................................................................................
-  // @no_blink                 = "\x1b[25m"
-  // @no_bold                  = "\x1b[22m"
-  // @no_reverse               = "\x1b[27m"
-  // @no_underline             = "\x1b[24m"
   'use strict';
-  var C, GUY, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GTNG, GUY, Test, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -31,6 +18,10 @@
   C = require('ansis');
 
   ({nfa} = require('../../../apps/normalize-function-arguments'));
+
+  GTNG = require('../../../apps/guy-test-NG');
+
+  ({Test} = GTNG);
 
   //===========================================================================================================
   demo_infinite_proxy = function() {
@@ -315,7 +306,7 @@
       return proxy;
     });
     (() => {      //.........................................................................................................
-      var H, Raw, append, button, escape_html_text, render_html, tag_function;
+      var H, Raw, append, button, escape_html_text, render_html, tag_function, Ω__46, Ω__47, Ω__48;
       echo('——————————————————————————————————————————————————————————————————————————————');
       append = function(list, ...P) {
         return list.splice(list.length, 0, ...P);
@@ -439,8 +430,19 @@
       info('Ω__43', white(bold(reverse(H.div.outer`this stuff is ${H.span.inner`cool!`}`))));
       info('Ω__44', white(bold(reverse(button = new Raw(H.button.on_click`send_form`.red`cool!`)))));
       info('Ω__45', white(bold(reverse(H.div.outer`press here: ${button}`))));
-      // info 'Ω__46', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
-      // info 'Ω__47', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
+      this.eq((Ω__46 = function() {
+        return H.div.outer`this stuff is ${H.span.inner`cool!`}`;
+      }), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>");
+      this.eq((Ω__47 = function() {
+        return new Raw(H.button.on_click`send_form`.red`cool!`);
+      }), {
+        data: "<button class='red' on_click='send_form'>cool!</button>"
+      });
+      this.eq((Ω__48 = function() {
+        return H.div.outer`press here: ${button}`;
+      }), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>");
+      // info 'Ω__49', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
+      // info 'Ω__50', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
       return null;
     })();
     return null;
@@ -453,10 +455,20 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
+      var guytest_cfg;
       // demo_infinite_proxy()
       // demo_colorful_proxy()
-      demo_proxy_as_html_producer();
-      return echo();
+      guytest_cfg = {
+        throw_on_error: true,
+        show_passes: false,
+        report_checks: false
+      };
+      guytest_cfg = {
+        throw_on_error: false,
+        show_passes: false,
+        report_checks: false
+      };
+      return (new Test(guytest_cfg)).test({demo_proxy_as_html_producer});
     })();
   }
 
