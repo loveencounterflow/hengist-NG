@@ -1,4 +1,17 @@
 
+  #.........................................................................................................
+# @blink                    = "\x1b[5m"
+# @bold                     = "\x1b[1m"
+# @reverse                  = "\x1b[7m"
+# @underline                = "\x1b[4m"
+
+# #-----------------------------------------------------------------------------------------------------------
+# # Effects Off
+# #...........................................................................................................
+# @no_blink                 = "\x1b[25m"
+# @no_bold                  = "\x1b[22m"
+# @no_reverse               = "\x1b[27m"
+# @no_underline             = "\x1b[24m"
 
 
 'use strict'
@@ -30,15 +43,19 @@ C                         = require 'ansis'
 
 #===========================================================================================================
 demo_proxy = ->
-  stack = []
+  stack     = []
+  get_proxy = Symbol 'get_proxy'
   #.........................................................................................................
   template =
-    base:         null
-    is_initial:   false
+    base:                     null
+    is_initial:               true
+    empty_stack_on_new_chain: true
   #.........................................................................................................
   new_infiniproxy = nfa { template, }, ( base, is_initial, cfg ) ->
+    is_initial = false unless cfg.empty_stack_on_new_chain
     proxy = new Proxy base,
       get: ( target, key ) ->
+        return new_infiniproxy { base, is_initial: false, } if key is get_proxy
         return target[ key ] if ( typeof key ) is 'symbol'
         stack.length = 0 if is_initial
         stack.push key
@@ -48,29 +65,162 @@ demo_proxy = ->
     return proxy
   #.........................................................................................................
   base = ( P... ) ->
-    # debug 'Ω___1', P
     R = "#{stack.join '.'}::#{rpr P}"
     stack.length = 0
     return R
-  p = new_infiniproxy base, { is_initial: true, }
-  debug 'Ω___2', p
-  debug 'Ω___3', p.arc
-  info 'Ω___4', p.arc.bo.cy 8
   #.........................................................................................................
   ### These calls will be `stack`ed but then get thrown away as soon as any property of `p` is used: ###
-  p.ooops;  debug 'Ω___5', stack
-  p.wat;    debug 'Ω___6', stack
-  p.nö;     debug 'Ω___7', stack
-  info 'Ω___8', p"some text"
-  debug 'Ω___9', stack
+  do =>
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    p = new_infiniproxy base, { empty_stack_on_new_chain: true } ### default ###
+    p.ooops;  debug 'Ω___1', stack
+    p.wat;    debug 'Ω___2', stack
+    p.nö;     debug 'Ω___3', stack
+    info 'Ω___4', p.more_of_this"some text"
+    debug 'Ω___5', stack
+    return null
   #.........................................................................................................
-  info 'Ω__10', p.arc.bo.cy"some text"
-  info 'Ω__11', p.arc.bo.cy.dean.blah"some text"
-  ### Building the chain: ###
-  chain = p.arc.bo.cy
-  chain.dean.blah
-  chain.and.then.some
-  info 'Ω__12', p "finally, a call"
+  ### These calls will be `stack`ed and remain on the stack until `p` is called: ###
+  do =>
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    p = new_infiniproxy base, { empty_stack_on_new_chain: false } ### opt-in ###
+    p.ooops;  debug 'Ω___6', stack
+    p.wat;    debug 'Ω___7', stack
+    p.nö;     debug 'Ω___8', stack
+    info 'Ω___9', p.more_of_this"some text"
+    debug 'Ω__10', stack
+    return null
+  #.........................................................................................................
+  do =>
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    p = new_infiniproxy base
+    info 'Ω__11', p.red.bold.underline"some text"
+    ### Some random property retrievals without call... ###
+    p.bold.underline
+    p.strikethrough.inverse
+    ### ...won't influence the meaning of the next property chain: ###
+    info 'Ω__12', p.yellow"finally, a call"
+    ### But if needed, can always reference a proxy from an intermediate result and build a property chain
+    on that; here we used a special unique value `get_proxy` that produces an intermediate result *without*
+    adding it to the property chain: ###
+    proxy = p[ get_proxy ]
+    ### Imagine we go through some branching if/then clauses to decide whether to add some styles: ###
+    proxy.bold.underline
+    proxy.strikethrough
+    proxy.inverse
+    proxy.yellow
+    ### Finally, we're ready to print: ###
+    info 'Ω__13', proxy"this will be printed in bold + underline + strikethrough + inverse + yellow"
+    return null
+  return null
+
+#===========================================================================================================
+demo_proxy_as_html_producer = ->
+  ### NOTE in order for nested calls to properly work, it looks like we need a stack of stacks;
+  currently
+  ```
+  H.div"this stuff is #{H.span"cool!"}"
+  ```
+  returns an empty string.
+  ###
+  stack       = []
+  properties  = new Map()
+  get_proxy   = Symbol 'get_proxy'
+  #.........................................................................................................
+  template =
+    base:                     null
+    is_initial:               true
+    empty_stack_on_new_chain: true
+  #.........................................................................................................
+  new_infiniproxy = nfa { template, }, ( base, is_initial, cfg ) ->
+    is_initial = false unless cfg.empty_stack_on_new_chain
+    proxy = new Proxy base,
+      get: ( target, key ) ->
+        return new_infiniproxy { base, is_initial: false, } if key is get_proxy
+        return target[ key ] if ( typeof key ) is 'symbol'
+        return target[ key ] if Reflect.has target, key
+        stack.length = 0 if is_initial
+        stack.push key
+        return R
+    if is_initial then  R = new_infiniproxy { base, is_initial: false, }
+    else                R = proxy
+    return proxy
+  #.........................................................................................................
+  do =>
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    #.......................................................................................................
+    tag_function = ( parts, expressions... ) ->
+      debug 'Ω__14', arguments
+      R = parts[ 0 ]
+      for expression, idx in expressions
+        R += expression.toString() + parts[ idx + 1 ]
+      R = R.replace /&/g, '&amp;'
+      R = R.replace /</g, '&lt;'
+      R = R.replace />/g, '&gt;'
+      return R
+    #.......................................................................................................
+    render_html = ( P... ) ->
+      is_template_call = ( Array.isArray P[ 0 ] ) and ( Object.isFrozen P[ 0 ] ) and ( P[ 0 ].raw? )
+      if is_template_call
+        text = tag_function P...
+      else
+        switch true
+          when P.length is 0 then text = ''
+          when P.length is 1 then text = tag_function P
+          else throw new Error "Ω__15 more than one argument not allowed"
+      # debug 'Ω__16', { is_template_call, text, }
+      #.....................................................................................................
+      R = []
+      if stack.length > 0
+        tag_name    = stack.shift()
+        if stack.length > 0
+          class_names = stack.join ' '
+          class_rpr   = " class='#{class_names}'"
+        else
+          class_rpr   = ''
+        #...................................................................................................
+        R.push "<"
+        R.push tag_name
+        R.push class_rpr
+        #...................................................................................................
+        ### properties: ###
+        p = do =>
+          return '' if properties.size is 0
+          _p = []
+          for [ property_name, property_value, ] from properties.entries()
+            ### TAINT must escape, quote value ###
+            property_value_rpr = property_value.replace /'/g, '&apos;'
+            _p.push "#{property_name}='#{property_value_rpr}'"
+          properties.clear()
+          return ' ' + _p.join ' '
+        #...................................................................................................
+        R.push p
+        R.push ">"
+        R.push text
+        R.push "</"
+        R.push tag_name
+        R.push ">"
+      #.....................................................................................................
+      stack.length = 0
+      urge 'Ω__10', R
+      return R.join ''
+    #.......................................................................................................
+    render_html.on_click = ( action ) ->
+      action = action[ 0 ] if Array.isArray action
+      properties.set 'on_click', action
+      return @
+    #.......................................................................................................
+    H = new_infiniproxy render_html
+    info 'Ω__17', H.div.big.important"some <arbitrary> text"
+    info 'Ω__18', H.div.big.important "some <arbitrary> text"
+    info 'Ω__19', H.on_click'send_form()'.xxx ### TAINT wrong result ###
+    info 'Ω__20', H.div.on_click'send_form()'.big.important"this value is #{true}"
+    info 'Ω__21', H.span"cool!"
+    info 'Ω__22', H.div"this stuff is #{"cool!"}"
+    info 'Ω__23', H.div"this stuff is #{H.span"cool!"}"
+    info 'Ω__24', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
+    info 'Ω__25', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
+    return null
   return null
 
 #===========================================================================================================
@@ -88,7 +238,7 @@ demo_colorful_proxy = ->
       get: ( target, key ) ->
         return target[ key ] if ( typeof key ) is 'symbol'
         unless Reflect.has bearer, key
-          throw new TMP_error "Ω__13 unknown key #{rpr key}"
+          throw new TMP_error "Ω__26 unknown key #{rpr key}"
         stack.length = 0 if is_initial
         stack.push key
         return R
@@ -103,126 +253,31 @@ demo_colorful_proxy = ->
       R   = C[ key ] R
     return R
   #.........................................................................................................
-# @blink                    = "\x1b[5m"
-# @bold                     = "\x1b[1m"
-# @reverse                  = "\x1b[7m"
-# @underline                = "\x1b[4m"
-
-# #-----------------------------------------------------------------------------------------------------------
-# # Effects Off
-# #...........................................................................................................
-# @no_blink                 = "\x1b[25m"
-# @no_bold                  = "\x1b[22m"
-# @no_reverse               = "\x1b[27m"
-# @no_underline             = "\x1b[24m"
-  #.........................................................................................................
-  # C =
-  #   blink: ( x ) ->
-  #     debug 'Ω__14', rpr x
-  #     return '---'
-  # Object.setPrototypeOf C, C
-  extension =
-    blink: ( x ) ->
-      debug 'Ω__15', rpr x
-      return '---'
-  #.........................................................................................................
   p = new_infiniproxy C, base, { is_initial: true, }
-  info 'Ω__16', p.green.bold.inverse " holy moly "
-  # info 'Ω__17', p.green.bold.inverse.blink " holy moly "
+  info 'Ω__27', p.green.bold.inverse " holy moly "
   #.........................................................................................................
-  info 'Ω__18', p.yellow.italic"some text"
-  info 'Ω__19', p.green.bold.inverse.underline"some text"
+  info 'Ω__28', p.yellow.italic"some text"
+  info 'Ω__29', p.green.bold.inverse.underline"some text"
   ### Building the chain: ###
   chain = p.cyan.bold
   chain.underline
-  info 'Ω__20', p "finally, a call"
+  info 'Ω__30', p "finally, a call"
   return null
 
 
-#===========================================================================================================
-demo_commutator = ->
-  class TMP_no_such_key_error extends Error
-  misfit = Symbol 'misfit'
-  #===========================================================================================================
-  class Commutator
-
-    #---------------------------------------------------------------------------------------------------------
-    constructor: ->
-      @bearers  = []
-      @cache    = new Map()
-      return undefined
-
-    #---------------------------------------------------------------------------------------------------------
-    add_bearer: ( x ) -> @bearers.unshift x; return null
-
-    #---------------------------------------------------------------------------------------------------------
-    get: ( key, fallback = misfit ) ->
-      return R if ( R = @cache.get key )?
-      for bearer in @bearers
-        continue unless Reflect.has bearer, key
-        @cache.set key, R = { bearer, value: bearer[ key ], }
-        return R
-      return fallback unless fallback is misfit
-      throw new TMP_no_such_key_error "Ω__21 unknown key #{rpr key}"
-
-  #===========================================================================================================
-  a = { k: 'K', l: 'not this', }
-  b = { l: 'L', }
-  c = new Commutator()
-  c.add_bearer a
-  c.add_bearer b
-  debug 'Ω__22', c.get 'ttt', null
-  debug 'Ω__23', c.get 'k'
-  debug 'Ω__24', c.get 'l'
-  return null
 
 
 #===========================================================================================================
 demo_picocolors_chalk = ->
   do =>
-    # info 'Ω__25',     C.yellow"█▒█"
-    # info 'Ω__26',     C.yellow"█#{ C.green"▒" }█"
-    info 'Ω__27',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
-    # info 'Ω__28', rpr C.yellow"█▒█"
-    # info 'Ω__29', rpr C.yellow"█#{ C.green"▒" }█"
-    info 'Ω__30', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
-    info 'Ω__31',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
-    info 'Ω__32', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
-    return null
-  # do =>
-  #   P = require 'picocolors'
-  #   info 'Ω__33',     P.yellow"█▒█"
-  #   info 'Ω__34',     P.yellow"█#{ P.green"▒" }█"
-  #   info 'Ω__35',     P.red"█#{    P.green"▒" }█"
-  #   info 'Ω__36', rpr P.yellow"█▒█"
-  #   info 'Ω__37', rpr P.yellow"█#{ P.green"▒" }█"
-  #   info 'Ω__38', rpr P.red"█#{    P.green"▒" }█"
-  #   return null
-  do =>
-    H = ( require 'chalk' ).default
-    #-----------------------------------------------------------------------------------------------------------
-    red_on    = '\x1B[31m'
-    green_on  = '\x1B[32m'
-    color_off = '\x1B[39m'
-    outer_on  = red_on
-    inner_on  = green_on
-    hcolor = ( parts, expressions... ) ->
-      R = outer_on + parts[ 0 ]
-      for expression, idx in expressions
-        R += ( inner_on + expression.toString() ) + ( outer_on + parts[ idx + 1 ] )
-      return R + color_off
-    # info 'Ω__39',     hcolor"█"
-    # info 'Ω__40',     hcolor"█#{'▒'}"
-    info 'Ω__41',     hcolor"█#{'▒'}█#{ 'GREEN' }###"
-    # info 'Ω__42', rpr hcolor"█"
-    # info 'Ω__43', rpr hcolor"█#{'▒'}"
-    info 'Ω__44', rpr hcolor"█#{'▒'}█#{ 'GREEN' }###"
-    # info 'Ω__45',     H.yellow"█▒█"
-    # info 'Ω__46',     H.yellow"█#{ H.green"▒" }█"
-    # info 'Ω__47',     H.red"█#{    H.green"▒" }█"
-    # info 'Ω__48', rpr H.yellow"█▒█"
-    # info 'Ω__49', rpr H.yellow"█#{ H.green"▒" }█"
-    # info 'Ω__50', rpr H.red"█#{    H.green"▒" }█"
+    # info 'Ω__35',     C.yellow"█▒█"
+    # info 'Ω__36',     C.yellow"█#{ C.green"▒" }█"
+    info 'Ω__37',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+    # info 'Ω__38', rpr C.yellow"█▒█"
+    # info 'Ω__39', rpr C.yellow"█#{ C.green"▒" }█"
+    info 'Ω__40', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+    info 'Ω__41',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+    info 'Ω__42', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
     return null
   do =>
     #-----------------------------------------------------------------------------------------------------------
@@ -244,12 +299,14 @@ demo_picocolors_chalk = ->
     red     = colorizer_from_color_code color_codes.red
     green   = colorizer_from_color_code color_codes.green
     yellow  = colorizer_from_color_code color_codes.yellow
-    # info 'Ω__41',     red"█#{'▒'}█#{ 'GREEN' }###"
-    # info 'Ω__44', rpr red"█#{'▒'}█#{ 'GREEN' }###"
-    info 'Ω__31',     red"████#{green"████#{yellow"████"}████"}████"
-    info 'Ω__31', rpr red"████#{green"████#{yellow"████"}████"}████"
+    # info 'Ω__61',     red"█#{'▒'}█#{ 'GREEN' }###"
+    # info 'Ω__62', rpr red"█#{'▒'}█#{ 'GREEN' }###"
+    info 'Ω__63',     red"████#{green"████#{yellow"████"}████"}████"
+    info 'Ω__64', rpr red"████#{green"████#{yellow"████"}████"}████"
     return null
   return null
+
+
 
 # { Chalk: [class Chalk], __esModule: true,
 #   backgroundColorNames: [ 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
@@ -267,7 +324,7 @@ if module is require.main then await do =>
   echo()
   demo_colorful_proxy()
   echo()
-  demo_commutator()
+  demo_proxy_as_html_producer()
   echo()
   demo_picocolors_chalk()
   echo()

@@ -1,6 +1,19 @@
 (async function() {
+  //.........................................................................................................
+  // @blink                    = "\x1b[5m"
+  // @bold                     = "\x1b[1m"
+  // @reverse                  = "\x1b[7m"
+  // @underline                = "\x1b[4m"
+
+  // #-----------------------------------------------------------------------------------------------------------
+  // # Effects Off
+  // #...........................................................................................................
+  // @no_blink                 = "\x1b[25m"
+  // @no_bold                  = "\x1b[22m"
+  // @no_reverse               = "\x1b[27m"
+  // @no_underline             = "\x1b[24m"
   'use strict';
-  var C, GUY, alert, debug, demo_colorful_proxy, demo_commutator, demo_picocolors_chalk, demo_proxy, echo, f, gold, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GUY, alert, debug, demo_colorful_proxy, demo_picocolors_chalk, demo_proxy, demo_proxy_as_html_producer, echo, f, gold, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -21,19 +34,29 @@
 
   //===========================================================================================================
   demo_proxy = function() {
-    /* Building the chain: */
-    var base, chain, new_infiniproxy, p, stack, template;
+    var base, get_proxy, new_infiniproxy, stack, template;
     stack = [];
+    get_proxy = Symbol('get_proxy');
     //.........................................................................................................
     template = {
       base: null,
-      is_initial: false
+      is_initial: true,
+      empty_stack_on_new_chain: true
     };
     //.........................................................................................................
     new_infiniproxy = nfa({template}, function(base, is_initial, cfg) {
       var R, proxy;
+      if (!cfg.empty_stack_on_new_chain) {
+        is_initial = false;
+      }
       proxy = new Proxy(base, {
         get: function(target, key) {
+          if (key === get_proxy) {
+            return new_infiniproxy({
+              base,
+              is_initial: false
+            });
+          }
           if ((typeof key) === 'symbol') {
             return target[key];
           }
@@ -57,41 +80,234 @@
     //.........................................................................................................
     base = function(...P) {
       var R;
-      // debug 'Ω___1', P
       R = `${stack.join('.')}::${rpr(P)}`;
       stack.length = 0;
       return R;
     };
-    p = new_infiniproxy(base, {
-      is_initial: true
+    (() => {      //.........................................................................................................
+      /* These calls will be `stack`ed but then get thrown away as soon as any property of `p` is used: */
+      var p;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      p = new_infiniproxy(base, {
+        empty_stack_on_new_chain: true
+      });
+      /* default */      p.ooops;
+      debug('Ω___1', stack);
+      p.wat;
+      debug('Ω___2', stack);
+      p.nö;
+      debug('Ω___3', stack);
+      info('Ω___4', p.more_of_this`some text`);
+      debug('Ω___5', stack);
+      return null;
+    })();
+    (() => {      //.........................................................................................................
+      /* These calls will be `stack`ed and remain on the stack until `p` is called: */
+      var p;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      p = new_infiniproxy(base, {
+        empty_stack_on_new_chain: false
+      });
+      /* opt-in */      p.ooops;
+      debug('Ω___6', stack);
+      p.wat;
+      debug('Ω___7', stack);
+      p.nö;
+      debug('Ω___8', stack);
+      info('Ω___9', p.more_of_this`some text`);
+      debug('Ω__10', stack);
+      return null;
+    })();
+    (() => {      //.........................................................................................................
+      /* But if needed, can always reference a proxy from an intermediate result and build a property chain
+         on that; here we used a special unique value `get_proxy` that produces an intermediate result *without*
+         adding it to the property chain: */
+      var p, proxy;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      p = new_infiniproxy(base);
+      info('Ω__11', p.red.bold.underline`some text`);
+      /* Some random property retrievals without call... */
+      p.bold.underline;
+      p.strikethrough.inverse;
+      /* ...won't influence the meaning of the next property chain: */
+      info('Ω__12', p.yellow`finally, a call`);
+      proxy = p[get_proxy];
+      /* Imagine we go through some branching if/then clauses to decide whether to add some styles: */
+      proxy.bold.underline;
+      proxy.strikethrough;
+      proxy.inverse;
+      proxy.yellow;
+      /* Finally, we're ready to print: */
+      info('Ω__13', proxy`this will be printed in bold + underline + strikethrough + inverse + yellow`);
+      return null;
+    })();
+    return null;
+  };
+
+  //===========================================================================================================
+  demo_proxy_as_html_producer = function() {
+    /* NOTE in order for nested calls to properly work, it looks like we need a stack of stacks;
+     currently
+     ```
+     H.div"this stuff is #{H.span"cool!"}"
+     ```
+     returns an empty string.
+     */
+    var get_proxy, new_infiniproxy, properties, stack, template;
+    stack = [];
+    properties = new Map();
+    get_proxy = Symbol('get_proxy');
+    //.........................................................................................................
+    template = {
+      base: null,
+      is_initial: true,
+      empty_stack_on_new_chain: true
+    };
+    //.........................................................................................................
+    new_infiniproxy = nfa({template}, function(base, is_initial, cfg) {
+      var R, proxy;
+      if (!cfg.empty_stack_on_new_chain) {
+        is_initial = false;
+      }
+      proxy = new Proxy(base, {
+        get: function(target, key) {
+          if (key === get_proxy) {
+            return new_infiniproxy({
+              base,
+              is_initial: false
+            });
+          }
+          if ((typeof key) === 'symbol') {
+            return target[key];
+          }
+          if (Reflect.has(target, key)) {
+            return target[key];
+          }
+          if (is_initial) {
+            stack.length = 0;
+          }
+          stack.push(key);
+          return R;
+        }
+      });
+      if (is_initial) {
+        R = new_infiniproxy({
+          base,
+          is_initial: false
+        });
+      } else {
+        R = proxy;
+      }
+      return proxy;
     });
-    debug('Ω___2', p);
-    debug('Ω___3', p.arc);
-    info('Ω___4', p.arc.bo.cy(8));
-    //.........................................................................................................
-    /* These calls will be `stack`ed but then get thrown away as soon as any property of `p` is used: */
-    p.ooops;
-    debug('Ω___5', stack);
-    p.wat;
-    debug('Ω___6', stack);
-    p.nö;
-    debug('Ω___7', stack);
-    info('Ω___8', p`some text`);
-    debug('Ω___9', stack);
-    //.........................................................................................................
-    info('Ω__10', p.arc.bo.cy`some text`);
-    info('Ω__11', p.arc.bo.cy.dean.blah`some text`);
-    chain = p.arc.bo.cy;
-    chain.dean.blah;
-    chain.and.then.some;
-    info('Ω__12', p("finally, a call"));
+    (() => {      //.........................................................................................................
+      var H, render_html, tag_function;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      //.......................................................................................................
+      tag_function = function(parts, ...expressions) {
+        var R, expression, i, idx, len;
+        debug('Ω__14', arguments);
+        R = parts[0];
+        for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
+          expression = expressions[idx];
+          R += expression.toString() + parts[idx + 1];
+        }
+        R = R.replace(/&/g, '&amp;');
+        R = R.replace(/</g, '&lt;');
+        R = R.replace(/>/g, '&gt;');
+        return R;
+      };
+      //.......................................................................................................
+      render_html = function(...P) {
+        var R, class_names, class_rpr, is_template_call, p, tag_name, text;
+        is_template_call = (Array.isArray(P[0])) && (Object.isFrozen(P[0])) && (P[0].raw != null);
+        if (is_template_call) {
+          text = tag_function(...P);
+        } else {
+          switch (true) {
+            case P.length === 0:
+              text = '';
+              break;
+            case P.length === 1:
+              text = tag_function(P);
+              break;
+            default:
+              throw new Error("Ω__15 more than one argument not allowed");
+          }
+        }
+        // debug 'Ω__16', { is_template_call, text, }
+        //.....................................................................................................
+        R = [];
+        if (stack.length > 0) {
+          tag_name = stack.shift();
+          if (stack.length > 0) {
+            class_names = stack.join(' ');
+            class_rpr = ` class='${class_names}'`;
+          } else {
+            class_rpr = '';
+          }
+          //...................................................................................................
+          R.push("<");
+          R.push(tag_name);
+          R.push(class_rpr);
+          //...................................................................................................
+          /* properties: */
+          p = (() => {
+            /* TAINT must escape, quote value */
+            var _p, property_name, property_value, property_value_rpr, x;
+            if (properties.size === 0) {
+              return '';
+            }
+            _p = [];
+            for (x of properties.entries()) {
+              [property_name, property_value] = x;
+              property_value_rpr = property_value.replace(/'/g, '&apos;');
+              _p.push(`${property_name}='${property_value_rpr}'`);
+            }
+            properties.clear();
+            return ' ' + _p.join(' ');
+          })();
+          //...................................................................................................
+          R.push(p);
+          R.push(">");
+          R.push(text);
+          R.push("</");
+          R.push(tag_name);
+          R.push(">");
+        }
+        //.....................................................................................................
+        stack.length = 0;
+        urge('Ω__10', R);
+        return R.join('');
+      };
+      //.......................................................................................................
+      render_html.on_click = function(action) {
+        if (Array.isArray(action)) {
+          action = action[0];
+        }
+        properties.set('on_click', action);
+        return this;
+      };
+      //.......................................................................................................
+      H = new_infiniproxy(render_html);
+      info('Ω__17', H.div.big.important`some <arbitrary> text`);
+      info('Ω__18', H.div.big.important("some <arbitrary> text"));
+      info('Ω__19', H.on_click`send_form()`.xxx);
+      /* TAINT wrong result */      info('Ω__20', H.div.on_click`send_form()`.big.important`this value is ${true}`);
+      info('Ω__21', H.span`cool!`);
+      info('Ω__22', H.div`this stuff is ${"cool!"}`);
+      info('Ω__23', H.div`this stuff is ${H.span`cool!`}`);
+      info('Ω__24', H.div.on_click`send_form()``this stuff is ${H.span`cool!`}`);
+      info('Ω__25', H.div.on_click`send_form()`.big.important`this stuff is ${H.span`cool!`}`);
+      return null;
+    })();
     return null;
   };
 
   //===========================================================================================================
   demo_colorful_proxy = function() {
     /* Building the chain: */
-    var TMP_error, base, chain, extension, new_infiniproxy, p, stack, template;
+    var TMP_error, base, chain, new_infiniproxy, p, stack, template;
     TMP_error = class TMP_error extends Error {};
     stack = [];
     //.........................................................................................................
@@ -109,7 +325,7 @@
             return target[key];
           }
           if (!Reflect.has(bearer, key)) {
-            throw new TMP_error(`Ω__13 unknown key ${rpr(key)}`);
+            throw new TMP_error(`Ω__26 unknown key ${rpr(key)}`);
           }
           if (is_initial) {
             stack.length = 0;
@@ -140,158 +356,30 @@
       return R;
     };
     //.........................................................................................................
-    // @blink                    = "\x1b[5m"
-    // @bold                     = "\x1b[1m"
-    // @reverse                  = "\x1b[7m"
-    // @underline                = "\x1b[4m"
-
-    // #-----------------------------------------------------------------------------------------------------------
-    // # Effects Off
-    // #...........................................................................................................
-    // @no_blink                 = "\x1b[25m"
-    // @no_bold                  = "\x1b[22m"
-    // @no_reverse               = "\x1b[27m"
-    // @no_underline             = "\x1b[24m"
-    //.........................................................................................................
-    // C =
-    //   blink: ( x ) ->
-    //     debug 'Ω__14', rpr x
-    //     return '---'
-    // Object.setPrototypeOf C, C
-    extension = {
-      blink: function(x) {
-        debug('Ω__15', rpr(x));
-        return '---';
-      }
-    };
-    //.........................................................................................................
     p = new_infiniproxy(C, base, {
       is_initial: true
     });
-    info('Ω__16', p.green.bold.inverse(" holy moly "));
-    // info 'Ω__17', p.green.bold.inverse.blink " holy moly "
+    info('Ω__27', p.green.bold.inverse(" holy moly "));
     //.........................................................................................................
-    info('Ω__18', p.yellow.italic`some text`);
-    info('Ω__19', p.green.bold.inverse.underline`some text`);
+    info('Ω__28', p.yellow.italic`some text`);
+    info('Ω__29', p.green.bold.inverse.underline`some text`);
     chain = p.cyan.bold;
     chain.underline;
-    info('Ω__20', p("finally, a call"));
-    return null;
-  };
-
-  //===========================================================================================================
-  demo_commutator = function() {
-    var Commutator, TMP_no_such_key_error, a, b, c, misfit;
-    TMP_no_such_key_error = class TMP_no_such_key_error extends Error {};
-    misfit = Symbol('misfit');
-    //===========================================================================================================
-    Commutator = class Commutator {
-      //---------------------------------------------------------------------------------------------------------
-      constructor() {
-        this.bearers = [];
-        this.cache = new Map();
-        return void 0;
-      }
-
-      //---------------------------------------------------------------------------------------------------------
-      add_bearer(x) {
-        this.bearers.unshift(x);
-        return null;
-      }
-
-      //---------------------------------------------------------------------------------------------------------
-      get(key, fallback = misfit) {
-        var R, bearer, i, len, ref;
-        if ((R = this.cache.get(key)) != null) {
-          return R;
-        }
-        ref = this.bearers;
-        for (i = 0, len = ref.length; i < len; i++) {
-          bearer = ref[i];
-          if (!Reflect.has(bearer, key)) {
-            continue;
-          }
-          this.cache.set(key, R = {
-            bearer,
-            value: bearer[key]
-          });
-          return R;
-        }
-        if (fallback !== misfit) {
-          return fallback;
-        }
-        throw new TMP_no_such_key_error(`Ω__21 unknown key ${rpr(key)}`);
-      }
-
-    };
-    //===========================================================================================================
-    a = {
-      k: 'K',
-      l: 'not this'
-    };
-    b = {
-      l: 'L'
-    };
-    c = new Commutator();
-    c.add_bearer(a);
-    c.add_bearer(b);
-    debug('Ω__22', c.get('ttt', null));
-    debug('Ω__23', c.get('k'));
-    debug('Ω__24', c.get('l'));
+    info('Ω__30', p("finally, a call"));
     return null;
   };
 
   //===========================================================================================================
   demo_picocolors_chalk = function() {
     (() => {
-      // info 'Ω__25',     C.yellow"█▒█"
-      // info 'Ω__26',     C.yellow"█#{ C.green"▒" }█"
-      info('Ω__27', C.red`█${C.green`▒`}█${C.green('GREEN')}###`);
-      // info 'Ω__28', rpr C.yellow"█▒█"
-      // info 'Ω__29', rpr C.yellow"█#{ C.green"▒" }█"
-      info('Ω__30', rpr(C.red`█${C.green`▒`}█${C.green('GREEN')}###`));
-      info('Ω__31', C.red`████${C.green`████${C.yellow`████`}████`}████`);
-      info('Ω__32', rpr(C.red`████${C.green`████${C.yellow`████`}████`}████`));
-      return null;
-    })();
-    (() => {      // do =>
-      //   P = require 'picocolors'
-      //   info 'Ω__33',     P.yellow"█▒█"
-      //   info 'Ω__34',     P.yellow"█#{ P.green"▒" }█"
-      //   info 'Ω__35',     P.red"█#{    P.green"▒" }█"
-      //   info 'Ω__36', rpr P.yellow"█▒█"
-      //   info 'Ω__37', rpr P.yellow"█#{ P.green"▒" }█"
-      //   info 'Ω__38', rpr P.red"█#{    P.green"▒" }█"
-      //   return null
-      var H, color_off, green_on, hcolor, inner_on, outer_on, red_on;
-      H = (require('chalk')).default;
-      //-----------------------------------------------------------------------------------------------------------
-      red_on = '\x1B[31m';
-      green_on = '\x1B[32m';
-      color_off = '\x1B[39m';
-      outer_on = red_on;
-      inner_on = green_on;
-      hcolor = function(parts, ...expressions) {
-        var R, expression, i, idx, len;
-        R = outer_on + parts[0];
-        for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
-          expression = expressions[idx];
-          R += (inner_on + expression.toString()) + (outer_on + parts[idx + 1]);
-        }
-        return R + color_off;
-      };
-      // info 'Ω__39',     hcolor"█"
-      // info 'Ω__40',     hcolor"█#{'▒'}"
-      info('Ω__41', hcolor`█${'▒'}█${'GREEN'}###`);
-      // info 'Ω__42', rpr hcolor"█"
-      // info 'Ω__43', rpr hcolor"█#{'▒'}"
-      info('Ω__44', rpr(hcolor`█${'▒'}█${'GREEN'}###`));
-      // info 'Ω__45',     H.yellow"█▒█"
-      // info 'Ω__46',     H.yellow"█#{ H.green"▒" }█"
-      // info 'Ω__47',     H.red"█#{    H.green"▒" }█"
-      // info 'Ω__48', rpr H.yellow"█▒█"
-      // info 'Ω__49', rpr H.yellow"█#{ H.green"▒" }█"
-      // info 'Ω__50', rpr H.red"█#{    H.green"▒" }█"
+      // info 'Ω__35',     C.yellow"█▒█"
+      // info 'Ω__36',     C.yellow"█#{ C.green"▒" }█"
+      info('Ω__37', C.red`█${C.green`▒`}█${C.green('GREEN')}###`);
+      // info 'Ω__38', rpr C.yellow"█▒█"
+      // info 'Ω__39', rpr C.yellow"█#{ C.green"▒" }█"
+      info('Ω__40', rpr(C.red`█${C.green`▒`}█${C.green('GREEN')}###`));
+      info('Ω__41', C.red`████${C.green`████${C.yellow`████`}████`}████`);
+      info('Ω__42', rpr(C.red`████${C.green`████${C.yellow`████`}████`}████`));
       return null;
     })();
     (() => {
@@ -322,10 +410,10 @@
       red = colorizer_from_color_code(color_codes.red);
       green = colorizer_from_color_code(color_codes.green);
       yellow = colorizer_from_color_code(color_codes.yellow);
-      // info 'Ω__41',     red"█#{'▒'}█#{ 'GREEN' }###"
-      // info 'Ω__44', rpr red"█#{'▒'}█#{ 'GREEN' }###"
-      info('Ω__31', red`████${green`████${yellow`████`}████`}████`);
-      info('Ω__31', rpr(red`████${green`████${yellow`████`}████`}████`));
+      // info 'Ω__61',     red"█#{'▒'}█#{ 'GREEN' }###"
+      // info 'Ω__62', rpr red"█#{'▒'}█#{ 'GREEN' }###"
+      info('Ω__63', red`████${green`████${yellow`████`}████`}████`);
+      info('Ω__64', rpr(red`████${green`████${yellow`████`}████`}████`));
       return null;
     })();
     return null;
@@ -347,7 +435,7 @@
       echo();
       demo_colorful_proxy();
       echo();
-      demo_commutator();
+      demo_proxy_as_html_producer();
       echo();
       demo_picocolors_chalk();
       return echo();
