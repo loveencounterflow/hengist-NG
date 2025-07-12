@@ -13,14 +13,14 @@
   // @no_reverse               = "\x1b[27m"
   // @no_underline             = "\x1b[24m"
   'use strict';
-  var C, GUY, alert, debug, demo_colorful_proxy, demo_picocolors_chalk, demo_proxy, demo_proxy_as_html_producer, echo, f, gold, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GUY, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
 
   ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('demo-proxy'));
 
-  ({rpr, inspect, echo, white, gold, red, reverse, log} = GUY.trm);
+  ({rpr, inspect, echo, white, blue, gold, grey, red, bold, reverse, log} = GUY.trm);
 
   ({f} = require('../../../apps/effstring'));
 
@@ -33,7 +33,7 @@
   ({nfa} = require('../../../apps/normalize-function-arguments'));
 
   //===========================================================================================================
-  demo_proxy = function() {
+  demo_infinite_proxy = function() {
     var base, get_proxy, new_infiniproxy, stack, template;
     stack = [];
     get_proxy = Symbol('get_proxy');
@@ -144,165 +144,44 @@
     return null;
   };
 
-  //===========================================================================================================
-  demo_proxy_as_html_producer = function() {
-    /* NOTE in order for nested calls to properly work, it looks like we need a stack of stacks;
-     currently
-     ```
-     H.div"this stuff is #{H.span"cool!"}"
-     ```
-     returns an empty string.
-     */
-    var get_proxy, new_infiniproxy, properties, stack, template;
-    stack = [];
-    properties = new Map();
-    get_proxy = Symbol('get_proxy');
-    //.........................................................................................................
-    template = {
-      base: null,
-      is_initial: true,
-      empty_stack_on_new_chain: true
-    };
-    //.........................................................................................................
-    new_infiniproxy = nfa({template}, function(base, is_initial, cfg) {
-      var R, proxy;
-      if (!cfg.empty_stack_on_new_chain) {
-        is_initial = false;
-      }
-      proxy = new Proxy(base, {
-        get: function(target, key) {
-          if (key === get_proxy) {
-            return new_infiniproxy({
-              base,
-              is_initial: false
-            });
-          }
-          if ((typeof key) === 'symbol') {
-            return target[key];
-          }
-          if (Reflect.has(target, key)) {
-            return target[key];
-          }
-          if (is_initial) {
-            stack.length = 0;
-          }
-          stack.push(key);
-          return R;
-        }
-      });
-      if (is_initial) {
-        R = new_infiniproxy({
-          base,
-          is_initial: false
-        });
-      } else {
-        R = proxy;
-      }
-      return proxy;
-    });
-    (() => {      //.........................................................................................................
-      var H, render_html, tag_function;
-      echo('——————————————————————————————————————————————————————————————————————————————');
-      //.......................................................................................................
-      tag_function = function(parts, ...expressions) {
-        var R, expression, i, idx, len;
-        debug('Ω__14', arguments);
-        R = parts[0];
-        for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
-          expression = expressions[idx];
-          R += expression.toString() + parts[idx + 1];
-        }
-        R = R.replace(/&/g, '&amp;');
-        R = R.replace(/</g, '&lt;');
-        R = R.replace(/>/g, '&gt;');
-        return R;
-      };
-      //.......................................................................................................
-      render_html = function(...P) {
-        var R, class_names, class_rpr, is_template_call, p, tag_name, text;
-        is_template_call = (Array.isArray(P[0])) && (Object.isFrozen(P[0])) && (P[0].raw != null);
-        if (is_template_call) {
-          text = tag_function(...P);
-        } else {
-          switch (true) {
-            case P.length === 0:
-              text = '';
-              break;
-            case P.length === 1:
-              text = tag_function(P);
-              break;
-            default:
-              throw new Error("Ω__15 more than one argument not allowed");
-          }
-        }
-        // debug 'Ω__16', { is_template_call, text, }
-        //.....................................................................................................
-        R = [];
-        if (stack.length > 0) {
-          tag_name = stack.shift();
-          if (stack.length > 0) {
-            class_names = stack.join(' ');
-            class_rpr = ` class='${class_names}'`;
-          } else {
-            class_rpr = '';
-          }
-          //...................................................................................................
-          R.push("<");
-          R.push(tag_name);
-          R.push(class_rpr);
-          //...................................................................................................
-          /* properties: */
-          p = (() => {
-            /* TAINT must escape, quote value */
-            var _p, property_name, property_value, property_value_rpr, x;
-            if (properties.size === 0) {
-              return '';
-            }
-            _p = [];
-            for (x of properties.entries()) {
-              [property_name, property_value] = x;
-              property_value_rpr = property_value.replace(/'/g, '&apos;');
-              _p.push(`${property_name}='${property_value_rpr}'`);
-            }
-            properties.clear();
-            return ' ' + _p.join(' ');
-          })();
-          //...................................................................................................
-          R.push(p);
-          R.push(">");
-          R.push(text);
-          R.push("</");
-          R.push(tag_name);
-          R.push(">");
-        }
-        //.....................................................................................................
-        stack.length = 0;
-        urge('Ω__10', R);
-        return R.join('');
-      };
-      //.......................................................................................................
-      render_html.on_click = function(action) {
-        if (Array.isArray(action)) {
-          action = action[0];
-        }
-        properties.set('on_click', action);
-        return this;
-      };
-      //.......................................................................................................
-      H = new_infiniproxy(render_html);
-      info('Ω__17', H.div.big.important`some <arbitrary> text`);
-      info('Ω__18', H.div.big.important("some <arbitrary> text"));
-      info('Ω__19', H.on_click`send_form()`.xxx);
-      /* TAINT wrong result */      info('Ω__20', H.div.on_click`send_form()`.big.important`this value is ${true}`);
-      info('Ω__21', H.span`cool!`);
-      info('Ω__22', H.div`this stuff is ${"cool!"}`);
-      info('Ω__23', H.div`this stuff is ${H.span`cool!`}`);
-      info('Ω__24', H.div.on_click`send_form()``this stuff is ${H.span`cool!`}`);
-      info('Ω__25', H.div.on_click`send_form()`.big.important`this stuff is ${H.span`cool!`}`);
-      return null;
-    })();
-    return null;
-  };
+  // #===========================================================================================================
+  // demo_picocolors_chalk = ->
+  //   do =>
+  //     # info 'Ω__14',     C.yellow"█▒█"
+  //     # info 'Ω__15',     C.yellow"█#{ C.green"▒" }█"
+  //     info 'Ω__16',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+  //     # info 'Ω__17', rpr C.yellow"█▒█"
+  //     # info 'Ω__18', rpr C.yellow"█#{ C.green"▒" }█"
+  //     info 'Ω__19', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+  //     info 'Ω__20',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+  //     info 'Ω__21', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+  //     return null
+  //   do =>
+  //     #-----------------------------------------------------------------------------------------------------------
+  //     color_codes =
+  //       red:    '\x1B[31m'
+  //       green:  '\x1B[32m'
+  //       yellow: '\x1B[33m'
+  //     color_off = '\x1B[39m'
+  //     #.......................................................................................................
+  //     colorizer_from_color_code = ( color_code ) ->
+  //       R = ( parts, expressions... ) ->
+  //         R = color_code + parts[ 0 ]
+  //         for expression, idx in expressions
+  //           inner = expression.toString().replace /\x1B\[39m$/, ''
+  //           R += ( inner ) + ( color_code + parts[ idx + 1 ] )
+  //         return R + color_off
+  //       return R
+  //     #.......................................................................................................
+  //     red     = colorizer_from_color_code color_codes.red
+  //     green   = colorizer_from_color_code color_codes.green
+  //     yellow  = colorizer_from_color_code color_codes.yellow
+  //     # info 'Ω__22',     red"█#{'▒'}█#{ 'GREEN' }###"
+  //     # info 'Ω__23', rpr red"█#{'▒'}█#{ 'GREEN' }###"
+  //     info 'Ω__24',     red"████#{green"████#{yellow"████"}████"}████"
+  //     info 'Ω__25', rpr red"████#{green"████#{yellow"████"}████"}████"
+  //     return null
+  //   return null
 
   //===========================================================================================================
   demo_colorful_proxy = function() {
@@ -370,74 +249,218 @@
   };
 
   //===========================================================================================================
-  demo_picocolors_chalk = function() {
-    (() => {
-      // info 'Ω__35',     C.yellow"█▒█"
-      // info 'Ω__36',     C.yellow"█#{ C.green"▒" }█"
-      info('Ω__37', C.red`█${C.green`▒`}█${C.green('GREEN')}###`);
-      // info 'Ω__38', rpr C.yellow"█▒█"
-      // info 'Ω__39', rpr C.yellow"█#{ C.green"▒" }█"
-      info('Ω__40', rpr(C.red`█${C.green`▒`}█${C.green('GREEN')}###`));
-      info('Ω__41', C.red`████${C.green`████${C.yellow`████`}████`}████`);
-      info('Ω__42', rpr(C.red`████${C.green`████${C.yellow`████`}████`}████`));
-      return null;
-    })();
-    (() => {
-      var color_codes, color_off, colorizer_from_color_code, green, yellow;
-      //-----------------------------------------------------------------------------------------------------------
-      color_codes = {
-        red: '\x1B[31m',
-        green: '\x1B[32m',
-        yellow: '\x1B[33m'
-      };
-      color_off = '\x1B[39m';
-      //.......................................................................................................
-      colorizer_from_color_code = function(color_code) {
-        var R;
-        R = function(parts, ...expressions) {
-          var expression, i, idx, inner, len;
-          R = color_code + parts[0];
-          for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
-            expression = expressions[idx];
-            inner = expression.toString().replace(/\x1B\[39m$/, '');
-            R += inner + (color_code + parts[idx + 1]);
+  demo_proxy_as_html_producer = function() {
+    var get_proxy, get_stack, new_infiniproxy, pop_old_stack, properties, push_new_stack, stackofstacks, template;
+    /* NOTE in order for nested calls to properly work, it looks like we need a stack of stacks;
+     currently
+     ```
+     H.div"this stuff is #{H.span"cool!"}"
+     ```
+     returns an empty string.
+     */
+    // stack         = []
+    stackofstacks = [];
+    get_stack = function() {
+      return stackofstacks.at(-1);
+    };
+    push_new_stack = function() {
+      stackofstacks.push([]);
+      return get_stack();
+    };
+    pop_old_stack = function() {
+      return stackofstacks.pop();
+    };
+    // push_new_stack()
+    properties = new Map();
+    get_proxy = Symbol('get_proxy');
+    //.........................................................................................................
+    template = {
+      base: null,
+      is_initial: true,
+      empty_stack_on_new_chain: true
+    };
+    //.........................................................................................................
+    new_infiniproxy = nfa({template}, function(base, is_initial, cfg) {
+      var R, proxy;
+      if (!cfg.empty_stack_on_new_chain) {
+        is_initial = false;
+      }
+      proxy = new Proxy(base, {
+        get: function(target, key) {
+          var XXX_before, XXX_mark, XXX_stack, ref, ref1;
+          if (key === get_proxy) {
+            return new_infiniproxy({
+              base,
+              is_initial: false
+            });
           }
-          return R + color_off;
-        };
+          if ((typeof key) === 'symbol') {
+            return target[key];
+          }
+          if (Reflect.has(target, key)) {
+            return target[key];
+          }
+          XXX_before = ((ref = get_stack()) != null ? ref : []).slice(0);
+          if (is_initial) {
+            // stack.length = 0
+            push_new_stack();
+          }
+          get_stack().push(key);
+          XXX_mark = is_initial ? reverse(red(bold(' I '))) : reverse(white(bold(' S ')));
+          XXX_stack = ((ref1 = get_stack()) != null ? ref1 : []).slice(0);
+          debug('Ω__31', XXX_mark, 'key:', rpr(key), 'before:', gold(rpr(XXX_before.join('.'))), 'after:', blue(rpr(XXX_stack.join('.'))));
+          return R;
+        }
+      });
+      if (is_initial) {
+        R = new_infiniproxy({
+          base,
+          is_initial: false
+        });
+      } else {
+        R = proxy;
+      }
+      return proxy;
+    });
+    (() => {      //.........................................................................................................
+      var H, Raw, escape_html_text, render_html, tag_function;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      //.......................................................................................................
+      Raw = class Raw {
+        constructor(text) {
+          this.data = text;
+          return void 0;
+        }
+
+        toString() {
+          return this.data;
+        }
+
+      };
+      //.......................................................................................................
+      escape_html_text = function(text) {
+        var R;
+        R = text;
+        R = R.replace(/&/g, '&amp;');
+        R = R.replace(/</g, '&lt;');
+        R = R.replace(/>/g, '&gt;');
         return R;
       };
       //.......................................................................................................
-      red = colorizer_from_color_code(color_codes.red);
-      green = colorizer_from_color_code(color_codes.green);
-      yellow = colorizer_from_color_code(color_codes.yellow);
-      // info 'Ω__61',     red"█#{'▒'}█#{ 'GREEN' }###"
-      // info 'Ω__62', rpr red"█#{'▒'}█#{ 'GREEN' }###"
-      info('Ω__63', red`████${green`████${yellow`████`}████`}████`);
-      info('Ω__64', rpr(red`████${green`████${yellow`████`}████`}████`));
+      tag_function = function(parts, ...expressions) {
+        var R, expression, expression_rpr, i, idx, len;
+        debug('Ω__32', expressions);
+        R = parts[0];
+        for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
+          expression = expressions[idx];
+          expression_rpr = expression.toString();
+          if (!(expression instanceof Raw)) {
+            expression_rpr = escape_html_text(expression_rpr);
+          }
+          R += expression_rpr + parts[idx + 1];
+        }
+        return R;
+      };
+      //.......................................................................................................
+      render_html = function(...P) {
+        var R, class_names, class_rpr, is_template_call, p, stack, tag_name, text;
+        stack = get_stack();
+        pop_old_stack();
+        urge('Ω__33', gold(reverse(bold({stack}))));
+        is_template_call = (Array.isArray(P[0])) && (Object.isFrozen(P[0])) && (P[0].raw != null);
+        if (is_template_call) {
+          text = tag_function(...P);
+        } else {
+          switch (true) {
+            case P.length === 0:
+              text = '';
+              break;
+            case P.length === 1:
+              text = tag_function(P);
+              break;
+            default:
+              throw new Error("Ω__34 more than one argument not allowed");
+          }
+        }
+        // debug 'Ω__35', { is_template_call, text, }
+        //.....................................................................................................
+        R = [];
+        if (stack.length > 0) {
+          tag_name = stack.shift();
+          if (stack.length > 0) {
+            class_names = stack.join(' ');
+            class_rpr = ` class='${class_names}'`;
+          } else {
+            class_rpr = '';
+          }
+          //...................................................................................................
+          R.push("<");
+          R.push(tag_name);
+          R.push(class_rpr);
+          //...................................................................................................
+          /* properties: */
+          p = (() => {
+            /* TAINT must escape, quote value */
+            var _p, property_name, property_value, property_value_rpr, x;
+            if (properties.size === 0) {
+              return '';
+            }
+            _p = [];
+            for (x of properties.entries()) {
+              [property_name, property_value] = x;
+              property_value_rpr = property_value.replace(/'/g, '&apos;');
+              _p.push(`${property_name}='${property_value_rpr}'`);
+            }
+            properties.clear();
+            return ' ' + _p.join(' ');
+          })();
+          //...................................................................................................
+          R.push(p);
+          R.push(">");
+          R.push(text);
+          R.push("</");
+          R.push(tag_name);
+          R.push(">");
+        }
+        //.....................................................................................................
+        stack.length = 0;
+        urge('Ω__36', R);
+        R = R.join('');
+        if (stackofstacks.length !== 0) {
+          R = new Raw(R);
+        }
+        return R;
+      };
+      //.......................................................................................................
+      render_html.on_click = function(action) {
+        if (Array.isArray(action)) {
+          action = action[0];
+        }
+        properties.set('on_click', action);
+        return this;
+      };
+      //.......................................................................................................
+      H = new_infiniproxy(render_html);
+      // info 'Ω__37', H.div.big.important"some <arbitrary> text"
+      // info 'Ω__38', H.div.big.important "some <arbitrary> text"
+      // info 'Ω__39', H.on_click'send_form()'.xxx ### TAINT wrong result ###
+      // info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
+      // info 'Ω__41', H.span"cool!"
+      // info 'Ω__42', H.div"this stuff is #{"cool!"}"
+      info('Ω__43', H.div.outer`this stuff is ${H.span.inner`cool!`}`);
+      // info 'Ω__44', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
+      // info 'Ω__45', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
       return null;
     })();
     return null;
   };
 
-  // { Chalk: [class Chalk], __esModule: true,
-  //   backgroundColorNames: [ 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
-  //   backgroundColors: [ 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
-  //   chalkStderr: { [Function: chalk] createChalk level: 3 },
-  //   colorNames: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright', 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
-  //   colors: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright', 'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite', 'bgBlackBright', 'bgGray', 'bgGrey', 'bgRedBright', 'bgGreenBright', 'bgYellowBright', 'bgBlueBright', 'bgMagentaBright', 'bgCyanBright', 'bgWhiteBright' ],
-  //   default: { [Function: chalk] createChalk level: 3 }, foregroundColorNames: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright' ], foregroundColors: [ 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'blackBright', 'gray', 'grey', 'redBright', 'greenBright', 'yellowBright', 'blueBright', 'magentaBright', 'cyanBright', 'whiteBright' ], modifierNames: [ 'reset', 'bold', 'dim', 'italic', 'underline', 'overline', 'inverse', 'hidden', 'strikethrough' ], modifiers: [ 'reset', 'bold', 'dim', 'italic', 'underline', 'overline', 'inverse', 'hidden', 'strikethrough' ], supportsColor: { level: 3, hasBasic: true, has256: true, has16m: true }, supportsColorStderr: { level: 3, hasBasic: true, has256: true, has16m: true } }
-
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      demo_proxy();
-      echo('——————————————————————————————————————————————————————————————————————————————');
-      echo();
-      demo_colorful_proxy();
-      echo();
+      // demo_infinite_proxy()
+      // demo_colorful_proxy()
       demo_proxy_as_html_producer();
-      echo();
-      demo_picocolors_chalk();
       return echo();
     })();
   }
