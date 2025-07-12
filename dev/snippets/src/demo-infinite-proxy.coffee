@@ -315,6 +315,7 @@ demo_proxy_as_html_producer = ->
       urge 'Ω__36', R
       R = R.join ''
       R = new Raw R if stackofstacks.length isnt 0
+      # R = new Raw R
       return R
     #.......................................................................................................
     render_html.on_click = ( action ) ->
@@ -322,7 +323,7 @@ demo_proxy_as_html_producer = ->
       properties.set 'on_click', action
       return @
     #.......................................................................................................
-    H = new_infiniproxy render_html
+    H   = new_infiniproxy render_html
     # info 'Ω__37', H.div.big.important"some <arbitrary> text"
     # info 'Ω__38', H.div.big.important "some <arbitrary> text"
     # info 'Ω__39', H.on_click'send_form()'.xxx ### TAINT wrong result ###
@@ -330,9 +331,10 @@ demo_proxy_as_html_producer = ->
     # info 'Ω__41', H.span"cool!"
     # info 'Ω__42', H.div"this stuff is #{"cool!"}"
     info 'Ω__43', H.div.outer"this stuff is #{H.span.inner"cool!"}"
-    info 'Ω__43', H.div.outer"press here: #{H.button.on_click'send_form'.red"cool!"}"
-    # info 'Ω__44', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
-    # info 'Ω__45', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
+    info 'Ω__44', button = new Raw H.button.on_click'send_form'.red"cool!"
+    info 'Ω__45', H.div.outer"press here: #{button}"
+    # info 'Ω__46', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
+    # info 'Ω__47', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
     return null
   return null
 

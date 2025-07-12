@@ -323,7 +323,7 @@
       return proxy;
     });
     (() => {      //.........................................................................................................
-      var H, Raw, escape_html_text, render_html, tag_function;
+      var H, Raw, button, escape_html_text, render_html, tag_function;
       echo('——————————————————————————————————————————————————————————————————————————————');
       //.......................................................................................................
       Raw = class Raw {
@@ -429,6 +429,7 @@
         if (stackofstacks.length !== 0) {
           R = new Raw(R);
         }
+        // R = new Raw R
         return R;
       };
       //.......................................................................................................
@@ -448,9 +449,10 @@
       // info 'Ω__41', H.span"cool!"
       // info 'Ω__42', H.div"this stuff is #{"cool!"}"
       info('Ω__43', H.div.outer`this stuff is ${H.span.inner`cool!`}`);
-      info('Ω__43', H.div.outer`press here: ${H.button.on_click`send_form`.red`cool!`}`);
-      // info 'Ω__44', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
-      // info 'Ω__45', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
+      info('Ω__44', button = new Raw(H.button.on_click`send_form`.red`cool!`));
+      info('Ω__45', H.div.outer`press here: ${button}`);
+      // info 'Ω__46', H.div.on_click'send_form()'"this stuff is #{H.span"cool!"}"
+      // info 'Ω__47', H.div.on_click'send_form()'.big.important"this stuff is #{H.span"cool!"}"
       return null;
     })();
     return null;
