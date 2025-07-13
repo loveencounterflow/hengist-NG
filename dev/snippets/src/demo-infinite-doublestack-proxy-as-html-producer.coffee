@@ -245,8 +245,7 @@ create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
   #.........................................................................................................
   html_safe_text_from_tagfun_call = create_text_from_tagfun_call ( expression ) ->
     R = "#{expression}"
-    if dont_escape?
-      R = escape_html_text R unless dont_escape expression
+    R = escape_html_text R if ( dont_escape? ) and ( not dont_escape expression )
     return R
   #.........................................................................................................
   return { html_safe_text_from_tagfun_call, }

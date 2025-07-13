@@ -352,10 +352,8 @@
     html_safe_text_from_tagfun_call = create_text_from_tagfun_call(function(expression) {
       var R;
       R = `${expression}`;
-      if (dont_escape != null) {
-        if (!dont_escape(expression)) {
-          R = escape_html_text(R);
-        }
+      if ((dont_escape != null) && (!dont_escape(expression))) {
+        R = escape_html_text(R);
       }
       return R;
     });
