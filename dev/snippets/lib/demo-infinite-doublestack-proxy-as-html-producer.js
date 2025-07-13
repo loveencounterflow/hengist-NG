@@ -138,6 +138,21 @@
         }
 
         //---------------------------------------------------------------------------------------------------------
+        toString() {
+          var e;
+          return `[${((function() {
+            var i, len, ref, results;
+            ref = this.data;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+              e = ref[i];
+              results.push(`${e}`);
+            }
+            return results;
+          }).call(this)).join`.`}]`;
+        }
+
+        //---------------------------------------------------------------------------------------------------------
         push(x) {
           this.data.push(x);
           return null;
@@ -198,6 +213,15 @@
         constructor() {
           this.data = [];
           return void 0;
+        }
+
+        //---------------------------------------------------------------------------------------------------------
+        toString() {
+          if (this.length === 0) {
+            return "{ DS[] }";
+          } else {
+            return `{ DS[ ${this.length - 1} ] = ${this.peek_stack('[]')} }`;
+          }
         }
 
         //---------------------------------------------------------------------------------------------------------
@@ -270,6 +294,7 @@
       //.........................................................................................................
       extendended_base = function(...P) {
         var R;
+        debug('Ωidsp___7', "CALL");
         R = base(...P);
         doublestack.pop_old_stack();
         return R;
@@ -294,10 +319,12 @@
             if (Reflect.has(target, key)) {
               return target[key];
             }
+            debug('Ωidsp___8', doublestack.length, GUY.trm.gold(doublestack.toString()));
             if (cfg.is_initial) {
               doublestack.push_new_stack();
             }
             doublestack.peek_stack().push(key);
+            debug('Ωidsp___9', doublestack.length, GUY.trm.gold(doublestack.toString()));
             return R;
           }
         });
@@ -360,40 +387,40 @@
     var test_doublestack, test_doublestack_infiniproxy, test_escape_html_text, test_html_safe_text_from_tagfun_call, test_is_tagfun_call;
     //.........................................................................................................
     (test_is_tagfun_call = () => {
-      var fn, is_tagfun_call, Ωidsp___7, Ωidsp___8, Ωidsp___9;
+      var fn, is_tagfun_call, Ωidsp__10, Ωidsp__11, Ωidsp__12;
       ({is_tagfun_call} = require_tagfun_tools());
       fn = function(...P) {
         return is_tagfun_call(...P);
       };
-      this.eq((Ωidsp___7 = function() {
+      this.eq((Ωidsp__10 = function() {
         return fn();
       }), false);
-      this.eq((Ωidsp___8 = function() {
+      this.eq((Ωidsp__11 = function() {
         return fn([1, 2, 3]);
       }), false);
-      this.eq((Ωidsp___9 = function() {
+      this.eq((Ωidsp__12 = function() {
         return fn`[ 1, 2, 3, ]`;
       }), true);
       return null;
     })();
     //.........................................................................................................
     (test_escape_html_text = () => {
-      var escape_html_text, Ωidsp__10, Ωidsp__11, Ωidsp__12;
+      var escape_html_text, Ωidsp__13, Ωidsp__14, Ωidsp__15;
       ({escape_html_text} = require_escape_html_text());
-      this.eq((Ωidsp__10 = function() {
+      this.eq((Ωidsp__13 = function() {
         return escape_html_text('');
       }), '');
-      this.eq((Ωidsp__11 = function() {
+      this.eq((Ωidsp__14 = function() {
         return escape_html_text('abc');
       }), 'abc');
-      this.eq((Ωidsp__12 = function() {
+      this.eq((Ωidsp__15 = function() {
         return escape_html_text('abc<tag>d&e&f</tag>');
       }), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;');
       return null;
     })();
     //.........................................................................................................
     (test_html_safe_text_from_tagfun_call = () => {
-      var fn, html_safe_text_from_tagfun_call, Ωidsp__13, Ωidsp__14, Ωidsp__15, Ωidsp__16;
+      var fn, html_safe_text_from_tagfun_call, Ωidsp__16, Ωidsp__17, Ωidsp__18, Ωidsp__19;
       ({html_safe_text_from_tagfun_call} = (() => {
         var dont_escape_raw_instances;
         dont_escape_raw_instances = function(x) {
@@ -402,98 +429,101 @@
         return create_html_escaped_text_from_tagfun_call(dont_escape_raw_instances);
       })());
       fn = html_safe_text_from_tagfun_call;
-      this.eq((Ωidsp__13 = function() {
+      this.eq((Ωidsp__16 = function() {
         return fn``;
       }), '');
-      this.eq((Ωidsp__14 = function() {
+      this.eq((Ωidsp__17 = function() {
         return fn`abc`;
       }), 'abc');
-      this.eq((Ωidsp__15 = function() {
+      this.eq((Ωidsp__18 = function() {
         return fn`abc<tag>d&e&f</tag>`;
       }), 'abc<tag>d&e&f</tag>');
-      this.eq((Ωidsp__16 = function() {
+      this.eq((Ωidsp__19 = function() {
         return fn`(${'abc<tag>d&e&f</tag>'})`;
       }), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)');
       return null;
     })();
     //.........................................................................................................
     (test_doublestack = () => {
-      var Doublestack, Stack, ds, my_stack_1, my_stack_2, Ωidsp__17, Ωidsp__18, Ωidsp__19, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23;
+      var Doublestack, Stack, ds, my_stack_1, my_stack_2, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23, Ωidsp__24, Ωidsp__25, Ωidsp__26;
       ({Stack, Doublestack} = require_stack_classes());
       ds = new Doublestack();
       my_stack_1 = null;
       my_stack_2 = null;
-      this.eq((Ωidsp__17 = function() {
+      this.eq((Ωidsp__20 = function() {
         return ds.data;
       }), []);
-      this.eq((Ωidsp__18 = function() {
-        return ds.length;
-      }), 0);
-      this.eq((Ωidsp__19 = function() {
-        return ds.peek_stack(null);
-      }), null);
-      this.eq((Ωidsp__20 = function() {
-        return (my_stack_1 = ds.push_new_stack()) instanceof Stack;
-      }), true);
       this.eq((Ωidsp__21 = function() {
         return ds.length;
-      }), 1);
+      }), 0);
       this.eq((Ωidsp__22 = function() {
+        return ds.peek_stack(null);
+      }), null);
+      this.eq((Ωidsp__23 = function() {
+        return (my_stack_1 = ds.push_new_stack()) instanceof Stack;
+      }), true);
+      this.eq((Ωidsp__24 = function() {
+        return ds.length;
+      }), 1);
+      this.eq((Ωidsp__25 = function() {
         return (my_stack_2 = ds.peek_stack()) instanceof Stack;
       }), true);
-      this.eq((Ωidsp__23 = function() {
+      this.eq((Ωidsp__26 = function() {
         return my_stack_1 === my_stack_2;
       }), true);
       return null;
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var base, create_doublestack_infiniproxy, doublestack, is_tagfun_call, proxy, text_from_tagfun_call, Ωidsp__29, Ωidsp__30, Ωidsp__31, Ωidsp__32, Ωidsp__33, Ωidsp__34;
+      var base, create_doublestack_infiniproxy, doublestack, is_tagfun_call, proxy, text_from_tagfun_call, Ωidsp__32, Ωidsp__33, Ωidsp__34, Ωidsp__35, Ωidsp__36, Ωidsp__37;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({text_from_tagfun_call} = require_tagfun_tools());
       //.......................................................................................................
       base = function(...P) {
         if (!is_tagfun_call(...P)) {
-          throw new Error("Ωidsp__24 only allowed to be used as tagged template function call (tagfun call)");
+          throw new Error("Ωidsp__27 only allowed to be used as tagged template function call (tagfun call)");
         }
-        // debug 'Ωidsp__25', text_from_tagfun_call P...
+        // debug 'Ωidsp__28', text_from_tagfun_call P...
         return '[' + (doublestack.peek_stack().data.join('.')) + ':' + (text_from_tagfun_call(...P)) + ']';
       };
       //.......................................................................................................
       ({proxy, doublestack} = create_doublestack_infiniproxy(base));
-      info('Ωidsp__26', rpr(proxy.gold.bold.underlined`text 1`));
-      info('Ωidsp__27', rpr(proxy.red.reverse.italic`text 2`));
-      info('Ωidsp__28', rpr(proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`));
+      info('Ωidsp__29', rpr(proxy.gold.bold.underlined`text 1`));
+      info('Ωidsp__30', rpr(proxy.red.reverse.italic`text 2`));
+      info('Ωidsp__31', rpr(proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`));
       //.......................................................................................................
-      this.eq((Ωidsp__29 = function() {
+      this.eq((Ωidsp__32 = function() {
         return proxy.gold.bold.underlined`text 1`;
       }), '[gold.bold.underlined:text 1]');
-      this.eq((Ωidsp__30 = function() {
+      this.eq((Ωidsp__33 = function() {
         return proxy.red.reverse.italic`text 2`;
       }), '[red.reverse.italic:text 2]');
-      this.eq((Ωidsp__31 = function() {
+      this.eq((Ωidsp__34 = function() {
         return proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`;
       }), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]');
       /* NOTE 'unused' property chains should leave no trace on stack: */
-      this.eq((Ωidsp__32 = function() {
+      this.eq((Ωidsp__35 = function() {
         return doublestack.length;
       }), 0);
-      this.eq((Ωidsp__33 = function() {
+      this.eq((Ωidsp__36 = function() {
         proxy.using_chain_2`some text`;
         return doublestack.length;
       }), 0);
-      this.eq((Ωidsp__34 = function() {
+      this.eq((Ωidsp__37 = function() {
         proxy.building.chain_1;
         proxy.using_chain_2`some text`;
         return doublestack.length;
       }), 0);
       //.......................................................................................................
-      info('Ωidsp__35', doublestack.length, doublestack);
-      info('Ωidsp__36', rpr(proxy.building.chain_1));
-      info('Ωidsp__37', doublestack.length, doublestack);
-      info('Ωidsp__38', rpr(proxy.using_chain_2`some text`));
-      info('Ωidsp__39', doublestack.length, doublestack);
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      doublestack.data.length = 0;
+      proxy.using.chain_2;
+      proxy.building.chain_1`some text`;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      doublestack.data.length = 0;
+      proxy.using.chain_2`some ${proxy.building.chain_1} text`;
+      echo('——————————————————————————————————————————————————————————————————————————————');
       return null;
     })();
     //.........................................................................................................
