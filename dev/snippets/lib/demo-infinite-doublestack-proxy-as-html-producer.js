@@ -475,6 +475,7 @@
       this.eq((Ωidsp__31 = function() {
         return proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`;
       }), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]');
+      /* NOTE 'unused' property chains should leave no trace on stack: */
       this.eq((Ωidsp__32 = function() {
         return doublestack.length;
       }), 0);

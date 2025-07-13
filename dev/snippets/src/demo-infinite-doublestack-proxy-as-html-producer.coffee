@@ -310,6 +310,7 @@ tests = ->
     @eq ( Ωidsp__29 = -> proxy.gold.bold.underlined"text 1"                                                 ), '[gold.bold.underlined:text 1]'
     @eq ( Ωidsp__30 = -> proxy.red.reverse.italic"text 2"                                                   ), '[red.reverse.italic:text 2]'
     @eq ( Ωidsp__31 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]'
+    ### NOTE 'unused' property chains should leave no trace on stack: ###
     @eq ( Ωidsp__32 = ->                                                          doublestack.length ), 0
     @eq ( Ωidsp__33 = ->                          proxy.using_chain_2"some text"; doublestack.length ), 0
     @eq ( Ωidsp__34 = -> proxy.building.chain_1;  proxy.using_chain_2"some text"; doublestack.length ), 0
