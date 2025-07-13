@@ -32,6 +32,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 
 
+############################################################################################################
+#
 #===========================================================================================================
 ### NOTE Future Single-File Module ###
 require_list_utils = ->
@@ -54,6 +56,7 @@ require_escape_html_text = ->
 require_text_from_tagged_template_call = ->
   ### NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
   tagged templates that are within curlies) into a string; could use this to apply some escaping etc. ###
+  ### TAINT should provide means to also format constant parts ###
   create_text_from_tagged_template_call = ( expression_to_string = null ) ->
     expression_to_string ?= ( expression ) -> "#{expression}"
     return ( parts, expressions... ) ->
@@ -74,15 +77,59 @@ require_is_tagged_template_call = ->
     return true
   return { is_tagged_template_call, }
 
+
+############################################################################################################
+#
 #===========================================================================================================
 class Raw
+
+  #---------------------------------------------------------------------------------------------------------
   constructor: ( text ) ->
     @data = text
     return undefined
   toString: -> @data
 
 #-----------------------------------------------------------------------------------------------------------
+class Stack
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ->
+    @data = []
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  push:     ( x ) -> @data.push x; null
+  unshift:  ( x ) -> @data.unshift x; null
+  #---------------------------------------------------------------------------------------------------------
+  pop:   ( fallback = misfit ) ->
+  shift: ( fallback = misfit ) ->
+  peek:  ( fallback = misfit ) ->
+
+#-----------------------------------------------------------------------------------------------------------
+class Doublestack
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ->
+    @stacks = []
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  push_new_stack:     -> @stacks.push    []; null
+  # unshift_new_stack:  -> @stacks.unshift []; null
+  #---------------------------------------------------------------------------------------------------------
+  pop_old_stack:    ( fallback = misfit ) ->
+  shift_old_stack:  ( fallback = misfit ) ->
+  peek_stack:       ( fallback = misfit ) -> @stacks.at -1
+
+  stackofstacks     = []
+  get_stack         = -> stackofstacks.at -1
+  push_new_stack    = -> stackofstacks.push []; get_stack()
+  pop_old_stack     = -> stackofstacks.pop()
+  get_stack_length  = -> stackofstacks.length
+
+#-----------------------------------------------------------------------------------------------------------
 create_html_escaped_text_from_tagged_template_call = ( dont_escape = null ) ->
+  ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
   { create_text_from_tagged_template_call,  } = require_text_from_tagged_template_call()
   { escape_html_text,                       } = require_escape_html_text()
   #.........................................................................................................
@@ -96,7 +143,7 @@ create_html_escaped_text_from_tagged_template_call = ( dont_escape = null ) ->
 
 
 #===========================================================================================================
-demo_proxy_as_html_producer = ->
+tests = ->
   { is_tagged_template_call,                  } = require_is_tagged_template_call()
   { html_safe_text_from_tagged_template_call, } = do =>
     dont_escape_raw_instances = ( x ) -> x instanceof Raw
@@ -107,6 +154,27 @@ demo_proxy_as_html_producer = ->
     @eq ( Ωidsp___1 = -> fn()             ), false
     @eq ( Ωidsp___2 = -> fn [ 1, 2, 3, ]  ), false
     @eq ( Ωidsp___3 = -> fn"[ 1, 2, 3, ]" ), true
+    return null
+  #.........................................................................................................
+  do test_escape_html_text = =>
+    { escape_html_text, } = require_escape_html_text()
+    @eq ( Ωidsp___4 = -> escape_html_text ''                    ), ''
+    @eq ( Ωidsp___5 = -> escape_html_text 'abc'                 ), 'abc'
+    @eq ( Ωidsp___6 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
+    return null
+  #.........................................................................................................
+  do test_html_safe_text_from_tagged_template_call = =>
+    fn = html_safe_text_from_tagged_template_call
+    @eq ( Ωidsp___7 = -> fn''                           ), ''
+    @eq ( Ωidsp___8 = -> fn'abc'                        ), 'abc'
+    @eq ( Ωidsp___9 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
+    @eq ( Ωidsp__10 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+    return null
+  #.........................................................................................................
+  return null
+
+#===========================================================================================================
+demo_proxy_as_html_producer = ->
   #.........................................................................................................
   echo '——————————————————————————————————————————————————————————————————————————————'
   return null
@@ -117,4 +185,6 @@ if module is require.main then await do =>
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
+  ( new Test guytest_cfg ).test { tests, }
+  demo_proxy_as_html_producer()
+
