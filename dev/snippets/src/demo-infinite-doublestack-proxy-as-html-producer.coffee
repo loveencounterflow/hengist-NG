@@ -132,21 +132,21 @@ require_stack_classes = ->
     pop: ( fallback = misfit ) ->
       if @length < 1
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___2 unable to pop value from empty stack"
+        throw new XXX_Stack_error "Ωidsp___1 unable to pop value from empty stack"
       return @data.pop()
 
     #---------------------------------------------------------------------------------------------------------
     shift: ( fallback = misfit ) ->
       if @length < 1
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___3 unable to shift value from empty stack"
+        throw new XXX_Stack_error "Ωidsp___2 unable to shift value from empty stack"
       return @data.shift()
 
     #---------------------------------------------------------------------------------------------------------
     peek: ( fallback = misfit ) ->
       if @length < 1
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+        throw new XXX_Stack_error "Ωidsp___3 unable to peek value of empty stack"
       return @data.at -1
 
 
@@ -155,35 +155,35 @@ require_stack_classes = ->
 
     #---------------------------------------------------------------------------------------------------------
     constructor: ->
-      @stacks = []
+      @data = []
       return undefined
 
     #---------------------------------------------------------------------------------------------------------
     set_getter @::, 'length', -> @data.length
 
     #---------------------------------------------------------------------------------------------------------
-    push_new_stack: -> @stacks.push []; @peek_stack()
-    # unshift_new_stack:  -> @stacks.unshift []; null
+    push_new_stack: -> @data.push ( new Stack() ); @peek_stack()
+    # unshift_new_stack:  -> @data.unshift []; null
 
     #---------------------------------------------------------------------------------------------------------
     pop_old_stack: ( fallback = misfit ) ->
       if @length < 1
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
-      return @stacks.pop()
+      return @data.pop()
 
     # #---------------------------------------------------------------------------------------------------------
     # shift_old_stack:  ( fallback = misfit ) ->
     #   if @length < 1
     #     return fallback unless fallback is misfit
-    #     throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
-    #   return @stacks.shift()
+    #     throw new XXX_Stack_error "Ωidsp___5 unable to peek value of empty stack"
+    #   return @data.shift()
 
     #---------------------------------------------------------------------------------------------------------
     peek_stack: ( fallback = misfit ) ->
       if @length < 1
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+        throw new XXX_Stack_error "Ωidsp___6 unable to peek value of empty stack"
       return @data.at -1
 
   #-----------------------------------------------------------------------------------------------------------
@@ -213,24 +213,39 @@ tests = ->
   #.........................................................................................................
   do test_is_tagged_template_call = =>
     fn = ( P... ) -> is_tagged_template_call P...
-    @eq ( Ωidsp___5 = -> fn()             ), false
-    @eq ( Ωidsp___6 = -> fn [ 1, 2, 3, ]  ), false
-    @eq ( Ωidsp___7 = -> fn"[ 1, 2, 3, ]" ), true
+    @eq ( Ωidsp___7 = -> fn()             ), false
+    @eq ( Ωidsp___8 = -> fn [ 1, 2, 3, ]  ), false
+    @eq ( Ωidsp___9 = -> fn"[ 1, 2, 3, ]" ), true
     return null
   #.........................................................................................................
   do test_escape_html_text = =>
     { escape_html_text, } = require_escape_html_text()
-    @eq ( Ωidsp___8 = -> escape_html_text ''                    ), ''
-    @eq ( Ωidsp___9 = -> escape_html_text 'abc'                 ), 'abc'
-    @eq ( Ωidsp__10 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
+    @eq ( Ωidsp__10 = -> escape_html_text ''                    ), ''
+    @eq ( Ωidsp__11 = -> escape_html_text 'abc'                 ), 'abc'
+    @eq ( Ωidsp__12 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
   #.........................................................................................................
   do test_html_safe_text_from_tagged_template_call = =>
     fn = html_safe_text_from_tagged_template_call
-    @eq ( Ωidsp__11 = -> fn''                           ), ''
-    @eq ( Ωidsp__12 = -> fn'abc'                        ), 'abc'
-    @eq ( Ωidsp__13 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
-    @eq ( Ωidsp__14 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+    @eq ( Ωidsp__13 = -> fn''                           ), ''
+    @eq ( Ωidsp__14 = -> fn'abc'                        ), 'abc'
+    @eq ( Ωidsp__15 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
+    @eq ( Ωidsp__16 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+    return null
+  #.........................................................................................................
+  do test_doublestack = =>
+    { Stack
+      Doublestack, }  = require_stack_classes()
+    ds                = new Doublestack()
+    my_stack_1        = null
+    my_stack_2        = null
+    @eq ( Ωidsp__17 = -> ds.data                                                  ), []
+    @eq ( Ωidsp__18 = -> ds.length                                                ), 0
+    @eq ( Ωidsp__19 = -> ds.peek_stack null                                       ), null
+    @eq ( Ωidsp__20 = -> ( my_stack_1 = ds.push_new_stack()   ) instanceof Stack  ), true
+    @eq ( Ωidsp__21 = -> ds.length                                                ), 1
+    @eq ( Ωidsp__22 = -> ( my_stack_2 = ds.peek_stack()       ) instanceof Stack  ), true
+    @eq ( Ωidsp__23 = -> my_stack_1 is my_stack_2                                 ), true
     return null
   #.........................................................................................................
   return null
@@ -253,8 +268,8 @@ tests = ->
 #   d.data.push 5
 #   d.data.push 6
 #   d.data.push 7
-#   debug 'Ωidsp__15', d
-#   debug 'Ωidsp__16', d.length
+#   debug 'Ωidsp__24', d
+#   debug 'Ωidsp__25', d.length
 #   #.........................................................................................................
 #   return null
 

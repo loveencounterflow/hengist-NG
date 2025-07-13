@@ -172,7 +172,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___2 unable to pop value from empty stack");
+            throw new XXX_Stack_error("Ωidsp___1 unable to pop value from empty stack");
           }
           return this.data.pop();
         }
@@ -183,7 +183,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___3 unable to shift value from empty stack");
+            throw new XXX_Stack_error("Ωidsp___2 unable to shift value from empty stack");
           }
           return this.data.shift();
         }
@@ -194,7 +194,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
+            throw new XXX_Stack_error("Ωidsp___3 unable to peek value of empty stack");
           }
           return this.data.at(-1);
         }
@@ -214,17 +214,17 @@
       class Doublestack {
         //---------------------------------------------------------------------------------------------------------
         constructor() {
-          this.stacks = [];
+          this.data = [];
           return void 0;
         }
 
         //---------------------------------------------------------------------------------------------------------
         push_new_stack() {
-          this.stacks.push([]);
+          this.data.push(new Stack());
           return this.peek_stack();
         }
 
-        // unshift_new_stack:  -> @stacks.unshift []; null
+        // unshift_new_stack:  -> @data.unshift []; null
 
           //---------------------------------------------------------------------------------------------------------
         pop_old_stack(fallback = misfit) {
@@ -234,15 +234,15 @@
             }
             throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
           }
-          return this.stacks.pop();
+          return this.data.pop();
         }
 
         // #---------------------------------------------------------------------------------------------------------
         // shift_old_stack:  ( fallback = misfit ) ->
         //   if @length < 1
         //     return fallback unless fallback is misfit
-        //     throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
-        //   return @stacks.shift()
+        //     throw new XXX_Stack_error "Ωidsp___5 unable to peek value of empty stack"
+        //   return @data.shift()
 
           //---------------------------------------------------------------------------------------------------------
         peek_stack(fallback = misfit) {
@@ -250,7 +250,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
+            throw new XXX_Stack_error("Ωidsp___6 unable to peek value of empty stack");
           }
           return this.data.at(-1);
         }
@@ -292,7 +292,7 @@
 
   //===========================================================================================================
   tests = function() {
-    var html_safe_text_from_tagged_template_call, is_tagged_template_call, test_escape_html_text, test_html_safe_text_from_tagged_template_call, test_is_tagged_template_call;
+    var html_safe_text_from_tagged_template_call, is_tagged_template_call, test_doublestack, test_escape_html_text, test_html_safe_text_from_tagged_template_call, test_is_tagged_template_call;
     ({is_tagged_template_call} = require_is_tagged_template_call());
     ({html_safe_text_from_tagged_template_call} = (() => {
       var dont_escape_raw_instances;
@@ -303,52 +303,82 @@
     })());
     //.........................................................................................................
     (test_is_tagged_template_call = () => {
-      var fn, Ωidsp___5, Ωidsp___6, Ωidsp___7;
+      var fn, Ωidsp___7, Ωidsp___8, Ωidsp___9;
       fn = function(...P) {
         return is_tagged_template_call(...P);
       };
-      this.eq((Ωidsp___5 = function() {
+      this.eq((Ωidsp___7 = function() {
         return fn();
       }), false);
-      this.eq((Ωidsp___6 = function() {
+      this.eq((Ωidsp___8 = function() {
         return fn([1, 2, 3]);
       }), false);
-      this.eq((Ωidsp___7 = function() {
+      this.eq((Ωidsp___9 = function() {
         return fn`[ 1, 2, 3, ]`;
       }), true);
       return null;
     })();
     //.........................................................................................................
     (test_escape_html_text = () => {
-      var escape_html_text, Ωidsp__10, Ωidsp___8, Ωidsp___9;
+      var escape_html_text, Ωidsp__10, Ωidsp__11, Ωidsp__12;
       ({escape_html_text} = require_escape_html_text());
-      this.eq((Ωidsp___8 = function() {
+      this.eq((Ωidsp__10 = function() {
         return escape_html_text('');
       }), '');
-      this.eq((Ωidsp___9 = function() {
+      this.eq((Ωidsp__11 = function() {
         return escape_html_text('abc');
       }), 'abc');
-      this.eq((Ωidsp__10 = function() {
+      this.eq((Ωidsp__12 = function() {
         return escape_html_text('abc<tag>d&e&f</tag>');
       }), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;');
       return null;
     })();
     //.........................................................................................................
     (test_html_safe_text_from_tagged_template_call = () => {
-      var fn, Ωidsp__11, Ωidsp__12, Ωidsp__13, Ωidsp__14;
+      var fn, Ωidsp__13, Ωidsp__14, Ωidsp__15, Ωidsp__16;
       fn = html_safe_text_from_tagged_template_call;
-      this.eq((Ωidsp__11 = function() {
+      this.eq((Ωidsp__13 = function() {
         return fn``;
       }), '');
-      this.eq((Ωidsp__12 = function() {
+      this.eq((Ωidsp__14 = function() {
         return fn`abc`;
       }), 'abc');
-      this.eq((Ωidsp__13 = function() {
+      this.eq((Ωidsp__15 = function() {
         return fn`abc<tag>d&e&f</tag>`;
       }), 'abc<tag>d&e&f</tag>');
-      this.eq((Ωidsp__14 = function() {
+      this.eq((Ωidsp__16 = function() {
         return fn`(${'abc<tag>d&e&f</tag>'})`;
       }), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)');
+      return null;
+    })();
+    //.........................................................................................................
+    (test_doublestack = () => {
+      var Doublestack, Stack, ds, my_stack_1, my_stack_2, Ωidsp__17, Ωidsp__18, Ωidsp__19, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23;
+      ({Stack, Doublestack} = require_stack_classes());
+      ds = new Doublestack();
+      my_stack_1 = null;
+      my_stack_2 = null;
+      this.eq((Ωidsp__17 = function() {
+        return ds.data;
+      }), []);
+      this.eq((Ωidsp__18 = function() {
+        return ds.length;
+      }), 0);
+      this.eq((Ωidsp__19 = function() {
+        return ds.peek_stack(null);
+      }), null);
+      this.eq((Ωidsp__20 = function() {
+        return (my_stack_1 = ds.push_new_stack()) instanceof Stack;
+      }), true);
+      this.eq((Ωidsp__21 = function() {
+        return ds.length;
+      }), 1);
+      this.eq((Ωidsp__22 = function() {
+        return (my_stack_2 = ds.peek_stack()) instanceof Stack;
+      }), true);
+      this.eq((Ωidsp__23 = function() {
+        return my_stack_1 === my_stack_2;
+      }), true);
       return null;
     })();
     //.........................................................................................................
@@ -373,8 +403,8 @@
   //   d.data.push 5
   //   d.data.push 6
   //   d.data.push 7
-  //   debug 'Ωidsp__15', d
-  //   debug 'Ωidsp__16', d.length
+  //   debug 'Ωidsp__24', d
+  //   debug 'Ωidsp__25', d.length
   //   #.........................................................................................................
   //   return null
 
