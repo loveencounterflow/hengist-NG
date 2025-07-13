@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagged_template_call, debug, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, require_escape_html_text, require_is_tagged_template_call, require_list_utils, require_managed_properties_helpers, require_nameit, require_stack_classes, require_text_from_tagged_template_call, reverse, rpr, tests, urge, warn, whisper, white;
+  var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagfun_call, debug, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, require_escape_html_text, require_list_tools, require_managed_property_tools, require_nameit, require_stack_classes, require_tagfun_tools, reverse, rpr, tests, urge, warn, whisper, white;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -22,7 +22,7 @@
 
   //===========================================================================================================
   /* NOTE Future Single-File Module */
-  require_list_utils = function() {
+  require_list_tools = function() {
     var append;
     append = function(list, ...P) {
       return list.splice(list.length, 0, ...P);
@@ -47,12 +47,12 @@
 
   //-----------------------------------------------------------------------------------------------------------
   /* NOTE Future Single-File Module */
-  require_text_from_tagged_template_call = function() {
+  require_tagfun_tools = function() {
     /* NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
      tagged templates that are within curlies) into a string; could use this to apply some escaping etc. */
     /* TAINT should provide means to also format constant parts */
-    var create_text_from_tagged_template_call, text_from_tagged_template_call;
-    create_text_from_tagged_template_call = function(expression_to_string = null) {
+    var create_text_from_tagfun_call, is_tagfun_call, text_from_tagfun_call;
+    create_text_from_tagfun_call = function(expression_to_string = null) {
       if (expression_to_string == null) {
         expression_to_string = function(expression) {
           return `${expression}`;
@@ -68,15 +68,9 @@
         return R;
       };
     };
-    text_from_tagged_template_call = create_text_from_tagged_template_call();
-    return {create_text_from_tagged_template_call, text_from_tagged_template_call};
-  };
-
-  //-----------------------------------------------------------------------------------------------------------
-  /* NOTE Future Single-File Module */
-  require_is_tagged_template_call = function() {
-    var is_tagged_template_call;
-    is_tagged_template_call = function(...P) {
+    text_from_tagfun_call = create_text_from_tagfun_call();
+    //---------------------------------------------------------------------------------------------------------
+    is_tagfun_call = function(...P) {
       if (!Array.isArray(P[0])) {
         return false;
       }
@@ -88,12 +82,13 @@
       }
       return true;
     };
-    return {is_tagged_template_call};
+    //---------------------------------------------------------------------------------------------------------
+    return {create_text_from_tagfun_call, text_from_tagfun_call, is_tagfun_call};
   };
 
   //-----------------------------------------------------------------------------------------------------------
   /* NOTE Future Single-File Module */
-  require_managed_properties_helpers = function() {
+  require_managed_property_tools = function() {
     var hide, set_getter;
     set_getter = function(object, name, get) {
       return Object.defineProperties(object, {
@@ -143,7 +138,7 @@
   //===========================================================================================================
   require_stack_classes = function() {
     var Doublestack, Stack, XXX_Stack_error, hide, misfit, set_getter;
-    ({set_getter, hide} = require_managed_properties_helpers());
+    ({set_getter, hide} = require_managed_property_tools());
     misfit = Symbol('misfit');
     XXX_Stack_error = class XXX_Stack_error extends Error {};
     Stack = (function() {
@@ -270,13 +265,13 @@
   };
 
   //-----------------------------------------------------------------------------------------------------------
-  create_html_escaped_text_from_tagged_template_call = function(dont_escape = null) {
+  create_html_escaped_text_from_tagfun_call = function(dont_escape = null) {
     /* NOTE will only escape *expressions* of tagged templates, not the constant parts */
-    var create_text_from_tagged_template_call, escape_html_text, html_safe_text_from_tagged_template_call;
-    ({create_text_from_tagged_template_call} = require_text_from_tagged_template_call());
+    var create_text_from_tagfun_call, escape_html_text, html_safe_text_from_tagfun_call;
+    ({create_text_from_tagfun_call} = require_tagfun_tools());
     ({escape_html_text} = require_escape_html_text());
     //.........................................................................................................
-    html_safe_text_from_tagged_template_call = create_text_from_tagged_template_call(function(expression) {
+    html_safe_text_from_tagfun_call = create_text_from_tagfun_call(function(expression) {
       var R;
       R = `${expression}`;
       if (dont_escape != null) {
@@ -287,25 +282,25 @@
       return R;
     });
     //.........................................................................................................
-    return {html_safe_text_from_tagged_template_call};
+    return {html_safe_text_from_tagfun_call};
   };
 
   //===========================================================================================================
   tests = function() {
-    var html_safe_text_from_tagged_template_call, is_tagged_template_call, test_doublestack, test_escape_html_text, test_html_safe_text_from_tagged_template_call, test_is_tagged_template_call;
-    ({is_tagged_template_call} = require_is_tagged_template_call());
-    ({html_safe_text_from_tagged_template_call} = (() => {
+    var html_safe_text_from_tagfun_call, is_tagfun_call, test_doublestack, test_escape_html_text, test_html_safe_text_from_tagfun_call, test_is_tagfun_call;
+    ({is_tagfun_call} = require_tagfun_tools());
+    ({html_safe_text_from_tagfun_call} = (() => {
       var dont_escape_raw_instances;
       dont_escape_raw_instances = function(x) {
         return x instanceof Raw;
       };
-      return create_html_escaped_text_from_tagged_template_call(dont_escape_raw_instances);
+      return create_html_escaped_text_from_tagfun_call(dont_escape_raw_instances);
     })());
     //.........................................................................................................
-    (test_is_tagged_template_call = () => {
+    (test_is_tagfun_call = () => {
       var fn, Ωidsp___7, Ωidsp___8, Ωidsp___9;
       fn = function(...P) {
-        return is_tagged_template_call(...P);
+        return is_tagfun_call(...P);
       };
       this.eq((Ωidsp___7 = function() {
         return fn();
@@ -334,9 +329,9 @@
       return null;
     })();
     //.........................................................................................................
-    (test_html_safe_text_from_tagged_template_call = () => {
+    (test_html_safe_text_from_tagfun_call = () => {
       var fn, Ωidsp__13, Ωidsp__14, Ωidsp__15, Ωidsp__16;
-      fn = html_safe_text_from_tagged_template_call;
+      fn = html_safe_text_from_tagfun_call;
       this.eq((Ωidsp__13 = function() {
         return fn``;
       }), '');
@@ -389,7 +384,7 @@
   // demo_managed_properties = ->
   //   # new_properties = ( me, P... ) -> Object.defineProperties me.prototype, P...
   //   { set_getter,
-  //     hide,       } = require_managed_properties_helpers()
+  //     hide,       } = require_managed_property_tools()
   //   class D
   //     #---------------------------------------------------------------------------------------------------------
   //     constructor: ->

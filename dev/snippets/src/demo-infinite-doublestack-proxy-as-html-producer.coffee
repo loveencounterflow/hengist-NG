@@ -36,7 +36,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #
 #===========================================================================================================
 ### NOTE Future Single-File Module ###
-require_list_utils = ->
+require_list_tools = ->
   append = ( list, P... ) -> list.splice list.length, 0, P...
   return { append, }
 
@@ -53,33 +53,32 @@ require_escape_html_text = ->
 
 #-----------------------------------------------------------------------------------------------------------
 ### NOTE Future Single-File Module ###
-require_text_from_tagged_template_call = ->
+require_tagfun_tools = ->
   ### NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
   tagged templates that are within curlies) into a string; could use this to apply some escaping etc. ###
   ### TAINT should provide means to also format constant parts ###
-  create_text_from_tagged_template_call = ( expression_to_string = null ) ->
+  create_text_from_tagfun_call = ( expression_to_string = null ) ->
     expression_to_string ?= ( expression ) -> "#{expression}"
     return ( parts, expressions... ) ->
       R = parts[ 0 ]
       for expression, idx in expressions
         R += ( expression_to_string expression ) + parts[ idx + 1 ]
       return R
-  text_from_tagged_template_call = create_text_from_tagged_template_call()
-  return { create_text_from_tagged_template_call, text_from_tagged_template_call, }
+  text_from_tagfun_call = create_text_from_tagfun_call()
 
-#-----------------------------------------------------------------------------------------------------------
-### NOTE Future Single-File Module ###
-require_is_tagged_template_call = ->
-  is_tagged_template_call = ( P... ) ->
+  #---------------------------------------------------------------------------------------------------------
+  is_tagfun_call = ( P... ) ->
     return false unless Array.isArray   P[ 0 ]
     return false unless Object.isFrozen P[ 0 ]
     return false unless P[ 0 ].raw?
     return true
-  return { is_tagged_template_call, }
+
+  #---------------------------------------------------------------------------------------------------------
+  return { create_text_from_tagfun_call, text_from_tagfun_call, is_tagfun_call, }
 
 #-----------------------------------------------------------------------------------------------------------
 ### NOTE Future Single-File Module ###
-require_managed_properties_helpers = ->
+require_managed_property_tools = ->
   set_getter = ( object, name, get ) -> Object.defineProperties object, { [name]: { get, }, }
   hide = ( object, name, value ) => Object.defineProperty object, name,
       enumerable:   false
@@ -109,7 +108,7 @@ class Raw
 #===========================================================================================================
 require_stack_classes = ->
   { set_getter,
-    hide,       } = require_managed_properties_helpers()
+    hide,       } = require_managed_property_tools()
   misfit          = Symbol 'misfit'
   class XXX_Stack_error extends Error
 
@@ -190,29 +189,29 @@ require_stack_classes = ->
   return { Stack, Doublestack, }
 
 #-----------------------------------------------------------------------------------------------------------
-create_html_escaped_text_from_tagged_template_call = ( dont_escape = null ) ->
+create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
   ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
-  { create_text_from_tagged_template_call,  } = require_text_from_tagged_template_call()
-  { escape_html_text,                       } = require_escape_html_text()
+  { create_text_from_tagfun_call, } = require_tagfun_tools()
+  { escape_html_text,             } = require_escape_html_text()
   #.........................................................................................................
-  html_safe_text_from_tagged_template_call = create_text_from_tagged_template_call ( expression ) ->
+  html_safe_text_from_tagfun_call = create_text_from_tagfun_call ( expression ) ->
     R = "#{expression}"
     if dont_escape?
       R = escape_html_text R unless dont_escape expression
     return R
   #.........................................................................................................
-  return { html_safe_text_from_tagged_template_call, }
+  return { html_safe_text_from_tagfun_call, }
 
 
 #===========================================================================================================
 tests = ->
-  { is_tagged_template_call,                  } = require_is_tagged_template_call()
-  { html_safe_text_from_tagged_template_call, } = do =>
+  { is_tagfun_call,                  } = require_tagfun_tools()
+  { html_safe_text_from_tagfun_call, } = do =>
     dont_escape_raw_instances = ( x ) -> x instanceof Raw
-    return create_html_escaped_text_from_tagged_template_call dont_escape_raw_instances
+    return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
   #.........................................................................................................
-  do test_is_tagged_template_call = =>
-    fn = ( P... ) -> is_tagged_template_call P...
+  do test_is_tagfun_call = =>
+    fn = ( P... ) -> is_tagfun_call P...
     @eq ( Ωidsp___7 = -> fn()             ), false
     @eq ( Ωidsp___8 = -> fn [ 1, 2, 3, ]  ), false
     @eq ( Ωidsp___9 = -> fn"[ 1, 2, 3, ]" ), true
@@ -225,8 +224,8 @@ tests = ->
     @eq ( Ωidsp__12 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
   #.........................................................................................................
-  do test_html_safe_text_from_tagged_template_call = =>
-    fn = html_safe_text_from_tagged_template_call
+  do test_html_safe_text_from_tagfun_call = =>
+    fn = html_safe_text_from_tagfun_call
     @eq ( Ωidsp__13 = -> fn''                           ), ''
     @eq ( Ωidsp__14 = -> fn'abc'                        ), 'abc'
     @eq ( Ωidsp__15 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
@@ -254,7 +253,7 @@ tests = ->
 # demo_managed_properties = ->
 #   # new_properties = ( me, P... ) -> Object.defineProperties me.prototype, P...
 #   { set_getter,
-#     hide,       } = require_managed_properties_helpers()
+#     hide,       } = require_managed_property_tools()
 #   class D
 #     #---------------------------------------------------------------------------------------------------------
 #     constructor: ->
