@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagged_template_call, debug, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, require_escape_html_text, require_list_utils, require_text_from_tagged_template_call, reverse, rpr, urge, warn, whisper, white;
+  var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagged_template_call, debug, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, require_escape_html_text, require_is_tagged_template_call, require_list_utils, require_text_from_tagged_template_call, reverse, rpr, urge, warn, whisper, white;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -48,26 +48,44 @@
   require_text_from_tagged_template_call = function() {
     /* NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
      tagged templates that are within curlies) into a string; could use this to apply some escaping etc. */
-    var create_text_from_tagged_template_call;
+    var create_text_from_tagged_template_call, text_from_tagged_template_call;
     create_text_from_tagged_template_call = function(expression_to_string = null) {
-      var text_from_tagged_template_call;
+      if (expression_to_string == null) {
+        expression_to_string = function(expression) {
+          return `${expression}`;
+        };
+      }
       return function(parts, ...expressions) {
-        var R, expression, expression_rpr, i, idx, len;
+        var R, expression, i, idx, len;
         R = parts[0];
         for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
           expression = expressions[idx];
-          if (expression_to_string != null) {
-            expression_rpr = expression_to_string(expression);
-          } else {
-            expression_rpr = `${expression}`;
-          }
-          R += expression_rpr + parts[idx + 1];
+          R += (expression_to_string(expression)) + parts[idx + 1];
         }
         return R;
       };
-      return text_from_tagged_template_call = create_text_from_tagged_template_call();
     };
+    text_from_tagged_template_call = create_text_from_tagged_template_call();
     return {create_text_from_tagged_template_call, text_from_tagged_template_call};
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  /* NOTE Future Single-File Module */
+  require_is_tagged_template_call = function() {
+    var is_tagged_template_call;
+    is_tagged_template_call = function(...P) {
+      if (!Array.isArray(P[0])) {
+        return false;
+      }
+      if (!Object.isFrozen(P[0])) {
+        return false;
+      }
+      if (P[0].raw == null) {
+        return false;
+      }
+      return true;
+    };
+    return {is_tagged_template_call};
   };
 
   //===========================================================================================================
@@ -105,6 +123,32 @@
 
   //===========================================================================================================
   demo_proxy_as_html_producer = function() {
+    var html_safe_text_from_tagged_template_call, is_tagged_template_call, test_is_tagged_template_call;
+    ({is_tagged_template_call} = require_is_tagged_template_call());
+    ({html_safe_text_from_tagged_template_call} = (() => {
+      var dont_escape_raw_instances;
+      dont_escape_raw_instances = function(x) {
+        return x instanceof Raw;
+      };
+      return create_html_escaped_text_from_tagged_template_call(dont_escape_raw_instances);
+    })());
+    //.........................................................................................................
+    (test_is_tagged_template_call = () => {
+      var fn, Ωidsp___1, Ωidsp___2, Ωidsp___3;
+      fn = function(...P) {
+        return is_tagged_template_call(...P);
+      };
+      this.eq((Ωidsp___1 = function() {
+        return fn();
+      }), false);
+      this.eq((Ωidsp___2 = function() {
+        return fn([1, 2, 3]);
+      }), false);
+      return this.eq((Ωidsp___3 = function() {
+        return fn`[ 1, 2, 3, ]`;
+      }), true);
+    })();
+    //.........................................................................................................
     echo('——————————————————————————————————————————————————————————————————————————————');
     return null;
   };

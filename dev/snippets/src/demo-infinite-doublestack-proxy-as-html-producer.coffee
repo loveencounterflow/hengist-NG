@@ -55,18 +55,24 @@ require_text_from_tagged_template_call = ->
   ### NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
   tagged templates that are within curlies) into a string; could use this to apply some escaping etc. ###
   create_text_from_tagged_template_call = ( expression_to_string = null ) ->
+    expression_to_string ?= ( expression ) -> "#{expression}"
     return ( parts, expressions... ) ->
       R = parts[ 0 ]
       for expression, idx in expressions
-        if expression_to_string?
-          expression_rpr = expression_to_string expression
-        else
-          expression_rpr  = "#{expression}"
-        R += expression_rpr + parts[ idx + 1 ]
+        R += ( expression_to_string expression ) + parts[ idx + 1 ]
       return R
-    text_from_tagged_template_call = create_text_from_tagged_template_call()
+  text_from_tagged_template_call = create_text_from_tagged_template_call()
   return { create_text_from_tagged_template_call, text_from_tagged_template_call, }
 
+#-----------------------------------------------------------------------------------------------------------
+### NOTE Future Single-File Module ###
+require_is_tagged_template_call = ->
+  is_tagged_template_call = ( P... ) ->
+    return false unless Array.isArray   P[ 0 ]
+    return false unless Object.isFrozen P[ 0 ]
+    return false unless P[ 0 ].raw?
+    return true
+  return { is_tagged_template_call, }
 
 #===========================================================================================================
 class Raw
@@ -91,6 +97,17 @@ create_html_escaped_text_from_tagged_template_call = ( dont_escape = null ) ->
 
 #===========================================================================================================
 demo_proxy_as_html_producer = ->
+  { is_tagged_template_call,                  } = require_is_tagged_template_call()
+  { html_safe_text_from_tagged_template_call, } = do =>
+    dont_escape_raw_instances = ( x ) -> x instanceof Raw
+    return create_html_escaped_text_from_tagged_template_call dont_escape_raw_instances
+  #.........................................................................................................
+  do test_is_tagged_template_call = =>
+    fn = ( P... ) -> is_tagged_template_call P...
+    @eq ( Ωidsp___1 = -> fn()             ), false
+    @eq ( Ωidsp___2 = -> fn [ 1, 2, 3, ]  ), false
+    @eq ( Ωidsp___3 = -> fn"[ 1, 2, 3, ]" ), true
+  #.........................................................................................................
   echo '——————————————————————————————————————————————————————————————————————————————'
   return null
 
