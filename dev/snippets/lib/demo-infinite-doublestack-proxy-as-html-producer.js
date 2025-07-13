@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var Doublestack, GTNG, GUY, Raw, Stack, Test, alert, blue, bold, create_html_escaped_text_from_tagged_template_call, debug, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, require_escape_html_text, require_is_tagged_template_call, require_list_utils, require_text_from_tagged_template_call, reverse, rpr, tests, urge, warn, whisper, white;
+  var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagged_template_call, debug, demo_proxy_as_html_producer, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, require_escape_html_text, require_is_tagged_template_call, require_list_utils, require_managed_properties_helpers, require_nameit, require_stack_classes, require_text_from_tagged_template_call, reverse, rpr, tests, urge, warn, whisper, white;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -91,6 +91,39 @@
     return {is_tagged_template_call};
   };
 
+  //-----------------------------------------------------------------------------------------------------------
+  /* NOTE Future Single-File Module */
+  require_managed_properties_helpers = function() {
+    var hide, set_getter;
+    set_getter = function(object, name, get) {
+      return Object.defineProperties(object, {
+        [name]: {get}
+      });
+    };
+    hide = (object, name, value) => {
+      return Object.defineProperty(object, name, {
+        enumerable: false,
+        writable: true,
+        configurable: true,
+        value: value
+      });
+    };
+    return {set_getter, hide};
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  /* NOTE Future Single-File Module */
+  require_nameit = function() {
+    var nameit;
+    nameit = function(name, fn) {
+      Object.defineProperty(fn, 'name', {
+        value: name
+      });
+      return fn;
+    };
+    return {nameit};
+  };
+
   //###########################################################################################################
 
   //===========================================================================================================
@@ -107,85 +140,134 @@
 
   };
 
-  //-----------------------------------------------------------------------------------------------------------
-  Stack = class Stack {
-    //---------------------------------------------------------------------------------------------------------
-    constructor() {
-      this.data = [];
-      return void 0;
-    }
+  //===========================================================================================================
+  require_stack_classes = function() {
+    var Doublestack, Stack, XXX_Stack_error, hide, misfit, set_getter;
+    ({set_getter, hide} = require_managed_properties_helpers());
+    misfit = Symbol('misfit');
+    XXX_Stack_error = class XXX_Stack_error extends Error {};
+    Stack = (function() {
+      //===========================================================================================================
+      class Stack {
+        //---------------------------------------------------------------------------------------------------------
+        constructor() {
+          this.data = [];
+          return void 0;
+        }
 
-    //---------------------------------------------------------------------------------------------------------
-    push(x) {
-      this.data.push(x);
-      return null;
-    }
+        //---------------------------------------------------------------------------------------------------------
+        push(x) {
+          this.data.push(x);
+          return null;
+        }
 
-    unshift(x) {
-      this.data.unshift(x);
-      return null;
-    }
+        unshift(x) {
+          this.data.unshift(x);
+          return null;
+        }
 
-    //---------------------------------------------------------------------------------------------------------
-    pop(fallback = misfit) {}
+        //---------------------------------------------------------------------------------------------------------
+        pop(fallback = misfit) {
+          if (this.length < 1) {
+            if (fallback !== misfit) {
+              return fallback;
+            }
+            throw new XXX_Stack_error("Ωidsp___2 unable to pop value from empty stack");
+          }
+          return this.data.pop();
+        }
 
-    shift(fallback = misfit) {}
+        //---------------------------------------------------------------------------------------------------------
+        shift(fallback = misfit) {
+          if (this.length < 1) {
+            if (fallback !== misfit) {
+              return fallback;
+            }
+            throw new XXX_Stack_error("Ωidsp___3 unable to shift value from empty stack");
+          }
+          return this.data.shift();
+        }
 
-    peek(fallback = misfit) {}
+        //---------------------------------------------------------------------------------------------------------
+        peek(fallback = misfit) {
+          if (this.length < 1) {
+            if (fallback !== misfit) {
+              return fallback;
+            }
+            throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
+          }
+          return this.data.at(-1);
+        }
 
-  };
+      };
 
-  Doublestack = (function() {
-    var get_stack, get_stack_length, pop_old_stack, push_new_stack, stackofstacks;
+      //---------------------------------------------------------------------------------------------------------
+      set_getter(Stack.prototype, 'length', function() {
+        return this.data.length;
+      });
 
+      return Stack;
+
+    }).call(this);
+    Doublestack = (function() {
+      //===========================================================================================================
+      class Doublestack {
+        //---------------------------------------------------------------------------------------------------------
+        constructor() {
+          this.stacks = [];
+          return void 0;
+        }
+
+        //---------------------------------------------------------------------------------------------------------
+        push_new_stack() {
+          this.stacks.push([]);
+          return this.peek_stack();
+        }
+
+        // unshift_new_stack:  -> @stacks.unshift []; null
+
+          //---------------------------------------------------------------------------------------------------------
+        pop_old_stack(fallback = misfit) {
+          if (this.length < 1) {
+            if (fallback !== misfit) {
+              return fallback;
+            }
+            throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
+          }
+          return this.stacks.pop();
+        }
+
+        // #---------------------------------------------------------------------------------------------------------
+        // shift_old_stack:  ( fallback = misfit ) ->
+        //   if @length < 1
+        //     return fallback unless fallback is misfit
+        //     throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+        //   return @stacks.shift()
+
+          //---------------------------------------------------------------------------------------------------------
+        peek_stack(fallback = misfit) {
+          if (this.length < 1) {
+            if (fallback !== misfit) {
+              return fallback;
+            }
+            throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
+          }
+          return this.data.at(-1);
+        }
+
+      };
+
+      //---------------------------------------------------------------------------------------------------------
+      set_getter(Doublestack.prototype, 'length', function() {
+        return this.data.length;
+      });
+
+      return Doublestack;
+
+    }).call(this);
     //-----------------------------------------------------------------------------------------------------------
-    class Doublestack {
-      //---------------------------------------------------------------------------------------------------------
-      constructor() {
-        this.stacks = [];
-        return void 0;
-      }
-
-      //---------------------------------------------------------------------------------------------------------
-      push_new_stack() {
-        this.stacks.push([]);
-        return null;
-      }
-
-      // unshift_new_stack:  -> @stacks.unshift []; null
-      //---------------------------------------------------------------------------------------------------------
-      pop_old_stack(fallback = misfit) {}
-
-      shift_old_stack(fallback = misfit) {}
-
-      peek_stack(fallback = misfit) {
-        return this.stacks.at(-1);
-      }
-
-    };
-
-    stackofstacks = [];
-
-    get_stack = function() {
-      return stackofstacks.at(-1);
-    };
-
-    push_new_stack = function() {
-      stackofstacks.push([]);
-      return get_stack();
-    };
-
-    pop_old_stack = function() {
-      return stackofstacks.pop();
-    };
-
-    get_stack_length = function() {
-      return stackofstacks.length;
-    };
-
-    return Doublestack;
-
-  }).call(this);
+    return {Stack, Doublestack};
+  };
 
   //-----------------------------------------------------------------------------------------------------------
   create_html_escaped_text_from_tagged_template_call = function(dont_escape = null) {
@@ -221,50 +303,50 @@
     })());
     //.........................................................................................................
     (test_is_tagged_template_call = () => {
-      var fn, Ωidsp___1, Ωidsp___2, Ωidsp___3;
+      var fn, Ωidsp___5, Ωidsp___6, Ωidsp___7;
       fn = function(...P) {
         return is_tagged_template_call(...P);
       };
-      this.eq((Ωidsp___1 = function() {
+      this.eq((Ωidsp___5 = function() {
         return fn();
       }), false);
-      this.eq((Ωidsp___2 = function() {
+      this.eq((Ωidsp___6 = function() {
         return fn([1, 2, 3]);
       }), false);
-      this.eq((Ωidsp___3 = function() {
+      this.eq((Ωidsp___7 = function() {
         return fn`[ 1, 2, 3, ]`;
       }), true);
       return null;
     })();
     //.........................................................................................................
     (test_escape_html_text = () => {
-      var escape_html_text, Ωidsp___4, Ωidsp___5, Ωidsp___6;
+      var escape_html_text, Ωidsp__10, Ωidsp___8, Ωidsp___9;
       ({escape_html_text} = require_escape_html_text());
-      this.eq((Ωidsp___4 = function() {
+      this.eq((Ωidsp___8 = function() {
         return escape_html_text('');
       }), '');
-      this.eq((Ωidsp___5 = function() {
+      this.eq((Ωidsp___9 = function() {
         return escape_html_text('abc');
       }), 'abc');
-      this.eq((Ωidsp___6 = function() {
+      this.eq((Ωidsp__10 = function() {
         return escape_html_text('abc<tag>d&e&f</tag>');
       }), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;');
       return null;
     })();
     //.........................................................................................................
     (test_html_safe_text_from_tagged_template_call = () => {
-      var fn, Ωidsp__10, Ωidsp___7, Ωidsp___8, Ωidsp___9;
+      var fn, Ωidsp__11, Ωidsp__12, Ωidsp__13, Ωidsp__14;
       fn = html_safe_text_from_tagged_template_call;
-      this.eq((Ωidsp___7 = function() {
+      this.eq((Ωidsp__11 = function() {
         return fn``;
       }), '');
-      this.eq((Ωidsp___8 = function() {
+      this.eq((Ωidsp__12 = function() {
         return fn`abc`;
       }), 'abc');
-      this.eq((Ωidsp___9 = function() {
+      this.eq((Ωidsp__13 = function() {
         return fn`abc<tag>d&e&f</tag>`;
       }), 'abc<tag>d&e&f</tag>');
-      this.eq((Ωidsp__10 = function() {
+      this.eq((Ωidsp__14 = function() {
         return fn`(${'abc<tag>d&e&f</tag>'})`;
       }), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)');
       return null;
@@ -272,6 +354,29 @@
     //.........................................................................................................
     return null;
   };
+
+  // #===========================================================================================================
+  // demo_managed_properties = ->
+  //   # new_properties = ( me, P... ) -> Object.defineProperties me.prototype, P...
+  //   { set_getter,
+  //     hide,       } = require_managed_properties_helpers()
+  //   class D
+  //     #---------------------------------------------------------------------------------------------------------
+  //     constructor: ->
+  //       hide @, 'data', []
+  //       return undefined
+  //     #---------------------------------------------------------------------------------------------------------
+  //     set_getter @::, 'length', -> @data.length
+  //   #.........................................................................................................
+  //   echo '——————————————————————————————————————————————————————————————————————————————'
+  //   d = new D()
+  //   d.data.push 5
+  //   d.data.push 6
+  //   d.data.push 7
+  //   debug 'Ωidsp__15', d
+  //   debug 'Ωidsp__16', d.length
+  //   #.........................................................................................................
+  //   return null
 
   //===========================================================================================================
   demo_proxy_as_html_producer = function() {
@@ -300,6 +405,8 @@
       return demo_proxy_as_html_producer();
     })();
   }
+
+  // demo_managed_properties()
 
 }).call(this);
 

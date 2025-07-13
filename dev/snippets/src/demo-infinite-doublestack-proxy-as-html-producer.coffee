@@ -77,6 +77,23 @@ require_is_tagged_template_call = ->
     return true
   return { is_tagged_template_call, }
 
+#-----------------------------------------------------------------------------------------------------------
+### NOTE Future Single-File Module ###
+require_managed_properties_helpers = ->
+  set_getter = ( object, name, get ) -> Object.defineProperties object, { [name]: { get, }, }
+  hide = ( object, name, value ) => Object.defineProperty object, name,
+      enumerable:   false
+      writable:     true
+      configurable: true
+      value:        value
+  return { set_getter, hide, }
+
+#-----------------------------------------------------------------------------------------------------------
+### NOTE Future Single-File Module ###
+require_nameit = ->
+  nameit = ( name, fn ) -> Object.defineProperty fn, 'name', { value: name, }; fn
+  return { nameit, }
+
 
 ############################################################################################################
 #
@@ -89,43 +106,88 @@ class Raw
     return undefined
   toString: -> @data
 
-#-----------------------------------------------------------------------------------------------------------
-class Stack
+#===========================================================================================================
+require_stack_classes = ->
+  { set_getter,
+    hide,       } = require_managed_properties_helpers()
+  misfit          = Symbol 'misfit'
+  class XXX_Stack_error extends Error
 
-  #---------------------------------------------------------------------------------------------------------
-  constructor: ->
-    @data = []
-    return undefined
+  #===========================================================================================================
+  class Stack
 
-  #---------------------------------------------------------------------------------------------------------
-  push:     ( x ) -> @data.push x; null
-  unshift:  ( x ) -> @data.unshift x; null
-  #---------------------------------------------------------------------------------------------------------
-  pop:   ( fallback = misfit ) ->
-  shift: ( fallback = misfit ) ->
-  peek:  ( fallback = misfit ) ->
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ->
+      @data = []
+      return undefined
 
-#-----------------------------------------------------------------------------------------------------------
-class Doublestack
+    #---------------------------------------------------------------------------------------------------------
+    set_getter @::, 'length', -> @data.length
 
-  #---------------------------------------------------------------------------------------------------------
-  constructor: ->
-    @stacks = []
-    return undefined
+    #---------------------------------------------------------------------------------------------------------
+    push:     ( x ) -> @data.push x;    null
+    unshift:  ( x ) -> @data.unshift x; null
 
-  #---------------------------------------------------------------------------------------------------------
-  push_new_stack:     -> @stacks.push    []; null
-  # unshift_new_stack:  -> @stacks.unshift []; null
-  #---------------------------------------------------------------------------------------------------------
-  pop_old_stack:    ( fallback = misfit ) ->
-  shift_old_stack:  ( fallback = misfit ) ->
-  peek_stack:       ( fallback = misfit ) -> @stacks.at -1
+    #---------------------------------------------------------------------------------------------------------
+    pop: ( fallback = misfit ) ->
+      if @length < 1
+        return fallback unless fallback is misfit
+        throw new XXX_Stack_error "Ωidsp___2 unable to pop value from empty stack"
+      return @data.pop()
 
-  stackofstacks     = []
-  get_stack         = -> stackofstacks.at -1
-  push_new_stack    = -> stackofstacks.push []; get_stack()
-  pop_old_stack     = -> stackofstacks.pop()
-  get_stack_length  = -> stackofstacks.length
+    #---------------------------------------------------------------------------------------------------------
+    shift: ( fallback = misfit ) ->
+      if @length < 1
+        return fallback unless fallback is misfit
+        throw new XXX_Stack_error "Ωidsp___3 unable to shift value from empty stack"
+      return @data.shift()
+
+    #---------------------------------------------------------------------------------------------------------
+    peek: ( fallback = misfit ) ->
+      if @length < 1
+        return fallback unless fallback is misfit
+        throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+      return @data.at -1
+
+
+  #===========================================================================================================
+  class Doublestack
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ->
+      @stacks = []
+      return undefined
+
+    #---------------------------------------------------------------------------------------------------------
+    set_getter @::, 'length', -> @data.length
+
+    #---------------------------------------------------------------------------------------------------------
+    push_new_stack: -> @stacks.push []; @peek_stack()
+    # unshift_new_stack:  -> @stacks.unshift []; null
+
+    #---------------------------------------------------------------------------------------------------------
+    pop_old_stack: ( fallback = misfit ) ->
+      if @length < 1
+        return fallback unless fallback is misfit
+        throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+      return @stacks.pop()
+
+    # #---------------------------------------------------------------------------------------------------------
+    # shift_old_stack:  ( fallback = misfit ) ->
+    #   if @length < 1
+    #     return fallback unless fallback is misfit
+    #     throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+    #   return @stacks.shift()
+
+    #---------------------------------------------------------------------------------------------------------
+    peek_stack: ( fallback = misfit ) ->
+      if @length < 1
+        return fallback unless fallback is misfit
+        throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
+      return @data.at -1
+
+  #-----------------------------------------------------------------------------------------------------------
+  return { Stack, Doublestack, }
 
 #-----------------------------------------------------------------------------------------------------------
 create_html_escaped_text_from_tagged_template_call = ( dont_escape = null ) ->
@@ -151,27 +213,50 @@ tests = ->
   #.........................................................................................................
   do test_is_tagged_template_call = =>
     fn = ( P... ) -> is_tagged_template_call P...
-    @eq ( Ωidsp___1 = -> fn()             ), false
-    @eq ( Ωidsp___2 = -> fn [ 1, 2, 3, ]  ), false
-    @eq ( Ωidsp___3 = -> fn"[ 1, 2, 3, ]" ), true
+    @eq ( Ωidsp___5 = -> fn()             ), false
+    @eq ( Ωidsp___6 = -> fn [ 1, 2, 3, ]  ), false
+    @eq ( Ωidsp___7 = -> fn"[ 1, 2, 3, ]" ), true
     return null
   #.........................................................................................................
   do test_escape_html_text = =>
     { escape_html_text, } = require_escape_html_text()
-    @eq ( Ωidsp___4 = -> escape_html_text ''                    ), ''
-    @eq ( Ωidsp___5 = -> escape_html_text 'abc'                 ), 'abc'
-    @eq ( Ωidsp___6 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
+    @eq ( Ωidsp___8 = -> escape_html_text ''                    ), ''
+    @eq ( Ωidsp___9 = -> escape_html_text 'abc'                 ), 'abc'
+    @eq ( Ωidsp__10 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
   #.........................................................................................................
   do test_html_safe_text_from_tagged_template_call = =>
     fn = html_safe_text_from_tagged_template_call
-    @eq ( Ωidsp___7 = -> fn''                           ), ''
-    @eq ( Ωidsp___8 = -> fn'abc'                        ), 'abc'
-    @eq ( Ωidsp___9 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
-    @eq ( Ωidsp__10 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+    @eq ( Ωidsp__11 = -> fn''                           ), ''
+    @eq ( Ωidsp__12 = -> fn'abc'                        ), 'abc'
+    @eq ( Ωidsp__13 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
+    @eq ( Ωidsp__14 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
     return null
   #.........................................................................................................
   return null
+
+# #===========================================================================================================
+# demo_managed_properties = ->
+#   # new_properties = ( me, P... ) -> Object.defineProperties me.prototype, P...
+#   { set_getter,
+#     hide,       } = require_managed_properties_helpers()
+#   class D
+#     #---------------------------------------------------------------------------------------------------------
+#     constructor: ->
+#       hide @, 'data', []
+#       return undefined
+#     #---------------------------------------------------------------------------------------------------------
+#     set_getter @::, 'length', -> @data.length
+#   #.........................................................................................................
+#   echo '——————————————————————————————————————————————————————————————————————————————'
+#   d = new D()
+#   d.data.push 5
+#   d.data.push 6
+#   d.data.push 7
+#   debug 'Ωidsp__15', d
+#   debug 'Ωidsp__16', d.length
+#   #.........................................................................................................
+#   return null
 
 #===========================================================================================================
 demo_proxy_as_html_producer = ->
@@ -187,4 +272,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   demo_proxy_as_html_producer()
-
+  # demo_managed_properties()
