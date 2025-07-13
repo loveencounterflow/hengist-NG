@@ -365,14 +365,7 @@
 
   //===========================================================================================================
   tests = function() {
-    var html_safe_text_from_tagfun_call, test_doublestack, test_doublestack_infiniproxy, test_escape_html_text, test_html_safe_text_from_tagfun_call, test_is_tagfun_call;
-    ({html_safe_text_from_tagfun_call} = (() => {
-      var dont_escape_raw_instances;
-      dont_escape_raw_instances = function(x) {
-        return x instanceof Raw;
-      };
-      return create_html_escaped_text_from_tagfun_call(dont_escape_raw_instances);
-    })());
+    var test_doublestack, test_doublestack_infiniproxy, test_escape_html_text, test_html_safe_text_from_tagfun_call, test_is_tagfun_call;
     //.........................................................................................................
     (test_is_tagfun_call = () => {
       var fn, is_tagfun_call, Ωidsp__10, Ωidsp___8, Ωidsp___9;
@@ -408,7 +401,14 @@
     })();
     //.........................................................................................................
     (test_html_safe_text_from_tagfun_call = () => {
-      var fn, Ωidsp__14, Ωidsp__15, Ωidsp__16, Ωidsp__17;
+      var fn, html_safe_text_from_tagfun_call, Ωidsp__14, Ωidsp__15, Ωidsp__16, Ωidsp__17;
+      ({html_safe_text_from_tagfun_call} = (() => {
+        var dont_escape_raw_instances;
+        dont_escape_raw_instances = function(x) {
+          return x instanceof Raw;
+        };
+        return create_html_escaped_text_from_tagfun_call(dont_escape_raw_instances);
+      })());
       fn = html_safe_text_from_tagfun_call;
       this.eq((Ωidsp__14 = function() {
         return fn``;
@@ -487,29 +487,6 @@
     //.........................................................................................................
     return null;
   };
-
-  // #===========================================================================================================
-  // demo_managed_properties = ->
-  //   # new_properties = ( me, P... ) -> Object.defineProperties me.prototype, P...
-  //   { set_getter,
-  //     hide,       } = require_managed_property_tools()
-  //   class D
-  //     #---------------------------------------------------------------------------------------------------------
-  //     constructor: ->
-  //       hide @, 'data', []
-  //       return undefined
-  //     #---------------------------------------------------------------------------------------------------------
-  //     set_getter @::, 'length', -> @data.length
-  //   #.........................................................................................................
-  //   echo '——————————————————————————————————————————————————————————————————————————————'
-  //   d = new D()
-  //   d.data.push 5
-  //   d.data.push 6
-  //   d.data.push 7
-  //   debug 'Ωidsp__33', d
-  //   debug 'Ωidsp__34', d.length
-  //   #.........................................................................................................
-  //   return null
 
   //===========================================================================================================
   demo_proxy_as_html_producer = function() {

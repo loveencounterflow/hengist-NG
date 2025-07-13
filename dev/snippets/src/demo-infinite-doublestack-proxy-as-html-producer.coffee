@@ -254,9 +254,6 @@ create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
 
 #===========================================================================================================
 tests = ->
-  { html_safe_text_from_tagfun_call, } = do =>
-    dont_escape_raw_instances = ( x ) -> x instanceof Raw
-    return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
   #.........................................................................................................
   do test_is_tagfun_call = =>
     { is_tagfun_call,                  } = require_tagfun_tools()
@@ -274,6 +271,9 @@ tests = ->
     return null
   #.........................................................................................................
   do test_html_safe_text_from_tagfun_call = =>
+    { html_safe_text_from_tagfun_call, } = do =>
+      dont_escape_raw_instances = ( x ) -> x instanceof Raw
+      return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
     fn = html_safe_text_from_tagfun_call
     @eq ( Ωidsp__14 = -> fn''                           ), ''
     @eq ( Ωidsp__15 = -> fn'abc'                        ), 'abc'
@@ -319,28 +319,6 @@ tests = ->
   #.........................................................................................................
   return null
 
-# #===========================================================================================================
-# demo_managed_properties = ->
-#   # new_properties = ( me, P... ) -> Object.defineProperties me.prototype, P...
-#   { set_getter,
-#     hide,       } = require_managed_property_tools()
-#   class D
-#     #---------------------------------------------------------------------------------------------------------
-#     constructor: ->
-#       hide @, 'data', []
-#       return undefined
-#     #---------------------------------------------------------------------------------------------------------
-#     set_getter @::, 'length', -> @data.length
-#   #.........................................................................................................
-#   echo '——————————————————————————————————————————————————————————————————————————————'
-#   d = new D()
-#   d.data.push 5
-#   d.data.push 6
-#   d.data.push 7
-#   debug 'Ωidsp__33', d
-#   debug 'Ωidsp__34', d.length
-#   #.........................................................................................................
-#   return null
 
 #===========================================================================================================
 demo_proxy_as_html_producer = ->
