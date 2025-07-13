@@ -188,7 +188,7 @@ require_doublestack_infiniproxy = ->
   dsip_cfg_template =
     base:                     null
     is_initial:               true
-    empty_stack_on_new_chain: true
+    # empty_stack_on_new_chain: true
   #-----------------------------------------------------------------------------------------------------------
   create_doublestack_infiniproxy = ( base ) ->
     doublestack = new Doublestack()
@@ -201,20 +201,15 @@ require_doublestack_infiniproxy = ->
     #---------------------------------------------------------------------------------------------------------
     new_doublestack_infiniproxy = ( cfg ) ->
       cfg = { dsip_cfg_template..., cfg..., }
-      cfg.is_initial = false unless cfg.empty_stack_on_new_chain
+      # cfg.is_initial = false unless cfg.empty_stack_on_new_chain
       #.......................................................................................................
       proxy = new Proxy extendended_base,
         get: ( target, key ) ->
           return new_doublestack_infiniproxy { base, is_initial: false, } if key is get_proxy
-          return target[ key ] if ( typeof key ) is 'symbol'
-          return target[ key ] if Reflect.has target, key
-          # XXX_before = ( peek_stack() ? [] )[ .. ]
-          if cfg.is_initial
-            doublestack.push_new_stack()
+          return target[ key ]                                            if ( typeof key ) is 'symbol'
+          return target[ key ]                                            if Reflect.has target, key
+          doublestack.push_new_stack()                                    if cfg.is_initial
           doublestack.peek_stack().push key
-          # XXX_mark = if is_initial then ( reverse red bold ' I ' ) else ( reverse white bold ' S ' )
-          # XXX_stack = ( peek_stack() ? [] )[ .. ]
-          # debug 'Ω___7', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
           return R
       if cfg.is_initial then  R = new_doublestack_infiniproxy { base, is_initial: false, }
       else                    R = proxy
@@ -257,16 +252,16 @@ tests = ->
   do test_is_tagfun_call = =>
     { is_tagfun_call,                  } = require_tagfun_tools()
     fn = ( P... ) -> is_tagfun_call P...
-    @eq ( Ωidsp___8 = -> fn()             ), false
-    @eq ( Ωidsp___9 = -> fn [ 1, 2, 3, ]  ), false
-    @eq ( Ωidsp__10 = -> fn"[ 1, 2, 3, ]" ), true
+    @eq ( Ωidsp___7 = -> fn()             ), false
+    @eq ( Ωidsp___8 = -> fn [ 1, 2, 3, ]  ), false
+    @eq ( Ωidsp___9 = -> fn"[ 1, 2, 3, ]" ), true
     return null
   #.........................................................................................................
   do test_escape_html_text = =>
     { escape_html_text, } = require_escape_html_text()
-    @eq ( Ωidsp__11 = -> escape_html_text ''                    ), ''
-    @eq ( Ωidsp__12 = -> escape_html_text 'abc'                 ), 'abc'
-    @eq ( Ωidsp__13 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
+    @eq ( Ωidsp__10 = -> escape_html_text ''                    ), ''
+    @eq ( Ωidsp__11 = -> escape_html_text 'abc'                 ), 'abc'
+    @eq ( Ωidsp__12 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
   #.........................................................................................................
   do test_html_safe_text_from_tagfun_call = =>
@@ -274,10 +269,10 @@ tests = ->
       dont_escape_raw_instances = ( x ) -> x instanceof Raw
       return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
     fn = html_safe_text_from_tagfun_call
-    @eq ( Ωidsp__14 = -> fn''                           ), ''
-    @eq ( Ωidsp__15 = -> fn'abc'                        ), 'abc'
-    @eq ( Ωidsp__16 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
-    @eq ( Ωidsp__17 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+    @eq ( Ωidsp__13 = -> fn''                           ), ''
+    @eq ( Ωidsp__14 = -> fn'abc'                        ), 'abc'
+    @eq ( Ωidsp__15 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
+    @eq ( Ωidsp__16 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
     return null
   #.........................................................................................................
   do test_doublestack = =>
@@ -286,13 +281,13 @@ tests = ->
     ds                = new Doublestack()
     my_stack_1        = null
     my_stack_2        = null
-    @eq ( Ωidsp__18 = -> ds.data                                                  ), []
-    @eq ( Ωidsp__19 = -> ds.length                                                ), 0
-    @eq ( Ωidsp__20 = -> ds.peek_stack null                                       ), null
-    @eq ( Ωidsp__21 = -> ( my_stack_1 = ds.push_new_stack()   ) instanceof Stack  ), true
-    @eq ( Ωidsp__22 = -> ds.length                                                ), 1
-    @eq ( Ωidsp__23 = -> ( my_stack_2 = ds.peek_stack()       ) instanceof Stack  ), true
-    @eq ( Ωidsp__24 = -> my_stack_1 is my_stack_2                                 ), true
+    @eq ( Ωidsp__17 = -> ds.data                                                  ), []
+    @eq ( Ωidsp__18 = -> ds.length                                                ), 0
+    @eq ( Ωidsp__19 = -> ds.peek_stack null                                       ), null
+    @eq ( Ωidsp__20 = -> ( my_stack_1 = ds.push_new_stack()   ) instanceof Stack  ), true
+    @eq ( Ωidsp__21 = -> ds.length                                                ), 1
+    @eq ( Ωidsp__22 = -> ( my_stack_2 = ds.peek_stack()       ) instanceof Stack  ), true
+    @eq ( Ωidsp__23 = -> my_stack_1 is my_stack_2                                 ), true
     return null
   #.........................................................................................................
   do test_doublestack_infiniproxy = =>
@@ -302,18 +297,28 @@ tests = ->
     #.......................................................................................................
     base = ( P... ) ->
       unless is_tagfun_call P...
-        throw new Error "Ωidsp__25 only allowed to be used as tagged template function call (tagfun call)"
-      # debug 'Ωidsp__26', text_from_tagfun_call P...
+        throw new Error "Ωidsp__24 only allowed to be used as tagged template function call (tagfun call)"
+      # debug 'Ωidsp__25', text_from_tagfun_call P...
       return '[' + ( doublestack.peek_stack().data.join '.' ) + ':' + ( text_from_tagfun_call P... ) + ']'
     #.......................................................................................................
     { proxy,
       doublestack,                    } = create_doublestack_infiniproxy base
-    info 'Ωidsp__27', rpr proxy.gold.bold.underlined"text 1"
-    info 'Ωidsp__28', rpr proxy.red.reverse.italic"text 2"
-    info 'Ωidsp__29', rpr proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"
-    @eq ( Ωidsp__30 = -> proxy.gold.bold.underlined"text 1"                                                 ), '[gold.bold.underlined:text 1]'
-    @eq ( Ωidsp__31 = -> proxy.red.reverse.italic"text 2"                                                   ), '[red.reverse.italic:text 2]'
-    @eq ( Ωidsp__32 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]'
+    info 'Ωidsp__26', rpr proxy.gold.bold.underlined"text 1"
+    info 'Ωidsp__27', rpr proxy.red.reverse.italic"text 2"
+    info 'Ωidsp__28', rpr proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"
+    #.......................................................................................................
+    @eq ( Ωidsp__29 = -> proxy.gold.bold.underlined"text 1"                                                 ), '[gold.bold.underlined:text 1]'
+    @eq ( Ωidsp__30 = -> proxy.red.reverse.italic"text 2"                                                   ), '[red.reverse.italic:text 2]'
+    @eq ( Ωidsp__31 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]'
+    @eq ( Ωidsp__32 = ->                                                          doublestack.length ), 0
+    @eq ( Ωidsp__33 = ->                          proxy.using_chain_2"some text"; doublestack.length ), 0
+    @eq ( Ωidsp__34 = -> proxy.building.chain_1;  proxy.using_chain_2"some text"; doublestack.length ), 0
+    #.......................................................................................................
+    info 'Ωidsp__35', doublestack.length, doublestack
+    info 'Ωidsp__36', rpr proxy.building.chain_1
+    info 'Ωidsp__37', doublestack.length, doublestack
+    info 'Ωidsp__38', rpr proxy.using_chain_2"some text"
+    info 'Ωidsp__39', doublestack.length, doublestack
     return null
   #.........................................................................................................
   return null
