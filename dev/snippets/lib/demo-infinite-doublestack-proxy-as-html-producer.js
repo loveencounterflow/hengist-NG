@@ -1,4 +1,29 @@
 (async function() {
+  /*
+
+  ## Applications
+
+  * **RegEx Builder** (example from [Rejigs blog post](https://medium.com/@omarzawahry/rejigs-making-regular-expressions-human-readable-1fad37cb3eae))
+
+  ```java
+  var emailRegex =
+      Rejigs.Create()
+            .AtStart()
+            .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf("._%+-"))
+            .Text("@")
+            .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf(".-"))
+            .Text(".")
+            .AnyLetterOrDigit().AtLeast(2)
+            .AtEnd()
+            .Build();
+  ```
+
+  * **HTML/XML Builer**
+  * **SQL Builder**
+  * **CLI Coloring**
+  * syntax for a **Type Checker**
+
+   */
   'use strict';
   var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagfun_call, debug, demo_proxy_as_html_producer, echo, f, gold, green, grey, help, info, inspect, log, nfa, plain, praise, red, require_doublestack_infiniproxy, require_escape_html_text, require_list_tools, require_managed_property_tools, require_nameit, require_stack_classes, require_tagfun_tools, reverse, rpr, tests, urge, warn, whisper, white;
 
@@ -196,6 +221,12 @@
           return this.data.at(-1);
         }
 
+        //---------------------------------------------------------------------------------------------------------
+        clear() {
+          this.data.length = 0;
+          return null;
+        }
+
       };
 
       //---------------------------------------------------------------------------------------------------------
@@ -259,6 +290,12 @@
             throw new XXX_Stack_error("Ωidsp___6 unable to peek value of empty stack");
           }
           return this.data.at(-1);
+        }
+
+        //---------------------------------------------------------------------------------------------------------
+        clear() {
+          this.data.length = 0;
+          return null;
         }
 
       };
@@ -472,48 +509,101 @@
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var base, create_doublestack_infiniproxy, doublestack, is_tagfun_call, proxy, text_from_tagfun_call, Ωidsp__29, Ωidsp__30, Ωidsp__31, Ωidsp__32, Ωidsp__33, Ωidsp__34;
+      var create_doublestack_infiniproxy, create_echoing_proxy, is_tagfun_call, text_from_tagfun_call;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({text_from_tagfun_call} = require_tagfun_tools());
       //.......................................................................................................
-      base = function(...P) {
-        if (!is_tagfun_call(...P)) {
-          throw new Error("Ωidsp__24 only allowed to be used as tagged template function call (tagfun call)");
-        }
-        // debug 'Ωidsp__25', text_from_tagfun_call P...
-        return '[' + (doublestack.peek_stack().data.join('.')) + ':' + (text_from_tagfun_call(...P)) + ']';
+      create_echoing_proxy = function(doublestack) {
+        var base, proxy;
+        base = function(...P) {
+          var chain, text;
+          switch (true) {
+            case is_tagfun_call(...P):
+              text = text_from_tagfun_call(...P);
+              break;
+            case P.length === 1:
+              text = text_from_tagfun_call([P[0]]);
+              break;
+            default:
+              throw new Error(`Ωidsp__24 expected 1 argument, got ${P.length}`);
+          }
+          chain = doublestack.peek_stack().data.join('.');
+          return `[${chain}:${rpr(text)}]`;
+        };
+        ({proxy, doublestack} = create_doublestack_infiniproxy(base));
+        return {proxy, doublestack};
       };
+      (() => {        //.......................................................................................................
+        var doublestack, proxy, Ωidsp__28, Ωidsp__29, Ωidsp__30, Ωidsp__31, Ωidsp__32, Ωidsp__33;
+        ({proxy, doublestack} = create_echoing_proxy());
+        info('Ωidsp__25', rpr(proxy.gold.bold.underlined`text 1`));
+        info('Ωidsp__26', rpr(proxy.red.reverse.italic`text 2`));
+        info('Ωidsp__27', rpr(proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`));
+        //.......................................................................................................
+        this.eq((Ωidsp__28 = function() {
+          return proxy.gold.bold.underlined`text 1`;
+        }), `[gold.bold.underlined:'text 1']`);
+        this.eq((Ωidsp__29 = function() {
+          return proxy.red.reverse.italic`text 2`;
+        }), `[red.reverse.italic:'text 2']`);
+        this.eq((Ωidsp__30 = function() {
+          return proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`;
+        }), `[red.reverse.italic:"text 2 [gold.bold.underlined:'(embedded text)']!!"]`);
+        /* NOTE 'unused' property chains shouldn't leave traces on stack, but they do: */
+        this.eq((Ωidsp__31 = function() {
+          return doublestack.length;
+        }), 0);
+        this.eq((Ωidsp__32 = function() {
+          proxy.using_chain_2`some text`;
+          return doublestack.length;
+        }), 0);
+        this.eq((Ωidsp__33 = function() {
+          proxy.building.chain_1;
+          proxy.using_chain_2`some text`;
+          return doublestack.length;
+        }), 1);
+/* NOTE: should be 0 */        return null;
+      })();
+      (() => {        //.......................................................................................................
+        var doublestack, proxy, Ωidsp__34, Ωidsp__35, Ωidsp__36, Ωidsp__37, Ωidsp__38;
+        echo('——————————————————————————————————————————————————————————————————————————————');
+        ({proxy, doublestack} = create_echoing_proxy());
+        proxy.a.b.c;
+        proxy.d.e.f;
+        this.eq((Ωidsp__34 = function() {
+          return doublestack.length;
+        }), 2);
+        this.eq((Ωidsp__35 = function() {
+          return proxy.g.h.i(127);
+        }), '[g.h.i:127]');
+        this.eq((Ωidsp__36 = function() {
+          return doublestack.length;
+        }), 2);
+        this.eq((Ωidsp__37 = function() {
+          return doublestack.clear();
+        }), null);
+        return this.eq((Ωidsp__38 = function() {
+          return doublestack.length;
+        }), 0);
+      })();
+      (() => {        //.......................................................................................................
+        var doublestack, proxy, Ωidsp__39, Ωidsp__40, Ωidsp__41;
+        echo('——————————————————————————————————————————————————————————————————————————————');
+        ({proxy, doublestack} = create_echoing_proxy());
+        this.eq((Ωidsp__39 = function() {
+          return proxy.a.b.c(90);
+        }), `[a.b.c:90]`);
+        this.eq((Ωidsp__40 = function() {
+          return proxy.a.b.c(proxy.d.e.f(90));
+        }), `[a.b.c:'[d.e.f:90]']`);
+        this.eq((Ωidsp__41 = function() {
+          return doublestack.length;
+        }), 0);
+        return null;
+      })();
       //.......................................................................................................
-      ({proxy, doublestack} = create_doublestack_infiniproxy(base));
-      info('Ωidsp__26', rpr(proxy.gold.bold.underlined`text 1`));
-      info('Ωidsp__27', rpr(proxy.red.reverse.italic`text 2`));
-      info('Ωidsp__28', rpr(proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`));
-      //.......................................................................................................
-      this.eq((Ωidsp__29 = function() {
-        return proxy.gold.bold.underlined`text 1`;
-      }), '[gold.bold.underlined:text 1]');
-      this.eq((Ωidsp__30 = function() {
-        return proxy.red.reverse.italic`text 2`;
-      }), '[red.reverse.italic:text 2]');
-      this.eq((Ωidsp__31 = function() {
-        return proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`;
-      }), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]');
-      /* NOTE 'unused' property chains shouldn't leave traces on stack, but they do: */
-      this.eq((Ωidsp__32 = function() {
-        return doublestack.length;
-      }), 0);
-      this.eq((Ωidsp__33 = function() {
-        proxy.using_chain_2`some text`;
-        return doublestack.length;
-      }), 0);
-      this.eq((Ωidsp__34 = function() {
-        proxy.building.chain_1;
-        proxy.using_chain_2`some text`;
-        return doublestack.length;
-      }), 1);
-//.......................................................................................................
-/* NOTE: should be 0 */      return null;
+      return null;
     })();
     //.........................................................................................................
     return null;

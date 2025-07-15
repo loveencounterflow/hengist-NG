@@ -1,4 +1,30 @@
 
+###
+
+
+## Applications
+
+* **RegEx Builder** (example from [Rejigs blog post](https://medium.com/@omarzawahry/rejigs-making-regular-expressions-human-readable-1fad37cb3eae))
+
+```java
+var emailRegex =
+    Rejigs.Create()
+          .AtStart()
+          .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf("._%+-"))
+          .Text("@")
+          .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf(".-"))
+          .Text(".")
+          .AnyLetterOrDigit().AtLeast(2)
+          .AtEnd()
+          .Build();
+```
+
+* **HTML/XML Builer**
+* **SQL Builder**
+* **CLI Coloring**
+* syntax for a **Type Checker**
+
+###
 
 'use strict'
 
@@ -144,6 +170,9 @@ require_stack_classes = ->
         throw new XXX_Stack_error "Ωidsp___3 unable to peek value of empty stack"
       return @data.at -1
 
+    #---------------------------------------------------------------------------------------------------------
+    clear: -> @data.length = 0; null
+
   #===========================================================================================================
   class Doublestack
 
@@ -182,6 +211,9 @@ require_stack_classes = ->
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___6 unable to peek value of empty stack"
       return @data.at -1
+
+    #---------------------------------------------------------------------------------------------------------
+    clear: -> @data.length = 0; null
 
   #-----------------------------------------------------------------------------------------------------------
   return { Stack, Doublestack, }
@@ -302,25 +334,50 @@ tests = ->
     { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
     { text_from_tagfun_call,          } = require_tagfun_tools()
     #.......................................................................................................
-    base = ( P... ) ->
-      unless is_tagfun_call P...
-        throw new Error "Ωidsp__24 only allowed to be used as tagged template function call (tagfun call)"
-      # debug 'Ωidsp__25', text_from_tagfun_call P...
-      return '[' + ( doublestack.peek_stack().data.join '.' ) + ':' + ( text_from_tagfun_call P... ) + ']'
+    create_echoing_proxy = ( doublestack ) ->
+      base = ( P... ) ->
+        switch true
+          when is_tagfun_call P...  then text = text_from_tagfun_call P...
+          when P.length is 1        then text = text_from_tagfun_call [ P[ 0 ], ]
+          else throw new Error "Ωidsp__24 expected 1 argument, got #{P.length}"
+        chain = doublestack.peek_stack().data.join '.'
+        return "[#{chain}:#{rpr text}]"
+      { proxy, doublestack, } = create_doublestack_infiniproxy base
+      return { proxy, doublestack, }
     #.......................................................................................................
-    { proxy,
-      doublestack,                    } = create_doublestack_infiniproxy base
-    info 'Ωidsp__26', rpr proxy.gold.bold.underlined"text 1"
-    info 'Ωidsp__27', rpr proxy.red.reverse.italic"text 2"
-    info 'Ωidsp__28', rpr proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"
+    do =>
+      { proxy, doublestack, } = create_echoing_proxy()
+      info 'Ωidsp__25', rpr proxy.gold.bold.underlined"text 1"
+      info 'Ωidsp__26', rpr proxy.red.reverse.italic"text 2"
+      info 'Ωidsp__27', rpr proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"
+      #.......................................................................................................
+      @eq ( Ωidsp__28 = -> proxy.gold.bold.underlined"text 1"                                                 ), """[gold.bold.underlined:'text 1']"""
+      @eq ( Ωidsp__29 = -> proxy.red.reverse.italic"text 2"                                                   ), """[red.reverse.italic:'text 2']"""
+      @eq ( Ωidsp__30 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), """[red.reverse.italic:"text 2 [gold.bold.underlined:'(embedded text)']!!"]"""
+      ### NOTE 'unused' property chains shouldn't leave traces on stack, but they do: ###
+      @eq ( Ωidsp__31 = ->                                                          doublestack.length ), 0
+      @eq ( Ωidsp__32 = ->                          proxy.using_chain_2"some text"; doublestack.length ), 0
+      @eq ( Ωidsp__33 = -> proxy.building.chain_1;  proxy.using_chain_2"some text"; doublestack.length ), 1 ### NOTE: should be 0 ###
+      return null
     #.......................................................................................................
-    @eq ( Ωidsp__29 = -> proxy.gold.bold.underlined"text 1"                                                 ), '[gold.bold.underlined:text 1]'
-    @eq ( Ωidsp__30 = -> proxy.red.reverse.italic"text 2"                                                   ), '[red.reverse.italic:text 2]'
-    @eq ( Ωidsp__31 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), '[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]'
-    ### NOTE 'unused' property chains shouldn't leave traces on stack, but they do: ###
-    @eq ( Ωidsp__32 = ->                                                          doublestack.length ), 0
-    @eq ( Ωidsp__33 = ->                          proxy.using_chain_2"some text"; doublestack.length ), 0
-    @eq ( Ωidsp__34 = -> proxy.building.chain_1;  proxy.using_chain_2"some text"; doublestack.length ), 1 ### NOTE: should be 0 ###
+    do =>
+      echo '——————————————————————————————————————————————————————————————————————————————'
+      { proxy, doublestack, } = create_echoing_proxy()
+      proxy.a.b.c
+      proxy.d.e.f
+      @eq ( Ωidsp__34 = -> doublestack.length   ), 2
+      @eq ( Ωidsp__35 = -> proxy.g.h.i 127      ), '[g.h.i:127]'
+      @eq ( Ωidsp__36 = -> doublestack.length   ), 2
+      @eq ( Ωidsp__37 = -> doublestack.clear()  ), null
+      @eq ( Ωidsp__38 = -> doublestack.length   ), 0
+    #.......................................................................................................
+    do =>
+      echo '——————————————————————————————————————————————————————————————————————————————'
+      { proxy, doublestack, } = create_echoing_proxy()
+      @.eq ( Ωidsp__39 = -> proxy.a.b.c 90              ), """[a.b.c:90]"""
+      @.eq ( Ωidsp__40 = -> proxy.a.b.c proxy.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+      @.eq ( Ωidsp__41 = -> doublestack.length          ), 0
+      return null
     #.......................................................................................................
     return null
   #.........................................................................................................
