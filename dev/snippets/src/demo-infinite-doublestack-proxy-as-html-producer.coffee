@@ -84,14 +84,16 @@ require_tagfun_tools = ->
   ### NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
   tagged templates that are within curlies) into a string; could use this to apply some escaping etc. ###
   ### TAINT should provide means to also format constant parts ###
-  create_text_from_tagfun_call = ( expression_to_string = null ) ->
+  create_get_first_argument_fn = ( expression_to_string = null ) ->
     expression_to_string ?= ( expression ) -> "#{expression}"
-    return ( parts, expressions... ) ->
+    R = get_first_argument = ( parts, expressions... ) ->
       R = parts[ 0 ]
       for expression, idx in expressions
         R += ( expression_to_string expression ) + parts[ idx + 1 ]
       return R
-  text_from_tagfun_call = create_text_from_tagfun_call()
+    R.create = create_get_first_argument_fn
+    return R
+  get_first_argument = create_get_first_argument_fn()
 
   #---------------------------------------------------------------------------------------------------------
   is_tagfun_call = ( P... ) ->
@@ -101,7 +103,7 @@ require_tagfun_tools = ->
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  return { create_text_from_tagfun_call, text_from_tagfun_call, is_tagfun_call, }
+  return { get_first_argument, is_tagfun_call, }
 
 #===========================================================================================================
 ### NOTE Future Single-File Module ###
@@ -143,7 +145,10 @@ require_stack_classes = ->
     toString: -> "[#{ ( "#{e}" for e in @data ).join'.' }]"
 
     #---------------------------------------------------------------------------------------------------------
-    set_getter @::, 'length', -> @data.length
+    set_getter @::, 'length',   -> @data.length
+    set_getter @::, 'is_empty', -> @data.length is 0
+    clear: -> @data.length = 0; null
+    [Symbol.iterator]: -> yield from @data
 
     #---------------------------------------------------------------------------------------------------------
     push:     ( x ) -> @data.push x;    null
@@ -151,27 +156,25 @@ require_stack_classes = ->
 
     #---------------------------------------------------------------------------------------------------------
     pop: ( fallback = misfit ) ->
-      if @length < 1
+      if @is_empty
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___1 unable to pop value from empty stack"
       return @data.pop()
 
     #---------------------------------------------------------------------------------------------------------
     shift: ( fallback = misfit ) ->
-      if @length < 1
+      if @is_empty
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___2 unable to shift value from empty stack"
       return @data.shift()
 
     #---------------------------------------------------------------------------------------------------------
     peek: ( fallback = misfit ) ->
-      if @length < 1
+      if @is_empty
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___3 unable to peek value of empty stack"
       return @data.at -1
 
-    #---------------------------------------------------------------------------------------------------------
-    clear: -> @data.length = 0; null
 
   #===========================================================================================================
   class Doublestack
@@ -185,7 +188,11 @@ require_stack_classes = ->
     toString: -> if @length is 0 then "{ DS[] }" else "{ DS[ #{ @length-1} ] = #{@peek_stack '[]'} }"
 
     #---------------------------------------------------------------------------------------------------------
-    set_getter @::, 'length', -> @data.length
+    set_getter @::, 'length',   -> @data.length
+    set_getter @::, 'is_empty', -> @data.length is 0
+    clear: -> @data.length = 0; null
+    ### TAINT might want to iterate over topmost stack in @data ###
+    [Symbol.iterator]: -> yield from @data
 
     #---------------------------------------------------------------------------------------------------------
     push_new_stack: -> @data.push ( new Stack() ); @peek_stack()
@@ -193,27 +200,24 @@ require_stack_classes = ->
 
     #---------------------------------------------------------------------------------------------------------
     pop_old_stack: ( fallback = misfit ) ->
-      if @length < 1
+      if @is_empty
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___4 unable to peek value of empty stack"
       return @data.pop()
 
     # #---------------------------------------------------------------------------------------------------------
     # shift_old_stack:  ( fallback = misfit ) ->
-    #   if @length < 1
+    #   if @is_empty
     #     return fallback unless fallback is misfit
     #     throw new XXX_Stack_error "Ωidsp___5 unable to peek value of empty stack"
     #   return @data.shift()
 
     #---------------------------------------------------------------------------------------------------------
     peek_stack: ( fallback = misfit ) ->
-      if @length < 1
+      if @is_empty
         return fallback unless fallback is misfit
         throw new XXX_Stack_error "Ωidsp___6 unable to peek value of empty stack"
       return @data.at -1
-
-    #---------------------------------------------------------------------------------------------------------
-    clear: -> @data.length = 0; null
 
   #-----------------------------------------------------------------------------------------------------------
   return { Stack, Doublestack, }
@@ -235,7 +239,7 @@ require_doublestack_infiniproxy = ->
     #.........................................................................................................
     extendended_base = ( P... ) ->
       R = base P...
-      doublestack.pop_old_stack()
+      doublestack.pop_old_stack() unless doublestack.is_empty
       return R
     #---------------------------------------------------------------------------------------------------------
     new_doublestack_infiniproxy = ( cfg ) ->
@@ -274,10 +278,10 @@ class Raw
 #===========================================================================================================
 create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
   ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
-  { create_text_from_tagfun_call, } = require_tagfun_tools()
+  { get_first_argument,           } = require_tagfun_tools()
   { escape_html_text,             } = require_escape_html_text()
   #.........................................................................................................
-  html_safe_text_from_tagfun_call = create_text_from_tagfun_call ( expression ) ->
+  html_safe_text_from_tagfun_call = get_first_argument.create ( expression ) ->
     R = "#{expression}"
     R = escape_html_text R if ( dont_escape? ) and ( not dont_escape expression )
     return R
@@ -332,13 +336,13 @@ tests = ->
   do test_doublestack_infiniproxy = =>
     { is_tagfun_call,                 } = require_tagfun_tools()
     { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
-    { text_from_tagfun_call,          } = require_tagfun_tools()
+    { get_first_argument,          } = require_tagfun_tools()
     #.......................................................................................................
     create_echoing_proxy = ( doublestack ) ->
       base = ( P... ) ->
         switch true
-          when is_tagfun_call P...  then text = text_from_tagfun_call P...
-          when P.length is 1        then text = text_from_tagfun_call [ P[ 0 ], ]
+          when is_tagfun_call P...  then text = get_first_argument P...
+          when P.length is 1        then text = get_first_argument [ P[ 0 ], ]
           else throw new Error "Ωidsp__24 expected 1 argument, got #{P.length}"
         chain = doublestack.peek_stack().data.join '.'
         return "[#{chain}:#{rpr text}]"
@@ -379,6 +383,41 @@ tests = ->
       @.eq ( Ωidsp__41 = -> doublestack.length          ), 0
       return null
     #.......................................................................................................
+    return null
+  #.........................................................................................................
+  do test_doublestack_infiniproxy = =>
+    { is_tagfun_call,                 } = require_tagfun_tools()
+    { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
+    { get_first_argument,          } = require_tagfun_tools()
+    { append,                         } = require_list_tools()
+    #.......................................................................................................
+    { escape_html_text,               } = require_escape_html_text()
+    #.......................................................................................................
+    create_html_proxy = ( doublestack ) ->
+      get_text = ( P... ) ->
+        switch true
+          when is_tagfun_call P...  then return get_first_argument P...
+          when P.length is 1        then return get_first_argument [ P[ 0 ], ]
+          else throw new Error "Ωidsp__42 expected 1 argument, got #{P.length}"
+      base = ( P... ) ->
+        text  = get_text P...
+        debug 'Ωidsp__43', rpr text
+        text  = escape_html_text text unless text instanceof Raw
+        return text if doublestack.is_empty
+        chain = doublestack.peek_stack()
+        R = []
+        [ tag_name, attr_names..., ] = chain
+        append R, '<', tag_name
+        debug 'Ωidsp__44', [ tag_name, attr_names, ]
+        append R, '>', text, '</', tag_name, '>'
+        return R.join ''
+      { proxy, doublestack, } = create_doublestack_infiniproxy base
+      return { proxy, doublestack, }
+    #.......................................................................................................
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    { proxy: H, } = create_html_proxy()
+    # @.eq ( Ωidsp__45 = -> H '<&>'  ), new Raw "&lt;&amp;&lt;"
+    # @.eq ( Ωidsp__46 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
     return null
   #.........................................................................................................
   return null

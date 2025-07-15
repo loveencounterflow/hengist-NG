@@ -76,15 +76,16 @@
     /* NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
      tagged templates that are within curlies) into a string; could use this to apply some escaping etc. */
     /* TAINT should provide means to also format constant parts */
-    var create_text_from_tagfun_call, is_tagfun_call, text_from_tagfun_call;
-    create_text_from_tagfun_call = function(expression_to_string = null) {
+    var create_get_first_argument_fn, get_first_argument, is_tagfun_call;
+    create_get_first_argument_fn = function(expression_to_string = null) {
+      var R, get_first_argument;
       if (expression_to_string == null) {
         expression_to_string = function(expression) {
           return `${expression}`;
         };
       }
-      return function(parts, ...expressions) {
-        var R, expression, i, idx, len;
+      R = get_first_argument = function(parts, ...expressions) {
+        var expression, i, idx, len;
         R = parts[0];
         for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
           expression = expressions[idx];
@@ -92,8 +93,10 @@
         }
         return R;
       };
+      R.create = create_get_first_argument_fn;
+      return R;
     };
-    text_from_tagfun_call = create_text_from_tagfun_call();
+    get_first_argument = create_get_first_argument_fn();
     //---------------------------------------------------------------------------------------------------------
     is_tagfun_call = function(...P) {
       if (!Array.isArray(P[0])) {
@@ -108,7 +111,7 @@
       return true;
     };
     //---------------------------------------------------------------------------------------------------------
-    return {create_text_from_tagfun_call, text_from_tagfun_call, is_tagfun_call};
+    return {get_first_argument, is_tagfun_call};
   };
 
   //===========================================================================================================
@@ -177,6 +180,15 @@
           }).call(this)).join`.`}]`;
         }
 
+        clear() {
+          this.data.length = 0;
+          return null;
+        }
+
+        * [Symbol.iterator]() {
+          return (yield* this.data);
+        }
+
         //---------------------------------------------------------------------------------------------------------
         push(x) {
           this.data.push(x);
@@ -190,7 +202,7 @@
 
         //---------------------------------------------------------------------------------------------------------
         pop(fallback = misfit) {
-          if (this.length < 1) {
+          if (this.is_empty) {
             if (fallback !== misfit) {
               return fallback;
             }
@@ -201,7 +213,7 @@
 
         //---------------------------------------------------------------------------------------------------------
         shift(fallback = misfit) {
-          if (this.length < 1) {
+          if (this.is_empty) {
             if (fallback !== misfit) {
               return fallback;
             }
@@ -212,7 +224,7 @@
 
         //---------------------------------------------------------------------------------------------------------
         peek(fallback = misfit) {
-          if (this.length < 1) {
+          if (this.is_empty) {
             if (fallback !== misfit) {
               return fallback;
             }
@@ -221,17 +233,15 @@
           return this.data.at(-1);
         }
 
-        //---------------------------------------------------------------------------------------------------------
-        clear() {
-          this.data.length = 0;
-          return null;
-        }
-
       };
 
       //---------------------------------------------------------------------------------------------------------
       set_getter(Stack.prototype, 'length', function() {
         return this.data.length;
+      });
+
+      set_getter(Stack.prototype, 'is_empty', function() {
+        return this.data.length === 0;
       });
 
       return Stack;
@@ -255,6 +265,16 @@
           }
         }
 
+        clear() {
+          this.data.length = 0;
+          return null;
+        }
+
+        /* TAINT might want to iterate over topmost stack in @data */
+        * [Symbol.iterator]() {
+          return (yield* this.data);
+        }
+
         //---------------------------------------------------------------------------------------------------------
         push_new_stack() {
           this.data.push(new Stack());
@@ -265,7 +285,7 @@
 
           //---------------------------------------------------------------------------------------------------------
         pop_old_stack(fallback = misfit) {
-          if (this.length < 1) {
+          if (this.is_empty) {
             if (fallback !== misfit) {
               return fallback;
             }
@@ -276,14 +296,14 @@
 
         // #---------------------------------------------------------------------------------------------------------
         // shift_old_stack:  ( fallback = misfit ) ->
-        //   if @length < 1
+        //   if @is_empty
         //     return fallback unless fallback is misfit
         //     throw new XXX_Stack_error "Ωidsp___5 unable to peek value of empty stack"
         //   return @data.shift()
 
           //---------------------------------------------------------------------------------------------------------
         peek_stack(fallback = misfit) {
-          if (this.length < 1) {
+          if (this.is_empty) {
             if (fallback !== misfit) {
               return fallback;
             }
@@ -292,17 +312,15 @@
           return this.data.at(-1);
         }
 
-        //---------------------------------------------------------------------------------------------------------
-        clear() {
-          this.data.length = 0;
-          return null;
-        }
-
       };
 
       //---------------------------------------------------------------------------------------------------------
       set_getter(Doublestack.prototype, 'length', function() {
         return this.data.length;
+      });
+
+      set_getter(Doublestack.prototype, 'is_empty', function() {
+        return this.data.length === 0;
       });
 
       return Doublestack;
@@ -332,7 +350,9 @@
       extendended_base = function(...P) {
         var R;
         R = base(...P);
-        doublestack.pop_old_stack();
+        if (!doublestack.is_empty) {
+          doublestack.pop_old_stack();
+        }
         return R;
       };
       //---------------------------------------------------------------------------------------------------------
@@ -400,11 +420,11 @@
   //===========================================================================================================
   create_html_escaped_text_from_tagfun_call = function(dont_escape = null) {
     /* NOTE will only escape *expressions* of tagged templates, not the constant parts */
-    var create_text_from_tagfun_call, escape_html_text, html_safe_text_from_tagfun_call;
-    ({create_text_from_tagfun_call} = require_tagfun_tools());
+    var escape_html_text, get_first_argument, html_safe_text_from_tagfun_call;
+    ({get_first_argument} = require_tagfun_tools());
     ({escape_html_text} = require_escape_html_text());
     //.........................................................................................................
-    html_safe_text_from_tagfun_call = create_text_from_tagfun_call(function(expression) {
+    html_safe_text_from_tagfun_call = get_first_argument.create(function(expression) {
       var R;
       R = `${expression}`;
       if ((dont_escape != null) && (!dont_escape(expression))) {
@@ -509,10 +529,10 @@
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var create_doublestack_infiniproxy, create_echoing_proxy, is_tagfun_call, text_from_tagfun_call;
+      var create_doublestack_infiniproxy, create_echoing_proxy, get_first_argument, is_tagfun_call;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
-      ({text_from_tagfun_call} = require_tagfun_tools());
+      ({get_first_argument} = require_tagfun_tools());
       //.......................................................................................................
       create_echoing_proxy = function(doublestack) {
         var base, proxy;
@@ -520,10 +540,10 @@
           var chain, text;
           switch (true) {
             case is_tagfun_call(...P):
-              text = text_from_tagfun_call(...P);
+              text = get_first_argument(...P);
               break;
             case P.length === 1:
-              text = text_from_tagfun_call([P[0]]);
+              text = get_first_argument([P[0]]);
               break;
             default:
               throw new Error(`Ωidsp__24 expected 1 argument, got ${P.length}`);
@@ -603,6 +623,58 @@
         return null;
       })();
       //.......................................................................................................
+      return null;
+    })();
+    //.........................................................................................................
+    (test_doublestack_infiniproxy = () => {
+      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, is_tagfun_call;
+      ({is_tagfun_call} = require_tagfun_tools());
+      ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
+      ({get_first_argument} = require_tagfun_tools());
+      ({append} = require_list_tools());
+      //.......................................................................................................
+      ({escape_html_text} = require_escape_html_text());
+      //.......................................................................................................
+      create_html_proxy = function(doublestack) {
+        var base, get_text, proxy;
+        get_text = function(...P) {
+          switch (true) {
+            case is_tagfun_call(...P):
+              return get_first_argument(...P);
+            case P.length === 1:
+              return get_first_argument([P[0]]);
+            default:
+              throw new Error(`Ωidsp__42 expected 1 argument, got ${P.length}`);
+          }
+        };
+        base = function(...P) {
+          var R, attr_names, chain, tag_name, text;
+          text = get_text(...P);
+          debug('Ωidsp__43', rpr(text));
+          if (!(text instanceof Raw)) {
+            text = escape_html_text(text);
+          }
+          if (doublestack.is_empty) {
+            return text;
+          }
+          chain = doublestack.peek_stack();
+          R = [];
+          [tag_name, ...attr_names] = chain;
+          append(R, '<', tag_name);
+          debug('Ωidsp__44', [tag_name, attr_names]);
+          append(R, '>', text, '</', tag_name, '>');
+          return R.join('');
+        };
+        ({proxy, doublestack} = create_doublestack_infiniproxy(base));
+        return {proxy, doublestack};
+      };
+      //.......................................................................................................
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      ({
+        proxy: H
+      } = create_html_proxy());
+      // @.eq ( Ωidsp__45 = -> H '<&>'  ), new Raw "&lt;&amp;&lt;"
+      // @.eq ( Ωidsp__46 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
       return null;
     })();
     //.........................................................................................................
