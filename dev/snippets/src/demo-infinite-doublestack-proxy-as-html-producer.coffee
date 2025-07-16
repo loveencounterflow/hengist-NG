@@ -88,16 +88,12 @@ require_tagfun_tools = ->
     unless ( typeof as_text ) is 'function'
       throw new Error "Ωidsp___1 expected a function, got #{rpr as_text}"
     #.......................................................................................................
-    get_first_argument =  ( P... ) ->
+    get_first_argument = ( P... ) ->
       ### Given the arguments of either a tagged template function call ('tagfun call') or the single
       argument of a conventional function call, return either
       * the result of applying `as_text()` to the sole argument, or
       * the result of concatenating the constant parts and the interpolated expressions, which each
-      expression replaced by the result of applying `as_text()` to it.
-
-      NOTE When `as_text` is given, it will be used to turn each expression (the parts of tagged templates
-      that are within curlies) into a string; could use this to apply some escaping etc. ###
-      ### TAINT should provide means to also format constant parts ###
+      expression replaced by the result of applying `as_text()` to it. ###
       unless is_tagfun_call P...
         unless P.length is 1
           throw new Error "Ωidsp___2 expected 1 argument, got #{P.length}"
@@ -407,13 +403,13 @@ tests = ->
     #.......................................................................................................
     { escape_html_text,               } = require_escape_html_text()
     #.......................................................................................................
-    get_first_argument_as_text = get_first_argument.create ( x ) ->
+    get_first_argument_for_html = get_first_argument.create ( x ) ->
       return "#{x}" if x instanceof Raw
-      return escape_html_text text "#{x}"
+      return escape_html_text "#{x}"
     #.......................................................................................................
     create_html_proxy = ( doublestack ) ->
       base = ( P... ) ->
-        text  = get_text P...
+        text  = get_first_argument_for_html P...
         debug 'Ωidsp__43', rpr text
         return text if doublestack.is_empty
         chain = doublestack.peek_stack()
@@ -428,8 +424,9 @@ tests = ->
     #.......................................................................................................
     echo '——————————————————————————————————————————————————————————————————————————————'
     { proxy: H, } = create_html_proxy()
-    # @.eq ( Ωidsp__45 = -> H '<&>'  ), new Raw "&lt;&amp;&lt;"
-    # @.eq ( Ωidsp__46 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+    @.eq ( Ωidsp__45 = -> H         '<&>'  ), "&lt;&amp;&gt;"
+    @.eq ( Ωidsp__46 = -> H new Raw '<&>'  ), '<&>'
+    # @.eq ( Ωidsp__47 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
     return null
   #.........................................................................................................
   return null

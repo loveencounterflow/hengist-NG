@@ -92,14 +92,10 @@
       get_first_argument = function(...P) {
         var R, expression, expressions, i, idx, len, parts;
         /* Given the arguments of either a tagged template function call ('tagfun call') or the single
-        argument of a conventional function call, return either
-        * the result of applying `as_text()` to the sole argument, or
-        * the result of concatenating the constant parts and the interpolated expressions, which each
-        expression replaced by the result of applying `as_text()` to it.
-
-        NOTE When `as_text` is given, it will be used to turn each expression (the parts of tagged templates
-        that are within curlies) into a string; could use this to apply some escaping etc.  */
-        /* TAINT should provide means to also format constant parts */
+             argument of a conventional function call, return either
+             * the result of applying `as_text()` to the sole argument, or
+             * the result of concatenating the constant parts and the interpolated expressions, which each
+             expression replaced by the result of applying `as_text()` to it.  */
         if (!is_tagfun_call(...P)) {
           if (P.length !== 1) {
             throw new Error(`Ωidsp___2 expected 1 argument, got ${P.length}`);
@@ -643,7 +639,7 @@
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_as_text, is_tagfun_call;
+      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({get_first_argument} = require_tagfun_tools());
@@ -651,18 +647,18 @@
       //.......................................................................................................
       ({escape_html_text} = require_escape_html_text());
       //.......................................................................................................
-      get_first_argument_as_text = get_first_argument.create(function(x) {
+      get_first_argument_for_html = get_first_argument.create(function(x) {
         if (x instanceof Raw) {
           return `${x}`;
         }
-        return escape_html_text(text(`${x}`));
+        return escape_html_text(`${x}`);
       });
       //.......................................................................................................
       create_html_proxy = function(doublestack) {
         var base, proxy;
         base = function(...P) {
           var R, attr_names, chain, tag_name, text;
-          text = get_text(...P);
+          text = get_first_argument_for_html(...P);
           debug('Ωidsp__43', rpr(text));
           if (doublestack.is_empty) {
             return text;
@@ -683,8 +679,13 @@
       ({
         proxy: H
       } = create_html_proxy());
-      // @.eq ( Ωidsp__45 = -> H '<&>'  ), new Raw "&lt;&amp;&lt;"
-      // @.eq ( Ωidsp__46 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+      this.eq((Ωidsp__45 = function() {
+        return H('<&>');
+      }), "&lt;&amp;&gt;");
+      this.eq((Ωidsp__46 = function() {
+        return H(new Raw('<&>'));
+      }), '<&>');
+      // @.eq ( Ωidsp__47 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
       return null;
     })();
     //.........................................................................................................
