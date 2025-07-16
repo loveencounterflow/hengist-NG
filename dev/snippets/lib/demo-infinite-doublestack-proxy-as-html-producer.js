@@ -48,11 +48,14 @@
   //===========================================================================================================
   /* NOTE Future Single-File Module */
   require_list_tools = function() {
-    var append;
+    var append, is_empty;
     append = function(list, ...P) {
       return list.splice(list.length, 0, ...P);
     };
-    return {append};
+    is_empty = function(list) {
+      return list.length === 0;
+    };
+    return {append, is_empty};
   };
 
   //===========================================================================================================
@@ -73,28 +76,47 @@
   //===========================================================================================================
   /* NOTE Future Single-File Module */
   require_tagfun_tools = function() {
-    /* NOTE When `expression_to_string` is given, it will be used to turn each expression (the parts of
-     tagged templates that are within curlies) into a string; could use this to apply some escaping etc. */
-    /* TAINT should provide means to also format constant parts */
     var create_get_first_argument_fn, get_first_argument, is_tagfun_call;
-    create_get_first_argument_fn = function(expression_to_string = null) {
-      var R, get_first_argument;
-      if (expression_to_string == null) {
-        expression_to_string = function(expression) {
+    create_get_first_argument_fn = function(as_text = null) {
+      var fn;
+      if (as_text == null) {
+        as_text = function(expression) {
           return `${expression}`;
         };
       }
-      R = get_first_argument = function(parts, ...expressions) {
-        var expression, i, idx, len;
+      /* TAINT use proper validation */
+      if ((typeof as_text) !== 'function') {
+        throw new Error(`Ωidsp___1 expected a function, got ${rpr(as_text)}`);
+      }
+      //.......................................................................................................
+      fn = function(parts, ...expressions) {
+        var R, expression, i, idx, len;
+        /* Given the arguments of either a tagged template function call ('tagfun call') or the single
+        argument of a conventional function call, return either
+        * the result of applying `as_text()` to the sole argument, or
+        * the result of concatenating the constant parts and the interpolated expressions, which each
+        expression replaced by the result of applying `as_text()` to it.
+
+        NOTE When `as_text` is given, it will be used to turn each expression (the parts of tagged templates
+        that are within curlies) into a string; could use this to apply some escaping etc.  */
+        /* TAINT should provide means to also format constant parts */
+        if (!is_tagfun_call(parts, ...expressions)) {
+          if (arguments.length !== 1) {
+            throw new Error(`Ωidsp___2 expected 1 argument, got ${arguments.length}`);
+          }
+          return as_text(parts);
+        }
+        //.....................................................................................................
         R = parts[0];
         for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
           expression = expressions[idx];
-          R += (expression_to_string(expression)) + parts[idx + 1];
+          R += (as_text(expression)) + parts[idx + 1];
         }
         return R;
       };
-      R.create = create_get_first_argument_fn;
-      return R;
+      //.......................................................................................................
+      fn.create = create_get_first_argument_fn;
+      return fn;
     };
     get_first_argument = create_get_first_argument_fn();
     //---------------------------------------------------------------------------------------------------------
@@ -206,7 +228,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___1 unable to pop value from empty stack");
+            throw new XXX_Stack_error("Ωidsp___3 unable to pop value from empty stack");
           }
           return this.data.pop();
         }
@@ -217,7 +239,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___2 unable to shift value from empty stack");
+            throw new XXX_Stack_error("Ωidsp___4 unable to shift value from empty stack");
           }
           return this.data.shift();
         }
@@ -228,7 +250,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___3 unable to peek value of empty stack");
+            throw new XXX_Stack_error("Ωidsp___5 unable to peek value of empty stack");
           }
           return this.data.at(-1);
         }
@@ -289,7 +311,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___4 unable to peek value of empty stack");
+            throw new XXX_Stack_error("Ωidsp___6 unable to peek value of empty stack");
           }
           return this.data.pop();
         }
@@ -298,7 +320,7 @@
         // shift_old_stack:  ( fallback = misfit ) ->
         //   if @is_empty
         //     return fallback unless fallback is misfit
-        //     throw new XXX_Stack_error "Ωidsp___5 unable to peek value of empty stack"
+        //     throw new XXX_Stack_error "Ωidsp___7 unable to peek value of empty stack"
         //   return @data.shift()
 
           //---------------------------------------------------------------------------------------------------------
@@ -307,7 +329,7 @@
             if (fallback !== misfit) {
               return fallback;
             }
-            throw new XXX_Stack_error("Ωidsp___6 unable to peek value of empty stack");
+            throw new XXX_Stack_error("Ωidsp___8 unable to peek value of empty stack");
           }
           return this.data.at(-1);
         }
@@ -441,40 +463,40 @@
     var test_doublestack, test_doublestack_infiniproxy, test_escape_html_text, test_html_safe_text_from_tagfun_call, test_is_tagfun_call;
     //.........................................................................................................
     (test_is_tagfun_call = () => {
-      var fn, is_tagfun_call, Ωidsp___7, Ωidsp___8, Ωidsp___9;
+      var fn, is_tagfun_call, Ωidsp__10, Ωidsp__11, Ωidsp___9;
       ({is_tagfun_call} = require_tagfun_tools());
       fn = function(...P) {
         return is_tagfun_call(...P);
       };
-      this.eq((Ωidsp___7 = function() {
+      this.eq((Ωidsp___9 = function() {
         return fn();
       }), false);
-      this.eq((Ωidsp___8 = function() {
+      this.eq((Ωidsp__10 = function() {
         return fn([1, 2, 3]);
       }), false);
-      this.eq((Ωidsp___9 = function() {
+      this.eq((Ωidsp__11 = function() {
         return fn`[ 1, 2, 3, ]`;
       }), true);
       return null;
     })();
     //.........................................................................................................
     (test_escape_html_text = () => {
-      var escape_html_text, Ωidsp__10, Ωidsp__11, Ωidsp__12;
+      var escape_html_text, Ωidsp__12, Ωidsp__13, Ωidsp__14;
       ({escape_html_text} = require_escape_html_text());
-      this.eq((Ωidsp__10 = function() {
+      this.eq((Ωidsp__12 = function() {
         return escape_html_text('');
       }), '');
-      this.eq((Ωidsp__11 = function() {
+      this.eq((Ωidsp__13 = function() {
         return escape_html_text('abc');
       }), 'abc');
-      this.eq((Ωidsp__12 = function() {
+      this.eq((Ωidsp__14 = function() {
         return escape_html_text('abc<tag>d&e&f</tag>');
       }), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;');
       return null;
     })();
     //.........................................................................................................
     (test_html_safe_text_from_tagfun_call = () => {
-      var fn, html_safe_text_from_tagfun_call, Ωidsp__13, Ωidsp__14, Ωidsp__15, Ωidsp__16;
+      var fn, html_safe_text_from_tagfun_call, Ωidsp__15, Ωidsp__16, Ωidsp__17, Ωidsp__18;
       ({html_safe_text_from_tagfun_call} = (() => {
         var dont_escape_raw_instances;
         dont_escape_raw_instances = function(x) {
@@ -483,46 +505,46 @@
         return create_html_escaped_text_from_tagfun_call(dont_escape_raw_instances);
       })());
       fn = html_safe_text_from_tagfun_call;
-      this.eq((Ωidsp__13 = function() {
+      this.eq((Ωidsp__15 = function() {
         return fn``;
       }), '');
-      this.eq((Ωidsp__14 = function() {
+      this.eq((Ωidsp__16 = function() {
         return fn`abc`;
       }), 'abc');
-      this.eq((Ωidsp__15 = function() {
+      this.eq((Ωidsp__17 = function() {
         return fn`abc<tag>d&e&f</tag>`;
       }), 'abc<tag>d&e&f</tag>');
-      this.eq((Ωidsp__16 = function() {
+      this.eq((Ωidsp__18 = function() {
         return fn`(${'abc<tag>d&e&f</tag>'})`;
       }), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)');
       return null;
     })();
     //.........................................................................................................
     (test_doublestack = () => {
-      var Doublestack, Stack, ds, my_stack_1, my_stack_2, Ωidsp__17, Ωidsp__18, Ωidsp__19, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23;
+      var Doublestack, Stack, ds, my_stack_1, my_stack_2, Ωidsp__19, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23, Ωidsp__24, Ωidsp__25;
       ({Stack, Doublestack} = require_stack_classes());
       ds = new Doublestack();
       my_stack_1 = null;
       my_stack_2 = null;
-      this.eq((Ωidsp__17 = function() {
+      this.eq((Ωidsp__19 = function() {
         return ds.data;
       }), []);
-      this.eq((Ωidsp__18 = function() {
+      this.eq((Ωidsp__20 = function() {
         return ds.length;
       }), 0);
-      this.eq((Ωidsp__19 = function() {
+      this.eq((Ωidsp__21 = function() {
         return ds.peek_stack(null);
       }), null);
-      this.eq((Ωidsp__20 = function() {
+      this.eq((Ωidsp__22 = function() {
         return (my_stack_1 = ds.push_new_stack()) instanceof Stack;
       }), true);
-      this.eq((Ωidsp__21 = function() {
+      this.eq((Ωidsp__23 = function() {
         return ds.length;
       }), 1);
-      this.eq((Ωidsp__22 = function() {
+      this.eq((Ωidsp__24 = function() {
         return (my_stack_2 = ds.peek_stack()) instanceof Stack;
       }), true);
-      this.eq((Ωidsp__23 = function() {
+      this.eq((Ωidsp__25 = function() {
         return my_stack_1 === my_stack_2;
       }), true);
       return null;
@@ -538,16 +560,7 @@
         var base, proxy;
         base = function(...P) {
           var chain, text;
-          switch (true) {
-            case is_tagfun_call(...P):
-              text = get_first_argument(...P);
-              break;
-            case P.length === 1:
-              text = get_first_argument([P[0]]);
-              break;
-            default:
-              throw new Error(`Ωidsp__24 expected 1 argument, got ${P.length}`);
-          }
+          text = get_first_argument(...P);
           chain = doublestack.peek_stack().data.join('.');
           return `[${chain}:${rpr(text)}]`;
         };
@@ -555,30 +568,30 @@
         return {proxy, doublestack};
       };
       (() => {        //.......................................................................................................
-        var doublestack, proxy, Ωidsp__28, Ωidsp__29, Ωidsp__30, Ωidsp__31, Ωidsp__32, Ωidsp__33;
+        var doublestack, proxy, Ωidsp__29, Ωidsp__30, Ωidsp__31, Ωidsp__32, Ωidsp__33, Ωidsp__34;
         ({proxy, doublestack} = create_echoing_proxy());
-        info('Ωidsp__25', rpr(proxy.gold.bold.underlined`text 1`));
-        info('Ωidsp__26', rpr(proxy.red.reverse.italic`text 2`));
-        info('Ωidsp__27', rpr(proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`));
+        info('Ωidsp__26', rpr(proxy.gold.bold.underlined`text 1`));
+        info('Ωidsp__27', rpr(proxy.red.reverse.italic`text 2`));
+        info('Ωidsp__28', rpr(proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`));
         //.......................................................................................................
-        this.eq((Ωidsp__28 = function() {
+        this.eq((Ωidsp__29 = function() {
           return proxy.gold.bold.underlined`text 1`;
         }), `[gold.bold.underlined:'text 1']`);
-        this.eq((Ωidsp__29 = function() {
+        this.eq((Ωidsp__30 = function() {
           return proxy.red.reverse.italic`text 2`;
         }), `[red.reverse.italic:'text 2']`);
-        this.eq((Ωidsp__30 = function() {
+        this.eq((Ωidsp__31 = function() {
           return proxy.red.reverse.italic`text 2 ${proxy.gold.bold.underlined`(embedded text)`}!!`;
         }), `[red.reverse.italic:"text 2 [gold.bold.underlined:'(embedded text)']!!"]`);
         /* NOTE 'unused' property chains shouldn't leave traces on stack, but they do: */
-        this.eq((Ωidsp__31 = function() {
-          return doublestack.length;
-        }), 0);
         this.eq((Ωidsp__32 = function() {
-          proxy.using_chain_2`some text`;
           return doublestack.length;
         }), 0);
         this.eq((Ωidsp__33 = function() {
+          proxy.using_chain_2`some text`;
+          return doublestack.length;
+        }), 0);
+        this.eq((Ωidsp__34 = function() {
           proxy.building.chain_1;
           proxy.using_chain_2`some text`;
           return doublestack.length;
@@ -586,38 +599,38 @@
 /* NOTE: should be 0 */        return null;
       })();
       (() => {        //.......................................................................................................
-        var doublestack, proxy, Ωidsp__34, Ωidsp__35, Ωidsp__36, Ωidsp__37, Ωidsp__38;
+        var doublestack, proxy, Ωidsp__35, Ωidsp__36, Ωidsp__37, Ωidsp__38, Ωidsp__39;
         echo('——————————————————————————————————————————————————————————————————————————————');
         ({proxy, doublestack} = create_echoing_proxy());
         proxy.a.b.c;
         proxy.d.e.f;
-        this.eq((Ωidsp__34 = function() {
-          return doublestack.length;
-        }), 2);
         this.eq((Ωidsp__35 = function() {
-          return proxy.g.h.i(127);
-        }), '[g.h.i:127]');
-        this.eq((Ωidsp__36 = function() {
           return doublestack.length;
         }), 2);
+        this.eq((Ωidsp__36 = function() {
+          return proxy.g.h.i(127);
+        }), "[g.h.i:'127']");
         this.eq((Ωidsp__37 = function() {
+          return doublestack.length;
+        }), 2);
+        this.eq((Ωidsp__38 = function() {
           return doublestack.clear();
         }), null);
-        return this.eq((Ωidsp__38 = function() {
+        return this.eq((Ωidsp__39 = function() {
           return doublestack.length;
         }), 0);
       })();
       (() => {        //.......................................................................................................
-        var doublestack, proxy, Ωidsp__39, Ωidsp__40, Ωidsp__41;
+        var doublestack, proxy, Ωidsp__40, Ωidsp__41, Ωidsp__42;
         echo('——————————————————————————————————————————————————————————————————————————————');
         ({proxy, doublestack} = create_echoing_proxy());
-        this.eq((Ωidsp__39 = function() {
-          return proxy.a.b.c(90);
-        }), `[a.b.c:90]`);
         this.eq((Ωidsp__40 = function() {
-          return proxy.a.b.c(proxy.d.e.f(90));
-        }), `[a.b.c:'[d.e.f:90]']`);
+          return proxy.a.b.c(90);
+        }), `[a.b.c:'90']`);
         this.eq((Ωidsp__41 = function() {
+          return proxy.a.b.c(proxy.d.e.f(90));
+        }), `[a.b.c:"[d.e.f:'90']"]`);
+        this.eq((Ωidsp__42 = function() {
           return doublestack.length;
         }), 0);
         return null;
@@ -627,7 +640,7 @@
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, is_tagfun_call;
+      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_as_text, is_tagfun_call;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({get_first_argument} = require_tagfun_tools());
@@ -635,25 +648,19 @@
       //.......................................................................................................
       ({escape_html_text} = require_escape_html_text());
       //.......................................................................................................
+      get_first_argument_as_text = get_first_argument.create(function(x) {
+        if (x instanceof Raw) {
+          return `${x}`;
+        }
+        return escape_html_text(text(`${x}`));
+      });
+      //.......................................................................................................
       create_html_proxy = function(doublestack) {
-        var base, get_text, proxy;
-        get_text = function(...P) {
-          switch (true) {
-            case is_tagfun_call(...P):
-              return get_first_argument(...P);
-            case P.length === 1:
-              return get_first_argument([P[0]]);
-            default:
-              throw new Error(`Ωidsp__42 expected 1 argument, got ${P.length}`);
-          }
-        };
+        var base, proxy;
         base = function(...P) {
           var R, attr_names, chain, tag_name, text;
           text = get_text(...P);
           debug('Ωidsp__43', rpr(text));
-          if (!(text instanceof Raw)) {
-            text = escape_html_text(text);
-          }
           if (doublestack.is_empty) {
             return text;
           }
