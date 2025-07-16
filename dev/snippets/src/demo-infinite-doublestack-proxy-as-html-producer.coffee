@@ -88,7 +88,7 @@ require_tagfun_tools = ->
     unless ( typeof as_text ) is 'function'
       throw new Error "Ωidsp___1 expected a function, got #{rpr as_text}"
     #.......................................................................................................
-    fn = ( parts, expressions... ) ->
+    get_first_argument =  ( P... ) ->
       ### Given the arguments of either a tagged template function call ('tagfun call') or the single
       argument of a conventional function call, return either
       * the result of applying `as_text()` to the sole argument, or
@@ -98,19 +98,19 @@ require_tagfun_tools = ->
       NOTE When `as_text` is given, it will be used to turn each expression (the parts of tagged templates
       that are within curlies) into a string; could use this to apply some escaping etc. ###
       ### TAINT should provide means to also format constant parts ###
-      unless is_tagfun_call parts, expressions...
-        unless arguments.length is 1
-          throw new Error "Ωidsp___2 expected 1 argument, got #{arguments.length}"
-        return as_text parts
+      unless is_tagfun_call P...
+        unless P.length is 1
+          throw new Error "Ωidsp___2 expected 1 argument, got #{P.length}"
+        return as_text P[ 0 ]
       #.....................................................................................................
+      [ parts, expressions..., ] = P
       R = parts[ 0 ]
       for expression, idx in expressions
         R += ( as_text expression ) + parts[ idx + 1 ]
       return R
     #.......................................................................................................
-    fn.create = create_get_first_argument_fn
-    return fn
-  get_first_argument = create_get_first_argument_fn()
+    get_first_argument.create = create_get_first_argument_fn
+    return get_first_argument
 
   #---------------------------------------------------------------------------------------------------------
   is_tagfun_call = ( P... ) ->
@@ -120,7 +120,7 @@ require_tagfun_tools = ->
     return true
 
   #---------------------------------------------------------------------------------------------------------
-  return { get_first_argument, is_tagfun_call, }
+  return { get_first_argument: create_get_first_argument_fn(), is_tagfun_call, }
 
 #===========================================================================================================
 ### NOTE Future Single-File Module ###

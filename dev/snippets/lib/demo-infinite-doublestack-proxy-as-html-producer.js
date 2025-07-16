@@ -76,9 +76,9 @@
   //===========================================================================================================
   /* NOTE Future Single-File Module */
   require_tagfun_tools = function() {
-    var create_get_first_argument_fn, get_first_argument, is_tagfun_call;
+    var create_get_first_argument_fn, is_tagfun_call;
     create_get_first_argument_fn = function(as_text = null) {
-      var fn;
+      var get_first_argument;
       if (as_text == null) {
         as_text = function(expression) {
           return `${expression}`;
@@ -89,8 +89,8 @@
         throw new Error(`Ωidsp___1 expected a function, got ${rpr(as_text)}`);
       }
       //.......................................................................................................
-      fn = function(parts, ...expressions) {
-        var R, expression, i, idx, len;
+      get_first_argument = function(...P) {
+        var R, expression, expressions, i, idx, len, parts;
         /* Given the arguments of either a tagged template function call ('tagfun call') or the single
         argument of a conventional function call, return either
         * the result of applying `as_text()` to the sole argument, or
@@ -100,13 +100,14 @@
         NOTE When `as_text` is given, it will be used to turn each expression (the parts of tagged templates
         that are within curlies) into a string; could use this to apply some escaping etc.  */
         /* TAINT should provide means to also format constant parts */
-        if (!is_tagfun_call(parts, ...expressions)) {
-          if (arguments.length !== 1) {
-            throw new Error(`Ωidsp___2 expected 1 argument, got ${arguments.length}`);
+        if (!is_tagfun_call(...P)) {
+          if (P.length !== 1) {
+            throw new Error(`Ωidsp___2 expected 1 argument, got ${P.length}`);
           }
-          return as_text(parts);
+          return as_text(P[0]);
         }
         //.....................................................................................................
+        [parts, ...expressions] = P;
         R = parts[0];
         for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
           expression = expressions[idx];
@@ -115,10 +116,9 @@
         return R;
       };
       //.......................................................................................................
-      fn.create = create_get_first_argument_fn;
-      return fn;
+      get_first_argument.create = create_get_first_argument_fn;
+      return get_first_argument;
     };
-    get_first_argument = create_get_first_argument_fn();
     //---------------------------------------------------------------------------------------------------------
     is_tagfun_call = function(...P) {
       if (!Array.isArray(P[0])) {
@@ -132,8 +132,11 @@
       }
       return true;
     };
-    //---------------------------------------------------------------------------------------------------------
-    return {get_first_argument, is_tagfun_call};
+    return {
+      //---------------------------------------------------------------------------------------------------------
+      get_first_argument: create_get_first_argument_fn(),
+      is_tagfun_call
+    };
   };
 
   //===========================================================================================================
