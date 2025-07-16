@@ -92,10 +92,20 @@
       get_first_argument = function(...P) {
         var R, expression, expressions, i, idx, len, parts;
         /* Given the arguments of either a tagged template function call ('tagfun call') or the single
-             argument of a conventional function call, return either
-             * the result of applying `as_text()` to the sole argument, or
-             * the result of concatenating the constant parts and the interpolated expressions, which each
-             expression replaced by the result of applying `as_text()` to it.  */
+        argument of a conventional function call, return either
+
+        * the result of applying `as_text()` to the sole argument, or
+
+        * the result of concatenating the constant parts and the interpolated expressions, which each
+        expression replaced by the result of applying `as_text()` to it.
+
+        Another way to describe this behavior is to say that this function treats a conventional call with
+        a single expression the same way that it treats a funtag call with a string that contains nothing but
+        that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
+        )` holds.
+
+        * intended for string producers, text processing, markup production;
+        * list some examples.  */
         if (!is_tagfun_call(...P)) {
           if (P.length !== 1) {
             throw new Error(`Ωidsp___2 expected 1 argument, got ${P.length}`);
@@ -639,7 +649,7 @@
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46, Ωidsp__47;
+      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46, Ωidsp__47, Ωidsp__48;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({get_first_argument} = require_tagfun_tools());
@@ -684,11 +694,14 @@
       }), "&lt;&amp;&gt;");
       this.eq((Ωidsp__46 = function() {
         return H`<&>`;
-      }), "&lt;&amp;&gt;");
+      }), '<&>');
       this.eq((Ωidsp__47 = function() {
+        return H`${'<&>'}`;
+      }), "&lt;&amp;&gt;");
+      this.eq((Ωidsp__48 = function() {
         return H(new Raw('<&>'));
       }), '<&>');
-      // @.eq ( Ωidsp__48 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+      // @.eq ( Ωidsp__49 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
       return null;
     })();
     //.........................................................................................................

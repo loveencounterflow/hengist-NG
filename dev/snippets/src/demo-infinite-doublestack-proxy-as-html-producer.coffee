@@ -91,9 +91,19 @@ require_tagfun_tools = ->
     get_first_argument = ( P... ) ->
       ### Given the arguments of either a tagged template function call ('tagfun call') or the single
       argument of a conventional function call, return either
+
       * the result of applying `as_text()` to the sole argument, or
+
       * the result of concatenating the constant parts and the interpolated expressions, which each
-      expression replaced by the result of applying `as_text()` to it. ###
+      expression replaced by the result of applying `as_text()` to it.
+
+      Another way to describe this behavior is to say that this function treats a conventional call with
+      a single expression the same way that it treats a funtag call with a string that contains nothing but
+      that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
+      )` holds.
+
+      * intended for string producers, text processing, markup production;
+      * list some examples. ###
       unless is_tagfun_call P...
         unless P.length is 1
           throw new Error "Ωidsp___2 expected 1 argument, got #{P.length}"
@@ -424,10 +434,11 @@ tests = ->
     #.......................................................................................................
     echo '——————————————————————————————————————————————————————————————————————————————'
     { proxy: H, } = create_html_proxy()
-    @.eq ( Ωidsp__45 = -> H         '<&>' ), "&lt;&amp;&gt;"
-    @.eq ( Ωidsp__46 = -> H'<&>'          ), "&lt;&amp;&gt;"
-    @.eq ( Ωidsp__47 = -> H new Raw '<&>' ), '<&>'
-    # @.eq ( Ωidsp__48 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+    @.eq ( Ωidsp__45 = -> H '<&>'         ), "&lt;&amp;&gt;"
+    @.eq ( Ωidsp__46 = -> H'<&>'          ), '<&>'
+    @.eq ( Ωidsp__47 = -> H"#{'<&>'}"     ), "&lt;&amp;&gt;"
+    @.eq ( Ωidsp__48 = -> H new Raw '<&>' ), '<&>'
+    # @.eq ( Ωidsp__49 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
     return null
   #.........................................................................................................
   return null
