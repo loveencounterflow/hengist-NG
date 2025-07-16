@@ -639,7 +639,7 @@
     })();
     //.........................................................................................................
     (test_doublestack_infiniproxy = () => {
-      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46;
+      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46, Ωidsp__47;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({get_first_argument} = require_tagfun_tools());
@@ -683,9 +683,12 @@
         return H('<&>');
       }), "&lt;&amp;&gt;");
       this.eq((Ωidsp__46 = function() {
+        return H`<&>`;
+      }), "&lt;&amp;&gt;");
+      this.eq((Ωidsp__47 = function() {
         return H(new Raw('<&>'));
       }), '<&>');
-      // @.eq ( Ωidsp__47 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+      // @.eq ( Ωidsp__48 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
       return null;
     })();
     //.........................................................................................................
