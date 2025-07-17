@@ -25,7 +25,7 @@
 
    */
   'use strict';
-  var GTNG, GUY, Raw, Test, alert, blue, bold, create_html_escaped_text_from_tagfun_call, debug, demo_proxy_as_html_producer, echo, f, gold, green, grey, help, info, inspect, log, nfa, plain, praise, red, require_doublestack_infiniproxy, require_escape_html_text, require_list_tools, require_managed_property_tools, require_nameit, require_stack_classes, require_tagfun_tools, reverse, rpr, tests, urge, warn, whisper, white;
+  var GTNG, GUY, Raw, Test, alert, all_tests, blue, bold, debug, demo_proxy_as_html_producer, echo, f, gold, green, grey, help, info, inspect, log, nfa, plain, praise, red, require_doublestack_infiniproxy, require_escape_html_text, require_list_tools, require_managed_property_tools, require_nameit, require_stack_classes, require_tagfun_tools, reverse, rpr, tests, tests_for_doublestack_infiniproxy, urge, warn, whisper, white;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -448,30 +448,23 @@
 
   };
 
-  //===========================================================================================================
-  create_html_escaped_text_from_tagfun_call = function(dont_escape = null) {
-    /* NOTE will only escape *expressions* of tagged templates, not the constant parts */
-    var escape_html_text, get_first_argument, html_safe_text_from_tagfun_call;
-    ({get_first_argument} = require_tagfun_tools());
-    ({escape_html_text} = require_escape_html_text());
-    //.........................................................................................................
-    html_safe_text_from_tagfun_call = get_first_argument.create(function(expression) {
-      var R;
-      R = `${expression}`;
-      if ((dont_escape != null) && (!dont_escape(expression))) {
-        R = escape_html_text(R);
-      }
-      return R;
-    });
-    //.........................................................................................................
-    return {html_safe_text_from_tagfun_call};
-  };
+  // #===========================================================================================================
+  // create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
+  //   ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
+  //   { get_first_argument,           } = require_tagfun_tools()
+  //   { escape_html_text,             } = require_escape_html_text()
+  //   #.........................................................................................................
+  //   html_safe_text_from_tagfun_call = get_first_argument.create ( expression ) ->
+  //     R = "#{expression}"
+  //     R = escape_html_text R if ( dont_escape? ) and ( not dont_escape expression )
+  //     return R
+  //   #.........................................................................................................
+  //   return { html_safe_text_from_tagfun_call, }
 
   //===========================================================================================================
-  tests = function() {
-    var test_doublestack, test_doublestack_infiniproxy, test_escape_html_text, test_html_safe_text_from_tagfun_call, test_is_tagfun_call;
-    //.........................................................................................................
-    (test_is_tagfun_call = () => {
+  tests = {
+    //---------------------------------------------------------------------------------------------------------
+    test_is_tagfun_call: function() {
       var fn, is_tagfun_call, Ωidsp__10, Ωidsp__11, Ωidsp___9;
       ({is_tagfun_call} = require_tagfun_tools());
       fn = function(...P) {
@@ -487,9 +480,9 @@
         return fn`[ 1, 2, 3, ]`;
       }), true);
       return null;
-    })();
-    //.........................................................................................................
-    (test_escape_html_text = () => {
+    },
+    //---------------------------------------------------------------------------------------------------------
+    test_escape_html_text: function() {
       var escape_html_text, Ωidsp__12, Ωidsp__13, Ωidsp__14;
       ({escape_html_text} = require_escape_html_text());
       this.eq((Ωidsp__12 = function() {
@@ -502,34 +495,21 @@
         return escape_html_text('abc<tag>d&e&f</tag>');
       }), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;');
       return null;
-    })();
-    //.........................................................................................................
-    (test_html_safe_text_from_tagfun_call = () => {
-      var fn, html_safe_text_from_tagfun_call, Ωidsp__15, Ωidsp__16, Ωidsp__17, Ωidsp__18;
-      ({html_safe_text_from_tagfun_call} = (() => {
-        var dont_escape_raw_instances;
-        dont_escape_raw_instances = function(x) {
-          return x instanceof Raw;
-        };
-        return create_html_escaped_text_from_tagfun_call(dont_escape_raw_instances);
-      })());
-      fn = html_safe_text_from_tagfun_call;
-      this.eq((Ωidsp__15 = function() {
-        return fn``;
-      }), '');
-      this.eq((Ωidsp__16 = function() {
-        return fn`abc`;
-      }), 'abc');
-      this.eq((Ωidsp__17 = function() {
-        return fn`abc<tag>d&e&f</tag>`;
-      }), 'abc<tag>d&e&f</tag>');
-      this.eq((Ωidsp__18 = function() {
-        return fn`(${'abc<tag>d&e&f</tag>'})`;
-      }), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)');
-      return null;
-    })();
-    //.........................................................................................................
-    (test_doublestack = () => {
+    },
+    // #.........................................................................................................
+    // do test_html_safe_text_from_tagfun_call = =>
+    //   { html_safe_text_from_tagfun_call, } = do =>
+    //     dont_escape_raw_instances = ( x ) -> x instanceof Raw
+    //     return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
+    //   fn = html_safe_text_from_tagfun_call
+    //   @eq ( Ωidsp__15 = -> fn''                           ), ''
+    //   @eq ( Ωidsp__16 = -> fn'abc'                        ), 'abc'
+    //   @eq ( Ωidsp__17 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
+    //   @eq ( Ωidsp__18 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+    //   return null
+
+    //---------------------------------------------------------------------------------------------------------
+    test_doublestack: function() {
       var Doublestack, Stack, ds, my_stack_1, my_stack_2, Ωidsp__19, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23, Ωidsp__24, Ωidsp__25;
       ({Stack, Doublestack} = require_stack_classes());
       ds = new Doublestack();
@@ -557,9 +537,9 @@
         return my_stack_1 === my_stack_2;
       }), true);
       return null;
-    })();
-    //.........................................................................................................
-    (test_doublestack_infiniproxy = () => {
+    },
+    //---------------------------------------------------------------------------------------------------------
+    test_doublestack_infiniproxy: function() {
       var create_doublestack_infiniproxy, create_echoing_proxy, get_first_argument, is_tagfun_call;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
@@ -646,10 +626,14 @@
       })();
       //.......................................................................................................
       return null;
-    })();
-    //.........................................................................................................
-    (test_doublestack_infiniproxy = () => {
-      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46, Ωidsp__47, Ωidsp__48;
+    }
+  };
+
+  //===========================================================================================================
+  tests_for_doublestack_infiniproxy = {
+    //---------------------------------------------------------------------------------------------------------
+    test_1: function() {
+      var H, append, create_doublestack_infiniproxy, create_html_proxy, escape_html_text, get_first_argument, get_first_argument_for_html, is_tagfun_call, Ωidsp__45, Ωidsp__46, Ωidsp__47, Ωidsp__48, Ωidsp__49;
       ({is_tagfun_call} = require_tagfun_tools());
       ({create_doublestack_infiniproxy} = require_doublestack_infiniproxy());
       ({get_first_argument} = require_tagfun_tools());
@@ -701,12 +685,16 @@
       this.eq((Ωidsp__48 = function() {
         return H(new Raw('<&>'));
       }), '<&>');
-      // @.eq ( Ωidsp__49 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+      this.eq((Ωidsp__49 = function() {
+        return H`<span>${98}</span>`;
+      }), "<span>98</span>");
+      // @.eq ( Ωidsp__50 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
       return null;
-    })();
-    //.........................................................................................................
-    return null;
+    }
   };
+
+  //===========================================================================================================
+  all_tests = {tests, tests_for_doublestack_infiniproxy};
 
   //===========================================================================================================
   demo_proxy_as_html_producer = function() {
@@ -731,12 +719,12 @@
         show_passes: false,
         report_checks: false
       };
-      (new Test(guytest_cfg)).test({tests});
-      return demo_proxy_as_html_producer();
+      return (new Test(guytest_cfg)).test({all_tests});
     })();
   }
 
-  // demo_managed_properties()
+  // demo_proxy_as_html_producer()
+// demo_managed_properties()
 
 }).call(this);
 

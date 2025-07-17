@@ -298,50 +298,53 @@ class Raw
     return undefined
   toString: -> @data
 
-#===========================================================================================================
-create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
-  ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
-  { get_first_argument,           } = require_tagfun_tools()
-  { escape_html_text,             } = require_escape_html_text()
-  #.........................................................................................................
-  html_safe_text_from_tagfun_call = get_first_argument.create ( expression ) ->
-    R = "#{expression}"
-    R = escape_html_text R if ( dont_escape? ) and ( not dont_escape expression )
-    return R
-  #.........................................................................................................
-  return { html_safe_text_from_tagfun_call, }
+# #===========================================================================================================
+# create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
+#   ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
+#   { get_first_argument,           } = require_tagfun_tools()
+#   { escape_html_text,             } = require_escape_html_text()
+#   #.........................................................................................................
+#   html_safe_text_from_tagfun_call = get_first_argument.create ( expression ) ->
+#     R = "#{expression}"
+#     R = escape_html_text R if ( dont_escape? ) and ( not dont_escape expression )
+#     return R
+#   #.........................................................................................................
+#   return { html_safe_text_from_tagfun_call, }
 
 
 #===========================================================================================================
-tests = ->
-  #.........................................................................................................
-  do test_is_tagfun_call = =>
+tests =
+
+  #---------------------------------------------------------------------------------------------------------
+  test_is_tagfun_call: ->
     { is_tagfun_call,                  } = require_tagfun_tools()
     fn = ( P... ) -> is_tagfun_call P...
     @eq ( Ωidsp___9 = -> fn()             ), false
     @eq ( Ωidsp__10 = -> fn [ 1, 2, 3, ]  ), false
     @eq ( Ωidsp__11 = -> fn"[ 1, 2, 3, ]" ), true
     return null
-  #.........................................................................................................
-  do test_escape_html_text = =>
+
+  #---------------------------------------------------------------------------------------------------------
+  test_escape_html_text: ->
     { escape_html_text, } = require_escape_html_text()
     @eq ( Ωidsp__12 = -> escape_html_text ''                    ), ''
     @eq ( Ωidsp__13 = -> escape_html_text 'abc'                 ), 'abc'
     @eq ( Ωidsp__14 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
-  #.........................................................................................................
-  do test_html_safe_text_from_tagfun_call = =>
-    { html_safe_text_from_tagfun_call, } = do =>
-      dont_escape_raw_instances = ( x ) -> x instanceof Raw
-      return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
-    fn = html_safe_text_from_tagfun_call
-    @eq ( Ωidsp__15 = -> fn''                           ), ''
-    @eq ( Ωidsp__16 = -> fn'abc'                        ), 'abc'
-    @eq ( Ωidsp__17 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
-    @eq ( Ωidsp__18 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
-    return null
-  #.........................................................................................................
-  do test_doublestack = =>
+  # #.........................................................................................................
+  # do test_html_safe_text_from_tagfun_call = =>
+  #   { html_safe_text_from_tagfun_call, } = do =>
+  #     dont_escape_raw_instances = ( x ) -> x instanceof Raw
+  #     return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
+  #   fn = html_safe_text_from_tagfun_call
+  #   @eq ( Ωidsp__15 = -> fn''                           ), ''
+  #   @eq ( Ωidsp__16 = -> fn'abc'                        ), 'abc'
+  #   @eq ( Ωidsp__17 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
+  #   @eq ( Ωidsp__18 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
+  #   return null
+
+  #---------------------------------------------------------------------------------------------------------
+  test_doublestack: ->
     { Stack
       Doublestack, }  = require_stack_classes()
     ds                = new Doublestack()
@@ -355,8 +358,9 @@ tests = ->
     @eq ( Ωidsp__24 = -> ( my_stack_2 = ds.peek_stack()       ) instanceof Stack  ), true
     @eq ( Ωidsp__25 = -> my_stack_1 is my_stack_2                                 ), true
     return null
-  #.........................................................................................................
-  do test_doublestack_infiniproxy = =>
+
+  #---------------------------------------------------------------------------------------------------------
+  test_doublestack_infiniproxy: ->
     { is_tagfun_call,                 } = require_tagfun_tools()
     { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
     { get_first_argument,          } = require_tagfun_tools()
@@ -404,8 +408,13 @@ tests = ->
       return null
     #.......................................................................................................
     return null
-  #.........................................................................................................
-  do test_doublestack_infiniproxy = =>
+
+
+#===========================================================================================================
+tests_for_doublestack_infiniproxy =
+
+  #---------------------------------------------------------------------------------------------------------
+  test_1: ->
     { is_tagfun_call,                 } = require_tagfun_tools()
     { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
     { get_first_argument,             } = require_tagfun_tools()
@@ -434,14 +443,17 @@ tests = ->
     #.......................................................................................................
     echo '——————————————————————————————————————————————————————————————————————————————'
     { proxy: H, } = create_html_proxy()
-    @.eq ( Ωidsp__45 = -> H '<&>'         ), "&lt;&amp;&gt;"
-    @.eq ( Ωidsp__46 = -> H'<&>'          ), '<&>'
-    @.eq ( Ωidsp__47 = -> H"#{'<&>'}"     ), "&lt;&amp;&gt;"
-    @.eq ( Ωidsp__48 = -> H new Raw '<&>' ), '<&>'
-    # @.eq ( Ωidsp__49 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+    @.eq ( Ωidsp__45 = -> H '<&>'                 ), "&lt;&amp;&gt;"
+    @.eq ( Ωidsp__46 = -> H'<&>'                  ), '<&>'
+    @.eq ( Ωidsp__47 = -> H"#{'<&>'}"             ), "&lt;&amp;&gt;"
+    @.eq ( Ωidsp__48 = -> H new Raw '<&>'         ), '<&>'
+    @.eq ( Ωidsp__49 = -> H"<span>#{98}</span>"   ), "<span>98</span>"
+    # @.eq ( Ωidsp__50 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
     return null
-  #.........................................................................................................
-  return null
+
+
+#===========================================================================================================
+all_tests = { tests, tests_for_doublestack_infiniproxy, }
 
 
 #===========================================================================================================
@@ -456,6 +468,6 @@ if module is require.main then await do =>
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
-  demo_proxy_as_html_producer()
+  ( new Test guytest_cfg ).test { all_tests, }
+  # demo_proxy_as_html_producer()
   # demo_managed_properties()
