@@ -58,7 +58,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 
 
-
 ############################################################################################################
 #
 #===========================================================================================================
@@ -82,31 +81,35 @@ require_escape_html_text = ->
 #===========================================================================================================
 ### NOTE Future Single-File Module ###
 require_tagfun_tools = ->
+
+  ### Given the arguments of either a tagged template function call ('tagfun call') or the single
+  argument of a conventional function call, `get_first_argument()` will return either
+
+  * the result of applying `as_text()` to the sole argument, or
+
+  * the result of concatenating the constant parts and the interpolated expressions, which each
+  expression replaced by the result of applying `as_text()` to it.
+
+  Another way to describe this behavior is to say that this function treats a conventional call with
+  a single expression the same way that it treats a funtag call with a string that contains nothing but
+  that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
+  )` holds.
+
+  * intended for string producers, text processing, markup production;
+  * list some examples. ###
+
+  #---------------------------------------------------------------------------------------------------------
   create_get_first_argument_fn = ( as_text = null ) ->
     as_text ?= ( expression ) -> "#{expression}"
+    debug 'Ωidsp___1', ( rpr as_text ), ( rpr as_text '<&>' )
     ### TAINT use proper validation ###
     unless ( typeof as_text ) is 'function'
-      throw new Error "Ωidsp___1 expected a function, got #{rpr as_text}"
-    #.......................................................................................................
+      throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"
+    #-------------------------------------------------------------------------------------------------------
     get_first_argument = ( P... ) ->
-      ### Given the arguments of either a tagged template function call ('tagfun call') or the single
-      argument of a conventional function call, return either
-
-      * the result of applying `as_text()` to the sole argument, or
-
-      * the result of concatenating the constant parts and the interpolated expressions, which each
-      expression replaced by the result of applying `as_text()` to it.
-
-      Another way to describe this behavior is to say that this function treats a conventional call with
-      a single expression the same way that it treats a funtag call with a string that contains nothing but
-      that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
-      )` holds.
-
-      * intended for string producers, text processing, markup production;
-      * list some examples. ###
       unless is_tagfun_call P...
         unless P.length is 1
-          throw new Error "Ωidsp___2 expected 1 argument, got #{P.length}"
+          throw new Error "Ωidsp___3 expected 1 argument, got #{P.length}"
         return as_text P[ 0 ]
       #.....................................................................................................
       [ parts, expressions..., ] = P
@@ -114,7 +117,7 @@ require_tagfun_tools = ->
       for expression, idx in expressions
         R += ( as_text expression ) + parts[ idx + 1 ]
       return R
-    #.......................................................................................................
+    #-------------------------------------------------------------------------------------------------------
     get_first_argument.create = create_get_first_argument_fn
     return get_first_argument
 
@@ -181,21 +184,21 @@ require_stack_classes = ->
     pop: ( fallback = misfit ) ->
       if @is_empty
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___3 unable to pop value from empty stack"
+        throw new XXX_Stack_error "Ωidsp___4 unable to pop value from empty stack"
       return @data.pop()
 
     #---------------------------------------------------------------------------------------------------------
     shift: ( fallback = misfit ) ->
       if @is_empty
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___4 unable to shift value from empty stack"
+        throw new XXX_Stack_error "Ωidsp___5 unable to shift value from empty stack"
       return @data.shift()
 
     #---------------------------------------------------------------------------------------------------------
     peek: ( fallback = misfit ) ->
       if @is_empty
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___5 unable to peek value of empty stack"
+        throw new XXX_Stack_error "Ωidsp___6 unable to peek value of empty stack"
       return @data.at -1
 
 
@@ -225,21 +228,21 @@ require_stack_classes = ->
     pop_old_stack: ( fallback = misfit ) ->
       if @is_empty
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___6 unable to peek value of empty stack"
+        throw new XXX_Stack_error "Ωidsp___7 unable to peek value of empty stack"
       return @data.pop()
 
     # #---------------------------------------------------------------------------------------------------------
     # shift_old_stack:  ( fallback = misfit ) ->
     #   if @is_empty
     #     return fallback unless fallback is misfit
-    #     throw new XXX_Stack_error "Ωidsp___7 unable to peek value of empty stack"
+    #     throw new XXX_Stack_error "Ωidsp___8 unable to peek value of empty stack"
     #   return @data.shift()
 
     #---------------------------------------------------------------------------------------------------------
     peek_stack: ( fallback = misfit ) ->
       if @is_empty
         return fallback unless fallback is misfit
-        throw new XXX_Stack_error "Ωidsp___8 unable to peek value of empty stack"
+        throw new XXX_Stack_error "Ωidsp___9 unable to peek value of empty stack"
       return @data.at -1
 
   #-----------------------------------------------------------------------------------------------------------
@@ -290,26 +293,34 @@ require_doublestack_infiniproxy = ->
 ############################################################################################################
 #
 #===========================================================================================================
-class Raw
+require_raw = ->
 
-  #---------------------------------------------------------------------------------------------------------
-  constructor: ( text ) ->
-    @data = text
-    return undefined
-  toString: -> @data
+  #-----------------------------------------------------------------------------------------------------------
+  class XXX_arity_error extends Error
+  { get_first_argument, } = require_tagfun_tools()
+  { set_getter,         } = require_managed_property_tools()
 
-# #===========================================================================================================
-# create_html_escaped_text_from_tagfun_call = ( dont_escape = null ) ->
-#   ### NOTE will only escape *expressions* of tagged templates, not the constant parts ###
-#   { get_first_argument,           } = require_tagfun_tools()
-#   { escape_html_text,             } = require_escape_html_text()
-#   #.........................................................................................................
-#   html_safe_text_from_tagfun_call = get_first_argument.create ( expression ) ->
-#     R = "#{expression}"
-#     R = escape_html_text R if ( dont_escape? ) and ( not dont_escape expression )
-#     return R
-#   #.........................................................................................................
-#   return { html_safe_text_from_tagfun_call, }
+  #-----------------------------------------------------------------------------------------------------------
+  class Raw extends String
+    set_getter @, Symbol.species, -> Raw
+  # class Raw
+
+    #---------------------------------------------------------------------------------------------------------
+    constructor: ( text ) ->
+      super text
+      unless ( arity = arguments.length ) is 1
+        throw new XXX_arity_error "Ωidsp__10 expected 1 argument, got #{arity}"
+      return undefined
+
+  #   #---------------------------------------------------------------------------------------------------------
+  #   toString: -> @data
+
+  #-----------------------------------------------------------------------------------------------------------
+  raw     = ( P... ) -> new Raw get_first_argument P...
+  is_raw  = ( x ) -> x instanceof Raw
+
+  #-----------------------------------------------------------------------------------------------------------
+  return { Raw, raw, is_raw, }
 
 
 #===========================================================================================================
@@ -319,29 +330,36 @@ tests =
   test_is_tagfun_call: ->
     { is_tagfun_call,                  } = require_tagfun_tools()
     fn = ( P... ) -> is_tagfun_call P...
-    @eq ( Ωidsp___9 = -> fn()             ), false
-    @eq ( Ωidsp__10 = -> fn [ 1, 2, 3, ]  ), false
-    @eq ( Ωidsp__11 = -> fn"[ 1, 2, 3, ]" ), true
+    @eq ( Ωidsp__11 = -> fn()             ), false
+    @eq ( Ωidsp__12 = -> fn [ 1, 2, 3, ]  ), false
+    @eq ( Ωidsp__13 = -> fn"[ 1, 2, 3, ]" ), true
     return null
 
   #---------------------------------------------------------------------------------------------------------
   test_escape_html_text: ->
     { escape_html_text, } = require_escape_html_text()
-    @eq ( Ωidsp__12 = -> escape_html_text ''                    ), ''
-    @eq ( Ωidsp__13 = -> escape_html_text 'abc'                 ), 'abc'
-    @eq ( Ωidsp__14 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
+    @eq ( Ωidsp__14 = -> escape_html_text ''                    ), ''
+    @eq ( Ωidsp__15 = -> escape_html_text 'abc'                 ), 'abc'
+    @eq ( Ωidsp__16 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
-  # #.........................................................................................................
-  # do test_html_safe_text_from_tagfun_call = =>
-  #   { html_safe_text_from_tagfun_call, } = do =>
-  #     dont_escape_raw_instances = ( x ) -> x instanceof Raw
-  #     return create_html_escaped_text_from_tagfun_call dont_escape_raw_instances
-  #   fn = html_safe_text_from_tagfun_call
-  #   @eq ( Ωidsp__15 = -> fn''                           ), ''
-  #   @eq ( Ωidsp__16 = -> fn'abc'                        ), 'abc'
-  #   @eq ( Ωidsp__17 = -> fn'abc<tag>d&e&f</tag>'        ), 'abc<tag>d&e&f</tag>'
-  #   @eq ( Ωidsp__18 = -> fn"(#{'abc<tag>d&e&f</tag>'})" ), '(abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;)'
-  #   return null
+
+  #---------------------------------------------------------------------------------------------------------
+  test_raw: ->
+    { Raw, raw,         } = require_raw()
+    { escape_html_text, } = require_escape_html_text()
+    @throws ( Ωidsp__17 = -> new Raw                ), /expected 1 argument/
+    @throws ( Ωidsp__18 = -> new Raw()              ), /expected 1 argument/
+    do =>
+      result = raw '<&>'
+      @eq ( Ωidsp__19 = -> result instanceof Raw  ), true
+      @eq ( Ωidsp__20 = -> result.length          ), 3
+      @eq ( Ωidsp__21 = -> Array.from result      ), [ '<', '&', '>', ]
+    do =>
+      result = raw'<&>'
+      @eq ( Ωidsp__22 = -> result instanceof Raw  ), true
+      @eq ( Ωidsp__23 = -> result.length          ), 3
+      @eq ( Ωidsp__24 = -> Array.from result      ), [ '<', '&', '>', ]
+    return null
 
   #---------------------------------------------------------------------------------------------------------
   test_doublestack: ->
@@ -350,20 +368,20 @@ tests =
     ds                = new Doublestack()
     my_stack_1        = null
     my_stack_2        = null
-    @eq ( Ωidsp__19 = -> ds.data                                                  ), []
-    @eq ( Ωidsp__20 = -> ds.length                                                ), 0
-    @eq ( Ωidsp__21 = -> ds.peek_stack null                                       ), null
-    @eq ( Ωidsp__22 = -> ( my_stack_1 = ds.push_new_stack()   ) instanceof Stack  ), true
-    @eq ( Ωidsp__23 = -> ds.length                                                ), 1
-    @eq ( Ωidsp__24 = -> ( my_stack_2 = ds.peek_stack()       ) instanceof Stack  ), true
-    @eq ( Ωidsp__25 = -> my_stack_1 is my_stack_2                                 ), true
+    @eq ( Ωidsp__25 = -> ds.data                                                  ), []
+    @eq ( Ωidsp__26 = -> ds.length                                                ), 0
+    @eq ( Ωidsp__27 = -> ds.peek_stack null                                       ), null
+    @eq ( Ωidsp__28 = -> ( my_stack_1 = ds.push_new_stack()   ) instanceof Stack  ), true
+    @eq ( Ωidsp__29 = -> ds.length                                                ), 1
+    @eq ( Ωidsp__30 = -> ( my_stack_2 = ds.peek_stack()       ) instanceof Stack  ), true
+    @eq ( Ωidsp__31 = -> my_stack_1 is my_stack_2                                 ), true
     return null
 
   #---------------------------------------------------------------------------------------------------------
   test_doublestack_infiniproxy: ->
-    { is_tagfun_call,                 } = require_tagfun_tools()
+    { is_tagfun_call,
+      get_first_argument,             } = require_tagfun_tools()
     { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
-    { get_first_argument,          } = require_tagfun_tools()
     #.......................................................................................................
     create_echoing_proxy = ( doublestack ) ->
       base = ( P... ) ->
@@ -375,17 +393,17 @@ tests =
     #.......................................................................................................
     do =>
       { proxy, doublestack, } = create_echoing_proxy()
-      info 'Ωidsp__26', rpr proxy.gold.bold.underlined"text 1"
-      info 'Ωidsp__27', rpr proxy.red.reverse.italic"text 2"
-      info 'Ωidsp__28', rpr proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"
+      info 'Ωidsp__32', rpr proxy.gold.bold.underlined"text 1"
+      info 'Ωidsp__33', rpr proxy.red.reverse.italic"text 2"
+      info 'Ωidsp__34', rpr proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"
       #.......................................................................................................
-      @eq ( Ωidsp__29 = -> proxy.gold.bold.underlined"text 1"                                                 ), """[gold.bold.underlined:'text 1']"""
-      @eq ( Ωidsp__30 = -> proxy.red.reverse.italic"text 2"                                                   ), """[red.reverse.italic:'text 2']"""
-      @eq ( Ωidsp__31 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), """[red.reverse.italic:"text 2 [gold.bold.underlined:'(embedded text)']!!"]"""
+      @eq ( Ωidsp__35 = -> proxy.gold.bold.underlined"text 1"                                                 ), """[gold.bold.underlined:'text 1']"""
+      @eq ( Ωidsp__36 = -> proxy.red.reverse.italic"text 2"                                                   ), """[red.reverse.italic:'text 2']"""
+      @eq ( Ωidsp__37 = -> proxy.red.reverse.italic"text 2 #{proxy.gold.bold.underlined"(embedded text)"}!!"  ), """[red.reverse.italic:"text 2 [gold.bold.underlined:'(embedded text)']!!"]"""
       ### NOTE 'unused' property chains shouldn't leave traces on stack, but they do: ###
-      @eq ( Ωidsp__32 = ->                                                          doublestack.length ), 0
-      @eq ( Ωidsp__33 = ->                          proxy.using_chain_2"some text"; doublestack.length ), 0
-      @eq ( Ωidsp__34 = -> proxy.building.chain_1;  proxy.using_chain_2"some text"; doublestack.length ), 1 ### NOTE: should be 0 ###
+      @eq ( Ωidsp__38 = ->                                                          doublestack.length ), 0
+      @eq ( Ωidsp__39 = ->                          proxy.using_chain_2"some text"; doublestack.length ), 0
+      @eq ( Ωidsp__40 = -> proxy.building.chain_1;  proxy.using_chain_2"some text"; doublestack.length ), 1 ### NOTE: should be 0 ###
       return null
     #.......................................................................................................
     do =>
@@ -393,18 +411,18 @@ tests =
       { proxy, doublestack, } = create_echoing_proxy()
       proxy.a.b.c
       proxy.d.e.f
-      @eq ( Ωidsp__35 = -> doublestack.length   ), 2
-      @eq ( Ωidsp__36 = -> proxy.g.h.i 127      ), "[g.h.i:'127']"
-      @eq ( Ωidsp__37 = -> doublestack.length   ), 2
-      @eq ( Ωidsp__38 = -> doublestack.clear()  ), null
-      @eq ( Ωidsp__39 = -> doublestack.length   ), 0
+      @eq ( Ωidsp__41 = -> doublestack.length   ), 2
+      @eq ( Ωidsp__42 = -> proxy.g.h.i 127      ), "[g.h.i:127]"
+      @eq ( Ωidsp__43 = -> doublestack.length   ), 2
+      @eq ( Ωidsp__44 = -> doublestack.clear()  ), null
+      @eq ( Ωidsp__45 = -> doublestack.length   ), 0
     #.......................................................................................................
     do =>
       echo '——————————————————————————————————————————————————————————————————————————————'
       { proxy, doublestack, } = create_echoing_proxy()
-      @.eq ( Ωidsp__40 = -> proxy.a.b.c 90              ), """[a.b.c:'90']"""
-      @.eq ( Ωidsp__41 = -> proxy.a.b.c proxy.d.e.f 90  ), """[a.b.c:"[d.e.f:'90']"]"""
-      @.eq ( Ωidsp__42 = -> doublestack.length          ), 0
+      @eq ( Ωidsp__46 = -> proxy.a.b.c 90              ), """[a.b.c:90]"""
+      @eq ( Ωidsp__47 = -> proxy.a.b.c proxy.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+      @eq ( Ωidsp__48 = -> doublestack.length          ), 0
       return null
     #.......................................................................................................
     return null
@@ -415,40 +433,66 @@ tests_for_doublestack_infiniproxy =
 
   #---------------------------------------------------------------------------------------------------------
   test_1: ->
-    { is_tagfun_call,                 } = require_tagfun_tools()
+    { get_first_argument,
+      is_tagfun_call,                 } = require_tagfun_tools()
     { create_doublestack_infiniproxy, } = require_doublestack_infiniproxy()
-    { get_first_argument,             } = require_tagfun_tools()
     { append,                         } = require_list_tools()
     #.......................................................................................................
+    { Raw, raw, is_raw,               } = require_raw()
     { escape_html_text,               } = require_escape_html_text()
     #.......................................................................................................
-    get_first_argument_for_html = get_first_argument.create ( x ) ->
-      return "#{x}" if x instanceof Raw
-      return escape_html_text "#{x}"
+    class XXX_no_tagfun_call_error extends Error
     #.......................................................................................................
-    create_html_proxy = ( doublestack ) ->
+    get_first_argument_for_html = get_first_argument.create Ωidsp__49 = ( x ) ->
+      # debug 'Ωidsp__50', ( rpr x ), ( is_raw x ), ( rpr escape_html_text x )
+      return x if is_raw x
+      # return "#{x}" if is_raw x
+      return escape_html_text "#{x}"
+      # return raw escape_html_text "#{x}"
+    #.......................................................................................................
+    create_html_proxy = ->
       base = ( P... ) ->
+        unless is_tagfun_call P...
+          throw new XXX_no_tagfun_call_error "Ωidsp__51 expected call as tagged template, got conventional call"
         text  = get_first_argument_for_html P...
-        debug 'Ωidsp__43', rpr text
-        return text if doublestack.is_empty
+        # debug 'Ωidsp__52', rpr text
+        if doublestack.is_empty
+          return if is_raw text then text else escape_html_text text
+        # return escape_html_text text if doublestack.is_empty
         chain = doublestack.peek_stack()
         R = []
         [ tag_name, attr_names..., ] = chain
         append R, '<', tag_name
-        debug 'Ωidsp__44', [ tag_name, attr_names, ]
+        debug 'Ωidsp__53', { tag_name, attr_names, }
         append R, '>', text, '</', tag_name, '>'
-        return R.join ''
+        return raw R.join ''
       { proxy, doublestack, } = create_doublestack_infiniproxy base
       return { proxy, doublestack, }
     #.......................................................................................................
-    echo '——————————————————————————————————————————————————————————————————————————————'
     { proxy: H, } = create_html_proxy()
-    @.eq ( Ωidsp__45 = -> H '<&>'                 ), "&lt;&amp;&gt;"
-    @.eq ( Ωidsp__46 = -> H'<&>'                  ), '<&>'
-    @.eq ( Ωidsp__47 = -> H"#{'<&>'}"             ), "&lt;&amp;&gt;"
-    @.eq ( Ωidsp__48 = -> H new Raw '<&>'         ), '<&>'
-    @.eq ( Ωidsp__49 = -> H"<span>#{98}</span>"   ), "<span>98</span>"
-    # @.eq ( Ωidsp__50 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
+    @eq     ( Ωidsp__54 = -> get_first_argument_for_html '<abc>'          ), '&lt;abc&gt;'
+    @eq     ( Ωidsp__55 = -> get_first_argument_for_html"#{'<abc>'}"      ), '&lt;abc&gt;'
+    @throws ( Ωidsp__56 = -> H "<abc>"                                    ), /expected call as tagged template/
+    @eq     ( Ωidsp__57 = -> H"<abc>"                                     ), '&lt;abc&gt;'
+    @eq     ( Ωidsp__58 = -> H"#{'<abc>'}"                                ), '&lt;abc&gt;'
+    @eq     ( Ωidsp__59 = -> H"#{raw '<abc>'}"                            ), '<abc>'
+    @eq     ( Ωidsp__60 = -> H"#{raw'<abc>'}"                             ), '<abc>'
+    # info 'Ωidsp__61', H.a.b.c"<xyz>"
+    # @eq ( Ωidsp__62 = -> "#{H '<&>'}"                                      ), "&lt;&amp;&gt;"
+    # @eq ( Ωidsp__63 = -> "#{H'<&>' }"                                      ), "&lt;&amp;&gt;"
+
+    # # @eq ( Ωidsp__64 = -> H '<&>'                                       ), '<&>'
+    # # @eq ( Ωidsp__65 = -> H'<&>'                                        ), '<&>'
+
+    # # @eq ( Ωidsp__66 = -> H"#{'<&>'}"                                   ), "&lt;&amp;&gt;"
+    # # @eq ( Ωidsp__67 = -> raw '<&>'                                     ), new Raw '<&>'
+    # # @eq ( Ωidsp__68 = -> H raw '<&>'                                   ), '<&>'
+    # # @eq ( Ωidsp__69 = -> H raw'<&>'                                    ), '<&>'
+    # # @eq ( Ωidsp__70 = -> H"<span>#{98}</span>"                         ), "<span>98</span>"
+    # # @eq ( Ωidsp__71 = -> H"""<div>#{"<span>#{98}</span>"}</div>"""     ), "<div>&lt;span&gt;98&lt;/span&gt;</div>"
+    # # @eq ( Ωidsp__72 = -> H"""<div>#{H"<span>#{98}</span>"}</div>"""    ), "<div><span>98</span></div>"
+    # # @eq ( Ωidsp__73 = -> H"""<div>#{H "<span>#{98}</span>"}</div>"""   ), "<div><span>98</span></div>"
+    # # # @eq ( Ωidsp__74 = -> H.a.b.c H.d.e.f 90  ), """[a.b.c:'[d.e.f:90]']"""
     return null
 
 
@@ -468,6 +512,9 @@ if module is require.main then await do =>
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { all_tests, }
+  # ( new Test guytest_cfg ).test { all_tests, }
+  ( new Test guytest_cfg ).test { tests_for_doublestack_infiniproxy, }
   # demo_proxy_as_html_producer()
   # demo_managed_properties()
+
+

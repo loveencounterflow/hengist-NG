@@ -1,0 +1,41 @@
+{
+  "tasks": {
+    // "data": "deno task collect && deno task analyze",
+    // "collect": "deno run --allow-read=. --allow-write=. scripts/collect.js",
+    "run": {
+      "description": "Run script",
+      // "command": "deno run --unstable-detect-cjs --deny-read=/ dev/snippets/lib/demo-infinite-doublestack-proxy-as-html-producer.js"
+      "command": "deno run --unstable-detect-cjs --deny-read=/home/flow/jzr/hengist-NG/node_modules --allow-read=dev/snippets/lib/ --allow-read=apps/effstring --allow-read=../effstring  --allow-read=apps/guy-test-NG --allow-read=../normalize-function-arguments/lib --allow-read=../guy-test-NG/lib --allow-read=../guy-test-NG/deps dev/snippets/lib/demo-infinite-doublestack-proxy-as-html-producer.js"
+      // "command": "deno run --unstable-detect-cjs --allow-read=. --allow-read=apps/effstring --allow-read=../effstring  --allow-read=apps/guy-test-NG --allow-read=../normalize-function-arguments/lib --allow-read=../guy-test-NG/lib --allow-read=../guy-test-NG/deps dev/snippets/lib/demo-infinite-doublestack-proxy-as-html-producer.js"
+    }
+  }
+}
+
+
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/dev/snippets/lib".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring.js".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring.cjs".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring.mjs".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring.wasm".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring.json".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/effstring.node".
+// ✅ Granted read access to "/home/flow/jzr/effstring/lib/main.js".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments.js".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments.cjs".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments.mjs".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments.wasm".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments.json".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/normalize-function-arguments.node".
+// ✅ Granted read access to "/home/flow/jzr/normalize-function-arguments/lib/main.js".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/guy-test-NG.js".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/guy-test-NG.cjs".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/guy-test-NG.mjs".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/guy-test-NG.wasm".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/guy-test-NG.json".
+// ✅ Granted read access to "/home/flow/jzr/hengist-NG/apps/guy-test-NG.node".
+// ✅ Granted read access to "/home/flow/jzr/guy-test-NG/lib/main.js".
+// ✅ Granted read access to "/home/flow/jzr/guy-test-NG/deps/jkroso-equals".
+// ✅ Granted read access to "/home/flow/jzr/guy-test-NG/deps/jkroso-equals.js".
+
