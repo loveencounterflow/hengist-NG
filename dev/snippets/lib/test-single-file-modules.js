@@ -139,30 +139,30 @@
       (() => {        //.......................................................................................................
         var PRX, Ωidsp__19, Ωidsp__20, Ωidsp__21, Ωidsp__22, Ωidsp__23, Ωidsp__24;
         PRX = create_echoing_proxy();
-        info('Ωidsp__16', rpr(PRX.proxy.gold.bold.underlined`text 1`));
-        info('Ωidsp__17', rpr(PRX.proxy.red.reverse.italic`text 2`));
-        info('Ωidsp__18', rpr(PRX.proxy.red.reverse.italic`text 2 ${PRX.proxy.gold.bold.underlined`(embedded text)`}!!`));
+        info('Ωidsp__16', rpr(PRX.gold.bold.underlined`text 1`));
+        info('Ωidsp__17', rpr(PRX.red.reverse.italic`text 2`));
+        info('Ωidsp__18', rpr(PRX.red.reverse.italic`text 2 ${PRX.gold.bold.underlined`(embedded text)`}!!`));
         //.......................................................................................................
         this.eq((Ωidsp__19 = function() {
-          return PRX.proxy.gold.bold.underlined`text 1`;
+          return PRX.gold.bold.underlined`text 1`;
         }), `[gold.bold.underlined:text 1]`);
         this.eq((Ωidsp__20 = function() {
-          return PRX.proxy.red.reverse.italic`text 2`;
+          return PRX.red.reverse.italic`text 2`;
         }), `[red.reverse.italic:text 2]`);
         this.eq((Ωidsp__21 = function() {
-          return PRX.proxy.red.reverse.italic`text 2 ${PRX.proxy.gold.bold.underlined`(embedded text)`}!!`;
+          return PRX.red.reverse.italic`text 2 ${PRX.gold.bold.underlined`(embedded text)`}!!`;
         }), `[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]`);
         /* NOTE 'unused' property chains shouldn't leave traces on stack, but they do: */
         this.eq((Ωidsp__22 = function() {
           return PRX.doublestack.length;
         }), 0);
         this.eq((Ωidsp__23 = function() {
-          PRX.proxy.using_chain_2`some text`;
+          PRX.using_chain_2`some text`;
           return PRX.doublestack.length;
         }), 0);
         this.eq((Ωidsp__24 = function() {
-          PRX.proxy.building.chain_1;
-          PRX.proxy.using_chain_2`some text`;
+          PRX.building.chain_1;
+          PRX.using_chain_2`some text`;
           return PRX.doublestack.length;
         }), 1);
 /* NOTE: should be 0 */        return null;
@@ -171,13 +171,13 @@
         var PRX, Ωidsp__25, Ωidsp__26, Ωidsp__27, Ωidsp__28, Ωidsp__29;
         echo('——————————————————————————————————————————————————————————————————————————————');
         PRX = create_echoing_proxy();
-        PRX.proxy.a.b.c;
-        PRX.proxy.d.e.f;
+        PRX.a.b.c;
+        PRX.d.e.f;
         this.eq((Ωidsp__25 = function() {
           return PRX.doublestack.length;
         }), 2);
         this.eq((Ωidsp__26 = function() {
-          return PRX.proxy.g.h.i(127);
+          return PRX.g.h.i(127);
         }), "[g.h.i:127]");
         this.eq((Ωidsp__27 = function() {
           return PRX.doublestack.length;
@@ -194,10 +194,10 @@
         echo('——————————————————————————————————————————————————————————————————————————————');
         PRX = create_echoing_proxy();
         this.eq((Ωidsp__30 = function() {
-          return PRX.proxy.a.b.c(90);
+          return PRX.a.b.c(90);
         }), `[a.b.c:90]`);
         this.eq((Ωidsp__31 = function() {
-          return PRX.proxy.a.b.c(PRX.proxy.d.e.f(90));
+          return PRX.a.b.c(PRX.d.e.f(90));
         }), `[a.b.c:[d.e.f:90]]`);
         this.eq((Ωidsp__32 = function() {
           return PRX.doublestack.length;

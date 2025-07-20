@@ -268,7 +268,7 @@ module.exports = SFMODULES =
         else                    R = proxy
         return proxy
       #.........................................................................................................
-      return do ( proxy = new_doublestack_infiniproxy base ) => { proxy, doublestack, }
+      return do ( proxy = new_doublestack_infiniproxy base ) => proxy.doublestack = doublestack; proxy
 
     #-----------------------------------------------------------------------------------------------------------
     return { create_doublestack_infiniproxy, }

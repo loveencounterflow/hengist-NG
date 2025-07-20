@@ -121,26 +121,26 @@ tests =
     #.......................................................................................................
     do =>
       PRX = create_echoing_proxy()
-      info 'Ωidsp__16', rpr PRX.proxy.gold.bold.underlined"text 1"
-      info 'Ωidsp__17', rpr PRX.proxy.red.reverse.italic"text 2"
-      info 'Ωidsp__18', rpr PRX.proxy.red.reverse.italic"text 2 #{PRX.proxy.gold.bold.underlined"(embedded text)"}!!"
+      info 'Ωidsp__16', rpr PRX.gold.bold.underlined"text 1"
+      info 'Ωidsp__17', rpr PRX.red.reverse.italic"text 2"
+      info 'Ωidsp__18', rpr PRX.red.reverse.italic"text 2 #{PRX.gold.bold.underlined"(embedded text)"}!!"
       #.......................................................................................................
-      @eq ( Ωidsp__19 = -> PRX.proxy.gold.bold.underlined"text 1"                                                     ), """[gold.bold.underlined:text 1]"""
-      @eq ( Ωidsp__20 = -> PRX.proxy.red.reverse.italic"text 2"                                                       ), """[red.reverse.italic:text 2]"""
-      @eq ( Ωidsp__21 = -> PRX.proxy.red.reverse.italic"text 2 #{PRX.proxy.gold.bold.underlined"(embedded text)"}!!"  ), """[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]"""
+      @eq ( Ωidsp__19 = -> PRX.gold.bold.underlined"text 1"                                               ), """[gold.bold.underlined:text 1]"""
+      @eq ( Ωidsp__20 = -> PRX.red.reverse.italic"text 2"                                                 ), """[red.reverse.italic:text 2]"""
+      @eq ( Ωidsp__21 = -> PRX.red.reverse.italic"text 2 #{PRX.gold.bold.underlined"(embedded text)"}!!"  ), """[red.reverse.italic:text 2 [gold.bold.underlined:(embedded text)]!!]"""
       ### NOTE 'unused' property chains shouldn't leave traces on stack, but they do: ###
-      @eq ( Ωidsp__22 = ->                                                                  PRX.doublestack.length ), 0
-      @eq ( Ωidsp__23 = ->                              PRX.proxy.using_chain_2"some text"; PRX.doublestack.length ), 0
-      @eq ( Ωidsp__24 = -> PRX.proxy.building.chain_1;  PRX.proxy.using_chain_2"some text"; PRX.doublestack.length ), 1 ### NOTE: should be 0 ###
+      @eq ( Ωidsp__22 = ->                                                      PRX.doublestack.length ), 0
+      @eq ( Ωidsp__23 = ->                        PRX.using_chain_2"some text"; PRX.doublestack.length ), 0
+      @eq ( Ωidsp__24 = -> PRX.building.chain_1;  PRX.using_chain_2"some text"; PRX.doublestack.length ), 1 ### NOTE: should be 0 ###
       return null
     #.......................................................................................................
     do =>
       echo '——————————————————————————————————————————————————————————————————————————————'
       PRX = create_echoing_proxy()
-      PRX.proxy.a.b.c
-      PRX.proxy.d.e.f
+      PRX.a.b.c
+      PRX.d.e.f
       @eq ( Ωidsp__25 = -> PRX.doublestack.length   ), 2
-      @eq ( Ωidsp__26 = -> PRX.proxy.g.h.i 127      ), "[g.h.i:127]"
+      @eq ( Ωidsp__26 = -> PRX.g.h.i 127            ), "[g.h.i:127]"
       @eq ( Ωidsp__27 = -> PRX.doublestack.length   ), 2
       @eq ( Ωidsp__28 = -> PRX.doublestack.clear()  ), null
       @eq ( Ωidsp__29 = -> PRX.doublestack.length   ), 0
@@ -148,9 +148,9 @@ tests =
     do =>
       echo '——————————————————————————————————————————————————————————————————————————————'
       PRX = create_echoing_proxy()
-      @eq ( Ωidsp__30 = -> PRX.proxy.a.b.c 90                  ), """[a.b.c:90]"""
-      @eq ( Ωidsp__31 = -> PRX.proxy.a.b.c PRX.proxy.d.e.f 90  ), """[a.b.c:[d.e.f:90]]"""
-      @eq ( Ωidsp__32 = -> PRX.doublestack.length              ), 0
+      @eq ( Ωidsp__30 = -> PRX.a.b.c 90             ), """[a.b.c:90]"""
+      @eq ( Ωidsp__31 = -> PRX.a.b.c PRX.d.e.f 90   ), """[a.b.c:[d.e.f:90]]"""
+      @eq ( Ωidsp__32 = -> PRX.doublestack.length   ), 0
       return null
     #.......................................................................................................
     return null
