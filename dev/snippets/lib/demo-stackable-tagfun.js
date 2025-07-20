@@ -106,7 +106,7 @@
 
   //===========================================================================================================
   demo_stackable_tagfun_with_object = function() {
-    var Html, escape_html_text, is_tagfun_call, require_escape_html_text, require_html_class, require_stackable_tagfun, stackable_tagfun, walk_chunks_and_values, walk_raw_chunks_and_values, Ωt__17, Ωt__18, Ωt__19, Ωt__20, Ωt__21, Ωt__22, Ωt__23, Ωt__24, Ωt__25, Ωt__26;
+    var Html, escape_html_text, is_tagfun_call, require_escape_html_text, require_html_class, require_stackable_tagfun, stackable_tagfun, walk_nonempty_parts, walk_parts, walk_raw_nonempty_parts, walk_raw_parts, Ωt__17, Ωt__18, Ωt__19, Ωt__20, Ωt__21, Ωt__22, Ωt__23, Ωt__24, Ωt__25, Ωt__26, Ωt__27, Ωt__28, Ωt__29, Ωt__30, Ωt__31, Ωt__32;
     //===========================================================================================================
     /* NOTE Future Single-File Module */
     require_escape_html_text = function() {
@@ -221,7 +221,7 @@
       return true;
     };
     //---------------------------------------------------------------------------------------------------------
-    walk_raw_chunks_and_values = function(chunks, ...values) {
+    walk_raw_parts = function*(chunks, ...values) {
       var chunk;
       chunks = (function() {
         var i, len, ref, results;
@@ -235,11 +235,11 @@
       })();
       chunks.raw = chunks.slice(0);
       Object.freeze(chunks);
-      return walk_chunks_and_values(chunks, ...values);
+      return (yield* walk_parts(chunks, ...values));
     };
     //---------------------------------------------------------------------------------------------------------
-    walk_chunks_and_values = function*(chunks, ...values) {
-      var i, idx, len, lidx, ridx, value;
+    walk_parts = function*(chunks, ...values) {
+      var i, idx, len, value;
       if (!is_tagfun_call(chunks, ...values)) {
         if (values.length !== 0) {
           throw new Error(`Ω__16 expected 1 argument in non-template call, got ${arguments.length}`);
@@ -250,213 +250,233 @@
           [chunks, values] = [['', ''], [chunks]];
         }
       }
-      //.......................................................................................................
-      lidx = -1;
-      ridx = chunks.length + values.length;
-      //.......................................................................................................
-      lidx++;
-      ridx--;
       yield ({
+        //.......................................................................................................
         chunk: chunks[0],
-        isa: 'chunk',
-        lidx,
-        ridx
+        isa: 'chunk'
       });
       for (idx = i = 0, len = values.length; i < len; idx = ++i) {
         value = values[idx];
-        lidx++;
-        ridx--;
         yield ({
           value,
-          isa: 'value',
-          lidx,
-          ridx
+          isa: 'value'
         });
-        lidx++;
-        ridx--;
         yield ({
           chunk: chunks[idx + 1],
-          isa: 'chunk',
-          lidx,
-          ridx
+          isa: 'chunk'
         });
       }
       //.......................................................................................................
       return null;
     };
-    echo('——————————————————————————————————————————————————————————————————————————————');
+    //---------------------------------------------------------------------------------------------------------
+    walk_raw_nonempty_parts = function*(chunks, ...values) {
+      var part;
+      for (part of walk_raw_parts(chunks, ...values)) {
+        if (!((part.chunk === '') || (part.value === ''))) {
+          yield part;
+        }
+      }
+      return null;
+    };
+    //---------------------------------------------------------------------------------------------------------
+    walk_nonempty_parts = function*(chunks, ...values) {
+      var part;
+      for (part of walk_parts(chunks, ...values)) {
+        if (!((part.chunk === '') || (part.value === ''))) {
+          yield part;
+        }
+      }
+      return null;
+    };
+    //=========================================================================================================
+    // echo '——————————————————————————————————————————————————————————————————————————————'
     this.eq((Ωt__17 = function() {
-      return [...(walk_chunks_and_values``)];
+      return [...(walk_parts``)];
     }), [
       {
         chunk: '',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 0
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__18 = function() {
-      return [...(walk_chunks_and_values`a`)];
+      return [...(walk_nonempty_parts``)];
+    }), []);
+    this.eq((Ωt__19 = function() {
+      return [...(walk_parts`a`)];
     }), [
       {
         chunk: 'a',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 0
-      }
-    ]);
-    this.eq((Ωt__19 = function() {
-      return [...(walk_chunks_and_values`\na`)];
-    }), [
-      {
-        chunk: '\na',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 0
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__20 = function() {
-      return [...(walk_raw_chunks_and_values`\na`)];
+      return [...(walk_parts`\na`)];
     }), [
       {
-        chunk: '\\na',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 0
+        chunk: '\na',
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__21 = function() {
-      return [...(walk_chunks_and_values`${1}`)];
+      return [...(walk_raw_parts`\na`)];
     }), [
       {
-        chunk: '',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 2
-      },
-      {
-        value: 1,
-        isa: 'value',
-        lidx: 1,
-        ridx: 1
-      },
-      {
-        chunk: '',
-        isa: 'chunk',
-        lidx: 2,
-        ridx: 0
+        chunk: '\\na',
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__22 = function() {
-      return [...(walk_chunks_and_values`a${1}`)];
+      return [...(walk_parts`${1}`)];
     }), [
       {
-        chunk: 'a',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 2
+        chunk: '',
+        isa: 'chunk'
       },
       {
         value: 1,
-        isa: 'value',
-        lidx: 1,
-        ridx: 1
+        isa: 'value'
       },
       {
         chunk: '',
-        isa: 'chunk',
-        lidx: 2,
-        ridx: 0
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__23 = function() {
-      return [...(walk_chunks_and_values`a${1}z`)];
+      return [...(walk_nonempty_parts`${1}`)];
     }), [
       {
-        chunk: 'a',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 2
-      },
-      {
         value: 1,
-        isa: 'value',
-        lidx: 1,
-        ridx: 1
-      },
-      {
-        chunk: 'z',
-        isa: 'chunk',
-        lidx: 2,
-        ridx: 0
+        isa: 'value'
       }
     ]);
     this.eq((Ωt__24 = function() {
-      return [...(walk_chunks_and_values`a${1}z${2}`)];
+      return [...(walk_parts`a${1}`)];
     }), [
       {
         chunk: 'a',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 4
+        isa: 'chunk'
       },
       {
         value: 1,
-        isa: 'value',
-        lidx: 1,
-        ridx: 3
-      },
-      {
-        chunk: 'z',
-        isa: 'chunk',
-        lidx: 2,
-        ridx: 2
-      },
-      {
-        value: 2,
-        isa: 'value',
-        lidx: 3,
-        ridx: 1
+        isa: 'value'
       },
       {
         chunk: '',
-        isa: 'chunk',
-        lidx: 4,
-        ridx: 0
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__25 = function() {
-      return [...(walk_chunks_and_values("atoz"))];
+      return [...(walk_parts`${1}${2}`)];
     }), [
       {
-        chunk: 'atoz',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 0
+        chunk: '',
+        isa: 'chunk'
+      },
+      {
+        value: 1,
+        isa: 'value'
+      },
+      {
+        chunk: '',
+        isa: 'chunk'
+      },
+      {
+        value: 2,
+        isa: 'value'
+      },
+      {
+        chunk: '',
+        isa: 'chunk'
       }
     ]);
     this.eq((Ωt__26 = function() {
-      return [...(walk_chunks_and_values(12))];
+      return [...(walk_nonempty_parts`${1}${2}`)];
+    }), [
+      {
+        value: 1,
+        isa: 'value'
+      },
+      {
+        value: 2,
+        isa: 'value'
+      }
+    ]);
+    this.eq((Ωt__27 = function() {
+      return [...(walk_parts`a${1}z`)];
+    }), [
+      {
+        chunk: 'a',
+        isa: 'chunk'
+      },
+      {
+        value: 1,
+        isa: 'value'
+      },
+      {
+        chunk: 'z',
+        isa: 'chunk'
+      }
+    ]);
+    this.eq((Ωt__28 = function() {
+      return [...(walk_parts`a${1}z${2}`)];
+    }), [
+      {
+        chunk: 'a',
+        isa: 'chunk'
+      },
+      {
+        value: 1,
+        isa: 'value'
+      },
+      {
+        chunk: 'z',
+        isa: 'chunk'
+      },
+      {
+        value: 2,
+        isa: 'value'
+      },
+      {
+        chunk: '',
+        isa: 'chunk'
+      }
+    ]);
+    this.eq((Ωt__29 = function() {
+      return [...(walk_parts("atoz"))];
+    }), [
+      {
+        chunk: 'atoz',
+        isa: 'chunk'
+      }
+    ]);
+    this.eq((Ωt__30 = function() {
+      return [...(walk_parts(12))];
     }), [
       {
         chunk: '',
-        isa: 'chunk',
-        lidx: 0,
-        ridx: 2
+        isa: 'chunk'
       },
       {
         value: 12,
-        isa: 'value',
-        lidx: 1,
-        ridx: 1
+        isa: 'value'
       },
       {
         chunk: '',
-        isa: 'chunk',
-        lidx: 2,
-        ridx: 0
+        isa: 'chunk'
       }
     ]);
+    this.eq((Ωt__31 = function() {
+      return [...(walk_nonempty_parts(12))];
+    }), [
+      {
+        value: 12,
+        isa: 'value'
+      }
+    ]);
+    this.eq((Ωt__32 = function() {
+      return [...(walk_nonempty_parts(''))];
+    }), []);
     //.........................................................................................................
     return null;
   };

@@ -172,52 +172,53 @@ demo_stackable_tagfun_with_object = ->
     return false unless P[ 0 ].raw?
     return true
   #---------------------------------------------------------------------------------------------------------
-  walk_raw_chunks_and_values = ( chunks, values... ) ->
+  walk_raw_parts = ( chunks, values... ) ->
     chunks      = ( chunk for chunk in chunks.raw )
     chunks.raw  = chunks[ ... ]
     Object.freeze chunks
-    return walk_chunks_and_values chunks, values...
+    yield from walk_parts chunks, values...
   #---------------------------------------------------------------------------------------------------------
-  walk_chunks_and_values = ( chunks, values... ) ->
+  walk_parts = ( chunks, values... ) ->
     unless is_tagfun_call chunks, values...
       if values.length isnt 0
         throw new Error "Ω__16 expected 1 argument in non-template call, got #{arguments.length}"
       if typeof chunks is 'string' then [ chunks, values, ] = [ [ chunks, ], [],          ]
       else                              [ chunks, values, ] = [ [ '', '', ], [ chunks, ], ]
     #.......................................................................................................
-    lidx = -1
-    ridx = chunks.length + values.length
-    #.......................................................................................................
-    lidx++; ridx--
-    yield { chunk: chunks[ 0 ], isa: 'chunk', lidx, ridx, }
+    yield { chunk: chunks[ 0 ], isa: 'chunk', }
     for value, idx in values
-      lidx++; ridx--
-      yield { value, isa: 'value', lidx, ridx, }
-      lidx++; ridx--
-      yield { chunk: chunks[ idx + 1 ], isa: 'chunk', lidx, ridx, }
+      yield { value, isa: 'value', }
+      yield { chunk: chunks[ idx + 1 ], isa: 'chunk', }
     #.......................................................................................................
     return null
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  @eq ( Ωt__17 = -> [ ( walk_chunks_and_values""           )..., ] ), [ { chunk: '', isa: 'chunk', lidx: 0, ridx: 0 }, ]
-  @eq ( Ωt__18 = -> [ ( walk_chunks_and_values"a"          )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 0 }, ]
-  @eq ( Ωt__19 = -> [ ( walk_chunks_and_values"\na"        )..., ] ), [ { chunk: '\na', isa: 'chunk', lidx: 0, ridx: 0 }, ]
-  @eq ( Ωt__20 = -> [ ( walk_raw_chunks_and_values"\na"    )..., ] ), [ { chunk: '\\na', isa: 'chunk', lidx: 0, ridx: 0 }, ]
-  @eq ( Ωt__21 = -> [ ( walk_chunks_and_values"#{1}"       )..., ] ), [ { chunk: '', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 1, isa: 'value', lidx: 1, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 2, ridx: 0 }, ]
-  @eq ( Ωt__22 = -> [ ( walk_chunks_and_values"a#{1}"      )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 1, isa: 'value', lidx: 1, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 2, ridx: 0 }, ]
-  @eq ( Ωt__23 = -> [ ( walk_chunks_and_values"a#{1}z"     )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 1, isa: 'value', lidx: 1, ridx: 1 }, { chunk: 'z', isa: 'chunk', lidx: 2, ridx: 0 }, ]
-  @eq ( Ωt__24 = -> [ ( walk_chunks_and_values"a#{1}z#{2}" )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 4 }, { value: 1, isa: 'value', lidx: 1, ridx: 3 }, { chunk: 'z', isa: 'chunk', lidx: 2, ridx: 2 }, { value: 2, isa: 'value', lidx: 3, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 4, ridx: 0 }, ]
-  @eq ( Ωt__25 = -> [ ( walk_chunks_and_values "atoz"      )..., ] ), [ { chunk: 'atoz', isa: 'chunk', lidx: 0, ridx: 0 }, ]
-  @eq ( Ωt__26 = -> [ ( walk_chunks_and_values 12          )..., ] ), [ { chunk: '', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 12, isa: 'value', lidx: 1, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 2, ridx: 0 }, ]
-
-
-
-
-
-
-
-
-
-
+  #---------------------------------------------------------------------------------------------------------
+  walk_raw_nonempty_parts = ( chunks, values... ) ->
+    for part from walk_raw_parts chunks, values...
+      yield part unless ( part.chunk is '' ) or ( part.value is '' )
+    return null
+  #---------------------------------------------------------------------------------------------------------
+  walk_nonempty_parts = ( chunks, values... ) ->
+    for part from walk_parts chunks, values...
+      yield part unless ( part.chunk is '' ) or ( part.value is '' )
+    return null
+  #=========================================================================================================
+  # echo '——————————————————————————————————————————————————————————————————————————————'
+  @eq ( Ωt__17 = -> [ ( walk_parts""                  )..., ] ), [ { chunk: '', isa: 'chunk', }, ]
+  @eq ( Ωt__18 = -> [ ( walk_nonempty_parts""         )..., ] ), []
+  @eq ( Ωt__19 = -> [ ( walk_parts"a"                 )..., ] ), [ { chunk: 'a', isa: 'chunk', }, ]
+  @eq ( Ωt__20 = -> [ ( walk_parts"\na"               )..., ] ), [ { chunk: '\na', isa: 'chunk', }, ]
+  @eq ( Ωt__21 = -> [ ( walk_raw_parts"\na"           )..., ] ), [ { chunk: '\\na', isa: 'chunk', }, ]
+  @eq ( Ωt__22 = -> [ ( walk_parts"#{1}"              )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+  @eq ( Ωt__23 = -> [ ( walk_nonempty_parts"#{1}"     )..., ] ), [ { value: 1, isa: 'value', }, ]
+  @eq ( Ωt__24 = -> [ ( walk_parts"a#{1}"             )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+  @eq ( Ωt__25 = -> [ ( walk_parts"#{1}#{2}"          )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, { value: 2, isa: 'value', }, { chunk: '', isa: 'chunk', } ]
+  @eq ( Ωt__26 = -> [ ( walk_nonempty_parts"#{1}#{2}" )..., ] ), [ { value: 1, isa: 'value', }, { value: 2, isa: 'value', }, ]
+  @eq ( Ωt__27 = -> [ ( walk_parts"a#{1}z"            )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: 'z', isa: 'chunk', }, ]
+  @eq ( Ωt__28 = -> [ ( walk_parts"a#{1}z#{2}"        )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: 'z', isa: 'chunk', }, { value: 2, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+  @eq ( Ωt__29 = -> [ ( walk_parts "atoz"             )..., ] ), [ { chunk: 'atoz', isa: 'chunk', }, ]
+  @eq ( Ωt__30 = -> [ ( walk_parts 12                 )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 12, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+  @eq ( Ωt__31 = -> [ ( walk_nonempty_parts 12        )..., ] ), [ { value: 12, isa: 'value', }, ]
+  @eq ( Ωt__32 = -> [ ( walk_nonempty_parts ''        )..., ] ), []
   #.........................................................................................................
   return null
 
