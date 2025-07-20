@@ -106,7 +106,7 @@
 
   //===========================================================================================================
   demo_stackable_tagfun_with_object = function() {
-    var Html, escape_html_text, is_tagfun_call, require_escape_html_text, require_html_class, require_stackable_tagfun, stackable_tagfun, walk_nonempty_parts, walk_parts, walk_raw_nonempty_parts, walk_raw_parts, Ωt__17, Ωt__18, Ωt__19, Ωt__20, Ωt__21, Ωt__22, Ωt__23, Ωt__24, Ωt__25, Ωt__26, Ωt__27, Ωt__28, Ωt__29, Ωt__30, Ωt__31, Ωt__32;
+    var Html, escape_html_text, is_tagfun_call, require_escape_html_text, require_html_class, require_stackable_tagfun, stackable_tagfun, walk_nonempty_parts, walk_parts, walk_raw_nonempty_parts, walk_raw_parts, Ωt__17, Ωt__18, Ωt__19, Ωt__20, Ωt__21, Ωt__22, Ωt__23, Ωt__24, Ωt__25, Ωt__26, Ωt__27, Ωt__28, Ωt__29, Ωt__30, Ωt__31, Ωt__32, Ωt__33;
     //===========================================================================================================
     /* NOTE Future Single-File Module */
     require_escape_html_text = function() {
@@ -300,9 +300,20 @@
       }
     ]);
     this.eq((Ωt__18 = function() {
+      return [...(walk_parts(""))];
+    }), [
+      {
+        chunk: '',
+        isa: 'chunk'
+      }
+    ]);
+    this.eq((Ωt__19 = function() {
       return [...(walk_nonempty_parts``)];
     }), []);
-    this.eq((Ωt__19 = function() {
+    this.eq((Ωt__20 = function() {
+      return [...(walk_nonempty_parts(''))];
+    }), []);
+    this.eq((Ωt__21 = function() {
       return [...(walk_parts`a`)];
     }), [
       {
@@ -310,7 +321,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__20 = function() {
+    this.eq((Ωt__22 = function() {
       return [...(walk_parts`\na`)];
     }), [
       {
@@ -318,7 +329,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__21 = function() {
+    this.eq((Ωt__23 = function() {
       return [...(walk_raw_parts`\na`)];
     }), [
       {
@@ -326,7 +337,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__22 = function() {
+    this.eq((Ωt__24 = function() {
       return [...(walk_parts`${1}`)];
     }), [
       {
@@ -342,7 +353,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__23 = function() {
+    this.eq((Ωt__25 = function() {
       return [...(walk_nonempty_parts`${1}`)];
     }), [
       {
@@ -350,7 +361,7 @@
         isa: 'value'
       }
     ]);
-    this.eq((Ωt__24 = function() {
+    this.eq((Ωt__26 = function() {
       return [...(walk_parts`a${1}`)];
     }), [
       {
@@ -366,7 +377,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__25 = function() {
+    this.eq((Ωt__27 = function() {
       return [...(walk_parts`${1}${2}`)];
     }), [
       {
@@ -390,7 +401,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__26 = function() {
+    this.eq((Ωt__28 = function() {
       return [...(walk_nonempty_parts`${1}${2}`)];
     }), [
       {
@@ -402,7 +413,7 @@
         isa: 'value'
       }
     ]);
-    this.eq((Ωt__27 = function() {
+    this.eq((Ωt__29 = function() {
       return [...(walk_parts`a${1}z`)];
     }), [
       {
@@ -418,7 +429,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__28 = function() {
+    this.eq((Ωt__30 = function() {
       return [...(walk_parts`a${1}z${2}`)];
     }), [
       {
@@ -442,7 +453,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__29 = function() {
+    this.eq((Ωt__31 = function() {
       return [...(walk_parts("atoz"))];
     }), [
       {
@@ -450,7 +461,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__30 = function() {
+    this.eq((Ωt__32 = function() {
       return [...(walk_parts(12))];
     }), [
       {
@@ -466,7 +477,7 @@
         isa: 'chunk'
       }
     ]);
-    this.eq((Ωt__31 = function() {
+    this.eq((Ωt__33 = function() {
       return [...(walk_nonempty_parts(12))];
     }), [
       {
@@ -474,9 +485,6 @@
         isa: 'value'
       }
     ]);
-    this.eq((Ωt__32 = function() {
-      return [...(walk_nonempty_parts(''))];
-    }), []);
     //.........................................................................................................
     return null;
   };
