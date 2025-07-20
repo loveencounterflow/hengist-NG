@@ -454,10 +454,10 @@
       }
     ]);
     this.eq((Ωt__31 = function() {
-      return [...(walk_parts("atoz"))];
+      return [...(walk_parts(`a${1}z${2}`))];
     }), [
       {
-        chunk: 'atoz',
+        chunk: 'a1z2',
         isa: 'chunk'
       }
     ]);
