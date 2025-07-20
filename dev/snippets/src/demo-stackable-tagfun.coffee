@@ -172,6 +172,12 @@ demo_stackable_tagfun_with_object = ->
     return false unless P[ 0 ].raw?
     return true
   #---------------------------------------------------------------------------------------------------------
+  walk_raw_chunks_and_values = ( chunks, values... ) ->
+    chunks      = ( chunk for chunk in chunks.raw )
+    chunks.raw  = chunks[ ... ]
+    Object.freeze chunks
+    return walk_chunks_and_values chunks, values...
+  #---------------------------------------------------------------------------------------------------------
   walk_chunks_and_values = ( chunks, values... ) ->
     unless is_tagfun_call chunks, values...
       if values.length isnt 0
@@ -192,21 +198,25 @@ demo_stackable_tagfun_with_object = ->
     #.......................................................................................................
     return null
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values""           ) then debug 'Ω__17', e
+  for e from ( walk_chunks_and_values""           ) then info 'Ω__17', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a"          ) then debug 'Ω__18', e
+  for e from ( walk_chunks_and_values"a"          ) then info 'Ω__18', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"#{1}"       ) then debug 'Ω__19', e
+  for e from ( walk_chunks_and_values"\na"        ) then info 'Ω__19', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a#{1}"      ) then debug 'Ω__20', e
+  for e from ( walk_raw_chunks_and_values"\na"    ) then info 'Ω__20', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a#{1}z"     ) then debug 'Ω__21', e
+  for e from ( walk_chunks_and_values"#{1}"       ) then info 'Ω__21', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a#{1}z#{2}" ) then debug 'Ω__22', e
+  for e from ( walk_chunks_and_values"a#{1}"      ) then info 'Ω__22', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values "atoz"      ) then debug 'Ω__23', e
+  for e from ( walk_chunks_and_values"a#{1}z"     ) then info 'Ω__23', e
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values 12          ) then debug 'Ω__24', e
+  for e from ( walk_chunks_and_values"a#{1}z#{2}" ) then info 'Ω__24', e
+  echo '——————————————————————————————————————————————————————————————————————————————'
+  for e from ( walk_chunks_and_values "atoz"      ) then info 'Ω__25', e
+  echo '——————————————————————————————————————————————————————————————————————————————'
+  for e from ( walk_chunks_and_values 12          ) then info 'Ω__26', e
   echo '——————————————————————————————————————————————————————————————————————————————'
   #.........................................................................................................
   return null

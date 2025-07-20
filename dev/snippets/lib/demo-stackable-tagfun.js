@@ -106,7 +106,7 @@
 
   //===========================================================================================================
   demo_stackable_tagfun_with_object = function() {
-    var Html, e, escape_html_text, is_tagfun_call, require_escape_html_text, require_html_class, require_stackable_tagfun, stackable_tagfun, walk_chunks_and_values;
+    var Html, e, escape_html_text, is_tagfun_call, require_escape_html_text, require_html_class, require_stackable_tagfun, stackable_tagfun, walk_chunks_and_values, walk_raw_chunks_and_values;
     //===========================================================================================================
     /* NOTE Future Single-File Module */
     require_escape_html_text = function() {
@@ -221,6 +221,23 @@
       return true;
     };
     //---------------------------------------------------------------------------------------------------------
+    walk_raw_chunks_and_values = function(chunks, ...values) {
+      var chunk;
+      chunks = (function() {
+        var i, len, ref, results;
+        ref = chunks.raw;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          chunk = ref[i];
+          results.push(chunk);
+        }
+        return results;
+      })();
+      chunks.raw = chunks.slice(0);
+      Object.freeze(chunks);
+      return walk_chunks_and_values(chunks, ...values);
+    };
+    //---------------------------------------------------------------------------------------------------------
     walk_chunks_and_values = function*(chunks, ...values) {
       var i, idx, len, lidx, ridx, value;
       if (!is_tagfun_call(chunks, ...values)) {
@@ -269,35 +286,43 @@
     };
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values``) {
-      debug('Ω__17', e);
+      info('Ω__17', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values`a`) {
-      debug('Ω__18', e);
+      info('Ω__18', e);
+    }
+    echo('——————————————————————————————————————————————————————————————————————————————');
+    for (e of walk_chunks_and_values`\na`) {
+      info('Ω__19', e);
+    }
+    echo('——————————————————————————————————————————————————————————————————————————————');
+    for (e of walk_raw_chunks_and_values`\na`) {
+      info('Ω__20', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values`${1}`) {
-      debug('Ω__19', e);
+      info('Ω__21', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values`a${1}`) {
-      debug('Ω__20', e);
+      info('Ω__22', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values`a${1}z`) {
-      debug('Ω__21', e);
+      info('Ω__23', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values`a${1}z${2}`) {
-      debug('Ω__22', e);
+      info('Ω__24', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values("atoz")) {
-      debug('Ω__23', e);
+      info('Ω__25', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     for (e of walk_chunks_and_values(12)) {
-      debug('Ω__24', e);
+      info('Ω__26', e);
     }
     echo('——————————————————————————————————————————————————————————————————————————————');
     //.........................................................................................................
