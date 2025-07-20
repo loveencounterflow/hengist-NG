@@ -101,7 +101,6 @@ require_tagfun_tools = ->
   #---------------------------------------------------------------------------------------------------------
   create_get_first_argument_fn = ( as_text = null ) ->
     as_text ?= ( expression ) -> "#{expression}"
-    debug 'Ωidsp___1', ( rpr as_text ), ( rpr as_text '<&>' )
     ### TAINT use proper validation ###
     unless ( typeof as_text ) is 'function'
       throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"

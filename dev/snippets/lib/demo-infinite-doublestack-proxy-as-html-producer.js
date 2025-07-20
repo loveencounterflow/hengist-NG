@@ -100,7 +100,6 @@
           return `${expression}`;
         };
       }
-      debug('Ωidsp___1', rpr(as_text), rpr(as_text('<&>')));
       /* TAINT use proper validation */
       if ((typeof as_text) !== 'function') {
         throw new Error(`Ωidsp___2 expected a function, got ${rpr(as_text)}`);
