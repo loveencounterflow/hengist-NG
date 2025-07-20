@@ -26,43 +26,43 @@ module.exports = SFMODULES =
   ### NOTE Future Single-File Module ###
   require_tagfun_tools: ->
 
-    ### Given the arguments of either a tagged template function call ('tagfun call') or the single
-    argument of a conventional function call, `get_first_argument()` will return either
+    # ### Given the arguments of either a tagged template function call ('tagfun call') or the single
+    # argument of a conventional function call, `get_first_argument()` will return either
 
-    * the result of applying `as_text()` to the sole argument, or
+    # * the result of applying `as_text()` to the sole argument, or
 
-    * the result of concatenating the constant parts and the interpolated expressions, which each
-    expression replaced by the result of applying `as_text()` to it.
+    # * the result of concatenating the constant parts and the interpolated expressions, which each
+    # expression replaced by the result of applying `as_text()` to it.
 
-    Another way to describe this behavior is to say that this function treats a conventional call with
-    a single expression the same way that it treats a funtag call with a string that contains nothing but
-    that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
-    )` holds.
+    # Another way to describe this behavior is to say that this function treats a conventional call with
+    # a single expression the same way that it treats a funtag call with a string that contains nothing but
+    # that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
+    # )` holds.
 
-    * intended for string producers, text processing, markup production;
-    * list some examples. ###
+    # * intended for string producers, text processing, markup production;
+    # * list some examples. ###
 
-    #---------------------------------------------------------------------------------------------------------
-    create_get_first_argument_fn = ( as_text = null ) ->
-      as_text ?= ( expression ) -> "#{expression}"
-      ### TAINT use proper validation ###
-      unless ( typeof as_text ) is 'function'
-        throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"
-      #-------------------------------------------------------------------------------------------------------
-      get_first_argument = ( P... ) ->
-        unless is_tagfun_call P...
-          unless P.length is 1
-            throw new Error "Ωidsp___3 expected 1 argument, got #{P.length}"
-          return as_text P[ 0 ]
-        #.....................................................................................................
-        [ parts, expressions..., ] = P
-        R = parts[ 0 ]
-        for expression, idx in expressions
-          R += ( as_text expression ) + parts[ idx + 1 ]
-        return R
-      #-------------------------------------------------------------------------------------------------------
-      get_first_argument.create = create_get_first_argument_fn
-      return get_first_argument
+    # #---------------------------------------------------------------------------------------------------------
+    # create_get_first_argument_fn = ( as_text = null ) ->
+    #   as_text ?= ( expression ) -> "#{expression}"
+    #   ### TAINT use proper validation ###
+    #   unless ( typeof as_text ) is 'function'
+    #     throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"
+    #   #-------------------------------------------------------------------------------------------------------
+    #   get_first_argument = ( P... ) ->
+    #     unless is_tagfun_call P...
+    #       unless P.length is 1
+    #         throw new Error "Ωidsp___3 expected 1 argument, got #{P.length}"
+    #       return as_text P[ 0 ]
+    #     #.....................................................................................................
+    #     [ parts, expressions..., ] = P
+    #     R = parts[ 0 ]
+    #     for expression, idx in expressions
+    #       R += ( as_text expression ) + parts[ idx + 1 ]
+    #     return R
+    #   #-------------------------------------------------------------------------------------------------------
+    #   get_first_argument.create = create_get_first_argument_fn
+    #   return get_first_argument
 
     #---------------------------------------------------------------------------------------------------------
     is_tagfun_call = ( P... ) ->
@@ -72,7 +72,48 @@ module.exports = SFMODULES =
       return true
 
     #---------------------------------------------------------------------------------------------------------
-    return { get_first_argument: create_get_first_argument_fn(), is_tagfun_call, }
+    walk_raw_parts = ( chunks, values... ) ->
+      chunks      = ( chunk for chunk in chunks.raw )
+      chunks.raw  = chunks[ ... ]
+      Object.freeze chunks
+      yield from walk_parts chunks, values...
+
+    #---------------------------------------------------------------------------------------------------------
+    walk_parts = ( chunks, values... ) ->
+      unless is_tagfun_call chunks, values...
+        if values.length isnt 0
+          throw new Error "Ω__16 expected 1 argument in non-template call, got #{arguments.length}"
+        if typeof chunks is 'string' then [ chunks, values, ] = [ [ chunks, ], [],          ]
+        else                              [ chunks, values, ] = [ [ '', '', ], [ chunks, ], ]
+      #.......................................................................................................
+      yield { chunk: chunks[ 0 ], isa: 'chunk', }
+      for value, idx in values
+        yield { value, isa: 'value', }
+        yield { chunk: chunks[ idx + 1 ], isa: 'chunk', }
+      #.......................................................................................................
+      return null
+
+    #---------------------------------------------------------------------------------------------------------
+    walk_raw_nonempty_parts = ( chunks, values... ) ->
+      for part from walk_raw_parts chunks, values...
+        yield part unless ( part.chunk is '' ) or ( part.value is '' )
+      return null
+
+    #---------------------------------------------------------------------------------------------------------
+    walk_nonempty_parts = ( chunks, values... ) ->
+      for part from walk_parts chunks, values...
+        yield part unless ( part.chunk is '' ) or ( part.value is '' )
+      return null
+
+    #---------------------------------------------------------------------------------------------------------
+    # return do exports = ( get_first_argument = create_get_first_argument_fn() ) -> {
+    #   get_first_argument, is_tagfun_call,
+    #   walk_parts, walk_nonempty_parts, walk_raw_parts, walk_raw_nonempty_parts, }
+    return {
+      is_tagfun_call,
+      walk_parts,           walk_raw_parts,
+      walk_nonempty_parts,  walk_raw_nonempty_parts, }
+
 
   #===========================================================================================================
   ### NOTE Future Single-File Module ###
@@ -206,7 +247,8 @@ module.exports = SFMODULES =
       get_proxy   = Symbol 'get_proxy'
       #.........................................................................................................
       extendended_base = ( P... ) ->
-        R = base P...
+        ctx = do get_ctx = ( stack = ( doublestack.peek_stack null ) ) -> { stack, doublestack, }
+        R   = base.call ctx, P...
         doublestack.pop_old_stack() unless doublestack.is_empty
         return R
       #---------------------------------------------------------------------------------------------------------

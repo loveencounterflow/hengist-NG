@@ -34,56 +34,45 @@
     //===========================================================================================================
     /* NOTE Future Single-File Module */
     require_tagfun_tools: function() {
-      var create_get_first_argument_fn, is_tagfun_call;
-      /* Given the arguments of either a tagged template function call ('tagfun call') or the single
-      argument of a conventional function call, `get_first_argument()` will return either
+      var is_tagfun_call, walk_nonempty_parts, walk_parts, walk_raw_nonempty_parts, walk_raw_parts;
+      // ### Given the arguments of either a tagged template function call ('tagfun call') or the single
+      // argument of a conventional function call, `get_first_argument()` will return either
 
-      * the result of applying `as_text()` to the sole argument, or
+      // * the result of applying `as_text()` to the sole argument, or
 
-      * the result of concatenating the constant parts and the interpolated expressions, which each
-      expression replaced by the result of applying `as_text()` to it.
+      // * the result of concatenating the constant parts and the interpolated expressions, which each
+      // expression replaced by the result of applying `as_text()` to it.
 
-      Another way to describe this behavior is to say that this function treats a conventional call with
-      a single expression the same way that it treats a funtag call with a string that contains nothing but
-      that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
-      )` holds.
+      // Another way to describe this behavior is to say that this function treats a conventional call with
+      // a single expression the same way that it treats a funtag call with a string that contains nothing but
+      // that same expression, so the invariant `( get_first_argument exp ) == ( get_first_argument"#{ exp }"
+      // )` holds.
 
-      * intended for string producers, text processing, markup production;
-      * list some examples.  */
-      //---------------------------------------------------------------------------------------------------------
-      create_get_first_argument_fn = function(as_text = null) {
-        var get_first_argument;
-        if (as_text == null) {
-          as_text = function(expression) {
-            return `${expression}`;
-          };
-        }
-        /* TAINT use proper validation */
-        if ((typeof as_text) !== 'function') {
-          throw new Error(`Ωidsp___2 expected a function, got ${rpr(as_text)}`);
-        }
-        //-------------------------------------------------------------------------------------------------------
-        get_first_argument = function(...P) {
-          var R, expression, expressions, i, idx, len, parts;
-          if (!is_tagfun_call(...P)) {
-            if (P.length !== 1) {
-              throw new Error(`Ωidsp___3 expected 1 argument, got ${P.length}`);
-            }
-            return as_text(P[0]);
-          }
-          //.....................................................................................................
-          [parts, ...expressions] = P;
-          R = parts[0];
-          for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
-            expression = expressions[idx];
-            R += (as_text(expression)) + parts[idx + 1];
-          }
-          return R;
-        };
-        //-------------------------------------------------------------------------------------------------------
-        get_first_argument.create = create_get_first_argument_fn;
-        return get_first_argument;
-      };
+      // * intended for string producers, text processing, markup production;
+      // * list some examples. ###
+
+      // #---------------------------------------------------------------------------------------------------------
+      // create_get_first_argument_fn = ( as_text = null ) ->
+      //   as_text ?= ( expression ) -> "#{expression}"
+      //   ### TAINT use proper validation ###
+      //   unless ( typeof as_text ) is 'function'
+      //     throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"
+      //   #-------------------------------------------------------------------------------------------------------
+      //   get_first_argument = ( P... ) ->
+      //     unless is_tagfun_call P...
+      //       unless P.length is 1
+      //         throw new Error "Ωidsp___3 expected 1 argument, got #{P.length}"
+      //       return as_text P[ 0 ]
+      //     #.....................................................................................................
+      //     [ parts, expressions..., ] = P
+      //     R = parts[ 0 ]
+      //     for expression, idx in expressions
+      //       R += ( as_text expression ) + parts[ idx + 1 ]
+      //     return R
+      //   #-------------------------------------------------------------------------------------------------------
+      //   get_first_argument.create = create_get_first_argument_fn
+      //   return get_first_argument
+
       //---------------------------------------------------------------------------------------------------------
       is_tagfun_call = function(...P) {
         if (!Array.isArray(P[0])) {
@@ -97,11 +86,80 @@
         }
         return true;
       };
-      return {
-        //---------------------------------------------------------------------------------------------------------
-        get_first_argument: create_get_first_argument_fn(),
-        is_tagfun_call
+      //---------------------------------------------------------------------------------------------------------
+      walk_raw_parts = function*(chunks, ...values) {
+        var chunk;
+        chunks = (function() {
+          var i, len, ref, results;
+          ref = chunks.raw;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            chunk = ref[i];
+            results.push(chunk);
+          }
+          return results;
+        })();
+        chunks.raw = chunks.slice(0);
+        Object.freeze(chunks);
+        return (yield* walk_parts(chunks, ...values));
       };
+      //---------------------------------------------------------------------------------------------------------
+      walk_parts = function*(chunks, ...values) {
+        var i, idx, len, value;
+        if (!is_tagfun_call(chunks, ...values)) {
+          if (values.length !== 0) {
+            throw new Error(`Ω__16 expected 1 argument in non-template call, got ${arguments.length}`);
+          }
+          if (typeof chunks === 'string') {
+            [chunks, values] = [[chunks], []];
+          } else {
+            [chunks, values] = [['', ''], [chunks]];
+          }
+        }
+        yield ({
+          //.......................................................................................................
+          chunk: chunks[0],
+          isa: 'chunk'
+        });
+        for (idx = i = 0, len = values.length; i < len; idx = ++i) {
+          value = values[idx];
+          yield ({
+            value,
+            isa: 'value'
+          });
+          yield ({
+            chunk: chunks[idx + 1],
+            isa: 'chunk'
+          });
+        }
+        //.......................................................................................................
+        return null;
+      };
+      //---------------------------------------------------------------------------------------------------------
+      walk_raw_nonempty_parts = function*(chunks, ...values) {
+        var part;
+        for (part of walk_raw_parts(chunks, ...values)) {
+          if (!((part.chunk === '') || (part.value === ''))) {
+            yield part;
+          }
+        }
+        return null;
+      };
+      //---------------------------------------------------------------------------------------------------------
+      walk_nonempty_parts = function*(chunks, ...values) {
+        var part;
+        for (part of walk_parts(chunks, ...values)) {
+          if (!((part.chunk === '') || (part.value === ''))) {
+            yield part;
+          }
+        }
+        return null;
+      };
+      //---------------------------------------------------------------------------------------------------------
+      // return do exports = ( get_first_argument = create_get_first_argument_fn() ) -> {
+      //   get_first_argument, is_tagfun_call,
+      //   walk_parts, walk_nonempty_parts, walk_raw_parts, walk_raw_nonempty_parts, }
+      return {is_tagfun_call, walk_parts, walk_raw_parts, walk_nonempty_parts, walk_raw_nonempty_parts};
     },
     //===========================================================================================================
     /* NOTE Future Single-File Module */
@@ -334,8 +392,11 @@
         get_proxy = Symbol('get_proxy');
         //.........................................................................................................
         extendended_base = function(...P) {
-          var R;
-          R = base(...P);
+          var R, ctx, get_ctx;
+          ctx = (get_ctx = function(stack) {
+            return {stack, doublestack};
+          })(doublestack.peek_stack(null));
+          R = base.call(ctx, ...P);
           if (!doublestack.is_empty) {
             doublestack.pop_old_stack();
           }
