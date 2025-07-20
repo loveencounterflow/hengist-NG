@@ -31,6 +31,7 @@ C                         = require 'ansis'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 
+warn 'Ω___1', reverse " superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "
 
 #===========================================================================================================
 demo_infinite_proxy = ->
@@ -64,33 +65,33 @@ demo_infinite_proxy = ->
   do =>
     echo '——————————————————————————————————————————————————————————————————————————————'
     p = new_infiniproxy base, { empty_stack_on_new_chain: true } ### default ###
-    p.ooops;  debug 'Ω___1', stack
-    p.wat;    debug 'Ω___2', stack
-    p.nö;     debug 'Ω___3', stack
-    info 'Ω___4', p.more_of_this"some text"
-    debug 'Ω___5', stack
+    p.ooops;  debug 'Ω___2', stack
+    p.wat;    debug 'Ω___3', stack
+    p.nö;     debug 'Ω___4', stack
+    info 'Ω___5', p.more_of_this"some text"
+    debug 'Ω___6', stack
     return null
   #.........................................................................................................
   ### These calls will be `stack`ed and remain on the stack until `p` is called: ###
   do =>
     echo '——————————————————————————————————————————————————————————————————————————————'
     p = new_infiniproxy base, { empty_stack_on_new_chain: false } ### opt-in ###
-    p.ooops;  debug 'Ω___6', stack
-    p.wat;    debug 'Ω___7', stack
-    p.nö;     debug 'Ω___8', stack
-    info 'Ω___9', p.more_of_this"some text"
-    debug 'Ω__10', stack
+    p.ooops;  debug 'Ω___7', stack
+    p.wat;    debug 'Ω___8', stack
+    p.nö;     debug 'Ω___9', stack
+    info 'Ω__10', p.more_of_this"some text"
+    debug 'Ω__11', stack
     return null
   #.........................................................................................................
   do =>
     echo '——————————————————————————————————————————————————————————————————————————————'
     p = new_infiniproxy base
-    info 'Ω__11', p.red.bold.underline"some text"
+    info 'Ω__12', p.red.bold.underline"some text"
     ### Some random property retrievals without call... ###
     p.bold.underline
     p.strikethrough.inverse
     ### ...won't influence the meaning of the next property chain: ###
-    info 'Ω__12', p.yellow"finally, a call"
+    info 'Ω__13', p.yellow"finally, a call"
     ### But if needed, can always reference a proxy from an intermediate result and build a property chain
     on that; here we used a special unique value `get_proxy` that produces an intermediate result *without*
     adding it to the property chain: ###
@@ -101,21 +102,21 @@ demo_infinite_proxy = ->
     proxy.inverse
     proxy.yellow
     ### Finally, we're ready to print: ###
-    info 'Ω__13', proxy"this will be printed in bold + underline + strikethrough + inverse + yellow"
+    info 'Ω__14', proxy"this will be printed in bold + underline + strikethrough + inverse + yellow"
     return null
   return null
 
 # #===========================================================================================================
 # demo_picocolors_chalk = ->
 #   do =>
-#     # info 'Ω__14',     C.yellow"█▒█"
-#     # info 'Ω__15',     C.yellow"█#{ C.green"▒" }█"
-#     info 'Ω__16',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
-#     # info 'Ω__17', rpr C.yellow"█▒█"
-#     # info 'Ω__18', rpr C.yellow"█#{ C.green"▒" }█"
-#     info 'Ω__19', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
-#     info 'Ω__20',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
-#     info 'Ω__21', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+#     # info 'Ω__15',     C.yellow"█▒█"
+#     # info 'Ω__16',     C.yellow"█#{ C.green"▒" }█"
+#     info 'Ω__17',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+#     # info 'Ω__18', rpr C.yellow"█▒█"
+#     # info 'Ω__19', rpr C.yellow"█#{ C.green"▒" }█"
+#     info 'Ω__20', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+#     info 'Ω__21',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+#     info 'Ω__22', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
 #     return null
 #   do =>
 #     #-----------------------------------------------------------------------------------------------------------
@@ -137,10 +138,10 @@ demo_infinite_proxy = ->
 #     red     = colorizer_from_color_code color_codes.red
 #     green   = colorizer_from_color_code color_codes.green
 #     yellow  = colorizer_from_color_code color_codes.yellow
-#     # info 'Ω__22',     red"█#{'▒'}█#{ 'GREEN' }###"
-#     # info 'Ω__23', rpr red"█#{'▒'}█#{ 'GREEN' }###"
-#     info 'Ω__24',     red"████#{green"████#{yellow"████"}████"}████"
-#     info 'Ω__25', rpr red"████#{green"████#{yellow"████"}████"}████"
+#     # info 'Ω__23',     red"█#{'▒'}█#{ 'GREEN' }###"
+#     # info 'Ω__24', rpr red"█#{'▒'}█#{ 'GREEN' }###"
+#     info 'Ω__25',     red"████#{green"████#{yellow"████"}████"}████"
+#     info 'Ω__26', rpr red"████#{green"████#{yellow"████"}████"}████"
 #     return null
 #   return null
 
@@ -159,7 +160,7 @@ demo_colorful_proxy = ->
       get: ( target, key ) ->
         return target[ key ] if ( typeof key ) is 'symbol'
         unless Reflect.has bearer, key
-          throw new TMP_error "Ω__26 unknown key #{rpr key}"
+          throw new TMP_error "Ω__27 unknown key #{rpr key}"
         stack.length = 0 if is_initial
         stack.push key
         return R
@@ -175,14 +176,14 @@ demo_colorful_proxy = ->
     return R
   #.........................................................................................................
   p = new_infiniproxy C, base, { is_initial: true, }
-  info 'Ω__27', p.green.bold.inverse " holy moly "
+  info 'Ω__28', p.green.bold.inverse " holy moly "
   #.........................................................................................................
-  info 'Ω__28', p.yellow.italic"some text"
-  info 'Ω__29', p.green.bold.inverse.underline"some text"
+  info 'Ω__29', p.yellow.italic"some text"
+  info 'Ω__30', p.green.bold.inverse.underline"some text"
   ### Building the chain: ###
   chain = p.cyan.bold
   chain.underline
-  info 'Ω__30', p "finally, a call"
+  info 'Ω__31', p "finally, a call"
   return null
 
 
@@ -213,7 +214,7 @@ get_infiniproxy = ( base ) ->
         get_stack().push key
         # XXX_mark = if is_initial then ( reverse red bold ' I ' ) else ( reverse white bold ' S ' )
         # XXX_stack = ( get_stack() ? [] )[ .. ]
-        # debug 'Ω__31', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
+        # debug 'Ω__32', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
         return R
     if is_initial then  R = new_doublestack_infiniproxy { base, is_initial: false, }
     else                R = proxy
@@ -242,7 +243,7 @@ demo_proxy_as_html_producer = ->
     return R
   #.......................................................................................................
   text_from_tagged_template_call = ( parts, expressions... ) ->
-    # debug 'Ω__32', expressions
+    # debug 'Ω__33', expressions
     R = parts[ 0 ]
     for expression, idx in expressions
       expression_rpr  = "#{expression}"
@@ -253,7 +254,7 @@ demo_proxy_as_html_producer = ->
   render_html = ( P... ) ->
     stack = XXX.get_stack()
     XXX.pop_old_stack()
-    # urge 'Ω__33', gold reverse bold { stack, }
+    # urge 'Ω__34', gold reverse bold { stack, }
     is_template_call = ( Array.isArray P[ 0 ] ) and ( Object.isFrozen P[ 0 ] ) and ( P[ 0 ].raw? )
     if is_template_call
       text = text_from_tagged_template_call P...
@@ -261,8 +262,8 @@ demo_proxy_as_html_producer = ->
       switch true
         when P.length is 0 then text = ''
         when P.length is 1 then text = text_from_tagged_template_call P
-        else throw new Error "Ω__34 more than one argument not allowed"
-    # debug 'Ω__35', { is_template_call, text, }
+        else throw new Error "Ω__35 more than one argument not allowed"
+    # debug 'Ω__36', { is_template_call, text, }
     #.....................................................................................................
     R = []
     if stack.length > 0
@@ -289,7 +290,7 @@ demo_proxy_as_html_producer = ->
       append R, atrs_rpr, ">", text, "</", tag_name, ">"
     #.....................................................................................................
     stack.length = 0
-    urge 'Ω__36', R
+    urge 'Ω__37', R
     R = R.join ''
     R = new Raw R if XXX.get_stack_length() isnt 0
     # R = new Raw R
@@ -303,23 +304,23 @@ demo_proxy_as_html_producer = ->
   properties  = new Map()
   XXX         = get_infiniproxy render_html
   H           = XXX.proxy
-  # info 'Ω__37', H.div.big.important"some <arbitrary> text"
-  # info 'Ω__38', H.div.big.important "some <arbitrary> text"
-  # info 'Ω__39', H.on_click'send_form()'.xxx ### TAINT wrong result ###
-  # info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
-  # info 'Ω__41', H.span"cool!"
-  # info 'Ω__42', H.div"this stuff is #{"cool!"}"
+  # info 'Ω__38', H.div.big.important"some <arbitrary> text"
+  # info 'Ω__39', H.div.big.important "some <arbitrary> text"
+  # info 'Ω__40', H.on_click'send_form()'.xxx ### TAINT wrong result ###
+  # info 'Ω__41', H.div.on_click'send_form()'.big.important"this value is #{true}"
+  # info 'Ω__42', H.span"cool!"
+  # info 'Ω__43', H.div"this stuff is #{"cool!"}"
   button = new Raw H.button.on_click'send_form'.red"cool!"
   #.........................................................................................................
-  info 'Ω__43', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
-  info 'Ω__44', white bold reverse new Raw H.button.on_click'send_form'.red"cool!"
-  info 'Ω__45', white bold reverse H.div.outer"press here: #{button}"
-  info 'Ω__46', white bold reverse H.div.outer"press here: #{null}"
-  info 'Ω__47', white bold reverse H.div.outer"press here: #{undefined}"
+  info 'Ω__44', white bold reverse H.div.outer"this stuff is #{H.span.inner"cool!"}"
+  info 'Ω__45', white bold reverse new Raw H.button.on_click'send_form'.red"cool!"
+  info 'Ω__46', white bold reverse H.div.outer"press here: #{button}"
+  info 'Ω__47', white bold reverse H.div.outer"press here: #{null}"
+  info 'Ω__48', white bold reverse H.div.outer"press here: #{undefined}"
   #.........................................................................................................
-  @eq ( Ω__48 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
-  @eq ( Ω__49 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
-  @eq ( Ω__50 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
+  @eq ( Ω__49 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
+  @eq ( Ω__50 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
+  @eq ( Ω__51 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
   return null
 
 # # # # ###
@@ -333,3 +334,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
+  #.........................................................................................................
+  warn 'Ω__52', reverse " superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "
+  process.exit 111

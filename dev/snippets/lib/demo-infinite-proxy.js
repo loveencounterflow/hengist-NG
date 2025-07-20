@@ -23,6 +23,8 @@
 
   ({Test} = GTNG);
 
+  warn('Ω___1', reverse(" superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "));
+
   //===========================================================================================================
   demo_infinite_proxy = function() {
     var base, get_proxy, new_infiniproxy, stack, template;
@@ -83,13 +85,13 @@
         empty_stack_on_new_chain: true
       });
       /* default */      p.ooops;
-      debug('Ω___1', stack);
-      p.wat;
       debug('Ω___2', stack);
-      p.nö;
+      p.wat;
       debug('Ω___3', stack);
-      info('Ω___4', p.more_of_this`some text`);
-      debug('Ω___5', stack);
+      p.nö;
+      debug('Ω___4', stack);
+      info('Ω___5', p.more_of_this`some text`);
+      debug('Ω___6', stack);
       return null;
     })();
     (() => {      //.........................................................................................................
@@ -100,13 +102,13 @@
         empty_stack_on_new_chain: false
       });
       /* opt-in */      p.ooops;
-      debug('Ω___6', stack);
-      p.wat;
       debug('Ω___7', stack);
-      p.nö;
+      p.wat;
       debug('Ω___8', stack);
-      info('Ω___9', p.more_of_this`some text`);
-      debug('Ω__10', stack);
+      p.nö;
+      debug('Ω___9', stack);
+      info('Ω__10', p.more_of_this`some text`);
+      debug('Ω__11', stack);
       return null;
     })();
     (() => {      //.........................................................................................................
@@ -116,12 +118,12 @@
       var p, proxy;
       echo('——————————————————————————————————————————————————————————————————————————————');
       p = new_infiniproxy(base);
-      info('Ω__11', p.red.bold.underline`some text`);
+      info('Ω__12', p.red.bold.underline`some text`);
       /* Some random property retrievals without call... */
       p.bold.underline;
       p.strikethrough.inverse;
       /* ...won't influence the meaning of the next property chain: */
-      info('Ω__12', p.yellow`finally, a call`);
+      info('Ω__13', p.yellow`finally, a call`);
       proxy = p[get_proxy];
       /* Imagine we go through some branching if/then clauses to decide whether to add some styles: */
       proxy.bold.underline;
@@ -129,7 +131,7 @@
       proxy.inverse;
       proxy.yellow;
       /* Finally, we're ready to print: */
-      info('Ω__13', proxy`this will be printed in bold + underline + strikethrough + inverse + yellow`);
+      info('Ω__14', proxy`this will be printed in bold + underline + strikethrough + inverse + yellow`);
       return null;
     })();
     return null;
@@ -138,14 +140,14 @@
   // #===========================================================================================================
   // demo_picocolors_chalk = ->
   //   do =>
-  //     # info 'Ω__14',     C.yellow"█▒█"
-  //     # info 'Ω__15',     C.yellow"█#{ C.green"▒" }█"
-  //     info 'Ω__16',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
-  //     # info 'Ω__17', rpr C.yellow"█▒█"
-  //     # info 'Ω__18', rpr C.yellow"█#{ C.green"▒" }█"
-  //     info 'Ω__19', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
-  //     info 'Ω__20',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
-  //     info 'Ω__21', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+  //     # info 'Ω__15',     C.yellow"█▒█"
+  //     # info 'Ω__16',     C.yellow"█#{ C.green"▒" }█"
+  //     info 'Ω__17',     C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+  //     # info 'Ω__18', rpr C.yellow"█▒█"
+  //     # info 'Ω__19', rpr C.yellow"█#{ C.green"▒" }█"
+  //     info 'Ω__20', rpr C.red"█#{    C.green"▒" }█#{ C.green 'GREEN' }###"
+  //     info 'Ω__21',     C.red"████#{C.green"████#{C.yellow"████"}████"}████"
+  //     info 'Ω__22', rpr C.red"████#{C.green"████#{C.yellow"████"}████"}████"
   //     return null
   //   do =>
   //     #-----------------------------------------------------------------------------------------------------------
@@ -167,10 +169,10 @@
   //     red     = colorizer_from_color_code color_codes.red
   //     green   = colorizer_from_color_code color_codes.green
   //     yellow  = colorizer_from_color_code color_codes.yellow
-  //     # info 'Ω__22',     red"█#{'▒'}█#{ 'GREEN' }###"
-  //     # info 'Ω__23', rpr red"█#{'▒'}█#{ 'GREEN' }###"
-  //     info 'Ω__24',     red"████#{green"████#{yellow"████"}████"}████"
-  //     info 'Ω__25', rpr red"████#{green"████#{yellow"████"}████"}████"
+  //     # info 'Ω__23',     red"█#{'▒'}█#{ 'GREEN' }###"
+  //     # info 'Ω__24', rpr red"█#{'▒'}█#{ 'GREEN' }###"
+  //     info 'Ω__25',     red"████#{green"████#{yellow"████"}████"}████"
+  //     info 'Ω__26', rpr red"████#{green"████#{yellow"████"}████"}████"
   //     return null
   //   return null
 
@@ -195,7 +197,7 @@
             return target[key];
           }
           if (!Reflect.has(bearer, key)) {
-            throw new TMP_error(`Ω__26 unknown key ${rpr(key)}`);
+            throw new TMP_error(`Ω__27 unknown key ${rpr(key)}`);
           }
           if (is_initial) {
             stack.length = 0;
@@ -229,13 +231,13 @@
     p = new_infiniproxy(C, base, {
       is_initial: true
     });
-    info('Ω__27', p.green.bold.inverse(" holy moly "));
+    info('Ω__28', p.green.bold.inverse(" holy moly "));
     //.........................................................................................................
-    info('Ω__28', p.yellow.italic`some text`);
-    info('Ω__29', p.green.bold.inverse.underline`some text`);
+    info('Ω__29', p.yellow.italic`some text`);
+    info('Ω__30', p.green.bold.inverse.underline`some text`);
     chain = p.cyan.bold;
     chain.underline;
-    info('Ω__30', p("finally, a call"));
+    info('Ω__31', p("finally, a call"));
     return null;
   };
 
@@ -290,7 +292,7 @@
           get_stack().push(key);
           // XXX_mark = if is_initial then ( reverse red bold ' I ' ) else ( reverse white bold ' S ' )
           // XXX_stack = ( get_stack() ? [] )[ .. ]
-          // debug 'Ω__31', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
+          // debug 'Ω__32', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
           return R;
         }
       });
@@ -317,7 +319,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   demo_proxy_as_html_producer = function() {
-    var H, Raw, XXX, append, button, escape_html_text, properties, render_html, text_from_tagged_template_call, Ω__48, Ω__49, Ω__50;
+    var H, Raw, XXX, append, button, escape_html_text, properties, render_html, text_from_tagged_template_call, Ω__49, Ω__50, Ω__51;
     //.........................................................................................................
     echo('——————————————————————————————————————————————————————————————————————————————');
     append = function(list, ...P) {
@@ -347,7 +349,7 @@
     //.......................................................................................................
     text_from_tagged_template_call = function(parts, ...expressions) {
       var R, expression, expression_rpr, i, idx, len;
-      // debug 'Ω__32', expressions
+      // debug 'Ω__33', expressions
       R = parts[0];
       for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
         expression = expressions[idx];
@@ -364,7 +366,7 @@
       var R, atrs_rpr, class_names, class_rpr, is_template_call, stack, tag_name, text;
       stack = XXX.get_stack();
       XXX.pop_old_stack();
-      // urge 'Ω__33', gold reverse bold { stack, }
+      // urge 'Ω__34', gold reverse bold { stack, }
       is_template_call = (Array.isArray(P[0])) && (Object.isFrozen(P[0])) && (P[0].raw != null);
       if (is_template_call) {
         text = text_from_tagged_template_call(...P);
@@ -377,10 +379,10 @@
             text = text_from_tagged_template_call(P);
             break;
           default:
-            throw new Error("Ω__34 more than one argument not allowed");
+            throw new Error("Ω__35 more than one argument not allowed");
         }
       }
-      // debug 'Ω__35', { is_template_call, text, }
+      // debug 'Ω__36', { is_template_call, text, }
       //.....................................................................................................
       R = [];
       if (stack.length > 0) {
@@ -415,7 +417,7 @@
       }
       //.....................................................................................................
       stack.length = 0;
-      urge('Ω__36', R);
+      urge('Ω__37', R);
       R = R.join('');
       if (XXX.get_stack_length() !== 0) {
         R = new Raw(R);
@@ -435,29 +437,29 @@
     properties = new Map();
     XXX = get_infiniproxy(render_html);
     H = XXX.proxy;
-    // info 'Ω__37', H.div.big.important"some <arbitrary> text"
-    // info 'Ω__38', H.div.big.important "some <arbitrary> text"
-    // info 'Ω__39', H.on_click'send_form()'.xxx ### TAINT wrong result ###
-    // info 'Ω__40', H.div.on_click'send_form()'.big.important"this value is #{true}"
-    // info 'Ω__41', H.span"cool!"
-    // info 'Ω__42', H.div"this stuff is #{"cool!"}"
+    // info 'Ω__38', H.div.big.important"some <arbitrary> text"
+    // info 'Ω__39', H.div.big.important "some <arbitrary> text"
+    // info 'Ω__40', H.on_click'send_form()'.xxx ### TAINT wrong result ###
+    // info 'Ω__41', H.div.on_click'send_form()'.big.important"this value is #{true}"
+    // info 'Ω__42', H.span"cool!"
+    // info 'Ω__43', H.div"this stuff is #{"cool!"}"
     button = new Raw(H.button.on_click`send_form`.red`cool!`);
     //.........................................................................................................
-    info('Ω__43', white(bold(reverse(H.div.outer`this stuff is ${H.span.inner`cool!`}`))));
-    info('Ω__44', white(bold(reverse(new Raw(H.button.on_click`send_form`.red`cool!`)))));
-    info('Ω__45', white(bold(reverse(H.div.outer`press here: ${button}`))));
-    info('Ω__46', white(bold(reverse(H.div.outer`press here: ${null}`))));
-    info('Ω__47', white(bold(reverse(H.div.outer`press here: ${void 0}`))));
+    info('Ω__44', white(bold(reverse(H.div.outer`this stuff is ${H.span.inner`cool!`}`))));
+    info('Ω__45', white(bold(reverse(new Raw(H.button.on_click`send_form`.red`cool!`)))));
+    info('Ω__46', white(bold(reverse(H.div.outer`press here: ${button}`))));
+    info('Ω__47', white(bold(reverse(H.div.outer`press here: ${null}`))));
+    info('Ω__48', white(bold(reverse(H.div.outer`press here: ${void 0}`))));
     //.........................................................................................................
-    this.eq((Ω__48 = function() {
+    this.eq((Ω__49 = function() {
       return H.div.outer`this stuff is ${H.span.inner`cool!`}`;
     }), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>");
-    this.eq((Ω__49 = function() {
+    this.eq((Ω__50 = function() {
       return new Raw(H.button.on_click`send_form`.red`cool!`);
     }), {
       data: "<button class='red' on_click='send_form'>cool!</button>"
     });
-    this.eq((Ω__50 = function() {
+    this.eq((Ω__51 = function() {
       return H.div.outer`press here: ${button}`;
     }), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>");
     return null;
@@ -483,7 +485,10 @@
         show_passes: false,
         report_checks: false
       };
-      return (new Test(guytest_cfg)).test({demo_proxy_as_html_producer});
+      (new Test(guytest_cfg)).test({demo_proxy_as_html_producer});
+      //.........................................................................................................
+      warn('Ω__52', reverse(" superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "));
+      return process.exit(111);
     })();
   }
 
