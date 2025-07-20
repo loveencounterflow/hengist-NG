@@ -198,26 +198,26 @@ demo_stackable_tagfun_with_object = ->
     #.......................................................................................................
     return null
   echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values""           ) then info 'Ω__17', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a"          ) then info 'Ω__18', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"\na"        ) then info 'Ω__19', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_raw_chunks_and_values"\na"    ) then info 'Ω__20', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"#{1}"       ) then info 'Ω__21', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a#{1}"      ) then info 'Ω__22', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a#{1}z"     ) then info 'Ω__23', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values"a#{1}z#{2}" ) then info 'Ω__24', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values "atoz"      ) then info 'Ω__25', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
-  for e from ( walk_chunks_and_values 12          ) then info 'Ω__26', e
-  echo '——————————————————————————————————————————————————————————————————————————————'
+  @eq ( Ωt__17 = -> [ ( walk_chunks_and_values""           )..., ] ), [ { chunk: '', isa: 'chunk', lidx: 0, ridx: 0 }, ]
+  @eq ( Ωt__18 = -> [ ( walk_chunks_and_values"a"          )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 0 }, ]
+  @eq ( Ωt__19 = -> [ ( walk_chunks_and_values"\na"        )..., ] ), [ { chunk: '\na', isa: 'chunk', lidx: 0, ridx: 0 }, ]
+  @eq ( Ωt__20 = -> [ ( walk_raw_chunks_and_values"\na"    )..., ] ), [ { chunk: '\\na', isa: 'chunk', lidx: 0, ridx: 0 }, ]
+  @eq ( Ωt__21 = -> [ ( walk_chunks_and_values"#{1}"       )..., ] ), [ { chunk: '', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 1, isa: 'value', lidx: 1, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 2, ridx: 0 }, ]
+  @eq ( Ωt__22 = -> [ ( walk_chunks_and_values"a#{1}"      )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 1, isa: 'value', lidx: 1, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 2, ridx: 0 }, ]
+  @eq ( Ωt__23 = -> [ ( walk_chunks_and_values"a#{1}z"     )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 1, isa: 'value', lidx: 1, ridx: 1 }, { chunk: 'z', isa: 'chunk', lidx: 2, ridx: 0 }, ]
+  @eq ( Ωt__24 = -> [ ( walk_chunks_and_values"a#{1}z#{2}" )..., ] ), [ { chunk: 'a', isa: 'chunk', lidx: 0, ridx: 4 }, { value: 1, isa: 'value', lidx: 1, ridx: 3 }, { chunk: 'z', isa: 'chunk', lidx: 2, ridx: 2 }, { value: 2, isa: 'value', lidx: 3, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 4, ridx: 0 }, ]
+  @eq ( Ωt__25 = -> [ ( walk_chunks_and_values "atoz"      )..., ] ), [ { chunk: 'atoz', isa: 'chunk', lidx: 0, ridx: 0 }, ]
+  @eq ( Ωt__26 = -> [ ( walk_chunks_and_values 12          )..., ] ), [ { chunk: '', isa: 'chunk', lidx: 0, ridx: 2 }, { value: 12, isa: 'value', lidx: 1, ridx: 1 }, { chunk: '', isa: 'chunk', lidx: 2, ridx: 0 }, ]
+
+
+
+
+
+
+
+
+
+
   #.........................................................................................................
   return null
 
