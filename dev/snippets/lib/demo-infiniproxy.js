@@ -268,4 +268,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=demo-infinite-proxy.js.map
+//# sourceMappingURL=demo-infiniproxy.js.map
