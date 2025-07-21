@@ -154,4 +154,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=demo-infinite-doublestack-proxy-as-html-producer.js.map
+//# sourceMappingURL=demo-infiniproxy-as-html-producer.js.map
