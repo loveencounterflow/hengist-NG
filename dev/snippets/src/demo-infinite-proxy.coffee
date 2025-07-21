@@ -321,6 +321,7 @@ demo_proxy_as_html_producer = ->
   @eq ( Ω__49 = -> H.div.outer"this stuff is #{H.span.inner"cool!"}"  ), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>"
   @eq ( Ω__50 = -> new Raw H.button.on_click'send_form'.red"cool!"    ), { data: "<button class='red' on_click='send_form'>cool!</button>" }
   @eq ( Ω__51 = -> H.div.outer"press here: #{button}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
+  # @eq ( Ω__51 = -> H.div.outer"press here: #{new Raw H.button.on_click'send_form'.red"cool!"}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
   return null
 
 # # # # ###
@@ -335,5 +336,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
   #.........................................................................................................
+  demo_infinite_proxy()
+  demo_colorful_proxy()
   warn 'Ω__52', reverse " superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "
   process.exit 111

@@ -56,12 +56,12 @@
       //   as_text ?= ( expression ) -> "#{expression}"
       //   ### TAINT use proper validation ###
       //   unless ( typeof as_text ) is 'function'
-      //     throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"
+      //     throw new Error "Ωidsp___1 expected a function, got #{rpr as_text}"
       //   #-------------------------------------------------------------------------------------------------------
       //   get_first_argument = ( P... ) ->
       //     unless is_tagfun_call P...
       //       unless P.length is 1
-      //         throw new Error "Ωidsp___3 expected 1 argument, got #{P.length}"
+      //         throw new Error "Ωidsp___2 expected 1 argument, got #{P.length}"
       //       return as_text P[ 0 ]
       //     #.....................................................................................................
       //     [ parts, expressions..., ] = P
@@ -108,7 +108,7 @@
         var i, idx, len, value;
         if (!is_tagfun_call(chunks, ...values)) {
           if (values.length !== 0) {
-            throw new Error(`Ω__16 expected 1 argument in non-template call, got ${arguments.length}`);
+            throw new Error(`Ω___3 expected 1 argument in non-template call, got ${arguments.length}`);
           }
           if (typeof chunks === 'string') {
             [chunks, values] = [[chunks], []];
@@ -382,30 +382,33 @@
       //...........................................................................................................
       dsip_cfg_template = {
         base: null,
-        is_initial: true
+        is_initial: true,
+        pop_stack: true
       };
       // empty_stack_on_new_chain: true
       //-----------------------------------------------------------------------------------------------------------
       create_doublestack_infiniproxy = function(base) {
-        var doublestack, extendended_base, get_proxy, new_doublestack_infiniproxy;
+        var doublestack, get_proxy, new_doublestack_infiniproxy;
         doublestack = new Doublestack();
         get_proxy = Symbol('get_proxy');
-        //.........................................................................................................
-        extendended_base = function(...P) {
-          var R, ctx, get_ctx;
-          ctx = (get_ctx = function(stack) {
-            return {stack, doublestack};
-          })(doublestack.peek_stack(null));
-          R = base.call(ctx, ...P);
-          if (!doublestack.is_empty) {
-            doublestack.pop_old_stack();
-          }
-          return R;
-        };
         //---------------------------------------------------------------------------------------------------------
         new_doublestack_infiniproxy = function(cfg) {
-          var R, proxy;
-          cfg = {...dsip_cfg_template, ...cfg};
+          var R2, extendended_base, non_initial_proxy, pop_stack, proxy;
+          ({pop_stack} = cfg = {...dsip_cfg_template, ...cfg});
+          //.......................................................................................................
+          extendended_base = function(...P) {
+            var R, ctx, get_ctx;
+            ctx = (get_ctx = function(stack) {
+              return {stack, doublestack, get_proxy};
+            })(doublestack.peek_stack(null));
+            R = base.call(ctx, ...P);
+            if (pop_stack && !doublestack.is_empty) {
+              doublestack.pop_old_stack();
+            }
+            return R;
+          };
+          Object.defineProperties(extendended_base, Object.getOwnPropertyDescriptors(base));
+          extendended_base.doublestack = doublestack;
           // cfg.is_initial = false unless cfg.empty_stack_on_new_chain
           //.......................................................................................................
           proxy = new Proxy(extendended_base, {
@@ -413,29 +416,33 @@
               if (key === get_proxy) {
                 return new_doublestack_infiniproxy({
                   base,
-                  is_initial: false
+                  is_initial: false,
+                  pop_stack
                 });
               }
               if ((typeof key) === 'symbol') {
+                // return new_doublestack_infiniproxy { base, is_initial: false, } if key is get_proxy
                 return target[key];
               }
               if (Reflect.has(target, key)) {
+                // console.debug 'Ωsfm__10', target, key, Reflect.has target, key
                 return target[key];
               }
-              if (cfg.is_initial) {
+              if (cfg.is_initial) { // or doublestack.is_empty
                 doublestack.push_new_stack();
               }
               doublestack.peek_stack().push(key);
-              return R;
+              return R2;
             }
           });
           if (cfg.is_initial) {
-            R = new_doublestack_infiniproxy({
+            R2 = non_initial_proxy = new_doublestack_infiniproxy({
               base,
-              is_initial: false
+              is_initial: false,
+              pop_stack
             });
           } else {
-            R = proxy;
+            R2 = proxy;
           }
           return proxy;
         };

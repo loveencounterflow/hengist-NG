@@ -60,20 +60,22 @@
 
       //-------------------------------------------------------------------------------------------------------
       toString() {
-        var R, e, i, len;
+        var R, e, i, len, ref;
         R = [];
-        R.push(`<${name}`);
+        R.push(`<${this.name}`);
         R.push(" ATRs");
         R.push(">");
-        for (i = 0, len = content.length; i < len; i++) {
-          e = content[i];
+        ref = this.content;
+        for (i = 0, len = ref.length; i < len; i++) {
+          e = ref[i];
           R.push(e);
         }
-        R.push(`</${name}>`);
+        R.push(`</${this.name}>`);
         return R.join('');
       }
 
     };
+    //.........................................................................................................
     return {Html};
   };
 
@@ -81,12 +83,53 @@
   tests = {
     //---------------------------------------------------------------------------------------------------------
     test_doublestack_infiniproxy: function() {
-      var append, create_doublestack_infiniproxy, escape_html_text, get_first_argument, is_tagfun_call;
-      ({get_first_argument, is_tagfun_call} = SFMODULES.require_tagfun_tools());
-      ({create_doublestack_infiniproxy} = SFMODULES.require_doublestack_infiniproxy());
-      ({append} = SFMODULES.require_list_tools());
-      //.......................................................................................................
+      var H, Html, as_text, create_doublestack_infiniproxy, escape_html_text, get_proxy, handler, is_tagfun_call, sub_proxy, walk_parts;
+      ({Html} = require_html_class());
+      ({walk_parts, is_tagfun_call} = SFMODULES.require_tagfun_tools());
+      ({create_doublestack_infiniproxy, get_proxy} = SFMODULES.require_doublestack_infiniproxy());
       ({escape_html_text} = SFMODULES.require_escape_html_text());
+      // { append,                         } = SFMODULES.require_list_tools()
+      as_text = function(x) {
+        return `${x}`;
+      };
+      //.......................................................................................................
+      handler = function(...P) {
+        var atrs, content, name;
+        [name, ...atrs] = this.stack;
+        // debug 'Ωdsh___1', [ @stack..., ]
+        debug('Ωdsh___2', {name, atrs});
+        content = [...(walk_parts(...P))];
+        // for part from walk_parts P...
+        //   debug 'Ωdsh___3', part
+        return new Html(name, null, content);
+      };
+      //.......................................................................................................
+      handler.on_click = function(...P) {
+        // info 'Ωdsh___4', @
+        // info 'Ωdsh___5', H
+        info('Ωdsh___6', this.doublestack); // .peek_stack null # [ @stack..., ]
+        return sub_proxy;
+      };
+      H = create_doublestack_infiniproxy(handler);
+      // urge 'Ωdsh___7',          H.doublestack
+      sub_proxy = H[get_proxy];
+      // urge 'Ωdsh___8',          H.doublestack
+      //.......................................................................................................
+      urge('Ωdsh___9', new Html('div'));
+      urge('Ωdsh__10', new Html('div', null, "content"));
+      urge('Ωdsh__11', as_text(new Html('div')));
+      urge('Ωdsh__12', as_text(new Html('div', null, "content")));
+      // urge 'Ωdsh__13',          H.div._cssclass"<content>"
+      // urge 'Ωdsh__14', as_text  H.div._cssclass"<content>"
+      // urge 'Ωdsh__15',          H.div.red.outline.on_click'doit()'
+      urge('Ωdsh__16', H.div.red`<content>`);
+      urge('Ωdsh__17', H.div.red.outline.on_click`doit()`.extra`<content>`);
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      // urge 'Ωdsh__18',          GUY.trm.truth H.div is H.div.on_click
+      urge('Ωdsh__19', H.div.on_click`doit()`);
+      // urge 'Ωdsh__20',          GUY.trm.truth H.div is H.div.on_click'doit()'
+      // urge 'Ωdsh__21',          H.div.on_click'doit()'._cssclass # "<content>"
+      urge('Ωdsh__22', H.div.on_click`doit()`._cssclass`<content>`);
       //.......................................................................................................
       return null;
     }

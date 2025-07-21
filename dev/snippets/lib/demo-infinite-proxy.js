@@ -462,6 +462,7 @@
     this.eq((Ω__51 = function() {
       return H.div.outer`press here: ${button}`;
     }), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>");
+    // @eq ( Ω__51 = -> H.div.outer"press here: #{new Raw H.button.on_click'send_form'.red"cool!"}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
     return null;
   };
 
@@ -487,6 +488,8 @@
       };
       (new Test(guytest_cfg)).test({demo_proxy_as_html_producer});
       //.........................................................................................................
+      demo_infinite_proxy();
+      demo_colorful_proxy();
       warn('Ω__52', reverse(" superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "));
       return process.exit(111);
     })();

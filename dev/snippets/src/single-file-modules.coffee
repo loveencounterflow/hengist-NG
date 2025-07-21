@@ -47,12 +47,12 @@ module.exports = SFMODULES =
     #   as_text ?= ( expression ) -> "#{expression}"
     #   ### TAINT use proper validation ###
     #   unless ( typeof as_text ) is 'function'
-    #     throw new Error "Ωidsp___2 expected a function, got #{rpr as_text}"
+    #     throw new Error "Ωidsp___1 expected a function, got #{rpr as_text}"
     #   #-------------------------------------------------------------------------------------------------------
     #   get_first_argument = ( P... ) ->
     #     unless is_tagfun_call P...
     #       unless P.length is 1
-    #         throw new Error "Ωidsp___3 expected 1 argument, got #{P.length}"
+    #         throw new Error "Ωidsp___2 expected 1 argument, got #{P.length}"
     #       return as_text P[ 0 ]
     #     #.....................................................................................................
     #     [ parts, expressions..., ] = P
@@ -82,7 +82,7 @@ module.exports = SFMODULES =
     walk_parts = ( chunks, values... ) ->
       unless is_tagfun_call chunks, values...
         if values.length isnt 0
-          throw new Error "Ω__16 expected 1 argument in non-template call, got #{arguments.length}"
+          throw new Error "Ω___3 expected 1 argument in non-template call, got #{arguments.length}"
         if typeof chunks is 'string' then [ chunks, values, ] = [ [ chunks, ], [],          ]
         else                              [ chunks, values, ] = [ [ '', '', ], [ chunks, ], ]
       #.......................................................................................................
@@ -240,32 +240,37 @@ module.exports = SFMODULES =
     dsip_cfg_template =
       base:                     null
       is_initial:               true
+      pop_stack:                true
       # empty_stack_on_new_chain: true
     #-----------------------------------------------------------------------------------------------------------
     create_doublestack_infiniproxy = ( base ) ->
       doublestack = new Doublestack()
       get_proxy   = Symbol 'get_proxy'
-      #.........................................................................................................
-      extendended_base = ( P... ) ->
-        ctx = do get_ctx = ( stack = ( doublestack.peek_stack null ) ) -> { stack, doublestack, }
-        R   = base.call ctx, P...
-        doublestack.pop_old_stack() unless doublestack.is_empty
-        return R
       #---------------------------------------------------------------------------------------------------------
       new_doublestack_infiniproxy = ( cfg ) ->
-        cfg = { dsip_cfg_template..., cfg..., }
+        { pop_stack,  } = cfg = { dsip_cfg_template..., cfg..., }
+        #.......................................................................................................
+        extendended_base = ( P... ) ->
+          ctx = do get_ctx = ( stack = ( doublestack.peek_stack null ) ) -> { stack, doublestack, get_proxy, }
+          R   = base.call ctx, P...
+          doublestack.pop_old_stack() if pop_stack and not doublestack.is_empty
+          return R
+        Object.defineProperties extendended_base, Object.getOwnPropertyDescriptors base
+        extendended_base.doublestack = doublestack
         # cfg.is_initial = false unless cfg.empty_stack_on_new_chain
         #.......................................................................................................
         proxy = new Proxy extendended_base,
           get: ( target, key ) ->
-            return new_doublestack_infiniproxy { base, is_initial: false, } if key is get_proxy
+            return new_doublestack_infiniproxy { base, is_initial: false, pop_stack, } if key is get_proxy
+            # return new_doublestack_infiniproxy { base, is_initial: false, } if key is get_proxy
             return target[ key ]                                            if ( typeof key ) is 'symbol'
+            # console.debug 'Ωsfm__10', target, key, Reflect.has target, key
             return target[ key ]                                            if Reflect.has target, key
-            doublestack.push_new_stack()                                    if cfg.is_initial
+            doublestack.push_new_stack()                                    if cfg.is_initial # or doublestack.is_empty
             doublestack.peek_stack().push key
-            return R
-        if cfg.is_initial then  R = new_doublestack_infiniproxy { base, is_initial: false, }
-        else                    R = proxy
+            return R2
+        if cfg.is_initial then  R2 = non_initial_proxy = new_doublestack_infiniproxy { base, is_initial: false, pop_stack, }
+        else                    R2 = proxy
         return proxy
       #.........................................................................................................
       return do ( proxy = new_doublestack_infiniproxy base ) => proxy.doublestack = doublestack; proxy
