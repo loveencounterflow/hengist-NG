@@ -20,7 +20,7 @@ var emailRegex =
 ```
 
 * **HTML/XML Builer**
-* **SQL Builder**
+* **SQL Builder**: `SQL.insert.into.employees('id','name').values(id,name)`
 * **CLI Coloring**
 * syntax for a **Type Checker**
 
@@ -90,12 +90,12 @@ require_html_class = ->
 tests =
 
   #---------------------------------------------------------------------------------------------------------
-  test_doublestack_infiniproxy: ->
+  test_infiniproxy: ->
     { Html,                           } = require_html_class()
     { walk_parts,
       is_tagfun_call,                 } = SFMODULES.require_tagfun_tools()
-    { create_doublestack_infiniproxy,
-      get_proxy,                      } = SFMODULES.require_doublestack_infiniproxy()
+    { create_infiniproxy,
+      get_proxy,                      } = SFMODULES.require_infiniproxy()
     { escape_html_text,               } = SFMODULES.require_escape_html_text()
     # { append,                         } = SFMODULES.require_list_tools()
     as_text                             = ( x ) -> "#{x}"
@@ -112,12 +112,9 @@ tests =
     handler.on_click = ( P... ) ->
       # info 'Ωdsh___4', @
       # info 'Ωdsh___5', H
-      info 'Ωdsh___6', @doublestack # .peek_stack null # [ @stack..., ]
       return sub_proxy
-    H         = create_doublestack_infiniproxy handler
-    # urge 'Ωdsh___7',          H.doublestack
+    H         = create_infiniproxy handler
     sub_proxy = H[ get_proxy ]
-    # urge 'Ωdsh___8',          H.doublestack
     #.......................................................................................................
     urge 'Ωdsh___9',          new Html 'div'
     urge 'Ωdsh__10',          new Html 'div', null, "content"

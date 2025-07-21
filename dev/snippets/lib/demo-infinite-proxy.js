@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var C, GTNG, GUY, Test, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, demo_proxy_as_html_producer, echo, f, get_infiniproxy, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GTNG, GUY, Test, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -23,7 +23,7 @@
 
   ({Test} = GTNG);
 
-  warn('Ω___1', reverse(" superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "));
+  warn('Ω___1', reverse(" superseded by `(test-)single-file-proxy.coffee` "));
 
   //===========================================================================================================
   demo_infinite_proxy = function() {
@@ -242,235 +242,6 @@
   };
 
   //===========================================================================================================
-  get_infiniproxy = function(base) {
-    var get_proxy, get_stack, get_stack_length, new_doublestack_infiniproxy, pop_old_stack, push_new_stack, stackofstacks, template;
-    stackofstacks = [];
-    get_stack = function() {
-      return stackofstacks.at(-1);
-    };
-    push_new_stack = function() {
-      stackofstacks.push([]);
-      return get_stack();
-    };
-    pop_old_stack = function() {
-      return stackofstacks.pop();
-    };
-    get_stack_length = function() {
-      return stackofstacks.length;
-    };
-    get_proxy = Symbol('get_proxy');
-    //.........................................................................................................
-    template = {
-      base: null,
-      is_initial: true,
-      empty_stack_on_new_chain: true
-    };
-    //.........................................................................................................
-    new_doublestack_infiniproxy = nfa({template}, function(base, is_initial, cfg) {
-      var R, proxy;
-      if (!cfg.empty_stack_on_new_chain) {
-        is_initial = false;
-      }
-      proxy = new Proxy(base, {
-        get: function(target, key) {
-          if (key === get_proxy) {
-            return new_infiniproxy({
-              base,
-              is_initial: false
-            });
-          }
-          if ((typeof key) === 'symbol') {
-            return target[key];
-          }
-          if (Reflect.has(target, key)) {
-            return target[key];
-          }
-          // XXX_before = ( get_stack() ? [] )[ .. ]
-          if (is_initial) {
-            push_new_stack();
-          }
-          get_stack().push(key);
-          // XXX_mark = if is_initial then ( reverse red bold ' I ' ) else ( reverse white bold ' S ' )
-          // XXX_stack = ( get_stack() ? [] )[ .. ]
-          // debug 'Ω__32', XXX_mark, 'key:', ( rpr key ), 'before:', ( gold rpr XXX_before.join '.' ), 'after:', ( blue rpr XXX_stack.join '.' )
-          return R;
-        }
-      });
-      if (is_initial) {
-        R = new_doublestack_infiniproxy({
-          base,
-          is_initial: false
-        });
-      } else {
-        R = proxy;
-      }
-      return proxy;
-    });
-    return {
-      //.........................................................................................................
-      proxy: new_doublestack_infiniproxy(base),
-      get_stack,
-      push_new_stack,
-      pop_old_stack,
-      get_proxy,
-      get_stack_length
-    };
-  };
-
-  //-----------------------------------------------------------------------------------------------------------
-  demo_proxy_as_html_producer = function() {
-    var H, Raw, XXX, append, button, escape_html_text, properties, render_html, text_from_tagged_template_call, Ω__49, Ω__50, Ω__51;
-    //.........................................................................................................
-    echo('——————————————————————————————————————————————————————————————————————————————');
-    append = function(list, ...P) {
-      return list.splice(list.length, 0, ...P);
-    };
-    //.......................................................................................................
-    Raw = class Raw {
-      constructor(text) {
-        this.data = text;
-        return void 0;
-      }
-
-      toString() {
-        return this.data;
-      }
-
-    };
-    //.......................................................................................................
-    escape_html_text = function(text) {
-      var R;
-      R = text;
-      R = R.replace(/&/g, '&amp;');
-      R = R.replace(/</g, '&lt;');
-      R = R.replace(/>/g, '&gt;');
-      return R;
-    };
-    //.......................................................................................................
-    text_from_tagged_template_call = function(parts, ...expressions) {
-      var R, expression, expression_rpr, i, idx, len;
-      // debug 'Ω__33', expressions
-      R = parts[0];
-      for (idx = i = 0, len = expressions.length; i < len; idx = ++i) {
-        expression = expressions[idx];
-        expression_rpr = `${expression}`;
-        if (!(expression instanceof Raw)) {
-          expression_rpr = escape_html_text(expression_rpr);
-        }
-        R += expression_rpr + parts[idx + 1];
-      }
-      return R;
-    };
-    //.......................................................................................................
-    render_html = function(...P) {
-      var R, atrs_rpr, class_names, class_rpr, is_template_call, stack, tag_name, text;
-      stack = XXX.get_stack();
-      XXX.pop_old_stack();
-      // urge 'Ω__34', gold reverse bold { stack, }
-      is_template_call = (Array.isArray(P[0])) && (Object.isFrozen(P[0])) && (P[0].raw != null);
-      if (is_template_call) {
-        text = text_from_tagged_template_call(...P);
-      } else {
-        switch (true) {
-          case P.length === 0:
-            text = '';
-            break;
-          case P.length === 1:
-            text = text_from_tagged_template_call(P);
-            break;
-          default:
-            throw new Error("Ω__35 more than one argument not allowed");
-        }
-      }
-      // debug 'Ω__36', { is_template_call, text, }
-      //.....................................................................................................
-      R = [];
-      if (stack.length > 0) {
-        tag_name = stack.shift();
-        if (stack.length > 0) {
-          class_names = stack.join(' ');
-          class_rpr = ` class='${class_names}'`;
-        } else {
-          class_rpr = '';
-        }
-        //...................................................................................................
-        append(R, "<", tag_name, class_rpr);
-        //...................................................................................................
-        /* properties: */
-        atrs_rpr = (() => {
-          /* TAINT must escape, quote value */
-          var _atrs, property_name, property_value, property_value_rpr, x;
-          if (properties.size === 0) {
-            return '';
-          }
-          _atrs = [];
-          for (x of properties.entries()) {
-            [property_name, property_value] = x;
-            property_value_rpr = property_value.replace(/'/g, '&apos;');
-            _atrs.push(`${property_name}='${property_value_rpr}'`);
-          }
-          properties.clear();
-          return ' ' + _atrs.join(' ');
-        })();
-        //...................................................................................................
-        append(R, atrs_rpr, ">", text, "</", tag_name, ">");
-      }
-      //.....................................................................................................
-      stack.length = 0;
-      urge('Ω__37', R);
-      R = R.join('');
-      if (XXX.get_stack_length() !== 0) {
-        R = new Raw(R);
-      }
-      // R = new Raw R
-      return R;
-    };
-    //.......................................................................................................
-    render_html.on_click = function(action) {
-      if (Array.isArray(action)) {
-        action = action[0];
-      }
-      properties.set('on_click', action);
-      return this;
-    };
-    //.......................................................................................................
-    properties = new Map();
-    XXX = get_infiniproxy(render_html);
-    H = XXX.proxy;
-    // info 'Ω__38', H.div.big.important"some <arbitrary> text"
-    // info 'Ω__39', H.div.big.important "some <arbitrary> text"
-    // info 'Ω__40', H.on_click'send_form()'.xxx ### TAINT wrong result ###
-    // info 'Ω__41', H.div.on_click'send_form()'.big.important"this value is #{true}"
-    // info 'Ω__42', H.span"cool!"
-    // info 'Ω__43', H.div"this stuff is #{"cool!"}"
-    button = new Raw(H.button.on_click`send_form`.red`cool!`);
-    //.........................................................................................................
-    info('Ω__44', white(bold(reverse(H.div.outer`this stuff is ${H.span.inner`cool!`}`))));
-    info('Ω__45', white(bold(reverse(new Raw(H.button.on_click`send_form`.red`cool!`)))));
-    info('Ω__46', white(bold(reverse(H.div.outer`press here: ${button}`))));
-    info('Ω__47', white(bold(reverse(H.div.outer`press here: ${null}`))));
-    info('Ω__48', white(bold(reverse(H.div.outer`press here: ${void 0}`))));
-    //.........................................................................................................
-    this.eq((Ω__49 = function() {
-      return H.div.outer`this stuff is ${H.span.inner`cool!`}`;
-    }), "<div class='outer'>this stuff is <span class='inner'>cool!</span></div>");
-    this.eq((Ω__50 = function() {
-      return new Raw(H.button.on_click`send_form`.red`cool!`);
-    }), {
-      data: "<button class='red' on_click='send_form'>cool!</button>"
-    });
-    this.eq((Ω__51 = function() {
-      return H.div.outer`press here: ${button}`;
-    }), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>");
-    // @eq ( Ω__51 = -> H.div.outer"press here: #{new Raw H.button.on_click'send_form'.red"cool!"}"                 ), "<div class='outer'>press here: <button class='red' on_click='send_form'>cool!</button></div>"
-    return null;
-  };
-
-  // # # # ###
-  // # # # SQL.insert.into.employees('id','name').values(id,name)
-  // # # # ###
-
-  //===========================================================================================================
   if (module === require.main) {
     await (() => {
       var guytest_cfg;
@@ -490,7 +261,7 @@
       //.........................................................................................................
       demo_infinite_proxy();
       demo_colorful_proxy();
-      warn('Ω__52', reverse(" superseded by doublestack proxy in `(test-)single-file-proxy.coffee` "));
+      warn('Ω__52', reverse(" superseded by `(test-)single-file-proxy.coffee` "));
       return process.exit(111);
     })();
   }
