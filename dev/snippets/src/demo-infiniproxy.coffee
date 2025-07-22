@@ -219,6 +219,32 @@ demo_colorful_proxy = ->
 
 #===========================================================================================================
 demo_instance_function_as_proxy = ->
+  { hide,               } = SFMODULES.require_managed_property_tools()
+  #===========================================================================================================
+  target_fn = ( P... ) -> debug 'Ω__31', "target_fn #{rpr P}"
+  #-----------------------------------------------------------------------------------------------------------
+  create_proxy = ( callable ) ->
+    return new Proxy callable,
+
+      #-------------------------------------------------------------------------------------------------------
+      construct: ( target, arguments_list, new_target ) ->
+        info 'Ω__32', rpr target, new_target, target is new_target
+        info 'Ω__33', rpr arguments_list
+        return { value: 56, }
+
+      #-------------------------------------------------------------------------------------------------------
+      apply: ( target, key, P ) ->
+        urge 'Ω__34', "apply #{rpr { target, key, P, }}"
+        ctx = { iam: 'synthetic-context', }
+        return Reflect.apply target, ctx, P ### NOTE: cannot use `target.apply()`, must use `Reflect` ###
+
+      #-------------------------------------------------------------------------------------------------------
+      get: ( target, key ) ->
+        urge 'Ω__35', "get #{rpr { target, key, }}"
+        return target[ key ] if ( typeof key ) is 'symbol'
+        return Reflect.get target, key if Reflect.has target, key
+        return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+
   #===========================================================================================================
   class D
 
@@ -226,11 +252,8 @@ demo_instance_function_as_proxy = ->
     constructor: ( callable ) ->
       @other_prop = 'OTHER_PROP'
       Object.setPrototypeOf callable, @
-      R = new Proxy callable,
-        get: ( target, key ) ->
-          return target[ key ] if ( typeof key ) is 'symbol'
-          return Reflect.get target, key if Reflect.has target, key
-          return "something else: #{rpr key}"
+      R = create_proxy callable
+      # ...
       return R
 
     #-------------------------------------------------------------------------------------------------------
@@ -238,13 +261,21 @@ demo_instance_function_as_proxy = ->
     property_of_d: 'PROPERTY_OF_D'
   #.........................................................................................................
   d = new D ( P... ) -> "{ arguments: #{rpr P} }"
-  debug 'Ω__31', d                # D { other_prop: 'OTHER_PROP' }
-  debug 'Ω__32', d.other_prop     # OTHER_PROP
-  debug 'Ω__33', d.method_of_d()  # METHOD_OF_D
-  debug 'Ω__34', d.property_of_d  # PROPERTY_OF_D
-  debug 'Ω__35', d.unknown_key    # something else: 'unknown_key'
-  debug 'Ω__36', d instanceof D   # true
-  debug 'Ω__37', d 1, 2, 'c'
+  debug 'Ω__36', d                # D { other_prop: 'OTHER_PROP' }
+  debug 'Ω__37', d.other_prop     # OTHER_PROP
+  debug 'Ω__38', d.method_of_d()  # METHOD_OF_D
+  debug 'Ω__39', d.property_of_d  # PROPERTY_OF_D
+  debug 'Ω__40', d.unknown_key    # something else: 'unknown_key'
+  debug 'Ω__41', d instanceof D   # true
+  debug 'Ω__42', d 1, 2, 'c'
+  echo '——————————————————————————————————————————————————————————————————————————————'
+  my_fn = ( P... ) -> "result of calling #{rpr my_fn} in ctx #{rpr @} with #{rpr P}"
+  hide my_fn, 'preset_key', "value of my_fn.preset_key"
+  info 'Ω__43', rpr proxy = create_proxy my_fn
+  info 'Ω__44', rpr proxy 4, 5, 6
+  info 'Ω__45', rpr proxy.mykey
+  info 'Ω__46', rpr proxy.preset_key
+  info 'Ω__47', rpr ( typeof Object.getPrototypeOf proxy ) is ( typeof ( -> ) )
   #.........................................................................................................
   return null
 
