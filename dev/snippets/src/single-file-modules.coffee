@@ -188,3 +188,45 @@ module.exports = SFMODULES =
     #-----------------------------------------------------------------------------------------------------------
     return { Stack, }
 
+  #===========================================================================================================
+  ### NOTE Future Single-File Module ###
+  require_infiniproxy: ->
+    { hide,               } = SFMODULES.require_managed_property_tools()
+    { Stack,              } = SFMODULES.require_stack_classes()
+    ### TAINT in this simulation of single-file modules, a new distinct symbol is produced with each call to
+    `require_infiniproxy()` ###
+    sys_symbol              = Symbol 'sys'
+
+    #=========================================================================================================
+    create_infinyproxy = ( callable ) ->
+      #.......................................................................................................
+      new_proxy = ({ is_top_level, }) -> new Proxy callable,
+
+        #-----------------------------------------------------------------------------------------------------
+        apply: ( target, key, P ) ->
+          # urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
+          ctx = { is_top_level, sys..., }
+          R   = Reflect.apply target, ctx, P ### NOTE: cannot use `target.apply()`, must use `Reflect` ###
+          sys.stack.clear()
+          return R
+
+        #-----------------------------------------------------------------------------------------------------
+        get: ( target, key ) ->
+          # urge 'Ω__32', "get #{rpr { target, key, }}"
+          return sys            if key            is sys_symbol
+          return target[ key ]  if ( typeof key ) is 'symbol'
+          return Reflect.get target, key if Reflect.has target, key
+          sys.stack.clear() if is_top_level
+          sys.stack.push key
+          # return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+          return sys.sub_level_proxy
+      #.......................................................................................................
+      sys =
+        stack:            new Stack()
+        top_level_proxy:  new_proxy { is_top_level: true,   }
+        sub_level_proxy:  new_proxy { is_top_level: false,  }
+      #.......................................................................................................
+      return sys.top_level_proxy
+
+    #---------------------------------------------------------------------------------------------------------
+    return { create_infinyproxy, sys_symbol, }

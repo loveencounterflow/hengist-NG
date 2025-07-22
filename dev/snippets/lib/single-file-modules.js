@@ -294,6 +294,67 @@
       }).call(this);
       //-----------------------------------------------------------------------------------------------------------
       return {Stack};
+    },
+    //===========================================================================================================
+    /* NOTE Future Single-File Module */
+    require_infiniproxy: function() {
+      /* TAINT in this simulation of single-file modules, a new distinct symbol is produced with each call to
+         `require_infiniproxy()` */
+      var Stack, create_infinyproxy, hide, sys_symbol;
+      ({hide} = SFMODULES.require_managed_property_tools());
+      ({Stack} = SFMODULES.require_stack_classes());
+      sys_symbol = Symbol('sys');
+      //=========================================================================================================
+      create_infinyproxy = function(callable) {
+        var new_proxy, sys;
+        //.......................................................................................................
+        new_proxy = function({is_top_level}) {
+          return new Proxy(callable, {
+            //-----------------------------------------------------------------------------------------------------
+            apply: function(target, key, P) {
+              var R, ctx;
+              // urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
+              ctx = {is_top_level, ...sys};
+              R = Reflect.apply(target, ctx, P);
+              /* NOTE: cannot use `target.apply()`, must use `Reflect` */              sys.stack.clear();
+              return R;
+            },
+            //-----------------------------------------------------------------------------------------------------
+            get: function(target, key) {
+              if (key === sys_symbol) {
+                // urge 'Ω__32', "get #{rpr { target, key, }}"
+                return sys;
+              }
+              if ((typeof key) === 'symbol') {
+                return target[key];
+              }
+              if (Reflect.has(target, key)) {
+                return Reflect.get(target, key);
+              }
+              if (is_top_level) {
+                sys.stack.clear();
+              }
+              sys.stack.push(key);
+              // return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+              return sys.sub_level_proxy;
+            }
+          });
+        };
+        //.......................................................................................................
+        sys = {
+          stack: new Stack(),
+          top_level_proxy: new_proxy({
+            is_top_level: true
+          }),
+          sub_level_proxy: new_proxy({
+            is_top_level: false
+          })
+        };
+        //.......................................................................................................
+        return sys.top_level_proxy;
+      };
+      //---------------------------------------------------------------------------------------------------------
+      return {create_infinyproxy, sys_symbol};
     }
   };
 
