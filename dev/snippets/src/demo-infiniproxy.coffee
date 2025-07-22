@@ -221,44 +221,38 @@ demo_colorful_proxy = ->
 demo_instance_function_as_proxy = ->
   { hide,               } = SFMODULES.require_managed_property_tools()
   { Stack,              } = SFMODULES.require_stack_classes()
+  sys_symbol              = Symbol 'sys'
   #===========================================================================================================
-  state_symbol = Symbol.for 'state'
-  #-----------------------------------------------------------------------------------------------------------
-  create_infiny_proxy = ( callable ) ->
-    state = { stack: ( new Stack() ), }
+  create_infinyproxy = ( callable ) ->
     #.........................................................................................................
     new_proxy = ({ is_top_level, }) -> new Proxy callable,
 
-      # #-------------------------------------------------------------------------------------------------------
-      # construct: ( target, P, new_target ) ->
-      #   urge 'Ω__31', rpr target, new_target, target is new_target
-      #   urge 'Ω__32', rpr P
-      #   # return new target P
-      #   return new_target P
-      #   # return { value: 56, }
-
       #-------------------------------------------------------------------------------------------------------
       apply: ( target, key, P ) ->
-        urge 'Ω__33', "apply #{rpr { target, key, P, is_top_level, }}"
-        ctx = { iam: 'synthetic-context', is_top_level, state..., }
-        R = Reflect.apply target, ctx, P ### NOTE: cannot use `target.apply()`, must use `Reflect` ###
-        state.stack.clear()
+        # urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
+        ctx = { is_top_level, sys..., }
+        R   = Reflect.apply target, ctx, P ### NOTE: cannot use `target.apply()`, must use `Reflect` ###
+        sys.stack.clear()
         return R
 
       #-------------------------------------------------------------------------------------------------------
       get: ( target, key ) ->
-        urge 'Ω__34', "get #{rpr { target, key, }}"
-        return state          if key            is state_symbol
+        # urge 'Ω__32', "get #{rpr { target, key, }}"
+        return sys          if key            is sys_symbol
         return target[ key ]  if ( typeof key ) is 'symbol'
         return Reflect.get target, key if Reflect.has target, key
-        state.stack.clear() if is_top_level
-        state.stack.push key
+        sys.stack.clear() if is_top_level
+        sys.stack.push key
         # return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
-        return sub_level_proxy
+        return sys.sub_level_proxy
     #.........................................................................................................
-    top_level_proxy = new_proxy { is_top_level: true, }
-    sub_level_proxy = new_proxy { is_top_level: false, }
-    return top_level_proxy
+    sys =
+      sys:              sys_symbol
+      stack:            new Stack()
+      top_level_proxy:  new_proxy { is_top_level: true,   }
+      sub_level_proxy:  new_proxy { is_top_level: false,  }
+    #.........................................................................................................
+    return sys.top_level_proxy
 
   #===========================================================================================================
   class D
@@ -267,7 +261,7 @@ demo_instance_function_as_proxy = ->
     constructor: ( callable ) ->
       @other_prop = 'OTHER_PROP'
       Object.setPrototypeOf callable, @
-      R = create_infiny_proxy callable
+      R = create_infinyproxy callable
       # ...
       return R
 
@@ -276,40 +270,27 @@ demo_instance_function_as_proxy = ->
     property_of_d: 'PROPERTY_OF_D'
   #.........................................................................................................
   do =>
-    echo '——————————————————————————————————————————————————————————————————————————————'
-    d = new D ( P... ) -> "{ arguments: #{rpr P} }"
-    debug 'Ω__35', d                # D { other_prop: 'OTHER_PROP' }
-    debug 'Ω__36', d.other_prop     # OTHER_PROP
-    debug 'Ω__37', d.method_of_d()  # METHOD_OF_D
-    debug 'Ω__38', d.property_of_d  # PROPERTY_OF_D
-    debug 'Ω__39', d.unknown_key    # something else: 'unknown_key'
-    debug 'Ω__40', d instanceof D   # true
-    debug 'Ω__41', d 1, 2, 'c'
-  #.........................................................................................................
-  do =>
-    echo '——————————————————————————————————————————————————————————————————————————————'
-    my_fn = ( P... ) -> "result of calling #{rpr my_fn} in ctx #{rpr @} with #{rpr P}"
-    hide my_fn, 'preset_key', "value of my_fn.preset_key"
-    info 'Ω__42', rpr proxy = create_infiny_proxy my_fn
-    info 'Ω__43', rpr proxy 4, 5, 6
-    info 'Ω__44', rpr proxy.mykey
-    info 'Ω__45', rpr proxy.preset_key
-    info 'Ω__46', rpr ( typeof Object.getPrototypeOf proxy ) is ( typeof ( -> ) )
-  #.........................................................................................................
-  do =>
-    echo '——————————————————————————————————————————————————————————————————————————————'
     my_fn_3 = ( P... ) ->
-      help 'Ω__47', @stack, @stack.is_empty, [ @stack..., ]
+      help 'Ω__33', @stack, @stack.is_empty, [ @stack..., ]
       return "result of calling #{rpr my_fn_3} in ctx #{rpr @} with #{rpr P}"
-    info 'Ω__48', rpr d = new D my_fn_3
-    info 'Ω__49', rpr d.other_prop     # OTHER_PROP
-    info 'Ω__50', rpr d.method_of_d()  # METHOD_OF_D
-    info 'Ω__51', rpr d.property_of_d  # PROPERTY_OF_D
-    info 'Ω__52', rpr d.unknown_key    # something else: 'unknown_key'
-    info 'Ω__53', rpr d instanceof D   # true
-    info 'Ω__54', rpr d 1, 2, 'c'
-    info 'Ω__55', rpr d.red
-    info 'Ω__56', rpr d.red.bold 1, 2, 'c'
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    help 'Ω__34', rpr d = new D my_fn_3
+    help 'Ω__35', reverse GUY.trm.truth ( d instanceof D )   # true
+    help 'Ω__36', rpr Object.getPrototypeOf d
+    help 'Ω__37', rpr ( typeof Object.getPrototypeOf d ) is ( typeof ( -> ) )
+    help 'Ω__38', rpr typeof d
+    help 'Ω__39', rpr Object::toString.call d
+    help 'Ω__40', rpr d instanceof Function
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    info 'Ω__41', rpr d.other_prop     # OTHER_PROP
+    info 'Ω__42', rpr d.method_of_d()  # METHOD_OF_D
+    info 'Ω__43', rpr d.property_of_d  # PROPERTY_OF_D
+    info 'Ω__44', rpr d.unknown_key    # something else: 'unknown_key'
+    echo '——————————————————————————————————————————————————————————————————————————————'
+    info 'Ω__45', rpr d 1, 2, 'c'
+    info 'Ω__46', rpr d.red
+    info 'Ω__47', rpr d 1, 2, 'c'
+    info 'Ω__48', rpr d.red.bold 1, 2, 'c'
   return null
 
 
