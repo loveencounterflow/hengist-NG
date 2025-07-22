@@ -273,44 +273,70 @@
 
   //===========================================================================================================
   demo_instance_function_as_proxy = function() {
-    var D, create_proxy, d, hide, my_fn, proxy, target_fn;
+    var D, Stack, create_proxy, hide, state_symbol;
     ({hide} = SFMODULES.require_managed_property_tools());
+    ({Stack} = SFMODULES.require_stack_classes());
     //===========================================================================================================
-    target_fn = function(...P) {
-      return debug('Ω__31', `target_fn ${rpr(P)}`);
-    };
+    state_symbol = Symbol.for('state');
     //-----------------------------------------------------------------------------------------------------------
     create_proxy = function(callable) {
-      return new Proxy(callable, {
-        //-------------------------------------------------------------------------------------------------------
-        construct: function(target, arguments_list, new_target) {
-          info('Ω__32', rpr(target, new_target, target === new_target));
-          info('Ω__33', rpr(arguments_list));
-          return {
-            value: 56
-          };
-        },
-        //-------------------------------------------------------------------------------------------------------
-        apply: function(target, key, P) {
-          var ctx;
-          urge('Ω__34', `apply ${rpr({target, key, P})}`);
-          ctx = {
-            iam: 'synthetic-context'
-          };
-          return Reflect.apply(target, ctx, P);
-        },
-        //-------------------------------------------------------------------------------------------------------
-        /* NOTE: cannot use `target.apply()`, must use `Reflect` */get: function(target, key) {
-          urge('Ω__35', `get ${rpr({target, key})}`);
-          if ((typeof key) === 'symbol') {
-            return target[key];
+      var new_proxy, state, sub_level_proxy, top_level_proxy;
+      state = {
+        stack: new Stack()
+      };
+      //.........................................................................................................
+      new_proxy = function({is_top_level}) {
+        return new Proxy(callable, {
+          // #-------------------------------------------------------------------------------------------------------
+          // construct: ( target, P, new_target ) ->
+          //   urge 'Ω__31', rpr target, new_target, target is new_target
+          //   urge 'Ω__32', rpr P
+          //   # return new target P
+          //   return new_target P
+          //   # return { value: 56, }
+
+          //-------------------------------------------------------------------------------------------------------
+          apply: function(target, key, P) {
+            var R, ctx;
+            urge('Ω__33', `apply ${rpr({target, key, P, is_top_level})}`);
+            ctx = {
+              iam: 'synthetic-context',
+              is_top_level,
+              ...state
+            };
+            R = Reflect.apply(target, ctx, P);
+            /* NOTE: cannot use `target.apply()`, must use `Reflect` */            state.stack.clear();
+            return R;
+          },
+          //-------------------------------------------------------------------------------------------------------
+          get: function(target, key) {
+            urge('Ω__34', `get ${rpr({target, key})}`);
+            if (key === state_symbol) {
+              return state;
+            }
+            if ((typeof key) === 'symbol') {
+              return target[key];
+            }
+            if (Reflect.has(target, key)) {
+              return Reflect.get(target, key);
+            }
+            if (is_top_level) {
+              state.stack.clear();
+            }
+            state.stack.push(key);
+            // return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+            return sub_level_proxy;
           }
-          if (Reflect.has(target, key)) {
-            return Reflect.get(target, key);
-          }
-          return `[result for getting non-preset key ${rpr(key)}] from ${rpr(target)}`;
-        }
+        });
+      };
+      //.........................................................................................................
+      top_level_proxy = new_proxy({
+        is_top_level: true
       });
+      sub_level_proxy = new_proxy({
+        is_top_level: false
+      });
+      return top_level_proxy;
     };
     D = (function() {
       //===========================================================================================================
@@ -337,28 +363,50 @@
       return D;
 
     }).call(this);
-    //.........................................................................................................
-    d = new D(function(...P) {
-      return `{ arguments: ${rpr(P)} }`;
-    });
-    debug('Ω__36', d); // D { other_prop: 'OTHER_PROP' }
-    debug('Ω__37', d.other_prop); // OTHER_PROP
-    debug('Ω__38', d.method_of_d()); // METHOD_OF_D
-    debug('Ω__39', d.property_of_d); // PROPERTY_OF_D
-    debug('Ω__40', d.unknown_key); // something else: 'unknown_key'
-    debug('Ω__41', d instanceof D); // true
-    debug('Ω__42', d(1, 2, 'c'));
-    echo('——————————————————————————————————————————————————————————————————————————————');
-    my_fn = function(...P) {
-      return `result of calling ${rpr(my_fn)} in ctx ${rpr(this)} with ${rpr(P)}`;
-    };
-    hide(my_fn, 'preset_key', "value of my_fn.preset_key");
-    info('Ω__43', rpr(proxy = create_proxy(my_fn)));
-    info('Ω__44', rpr(proxy(4, 5, 6)));
-    info('Ω__45', rpr(proxy.mykey));
-    info('Ω__46', rpr(proxy.preset_key));
-    info('Ω__47', rpr((typeof Object.getPrototypeOf(proxy)) === (typeof (function() {}))));
-    //.........................................................................................................
+    (() => {      //.........................................................................................................
+      var d;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      d = new D(function(...P) {
+        return `{ arguments: ${rpr(P)} }`;
+      });
+      debug('Ω__35', d); // D { other_prop: 'OTHER_PROP' }
+      debug('Ω__36', d.other_prop); // OTHER_PROP
+      debug('Ω__37', d.method_of_d()); // METHOD_OF_D
+      debug('Ω__38', d.property_of_d); // PROPERTY_OF_D
+      debug('Ω__39', d.unknown_key); // something else: 'unknown_key'
+      debug('Ω__40', d instanceof D); // true
+      return debug('Ω__41', d(1, 2, 'c'));
+    })();
+    (() => {      //.........................................................................................................
+      var my_fn, proxy;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      my_fn = function(...P) {
+        return `result of calling ${rpr(my_fn)} in ctx ${rpr(this)} with ${rpr(P)}`;
+      };
+      hide(my_fn, 'preset_key', "value of my_fn.preset_key");
+      info('Ω__42', rpr(proxy = create_proxy(my_fn)));
+      info('Ω__43', rpr(proxy(4, 5, 6)));
+      info('Ω__44', rpr(proxy.mykey));
+      info('Ω__45', rpr(proxy.preset_key));
+      return info('Ω__46', rpr((typeof Object.getPrototypeOf(proxy)) === (typeof (function() {}))));
+    })();
+    (() => {      //.........................................................................................................
+      var d, my_fn_3;
+      echo('——————————————————————————————————————————————————————————————————————————————');
+      my_fn_3 = function(...P) {
+        help('Ω__47', this.stack, this.stack.is_empty, [...this.stack]);
+        return `result of calling ${rpr(my_fn_3)} in ctx ${rpr(this)} with ${rpr(P)}`;
+      };
+      info('Ω__48', rpr(d = new D(my_fn_3)));
+      info('Ω__49', rpr(d.other_prop)); // OTHER_PROP
+      info('Ω__50', rpr(d.method_of_d())); // METHOD_OF_D
+      info('Ω__51', rpr(d.property_of_d)); // PROPERTY_OF_D
+      info('Ω__52', rpr(d.unknown_key)); // something else: 'unknown_key'
+      info('Ω__53', rpr(d instanceof D)); // true
+      info('Ω__54', rpr(d(1, 2, 'c')));
+      info('Ω__55', rpr(d.red));
+      return info('Ω__56', rpr(d.red.bold(1, 2, 'c')));
+    })();
     return null;
   };
 
