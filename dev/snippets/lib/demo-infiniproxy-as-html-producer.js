@@ -1,29 +1,4 @@
 (async function() {
-  /*
-
-  ## Applications
-
-  * **RegEx Builder** (example from [Rejigs blog post](https://medium.com/@omarzawahry/rejigs-making-regular-expressions-human-readable-1fad37cb3eae))
-
-  ```java
-  var emailRegex =
-      Rejigs.Create()
-            .AtStart()
-            .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf("._%+-"))
-            .Text("@")
-            .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf(".-"))
-            .Text(".")
-            .AnyLetterOrDigit().AtLeast(2)
-            .AtEnd()
-            .Build();
-  ```
-
-  * **HTML/XML Builer**
-  * **SQL Builder**: `SQL.insert.into.employees('id','name').values(id,name)`
-  * **CLI Coloring**
-  * syntax for a **Type Checker**
-
-   */
   'use strict';
   var GTNG, GUY, SFMODULES, Test, alert, blue, bold, debug, echo, f, gold, green, grey, help, info, inspect, log, nfa, plain, praise, red, require_html_class, reverse, rpr, tests, urge, warn, whisper, white;
 

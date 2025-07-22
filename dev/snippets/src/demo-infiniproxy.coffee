@@ -1,4 +1,31 @@
 
+###
+
+
+## Applications
+
+* **RegEx Builder** (example from [Rejigs blog post](https://medium.com/@omarzawahry/rejigs-making-regular-expressions-human-readable-1fad37cb3eae))
+
+```java
+var emailRegex =
+    Rejigs.Create()
+          .AtStart()
+          .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf("._%+-"))
+          .Text("@")
+          .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf(".-"))
+          .Text(".")
+          .AnyLetterOrDigit().AtLeast(2)
+          .AtEnd()
+          .Build();
+```
+
+* **HTML/XML Builer**
+* **SQL Builder**: `SQL.insert.into.employees('id','name').values(id,name)`
+* **CLI Coloring**
+* syntax for a **Type Checker**
+
+###
+
 
 'use strict'
 
@@ -30,31 +57,35 @@ C                         = require 'ansis'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
+SFMODULES                 = require './single-file-modules'
 
-warn 'Ω___1', reverse " superseded by `(test-)single-file-proxy.coffee` "
 
 #===========================================================================================================
-demo_infinite_proxy = ->
-  stack     = []
-  get_proxy = Symbol 'get_proxy'
+SFMODULES.require_infiniproxy = ->
+  { Stack,            } = SFMODULES.require_stack_classes()
+  # stack                 = new Stack()
+  # get_proxy = Symbol 'get_proxy'
   #.........................................................................................................
   template =
-    base:                     null
-    is_initial:               true
-    empty_stack_on_new_chain: true
+    handler:      null
+    is_initial:   true
   #.........................................................................................................
-  new_infiniproxy = nfa { template, }, ( base, is_initial, cfg ) ->
+  new_infiniproxy = nfa { template, }, ( handler, is_initial, cfg ) ->
     is_initial = false unless cfg.empty_stack_on_new_chain
-    proxy = new Proxy base,
+    proxy = new Proxy handler,
       get: ( target, key ) ->
-        return new_infiniproxy { base, is_initial: false, } if key is get_proxy
+        return new_infiniproxy { handler, is_initial: false, } if key is get_proxy
         return target[ key ] if ( typeof key ) is 'symbol'
         stack.length = 0 if is_initial
         stack.push key
         return R
-    if is_initial then  R = new_infiniproxy { base, is_initial: false, }
+    if is_initial then  R = new_infiniproxy { handler, is_initial: false, }
     else                R = proxy
     return proxy
+
+
+#===========================================================================================================
+demo_infinite_proxy = ->
   #.........................................................................................................
   base = ( P... ) ->
     R = "#{stack.join '.'}::#{rpr P}"
@@ -189,13 +220,9 @@ demo_colorful_proxy = ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  # demo_infinite_proxy()
-  # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
+  # ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
   #.........................................................................................................
   demo_infinite_proxy()
   demo_colorful_proxy()
-  warn 'Ω__52', reverse " superseded by `(test-)single-file-proxy.coffee` "
-  process.exit 111

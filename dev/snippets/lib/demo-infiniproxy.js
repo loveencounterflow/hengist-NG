@@ -1,6 +1,31 @@
 (async function() {
+  /*
+
+  ## Applications
+
+  * **RegEx Builder** (example from [Rejigs blog post](https://medium.com/@omarzawahry/rejigs-making-regular-expressions-human-readable-1fad37cb3eae))
+
+  ```java
+  var emailRegex =
+      Rejigs.Create()
+            .AtStart()
+            .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf("._%+-"))
+            .Text("@")
+            .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf(".-"))
+            .Text(".")
+            .AnyLetterOrDigit().AtLeast(2)
+            .AtEnd()
+            .Build();
+  ```
+
+  * **HTML/XML Builer**
+  * **SQL Builder**: `SQL.insert.into.employees('id','name').values(id,name)`
+  * **CLI Coloring**
+  * syntax for a **Type Checker**
+
+   */
   'use strict';
-  var C, GTNG, GUY, Test, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GTNG, GUY, SFMODULES, Test, alert, blue, bold, debug, demo_colorful_proxy, demo_infinite_proxy, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -23,30 +48,30 @@
 
   ({Test} = GTNG);
 
-  warn('Ω___1', reverse(" superseded by `(test-)single-file-proxy.coffee` "));
+  SFMODULES = require('./single-file-modules');
 
   //===========================================================================================================
-  demo_infinite_proxy = function() {
-    var base, get_proxy, new_infiniproxy, stack, template;
-    stack = [];
-    get_proxy = Symbol('get_proxy');
+  SFMODULES.require_infiniproxy = function() {
+    var Stack, new_infiniproxy, template;
+    ({Stack} = SFMODULES.require_stack_classes());
+    // stack                 = new Stack()
+    // get_proxy = Symbol 'get_proxy'
     //.........................................................................................................
     template = {
-      base: null,
-      is_initial: true,
-      empty_stack_on_new_chain: true
+      handler: null,
+      is_initial: true
     };
     //.........................................................................................................
-    new_infiniproxy = nfa({template}, function(base, is_initial, cfg) {
+    return new_infiniproxy = nfa({template}, function(handler, is_initial, cfg) {
       var R, proxy;
       if (!cfg.empty_stack_on_new_chain) {
         is_initial = false;
       }
-      proxy = new Proxy(base, {
+      proxy = new Proxy(handler, {
         get: function(target, key) {
           if (key === get_proxy) {
             return new_infiniproxy({
-              base,
+              handler,
               is_initial: false
             });
           }
@@ -62,7 +87,7 @@
       });
       if (is_initial) {
         R = new_infiniproxy({
-          base,
+          handler,
           is_initial: false
         });
       } else {
@@ -70,6 +95,11 @@
       }
       return proxy;
     });
+  };
+
+  //===========================================================================================================
+  demo_infinite_proxy = function() {
+    var base;
     //.........................................................................................................
     base = function(...P) {
       var R;
@@ -245,8 +275,6 @@
   if (module === require.main) {
     await (() => {
       var guytest_cfg;
-      // demo_infinite_proxy()
-      // demo_colorful_proxy()
       guytest_cfg = {
         throw_on_error: false,
         show_passes: false,
@@ -257,12 +285,10 @@
         show_passes: false,
         report_checks: false
       };
-      (new Test(guytest_cfg)).test({demo_proxy_as_html_producer});
+      // ( new Test guytest_cfg ).test { demo_proxy_as_html_producer, }
       //.........................................................................................................
       demo_infinite_proxy();
-      demo_colorful_proxy();
-      warn('Ω__52', reverse(" superseded by `(test-)single-file-proxy.coffee` "));
-      return process.exit(111);
+      return demo_colorful_proxy();
     })();
   }
 
