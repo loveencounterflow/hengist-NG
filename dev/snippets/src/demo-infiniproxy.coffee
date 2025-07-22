@@ -271,8 +271,10 @@ demo_instance_function_as_proxy = ->
   #.........................................................................................................
   do =>
     my_fn_3 = ( P... ) ->
-      help 'Ω__33', @stack, @stack.is_empty, [ @stack..., ]
-      return "result of calling #{rpr my_fn_3} in ctx #{rpr @} with #{rpr P}"
+      whisper 'Ω__33', @stack, @stack.is_empty, [ @stack..., ]
+      chain   = [ @stack..., ].join '.'
+      content = ( ( rpr p ) for p in P )
+      return "[#{chain}:#{content}]"
     echo '——————————————————————————————————————————————————————————————————————————————'
     help 'Ω__34', rpr d = new D my_fn_3
     help 'Ω__35', reverse GUY.trm.truth ( d instanceof D )   # true

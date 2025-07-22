@@ -355,8 +355,19 @@
     (() => {      //.........................................................................................................
       var d, my_fn_3;
       my_fn_3 = function(...P) {
-        help('Ω__33', this.stack, this.stack.is_empty, [...this.stack]);
-        return `result of calling ${rpr(my_fn_3)} in ctx ${rpr(this)} with ${rpr(P)}`;
+        var chain, content, p;
+        whisper('Ω__33', this.stack, this.stack.is_empty, [...this.stack]);
+        chain = [...this.stack].join('.');
+        content = (function() {
+          var i, len, results;
+          results = [];
+          for (i = 0, len = P.length; i < len; i++) {
+            p = P[i];
+            results.push(rpr(p));
+          }
+          return results;
+        })();
+        return `[${chain}:${content}]`;
       };
       echo('——————————————————————————————————————————————————————————————————————————————');
       help('Ω__34', rpr(d = new D(my_fn_3)));
