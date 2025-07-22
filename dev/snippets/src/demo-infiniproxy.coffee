@@ -219,80 +219,100 @@ demo_colorful_proxy = ->
 
 #===========================================================================================================
 demo_instance_function_as_proxy = ->
-  { hide,               } = SFMODULES.require_managed_property_tools()
-  { Stack,              } = SFMODULES.require_stack_classes()
-  sys_symbol              = Symbol 'sys'
+  require_infiniproxy = ->
+    { hide,               } = SFMODULES.require_managed_property_tools()
+    { Stack,              } = SFMODULES.require_stack_classes()
+    ### TAINT in this simulation of single-file modules, a new distinct symbol is produced with each call to
+    `require_infiniproxy()` ###
+    sys_symbol              = Symbol 'sys'
+    #===========================================================================================================
+    create_infinyproxy = ( callable ) ->
+      #.........................................................................................................
+      new_proxy = ({ is_top_level, }) -> new Proxy callable,
+
+        #-------------------------------------------------------------------------------------------------------
+        apply: ( target, key, P ) ->
+          # urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
+          ctx = { is_top_level, sys..., }
+          R   = Reflect.apply target, ctx, P ### NOTE: cannot use `target.apply()`, must use `Reflect` ###
+          sys.stack.clear()
+          return R
+
+        #-------------------------------------------------------------------------------------------------------
+        get: ( target, key ) ->
+          # urge 'Ω__32', "get #{rpr { target, key, }}"
+          return sys            if key            is sys_symbol
+          return target[ key ]  if ( typeof key ) is 'symbol'
+          return Reflect.get target, key if Reflect.has target, key
+          sys.stack.clear() if is_top_level
+          sys.stack.push key
+          # return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+          return sys.sub_level_proxy
+      #.........................................................................................................
+      sys =
+        stack:            new Stack()
+        top_level_proxy:  new_proxy { is_top_level: true,   }
+        sub_level_proxy:  new_proxy { is_top_level: false,  }
+      #.........................................................................................................
+      return sys.top_level_proxy
+    #-----------------------------------------------------------------------------------------------------------
+    return exports = { create_infinyproxy, sys_symbol, }
+
   #===========================================================================================================
-  create_infinyproxy = ( callable ) ->
-    #.........................................................................................................
-    new_proxy = ({ is_top_level, }) -> new Proxy callable,
+  { D, } = do ->
+    { create_infinyproxy,
+      sys_symbol,           } = require_infiniproxy()
+    #=========================================================================================================
+    class D
 
       #-------------------------------------------------------------------------------------------------------
-      apply: ( target, key, P ) ->
-        # urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
-        ctx = { is_top_level, sys..., }
-        R   = Reflect.apply target, ctx, P ### NOTE: cannot use `target.apply()`, must use `Reflect` ###
-        sys.stack.clear()
+      constructor: ( callable ) ->
+        @other_prop = 'OTHER_PROP'
+        Object.setPrototypeOf callable, @
+        R = create_infinyproxy callable
+        # ...
         return R
 
       #-------------------------------------------------------------------------------------------------------
-      get: ( target, key ) ->
-        # urge 'Ω__32', "get #{rpr { target, key, }}"
-        return sys          if key            is sys_symbol
-        return target[ key ]  if ( typeof key ) is 'symbol'
-        return Reflect.get target, key if Reflect.has target, key
-        sys.stack.clear() if is_top_level
-        sys.stack.push key
-        # return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
-        return sys.sub_level_proxy
-    #.........................................................................................................
-    sys =
-      sys:              sys_symbol
-      stack:            new Stack()
-      top_level_proxy:  new_proxy { is_top_level: true,   }
-      sub_level_proxy:  new_proxy { is_top_level: false,  }
-    #.........................................................................................................
-    return sys.top_level_proxy
+      method_of_d: ( value ) ->
+        whisper 'Ω__33', 'METHOD_OF_D'
+        @[ sys_symbol ].stack.push 'generated'
+        @[ sys_symbol ].stack.push 'stuff'
+        @[ sys_symbol ].stack.push "value:#{rpr value}"
+        return @[ sys_symbol ].sub_level_proxy
 
-  #===========================================================================================================
-  class D
+      #-------------------------------------------------------------------------------------------------------
+      property_of_d: 'PROPERTY_OF_D'
 
-    #-------------------------------------------------------------------------------------------------------
-    constructor: ( callable ) ->
-      @other_prop = 'OTHER_PROP'
-      Object.setPrototypeOf callable, @
-      R = create_infinyproxy callable
-      # ...
-      return R
-
-    #-------------------------------------------------------------------------------------------------------
-    method_of_d: -> 'METHOD_OF_D'
-    property_of_d: 'PROPERTY_OF_D'
+    #---------------------------------------------------------------------------------------------------------
+    return exports = { D, }
   #.........................................................................................................
   do =>
     my_fn_3 = ( P... ) ->
-      whisper 'Ω__33', @stack, @stack.is_empty, [ @stack..., ]
+      whisper 'Ω__34', @stack, @stack.is_empty, [ @stack..., ]
       chain   = [ @stack..., ].join '.'
       content = ( ( rpr p ) for p in P )
       return "[#{chain}:#{content}]"
     echo '——————————————————————————————————————————————————————————————————————————————'
-    help 'Ω__34', rpr d = new D my_fn_3
-    help 'Ω__35', reverse GUY.trm.truth ( d instanceof D )   # true
-    help 'Ω__36', rpr Object.getPrototypeOf d
-    help 'Ω__37', rpr ( typeof Object.getPrototypeOf d ) is ( typeof ( -> ) )
-    help 'Ω__38', rpr typeof d
-    help 'Ω__39', rpr Object::toString.call d
-    help 'Ω__40', rpr d instanceof Function
+    help 'Ω__35', rpr d = new D my_fn_3
+    help 'Ω__36', reverse GUY.trm.truth ( d instanceof D )   # true
+    help 'Ω__37', rpr Object.getPrototypeOf d
+    help 'Ω__38', rpr ( typeof Object.getPrototypeOf d ) is ( typeof ( -> ) )
+    help 'Ω__39', rpr typeof d
+    help 'Ω__40', rpr Object::toString.call d
+    help 'Ω__41', rpr d instanceof Function
     echo '——————————————————————————————————————————————————————————————————————————————'
-    info 'Ω__41', rpr d.other_prop     # OTHER_PROP
-    info 'Ω__42', rpr d.method_of_d()  # METHOD_OF_D
-    info 'Ω__43', rpr d.property_of_d  # PROPERTY_OF_D
-    info 'Ω__44', rpr d.unknown_key    # something else: 'unknown_key'
+    info 'Ω__42', rpr d.other_prop     # OTHER_PROP
+    info 'Ω__43', rpr d.method_of_d()  # METHOD_OF_D
+    info 'Ω__44', rpr d.property_of_d  # PROPERTY_OF_D
+    info 'Ω__45', rpr d.unknown_key    # something else: 'unknown_key'
     echo '——————————————————————————————————————————————————————————————————————————————'
-    info 'Ω__45', rpr d 1, 2, 'c'
-    info 'Ω__46', rpr d.red
-    info 'Ω__47', rpr d 1, 2, 'c'
-    info 'Ω__48', rpr d.red.bold 1, 2, 'c'
+    info 'Ω__46', rpr d 1, 2, 'c'
+    info 'Ω__47', rpr d.red
+    info 'Ω__48', rpr d 1, 2, 'c'
+    info 'Ω__49', rpr d.red.bold 1, 2, 'c'
+    info 'Ω__50', rpr d.red.bold.method_of_d(123).hola 'ftw'
+    info 'Ω__50', rpr d.red.bold.method_of_d'123'.hola 'ftw'
   return null
 
 

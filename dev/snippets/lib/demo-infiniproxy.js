@@ -273,90 +273,108 @@
 
   //===========================================================================================================
   demo_instance_function_as_proxy = function() {
-    var D, Stack, create_infinyproxy, hide, sys_symbol;
-    ({hide} = SFMODULES.require_managed_property_tools());
-    ({Stack} = SFMODULES.require_stack_classes());
-    sys_symbol = Symbol('sys');
-    //===========================================================================================================
-    create_infinyproxy = function(callable) {
-      var new_proxy, sys;
-      //.........................................................................................................
-      new_proxy = function({is_top_level}) {
-        return new Proxy(callable, {
-          //-------------------------------------------------------------------------------------------------------
-          apply: function(target, key, P) {
-            var R, ctx;
-            // urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
-            ctx = {is_top_level, ...sys};
-            R = Reflect.apply(target, ctx, P);
-            /* NOTE: cannot use `target.apply()`, must use `Reflect` */            sys.stack.clear();
-            return R;
-          },
-          //-------------------------------------------------------------------------------------------------------
-          get: function(target, key) {
-            if (key === sys_symbol) {
-              // urge 'Ω__32', "get #{rpr { target, key, }}"
-              return sys;
-            }
-            if ((typeof key) === 'symbol') {
-              return target[key];
-            }
-            if (Reflect.has(target, key)) {
-              return Reflect.get(target, key);
-            }
-            if (is_top_level) {
-              sys.stack.clear();
-            }
-            sys.stack.push(key);
-            // return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
-            return sys.sub_level_proxy;
-          }
-        });
-      };
-      //.........................................................................................................
-      sys = {
-        sys: sys_symbol,
-        stack: new Stack(),
-        top_level_proxy: new_proxy({
-          is_top_level: true
-        }),
-        sub_level_proxy: new_proxy({
-          is_top_level: false
-        })
-      };
-      //.........................................................................................................
-      return sys.top_level_proxy;
-    };
-    D = (function() {
+    var D, require_infiniproxy;
+    require_infiniproxy = function() {
+      /* TAINT in this simulation of single-file modules, a new distinct symbol is produced with each call to
+         `require_infiniproxy()` */
+      var Stack, create_infinyproxy, exports, hide, sys_symbol;
+      ({hide} = SFMODULES.require_managed_property_tools());
+      ({Stack} = SFMODULES.require_stack_classes());
+      sys_symbol = Symbol('sys');
       //===========================================================================================================
-      class D {
-        //-------------------------------------------------------------------------------------------------------
-        constructor(callable) {
-          var R;
-          this.other_prop = 'OTHER_PROP';
-          Object.setPrototypeOf(callable, this);
-          R = create_infinyproxy(callable);
-          // ...
-          return R;
-        }
-
-        //-------------------------------------------------------------------------------------------------------
-        method_of_d() {
-          return 'METHOD_OF_D';
-        }
-
+      create_infinyproxy = function(callable) {
+        var new_proxy, sys;
+        //.........................................................................................................
+        new_proxy = function({is_top_level}) {
+          return new Proxy(callable, {
+            //-------------------------------------------------------------------------------------------------------
+            apply: function(target, key, P) {
+              var R, ctx;
+              // urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
+              ctx = {is_top_level, ...sys};
+              R = Reflect.apply(target, ctx, P);
+              /* NOTE: cannot use `target.apply()`, must use `Reflect` */              sys.stack.clear();
+              return R;
+            },
+            //-------------------------------------------------------------------------------------------------------
+            get: function(target, key) {
+              if (key === sys_symbol) {
+                // urge 'Ω__32', "get #{rpr { target, key, }}"
+                return sys;
+              }
+              if ((typeof key) === 'symbol') {
+                return target[key];
+              }
+              if (Reflect.has(target, key)) {
+                return Reflect.get(target, key);
+              }
+              if (is_top_level) {
+                sys.stack.clear();
+              }
+              sys.stack.push(key);
+              // return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+              return sys.sub_level_proxy;
+            }
+          });
+        };
+        //.........................................................................................................
+        sys = {
+          stack: new Stack(),
+          top_level_proxy: new_proxy({
+            is_top_level: true
+          }),
+          sub_level_proxy: new_proxy({
+            is_top_level: false
+          })
+        };
+        //.........................................................................................................
+        return sys.top_level_proxy;
       };
+      //-----------------------------------------------------------------------------------------------------------
+      return exports = {create_infinyproxy, sys_symbol};
+    };
+    //===========================================================================================================
+    ({D} = (function() {
+      var create_infinyproxy, exports, sys_symbol;
+      ({create_infinyproxy, sys_symbol} = require_infiniproxy());
+      D = (function() {
+        //=========================================================================================================
+        class D {
+          //-------------------------------------------------------------------------------------------------------
+          constructor(callable) {
+            var R;
+            this.other_prop = 'OTHER_PROP';
+            Object.setPrototypeOf(callable, this);
+            R = create_infinyproxy(callable);
+            // ...
+            return R;
+          }
 
-      D.prototype.property_of_d = 'PROPERTY_OF_D';
+          //-------------------------------------------------------------------------------------------------------
+          method_of_d(value) {
+            whisper('Ω__33', 'METHOD_OF_D');
+            this[sys_symbol].stack.push('generated');
+            this[sys_symbol].stack.push('stuff');
+            this[sys_symbol].stack.push(`value:${rpr(value)}`);
+            return this[sys_symbol].sub_level_proxy;
+          }
 
-      return D;
+        };
 
-    }).call(this);
+        //-------------------------------------------------------------------------------------------------------
+        D.prototype.property_of_d = 'PROPERTY_OF_D';
+
+        return D;
+
+      }).call(this);
+      //---------------------------------------------------------------------------------------------------------
+      return exports = {D};
+    })());
     (() => {      //.........................................................................................................
       var d, my_fn_3;
       my_fn_3 = function(...P) {
         var chain, content, p;
-        whisper('Ω__33', this.stack, this.stack.is_empty, [...this.stack]);
+        whisper('Ω__34', this.stack, this.stack.is_empty, [...this.stack]);
         chain = [...this.stack].join('.');
         content = (function() {
           var i, len, results;
@@ -370,23 +388,25 @@
         return `[${chain}:${content}]`;
       };
       echo('——————————————————————————————————————————————————————————————————————————————');
-      help('Ω__34', rpr(d = new D(my_fn_3)));
-      help('Ω__35', reverse(GUY.trm.truth(d instanceof D))); // true
-      help('Ω__36', rpr(Object.getPrototypeOf(d)));
-      help('Ω__37', rpr((typeof Object.getPrototypeOf(d)) === (typeof (function() {}))));
-      help('Ω__38', rpr(typeof d));
-      help('Ω__39', rpr(Object.prototype.toString.call(d)));
-      help('Ω__40', rpr(d instanceof Function));
+      help('Ω__35', rpr(d = new D(my_fn_3)));
+      help('Ω__36', reverse(GUY.trm.truth(d instanceof D))); // true
+      help('Ω__37', rpr(Object.getPrototypeOf(d)));
+      help('Ω__38', rpr((typeof Object.getPrototypeOf(d)) === (typeof (function() {}))));
+      help('Ω__39', rpr(typeof d));
+      help('Ω__40', rpr(Object.prototype.toString.call(d)));
+      help('Ω__41', rpr(d instanceof Function));
       echo('——————————————————————————————————————————————————————————————————————————————');
-      info('Ω__41', rpr(d.other_prop)); // OTHER_PROP
-      info('Ω__42', rpr(d.method_of_d())); // METHOD_OF_D
-      info('Ω__43', rpr(d.property_of_d)); // PROPERTY_OF_D
-      info('Ω__44', rpr(d.unknown_key)); // something else: 'unknown_key'
+      info('Ω__42', rpr(d.other_prop)); // OTHER_PROP
+      info('Ω__43', rpr(d.method_of_d())); // METHOD_OF_D
+      info('Ω__44', rpr(d.property_of_d)); // PROPERTY_OF_D
+      info('Ω__45', rpr(d.unknown_key)); // something else: 'unknown_key'
       echo('——————————————————————————————————————————————————————————————————————————————');
-      info('Ω__45', rpr(d(1, 2, 'c')));
-      info('Ω__46', rpr(d.red));
-      info('Ω__47', rpr(d(1, 2, 'c')));
-      return info('Ω__48', rpr(d.red.bold(1, 2, 'c')));
+      info('Ω__46', rpr(d(1, 2, 'c')));
+      info('Ω__47', rpr(d.red));
+      info('Ω__48', rpr(d(1, 2, 'c')));
+      info('Ω__49', rpr(d.red.bold(1, 2, 'c')));
+      info('Ω__50', rpr(d.red.bold.method_of_d(123).hola('ftw')));
+      return info('Ω__50', rpr(d.red.bold.method_of_d`123`.hola('ftw')));
     })();
     return null;
   };
