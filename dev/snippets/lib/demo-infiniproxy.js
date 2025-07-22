@@ -273,13 +273,13 @@
 
   //===========================================================================================================
   demo_instance_function_as_proxy = function() {
-    var D, Stack, create_proxy, hide, state_symbol;
+    var D, Stack, create_infiny_proxy, hide, state_symbol;
     ({hide} = SFMODULES.require_managed_property_tools());
     ({Stack} = SFMODULES.require_stack_classes());
     //===========================================================================================================
     state_symbol = Symbol.for('state');
     //-----------------------------------------------------------------------------------------------------------
-    create_proxy = function(callable) {
+    create_infiny_proxy = function(callable) {
       var new_proxy, state, sub_level_proxy, top_level_proxy;
       state = {
         stack: new Stack()
@@ -346,7 +346,7 @@
           var R;
           this.other_prop = 'OTHER_PROP';
           Object.setPrototypeOf(callable, this);
-          R = create_proxy(callable);
+          R = create_infiny_proxy(callable);
           // ...
           return R;
         }
@@ -384,7 +384,7 @@
         return `result of calling ${rpr(my_fn)} in ctx ${rpr(this)} with ${rpr(P)}`;
       };
       hide(my_fn, 'preset_key', "value of my_fn.preset_key");
-      info('Ω__42', rpr(proxy = create_proxy(my_fn)));
+      info('Ω__42', rpr(proxy = create_infiny_proxy(my_fn)));
       info('Ω__43', rpr(proxy(4, 5, 6)));
       info('Ω__44', rpr(proxy.mykey));
       info('Ω__45', rpr(proxy.preset_key));

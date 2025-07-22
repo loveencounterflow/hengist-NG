@@ -224,7 +224,7 @@ demo_instance_function_as_proxy = ->
   #===========================================================================================================
   state_symbol = Symbol.for 'state'
   #-----------------------------------------------------------------------------------------------------------
-  create_proxy = ( callable ) ->
+  create_infiny_proxy = ( callable ) ->
     state = { stack: ( new Stack() ), }
     #.........................................................................................................
     new_proxy = ({ is_top_level, }) -> new Proxy callable,
@@ -267,7 +267,7 @@ demo_instance_function_as_proxy = ->
     constructor: ( callable ) ->
       @other_prop = 'OTHER_PROP'
       Object.setPrototypeOf callable, @
-      R = create_proxy callable
+      R = create_infiny_proxy callable
       # ...
       return R
 
@@ -290,7 +290,7 @@ demo_instance_function_as_proxy = ->
     echo '——————————————————————————————————————————————————————————————————————————————'
     my_fn = ( P... ) -> "result of calling #{rpr my_fn} in ctx #{rpr @} with #{rpr P}"
     hide my_fn, 'preset_key', "value of my_fn.preset_key"
-    info 'Ω__42', rpr proxy = create_proxy my_fn
+    info 'Ω__42', rpr proxy = create_infiny_proxy my_fn
     info 'Ω__43', rpr proxy 4, 5, 6
     info 'Ω__44', rpr proxy.mykey
     info 'Ω__45', rpr proxy.preset_key
