@@ -298,25 +298,51 @@
     //===========================================================================================================
     /* NOTE Future Single-File Module */
     require_infiniproxy: function() {
+      /*
+
+      ## To Do
+
+      * **`[—]`** allow to set context to be used by `apply()`
+      * **`[—]`** allow to call `sys.stack.clear()` manually where seen fit
+
+       */
       /* TAINT in this simulation of single-file modules, a new distinct symbol is produced with each call to
          `require_infiniproxy()` */
-      var Stack, create_infinyproxy, hide, sys_symbol;
+      var Stack, create_infinyproxy, hide, sys_symbol, template;
       ({hide} = SFMODULES.require_managed_property_tools());
       ({Stack} = SFMODULES.require_stack_classes());
       sys_symbol = Symbol('sys');
+      template = {
+        /* An object that will be checked for existing properties to return; when no provider is given or a
+             provider lacks a requested property, `sys.sub_level_proxy` will be returned for property accesses: */
+        provider: null,
+        /* A function to be called when the proxy (either `sys.top_level_proxy` or `sys.sub_level_proxy`) is
+             called; notice that if the `provider` provides a method for a given key, that method will be called
+             instead of the `callee`: */
+        callee: null,
+        /* The context (value of `this`) in which the callee and methods of the provider are to be called. It
+             defaults to the `provider`, in which case the `sys` object can be retrieved using `this[ sys_symbol ]`;
+             if `callee_ctx` is set to `true`, then `this` will be the `sys` object itself: */
+        callee_ctx: null
+      };
       //=========================================================================================================
-      create_infinyproxy = function(callable) {
-        var new_proxy, sys;
+      create_infinyproxy = function(cfg) {
+        /* TAINT use proper typechecking */
+        var callee, callee_ctx, new_proxy, provider, sys;
+        ({provider, callee, callee_ctx} = {...template, ...ctx});
+        if (callee_ctx === true) {
+          callee_ctx = provider;
+        }
         //.......................................................................................................
         new_proxy = function({is_top_level}) {
-          return new Proxy(callable, {
+          return new Proxy(cfg.callee, {
             //-----------------------------------------------------------------------------------------------------
             apply: function(target, key, P) {
               var R, ctx;
               // urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
               ctx = {is_top_level, ...sys};
               R = Reflect.apply(target, ctx, P);
-              /* NOTE: cannot use `target.apply()`, must use `Reflect` */              sys.stack.clear();
+              sys.stack.clear();
               return R;
             },
             //-----------------------------------------------------------------------------------------------------
@@ -328,20 +354,21 @@
               if ((typeof key) === 'symbol') {
                 return target[key];
               }
-              if (Reflect.has(target, key)) {
-                return Reflect.get(target, key);
+              if (Reflect.has(provider, key)) {
+                return Reflect.get(provider, key);
               }
               if (is_top_level) {
                 sys.stack.clear();
               }
               sys.stack.push(key);
-              // return "[result for getting non-preset key #{rpr key}] from #{rpr target}"
+              // return "[result for getting non-preset key #{rpr key}] from #{rpr provider}"
               return sys.sub_level_proxy;
             }
           });
         };
         //.......................................................................................................
         sys = {
+          is_top_level: false,
           stack: new Stack(),
           top_level_proxy: new_proxy({
             is_top_level: true
