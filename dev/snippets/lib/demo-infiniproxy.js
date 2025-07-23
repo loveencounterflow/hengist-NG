@@ -61,18 +61,30 @@
         //=========================================================================================================
         class D {
           //-------------------------------------------------------------------------------------------------------
-          constructor(callable) {
+          constructor(callee) {
             var R;
             this.other_prop = 'OTHER_PROP';
-            Object.setPrototypeOf(callable, this);
-            R = create_infinyproxy(callable);
+            Object.setPrototypeOf(callee, this);
+            R = create_infinyproxy({
+              callee,
+              provider: this
+            });
             // ...
             return R;
           }
 
           //-------------------------------------------------------------------------------------------------------
           method_of_d(value) {
+            var k;
             whisper('Ω___1', 'METHOD_OF_D');
+            whisper('Ω___2', (function() {
+              var results;
+              results = [];
+              for (k in this[sys_symbol]) {
+                results.push(k);
+              }
+              return results;
+            }).call(this));
             this[sys_symbol].stack.push('generated');
             this[sys_symbol].stack.push('stuff');
             this[sys_symbol].stack.push(`value:${rpr(value)}`);
@@ -94,7 +106,7 @@
       var d, my_fn_3;
       my_fn_3 = function(...P) {
         var chain, content, p;
-        whisper('Ω___2', this.stack, this.stack.is_empty, [...this.stack]);
+        whisper('Ω___3', this.stack, this.stack.is_empty, [...this.stack]);
         chain = [...this.stack].join('.');
         content = (function() {
           var i, len, results;
@@ -108,25 +120,25 @@
         return `[${chain}:${content}]`;
       };
       echo('——————————————————————————————————————————————————————————————————————————————');
-      help('Ω___3', rpr(d = new D(my_fn_3)));
-      help('Ω___4', reverse(GUY.trm.truth(d instanceof D))); // true
-      help('Ω___5', rpr(Object.getPrototypeOf(d)));
-      help('Ω___6', rpr((typeof Object.getPrototypeOf(d)) === (typeof (function() {}))));
-      help('Ω___7', rpr(typeof d));
-      help('Ω___8', rpr(Object.prototype.toString.call(d)));
-      help('Ω___9', rpr(d instanceof Function));
+      help('Ω___4', rpr(d = new D(my_fn_3)));
+      help('Ω___5', reverse(GUY.trm.truth(d instanceof D))); // true
+      help('Ω___6', rpr(Object.getPrototypeOf(d)));
+      help('Ω___7', rpr((typeof Object.getPrototypeOf(d)) === (typeof (function() {}))));
+      help('Ω___8', rpr(typeof d));
+      help('Ω___9', rpr(Object.prototype.toString.call(d)));
+      help('Ω__10', rpr(d instanceof Function));
       echo('——————————————————————————————————————————————————————————————————————————————');
-      info('Ω__10', rpr(d.other_prop)); // OTHER_PROP
-      info('Ω__11', rpr(d.method_of_d())); // METHOD_OF_D
-      info('Ω__12', rpr(d.property_of_d)); // PROPERTY_OF_D
-      info('Ω__13', rpr(d.unknown_key)); // something else: 'unknown_key'
+      info('Ω__11', rpr(d.other_prop)); // OTHER_PROP
+      info('Ω__12', rpr(d.method_of_d())); // METHOD_OF_D
+      info('Ω__13', rpr(d.property_of_d)); // PROPERTY_OF_D
+      info('Ω__14', rpr(d.unknown_key)); // something else: 'unknown_key'
       echo('——————————————————————————————————————————————————————————————————————————————');
-      info('Ω__14', rpr(d(1, 2, 'c')));
-      info('Ω__15', rpr(d.red));
-      info('Ω__16', rpr(d(1, 2, 'c')));
-      info('Ω__17', rpr(d.red.bold(1, 2, 'c')));
-      info('Ω__18', rpr(d.red.bold.method_of_d(123).hola('ftw')));
-      return info('Ω__19', rpr(d.red.bold.method_of_d`123`.hola('ftw')));
+      info('Ω__15', rpr(d(1, 2, 'c')));
+      info('Ω__16', rpr(d.red));
+      info('Ω__17', rpr(d(1, 2, 'c')));
+      info('Ω__18', rpr(d.red.bold(1, 2, 'c')));
+      info('Ω__19', rpr(d.red.bold.method_of_d(123).hola('ftw')));
+      return info('Ω__20', rpr(d.red.bold.method_of_d`123`.hola('ftw')));
     })();
     return null;
   };
@@ -140,9 +152,9 @@
     Colorizer = class Colorizer {
       //-------------------------------------------------------------------------------------------------------
       static colorize(...P) {
-        whisper('Ω__20', `colorize() context:   ${rpr(this)}`);
-        whisper('Ω__21', `colorize() arguments: ${rpr(P)}`);
-        whisper('Ω__22', `colorize() stack:     ${rpr(this.stack)}`);
+        whisper('Ω__21', `colorize() context:   ${rpr(this)}`);
+        whisper('Ω__22', `colorize() arguments: ${rpr(P)}`);
+        whisper('Ω__23', `colorize() stack:     ${rpr(this.stack)}`);
         return "*******************";
       }
 
@@ -151,7 +163,10 @@
         var R;
         this.other_prop = 'OTHER_PROP';
         Object.setPrototypeOf(this.constructor.colorize, this);
-        R = create_infinyproxy(this.constructor.colorize);
+        R = create_infinyproxy({
+          callee: this.constructor.colorize,
+          provider: this
+        });
         return R;
       }
 
@@ -165,22 +180,22 @@
     //   return R
     //.........................................................................................................
     c = new Colorizer();
-    info('Ω__23', c);
-    info('Ω__24', c.green.bold.inverse(" holy moly "));
+    info('Ω__24', c);
+    info('Ω__25', c.green.bold.inverse(" holy moly "));
     // #.........................................................................................................
-    // info 'Ω__25', p.yellow.italic"some text"
-    // info 'Ω__26', p.green.bold.inverse.underline"some text"
+    // info 'Ω__26', p.yellow.italic"some text"
+    // info 'Ω__27', p.green.bold.inverse.underline"some text"
     // ### Building the chain: ###
     // chain = p.cyan.bold
     // chain.underline
-    // info 'Ω__27', p "finally, a call"
+    // info 'Ω__28', p "finally, a call"
     return null;
   };
 
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var callee, callee_ctx, d, guytest_cfg, provider;
+      var guytest_cfg;
       guytest_cfg = {
         throw_on_error: false,
         show_passes: false,
@@ -195,34 +210,29 @@
       //.........................................................................................................
       // demo_infinite_proxy()
       demo_instance_function_as_proxy();
-      demo_colorful_proxy();
-      // d = new Proxy ( ( P... ) -> urge 'Ω__28', P ),
-      provider = {};
-      callee = function(...P) {};
-      callee_ctx = {};
-      d = new Proxy(callee, {
-        set: function(target, key, value) {
-          warn('Ω__29', 'set', rpr(key), rpr(value));
-          Reflect.set(provider, key, `*${value}*`);
-          return true;
-        },
-        get: function(target, key) {
-          help('Ω__30', 'get', rpr(key));
-          if (Reflect.has(provider, key)) {
-            return Reflect.get(provider, key);
-          }
-          return Symbol('notavalue');
-        },
-        apply: function(target, _, ...P) {
-          return debug('Ω__31', P);
-        }
-      });
-      // target.apply null, P
-      info('Ω__32', d('helo'));
-      info('Ω__33', d.greetings = 'helo');
-      return info('Ω__34', d.greetings);
+      return demo_colorful_proxy();
     })();
   }
+
+  // # d = new Proxy ( ( P... ) -> urge 'Ω__29', P ),
+// provider    = {}
+// callee      = ( P... ) ->
+// callee_ctx  = {}
+// d = new Proxy callee,
+//   set: ( target, key, value ) ->
+//     warn 'Ω__30', 'set', ( rpr key ), ( rpr value )
+//     Reflect.set provider, key, "*#{value}*"
+//     return true
+//   get: ( target, key ) ->
+//     help 'Ω__31', 'get', rpr key
+//     return Reflect.get provider, key if Reflect.has provider, key
+//     return Symbol 'notavalue'
+//   apply: ( target, _, P... ) ->
+//     debug 'Ω__32', P
+//     # target.apply null, P
+// info 'Ω__33', d 'helo'
+// info 'Ω__34', d.greetings = 'helo'
+// info 'Ω__35', d.greetings
 
 }).call(this);
 

@@ -204,53 +204,51 @@ module.exports = SFMODULES =
     ### TAINT in this simulation of single-file modules, a new distinct symbol is produced with each call to
     `require_infiniproxy()` ###
     sys_symbol              = Symbol 'sys'
+    # misfit                  = Symbol 'misfit'
     template                =
       ### An object that will be checked for existing properties to return; when no provider is given or a
       provider lacks a requested property, `sys.sub_level_proxy` will be returned for property accesses: ###
-      provider:     null
+      provider:     Object.create null
       ### A function to be called when the proxy (either `sys.top_level_proxy` or `sys.sub_level_proxy`) is
       called; notice that if the `provider` provides a method for a given key, that method will be called
       instead of the `callee`: ###
       callee:       null
-      ### The context (value of `this`) in which the callee and methods of the provider are to be called. It
-      defaults to the `provider`, in which case the `sys` object can be retrieved using `this[ sys_symbol ]`;
-      if `callee_ctx` is set to `true`, then `this` will be the `sys` object itself: ###
-      callee_ctx:   null
 
     #=========================================================================================================
     create_infinyproxy = ( cfg ) ->
       ### TAINT use proper typechecking ###
-      { provider,
-        callee,
-        callee_ctx, } = { template..., ctx..., }
-      callee_ctx = provider if callee_ctx is true
+      cfg = { template...,  cfg..., }
       #.......................................................................................................
-      new_proxy = ({ is_top_level, }) -> new Proxy cfg.callee,
+      new_proxy = ({ is_top_level, }) ->
+        callee_ctx  = null
+        get_ctx     = -> callee_ctx ?= { is_top_level, cfg..., sys..., }
+        #.....................................................................................................
+        R = new Proxy cfg.callee,
 
-        #-----------------------------------------------------------------------------------------------------
-        apply: ( target, key, P ) ->
-          # urge 'Ω__31', "apply #{rpr { target, key, P, is_top_level, }}"
-          ctx = { is_top_level, sys..., }
-          R   = Reflect.apply target, ctx, P
-          sys.stack.clear()
-          return R
+          #-----------------------------------------------------------------------------------------------------
+          apply: ( target, key, P ) ->
+            # urge 'Ω__10', "apply #{rpr { target, key, P, is_top_level, }}"
 
-        #-----------------------------------------------------------------------------------------------------
-        get: ( target, key ) ->
-          # urge 'Ω__32', "get #{rpr { target, key, }}"
-          return sys                        if key            is sys_symbol
-          return target[ key ]              if ( typeof key ) is 'symbol'
-          return Reflect.get provider, key  if Reflect.has provider, key
-          sys.stack.clear() if is_top_level
-          sys.stack.push key
-          # return "[result for getting non-preset key #{rpr key}] from #{rpr provider}"
-          return sys.sub_level_proxy
+            R = Reflect.apply target, get_ctx(), P
+            sys.stack.clear()
+            return R
+
+          #-----------------------------------------------------------------------------------------------------
+          get: ( target, key ) ->
+            # urge 'Ω__11', "get #{rpr { target, key, }}"
+            return get_ctx()                      if key is sys_symbol
+            return target[ key ]                  if ( typeof key ) is 'symbol'
+            return Reflect.get cfg.provider, key  if Reflect.has cfg.provider, key
+            sys.stack.clear() if is_top_level
+            sys.stack.push key
+            # return "[result for getting non-preset key #{rpr key}] from #{rpr provider}"
+            return sys.sub_level_proxy
+        #.....................................................................................................
+        return R
       #.......................................................................................................
-      sys =
-        is_top_level:     false
-        stack:            new Stack()
-        top_level_proxy:  new_proxy { is_top_level: true,   }
-        sub_level_proxy:  new_proxy { is_top_level: false,  }
+      sys = { stack: new Stack(), }
+      sys.top_level_proxy = new_proxy { is_top_level: true,  }
+      sys.sub_level_proxy = new_proxy { is_top_level: false, }
       #.......................................................................................................
       return sys.top_level_proxy
 
