@@ -262,6 +262,8 @@
     show("\x1b[38;05;51m——————————————————————————————————————————————————————————————————————————————");
     show("abc \x1b[36m\x1b[53m\x1b[7m DEFgjy \x1b[55m\x1b[34m\x1b[27mxyz —— overline + reverse  ——");
     show("abc \x1b[36m\x1b[53m\x1b[7m DEFgjy \x1b[55m\x1b[34m\x1b[27mxyz —— overline + reverse  ——");
+    show("abc \x1b[36m\x1b[53m\x1b[7m DEFgjy \x1b[55m\x1b[34m\x1b[27mxyz —— overline + reverse  ——");
+    show("abc \x1b[36m\x1b[53m\x1b[7m DEFgjy \x1b[55m\x1b[34m\x1b[27mxyz —— overline + reverse  ——");
     show("\x1b[38;05;51m——————————————————————————————————————————————————————————————————————————————");
     show("abc▄\x1b[30m DEF▄ \x1b[0mxyz▄ —— fg_black             ——");
     show("abc▄\x1b[31m DEF▄ \x1b[0mxyz▄ —— fg_red               ——");
