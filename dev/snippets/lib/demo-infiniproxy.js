@@ -151,6 +151,28 @@
     //=========================================================================================================
     ANSI = new (Ansi = (function() {
       class Ansi {
+        /*
+
+        * as for the background ('bg'), only colors and no effects can be set; in addition, the bg color can be
+          set to its default (or 'transparent'), which will show the terminal's or the terminal emulator's
+          configured bg color
+        * as for the foreground ('fg'), colors and effects such as blinking, bold, italic, underline, overline,
+          strike can be set; in addition, the configured terminal default font color can be set, and each effect
+          has a dedicated off-switch
+        * neat tables can be drawn by combining the overline effect with `│` U+2502 'Box Drawing Light Vertical
+          Line'; the renmarkable feature of this is that it minimizes spacing around characters meaning it's
+          possible to have adjacent rows of cells separated from the next row by a border without having to
+          sacrifice a line of text just to draw the border.
+        * while the two color palattes implied by the standard XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          * better to only use full RGB than to fuzz around with palettes
+          * apps that use colors at all should be prepared for dark and bright backgrounds
+          * in general better to set fg, bg colors than to use reverse
+          * but reverse actually does do what it says—it swaps fg with bg color
+
+        \x1b[39m default fg color
+        \x1b[49m default bg color
+
+         */
         //-------------------------------------------------------------------------------------------------------
         fg_color_code_from_rgb_dec([r, g, b]) {
           return `\x1b[38:2::${r}:${g}:${b}m`;
@@ -254,8 +276,8 @@
       echo('Ω__10', f`abc▄${fg_code_start} DEF▄ \x1b[0mxyz▄ ${fg_black}${bg_code_start} DEF▄ \x1b[0mxyz▄ —— ${name}:<20c; ——`);
     }
     color_zones = (require('./color-zones')).color_zones;
-    fgz = '\x1b[0m';
-    bgz = '\x1b[0m';
+    fgz = '\x1b[39m';
+    bgz = '\x1b[49m';
     for (zone_name_1 in color_zones) {
       zone_colors_1 = color_zones[zone_name_1];
       for (color_name_1 in zone_colors_1) {
@@ -273,6 +295,14 @@
         echo(R);
       }
     }
+    // echo rpr R
+    echo("abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——");
+    echo("abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——");
+    echo("abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——");
+    echo("abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——");
+    echo();
+    echo("\x1B[39m\x1B[49m\x1B[38:2::37:54:118m\x1B[48:2::207:32:39m abc \x1b[7m abc \x1b[0m");
+    echo();
     return null;
     //=========================================================================================================
     Colorizer = class Colorizer {
