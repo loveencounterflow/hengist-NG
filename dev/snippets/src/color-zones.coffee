@@ -11,7 +11,7 @@ module.exports =
       chartreuse:   '#e0e67a'
       mint:         '#bbddae'
       azure:        '#a1dae1'
-      mauve:        '#a1dae1'
+      mauve:        '#c5a0c9'
     vivid:
       grey:         '#7f7e7f'
       red:          '#cf2027'

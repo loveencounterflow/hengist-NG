@@ -145,7 +145,7 @@
 
   //===========================================================================================================
   demo_colorful_proxy = function() {
-    var ANSI, Ansi, Colorizer, TMP_error, bg_code_start, bg_code_stop, c, code, color_name, create_infinyproxy, fg_black, fg_code_start, fg_code_stop, hex, name, ref, ref1, rgb, sys_symbol, zone_colors, zone_name;
+    var ANSI, Ansi, Colorizer, R, TMP_error, bg_code_start, bga2, bgz, c, code, color_name_1, color_name_2, color_zones, create_infinyproxy, fg_black, fg_code_start, fga1, fgz, hex_1, hex_2, name, ref, rgb, sys_symbol, zone_colors_1, zone_colors_2, zone_name_1, zone_name_2;
     TMP_error = class TMP_error extends Error {};
     ({create_infinyproxy, sys_symbol} = SFMODULES.require_infiniproxy());
     //=========================================================================================================
@@ -158,6 +158,14 @@
 
         bg_color_code_from_rgb_dec([r, g, b]) {
           return `\x1b[48:2::${r}:${g}:${b}m`;
+        }
+
+        fg_color_code_from_hex(hex) {
+          return this.fg_color_code_from_rgb_dec(this.rgb_from_hex(hex));
+        }
+
+        bg_color_code_from_hex(hex) {
+          return this.bg_color_code_from_rgb_dec(this.rgb_from_hex(hex));
         }
 
         fg_color_code_from_color_name(name) {
@@ -240,21 +248,29 @@
       }
       fg_code_start = ANSI.fg_color_code_from_rgb_dec(rgb);
       bg_code_start = ANSI.bg_color_code_from_rgb_dec(rgb);
-      fg_code_stop = '\x1b[0m';
-      bg_code_stop = '\x1b[0m';
       if (name === 'black') {
         fg_black = fg_code_start;
       }
-      echo('Ω__10', f`abc▄${fg_code_start} DEF▄ ${fg_code_stop}xyz▄ ${fg_black}${bg_code_start} DEF▄ ${bg_code_stop}xyz▄ —— ${name}:<20c; ——`);
+      echo('Ω__10', f`abc▄${fg_code_start} DEF▄ \x1b[0mxyz▄ ${fg_black}${bg_code_start} DEF▄ \x1b[0mxyz▄ —— ${name}:<20c; ——`);
     }
-    ref1 = (require('./color-zones')).color_zones;
-    for (zone_name in ref1) {
-      zone_colors = ref1[zone_name];
-      for (color_name in zone_colors) {
-        hex = zone_colors[color_name];
-        fg_code_start = ANSI.fg_color_code_from_rgb_dec(ANSI.rgb_from_hex(hex));
-        bg_code_start = ANSI.bg_color_code_from_rgb_dec(ANSI.rgb_from_hex(hex));
-        echo('Ω__10', zone_name, color_name, hex, `${fg_code_start} text ${fg_code_stop}${bg_code_start} text ${bg_code_stop}`);
+    color_zones = (require('./color-zones')).color_zones;
+    fgz = '\x1b[0m';
+    bgz = '\x1b[0m';
+    for (zone_name_1 in color_zones) {
+      zone_colors_1 = color_zones[zone_name_1];
+      for (color_name_1 in zone_colors_1) {
+        hex_1 = zone_colors_1[color_name_1];
+        R = f`${zone_name_1}:<6c; ${color_name_1}:<10c; ${hex_1} `;
+        fga1 = ANSI.fg_color_code_from_hex(hex_1);
+        for (zone_name_2 in color_zones) {
+          zone_colors_2 = color_zones[zone_name_2];
+          for (color_name_2 in zone_colors_2) {
+            hex_2 = zone_colors_2[color_name_2];
+            bga2 = ANSI.bg_color_code_from_hex(hex_2);
+            R += `${fga1}${bga2} W ${fgz}${bgz}`;
+          }
+        }
+        echo(R);
       }
     }
     return null;
@@ -276,7 +292,6 @@
 
       //-------------------------------------------------------------------------------------------------------
       constructor() {
-        var R;
         this.other_prop = 'OTHER_PROP';
         Object.setPrototypeOf(this.constructor.colorize, this);
         R = create_infinyproxy({
