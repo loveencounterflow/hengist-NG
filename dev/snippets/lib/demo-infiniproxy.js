@@ -145,7 +145,7 @@
 
   //===========================================================================================================
   demo_colorful_proxy = function() {
-    var ANSI, Ansi, Colorizer, TMP_error, bg_code_start, bg_code_stop, c, code, create_infinyproxy, fg_black, fg_code_start, fg_code_stop, name, ref, rgb, sys_symbol;
+    var ANSI, Ansi, Colorizer, TMP_error, bg_code_start, bg_code_stop, c, code, color_name, create_infinyproxy, fg_black, fg_code_start, fg_code_stop, hex, name, ref, ref1, rgb, sys_symbol, zone_colors, zone_name;
     TMP_error = class TMP_error extends Error {};
     ({create_infinyproxy, sys_symbol} = SFMODULES.require_infiniproxy());
     //=========================================================================================================
@@ -199,22 +199,22 @@
         ebony: '#191919',
         forest: '#005c31',
         green: '#2bce48',
+        lime: '#9dcc00',
+        quagmire: '#426600',
         honeydew: '#ffcc99',
         iron: '#808080',
         jade: '#94ffb5',
         khaki: '#8f7c00',
-        lime: '#9dcc00',
         mallow: '#c20088',
         navy: '#003380',
         orpiment: '#ffa405',
         pink: '#ffa8bb',
-        quagmire: '#426600',
         red: '#ff0010',
         sky: '#5ef1f2',
         turquoise: '#00998f',
-        uranium: '#e0ff66',
         violet: '#740aff',
         wine: '#990000',
+        uranium: '#e0ff66',
         xanthin: '#ffff80',
         yellow: '#ffe100',
         zinnia: '#ff5005',
@@ -246,6 +246,16 @@
         fg_black = fg_code_start;
       }
       echo('Ω__10', f`abc▄${fg_code_start} DEF▄ ${fg_code_stop}xyz▄ ${fg_black}${bg_code_start} DEF▄ ${bg_code_stop}xyz▄ —— ${name}:<20c; ——`);
+    }
+    ref1 = (require('./color-zones')).color_zones;
+    for (zone_name in ref1) {
+      zone_colors = ref1[zone_name];
+      for (color_name in zone_colors) {
+        hex = zone_colors[color_name];
+        fg_code_start = ANSI.fg_color_code_from_rgb_dec(ANSI.rgb_from_hex(hex));
+        bg_code_start = ANSI.bg_color_code_from_rgb_dec(ANSI.rgb_from_hex(hex));
+        echo('Ω__10', zone_name, color_name, hex, `${fg_code_start} text ${fg_code_stop}${bg_code_start} text ${bg_code_stop}`);
+      }
     }
     return null;
     //=========================================================================================================
