@@ -221,20 +221,31 @@ demo_colorful_proxy = ->
   fgz         = '\x1b[39m'
   bgz         = '\x1b[49m'
   for zone_name_1, zone_colors_1 of color_zones
+    echo()
     for color_name_1, hex_1 of zone_colors_1
       R     = f"#{zone_name_1}:<6c; #{color_name_1}:<10c; #{hex_1} "
       fga1  = ANSI.fg_color_code_from_hex hex_1
       for zone_name_2, zone_colors_2 of color_zones
+        R += ' '
         for color_name_2, hex_2 of zone_colors_2
           bga2  = ANSI.bg_color_code_from_hex hex_2
           R    += "#{fga1}#{bga2} W #{fgz}#{bgz}"
       echo R
       # echo rpr R
 
-  echo "abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——"
-  echo "abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——"
-  echo "abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——"
-  echo "abc \x1B[38:2::37:54:118m\x1B[48:2::255:255:255m\x1b[53m DEF│gjy│1234 \x1b[55m\x1b[39m\x1b[49m xyz —— overline + reverse  ——"
+  fga       = '\x1B[38:2::37:54:118m'
+  bga       = '\x1B[48:2::255:255:255m'
+  overlinea = '\x1b[53m'
+  overlinez = '\x1b[55m'
+  blinka    = '\x1b[5m'
+  blinkz    = '\x1b[25m'
+  red       = '\x1B[38:2::207:32:39m'
+  bgred     = '\x1B[48:2::207:32:39m'
+  echo "abc #{fga}#{bga}#{overlinea} DEF│gjy│1234 #{overlinez}#{fgz}#{bgz} xyz"
+  echo "abc #{fga}#{bga}#{overlinea} DEF#{bgred}│gjy│#{bga}1234 #{overlinez}#{fgz}#{bgz} xyz"
+  echo "abc #{fga}#{bga}#{overlinea} DEF│gjy│#{red}1234#{fga} #{overlinez}#{fgz}#{bgz} xyz"
+  echo "abc #{fga}#{bga}#{overlinea} DEF│#{blinka}gjy#{blinkz}│1234 #{overlinez}#{fgz}#{bgz} xyz"
+  echo "abc #{fga}#{bga}#{overlinea} DEF│gjy│1234 #{overlinez}#{fgz}#{bgz} xyz"
   echo()
   echo "\x1B[39m\x1B[49m\x1B[38:2::37:54:118m\x1B[48:2::207:32:39m abc \x1b[7m abc \x1b[0m"
   echo()
