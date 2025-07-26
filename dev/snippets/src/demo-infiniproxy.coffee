@@ -124,10 +124,8 @@ demo_instance_function_as_proxy = ->
 
 
 #===========================================================================================================
-demo_colorful_proxy = ->
-  class TMP_error extends Error
-  { create_infinyproxy,
-    sys_symbol,           } = SFMODULES.require_infiniproxy()
+SFMODULES.require_ansi = ->
+
   #=========================================================================================================
   ANSI = new class Ansi
     ###
@@ -168,43 +166,52 @@ demo_colorful_proxy = ->
       [ r16, g16, b16, ] = [ hex[ 1 .. 2 ], hex[ 3 .. 4 ], hex[ 5 .. 6 ], ]
       return [ ( parseInt r16, 16 ), ( parseInt g16, 16 ), ( parseInt b16, 16 ), ]
 
-    #-------------------------------------------------------------------------------------------------------
-    colors_ansi: null
-    colors:
-      ### thx to: https://en.wikipedia.org/wiki/Help:Distinguishable_colors ###
-      ### thx to: https://graphicdesign.stackexchange.com/questions/3682/where-can-i-find-a-large-palette-set-of-contrasting-colors-for-coloring-many-d ###
-      black:            '#000000'
-      white:            '#ffffff'
-      amethyst:         '#f0a3ff'
-      blue:             '#0075dc'
-      caramel:          '#993f00'
-      damson:           '#4c005c'
-      ebony:            '#191919'
-      forest:           '#005c31'
-      green:            '#2bce48'
-      lime:             '#9dcc00'
-      quagmire:         '#426600'
-      honeydew:         '#ffcc99'
-      iron:             '#808080'
-      jade:             '#94ffb5'
-      khaki:            '#8f7c00'
-      mallow:           '#c20088'
-      navy:             '#003380'
-      orpiment:         '#ffa405'
-      pink:             '#ffa8bb'
-      red:              '#ff0010'
-      sky:              '#5ef1f2'
-      turquoise:        '#00998f'
-      violet:           '#740aff'
-      wine:             '#990000'
-      uranium:          '#e0ff66'
-      xanthin:          '#ffff80'
-      yellow:           '#ffe100'
-      zinnia:           '#ff5005'
-      #.....................................................................................................
-      fallback:         [ 255,  20, 147, ]
+  #---------------------------------------------------------------------------------------------------------
+  return exports = { ANSI, }
 
-  for name, code of ANSI.colors
+#===========================================================================================================
+demo_colorful_proxy = ->
+  class TMP_error extends Error
+  { create_infinyproxy,
+    sys_symbol,           } = SFMODULES.require_infiniproxy()
+  { ANSI,                 } = SFMODULES.require_ansi()
+  #-------------------------------------------------------------------------------------------------------
+  colors_ansi = null
+  colors =
+    ### thx to: https://en.wikipedia.org/wiki/Help:Distinguishable_colors ###
+    ### thx to: https://graphicdesign.stackexchange.com/questions/3682/where-can-i-find-a-large-palette-set-of-contrasting-colors-for-coloring-many-d ###
+    black:            '#000000'
+    white:            '#ffffff'
+    amethyst:         '#f0a3ff'
+    blue:             '#0075dc'
+    caramel:          '#993f00'
+    damson:           '#4c005c'
+    ebony:            '#191919'
+    forest:           '#005c31'
+    green:            '#2bce48'
+    lime:             '#9dcc00'
+    quagmire:         '#426600'
+    honeydew:         '#ffcc99'
+    iron:             '#808080'
+    jade:             '#94ffb5'
+    khaki:            '#8f7c00'
+    mallow:           '#c20088'
+    navy:             '#003380'
+    orpiment:         '#ffa405'
+    pink:             '#ffa8bb'
+    red:              '#ff0010'
+    sky:              '#5ef1f2'
+    turquoise:        '#00998f'
+    violet:           '#740aff'
+    wine:             '#990000'
+    uranium:          '#e0ff66'
+    xanthin:          '#ffff80'
+    yellow:           '#ffe100'
+    zinnia:           '#ff5005'
+    #.....................................................................................................
+    fallback:         [ 255,  20, 147, ]
+
+  for name, code of colors
     switch true
       when ( typeof code ) is 'string'
         rgb = ANSI.rgb_from_hex code
