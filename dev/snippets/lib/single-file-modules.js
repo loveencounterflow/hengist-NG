@@ -380,6 +380,80 @@
       };
       //---------------------------------------------------------------------------------------------------------
       return {create_infinyproxy, sys_symbol};
+    },
+    //===========================================================================================================
+    /* NOTE Future Single-File Module */
+    require_next_free_filename: function() {
+      var FS, PATH, TMP_exhaustion_error, TMP_validation_error, cache_filename_re, cfg, errors, exists, exports, get_next_filename, get_next_free_filename, rpr;
+      cache_filename_re = /^~\.(?<first>.*)\.(?<nr>[0-9]{4})\.filemirror-cache/v;
+      rpr = function(x) {
+        return `'${(typeof x) === 'string' ? x.replace(/'/g, "\\'") : void 0}'`;
+        return `${x}`;
+      };
+      errors = {
+        TMP_exhaustion_error: TMP_exhaustion_error = class TMP_exhaustion_error extends Error {},
+        TMP_validation_error: TMP_validation_error = class TMP_validation_error extends Error {}
+      };
+      FS = require('node:fs');
+      PATH = require('node:path');
+      cfg = {
+        max_attempts: 9999,
+        prefix: '~.',
+        suffix: '.filemirror-cache'
+      };
+      //.......................................................................................................
+      exists = function(path) {
+        var error;
+        try {
+          FS.statSync(path);
+        } catch (error1) {
+          error = error1;
+          return false;
+        }
+        return true;
+      };
+      //.......................................................................................................
+      get_next_filename = function(path) {
+        var basename, dirname, first, match, nr;
+        if ((typeof path) !== 'string') {
+          /* TAINT use proper type checking */
+          throw new errors.TMP_validation_error(`Ω___1 expected a text, got ${rpr(path)}`);
+        }
+        if (!(path.length > 0)) {
+          throw new errors.TMP_validation_error(`Ω___2 expected a nonempty text, got ${rpr(path)}`);
+        }
+        dirname = PATH.dirname(path);
+        basename = PATH.basename(path);
+        if ((match = basename.match(cache_filename_re)) == null) {
+          return PATH.join(dirname, `${cfg.prefix}${basename}.0001${cfg.suffix}`);
+        }
+        ({first, nr} = match.groups);
+        nr = `${(parseInt(nr, 10)) + 1}`.padStart(4, '0');
+        path = first;
+        return PATH.join(dirname, `${cfg.prefix}${first}.${nr}${cfg.suffix}`);
+      };
+      //.......................................................................................................
+      get_next_free_filename = function(path) {
+        var R, failure_count;
+        R = path;
+        failure_count = -1;
+        while (true) {
+          //...................................................................................................
+          //.....................................................................................................
+          failure_count++;
+          if (failure_count > cfg.max_attempts) {
+            throw new errors.TMP_exhaustion_error(`Ω___5 too many (${failure_count}) attempts; path ${rpr(R)} exists`);
+          }
+          //...................................................................................................
+          R = get_next_filename(R);
+          if (!exists(R)) {
+            break;
+          }
+        }
+        return R;
+      };
+      //.......................................................................................................
+      return exports = {get_next_free_filename, get_next_filename, exists, cache_filename_re, errors};
     }
   };
 

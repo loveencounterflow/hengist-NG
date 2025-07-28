@@ -254,3 +254,54 @@ module.exports = SFMODULES =
 
     #---------------------------------------------------------------------------------------------------------
     return { create_infinyproxy, sys_symbol, }
+
+
+  #===========================================================================================================
+  ### NOTE Future Single-File Module ###
+  require_next_free_filename: ->
+    cache_filename_re = /^~\.(?<first>.*)\.(?<nr>[0-9]{4})\.filemirror-cache/v
+    rpr               = ( x ) ->
+      return "'#{x.replace /'/g, "\\'" if ( typeof x ) is 'string'}'"
+      return "#{x}"
+    errors =
+      TMP_exhaustion_error: class TMP_exhaustion_error extends Error
+      TMP_validation_error: class TMP_validation_error extends Error
+    FS            = require 'node:fs'
+    PATH          = require 'node:path'
+    cfg =
+      max_attempts:   9999
+      prefix:         '~.'
+      suffix:         '.filemirror-cache'
+    #.......................................................................................................
+    exists = ( path ) ->
+      try FS.statSync path catch error then return false
+      return true
+    #.......................................................................................................
+    get_next_filename = ( path ) ->
+      ### TAINT use proper type checking ###
+      throw new errors.TMP_validation_error "Ω___1 expected a text, got #{rpr path}" unless ( typeof path ) is 'string'
+      throw new errors.TMP_validation_error "Ω___2 expected a nonempty text, got #{rpr path}" unless path.length > 0
+      dirname  = PATH.dirname path
+      basename = PATH.basename path
+      unless ( match = basename.match cache_filename_re )?
+        return PATH.join dirname, "#{cfg.prefix}#{basename}.0001#{cfg.suffix}"
+      { first, nr,  } = match.groups
+      nr              = "#{( parseInt nr, 10 ) + 1}".padStart 4, '0'
+      path            = first
+      return PATH.join dirname, "#{cfg.prefix}#{first}.#{nr}#{cfg.suffix}"
+    #.......................................................................................................
+    get_next_free_filename = ( path ) ->
+      R             = path
+      failure_count = -1
+      #.....................................................................................................
+      loop
+        #...................................................................................................
+        failure_count++
+        if failure_count > cfg.max_attempts
+          throw new errors.TMP_exhaustion_error "Ω___5 too many (#{failure_count}) attempts; path #{rpr R} exists"
+        #...................................................................................................
+        R = get_next_filename R
+        break unless exists R
+      return R
+    #.......................................................................................................
+    return exports = { get_next_free_filename, get_next_filename, exists, cache_filename_re, errors, }
