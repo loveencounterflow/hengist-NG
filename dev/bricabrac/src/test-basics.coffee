@@ -12,7 +12,7 @@ GUY                       = require 'guy'
   praise
   urge
   warn
-  whisper }               = GUY.trm.get_loggers 'demo-proxy'
+  whisper }               = GUY.trm.get_loggers 'bricabrac'
 { rpr
   inspect
   echo
@@ -30,13 +30,13 @@ C                         = require 'ansis'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
-SFMODULES                 = require './single-file-modules'
+SFMODULES                 = require '../../snippets/lib/single-file-modules'
 
 
 
 #===========================================================================================================
-file_mirror_tests =
-  t1: ->
+@bricabrac_tests =
+  get_next_free_filename: ->
     { get_next_free_filename,
       get_next_filename,
       exists,
@@ -97,6 +97,6 @@ file_mirror_tests =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { file_mirror_tests, }
+  ( new Test guytest_cfg ).test { bricabrac_tests: @bricabrac_tests, }
   #.........................................................................................................
   return null

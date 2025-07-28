@@ -259,7 +259,19 @@ module.exports = SFMODULES =
   #===========================================================================================================
   ### NOTE Future Single-File Module ###
   require_next_free_filename: ->
-    cache_filename_re = /^~\.(?<first>.*)\.(?<nr>[0-9]{4})\.filemirror-cache/v
+    cfg =
+      max_attempts:   9999
+      prefix:         '~.'
+      suffix:         '.bricabrac-cache'
+    cache_filename_re = ///
+      ^
+      (?: #{RegExp.escape cfg.prefix} )
+      (?<first>.*)
+      \.
+      (?<nr>[0-9]{4})
+      (?: #{RegExp.escape cfg.suffix} )
+      $
+      ///v
     rpr               = ( x ) ->
       return "'#{x.replace /'/g, "\\'" if ( typeof x ) is 'string'}'"
       return "#{x}"
@@ -268,10 +280,6 @@ module.exports = SFMODULES =
       TMP_validation_error: class TMP_validation_error extends Error
     FS            = require 'node:fs'
     PATH          = require 'node:path'
-    cfg =
-      max_attempts:   9999
-      prefix:         '~.'
-      suffix:         '.filemirror-cache'
     #.......................................................................................................
     exists = ( path ) ->
       try FS.statSync path catch error then return false

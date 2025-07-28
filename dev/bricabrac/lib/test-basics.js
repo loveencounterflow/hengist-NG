@@ -1,11 +1,11 @@
 (async function() {
   'use strict';
-  var C, GTNG, GUY, SFMODULES, Test, alert, blue, bold, debug, echo, f, file_mirror_tests, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
+  var C, GTNG, GUY, SFMODULES, Test, alert, blue, bold, debug, echo, f, gold, grey, help, info, inspect, log, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white, write;
 
   //===========================================================================================================
   GUY = require('guy');
 
-  ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('demo-proxy'));
+  ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('bricabrac'));
 
   ({rpr, inspect, echo, white, blue, gold, grey, red, bold, reverse, log} = GUY.trm);
 
@@ -23,11 +23,11 @@
 
   ({Test} = GTNG);
 
-  SFMODULES = require('./single-file-modules');
+  SFMODULES = require('../../snippets/lib/single-file-modules');
 
   //===========================================================================================================
-  file_mirror_tests = {
-    t1: function() {
+  this.bricabrac_tests = {
+    get_next_free_filename: function() {
       var PATH, cache_filename_re, exists, get_next_filename, get_next_free_filename, path_prefix, probes_and_matchers, Ω___1, Ω___2, Ω___3, Ω___4;
       ({get_next_free_filename, get_next_filename, exists, cache_filename_re} = SFMODULES.require_next_free_filename());
       PATH = require('node:path');
@@ -126,7 +126,9 @@
         show_passes: false,
         report_checks: false
       };
-      (new Test(guytest_cfg)).test({file_mirror_tests});
+      (new Test(guytest_cfg)).test({
+        bricabrac_tests: this.bricabrac_tests
+      });
       //.........................................................................................................
       return null;
     })();
@@ -134,4 +136,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=demo-unused-filename.js.map
+//# sourceMappingURL=test-basics.js.map

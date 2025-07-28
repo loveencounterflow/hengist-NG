@@ -385,7 +385,12 @@
     /* NOTE Future Single-File Module */
     require_next_free_filename: function() {
       var FS, PATH, TMP_exhaustion_error, TMP_validation_error, cache_filename_re, cfg, errors, exists, exports, get_next_filename, get_next_free_filename, rpr;
-      cache_filename_re = /^~\.(?<first>.*)\.(?<nr>[0-9]{4})\.filemirror-cache/v;
+      cfg = {
+        max_attempts: 9999,
+        prefix: '~.',
+        suffix: '.bricabrac-cache'
+      };
+      cache_filename_re = RegExp(`^(?:${RegExp.escape(cfg.prefix)})(?<first>.*)\\.(?<nr>[0-9]{4})(?:${RegExp.escape(cfg.suffix)})$`, "v");
       rpr = function(x) {
         return `'${(typeof x) === 'string' ? x.replace(/'/g, "\\'") : void 0}'`;
         return `${x}`;
@@ -396,11 +401,6 @@
       };
       FS = require('node:fs');
       PATH = require('node:path');
-      cfg = {
-        max_attempts: 9999,
-        prefix: '~.',
-        suffix: '.filemirror-cache'
-      };
       //.......................................................................................................
       exists = function(path) {
         var error;
