@@ -30,7 +30,7 @@ C                         = require 'ansis'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
-SFMODULES                 = require './single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
 
 
 #===========================================================================================================
@@ -294,3 +294,4 @@ if module is require.main then await do =>
   #.........................................................................................................
   demo_show_color_effects()
   demo_2()
+

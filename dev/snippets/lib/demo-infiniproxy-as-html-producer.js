@@ -18,7 +18,7 @@
 
   ({Test} = GTNG);
 
-  SFMODULES = require('./single-file-modules');
+  SFMODULES = require('../../../apps/bricabrac-single-file-modules');
 
   //===========================================================================================================
   require_html_class = function() {

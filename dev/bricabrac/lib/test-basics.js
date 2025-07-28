@@ -23,7 +23,7 @@
 
   ({Test} = GTNG);
 
-  SFMODULES = require('../../snippets/lib/single-file-modules');
+  SFMODULES = require('../../../apps/bricabrac-single-file-modules');
 
   //===========================================================================================================
   this.tests = tests = {

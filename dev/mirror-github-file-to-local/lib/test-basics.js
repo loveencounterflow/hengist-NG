@@ -172,10 +172,60 @@
   this.mirror_file_tasks = {
     //=========================================================================================================
     basics: function() {
-      var bg_color, color, command, error, fmt, i, insert_tag_re, len, match, path, position, prefix, probe, probes, slash, suffix, system_eoi, user_eoi;
-      insert_tag_re = /^(?<prefix>.*?)<<<(?<slash>\/?)(?<command>insert|replace)\x20+((?<position>below|above)\x20+)?(?<path>(?:(?:'(?:\\'|[^'])+')|(?:"(?:\\"|[^"])+")|(?:\$[a-zA-Z0-9]+)))>(?<user_eoi>[^>]*)>(?<system_eoi>[^>]*)>(?<suffix>.*?)$/; // insert JS identifier pattern
+      var bg_color, color, command, disposition, error, fmt, i, len, match, match_line, p1, p1_name, pattern_name, patterns, position, prefix, probe, probes, slash, suffix, system_eoi, user_eoi;
+      patterns = {
+        insert_replace: /^(?<prefix>.*?)<<<(?<slash>\/?)(?<command>insert|replace)\x20+((?<position>below|above)\x20+)?(src\s*=\s*)?(?<p1>(?:(?:'(?:\\'|[^'])+')|(?:"(?:\\"|[^"])+")|(?:\$[a-zA-Z0-9]+)))>(?<user_eoi>[^>]*)>(?<system_eoi>[^>]*)>(?<suffix>.*?)$/, // insert JS identifier pattern
+        publish: /^(?<prefix>.*?)<<<(?<slash>\/?)(?<command>publish)\x20+((?<disposition>one|enclosed)\x20+)?((?<position>below|above)\x20+)?(as\s*=\s*)?(?<p1>(?:(?:'\#(?:\\'|[^'])+')|(?:"\#(?:\\"|[^"])+")))>(?<user_eoi>[^>]*)>(?<system_eoi>[^>]*)>(?<suffix>.*?)$/,
+        generic: /^(?<prefix>.*?)<<<(?<slash>\/?)(?<p1>.*?)>(?<user_eoi>[^>]*)>(?<system_eoi>[^>]*)>(?<suffix>.*?)$/
+      };
       //.......................................................................................................
-      probes = [`<<<insert below 'brackets.txt'>>>`, `<<<insert below 'brackets.txt'>USER>>`, `<!-- <<</insert below 'brackets.txt'>>SYSTEM> -->`, `<!-- <<</insert below 'my brackets.txt'>>SYSTEM> -->`, `<!-- <<</insert below "my brackets.txt">>SYSTEM> -->`, `<!-- <<</insert below "my " brackets.txt">>SYSTEM> -->`, `<!-- <<</insert below "my \\" brackets.txt">>SYSTEM> -->`, `<!-- <<</insert below 'my \\> brackets.txt'>>SYSTEM> -->`, `<!-- <<</insert below 'my > brackets.txt'>>SYSTEM> -->`, `<!-- <<</insert below $brackets>>SYSTEM> -->`, `# <<<insert $brackets>>>`, `# <<<replace above $header>>>`, `# <<<replace below $footer>>>`];
+      probes = [
+        /* insert: */
+        `<<<insert below 'brackets.txt'>>>`,
+        `<<<insert below 'brackets.txt'>USER>>`,
+        `<!-- <<</insert 'brackets.txt'>>SYSTEM> -->`,
+        `<!-- <<</insert below 'brackets.txt'>>SYSTEM> -->`,
+        `<!-- <<</insert below 'my brackets.txt'>>SYSTEM> -->`,
+        `<!-- <<</insert below "my brackets.txt">>SYSTEM> -->`,
+        `<!-- <<</insert below "my \\" brackets.txt">>SYSTEM> -->`,
+        `<!-- <<</insert below 'my \\> brackets.txt'>>SYSTEM> -->`,
+        `<!-- <<</insert below 'my > brackets.txt'>>SYSTEM> -->`,
+        `<!-- <<</insert below $brackets>>SYSTEM> -->`,
+        `<!-- <<</insert below src=$brackets>>> -->`,
+        `# <<<insert $brackets>>>`,
+        //.....................................................................................................
+        /* replace: */
+        `# <<<replace above $header>>>`,
+        `# <<<replace below $footer>>>`,
+        //.....................................................................................................
+        /* publish: */
+        `# <<<publish '#myname'>>>`,
+        `# <<<publish as='#myname'>>>`,
+        `# <<<publish above as='#myname'>>>`,
+        `# <<<publish enclosed above as='#myname'>>>`,
+        `# <<<publish below as='#myname'>>>`,
+        `# <<<publish one below as='#myname'>>>`,
+        `# <<<publish enclosed below as='#myname'>>>`,
+        `# <<<publish enclosed as='#myname'>>>`,
+        `# <<</publish enclosed as='#myname'>>>`,
+        `# <<<publish enclosed '#myname'>>>`,
+        `# <<<publish one '#myname'>>>`,
+        `<!--<<<publish enclosed as='#id'>>>-->`,
+        //.....................................................................................................
+        /* generic: */
+        `<!-- <<</insert below "my " brackets.txt">>SYSTEM> -->`,
+        `# <<<publish enclosed #myname>>>`,
+        `# <<<publish enclosed as=#myname>>>`,
+        `# <<<>>>`,
+        `# <<< >>>`,
+        `# <<<<>>>`,
+        `# <<<<<<>>>>>`,
+        `<<<publish enclosed as=<name>>>>`,
+        `<!--<<<publish enclosed as=<name>>>-->`,
+        //.....................................................................................................
+        /* no match: */
+        ''
+      ];
       //.......................................................................................................
       color = C.black;
       bg_color = C.bg_gainsboro;
@@ -192,22 +242,46 @@
             return rpr(x);
         }
       };
+      match_line = function(text) {
+        var match, pattern, pattern_name;
+        for (pattern_name in patterns) {
+          pattern = patterns[pattern_name];
+          if ((match = probe.match(pattern)) != null) {
+            return {pattern_name, match};
+          }
+        }
+        return {
+          pattern_name: null,
+          match: null
+        };
+      };
       for (i = 0, len = probes.length; i < len; i++) {
         probe = probes[i];
         // urge 'Ωmf___3', rpr probe
-        if ((match = probe.match(insert_tag_re)) != null) {
-          ({prefix, slash, command, position, path, user_eoi, system_eoi, suffix} = match.groups);
+        ({pattern_name, match} = match_line(probe));
+        if (match != null) {
+          ({prefix, slash, command, disposition, position, p1, user_eoi, system_eoi, suffix} = match.groups);
         } else {
           prefix = error;
           slash = '';
           command = '';
+          disposition = '';
           position = '';
-          path = '';
+          p1 = '';
           user_eoi = '';
           system_eoi = '';
           suffix = '';
         }
-        echo(f`${color + bg_color}│${C.overline1}${fmt(prefix)}:<10c;│${fmt(slash)}:<10c;│${fmt(command)}:<10c;│${fmt(position)}:<10c;│${fmt(path)}:<30c;│${fmt(user_eoi)}:<10c;│${fmt(system_eoi)}:<10c;│${fmt(suffix)}:<10c;${C.overline0}│${C.default + C.bg_default}`);
+        p1_name = {
+          insert_replace: 'src',
+          publish: 'id',
+          generic: 'inner',
+          no_match: ''
+        }[pattern_name != null ? pattern_name : 'no_match'];
+        if (p1_name !== '') {
+          p1_name = p1_name + ':';
+        }
+        echo(f`${color + bg_color}│${C.overline1}${fmt(pattern_name)}:<20c;│${fmt(prefix)}:<10c;│${fmt(slash)}:<10c;│${fmt(command)}:<10c;│${fmt(disposition)}:<10c;│${fmt(position)}:<10c;│${p1_name}:<10c;${fmt(p1)}:<40c;│${fmt(user_eoi)}:<10c;│${fmt(system_eoi)}:<10c;│${fmt(suffix)}:<10c;${C.overline0}│${C.default + C.bg_default}`);
       }
       //.......................................................................................................
       return null;
