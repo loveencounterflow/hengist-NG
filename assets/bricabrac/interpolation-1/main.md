@@ -1,4 +1,6 @@
 
+These lines are going to be overwritten by the `replace above` command, below
+
 
 <!-- <<<replace above 'header.md'>>> -->
 -----------------------------------------------------------
