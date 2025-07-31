@@ -1,11 +1,11 @@
 
-These lines are going to be overwritten by the `replace above` command, below
+These lines are going to be overwritten by the `replace-above` command
 
 
-<!-- <<<replace above 'header.md'>>> -->
+<!-- <<</replace-above 'header.md'>>> -->
 -----------------------------------------------------------
 
-> Seen above the horizontal ruler above is the contents of `header.md`
+> Above horizontal ruler is contents of `header.md`
 
 # Main File
 
@@ -14,7 +14,7 @@ This file demonstrates interpolation facility of Bric-A-Brac:
 ## Part One
 
 -----------------------------------------------------------
-<!-- <<<insert below 'part1.md'>>> -->
+<!-- <<<insert 'part1.md'>>> -->
 -----------------------------------------------------------
 
 ## Part Two
@@ -22,13 +22,15 @@ This file demonstrates interpolation facility of Bric-A-Brac:
 -----------------------------------------------------------
 <!-- <<<insert 'part2.md'>UNIQUE56>> -->
 -----------------------------------------------------------
+<!-- <<< looks similar >>> -->
 
 ## The Footer
 
-> Seen below the horizontal ruler below is the contents of `footer.md`
+> Below horizontal ruler is contents of `footer.md`
 
 -----------------------------------------------------------
-<!-- <<<replace below 'footer.md'>>> -->
+<!-- <<<replace-below 'footer.md'>>> -->
 
+These lines are going to be overwritten by the `replace-below` command
 
 
