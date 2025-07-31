@@ -479,40 +479,113 @@ GTNG                      = require '../../../apps/guy-test-NG'
         reverse
         bold                            } = GUY.trm
       #.....................................................................................................
-      @eq ( Ωfstr_202 = ->         width_of                  'abc'            ), 3
-      @eq ( Ωfstr_203 = ->         width_of red              'abc'            ), 3
-      @eq ( Ωfstr_204 = ->         width_of reverse          'abc'            ), 3
-      @eq ( Ωfstr_205 = ->         width_of bold             'abc'            ), 3
-      @eq ( Ωfstr_206 = ->         width_of red reverse bold 'abc'            ), 3
-      @eq ( Ωfstr_207 = ->     string_width                  'abc'            ), 3
-      @eq ( Ωfstr_208 = ->     string_width red              'abc'            ), 3
-      @eq ( Ωfstr_209 = ->     string_width reverse          'abc'            ), 3
-      @eq ( Ωfstr_210 = ->     string_width bold             'abc'            ), 3
-      @eq ( Ωfstr_211 = ->     string_width red reverse bold 'abc'            ), 3
+      do =>
+        SFMODULES_dev = require '../../../apps/bricabrac-single-file-modules'
+        { ansi_colors_and_effects: C, } = SFMODULES_dev.require_ansi_colors_and_effects()
+        @eq ( Ωfstr_202 = ->         width_of C.red + 'abc' + C.default           ), 3
+        @eq ( Ωfstr_203 = ->     string_width C.red + 'abc' + C.default           ), 3
+        @eq ( Ωfstr_204 = ->         width_of C.red + C.italic + C.bold + 'abc' + C.bold0 + C.italic0 + C.default           ), 3
+        @eq ( Ωfstr_205 = ->     string_width C.red + C.italic + C.bold + 'abc' + C.bold0 + C.italic0 + C.default           ), 3
+        ###
+to-width:
+    "string-width": "7.2.0",
+    "wcstring": "^2.1.1"
+effstring:
+    "string-width": "^7.2.0"
+
+
+        ###
+        ansi_matcher  = /((?:\x1b\[[^m]+m)+)/g
+        segmenter     = new Intl.Segmenter()
+        split_into_visual_glyphs = ( text ) -> ( d.segment for d from segmenter.segment text )
+        debug 'Ωfstr_206',      width_of        f"#{ red reverse bold '' }"
+        debug 'Ωfstr_207',      string_width    f"#{ red reverse bold '' }"
+        debug 'Ωfstr_208',                      f"\x1b[mA"
+        debug 'Ωfstr_209',                      f"\x1b[45mA"
+        debug 'Ωfstr_210',                      f"\x1b[999mA"
+        debug 'Ωfstr_211',                      f"\x1b[999:876:7mA"
+        text_with_ansi_codes = "ABC#{ C.black + C.bg_red + C.bold + 'DEF' + C.bold0 + C.default + C.bg_default }XYZ"
+        debug 'Ωfstr_212',                    text_with_ansi_codes
+        # debug 'Ωfstr_213', ( d.segment for d from segmenter.segment  text_with_ansi_codes )
+        debug 'Ωfstr_214', rpr                text_with_ansi_codes
+        debug 'Ωfstr_215', width_of           text_with_ansi_codes
+        debug 'Ωfstr_216', string_width       text_with_ansi_codes
+        debug 'Ωfstr_217', rpr strip_ansi     text_with_ansi_codes
+        urge 'Ωfstr_218', d for d from        text_with_ansi_codes.matchAll ansi_matcher
+        debug 'Ωfstr_219',                    text_with_ansi_codes.replace  ansi_matcher, '.'
+        chunkify = ( text ) ->
+          chunks          = []
+          width           = 0
+          has_ansi        = false
+          chunk_has_ansi  = true
+          ### TAINT might as well return an empty list of chunks ###
+          if text is ''
+            return { has_ansi, width, chunks: [ { has_ansi, width, chunk: '', }, ], }
+          for chunk in text.split ansi_matcher
+            chunk_has_ansi    = not chunk_has_ansi
+            has_ansi        or= chunk_has_ansi
+            continue if chunk is ''
+            chunk_width       = if has_ansi then 0 else string_width chunk
+            width            += chunk_width
+            chunks.push { has_ansi: chunk_has_ansi, width: chunk_width, chunk, }
+          return { has_ansi, width, chunks, }
+          # [Symbol.iterator]: ( -> d for d in chunks )
+        do =>
+          echo '—————————————————————————————————————————————'
+          text = text_with_ansi_codes
+          urge 'Ωfstr_220',                chunkify text
+          info 'Ωfstr_221', d for d from ( chunkify text ).chunks
+        do =>
+          echo '—————————————————————————————————————————————'
+          text = 'ABCDEFXYZ'
+          urge 'Ωfstr_222',                chunkify text
+          info 'Ωfstr_223', d for d from ( chunkify text ).chunks
+        do =>
+          echo '—————————————————————————————————————————————'
+          text = "#{ C.black + C.bg_red + C.bold + C.bold0 + C.default + C.bg_default }"
+          urge 'Ωfstr_224',                chunkify text
+          info 'Ωfstr_225', d for d from ( chunkify text ).chunks
+        do =>
+          echo '—————————————————————————————————————————————'
+          text = ''
+          urge 'Ωfstr_226',                chunkify text
+          info 'Ωfstr_227', d for d from ( chunkify text ).chunks
+        process.exit 111
       #.....................................................................................................
-      @eq ( Ωfstr_212 = ->            f"[#{                  'abc' }:<20c;]"  ), '[abc                 ]'
-      @eq ( Ωfstr_213 = -> strip_ansi f"[#{ red              'abc' }:<20c;]"  ), '[abc                 ]'
-      @eq ( Ωfstr_214 = -> strip_ansi f"[#{ reverse          'abc' }:<20c;]"  ), '[abc                 ]'
-      @eq ( Ωfstr_215 = -> strip_ansi f"[#{ bold             'abc' }:<20c;]"  ), '[abc                 ]'
-      @eq ( Ωfstr_216 = -> strip_ansi f"[#{ red reverse bold 'abc' }:<20c;]"  ), '[abc                 ]'
+      @eq ( Ωfstr_228 = ->         width_of                  'abc'            ), 3
+      @eq ( Ωfstr_229 = ->         width_of red              'abc'            ), 3
+      @eq ( Ωfstr_230 = ->         width_of reverse          'abc'            ), 3
+      @eq ( Ωfstr_231 = ->         width_of bold             'abc'            ), 3
+      @eq ( Ωfstr_232 = ->         width_of red reverse bold 'abc'            ), 3
+      @eq ( Ωfstr_233 = ->     string_width                  'abc'            ), 3
+      @eq ( Ωfstr_234 = ->     string_width red              'abc'            ), 3
+      @eq ( Ωfstr_235 = ->     string_width reverse          'abc'            ), 3
+      @eq ( Ωfstr_236 = ->     string_width bold             'abc'            ), 3
+      @eq ( Ωfstr_237 = ->     string_width red reverse bold 'abc'            ), 3
       #.....................................................................................................
-      @eq ( Ωfstr_217 = ->            f"[#{                  'abc' }:>20c;]"  ), '[                 abc]'
-      @eq ( Ωfstr_218 = -> strip_ansi f"[#{ red              'abc' }:>20c;]"  ), '[                 abc]'
-      @eq ( Ωfstr_219 = -> strip_ansi f"[#{ reverse          'abc' }:>20c;]"  ), '[                 abc]'
-      @eq ( Ωfstr_220 = -> strip_ansi f"[#{ bold             'abc' }:>20c;]"  ), '[                 abc]'
-      @eq ( Ωfstr_221 = -> strip_ansi f"[#{ red reverse bold 'abc' }:>20c;]"  ), '[                 abc]'
+      @eq ( Ωfstr_238 = ->            f"[#{                  'abc' }:<20c;]"  ), '[abc                 ]'
+      @eq ( Ωfstr_239 = -> strip_ansi f"[#{ red              'abc' }:<20c;]"  ), '[abc                 ]'
+      @eq ( Ωfstr_240 = -> strip_ansi f"[#{ reverse          'abc' }:<20c;]"  ), '[abc                 ]'
+      @eq ( Ωfstr_241 = -> strip_ansi f"[#{ bold             'abc' }:<20c;]"  ), '[abc                 ]'
+      @eq ( Ωfstr_242 = -> strip_ansi f"[#{ red reverse bold 'abc' }:<20c;]"  ), '[abc                 ]'
       #.....................................................................................................
-      @eq ( Ωfstr_222 = ->            f"[#{                  'abc' }:^20c;]"  ), '[        abc         ]'
-      @eq ( Ωfstr_223 = -> strip_ansi f"[#{ red              'abc' }:^20c;]"  ), '[        abc         ]'
-      @eq ( Ωfstr_224 = -> strip_ansi f"[#{ reverse          'abc' }:^20c;]"  ), '[        abc         ]'
-      @eq ( Ωfstr_225 = -> strip_ansi f"[#{ bold             'abc' }:^20c;]"  ), '[        abc         ]'
-      @eq ( Ωfstr_226 = -> strip_ansi f"[#{ red reverse bold 'abc' }:^20c;]"  ), '[        abc         ]'
+      @eq ( Ωfstr_243 = ->            f"[#{                  'abc' }:>20c;]"  ), '[                 abc]'
+      @eq ( Ωfstr_244 = -> strip_ansi f"[#{ red              'abc' }:>20c;]"  ), '[                 abc]'
+      @eq ( Ωfstr_245 = -> strip_ansi f"[#{ reverse          'abc' }:>20c;]"  ), '[                 abc]'
+      @eq ( Ωfstr_246 = -> strip_ansi f"[#{ bold             'abc' }:>20c;]"  ), '[                 abc]'
+      @eq ( Ωfstr_247 = -> strip_ansi f"[#{ red reverse bold 'abc' }:>20c;]"  ), '[                 abc]'
       #.....................................................................................................
-      @eq ( Ωfstr_222 = ->            f"[#{                  'abc' }:=20c;]"  ), '[                 abc]'
-      # @eq ( Ωfstr_223 = -> strip_ansi f"[#{ red              'abc' }:=20c;]"  ), '[        abc         ]'
-      # @eq ( Ωfstr_224 = -> strip_ansi f"[#{ reverse          'abc' }:=20c;]"  ), '[        abc         ]'
-      # @eq ( Ωfstr_225 = -> strip_ansi f"[#{ bold             'abc' }:=20c;]"  ), '[        abc         ]'
-      # @eq ( Ωfstr_226 = -> strip_ansi f"[#{ red reverse bold 'abc' }:=20c;]"  ), '[        abc         ]'
+      @eq ( Ωfstr_248 = ->            f"[#{                  'abc' }:^20c;]"  ), '[        abc         ]'
+      @eq ( Ωfstr_249 = -> strip_ansi f"[#{ red              'abc' }:^20c;]"  ), '[        abc         ]'
+      @eq ( Ωfstr_250 = -> strip_ansi f"[#{ reverse          'abc' }:^20c;]"  ), '[        abc         ]'
+      @eq ( Ωfstr_251 = -> strip_ansi f"[#{ bold             'abc' }:^20c;]"  ), '[        abc         ]'
+      @eq ( Ωfstr_252 = -> strip_ansi f"[#{ red reverse bold 'abc' }:^20c;]"  ), '[        abc         ]'
+      #.....................................................................................................
+      @eq ( Ωfstr_253 = ->            f"[#{                  'abc' }:=20c;]"  ), '[                 abc]'
+      # @eq ( Ωfstr_254 = -> strip_ansi f"[#{ red              'abc' }:=20c;]"  ), '[        abc         ]'
+      # @eq ( Ωfstr_255 = -> strip_ansi f"[#{ reverse          'abc' }:=20c;]"  ), '[        abc         ]'
+      # @eq ( Ωfstr_256 = -> strip_ansi f"[#{ bold             'abc' }:=20c;]"  ), '[        abc         ]'
+      # @eq ( Ωfstr_257 = -> strip_ansi f"[#{ red reverse bold 'abc' }:=20c;]"  ), '[        abc         ]'
       #.....................................................................................................
       return null
 
@@ -533,9 +606,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
       _locale_cfg_from_hints
       _hint_as_locale_cfg              } = require '../../../apps/effstring'
     #.......................................................................................................
-    @eq ( Ωfstr_227 = -> urge 'Ωfstr_228', rpr f"d = #{"helo"}:60.40f/k;m" ), null
-    @eq ( Ωfstr_229 = -> urge 'Ωfstr_230', rpr f"d = #{true}:60.40f/k;m" ), null
-    # @eq ( Ωfstr_231 = -> urge 'Ωfstr_232', rpr f"d = #{123456789n}:60.40f/k;m" ), null
+    @eq ( Ωfstr_258 = -> urge 'Ωfstr_259', rpr f"d = #{"helo"}:60.40f/k;m" ), null
+    @eq ( Ωfstr_260 = -> urge 'Ωfstr_261', rpr f"d = #{true}:60.40f/k;m" ), null
+    # @eq ( Ωfstr_262 = -> urge 'Ωfstr_263', rpr f"d = #{123456789n}:60.40f/k;m" ), null
     #.......................................................................................................
     return null
 
@@ -545,13 +618,13 @@ demo =
     { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
     echo()
     do =>
-      # info 'Ωfstr_233', f"——#{1234}:$#20x;——"
-      info 'Ωfstr_234', f"——#{1234}:;>20;——"
-      info 'Ωfstr_235', f"——#{1234}:#>20.3e;——"
-      info 'Ωfstr_236', f"——#{1234}:#>20.3f;——"
-      info 'Ωfstr_237', f"——#{1234}:#>20.3s;——"
-      info 'Ωfstr_238', f"——#{1234}:#>20.3n;——"
-      info 'Ωfstr_239', f"——#{Infinity}:#>20.3n;——"
+      # info 'Ωfstr_264', f"——#{1234}:$#20x;——"
+      info 'Ωfstr_265', f"——#{1234}:;>20;——"
+      info 'Ωfstr_266', f"——#{1234}:#>20.3e;——"
+      info 'Ωfstr_267', f"——#{1234}:#>20.3f;——"
+      info 'Ωfstr_268', f"——#{1234}:#>20.3s;——"
+      info 'Ωfstr_269', f"——#{1234}:#>20.3n;——"
+      info 'Ωfstr_270', f"——#{Infinity}:#>20.3n;——"
     do =>
       ja_jp_cfg     = {
         numerals: [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', ], }
@@ -629,97 +702,97 @@ demo =
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3~", 1e-6
-        info 'Ωfstr_240', ff 0.00000042
-        info 'Ωfstr_241', ff 0.0000042
-        info 'Ωfstr_242', ff 0.000042
-        info 'Ωfstr_243', ff 0.00042
-        info 'Ωfstr_244', ff 0.0042
-        info 'Ωfstr_245', ff 0.042
-        info 'Ωfstr_246', ff 0.42
+        info 'Ωfstr_271', ff 0.00000042
+        info 'Ωfstr_272', ff 0.0000042
+        info 'Ωfstr_273', ff 0.000042
+        info 'Ωfstr_274', ff 0.00042
+        info 'Ωfstr_275', ff 0.0042
+        info 'Ωfstr_276', ff 0.042
+        info 'Ωfstr_277', ff 0.42
         return null
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3~s", 1e-6
-        info 'Ωfstr_247', ff 0.00000042
-        info 'Ωfstr_248', ff 0.0000042
-        info 'Ωfstr_249', ff 0.000042
-        info 'Ωfstr_250', ff 0.00042
-        info 'Ωfstr_251', ff 0.0042
-        info 'Ωfstr_252', ff 0.042
-        info 'Ωfstr_253', ff 0.42
+        info 'Ωfstr_278', ff 0.00000042
+        info 'Ωfstr_279', ff 0.0000042
+        info 'Ωfstr_280', ff 0.000042
+        info 'Ωfstr_281', ff 0.00042
+        info 'Ωfstr_282', ff 0.0042
+        info 'Ωfstr_283', ff 0.042
+        info 'Ωfstr_284', ff 0.42
         return null
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3~f", 1e-6
-        info 'Ωfstr_254', ff 0.00000042
-        info 'Ωfstr_255', ff 0.0000042
-        info 'Ωfstr_256', ff 0.000042
-        info 'Ωfstr_257', ff 0.00042
-        info 'Ωfstr_258', ff 0.0042
-        info 'Ωfstr_259', ff 0.042
-        info 'Ωfstr_260', ff 0.42
+        info 'Ωfstr_285', ff 0.00000042
+        info 'Ωfstr_286', ff 0.0000042
+        info 'Ωfstr_287', ff 0.000042
+        info 'Ωfstr_288', ff 0.00042
+        info 'Ωfstr_289', ff 0.0042
+        info 'Ωfstr_290', ff 0.042
+        info 'Ωfstr_291', ff 0.42
         return null
       do =>
         echo()
-        info 'Ωfstr_261', f"#{0.00000042}:_>15,.3f/µ;"
-        info 'Ωfstr_262', f"#{0.0000042}:_>15,.3f/µ;"
-        info 'Ωfstr_263', f"#{0.000042}:_>15,.3f/µ;"
-        info 'Ωfstr_264', f"#{0.00042}:_>15,.3f/µ;"
-        info 'Ωfstr_265', f"#{0.0042}:_>15,.3f/µ;"
-        info 'Ωfstr_266', f"#{0.042}:_>15,.3f/µ;"
-        info 'Ωfstr_267', f"#{0.42}:_>15,.3f/µ;"
+        info 'Ωfstr_292', f"#{0.00000042}:_>15,.3f/µ;"
+        info 'Ωfstr_293', f"#{0.0000042}:_>15,.3f/µ;"
+        info 'Ωfstr_294', f"#{0.000042}:_>15,.3f/µ;"
+        info 'Ωfstr_295', f"#{0.00042}:_>15,.3f/µ;"
+        info 'Ωfstr_296', f"#{0.0042}:_>15,.3f/µ;"
+        info 'Ωfstr_297', f"#{0.042}:_>15,.3f/µ;"
+        info 'Ωfstr_298', f"#{0.42}:_>15,.3f/µ;"
         return null
       do =>
         echo()
-        info 'Ωfstr_268', f"#{ 123000    }:_>9,.3f/k;m"
-        info 'Ωfstr_269', f"#{ 7000      }:_>9,.3f/k;m"
-        info 'Ωfstr_270', f"#{ 500       }:_>9,.3f/k;m"
-        info 'Ωfstr_271', f"#{ 99        }:_>9,.3f/k;m"
+        info 'Ωfstr_299', f"#{ 123000    }:_>9,.3f/k;m"
+        info 'Ωfstr_300', f"#{ 7000      }:_>9,.3f/k;m"
+        info 'Ωfstr_301', f"#{ 500       }:_>9,.3f/k;m"
+        info 'Ωfstr_302', f"#{ 99        }:_>9,.3f/k;m"
         return null
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3f", 1e-3
-        info 'Ωfstr_272', ff 0.00089
-        info 'Ωfstr_273', ff 0.0089
-        info 'Ωfstr_274', ff 0.089
-        info 'Ωfstr_275', ff 0.89
-        info 'Ωfstr_276', ff 8.9
-        info 'Ωfstr_277', ff 89
-        info 'Ωfstr_278', ff 890
+        info 'Ωfstr_303', ff 0.00089
+        info 'Ωfstr_304', ff 0.0089
+        info 'Ωfstr_305', ff 0.089
+        info 'Ωfstr_306', ff 0.89
+        info 'Ωfstr_307', ff 8.9
+        info 'Ωfstr_308', ff 89
+        info 'Ωfstr_309', ff 890
         return null
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3f", 1e-2
-        info 'Ωfstr_279', ff 0.00089
-        info 'Ωfstr_280', ff 0.0089
-        info 'Ωfstr_281', ff 0.089
-        info 'Ωfstr_282', ff 0.89
-        info 'Ωfstr_283', ff 8.9
-        info 'Ωfstr_284', ff 89
-        info 'Ωfstr_285', ff 890
+        info 'Ωfstr_310', ff 0.00089
+        info 'Ωfstr_311', ff 0.0089
+        info 'Ωfstr_312', ff 0.089
+        info 'Ωfstr_313', ff 0.89
+        info 'Ωfstr_314', ff 8.9
+        info 'Ωfstr_315', ff 89
+        info 'Ωfstr_316', ff 890
         return null
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3f", 1e-1
-        info 'Ωfstr_286', ff 0.00089
-        info 'Ωfstr_287', ff 0.0089
-        info 'Ωfstr_288', ff 0.089
-        info 'Ωfstr_289', ff 0.89
-        info 'Ωfstr_290', ff 8.9
-        info 'Ωfstr_291', ff 89
-        info 'Ωfstr_292', ff 890
+        info 'Ωfstr_317', ff 0.00089
+        info 'Ωfstr_318', ff 0.0089
+        info 'Ωfstr_319', ff 0.089
+        info 'Ωfstr_320', ff 0.89
+        info 'Ωfstr_321', ff 8.9
+        info 'Ωfstr_322', ff 89
+        info 'Ωfstr_323', ff 890
         return null
       do =>
         echo()
         ff = _d3_format.formatPrefix "_>15,.3f", 1e0
         scale = 1 / 1e-2
-        info 'Ωfstr_293', ff 0.00089  * scale
-        info 'Ωfstr_294', ff 0.0089   * scale
-        info 'Ωfstr_295', ff 0.089    * scale
-        info 'Ωfstr_296', ff 0.89     * scale
-        info 'Ωfstr_297', ff 8.9      * scale
-        info 'Ωfstr_298', ff 89       * scale
-        info 'Ωfstr_299', ff 890      * scale
+        info 'Ωfstr_324', ff 0.00089  * scale
+        info 'Ωfstr_325', ff 0.0089   * scale
+        info 'Ωfstr_326', ff 0.089    * scale
+        info 'Ωfstr_327', ff 0.89     * scale
+        info 'Ωfstr_328', ff 8.9      * scale
+        info 'Ωfstr_329', ff 89       * scale
+        info 'Ωfstr_330', ff 890      * scale
         return null
     echo()
     return null
@@ -728,21 +801,21 @@ demo =
   intl_number: ->
     { f, new_ftag, _d3_format, } = require '../../../apps/effstring'
     { reverse: rvs } = GUY.trm
-    debug 'Ωfstr_300', 1234567891234567891
-    debug 'Ωfstr_301', f"#{1234567891234567891}:<30.3f;"
-    # debug 'Ωfstr_302', f"#{1234567891234567891n}:<30.3f;"
-    debug 'Ωfstr_303', f"#{'1234567891234567891'}:<30.3f;"
+    debug 'Ωfstr_331', 1234567891234567891
+    debug 'Ωfstr_332', f"#{1234567891234567891}:<30.3f;"
+    # debug 'Ωfstr_333', f"#{1234567891234567891n}:<30.3f;"
+    debug 'Ωfstr_334', f"#{'1234567891234567891'}:<30.3f;"
     do =>
       locale = new Intl.NumberFormat 'en-US' #, { style: 'currency', currency: 'USD', }
-      help 'Ωfstr_304', locale.resolvedOptions()
-      urge 'Ωfstr_305', locale.format 9876543210
+      help 'Ωfstr_335', locale.resolvedOptions()
+      urge 'Ωfstr_336', locale.format 9876543210
       for { type, value, } in locale.formatToParts 9876543210
-        debug 'Ωfstr_306', ( f"#{type}:15c;" ), ( rvs rpr value )
+        debug 'Ωfstr_337', ( f"#{type}:15c;" ), ( rvs rpr value )
     echo()
     do =>
       number  = 123456.789
-      de_DE   = new Intl.NumberFormat 'de-DE'; urge 'Ωfstr_307', rvs rpr de_DE.format number
-      en_US   = new Intl.NumberFormat 'en-US'; urge 'Ωfstr_308', rvs rpr en_US.format number
+      de_DE   = new Intl.NumberFormat 'de-DE'; urge 'Ωfstr_338', rvs rpr de_DE.format number
+      en_US   = new Intl.NumberFormat 'en-US'; urge 'Ωfstr_339', rvs rpr en_US.format number
       return null
     # You can also specify additional options such as the style of formatting (decimal, currency, or
     # percent), the currency to use if formatting a currency, and the number of minimum and maximum fraction
@@ -750,28 +823,28 @@ demo =
     amount  = 654321.987;
     do =>
       numberFormat = new Intl.NumberFormat 'en-US', { style: 'currency', currency: 'USD', }
-      info 'Ωfstr_309', rvs rpr numberFormat.format amount
+      info 'Ωfstr_340', rvs rpr numberFormat.format amount
     do =>
       numberFormat = new Intl.NumberFormat 'en-US', { style: 'percent', currency: 'USD', }
-      info 'Ωfstr_310', rvs rpr numberFormat.format amount
-      info 'Ωfstr_311', rvs rpr numberFormat.format 0.756789
+      info 'Ωfstr_341', rvs rpr numberFormat.format amount
+      info 'Ωfstr_342', rvs rpr numberFormat.format 0.756789
     do =>
       numberFormat = new Intl.NumberFormat 'en-US', { style: 'percent', currency: 'USD', maximumSignificantDigits: 2, }
-      info 'Ωfstr_312', rvs rpr numberFormat.format amount
-      info 'Ωfstr_313', rvs rpr numberFormat.format 0.756789
+      info 'Ωfstr_343', rvs rpr numberFormat.format amount
+      info 'Ωfstr_344', rvs rpr numberFormat.format 0.756789
     do =>
       # the nu extension key requests a numbering system, e.g. Chinese decimal
-      help 'Ωfstr_314', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hanidec' ).format 123456.789
-      help 'Ωfstr_315', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hans'    ).format 123456.789
-      help 'Ωfstr_316', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hansfin' ).format 123456.789
-      help 'Ωfstr_317', rvs rpr ( new Intl.NumberFormat 'zh-Hant-TW-u-nu-hant'    ).format 123456.789
-      help 'Ωfstr_318', rvs rpr ( new Intl.NumberFormat 'zh-Hant-TW-u-nu-hantfin' ).format 123456.789
-      help 'Ωfstr_319', rvs rpr ( new Intl.NumberFormat 'roman' ).format 123456.789
+      help 'Ωfstr_345', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hanidec' ).format 123456.789
+      help 'Ωfstr_346', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hans'    ).format 123456.789
+      help 'Ωfstr_347', rvs rpr ( new Intl.NumberFormat 'zh-Hans-CN-u-nu-hansfin' ).format 123456.789
+      help 'Ωfstr_348', rvs rpr ( new Intl.NumberFormat 'zh-Hant-TW-u-nu-hant'    ).format 123456.789
+      help 'Ωfstr_349', rvs rpr ( new Intl.NumberFormat 'zh-Hant-TW-u-nu-hantfin' ).format 123456.789
+      help 'Ωfstr_350', rvs rpr ( new Intl.NumberFormat 'roman' ).format 123456.789
     do =>
       # Additionally, you can use the format method of an Intl.NumberFormat instance to format a number
       # according to the locale and formatting options of the object
       numberFormat = new Intl.NumberFormat 'en-US'
-      info 'Ωfstr_320', rvs rpr numberFormat.format 123456.789 # "123,456.789"
+      info 'Ωfstr_351', rvs rpr numberFormat.format 123456.789 # "123,456.789"
     return null
 
   #=========================================================================================================
@@ -786,17 +859,17 @@ demo =
       mantissa  = '1' + bits.slice(12)
       return { sign, exponent, mantissa, }
     d = 123_456_789.123456789
-    e = d * 1e18; debug 'Ωfstr_321', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d * 1e12; debug 'Ωfstr_322', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d * 1e09; debug 'Ωfstr_323', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d * 1e06; debug 'Ωfstr_324', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d * 1e03; debug 'Ωfstr_325', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d;        debug 'Ωfstr_326', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d / 1e03; debug 'Ωfstr_327', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d / 1e06; debug 'Ωfstr_328', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d / 1e09; debug 'Ωfstr_329', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d / 1e12; debug 'Ωfstr_330', f"#{e}:34,.17;", get_mantissa_and_exponent e
-    e = d / 1e18; debug 'Ωfstr_331', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d * 1e18; debug 'Ωfstr_352', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d * 1e12; debug 'Ωfstr_353', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d * 1e09; debug 'Ωfstr_354', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d * 1e06; debug 'Ωfstr_355', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d * 1e03; debug 'Ωfstr_356', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d;        debug 'Ωfstr_357', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d / 1e03; debug 'Ωfstr_358', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d / 1e06; debug 'Ωfstr_359', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d / 1e09; debug 'Ωfstr_360', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d / 1e12; debug 'Ωfstr_361', f"#{e}:34,.17;", get_mantissa_and_exponent e
+    e = d / 1e18; debug 'Ωfstr_362', f"#{e}:34,.17;", get_mantissa_and_exponent e
     formatter = new Intl.NumberFormat 'en-US', {
       useGrouping:              false,
       # minimumFractionDigits:    40,
@@ -804,46 +877,46 @@ demo =
       minimumSignificantDigits: 16, # max allowed value is 21
       maximumSignificantDigits: 16, # max allowed value is 21
       }
-    e = d * 1e200; help 'Ωfstr_332', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e100; help 'Ωfstr_333', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e50; help 'Ωfstr_334', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e44; help 'Ωfstr_335', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e41; help 'Ωfstr_336', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e39; help 'Ωfstr_337', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e36; help 'Ωfstr_338', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e33; help 'Ωfstr_339', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e30; help 'Ωfstr_340', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e27; help 'Ωfstr_341', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e24; help 'Ωfstr_342', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e21; help 'Ωfstr_343', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e18; help 'Ωfstr_344', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e15; help 'Ωfstr_345', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e12; help 'Ωfstr_346', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e09; help 'Ωfstr_347', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e06; help 'Ωfstr_348', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d * 1e03; help 'Ωfstr_349', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e200; help 'Ωfstr_363', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e100; help 'Ωfstr_364', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e50; help 'Ωfstr_365', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e44; help 'Ωfstr_366', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e41; help 'Ωfstr_367', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e39; help 'Ωfstr_368', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e36; help 'Ωfstr_369', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e33; help 'Ωfstr_370', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e30; help 'Ωfstr_371', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e27; help 'Ωfstr_372', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e24; help 'Ωfstr_373', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e21; help 'Ωfstr_374', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e18; help 'Ωfstr_375', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e15; help 'Ωfstr_376', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e12; help 'Ωfstr_377', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e09; help 'Ωfstr_378', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e06; help 'Ωfstr_379', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d * 1e03; help 'Ωfstr_380', f"#{formatter.format e}:>60c;".replace /0/g, '*'
     echo()
-    e = d;        help 'Ωfstr_350', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d;        help 'Ωfstr_381', f"#{formatter.format e}:>60c;".replace /0/g, '*'
     echo()
-    e = d / 1e03; help 'Ωfstr_351', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e06; help 'Ωfstr_352', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e09; help 'Ωfstr_353', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e12; help 'Ωfstr_354', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e15; help 'Ωfstr_355', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e18; help 'Ωfstr_356', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e21; help 'Ωfstr_357', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e24; help 'Ωfstr_358', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e27; help 'Ωfstr_359', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e30; help 'Ωfstr_360', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e33; help 'Ωfstr_361', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e36; help 'Ωfstr_362', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e39; help 'Ωfstr_363', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e41; help 'Ωfstr_364', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e44; help 'Ωfstr_365', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e100; help 'Ωfstr_366', f"#{formatter.format e}:>60c;".replace /0/g, '*'
-    e = d / 1e200; help 'Ωfstr_367', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e03; help 'Ωfstr_382', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e06; help 'Ωfstr_383', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e09; help 'Ωfstr_384', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e12; help 'Ωfstr_385', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e15; help 'Ωfstr_386', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e18; help 'Ωfstr_387', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e21; help 'Ωfstr_388', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e24; help 'Ωfstr_389', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e27; help 'Ωfstr_390', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e30; help 'Ωfstr_391', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e33; help 'Ωfstr_392', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e36; help 'Ωfstr_393', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e39; help 'Ωfstr_394', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e41; help 'Ωfstr_395', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e44; help 'Ωfstr_396', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e100; help 'Ωfstr_397', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = d / 1e200; help 'Ωfstr_398', f"#{formatter.format e}:>60c;".replace /0/g, '*'
     echo()
-    e = 0.1 + 0.1 + 0.1;        help 'Ωfstr_368', f"#{formatter.format e}:>60c;".replace /0/g, '*'
+    e = 0.1 + 0.1 + 0.1;        help 'Ωfstr_399', f"#{formatter.format e}:>60c;".replace /0/g, '*'
     return null
 
   #=========================================================================================================
@@ -862,16 +935,16 @@ demo =
       ',###'                      ; [ 0, ',', 3, ]
       ',###,##-#:#'               ; [ 0, ',', 3, ',', 2, '-', 1, ':', 1, ]
     #-------------------------------------------------------------------------------------------------------
-    urge 'Ωfstr_369', f"#{group_digits '1'}:>20c;"
-    urge 'Ωfstr_370', f"#{group_digits '12'}:>20c;"
-    urge 'Ωfstr_371', f"#{group_digits '123'}:>20c;"
-    urge 'Ωfstr_372', f"#{group_digits '1234'}:>20c;"
-    urge 'Ωfstr_373', f"#{group_digits '12345'}:>20c;"
-    urge 'Ωfstr_374', f"#{group_digits '123456'}:>20c;"
-    urge 'Ωfstr_375', f"#{group_digits '1234567'}:>20c;"
-    urge 'Ωfstr_376', f"#{group_digits '12345678'}:>20c;"
-    urge 'Ωfstr_377', f"#{group_digits '123456789'}:>20c;"
-    urge 'Ωfstr_378', f"#{group_digits '1234567890'}:>20c;"
+    urge 'Ωfstr_400', f"#{group_digits '1'}:>20c;"
+    urge 'Ωfstr_401', f"#{group_digits '12'}:>20c;"
+    urge 'Ωfstr_402', f"#{group_digits '123'}:>20c;"
+    urge 'Ωfstr_403', f"#{group_digits '1234'}:>20c;"
+    urge 'Ωfstr_404', f"#{group_digits '12345'}:>20c;"
+    urge 'Ωfstr_405', f"#{group_digits '123456'}:>20c;"
+    urge 'Ωfstr_406', f"#{group_digits '1234567'}:>20c;"
+    urge 'Ωfstr_407', f"#{group_digits '12345678'}:>20c;"
+    urge 'Ωfstr_408', f"#{group_digits '123456789'}:>20c;"
+    urge 'Ωfstr_409', f"#{group_digits '1234567890'}:>20c;"
     #-------------------------------------------------------------------------------------------------------
     class TOBEDONE_Error extends Error
     #-------------------------------------------------------------------------------------------------------
@@ -899,20 +972,20 @@ demo =
     #-------------------------------------------------------------------------------------------------------
     demo_grouping = ( text, grouping_cfg ) ->
       # [...new Intl.Segmenter().segment( text )].map(s => s.segment)
-      urge 'Ωfstr_379', rpr grouping_cfg.join ''
+      urge 'Ωfstr_410', rpr grouping_cfg.join ''
       chrs = Array.from text
       for insertion from walk_group_steps grouping_cfg, chrs.length
         chrs.splice insertion.chr_idx, 0, insertion.marker
       return chrs.join ''
     #-------------------------------------------------------------------------------------------------------
     do =>
-      info 'Ωfstr_380', demo_grouping '98765432109876543210', [     ',', 3, ',', 2, '-', 1, ':', 1, ]
-      info 'Ωfstr_381', demo_grouping '98765432109876543210', [ 0,  ',', 3, ',', 2, '-', 1, ':', 1, ]
-      info 'Ωfstr_382', demo_grouping '98765432109876543210', [     ',', 1,                         ]
-      info 'Ωfstr_383', demo_grouping '98765432109876543210', [     ',', 2,                         ]
-      info 'Ωfstr_384', demo_grouping '98765432109876543210', [     ',', 3,                         ]
-      info 'Ωfstr_385', demo_grouping '98765432109876543210', [     ',', 4,                         ]
-      info 'Ωfstr_386', demo_grouping '98765432109876543210', [     ',', 5,                         ]
+      info 'Ωfstr_411', demo_grouping '98765432109876543210', [     ',', 3, ',', 2, '-', 1, ':', 1, ]
+      info 'Ωfstr_412', demo_grouping '98765432109876543210', [ 0,  ',', 3, ',', 2, '-', 1, ':', 1, ]
+      info 'Ωfstr_413', demo_grouping '98765432109876543210', [     ',', 1,                         ]
+      info 'Ωfstr_414', demo_grouping '98765432109876543210', [     ',', 2,                         ]
+      info 'Ωfstr_415', demo_grouping '98765432109876543210', [     ',', 3,                         ]
+      info 'Ωfstr_416', demo_grouping '98765432109876543210', [     ',', 4,                         ]
+      info 'Ωfstr_417', demo_grouping '98765432109876543210', [     ',', 5,                         ]
     #-------------------------------------------------------------------------------------------------------
     return null
 

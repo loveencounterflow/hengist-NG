@@ -82,13 +82,13 @@
     },
     //---------------------------------------------------------------------------------------------------------
     walk_tagfun_call_parts: function() {
-      var walk_nonempty_parts, walk_parts, walk_raw_nonempty_parts, walk_raw_parts, Ωt__33, Ωt__34, Ωt__35, Ωt__36, Ωt__37, Ωt__38, Ωt__39, Ωt__40, Ωt__41, Ωt__42, Ωt__43, Ωt__44, Ωt__45, Ωt__46, Ωt__47, Ωt__48, Ωt__49;
+      var walk_nonempty_parts, walk_parts, walk_raw_nonempty_parts, walk_raw_parts, Ωt__10, Ωt__11, Ωt__12, Ωt__13, Ωt__14, Ωt__15, Ωt__16, Ωt__17, Ωt__18, Ωt__19, Ωt__20, Ωt__21, Ωt__22, Ωt__23, Ωt___7, Ωt___8, Ωt___9;
       // { Html,                     } = require_html_class()
       // { escape_html_text,         } = require_escape_html_text()
       // { stackable_tagfun,         } = require_stackable_tagfun()
       ({walk_parts, walk_nonempty_parts, walk_raw_parts, walk_raw_nonempty_parts} = SFMODULES.require_tagfun_tools());
       //-------------------------------------------------------------------------------------------------------
-      this.eq((Ωt__33 = function() {
+      this.eq((Ωt___7 = function() {
         return [...(walk_parts``)];
       }), [
         {
@@ -96,7 +96,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__34 = function() {
+      this.eq((Ωt___8 = function() {
         return [...(walk_parts(""))];
       }), [
         {
@@ -104,13 +104,13 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__35 = function() {
+      this.eq((Ωt___9 = function() {
         return [...(walk_nonempty_parts``)];
       }), []);
-      this.eq((Ωt__36 = function() {
+      this.eq((Ωt__10 = function() {
         return [...(walk_nonempty_parts(''))];
       }), []);
-      this.eq((Ωt__37 = function() {
+      this.eq((Ωt__11 = function() {
         return [...(walk_parts`a`)];
       }), [
         {
@@ -118,7 +118,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__38 = function() {
+      this.eq((Ωt__12 = function() {
         return [...(walk_parts`\na`)];
       }), [
         {
@@ -126,7 +126,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__39 = function() {
+      this.eq((Ωt__13 = function() {
         return [...(walk_raw_parts`\na`)];
       }), [
         {
@@ -134,7 +134,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__40 = function() {
+      this.eq((Ωt__14 = function() {
         return [...(walk_parts`${1}`)];
       }), [
         {
@@ -150,7 +150,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__41 = function() {
+      this.eq((Ωt__15 = function() {
         return [...(walk_nonempty_parts`${1}`)];
       }), [
         {
@@ -158,7 +158,7 @@
           isa: 'value'
         }
       ]);
-      this.eq((Ωt__42 = function() {
+      this.eq((Ωt__16 = function() {
         return [...(walk_parts`a${1}`)];
       }), [
         {
@@ -174,7 +174,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__43 = function() {
+      this.eq((Ωt__17 = function() {
         return [...(walk_parts`${1}${2}`)];
       }), [
         {
@@ -198,7 +198,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__44 = function() {
+      this.eq((Ωt__18 = function() {
         return [...(walk_nonempty_parts`${1}${2}`)];
       }), [
         {
@@ -210,7 +210,7 @@
           isa: 'value'
         }
       ]);
-      this.eq((Ωt__45 = function() {
+      this.eq((Ωt__19 = function() {
         return [...(walk_parts`a${1}z`)];
       }), [
         {
@@ -226,7 +226,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__46 = function() {
+      this.eq((Ωt__20 = function() {
         return [...(walk_parts`a${1}z${2}`)];
       }), [
         {
@@ -250,7 +250,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__47 = function() {
+      this.eq((Ωt__21 = function() {
         return [...(walk_parts(`a${1}z${2}`))];
       }), [
         {
@@ -258,7 +258,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__48 = function() {
+      this.eq((Ωt__22 = function() {
         return [...(walk_parts(12))];
       }), [
         {
@@ -274,7 +274,7 @@
           isa: 'chunk'
         }
       ]);
-      this.eq((Ωt__49 = function() {
+      this.eq((Ωt__23 = function() {
         return [...(walk_nonempty_parts(12))];
       }), [
         {
@@ -285,78 +285,79 @@
       //.........................................................................................................
       return null;
     },
+    //---------------------------------------------------------------------------------------------------------
     get_next_free_filename: function() {
-      var PATH, cache_filename_re, exists, get_next_filename, get_next_free_filename, path_prefix, probes_and_matchers, Ωgnff___1, Ωgnff___2, Ωgnff___3, Ωgnff___4;
+      var PATH, cache_filename_re, exists, get_next_filename, get_next_free_filename, path_prefix, probes_and_matchers, Ωgnff__24, Ωgnff__25, Ωgnff__26, Ωgnff__27;
       ({get_next_free_filename, get_next_filename, exists, cache_filename_re} = SFMODULES.require_next_free_filename());
       PATH = require('node:path');
       //.......................................................................................................
-      this.throws((Ωgnff___1 = function() {
+      this.throws((Ωgnff__24 = function() {
         return get_next_free_filename(null);
       }), /expected a text/);
-      this.throws((Ωgnff___2 = function() {
+      this.throws((Ωgnff__25 = function() {
         return get_next_free_filename(void 0);
       }), /expected a text/);
-      this.throws((Ωgnff___3 = function() {
+      this.throws((Ωgnff__26 = function() {
         return get_next_free_filename(true);
       }), /expected a text/);
-      this.throws((Ωgnff___4 = function() {
+      this.throws((Ωgnff__27 = function() {
         return get_next_free_filename('');
       }), /expected a nonempty text/);
       //.......................................................................................................
       probes_and_matchers = [['a', [false, '~.a.0001.bricabrac-cache', '~.a.0001.bricabrac-cache']], ['README.md', [true, '~.README.md.0001.bricabrac-cache', '~.README.md.0004.bricabrac-cache']], ['~.README.md.0001.bricabrac-cache', [true, '~.README.md.0002.bricabrac-cache', '~.README.md.0004.bricabrac-cache']], ['~.README.md.0002.bricabrac-cache', [true, '~.README.md.0003.bricabrac-cache', '~.README.md.0004.bricabrac-cache']], ['~.README.md.0003.bricabrac-cache', [true, '~.README.md.0004.bricabrac-cache', '~.README.md.0004.bricabrac-cache']], ['~.README.md.0004.bricabrac-cache', [false, '~.README.md.0005.bricabrac-cache', '~.README.md.0005.bricabrac-cache']]];
       path_prefix = PATH.resolve(PATH.join(__dirname, '../../../assets/bricabrac/find-free-filename'));
       (() => {        //.......................................................................................................
-        var abs_matcher_2, abs_matcher_3, abs_path, i, len, matcher_1, matcher_2, matcher_3, path, Ωgnff___5, Ωgnff___6, Ωgnff___7;
+        var abs_matcher_2, abs_matcher_3, abs_path, i, len, matcher_1, matcher_2, matcher_3, path, Ωgnff__28, Ωgnff__29, Ωgnff__30;
         for (i = 0, len = probes_and_matchers.length; i < len; i++) {
           [path, [matcher_1, matcher_2, matcher_3]] = probes_and_matchers[i];
           abs_path = PATH.join(path_prefix, path);
           abs_matcher_2 = PATH.join(path_prefix, matcher_2);
           abs_matcher_3 = PATH.join(path_prefix, matcher_3);
-          this.eq((Ωgnff___5 = function() {
+          this.eq((Ωgnff__28 = function() {
             return exists(abs_path);
           }), matcher_1);
-          this.eq((Ωgnff___6 = function() {
+          this.eq((Ωgnff__29 = function() {
             return get_next_filename(abs_path);
           }), abs_matcher_2);
-          this.eq((Ωgnff___7 = function() {
+          this.eq((Ωgnff__30 = function() {
             return get_next_free_filename(abs_path);
           }), abs_matcher_3);
         }
         return null;
       })();
       (() => {        //.......................................................................................................
-        var i, len, matcher_1, matcher_2, matcher_3, path, rel_matcher_2, rel_matcher_3, rel_path, Ωgnff__10, Ωgnff___8, Ωgnff___9;
+        var i, len, matcher_1, matcher_2, matcher_3, path, rel_matcher_2, rel_matcher_3, rel_path, Ωgnff__31, Ωgnff__32, Ωgnff__33;
         for (i = 0, len = probes_and_matchers.length; i < len; i++) {
           [path, [matcher_1, matcher_2, matcher_3]] = probes_and_matchers[i];
           rel_path = PATH.relative(process.cwd(), PATH.join(path_prefix, path));
           rel_matcher_2 = PATH.relative(process.cwd(), PATH.join(path_prefix, matcher_2));
           rel_matcher_3 = PATH.relative(process.cwd(), PATH.join(path_prefix, matcher_3));
-          this.eq((Ωgnff___8 = function() {
+          this.eq((Ωgnff__31 = function() {
             return exists(rel_path);
           }), matcher_1);
-          this.eq((Ωgnff___9 = function() {
+          this.eq((Ωgnff__32 = function() {
             return get_next_filename(rel_path);
           }), rel_matcher_2);
-          this.eq((Ωgnff__10 = function() {
+          this.eq((Ωgnff__33 = function() {
             return get_next_free_filename(rel_path);
           }), rel_matcher_3);
         }
         return null;
       })();
       (() => {        //.......................................................................................................
-        var current_cwd, i, len, matcher_1, matcher_2, matcher_3, path, Ωgnff__11, Ωgnff__12, Ωgnff__13;
+        var current_cwd, i, len, matcher_1, matcher_2, matcher_3, path, Ωgnff__34, Ωgnff__35, Ωgnff__36;
         current_cwd = PATH.resolve(process.cwd());
         process.chdir(path_prefix);
         try {
           for (i = 0, len = probes_and_matchers.length; i < len; i++) {
             [path, [matcher_1, matcher_2, matcher_3]] = probes_and_matchers[i];
-            this.eq((Ωgnff__11 = function() {
+            this.eq((Ωgnff__34 = function() {
               return exists(path);
             }), matcher_1);
-            this.eq((Ωgnff__12 = function() {
+            this.eq((Ωgnff__35 = function() {
               return get_next_filename(path);
             }), matcher_2);
-            this.eq((Ωgnff__13 = function() {
+            this.eq((Ωgnff__36 = function() {
               return get_next_free_filename(path);
             }), matcher_3);
           }
@@ -365,6 +366,67 @@
         }
         return null;
       })();
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    ANSI: function() {
+      var ANSI, Ωgnff__37, Ωgnff__38, Ωgnff__39, Ωgnff__40, Ωgnff__41, Ωgnff__42, Ωgnff__43, Ωgnff__44;
+      ({ANSI} = SFMODULES.require_ansi());
+      this.eq((Ωgnff__37 = function() {
+        return ANSI.fg_from_hex('#a0a1a2');
+      }), '\x1B[38:2::160:161:162m');
+      this.eq((Ωgnff__38 = function() {
+        return ANSI.bg_from_hex('#a0a1a2');
+      }), '\x1B[48:2::160:161:162m');
+      this.eq((Ωgnff__39 = function() {
+        return ANSI.fg_from_dec([160, 161, 162]);
+      }), '\x1B[38:2::160:161:162m');
+      this.eq((Ωgnff__40 = function() {
+        return ANSI.bg_from_dec([160, 161, 162]);
+      }), '\x1B[48:2::160:161:162m');
+      this.eq((Ωgnff__41 = function() {
+        return ANSI.dec_from_hex('#a0a1a2');
+      }), [160, 161, 162]);
+      this.throws((Ωgnff__42 = function() {
+        return ANSI.dec_from_hex('#xxxxxx');
+      }), /not a proper hexadecimal RGB code: '#xxxxxx'/);
+      this.throws((Ωgnff__43 = function() {
+        return ANSI.dec_from_hex('#aaaaa');
+      }), /not a proper hexadecimal RGB code: '#aaaaa'/);
+      this.throws((Ωgnff__44 = function() {
+        return ANSI.dec_from_hex('#aaaaabb');
+      }), /not a proper hexadecimal RGB code: '#aaaaabb'/);
+      //.......................................................................................................
+      return null;
+    },
+    //---------------------------------------------------------------------------------------------------------
+    require_ansi_colors_and_effects: function() {
+      var C, Ωgnff__45, Ωgnff__46, Ωgnff__47, Ωgnff__48, Ωgnff__49, Ωgnff__50, Ωgnff__51;
+      ({
+        ansi_colors_and_effects: C
+      } = SFMODULES.require_ansi_colors_and_effects());
+      this.eq((Ωgnff__45 = function() {
+        return C.red;
+      }), '\x1B[38:2::255:0:16m');
+      this.eq((Ωgnff__46 = function() {
+        return C.bg_red;
+      }), '\x1B[48:2::255:0:16m');
+      this.eq((Ωgnff__47 = function() {
+        return C.overline1;
+      }), '\x1b[53m');
+      this.eq((Ωgnff__48 = function() {
+        return C.overline0;
+      }), '\x1b[55m');
+      this.eq((Ωgnff__49 = function() {
+        return C.default;
+      }), '\x1b[39m');
+      this.eq((Ωgnff__50 = function() {
+        return C.bg_default;
+      }), '\x1b[49m');
+      this.eq((Ωgnff__51 = function() {
+        return C.reset;
+      }), '\x1b[0m');
       //.......................................................................................................
       return null;
     }
@@ -390,8 +452,8 @@
     })();
   }
 
-  // f = ( ctx ) -> debug 'Ωidsp__50', ctx.arguments
-// g = ( P... ) -> debug 'Ωidsp__51', f { arguments, }
+  // f = ( ctx ) -> debug 'Ωidsp__52', ctx.arguments
+// g = ( P... ) -> debug 'Ωidsp__53', f { arguments, }
 // g 5, 'd'
 
 }).call(this);
