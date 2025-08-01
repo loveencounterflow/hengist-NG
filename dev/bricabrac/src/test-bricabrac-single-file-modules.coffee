@@ -69,17 +69,17 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   is_tagfun_call: ->
     { is_tagfun_call,                  } = SFMODULES.require_tagfun_tools()
     fn = ( P... ) -> is_tagfun_call P...
-    @eq ( Ωidsp___1 = -> fn()             ), false
-    @eq ( Ωidsp___2 = -> fn [ 1, 2, 3, ]  ), false
-    @eq ( Ωidsp___3 = -> fn"[ 1, 2, 3, ]" ), true
+    @eq ( Ωbbsfm___1 = -> fn()             ), false
+    @eq ( Ωbbsfm___2 = -> fn [ 1, 2, 3, ]  ), false
+    @eq ( Ωbbsfm___3 = -> fn"[ 1, 2, 3, ]" ), true
     return null
 
   #---------------------------------------------------------------------------------------------------------
   escape_html_text: ->
     { escape_html_text, } = SFMODULES.require_escape_html_text()
-    @eq ( Ωidsp___4 = -> escape_html_text ''                    ), ''
-    @eq ( Ωidsp___5 = -> escape_html_text 'abc'                 ), 'abc'
-    @eq ( Ωidsp___6 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
+    @eq ( Ωbbsfm___4 = -> escape_html_text ''                    ), ''
+    @eq ( Ωbbsfm___5 = -> escape_html_text 'abc'                 ), 'abc'
+    @eq ( Ωbbsfm___6 = -> escape_html_text 'abc<tag>d&e&f</tag>' ), 'abc&lt;tag&gt;d&amp;e&amp;f&lt;/tag&gt;'
     return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -92,23 +92,23 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       walk_raw_parts,
       walk_raw_nonempty_parts,  } = SFMODULES.require_tagfun_tools()
     #-------------------------------------------------------------------------------------------------------
-    @eq ( Ωt___7 = -> [ ( walk_parts""                  )..., ] ), [ { chunk: '', isa: 'chunk', }, ]
-    @eq ( Ωt___8 = -> [ ( walk_parts ""                 )..., ] ), [ { chunk: '', isa: 'chunk', }, ]
-    @eq ( Ωt___9 = -> [ ( walk_nonempty_parts""         )..., ] ), []
-    @eq ( Ωt__10 = -> [ ( walk_nonempty_parts ''        )..., ] ), []
-    @eq ( Ωt__11 = -> [ ( walk_parts"a"                 )..., ] ), [ { chunk: 'a', isa: 'chunk', }, ]
-    @eq ( Ωt__12 = -> [ ( walk_parts"\na"               )..., ] ), [ { chunk: '\na', isa: 'chunk', }, ]
-    @eq ( Ωt__13 = -> [ ( walk_raw_parts"\na"           )..., ] ), [ { chunk: '\\na', isa: 'chunk', }, ]
-    @eq ( Ωt__14 = -> [ ( walk_parts"#{1}"              )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
-    @eq ( Ωt__15 = -> [ ( walk_nonempty_parts"#{1}"     )..., ] ), [ { value: 1, isa: 'value', }, ]
-    @eq ( Ωt__16 = -> [ ( walk_parts"a#{1}"             )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
-    @eq ( Ωt__17 = -> [ ( walk_parts"#{1}#{2}"          )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, { value: 2, isa: 'value', }, { chunk: '', isa: 'chunk', } ]
-    @eq ( Ωt__18 = -> [ ( walk_nonempty_parts"#{1}#{2}" )..., ] ), [ { value: 1, isa: 'value', }, { value: 2, isa: 'value', }, ]
-    @eq ( Ωt__19 = -> [ ( walk_parts"a#{1}z"            )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: 'z', isa: 'chunk', }, ]
-    @eq ( Ωt__20 = -> [ ( walk_parts"a#{1}z#{2}"        )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: 'z', isa: 'chunk', }, { value: 2, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
-    @eq ( Ωt__21 = -> [ ( walk_parts "a#{1}z#{2}"       )..., ] ), [ { chunk: 'a1z2', isa: 'chunk', }, ]
-    @eq ( Ωt__22 = -> [ ( walk_parts 12                 )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 12, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
-    @eq ( Ωt__23 = -> [ ( walk_nonempty_parts 12        )..., ] ), [ { value: 12, isa: 'value', }, ]
+    @eq ( Ωbbsfm___7 = -> [ ( walk_parts""                  )..., ] ), [ { chunk: '', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm___8 = -> [ ( walk_parts ""                 )..., ] ), [ { chunk: '', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm___9 = -> [ ( walk_nonempty_parts""         )..., ] ), []
+    @eq ( Ωbbsfm__10 = -> [ ( walk_nonempty_parts ''        )..., ] ), []
+    @eq ( Ωbbsfm__11 = -> [ ( walk_parts"a"                 )..., ] ), [ { chunk: 'a', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__12 = -> [ ( walk_parts"\na"               )..., ] ), [ { chunk: '\na', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__13 = -> [ ( walk_raw_parts"\na"           )..., ] ), [ { chunk: '\\na', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__14 = -> [ ( walk_parts"#{1}"              )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__15 = -> [ ( walk_nonempty_parts"#{1}"     )..., ] ), [ { value: 1, isa: 'value', }, ]
+    @eq ( Ωbbsfm__16 = -> [ ( walk_parts"a#{1}"             )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__17 = -> [ ( walk_parts"#{1}#{2}"          )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: '', isa: 'chunk', }, { value: 2, isa: 'value', }, { chunk: '', isa: 'chunk', } ]
+    @eq ( Ωbbsfm__18 = -> [ ( walk_nonempty_parts"#{1}#{2}" )..., ] ), [ { value: 1, isa: 'value', }, { value: 2, isa: 'value', }, ]
+    @eq ( Ωbbsfm__19 = -> [ ( walk_parts"a#{1}z"            )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: 'z', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__20 = -> [ ( walk_parts"a#{1}z#{2}"        )..., ] ), [ { chunk: 'a', isa: 'chunk', }, { value: 1, isa: 'value', }, { chunk: 'z', isa: 'chunk', }, { value: 2, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__21 = -> [ ( walk_parts "a#{1}z#{2}"       )..., ] ), [ { chunk: 'a1z2', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__22 = -> [ ( walk_parts 12                 )..., ] ), [ { chunk: '', isa: 'chunk', }, { value: 12, isa: 'value', }, { chunk: '', isa: 'chunk', }, ]
+    @eq ( Ωbbsfm__23 = -> [ ( walk_nonempty_parts 12        )..., ] ), [ { value: 12, isa: 'value', }, ]
     #.........................................................................................................
     return null
 
@@ -120,10 +120,10 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       cache_filename_re,      } = SFMODULES.require_next_free_filename()
     PATH                        = require 'node:path'
     #.......................................................................................................
-    @throws ( Ωgnff__24 = -> get_next_free_filename null        ), /expected a text/
-    @throws ( Ωgnff__25 = -> get_next_free_filename undefined   ), /expected a text/
-    @throws ( Ωgnff__26 = -> get_next_free_filename true        ), /expected a text/
-    @throws ( Ωgnff__27 = -> get_next_free_filename ''          ), /expected a nonempty text/
+    @throws ( Ωbbsfm__24 = -> get_next_free_filename null        ), /expected a text/
+    @throws ( Ωbbsfm__25 = -> get_next_free_filename undefined   ), /expected a text/
+    @throws ( Ωbbsfm__26 = -> get_next_free_filename true        ), /expected a text/
+    @throws ( Ωbbsfm__27 = -> get_next_free_filename ''          ), /expected a nonempty text/
     #.......................................................................................................
     probes_and_matchers = [
       [ 'a',                                  [ false, '~.a.0001.bricabrac-cache',         '~.a.0001.bricabrac-cache', ], ]
@@ -140,9 +140,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         abs_path      = PATH.join path_prefix, path
         abs_matcher_2 = PATH.join path_prefix, matcher_2
         abs_matcher_3 = PATH.join path_prefix, matcher_3
-        @eq ( Ωgnff__28 = -> exists abs_path                    ), matcher_1
-        @eq ( Ωgnff__29 = -> get_next_filename       abs_path   ), abs_matcher_2
-        @eq ( Ωgnff__30 = -> get_next_free_filename  abs_path   ), abs_matcher_3
+        @eq ( Ωbbsfm__28 = -> exists abs_path                    ), matcher_1
+        @eq ( Ωbbsfm__29 = -> get_next_filename       abs_path   ), abs_matcher_2
+        @eq ( Ωbbsfm__30 = -> get_next_free_filename  abs_path   ), abs_matcher_3
       return null
     #.......................................................................................................
     do =>
@@ -150,9 +150,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         rel_path      = PATH.relative process.cwd(), PATH.join path_prefix, path
         rel_matcher_2 = PATH.relative process.cwd(), PATH.join path_prefix, matcher_2
         rel_matcher_3 = PATH.relative process.cwd(), PATH.join path_prefix, matcher_3
-        @eq ( Ωgnff__31 = -> exists rel_path                    ), matcher_1
-        @eq ( Ωgnff__32 = -> get_next_filename       rel_path   ), rel_matcher_2
-        @eq ( Ωgnff__33 = -> get_next_free_filename  rel_path   ), rel_matcher_3
+        @eq ( Ωbbsfm__31 = -> exists rel_path                    ), matcher_1
+        @eq ( Ωbbsfm__32 = -> get_next_filename       rel_path   ), rel_matcher_2
+        @eq ( Ωbbsfm__33 = -> get_next_free_filename  rel_path   ), rel_matcher_3
       return null
     #.......................................................................................................
     do =>
@@ -160,9 +160,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       process.chdir path_prefix
       try
         for [ path, [ matcher_1, matcher_2, matcher_3, ], ] in probes_and_matchers
-          @eq ( Ωgnff__34 = -> exists path                    ), matcher_1
-          @eq ( Ωgnff__35 = -> get_next_filename       path   ), matcher_2
-          @eq ( Ωgnff__36 = -> get_next_free_filename  path   ), matcher_3
+          @eq ( Ωbbsfm__34 = -> exists path                    ), matcher_1
+          @eq ( Ωbbsfm__35 = -> get_next_filename       path   ), matcher_2
+          @eq ( Ωbbsfm__36 = -> get_next_free_filename  path   ), matcher_3
       finally
         process.chdir current_cwd
       return null
@@ -172,27 +172,78 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   #---------------------------------------------------------------------------------------------------------
   ANSI: ->
     { ANSI, } = SFMODULES.require_ansi()
-    @eq     ( Ωgnff__37 = -> ANSI.fg_from_hex '#a0a1a2'           ), '\x1B[38:2::160:161:162m'
-    @eq     ( Ωgnff__38 = -> ANSI.bg_from_hex '#a0a1a2'           ), '\x1B[48:2::160:161:162m'
-    @eq     ( Ωgnff__39 = -> ANSI.fg_from_dec [ 160, 161, 162 ]   ), '\x1B[38:2::160:161:162m'
-    @eq     ( Ωgnff__40 = -> ANSI.bg_from_dec [ 160, 161, 162 ]   ), '\x1B[48:2::160:161:162m'
-    @eq     ( Ωgnff__41 = -> ANSI.dec_from_hex '#a0a1a2'          ), [ 160, 161, 162 ]
-    @throws ( Ωgnff__42 = -> ANSI.dec_from_hex '#xxxxxx'          ), /not a proper hexadecimal RGB code: '#xxxxxx'/
-    @throws ( Ωgnff__43 = -> ANSI.dec_from_hex '#aaaaa'           ), /not a proper hexadecimal RGB code: '#aaaaa'/
-    @throws ( Ωgnff__44 = -> ANSI.dec_from_hex '#aaaaabb'         ), /not a proper hexadecimal RGB code: '#aaaaabb'/
+    @eq     ( Ωbbsfm__37 = -> ANSI.fg_from_hex '#a0a1a2'           ), '\x1B[38:2::160:161:162m'
+    @eq     ( Ωbbsfm__38 = -> ANSI.bg_from_hex '#a0a1a2'           ), '\x1B[48:2::160:161:162m'
+    @eq     ( Ωbbsfm__39 = -> ANSI.fg_from_dec [ 160, 161, 162 ]   ), '\x1B[38:2::160:161:162m'
+    @eq     ( Ωbbsfm__40 = -> ANSI.bg_from_dec [ 160, 161, 162 ]   ), '\x1B[48:2::160:161:162m'
+    @eq     ( Ωbbsfm__41 = -> ANSI.dec_from_hex '#a0a1a2'          ), [ 160, 161, 162 ]
+    @throws ( Ωbbsfm__42 = -> ANSI.dec_from_hex '#xxxxxx'          ), /not a proper hexadecimal RGB code: '#xxxxxx'/
+    @throws ( Ωbbsfm__43 = -> ANSI.dec_from_hex '#aaaaa'           ), /not a proper hexadecimal RGB code: '#aaaaa'/
+    @throws ( Ωbbsfm__44 = -> ANSI.dec_from_hex '#aaaaabb'         ), /not a proper hexadecimal RGB code: '#aaaaabb'/
     #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
   require_ansi_colors_and_effects: ->
     { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
-    @eq     ( Ωgnff__45 = -> C.red              ), '\x1B[38:2::255:0:16m'
-    @eq     ( Ωgnff__46 = -> C.bg_red           ), '\x1B[48:2::255:0:16m'
-    @eq     ( Ωgnff__47 = -> C.overline1        ), '\x1b[53m'
-    @eq     ( Ωgnff__48 = -> C.overline0        ), '\x1b[55m'
-    @eq     ( Ωgnff__49 = -> C.default          ), '\x1b[39m'
-    @eq     ( Ωgnff__50 = -> C.bg_default       ), '\x1b[49m'
-    @eq     ( Ωgnff__51 = -> C.reset            ), '\x1b[0m'
+    @eq     ( Ωbbsfm__45 = -> C.red              ), '\x1B[38:2::255:0:16m'
+    @eq     ( Ωbbsfm__46 = -> C.bg_red           ), '\x1B[48:2::255:0:16m'
+    @eq     ( Ωbbsfm__47 = -> C.overline1        ), '\x1b[53m'
+    @eq     ( Ωbbsfm__48 = -> C.overline0        ), '\x1b[55m'
+    @eq     ( Ωbbsfm__49 = -> C.default          ), '\x1b[39m'
+    @eq     ( Ωbbsfm__50 = -> C.bg_default       ), '\x1b[49m'
+    @eq     ( Ωbbsfm__51 = -> C.reset            ), '\x1b[0m'
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_ansi_chunker: ->
+    { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
+    { Ansi_chunker,               } = SFMODULES.require_ansi_chunker()
+    do =>
+      echo '—————————————————————————————————————————————'
+      text  = "ABC#{ C.black + C.bg_red + C.bold + 'DEF' + C.bold0 + C.default + C.bg_default }XYZ"
+      ac    = new Ansi_chunker()
+      urge 'Ωbbsfm__52',                ac.chunkify text
+      # info 'Ωbbsfm__53', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__54', d for d from ac
+      info 'Ωbbsfm__55', ac.width
+      info 'Ωbbsfm__56', ac.length
+      info 'Ωbbsfm__57', ac.has_ansi
+      info 'Ωbbsfm__58', ac.text
+    do =>
+      echo '—————————————————————————————————————————————'
+      text  = 'ABCDEFXYZ'
+      ac    = new Ansi_chunker()
+      urge 'Ωbbsfm__59',                ac.chunkify text
+      # info 'Ωbbsfm__60', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__61', d for d from ac
+      info 'Ωbbsfm__62', ac.width
+      info 'Ωbbsfm__63', ac.length
+      info 'Ωbbsfm__64', ac.has_ansi
+      info 'Ωbbsfm__65', ac.text
+    do =>
+      echo '—————————————————————————————————————————————'
+      text  = "#{ C.black + C.bg_red + C.bold + C.bold0 + C.default + C.bg_default }"
+      ac    = new Ansi_chunker()
+      urge 'Ωbbsfm__66',                ac.chunkify text
+      # info 'Ωbbsfm__67', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__68', d for d from ac
+      info 'Ωbbsfm__69', ac.width
+      info 'Ωbbsfm__70', ac.length
+      info 'Ωbbsfm__71', ac.has_ansi
+      info 'Ωbbsfm__72', ac.text
+    do =>
+      echo '—————————————————————————————————————————————'
+      text  = ''
+      ac    = new Ansi_chunker()
+      urge 'Ωbbsfm__73',                ac.chunkify text
+      # info 'Ωbbsfm__74', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__75', d for d from ac
+      info 'Ωbbsfm__76', ac.width
+      info 'Ωbbsfm__77', ac.length
+      info 'Ωbbsfm__78', ac.has_ansi
+      info 'Ωbbsfm__79', ac.text
     #.......................................................................................................
     return null
 
@@ -206,6 +257,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
 
-  # f = ( ctx ) -> debug 'Ωidsp__52', ctx.arguments
-  # g = ( P... ) -> debug 'Ωidsp__53', f { arguments, }
+  # f = ( ctx ) -> debug 'Ωbbsfm__80', ctx.arguments
+  # g = ( P... ) -> debug 'Ωbbsfm__81', f { arguments, }
   # g 5, 'd'
