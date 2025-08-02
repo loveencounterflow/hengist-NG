@@ -505,7 +505,7 @@
   //===========================================================================================================
   if (module === require.main) {
     await (() => {
-      var CP, demo_wc_max_line_length, get_rough_unicode_category, get_wc_max_line_length, glyph, guytest_cfg, i, illegal_codepoint_patterns, len, ranges, text, texts, ucc_descriptor_from_chr, ucc_patterns;
+      var CP, cp, demo_wc_max_line_length, get_rough_unicode_category, get_wc_max_line_length, glyph, guytest_cfg, i, illegal_codepoint_patterns, len, ranges, text, texts, ucc_descriptor_from_chr, ucc_patterns;
       // demo_infinite_proxy()
       // demo_colorful_proxy()
       guytest_cfg = {
@@ -845,7 +845,8 @@
         'xa︠b︡x', // 3
         'xa︠b︡x', // 3
         'xâx', // 2
-        'x𓃵x'
+        'x𓃵x',
+        'x﷽x'
       ];
       get_wc_max_line_length = function(text) {
         var width1_txt;
@@ -882,6 +883,22 @@
         //     echo """echo '' ; echo -en 'xx#{chr}\\x1b[6n' ; tmux display-message -p '#{chr}: \#{cursor_x}' >> /tmp/output"""
         return null;
       };
+      cp = CP.spawn("echo", ['helo'], {
+        encoding: 'utf-8'
+      });
+      cp.stdin.setEncoding('utf-8');
+      cp.stdout.setEncoding('utf-8');
+      cp.stderr.setEncoding('utf-8');
+      cp.stdin.on('data', function(data) {
+        return help('Ωbbsfm__95', rpr(data)); // 0
+      });
+      cp.stdout.on('data', function(data) {
+        return urge('Ωbbsfm__96', rpr(data)); // 1
+      });
+      cp.stderr.on('data', function(data) {
+        return warn('Ωbbsfm__97', rpr(data)); // 2
+      });
+      cp.stdin.write("ls\n");
       return null;
     })();
   }

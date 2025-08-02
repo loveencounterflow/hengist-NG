@@ -441,6 +441,7 @@ if module is require.main then await do =>
     'xa︠b︡x'  # 3
     'xâx'  # 2
     'x𓃵x'
+    'x﷽x'
     ]
   get_wc_max_line_length = ( text ) ->
     width1_txt  = CP.execSync """echo #{rpr text} | wc --max-line-length""", { encoding: 'utf-8', }
@@ -466,4 +467,12 @@ if module is require.main then await do =>
         #     # echo """echo ; echo -ne "x#{chr}\\x1b[6n" ; IFS=';' read -sdR -p $'\\E[6n' ROW COL ; echo "#{chr}: $COL" >> /tmp/output"""
         #     echo """echo '' ; echo -en 'xx#{chr}\\x1b[6n' ; tmux display-message -p '#{chr}: \#{cursor_x}' >> /tmp/output"""
     return null
+  cp = CP.spawn "echo", [ 'helo', ], { encoding: 'utf-8', }
+  cp.stdin.setEncoding  'utf-8'
+  cp.stdout.setEncoding 'utf-8'
+  cp.stderr.setEncoding 'utf-8'
+  cp.stdin.on  'data', ( data ) -> help 'Ωbbsfm__95', rpr data # 0
+  cp.stdout.on 'data', ( data ) -> urge 'Ωbbsfm__96', rpr data # 1
+  cp.stderr.on 'data', ( data ) -> warn 'Ωbbsfm__97', rpr data # 2
+  cp.stdin.write "ls\n"
   return null
