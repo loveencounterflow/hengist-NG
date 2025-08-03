@@ -100,6 +100,7 @@ class Segment_width_db extends Node_sqlite
 
   #---------------------------------------------------------------------------------------------------------
   @functions:
+    #.......................................................................................................
     width_from_text:
       deterministic:  true
       varargs:        false
@@ -107,6 +108,7 @@ class Segment_width_db extends Node_sqlite
         # debug 'Ωnql___2', 'width_from_text', @cache
         ### TAINT preliminary implementation ###
         return ( Array.from text ).length
+    #.......................................................................................................
     length_from_text:
       deterministic:  true
       varargs:        false
