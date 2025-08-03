@@ -67,19 +67,15 @@ class Node_sqlite
     as the case may be. Hence we prepare statements on-demand and cache them here as needed: ###
     @statements         = {}
     #.......................................................................................................
-    ### TAINT move to proper attribute of proper class ###
-    #.......................................................................................................
-    call = ( text ) ->
-      debug 'Ωnql___1', @cache
-      ### TAINT preliminary implementation ###
-      return ( Array.from text ).length
-    call = call.bind @
-    @db.function 'width_from_text', { deterministic: true, varargs: false, }, call
-    #.......................................................................................................
-    call = ( text ) ->
-      return ( Array.from text ).length
-    call = call.bind @
-    @db.function 'length_from_text', { deterministic: true, varargs: false, }, call
+    fn_cfg_template = { deterministic: true, varargs: false, }
+    for name, fn_cfg of clasz.functions
+      if ( typeof fn_cfg ) is 'function'
+        [ call, fn_cfg, ] = [ fn_cfg, {}, ]
+      else
+        { call, } = fn_cfg
+      fn_cfg  = { fn_cfg_template..., fn_cfg, }
+      call    = call.bind @
+      @db.function name, fn_cfg, call
     #.......................................................................................................
     for name, sql of clasz.statements
       switch true
@@ -108,7 +104,7 @@ class Segment_width_db extends Node_sqlite
       deterministic:  true
       varargs:        false
       call:           ( text ) ->
-        debug 'Ωnql___3', @cache
+        debug 'Ωnql___3', 'width_from_text', @cache
         ### TAINT preliminary implementation ###
         return ( Array.from text ).length
     length_from_text:
@@ -135,11 +131,12 @@ class Segment_width_db extends Node_sqlite
     #                 set     (                 segment_width,  segment_length  ) =
     #                         ( excluded.segment_width, excluded.segment_length );"""
     #.......................................................................................................
+    ### NOTE I'd prefer 'do nothing' but that won't return the current row ###
     insert_segment: SQL"""
       insert into segments  ( segment_text  )
                     values  ( $segment_text )
-        on conflict ( segment_text ) do nothing;"""
-
+        on conflict ( segment_text ) do update set segment_text = excluded.segment_text
+        returning *;"""
   #---------------------------------------------------------------------------------------------------------
   constructor: ( db_path ) ->
     super db_path
@@ -180,25 +177,30 @@ demo = =>
       else
         segment_width   = 1 ### TAINT run wc --max-line-length ###
         segment_length  = 1
-    insert_segment.run { segment_text, }
-  insert_segment.run { segment_text: "a somewhat longer text", }
+    info 'Ωnql___8', insert_segment.all { segment_text, }
   db.execute SQL"""commit;"""
-  for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-    info 'Ωnql___8', ( rpr segment_text ), segment_width, segment_length
+  info 'Ωnql___9', insert_segment.all { segment_text: "a somewhat longer text", }
+  info 'Ωnql__10', insert_segment.all { segment_text: "a text", }
+  info 'Ωnql__11', insert_segment.all { segment_text: "A", }
+  info 'Ωnql__12', insert_segment.all { segment_text: "9", }
+  count_segments = db.prepare SQL"select count(*) from segments;"
+  info 'Ωnql__13', count_segments.all()
+  # for { segment_text, segment_width, segment_length, } from all_segments.iterate()
+  #   info 'Ωnql__14', ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
   # some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-  # debug 'Ωnql___9', some_segments.run { texts: [ 'a', 'b', ], }
+  # debug 'Ωnql__15', some_segments.run { texts: [ 'a', 'b', ], }
   some_segments = db.prepare SQL"""select * from segments where segment_text in (
     select value from json_each(?) );"""
   # some_segments.setReturnArrays true
   for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-    urge 'Ωnql__10', idx, ( rpr segment_text ), segment_width, segment_length
-  #.........................................................................................................
-  some_segments_with_widths = db.prepare SQL"""
-    select
-      $text as my_text,
-      width_from_text( $text ) as width;"""
-  debug 'Ωnql__11', some_segments_with_widths.all { text: '765', }
+    urge 'Ωnql__16', idx, ( rpr segment_text ), segment_width, segment_length
+  # #.........................................................................................................
+  # some_segments_with_widths = db.prepare SQL"""
+  #   select
+  #     $text as my_text,
+  #     width_from_text( $text ) as width;"""
+  # debug 'Ωnql__17', some_segments_with_widths.all { text: '765', }
   #.........................................................................................................
   return null
 

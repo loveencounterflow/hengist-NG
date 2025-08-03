@@ -57,38 +57,33 @@
     class Node_sqlite {
       //---------------------------------------------------------------------------------------------------------
       constructor(db_path) {
-        var call, clasz, name, ref, sql;
+        var call, clasz, fn_cfg, fn_cfg_template, name, ref, ref1, sql;
         this.db = new SQLITE.DatabaseSync(db_path);
         clasz = this.constructor;
         /* NOTE we can't just prepare all the stetments as they depend on DB objects existing or not existing,
            as the case may be. Hence we prepare statements on-demand and cache them here as needed: */
         this.statements = {};
         //.......................................................................................................
-        /* TAINT move to proper attribute of proper class */
-        //.......................................................................................................
-        call = function(text) {
-          debug('Ωnql___1', this.cache);
-          /* TAINT preliminary implementation */
-          return (Array.from(text)).length;
-        };
-        call = call.bind(this);
-        this.db.function('width_from_text', {
+        fn_cfg_template = {
           deterministic: true,
           varargs: false
-        }, call);
-        //.......................................................................................................
-        call = function(text) {
-          return (Array.from(text)).length;
         };
-        call = call.bind(this);
-        this.db.function('length_from_text', {
-          deterministic: true,
-          varargs: false
-        }, call);
-        ref = clasz.statements;
-        //.......................................................................................................
+        ref = clasz.functions;
         for (name in ref) {
-          sql = ref[name];
+          fn_cfg = ref[name];
+          if ((typeof fn_cfg) === 'function') {
+            [call, fn_cfg] = [fn_cfg, {}];
+          } else {
+            ({call} = fn_cfg);
+          }
+          fn_cfg = {...fn_cfg_template, fn_cfg};
+          call = call.bind(this);
+          this.db.function(name, fn_cfg, call);
+        }
+        ref1 = clasz.statements;
+        //.......................................................................................................
+        for (name in ref1) {
+          sql = ref1[name];
           switch (true) {
             case name.startsWith('create_table_'):
               null;
@@ -143,7 +138,7 @@
         deterministic: true,
         varargs: false,
         call: function(text) {
-          debug('Ωnql___3', this.cache);
+          debug('Ωnql___3', 'width_from_text', this.cache);
           /* TAINT preliminary implementation */
           return (Array.from(text)).length;
         }
@@ -175,9 +170,11 @@ create table segments (
       //                 set     (                 segment_width,  segment_length  ) =
       //                         ( excluded.segment_width, excluded.segment_length );"""
       //.......................................................................................................
+      /* NOTE I'd prefer 'do nothing' but that won't return the current row */
       insert_segment: SQL`insert into segments  ( segment_text  )
               values  ( $segment_text )
-  on conflict ( segment_text ) do nothing;`
+  on conflict ( segment_text ) do update set segment_text = excluded.segment_text
+  returning *;`
     };
 
     return Segment_width_db;
@@ -186,7 +183,7 @@ create table segments (
 
   //===========================================================================================================
   demo = () => {
-    var all_segments, chr, cid, cid_hex, db, db_path, i, idx, insert_segment, j, k, len, ref, segment_length, segment_text, segment_width, some_segments, some_segments_with_widths, tmp_path, ucc, v, x;
+    var all_segments, chr, cid, cid_hex, count_segments, db, db_path, i, idx, insert_segment, j, k, len, ref, segment_length, segment_text, segment_width, some_segments, tmp_path, ucc, v;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___4', k, v);
@@ -225,34 +222,42 @@ create table segments (
           segment_width = 1/* TAINT run wc --max-line-length */
           segment_length = 1;
       }
-      insert_segment.run({segment_text});
+      info('Ωnql___8', insert_segment.all({segment_text}));
     }
-    insert_segment.run({
-      segment_text: "a somewhat longer text"
-    });
     db.execute(SQL`commit;`);
-    for (x of all_segments.iterate()) {
-      ({segment_text, segment_width, segment_length} = x);
-      info('Ωnql___8', rpr(segment_text), segment_width, segment_length);
-    }
+    info('Ωnql___9', insert_segment.all({
+      segment_text: "a somewhat longer text"
+    }));
+    info('Ωnql__10', insert_segment.all({
+      segment_text: "a text"
+    }));
+    info('Ωnql__11', insert_segment.all({
+      segment_text: "A"
+    }));
+    info('Ωnql__12', insert_segment.all({
+      segment_text: "9"
+    }));
+    count_segments = db.prepare(SQL`select count(*) from segments;`);
+    info('Ωnql__13', count_segments.all());
+    // for { segment_text, segment_width, segment_length, } from all_segments.iterate()
+    //   info 'Ωnql__14', ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
     // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-    // debug 'Ωnql___9', some_segments.run { texts: [ 'a', 'b', ], }
+    // debug 'Ωnql__15', some_segments.run { texts: [ 'a', 'b', ], }
     some_segments = db.prepare(SQL`select * from segments where segment_text in (
 select value from json_each(?) );`);
     ref = some_segments.all(JSON.stringify(['a', 'b']));
     // some_segments.setReturnArrays true
     for (idx = j = 0, len = ref.length; j < len; idx = ++j) {
       ({segment_text, segment_width, segment_length} = ref[idx]);
-      urge('Ωnql__10', idx, rpr(segment_text), segment_width, segment_length);
+      urge('Ωnql__16', idx, rpr(segment_text), segment_width, segment_length);
     }
-    //.........................................................................................................
-    some_segments_with_widths = db.prepare(SQL`select
-  $text as my_text,
-  width_from_text( $text ) as width;`);
-    debug('Ωnql__11', some_segments_with_widths.all({
-      text: '765'
-    }));
+    // #.........................................................................................................
+    // some_segments_with_widths = db.prepare SQL"""
+    //   select
+    //     $text as my_text,
+    //     width_from_text( $text ) as width;"""
+    // debug 'Ωnql__17', some_segments_with_widths.all { text: '765', }
     //.........................................................................................................
     return null;
   };
