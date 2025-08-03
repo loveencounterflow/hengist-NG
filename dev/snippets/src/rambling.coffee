@@ -297,12 +297,19 @@ ramble = =>
     debug 'Ωbbsfm__34', ( "#{cid}".padStart 6, ' ' ), ( cid_hex ), ( cid & 0b1111_0000 ) >> 4, ( ( cid & 0b000_1111 ) << 1 )
   bitfield = new Uint32Array [ 1, 0xffff_ffff, 3, 4, 5, ]
   debug 'Ωbbsfm__35', ( bitfield[ 0 ].toString 2 ).padStart 32, '.'
-  debug 'Ωbbsfm__35', ( bitfield[ 1 ].toString 2 ).padStart 32, '.'
+  debug 'Ωbbsfm__36', ( bitfield[ 1 ].toString 2 ).padStart 32, '.'
   bitfield[ 1 ] += 0x1
-  debug 'Ωbbsfm__35', ( bitfield[ 1 ].toString 2 ).padStart 32, '.'
-  debug 'Ωbbsfm__35', ( bitfield[ 2 ].toString 2 ).padStart 32, '.'
-  debug 'Ωbbsfm__35', ( bitfield[ 3 ].toString 2 ).padStart 32, '.'
-  debug 'Ωbbsfm__35', ( bitfield[ 4 ].toString 2 ).padStart 32, '.'
+  debug 'Ωbbsfm__37', ( bitfield[ 1 ].toString 2 ).padStart 32, '.'
+  debug 'Ωbbsfm__38', ( bitfield[ 2 ].toString 2 ).padStart 32, '.'
+  debug 'Ωbbsfm__39', ( bitfield[ 3 ].toString 2 ).padStart 32, '.'
+  debug 'Ωbbsfm__40', ( bitfield[ 4 ].toString 2 ).padStart 32, '.'
+  findCacheDirectory = ( require 'find-cache-directory' ).default
+  debug 'Ωbbsfm__41', findCacheDirectory { name: 'effstring', create: true, }
+  envPaths = ( require 'env-paths' ).default
+  debug 'Ωbbsfm__42', k, v for k, v of envPaths 'effstring'
+
+# findCacheDirectory({name: 'unicorns'});
+# //=> '/user/path/node-modules/.cache/unicorns'
   return null
 
 #===========================================================================================================

@@ -21,7 +21,7 @@
   SFMODULES = require('../../../apps/bricabrac-single-file-modules');
 
   ramble = () => {
-    var CP, bitfield, cid, cid_hex, demo_wc_max_line_length, get_rough_unicode_category, get_wc_max_line_length, i, illegal_codepoint_patterns, ranges, texts, ucc_descriptor_from_chr, ucc_patterns, use_open_process_to_execute_shell_commands, write_unicode_chrs;
+    var CP, bitfield, cid, cid_hex, demo_wc_max_line_length, envPaths, findCacheDirectory, get_rough_unicode_category, get_wc_max_line_length, i, illegal_codepoint_patterns, k, ranges, ref, texts, ucc_descriptor_from_chr, ucc_patterns, use_open_process_to_execute_shell_commands, v, write_unicode_chrs;
     // echo "\x1b[6nxyz"
     // echo "abc\x1b[6nxyz"
     // echo "abcdef\x1b[6nxyz"
@@ -463,12 +463,25 @@
     }
     bitfield = new Uint32Array([1, 0xffff_ffff, 3, 4, 5]);
     debug('Ωbbsfm__35', (bitfield[0].toString(2)).padStart(32, '.'));
-    debug('Ωbbsfm__35', (bitfield[1].toString(2)).padStart(32, '.'));
+    debug('Ωbbsfm__36', (bitfield[1].toString(2)).padStart(32, '.'));
     bitfield[1] += 0x1;
-    debug('Ωbbsfm__35', (bitfield[1].toString(2)).padStart(32, '.'));
-    debug('Ωbbsfm__35', (bitfield[2].toString(2)).padStart(32, '.'));
-    debug('Ωbbsfm__35', (bitfield[3].toString(2)).padStart(32, '.'));
-    debug('Ωbbsfm__35', (bitfield[4].toString(2)).padStart(32, '.'));
+    debug('Ωbbsfm__37', (bitfield[1].toString(2)).padStart(32, '.'));
+    debug('Ωbbsfm__38', (bitfield[2].toString(2)).padStart(32, '.'));
+    debug('Ωbbsfm__39', (bitfield[3].toString(2)).padStart(32, '.'));
+    debug('Ωbbsfm__40', (bitfield[4].toString(2)).padStart(32, '.'));
+    findCacheDirectory = (require('find-cache-directory')).default;
+    debug('Ωbbsfm__41', findCacheDirectory({
+      name: 'effstring',
+      create: true
+    }));
+    envPaths = (require('env-paths')).default;
+    ref = envPaths('effstring');
+    for (k in ref) {
+      v = ref[k];
+      debug('Ωbbsfm__42', k, v);
+    }
+    // findCacheDirectory({name: 'unicorns'});
+    // //=> '/user/path/node-modules/.cache/unicorns'
     return null;
   };
 
