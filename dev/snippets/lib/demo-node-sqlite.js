@@ -57,7 +57,7 @@
     class Node_sqlite {
       //---------------------------------------------------------------------------------------------------------
       constructor(db_path) {
-        var cfg, clasz, name, ref, sql;
+        var call, clasz, name, ref, sql;
         this.db = new SQLITE.DatabaseSync(db_path);
         clasz = this.constructor;
         /* NOTE we can't just prepare all the stetments as they depend on DB objects existing or not existing,
@@ -65,17 +65,26 @@
         this.statements = {};
         //.......................................................................................................
         /* TAINT move to proper attribute of proper class */
-        cfg = {
-          deterministic: true,
-          varargs: false
-        };
-        this.db.function('width_from_text', cfg, function(text) {
+        //.......................................................................................................
+        call = function(text) {
+          debug('Ωnql___1', this.cache);
           /* TAINT preliminary implementation */
           return (Array.from(text)).length;
-        });
-        this.db.function('length_from_text', cfg, function(text) {
+        };
+        call = call.bind(this);
+        this.db.function('width_from_text', {
+          deterministic: true,
+          varargs: false
+        }, call);
+        //.......................................................................................................
+        call = function(text) {
           return (Array.from(text)).length;
-        });
+        };
+        call = call.bind(this);
+        this.db.function('length_from_text', {
+          deterministic: true,
+          varargs: false
+        }, call);
         ref = clasz.statements;
         //.......................................................................................................
         for (name in ref) {
@@ -88,7 +97,7 @@
               null;
               break;
             default:
-              throw new Error(`Ωnql___1 unable to parse statement name ${rpr(name)}`);
+              throw new Error(`Ωnql___2 unable to parse statement name ${rpr(name)}`);
           }
         }
         //   @[ name ] = @prepare sql
@@ -108,6 +117,8 @@
     };
 
     //---------------------------------------------------------------------------------------------------------
+    Node_sqlite.functions = {};
+
     Node_sqlite.statements = {};
 
     return Node_sqlite;
@@ -116,7 +127,35 @@
 
   Segment_width_db = (function() {
     //===========================================================================================================
-    class Segment_width_db extends Node_sqlite {};
+    class Segment_width_db extends Node_sqlite {
+      //---------------------------------------------------------------------------------------------------------
+      constructor(db_path) {
+        super(db_path);
+        this.cache = new Map();
+        return void 0;
+      }
+
+    };
+
+    //---------------------------------------------------------------------------------------------------------
+    Segment_width_db.functions = {
+      width_from_text: {
+        deterministic: true,
+        varargs: false,
+        call: function(text) {
+          debug('Ωnql___3', this.cache);
+          /* TAINT preliminary implementation */
+          return (Array.from(text)).length;
+        }
+      },
+      length_from_text: {
+        deterministic: true,
+        varargs: false,
+        call: function(text) {
+          return (Array.from(text)).length;
+        }
+      }
+    };
 
     //---------------------------------------------------------------------------------------------------------
     Segment_width_db.statements = {
@@ -150,12 +189,12 @@ create table segments (
     var all_segments, chr, cid, cid_hex, db, db_path, i, idx, insert_segment, j, k, len, ref, segment_length, segment_text, segment_width, some_segments, some_segments_with_widths, tmp_path, ucc, v, x;
     for (k in env_paths) {
       v = env_paths[k];
-      debug('Ωnql___2', k, v);
+      debug('Ωnql___4', k, v);
     }
     tmp_path = env_paths.temp;
     db_path = PATH.join(tmp_path, 'chr-widths.sqlite');
-    debug('Ωnql___3', mkdirp.sync(tmp_path));
-    debug('Ωnql___4', db = new Segment_width_db(db_path));
+    debug('Ωnql___5', mkdirp.sync(tmp_path));
+    debug('Ωnql___6', db = new Segment_width_db(db_path));
     //.........................................................................................................
     db.execute(SQL`drop table if exists segments;`);
     db.execute(db.constructor.statements.create_table_segments);
@@ -169,7 +208,7 @@ create table segments (
       cid_hex = `U+${(cid.toString(16)).padStart(4, '0')}`;
       chr = String.fromCodePoint(cid);
       ucc = get_rough_unicode_category(chr);
-      // debug 'Ωbbsfm___5', cid_hex, ( rpr chr ), ucc
+      // debug 'Ωbbsfm___7', cid_hex, ( rpr chr ), ucc
       segment_text = chr;
       segment_width = null;
       segment_length = null;
@@ -194,24 +233,24 @@ create table segments (
     db.execute(SQL`commit;`);
     for (x of all_segments.iterate()) {
       ({segment_text, segment_width, segment_length} = x);
-      info('Ωnql___6', rpr(segment_text), segment_width, segment_length);
+      info('Ωnql___8', rpr(segment_text), segment_width, segment_length);
     }
     //.........................................................................................................
     // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-    // debug 'Ωnql___7', some_segments.run { texts: [ 'a', 'b', ], }
+    // debug 'Ωnql___9', some_segments.run { texts: [ 'a', 'b', ], }
     some_segments = db.prepare(SQL`select * from segments where segment_text in (
 select value from json_each(?) );`);
     ref = some_segments.all(JSON.stringify(['a', 'b']));
     // some_segments.setReturnArrays true
     for (idx = j = 0, len = ref.length; j < len; idx = ++j) {
       ({segment_text, segment_width, segment_length} = ref[idx]);
-      urge('Ωnql___8', idx, rpr(segment_text), segment_width, segment_length);
+      urge('Ωnql__10', idx, rpr(segment_text), segment_width, segment_length);
     }
     //.........................................................................................................
     some_segments_with_widths = db.prepare(SQL`select
   $text as my_text,
   width_from_text( $text ) as width;`);
-    debug('Ωnql___9', some_segments_with_widths.all({
+    debug('Ωnql__11', some_segments_with_widths.all({
       text: '765'
     }));
     //.........................................................................................................

@@ -56,6 +56,7 @@ get_rough_unicode_category = ( chr ) ->
 class Node_sqlite
 
   #---------------------------------------------------------------------------------------------------------
+  @functions: {}
   @statements: {}
 
   #---------------------------------------------------------------------------------------------------------
@@ -67,12 +68,18 @@ class Node_sqlite
     @statements         = {}
     #.......................................................................................................
     ### TAINT move to proper attribute of proper class ###
-    cfg = { deterministic: true, varargs: false, }
-    @db.function 'width_from_text', cfg, ( text ) ->
+    #.......................................................................................................
+    call = ( text ) ->
+      debug 'Ωnql___1', @cache
       ### TAINT preliminary implementation ###
       return ( Array.from text ).length
-    @db.function 'length_from_text', cfg, ( text ) ->
+    call = call.bind @
+    @db.function 'width_from_text', { deterministic: true, varargs: false, }, call
+    #.......................................................................................................
+    call = ( text ) ->
       return ( Array.from text ).length
+    call = call.bind @
+    @db.function 'length_from_text', { deterministic: true, varargs: false, }, call
     #.......................................................................................................
     for name, sql of clasz.statements
       switch true
@@ -81,7 +88,7 @@ class Node_sqlite
         when name.startsWith 'insert_'
           null
         else
-          throw new Error "Ωnql___1 unable to parse statement name #{rpr name}"
+          throw new Error "Ωnql___2 unable to parse statement name #{rpr name}"
     #   @[ name ] = @prepare sql
     return undefined
 
@@ -94,6 +101,20 @@ class Node_sqlite
 
 #===========================================================================================================
 class Segment_width_db extends Node_sqlite
+
+  #---------------------------------------------------------------------------------------------------------
+  @functions:
+    width_from_text:
+      deterministic:  true
+      varargs:        false
+      call:           ( text ) ->
+        debug 'Ωnql___3', @cache
+        ### TAINT preliminary implementation ###
+        return ( Array.from text ).length
+    length_from_text:
+      deterministic:  true
+      varargs:        false
+      call:           ( text ) -> ( Array.from text ).length
 
   #---------------------------------------------------------------------------------------------------------
   @statements:
@@ -119,13 +140,19 @@ class Segment_width_db extends Node_sqlite
                     values  ( $segment_text )
         on conflict ( segment_text ) do nothing;"""
 
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ( db_path ) ->
+    super db_path
+    @cache = new Map()
+    return undefined
+
 #===========================================================================================================
 demo = =>
-  debug 'Ωnql___2', k, v for k, v of env_paths
+  debug 'Ωnql___4', k, v for k, v of env_paths
   tmp_path  = env_paths.temp
   db_path   = PATH.join tmp_path, 'chr-widths.sqlite'
-  debug 'Ωnql___3', mkdirp.sync tmp_path
-  debug 'Ωnql___4', db = new Segment_width_db db_path
+  debug 'Ωnql___5', mkdirp.sync tmp_path
+  debug 'Ωnql___6', db = new Segment_width_db db_path
   #.........................................................................................................
   db.execute SQL"""drop table if exists segments;"""
   db.execute db.constructor.statements.create_table_segments
@@ -139,7 +166,7 @@ demo = =>
     cid_hex = "U+#{( cid.toString 16 ).padStart 4, '0'}"
     chr     = String.fromCodePoint cid
     ucc     = get_rough_unicode_category chr
-    # debug 'Ωbbsfm___5', cid_hex, ( rpr chr ), ucc
+    # debug 'Ωbbsfm___7', cid_hex, ( rpr chr ), ucc
     segment_text    = chr
     segment_width   = null
     segment_length  = null
@@ -157,21 +184,21 @@ demo = =>
   insert_segment.run { segment_text: "a somewhat longer text", }
   db.execute SQL"""commit;"""
   for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-    info 'Ωnql___6', ( rpr segment_text ), segment_width, segment_length
+    info 'Ωnql___8', ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
   # some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-  # debug 'Ωnql___7', some_segments.run { texts: [ 'a', 'b', ], }
+  # debug 'Ωnql___9', some_segments.run { texts: [ 'a', 'b', ], }
   some_segments = db.prepare SQL"""select * from segments where segment_text in (
     select value from json_each(?) );"""
   # some_segments.setReturnArrays true
   for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-    urge 'Ωnql___8', idx, ( rpr segment_text ), segment_width, segment_length
+    urge 'Ωnql__10', idx, ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
   some_segments_with_widths = db.prepare SQL"""
     select
       $text as my_text,
       width_from_text( $text ) as width;"""
-  debug 'Ωnql___9', some_segments_with_widths.all { text: '765', }
+  debug 'Ωnql__11', some_segments_with_widths.all { text: '765', }
   #.........................................................................................................
   return null
 
