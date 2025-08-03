@@ -180,7 +180,7 @@
         deterministic: true,
         varargs: false,
         call: function(text) {
-          return (Array.from(text)).length;
+          return text.length;
         }
       }
     };

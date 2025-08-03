@@ -112,7 +112,7 @@ class Segment_width_db extends Node_sqlite
     length_from_text:
       deterministic:  true
       varargs:        false
-      call:           ( text ) -> ( Array.from text ).length
+      call:           ( text ) -> text.length
 
   #---------------------------------------------------------------------------------------------------------
   @statements:
