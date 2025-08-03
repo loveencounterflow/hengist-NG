@@ -57,12 +57,25 @@
     class Node_sqlite {
       //---------------------------------------------------------------------------------------------------------
       constructor(db_path) {
-        var clasz, name, ref, sql;
+        var cfg, clasz, name, ref, sql;
         this.db = new SQLITE.DatabaseSync(db_path);
         clasz = this.constructor;
         /* NOTE we can't just prepare all the stetments as they depend on DB objects existing or not existing,
            as the case may be. Hence we prepare statements on-demand and cache them here as needed: */
         this.statements = {};
+        //.......................................................................................................
+        /* TAINT move to proper attribute of proper class */
+        cfg = {
+          deterministic: true,
+          varargs: false
+        };
+        this.db.function('width_from_text', cfg, function(text) {
+          /* TAINT preliminary implementation */
+          return (Array.from(text)).length;
+        });
+        this.db.function('length_from_text', cfg, function(text) {
+          return (Array.from(text)).length;
+        });
         ref = clasz.statements;
         //.......................................................................................................
         for (name in ref) {
@@ -111,16 +124,21 @@
       create_table_segments: SQL`drop table if exists segments;
 create table segments (
     segment_text      text    not null primary key,
-    segment_width     integer not null,
-    segment_length    integer not null,
+    segment_width     integer not null generated always as ( width_from_text(  segment_text ) ) stored,
+    segment_length    integer not null generated always as ( length_from_text( segment_text ) ) stored,
   constraint segment_width_eqgt_zero  check ( segment_width  >= 0 ),
   constraint segment_length_eqgt_zero check ( segment_length >= 0 ) );`,
+      // #.......................................................................................................
+      // insert_segment: SQL"""
+      //   insert into segments  ( segment_text,   segment_width,  segment_length  )
+      //                 values  ( $segment_text,  $segment_width, $segment_length )
+      //     on conflict ( segment_text ) do update
+      //                 set     (                 segment_width,  segment_length  ) =
+      //                         ( excluded.segment_width, excluded.segment_length );"""
       //.......................................................................................................
-      insert_segment: SQL`insert into segments  ( segment_text,   segment_width,  segment_length  )
-              values  ( $segment_text,  $segment_width, $segment_length )
-  on conflict ( segment_text ) do update
-              set     (                 segment_width,  segment_length  ) =
-                      ( excluded.segment_width, excluded.segment_length );`
+      insert_segment: SQL`insert into segments  ( segment_text  )
+              values  ( $segment_text )
+  on conflict ( segment_text ) do nothing;`
     };
 
     return Segment_width_db;
@@ -129,7 +147,7 @@ create table segments (
 
   //===========================================================================================================
   demo = () => {
-    var all_segments, cfg, chr, cid, cid_hex, db, db_path, i, idx, insert_segment, j, k, len, ref, segment_length, segment_text, segment_width, some_segments, some_segments_with_widths, tmp_path, ucc, v, x;
+    var all_segments, chr, cid, cid_hex, db, db_path, i, idx, insert_segment, j, k, len, ref, segment_length, segment_text, segment_width, some_segments, some_segments_with_widths, tmp_path, ucc, v, x;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___2', k, v);
@@ -168,8 +186,11 @@ create table segments (
           segment_width = 1/* TAINT run wc --max-line-length */
           segment_length = 1;
       }
-      insert_segment.run({segment_text, segment_width, segment_length});
+      insert_segment.run({segment_text});
     }
+    insert_segment.run({
+      segment_text: "a somewhat longer text"
+    });
     db.execute(SQL`commit;`);
     for (x of all_segments.iterate()) {
       ({segment_text, segment_width, segment_length} = x);
@@ -187,13 +208,6 @@ select value from json_each(?) );`);
       urge('Ωnql___8', idx, rpr(segment_text), segment_width, segment_length);
     }
     //.........................................................................................................
-    cfg = {
-      deterministic: true,
-      varargs: false
-    };
-    db.db.function('width_from_text', cfg, function(text) {
-      return (Array.from(text)).length;
-    });
     some_segments_with_widths = db.prepare(SQL`select
   $text as my_text,
   width_from_text( $text ) as width;`);

@@ -66,6 +66,14 @@ class Node_sqlite
     as the case may be. Hence we prepare statements on-demand and cache them here as needed: ###
     @statements         = {}
     #.......................................................................................................
+    ### TAINT move to proper attribute of proper class ###
+    cfg = { deterministic: true, varargs: false, }
+    @db.function 'width_from_text', cfg, ( text ) ->
+      ### TAINT preliminary implementation ###
+      return ( Array.from text ).length
+    @db.function 'length_from_text', cfg, ( text ) ->
+      return ( Array.from text ).length
+    #.......................................................................................................
     for name, sql of clasz.statements
       switch true
         when name.startsWith 'create_table_'
@@ -94,17 +102,22 @@ class Segment_width_db extends Node_sqlite
       drop table if exists segments;
       create table segments (
           segment_text      text    not null primary key,
-          segment_width     integer not null,
-          segment_length    integer not null,
+          segment_width     integer not null generated always as ( width_from_text(  segment_text ) ) stored,
+          segment_length    integer not null generated always as ( length_from_text( segment_text ) ) stored,
         constraint segment_width_eqgt_zero  check ( segment_width  >= 0 ),
         constraint segment_length_eqgt_zero check ( segment_length >= 0 ) );"""
+    # #.......................................................................................................
+    # insert_segment: SQL"""
+    #   insert into segments  ( segment_text,   segment_width,  segment_length  )
+    #                 values  ( $segment_text,  $segment_width, $segment_length )
+    #     on conflict ( segment_text ) do update
+    #                 set     (                 segment_width,  segment_length  ) =
+    #                         ( excluded.segment_width, excluded.segment_length );"""
     #.......................................................................................................
     insert_segment: SQL"""
-      insert into segments  ( segment_text,   segment_width,  segment_length  )
-                    values  ( $segment_text,  $segment_width, $segment_length )
-        on conflict ( segment_text ) do update
-                    set     (                 segment_width,  segment_length  ) =
-                            ( excluded.segment_width, excluded.segment_length );"""
+      insert into segments  ( segment_text  )
+                    values  ( $segment_text )
+        on conflict ( segment_text ) do nothing;"""
 
 #===========================================================================================================
 demo = =>
@@ -140,7 +153,8 @@ demo = =>
       else
         segment_width   = 1 ### TAINT run wc --max-line-length ###
         segment_length  = 1
-    insert_segment.run { segment_text, segment_width, segment_length, }
+    insert_segment.run { segment_text, }
+  insert_segment.run { segment_text: "a somewhat longer text", }
   db.execute SQL"""commit;"""
   for { segment_text, segment_width, segment_length, } from all_segments.iterate()
     info 'Ωnql___6', ( rpr segment_text ), segment_width, segment_length
@@ -153,9 +167,6 @@ demo = =>
   for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
     urge 'Ωnql___8', idx, ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
-  cfg = { deterministic: true, varargs: false, }
-  db.db.function 'width_from_text', cfg, ( text ) ->
-    return ( Array.from text ).length
   some_segments_with_widths = db.prepare SQL"""
     select
       $text as my_text,
