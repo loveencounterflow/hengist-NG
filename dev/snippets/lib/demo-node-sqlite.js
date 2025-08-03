@@ -91,17 +91,11 @@ on conflict ( width_text ) do update set width_cells = excluded.width_cells;`);
         case 'separator':
           width_cells = 0;
           break;
-        case 'space':
-          width_cells = 1;
-          break;
-        case 'unassigned':
-          width_cells = 1;
-          break;
-        case 'mark':
-          width_cells = 1;
-          break;
         default:
-          width_cells = 1;
+          // when 'space'        then  width_cells = 1
+          // when 'unassigned'   then  width_cells = 1
+          // when 'mark'         then  width_cells = 1
+          width_cells = 1/* TAINT run wc --max-line-length */
       }
       insert_width.run({width_text, width_cells});
     }

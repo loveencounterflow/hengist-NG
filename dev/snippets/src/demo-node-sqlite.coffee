@@ -85,10 +85,10 @@ demo = =>
     switch ucc
       when 'control'      then  width_cells = 0
       when 'separator'    then  width_cells = 0
-      when 'space'        then  width_cells = 1
-      when 'unassigned'   then  width_cells = 1
-      when 'mark'         then  width_cells = 1
-      else                      width_cells = 1
+      # when 'space'        then  width_cells = 1
+      # when 'unassigned'   then  width_cells = 1
+      # when 'mark'         then  width_cells = 1
+      else                      width_cells = 1 ### TAINT run wc --max-line-length ###
     insert_width.run { width_text, width_cells, }
   db.exec SQL"""commit;"""
   for { width_text, width_cells, } from ( db.prepare SQL"select * from widths order by width_text;" ).iterate()
