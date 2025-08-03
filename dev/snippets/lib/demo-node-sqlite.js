@@ -54,7 +54,7 @@
 
   //===========================================================================================================
   demo = () => {
-    var chr, cid, cid_hex, db, db_path, i, insert_width, k, tmp_path, ucc, v, width_cells, width_text, x;
+    var all_segments, chr, cid, cid_hex, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, some_segments, tmp_path, ucc, v, x;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___1', k, v);
@@ -64,16 +64,22 @@
     debug('Ωnql___2', mkdirp.sync(tmp_path));
     debug('Ωnql___3', db = new S.DatabaseSync(db_path));
     //.........................................................................................................
-    db.exec(SQL`drop table if exists widths;`);
+    db.exec(SQL`drop table if exists segments;`);
     //.........................................................................................................
-    db.exec(SQL`create table widths (
-  width_text      text    not null primary key,
-  width_cells     integer not null );`);
+    db.exec(SQL`create table segments (
+  segment_text      text    not null primary key,
+  segment_width     integer not null,
+  segment_length    integer not null,
+  constraint segment_width_eqgt_zero  check ( segment_width >= 0  ),
+  constraint segment_length_eqgt_zero check ( segment_length >= 0 ) );`);
     //.........................................................................................................
-    insert_width = db.prepare(SQL`insert
-into widths ( width_text, width_cells )
-values ( $width_text, $width_cells )
-on conflict ( width_text ) do update set width_cells = excluded.width_cells;`);
+    insert_segment = db.prepare(SQL`insert
+into segments ( segment_text, segment_width, segment_length )
+values ( $segment_text, $segment_width, $segment_length )
+on conflict ( segment_text ) do update
+  set ( segment_width, segment_length ) = ( excluded.segment_width, excluded.segment_length );`);
+    //.........................................................................................................
+    all_segments = db.prepare(SQL`select * from segments order by segment_text;`);
     //.........................................................................................................
     db.exec(SQL`begin transaction;`);
     for (cid = i = 0x00_0000; i <= 255; cid = ++i) {
@@ -82,29 +88,36 @@ on conflict ( width_text ) do update set width_cells = excluded.width_cells;`);
       chr = String.fromCodePoint(cid);
       ucc = get_rough_unicode_category(chr);
       // debug 'Ωbbsfm___4', cid_hex, ( rpr chr ), ucc
-      width_text = chr;
-      width_cells = null;
+      segment_text = chr;
+      segment_width = null;
+      segment_length = null;
       switch (ucc) {
         case 'control':
-          width_cells = 0;
+          segment_width = 0;
+          segment_length = 0;
           break;
         case 'separator':
-          width_cells = 0;
+          segment_width = 0;
+          segment_length = 0;
           break;
         default:
-          // when 'space'        then  width_cells = 1
-          // when 'unassigned'   then  width_cells = 1
-          // when 'mark'         then  width_cells = 1
-          width_cells = 1/* TAINT run wc --max-line-length */
+          segment_width = 1/* TAINT run wc --max-line-length */
+          segment_length = 1;
       }
-      insert_width.run({width_text, width_cells});
+      insert_segment.run({segment_text, segment_width, segment_length});
     }
     db.exec(SQL`commit;`);
-    for (x of (db.prepare(SQL`select * from widths order by width_text;`)).iterate()) {
-      ({width_text, width_cells} = x);
-      info('Ωnql___5', rpr(width_text), width_cells);
+    for (x of all_segments.iterate()) {
+      ({segment_text, segment_width, segment_length} = x);
+      info('Ωnql___5', rpr(segment_text), segment_width, segment_length);
     }
-    // db.exec SQL"""create index if not exists width_cells_index on widths ( );"""
+    //.........................................................................................................
+    // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
+    // debug 'Ωnql___6', some_segments.run { texts: [ 'a', 'b', ], }
+    some_segments = db.prepare(SQL`select * from segments where segment_text in (
+select value from json_each(?) );`);
+    debug('Ωnql___7', some_segments.all(JSON.stringify(['a', 'b'])));
+    //.........................................................................................................
     return null;
   };
 
