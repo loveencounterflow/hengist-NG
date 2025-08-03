@@ -108,7 +108,9 @@ demo = =>
   # debug 'Ωnql___6', some_segments.run { texts: [ 'a', 'b', ], }
   some_segments = db.prepare SQL"""select * from segments where segment_text in (
     select value from json_each(?) );"""
-  debug 'Ωnql___7', some_segments.all ( JSON.stringify [ 'a', 'b', ] )
+  # some_segments.setReturnArrays true
+  for segment, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
+    urge 'Ωnql___7', ( rpr segment ), segment
   #.........................................................................................................
   return null
 

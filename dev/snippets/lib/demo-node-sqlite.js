@@ -54,7 +54,7 @@
 
   //===========================================================================================================
   demo = () => {
-    var all_segments, chr, cid, cid_hex, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, some_segments, tmp_path, ucc, v, x;
+    var all_segments, chr, cid, cid_hex, db, db_path, i, idx, insert_segment, j, k, len, ref, segment, segment_length, segment_text, segment_width, some_segments, tmp_path, ucc, v, x;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___1', k, v);
@@ -116,7 +116,12 @@ on conflict ( segment_text ) do update
     // debug 'Ωnql___6', some_segments.run { texts: [ 'a', 'b', ], }
     some_segments = db.prepare(SQL`select * from segments where segment_text in (
 select value from json_each(?) );`);
-    debug('Ωnql___7', some_segments.all(JSON.stringify(['a', 'b'])));
+    ref = some_segments.all(JSON.stringify(['a', 'b']));
+    // some_segments.setReturnArrays true
+    for (idx = j = 0, len = ref.length; j < len; idx = ++j) {
+      segment = ref[idx];
+      urge('Ωnql___7', rpr(segment), segment);
+    }
     //.........................................................................................................
     return null;
   };
