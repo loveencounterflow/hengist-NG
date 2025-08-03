@@ -154,7 +154,7 @@ class Segment_width_db extends Node_sqlite
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  get_segment_metrics: ( segment_texts... ) ->
+  get_many_segment_metrics: ( segment_texts... ) ->
     ### TAINT consider bundling requests into single one using JSON array ###
     segment_texts = segment_texts.flat Infinity
     R = Object.create null
@@ -170,7 +170,7 @@ class Segment_width_db extends Node_sqlite
     return R
 
   #---------------------------------------------------------------------------------------------------------
-  get_single_segment_metrics: ( segment_text ) -> return R for _, R of @get_segment_metrics segment_text
+  get_single_segment_metrics: ( segment_text ) -> return R for _, R of @get_many_segment_metrics segment_text
 
 
 #===========================================================================================================
@@ -214,7 +214,7 @@ demo = =>
   info 'Ωnql__10', insert_segment.all { segment_text: "A", }
   info 'Ωnql__11', insert_segment.all { segment_text: "9", }
   count_segments = db.prepare SQL"select count(*) from segments;"
-  info 'Ωnql__12', count_segments.all()
+  info 'Ωnql__12', count_segments.get()
   # for { segment_text, segment_width, segment_length, } from all_segments.iterate()
   #   info 'Ωnql__13', ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
@@ -227,10 +227,11 @@ demo = =>
   #   urge 'Ωnql__15', idx, ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
   info 'Ωnql__16', db.cache.size
-  info 'Ωnql__17', db.get_segment_metrics 'A', 'a somewhat longer text', 'Z'
+  info 'Ωnql__17', db.get_many_segment_metrics 'A', 'a somewhat longer text', 'Z'
   info 'Ωnql__18', db.cache.size
   info 'Ωnql__19', db.get_single_segment_metrics 'a new text'
   info 'Ωnql__20', db.cache.size
+  info 'Ωnql__12', count_segments.get()
   # info 'Ωnql__21', db.cache
   # #.........................................................................................................
   # some_segments_with_widths = db.prepare SQL"""
