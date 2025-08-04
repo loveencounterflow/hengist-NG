@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var GTNG, GUY, Node_sqlite, PATH, SFMODULES, SQL, SQLITE, Segment_width_db, Test, alert, blue, bold, debug, demo, echo, env_paths, f, get_rough_unicode_category, gold, green, grey, help, illegal_codepoint_patterns, info, inspect, log, mkdirp, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white;
+  var CP, GTNG, GUY, Node_sqlite, PATH, SFMODULES, SQL, SQLITE, Segment_width_db, Test, alert, blue, bold, debug, demo, echo, env_paths, f, get_command_line_result, get_rough_unicode_category, get_wc_max_line_length, gold, green, grey, help, illegal_codepoint_patterns, info, inspect, log, mkdirp, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -41,6 +41,8 @@
   };
 
   // surrogate:  ///^\p{C}$///v # Surrogate
+
+  //-----------------------------------------------------------------------------------------------------------
   get_rough_unicode_category = function(chr) {
     var name, pattern;
     for (name in illegal_codepoint_patterns) {
@@ -50,6 +52,23 @@
       }
     }
     return 'other';
+  };
+
+  //===========================================================================================================
+  CP = require('node:child_process');
+
+  //-----------------------------------------------------------------------------------------------------------
+  get_command_line_result = function(command, text) {
+    return (CP.execSync(command, {
+      encoding: 'utf-8',
+      input: text
+    })).replace(/\n$/s, '');
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  get_wc_max_line_length = function(text) {
+    /* thx to https://unix.stackexchange.com/a/258551/280204 */
+    return parseInt(get_command_line_result('wc --max-line-length', text), 10);
   };
 
   Node_sqlite = (function() {
@@ -170,9 +189,7 @@
         deterministic: true,
         varargs: false,
         call: function(text) {
-          // debug 'Ωnql___2', 'width_from_text', @cache
-          /* TAINT preliminary implementation */
-          return (Array.from(text)).length;
+          return get_wc_max_line_length(text);
         }
       },
       //.......................................................................................................
@@ -220,12 +237,12 @@ create table segments (
     var all_segments, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, tmp_path, ucc, v;
     for (k in env_paths) {
       v = env_paths[k];
-      debug('Ωnql___3', k, v);
+      debug('Ωnql___2', k, v);
     }
     tmp_path = env_paths.temp;
     db_path = PATH.join(tmp_path, 'chr-widths.sqlite');
-    debug('Ωnql___4', mkdirp.sync(tmp_path));
-    debug('Ωnql___5', db = new Segment_width_db(db_path));
+    debug('Ωnql___3', mkdirp.sync(tmp_path));
+    debug('Ωnql___4', db = new Segment_width_db(db_path));
     //.........................................................................................................
     db.execute(SQL`drop table if exists segments;`);
     db.execute(db.constructor.statements.create_table_segments);
@@ -239,7 +256,7 @@ create table segments (
       cid_hex = `U+${(cid.toString(16)).padStart(4, '0')}`;
       chr = String.fromCodePoint(cid);
       ucc = get_rough_unicode_category(chr);
-      // debug 'Ωbbsfm___6', cid_hex, ( rpr chr ), ucc
+      // debug 'Ωbbsfm___5', cid_hex, ( rpr chr ), ucc
       segment_text = chr;
       segment_width = null;
       segment_length = null;
@@ -256,40 +273,40 @@ create table segments (
           segment_width = 1/* TAINT run wc --max-line-length */
           segment_length = 1;
       }
-      info('Ωnql___7', insert_segment.all({segment_text}));
+      info('Ωnql___6', insert_segment.all({segment_text}));
     }
     db.execute(SQL`commit;`);
-    info('Ωnql___8', insert_segment.all({
+    info('Ωnql___7', insert_segment.all({
       segment_text: "a somewhat longer text"
     }));
-    info('Ωnql___9', insert_segment.all({
+    info('Ωnql___8', insert_segment.all({
       segment_text: "a text"
     }));
-    info('Ωnql__10', insert_segment.all({
+    info('Ωnql___9', insert_segment.all({
       segment_text: "A"
     }));
-    info('Ωnql__11', insert_segment.all({
+    info('Ωnql__10', insert_segment.all({
       segment_text: "9"
     }));
     count_segments = db.prepare(SQL`select count(*) from segments;`);
-    info('Ωnql__12', count_segments.get());
+    info('Ωnql__11', count_segments.get());
     // for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-    //   info 'Ωnql__13', ( rpr segment_text ), segment_width, segment_length
+    //   info 'Ωnql__12', ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
     // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-    // debug 'Ωnql__14', some_segments.run { texts: [ 'a', 'b', ], }
+    // debug 'Ωnql__13', some_segments.run { texts: [ 'a', 'b', ], }
     // some_segments = db.prepare SQL"""select * from segments where segment_text in (
     //   select value from json_each(?) );"""
     // some_segments.setReturnArrays true
     // for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-    //   urge 'Ωnql__15', idx, ( rpr segment_text ), segment_width, segment_length
+    //   urge 'Ωnql__14', idx, ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
-    info('Ωnql__16', db.cache.size);
-    info('Ωnql__17', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
-    info('Ωnql__18', db.cache.size);
-    info('Ωnql__19', db.get_single_segment_metrics('a new text'));
-    info('Ωnql__20', db.cache.size);
-    info('Ωnql__12', count_segments.get());
+    info('Ωnql__15', db.cache.size);
+    info('Ωnql__16', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
+    info('Ωnql__17', db.cache.size);
+    info('Ωnql__18', db.get_single_segment_metrics('a new text'));
+    info('Ωnql__19', db.cache.size);
+    info('Ωnql__20', count_segments.get());
     // info 'Ωnql__21', db.cache
     // #.........................................................................................................
     // some_segments_with_widths = db.prepare SQL"""

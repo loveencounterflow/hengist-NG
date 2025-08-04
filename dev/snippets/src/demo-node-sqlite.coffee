@@ -47,10 +47,25 @@ illegal_codepoint_patterns =
   mark:       ///^\p{M}$///v
   # surrogate:  ///^\p{C}$///v # Surrogate
 
+#-----------------------------------------------------------------------------------------------------------
 get_rough_unicode_category = ( chr ) ->
   for name, pattern of illegal_codepoint_patterns
     return name if pattern.test chr
   return 'other'
+
+
+#===========================================================================================================
+CP = require 'node:child_process'
+
+#-----------------------------------------------------------------------------------------------------------
+get_command_line_result = ( command, text ) ->
+  return ( CP.execSync command, { encoding: 'utf-8', input: text, } ).replace /\n$/s, ''
+
+#-----------------------------------------------------------------------------------------------------------
+get_wc_max_line_length = ( text ) ->
+  ### thx to https://unix.stackexchange.com/a/258551/280204 ###
+  return parseInt ( get_command_line_result 'wc --max-line-length', text ), 10
+
 
 #===========================================================================================================
 class Node_sqlite
@@ -104,10 +119,7 @@ class Segment_width_db extends Node_sqlite
     width_from_text:
       deterministic:  true
       varargs:        false
-      call:           ( text ) ->
-        # debug 'Ωnql___2', 'width_from_text', @cache
-        ### TAINT preliminary implementation ###
-        return ( Array.from text ).length
+      call:           ( text ) -> get_wc_max_line_length text
     #.......................................................................................................
     length_from_text:
       deterministic:  true
@@ -175,11 +187,11 @@ class Segment_width_db extends Node_sqlite
 
 #===========================================================================================================
 demo = =>
-  debug 'Ωnql___3', k, v for k, v of env_paths
+  debug 'Ωnql___2', k, v for k, v of env_paths
   tmp_path  = env_paths.temp
   db_path   = PATH.join tmp_path, 'chr-widths.sqlite'
-  debug 'Ωnql___4', mkdirp.sync tmp_path
-  debug 'Ωnql___5', db = new Segment_width_db db_path
+  debug 'Ωnql___3', mkdirp.sync tmp_path
+  debug 'Ωnql___4', db = new Segment_width_db db_path
   #.........................................................................................................
   db.execute SQL"""drop table if exists segments;"""
   db.execute db.constructor.statements.create_table_segments
@@ -193,7 +205,7 @@ demo = =>
     cid_hex = "U+#{( cid.toString 16 ).padStart 4, '0'}"
     chr     = String.fromCodePoint cid
     ucc     = get_rough_unicode_category chr
-    # debug 'Ωbbsfm___6', cid_hex, ( rpr chr ), ucc
+    # debug 'Ωbbsfm___5', cid_hex, ( rpr chr ), ucc
     segment_text    = chr
     segment_width   = null
     segment_length  = null
@@ -207,31 +219,31 @@ demo = =>
       else
         segment_width   = 1 ### TAINT run wc --max-line-length ###
         segment_length  = 1
-    info 'Ωnql___7', insert_segment.all { segment_text, }
+    info 'Ωnql___6', insert_segment.all { segment_text, }
   db.execute SQL"""commit;"""
-  info 'Ωnql___8', insert_segment.all { segment_text: "a somewhat longer text", }
-  info 'Ωnql___9', insert_segment.all { segment_text: "a text", }
-  info 'Ωnql__10', insert_segment.all { segment_text: "A", }
-  info 'Ωnql__11', insert_segment.all { segment_text: "9", }
+  info 'Ωnql___7', insert_segment.all { segment_text: "a somewhat longer text", }
+  info 'Ωnql___8', insert_segment.all { segment_text: "a text", }
+  info 'Ωnql___9', insert_segment.all { segment_text: "A", }
+  info 'Ωnql__10', insert_segment.all { segment_text: "9", }
   count_segments = db.prepare SQL"select count(*) from segments;"
-  info 'Ωnql__12', count_segments.get()
+  info 'Ωnql__11', count_segments.get()
   # for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-  #   info 'Ωnql__13', ( rpr segment_text ), segment_width, segment_length
+  #   info 'Ωnql__12', ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
   # some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-  # debug 'Ωnql__14', some_segments.run { texts: [ 'a', 'b', ], }
+  # debug 'Ωnql__13', some_segments.run { texts: [ 'a', 'b', ], }
   # some_segments = db.prepare SQL"""select * from segments where segment_text in (
   #   select value from json_each(?) );"""
   # some_segments.setReturnArrays true
   # for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-  #   urge 'Ωnql__15', idx, ( rpr segment_text ), segment_width, segment_length
+  #   urge 'Ωnql__14', idx, ( rpr segment_text ), segment_width, segment_length
   #.........................................................................................................
-  info 'Ωnql__16', db.cache.size
-  info 'Ωnql__17', db.get_many_segment_metrics 'A', 'a somewhat longer text', 'Z'
-  info 'Ωnql__18', db.cache.size
-  info 'Ωnql__19', db.get_single_segment_metrics 'a new text'
-  info 'Ωnql__20', db.cache.size
-  info 'Ωnql__12', count_segments.get()
+  info 'Ωnql__15', db.cache.size
+  info 'Ωnql__16', db.get_many_segment_metrics 'A', 'a somewhat longer text', 'Z'
+  info 'Ωnql__17', db.cache.size
+  info 'Ωnql__18', db.get_single_segment_metrics 'a new text'
+  info 'Ωnql__19', db.cache.size
+  info 'Ωnql__20', count_segments.get()
   # info 'Ωnql__21', db.cache
   # #.........................................................................................................
   # some_segments_with_widths = db.prepare SQL"""
