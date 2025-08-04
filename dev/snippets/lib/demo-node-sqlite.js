@@ -58,10 +58,10 @@
   CP = require('node:child_process');
 
   //-----------------------------------------------------------------------------------------------------------
-  get_command_line_result = function(command, text) {
+  get_command_line_result = function(command, input) {
     return (CP.execSync(command, {
       encoding: 'utf-8',
-      input: text
+      input
     })).replace(/\n$/s, '');
   };
 
@@ -234,7 +234,7 @@ create table segments (
 
   //===========================================================================================================
   demo = () => {
-    var all_segments, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, tmp_path, ucc, v;
+    var all_segments, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, session, tmp_path, ucc, v;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___2', k, v);
@@ -250,6 +250,7 @@ create table segments (
     //.........................................................................................................
     all_segments = db.prepare(SQL`select * from segments order by segment_text;`);
     //.........................................................................................................
+    session = db.db.createSession();
     db.execute(SQL`begin transaction;`);
     for (cid = i = 0x00_000c; i <= 80; cid = ++i) {
       chr = String.fromCodePoint(cid);
@@ -288,32 +289,45 @@ create table segments (
     info('Ωnql__10', insert_segment.all({
       segment_text: "9"
     }));
+    urge('Ωnql__11', insert_segment.all({
+      segment_text: "\n"
+    }));
+    urge('Ωnql__12', insert_segment.all({
+      segment_text: ""
+    }));
+    urge('Ωnql__13', insert_segment.all({
+      segment_text: "$(ls)"
+    }));
     count_segments = db.prepare(SQL`select count(*) from segments;`);
-    info('Ωnql__11', count_segments.get());
+    info('Ωnql__14', count_segments.get());
     // for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-    //   info 'Ωnql__12', ( rpr segment_text ), segment_width, segment_length
+    //   info 'Ωnql__15', ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
     // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-    // debug 'Ωnql__13', some_segments.run { texts: [ 'a', 'b', ], }
+    // debug 'Ωnql__16', some_segments.run { texts: [ 'a', 'b', ], }
     // some_segments = db.prepare SQL"""select * from segments where segment_text in (
     //   select value from json_each(?) );"""
     // some_segments.setReturnArrays true
     // for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-    //   urge 'Ωnql__14', idx, ( rpr segment_text ), segment_width, segment_length
+    //   urge 'Ωnql__17', idx, ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
-    info('Ωnql__15', db.cache.size);
-    info('Ωnql__16', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
-    info('Ωnql__17', db.cache.size);
-    info('Ωnql__18', db.get_single_segment_metrics('a new text'));
-    info('Ωnql__19', db.cache.size);
-    info('Ωnql__20', count_segments.get());
-    // info 'Ωnql__21', db.cache
+    info('Ωnql__18', db.cache.size);
+    info('Ωnql__19', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
+    info('Ωnql__20', db.cache.size);
+    info('Ωnql__21', db.get_single_segment_metrics('a new text'));
+    info('Ωnql__22', db.cache.size);
+    info('Ωnql__23', count_segments.get());
+    // info 'Ωnql__24', db.cache
     // #.........................................................................................................
     // some_segments_with_widths = db.prepare SQL"""
     //   select
     //     $text as my_text,
     //     width_from_text( $text ) as width;"""
-    // debug 'Ωnql__22', some_segments_with_widths.all { text: '765', }
+    // debug 'Ωnql__25', some_segments_with_widths.all { text: '765', }
+    //.........................................................................................................
+    // debug 'Ωnql__26', rpr ( Buffer.from session.patchset() ).toString 'utf-8'
+    debug('Ωnql__27', session.patchset());
+    debug('Ωnql__27', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
     //.........................................................................................................
     return null;
   };
