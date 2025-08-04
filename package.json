@@ -19,6 +19,7 @@
     "exifr": "^7.1.3",
     "exifreader": "^4.23.3",
     "exiftool-vendored": "^27.0.0",
+    "exit-hook": "^4.0.0",
     "fast-glob": "^3.3.2",
     "find-cache-directory": "^6.0.0",
     "fn-args": "^6.0.0",

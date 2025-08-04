@@ -327,7 +327,7 @@ create table segments (
     //.........................................................................................................
     // debug 'Ωnql__26', rpr ( Buffer.from session.patchset() ).toString 'utf-8'
     debug('Ωnql__27', session.patchset());
-    debug('Ωnql__27', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
+    debug('Ωnql__28', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
     //.........................................................................................................
     return null;
   };
@@ -335,7 +335,14 @@ create table segments (
   //===========================================================================================================
   if (module === require.main) {
     await (async() => {
+      var asyncExitHook, gracefulExit, on_exit;
       await demo();
+      ({
+        asyncExitHook,
+        default: on_exit,
+        gracefulExit
+      } = require('exit-hook'));
+      debug('Ωnql__29', {asyncExitHook, on_exit, gracefulExit});
       return null;
     })();
   }
