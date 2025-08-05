@@ -1,6 +1,6 @@
 (async function() {
   'use strict';
-  var CP, GTNG, GUY, Node_sqlite, PATH, SFMODULES, SQL, SQLITE, Segment_width_db, Test, alert, blue, bold, debug, demo, echo, env_paths, f, get_command_line_result, get_rough_unicode_category, get_wc_max_line_length, gold, green, grey, help, illegal_codepoint_patterns, info, inspect, log, mkdirp, nfa, plain, praise, red, reverse, rpr, urge, warn, whisper, white;
+  var CP, FS, GTNG, GUY, Node_sqlite, PATH, SFMODULES, SQL, SQLITE, Segment_width_db, Test, alert, blue, bold, debug, demo, echo, env_paths, f, get_command_line_result, get_next_free_filename, get_rough_unicode_category, get_wc_max_line_length, gold, green, grey, help, illegal_codepoint_patterns, info, inspect, log, mkdirp, nfa, on_process_exit, plain, praise, red, reverse, rpr, urge, warn, whisper, white;
 
   //===========================================================================================================
   GUY = require('guy');
@@ -29,6 +29,14 @@
   PATH = require('node:path');
 
   ({SQL} = require('../../../apps/dbay'));
+
+  ({
+    default: on_process_exit
+  } = require('exit-hook'));
+
+  ({get_next_free_filename} = SFMODULES.require_next_free_filename());
+
+  FS = require('node:fs');
 
   //===========================================================================================================
   illegal_codepoint_patterns = {
@@ -234,15 +242,35 @@ create table segments (
 
   //===========================================================================================================
   demo = () => {
-    var all_segments, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, session, tmp_path, ucc, v;
+    var all_segments, changeset, changeset_final_path, changeset_intermediate_path, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, session, tmp_path, ucc, v;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___2', k, v);
     }
     tmp_path = env_paths.temp;
     db_path = PATH.join(tmp_path, 'chr-widths.sqlite');
+    changeset_intermediate_path = get_next_free_filename(db_path);
+    changeset_final_path = `${changeset_intermediate_path}.finalized`;
+    changeset = null;
+    session = null;
     debug('Ωnql___3', mkdirp.sync(tmp_path));
     debug('Ωnql___4', db = new Segment_width_db(db_path));
+    on_process_exit(function(...P) {
+      if (session == null) {
+        return null;
+      }
+      changeset = session.patchset();
+      // changeset = session.changeset()
+      /* * to avoid application of unfinished changesets:      */
+      /*   * write changeset to intermediate file              */
+      FS.writeFileSync(changeset_intermediate_path, changeset);
+      help('Ωnql___5', `changeset written to ${changeset_intermediate_path}`);
+      /*   * rename intermediate file to final version         */
+      FS.renameSync(changeset_intermediate_path, changeset_final_path);
+      help('Ωnql___5', `changeset renamed to ${changeset_final_path}`);
+      /* * apply changeset to read-only DB                     */
+      return null;
+    });
     //.........................................................................................................
     db.execute(SQL`drop table if exists segments;`);
     db.execute(db.constructor.statements.create_table_segments);
@@ -257,7 +285,7 @@ create table segments (
       cid_hex = `U+${(cid.toString(16)).padStart(4, '0')}`;
       chr = String.fromCodePoint(cid);
       ucc = get_rough_unicode_category(chr);
-      // debug 'Ωbbsfm___5', cid_hex, ( rpr chr ), ucc
+      // debug 'Ωbbsfm___6', cid_hex, ( rpr chr ), ucc
       segment_text = chr;
       segment_width = null;
       segment_length = null;
@@ -274,60 +302,58 @@ create table segments (
           segment_width = 1/* TAINT run wc --max-line-length */
           segment_length = 1;
       }
-      info('Ωnql___6', insert_segment.all({segment_text}));
+      info('Ωnql___7', insert_segment.all({segment_text}));
     }
     db.execute(SQL`commit;`);
-    info('Ωnql___7', insert_segment.all({
+    info('Ωnql___8', insert_segment.all({
       segment_text: "a somewhat longer text"
     }));
-    info('Ωnql___8', insert_segment.all({
+    info('Ωnql___9', insert_segment.all({
       segment_text: "a text"
     }));
-    info('Ωnql___9', insert_segment.all({
+    info('Ωnql__10', insert_segment.all({
       segment_text: "A"
     }));
-    info('Ωnql__10', insert_segment.all({
+    info('Ωnql__11', insert_segment.all({
       segment_text: "9"
     }));
-    urge('Ωnql__11', insert_segment.all({
+    urge('Ωnql__12', insert_segment.all({
       segment_text: "\n"
     }));
-    urge('Ωnql__12', insert_segment.all({
+    urge('Ωnql__13', insert_segment.all({
       segment_text: ""
     }));
-    urge('Ωnql__13', insert_segment.all({
+    urge('Ωnql__14', insert_segment.all({
       segment_text: "$(ls)"
     }));
     count_segments = db.prepare(SQL`select count(*) from segments;`);
-    info('Ωnql__14', count_segments.get());
+    info('Ωnql__15', count_segments.get());
     // for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-    //   info 'Ωnql__15', ( rpr segment_text ), segment_width, segment_length
+    //   info 'Ωnql__16', ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
     // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-    // debug 'Ωnql__16', some_segments.run { texts: [ 'a', 'b', ], }
+    // debug 'Ωnql__17', some_segments.run { texts: [ 'a', 'b', ], }
     // some_segments = db.prepare SQL"""select * from segments where segment_text in (
     //   select value from json_each(?) );"""
     // some_segments.setReturnArrays true
     // for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-    //   urge 'Ωnql__17', idx, ( rpr segment_text ), segment_width, segment_length
+    //   urge 'Ωnql__18', idx, ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
-    info('Ωnql__18', db.cache.size);
-    info('Ωnql__19', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
-    info('Ωnql__20', db.cache.size);
-    info('Ωnql__21', db.get_single_segment_metrics('a new text'));
-    info('Ωnql__22', db.cache.size);
-    info('Ωnql__23', count_segments.get());
-    // info 'Ωnql__24', db.cache
+    info('Ωnql__19', db.cache.size);
+    info('Ωnql__20', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
+    info('Ωnql__21', db.cache.size);
+    info('Ωnql__22', db.get_single_segment_metrics('a new text'));
+    info('Ωnql__23', db.cache.size);
+    info('Ωnql__24', count_segments.get());
+    // info 'Ωnql__25', db.cache
     // #.........................................................................................................
     // some_segments_with_widths = db.prepare SQL"""
     //   select
     //     $text as my_text,
     //     width_from_text( $text ) as width;"""
-    // debug 'Ωnql__25', some_segments_with_widths.all { text: '765', }
+    // debug 'Ωnql__26', some_segments_with_widths.all { text: '765', }
     //.........................................................................................................
-    // debug 'Ωnql__26', rpr ( Buffer.from session.patchset() ).toString 'utf-8'
-    debug('Ωnql__27', session.patchset());
-    debug('Ωnql__28', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
+    debug('Ωnql__27', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
     //.........................................................................................................
     return null;
   };
@@ -335,14 +361,7 @@ create table segments (
   //===========================================================================================================
   if (module === require.main) {
     await (async() => {
-      var asyncExitHook, gracefulExit, on_exit;
       await demo();
-      ({
-        asyncExitHook,
-        default: on_exit,
-        gracefulExit
-      } = require('exit-hook'));
-      debug('Ωnql__29', {asyncExitHook, on_exit, gracefulExit});
       return null;
     })();
   }
