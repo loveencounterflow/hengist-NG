@@ -34,7 +34,7 @@
     default: on_process_exit
   } = require('exit-hook'));
 
-  ({get_next_free_filename} = SFMODULES.require_next_free_filename());
+  ({get_next_free_filename} = SFMODULES.unstable.require_next_free_filename());
 
   FS = require('node:fs');
 
@@ -242,20 +242,24 @@ create table segments (
 
   //===========================================================================================================
   demo = () => {
-    var all_segments, changeset, changeset_final_path, changeset_intermediate_path, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, session, tmp_path, ucc, v;
+    var all_segments, changeset, changeset_final_path_ins, changeset_intermediate_ins, chr, cid, cid_hex, count_segments, db, db_path, i, insert_segment, k, segment_length, segment_text, segment_width, session, tmp_path, ucc, v;
     for (k in env_paths) {
       v = env_paths[k];
       debug('Ωnql___2', k, v);
     }
     tmp_path = env_paths.temp;
     db_path = PATH.join(tmp_path, 'chr-widths.sqlite');
-    changeset_intermediate_path = get_next_free_filename(db_path);
-    changeset_final_path = `${changeset_intermediate_path}.finalized`;
+    changeset_intermediate_ins = `${db_path}.changeset.intermediate`;
+    changeset_final_path_ins = `${db_path}.changeset.finalized`;
     changeset = null;
     session = null;
     debug('Ωnql___3', mkdirp.sync(tmp_path));
     debug('Ωnql___4', db = new Segment_width_db(db_path));
     on_process_exit(function(...P) {
+      /* * apply changeset to read-only DB                     */
+      /*   * rename intermediate file to final version         */
+      var ac_cfg, changeset_final_path, changeset_intermediate_path;
+      debug('Ωnql___5', `segment count before changeset application: ${count_segments.get().count}`);
       if (session == null) {
         return null;
       }
@@ -263,12 +267,19 @@ create table segments (
       // changeset = session.changeset()
       /* * to avoid application of unfinished changesets:      */
       /*   * write changeset to intermediate file              */
+      changeset_intermediate_path = get_next_free_filename(changeset_intermediate_ins);
       FS.writeFileSync(changeset_intermediate_path, changeset);
-      help('Ωnql___5', `changeset written to ${changeset_intermediate_path}`);
-      /*   * rename intermediate file to final version         */
+      help('Ωnql___6', `changeset written to ${changeset_intermediate_path}`);
+      changeset_final_path = get_next_free_filename(changeset_final_path_ins);
       FS.renameSync(changeset_intermediate_path, changeset_final_path);
-      help('Ωnql___5', `changeset renamed to ${changeset_final_path}`);
-      /* * apply changeset to read-only DB                     */
+      help('Ωnql___7', `changeset renamed to ${changeset_final_path}`);
+      ac_cfg = {
+        onConflict: function(type_of_change) {
+          return SQLITE.constants.SQLITE_CHANGESET_OMIT;
+        }
+      };
+      debug('Ωnql___8', db.db.applyChangeset(FS.readFileSync(changeset_final_path), ac_cfg));
+      debug('Ωnql___9', `segment count after changeset application: ${count_segments.get().count}`);
       return null;
     });
     //.........................................................................................................
@@ -277,6 +288,7 @@ create table segments (
     insert_segment = db.prepare(db.constructor.statements.insert_segment);
     //.........................................................................................................
     all_segments = db.prepare(SQL`select * from segments order by segment_text;`);
+    count_segments = db.prepare(SQL`select count(*) as count from segments;`);
     //.........................................................................................................
     session = db.db.createSession();
     db.execute(SQL`begin transaction;`);
@@ -285,7 +297,7 @@ create table segments (
       cid_hex = `U+${(cid.toString(16)).padStart(4, '0')}`;
       chr = String.fromCodePoint(cid);
       ucc = get_rough_unicode_category(chr);
-      // debug 'Ωbbsfm___6', cid_hex, ( rpr chr ), ucc
+      // debug 'Ωbbsfm__10', cid_hex, ( rpr chr ), ucc
       segment_text = chr;
       segment_width = null;
       segment_length = null;
@@ -302,58 +314,58 @@ create table segments (
           segment_width = 1/* TAINT run wc --max-line-length */
           segment_length = 1;
       }
-      info('Ωnql___7', insert_segment.all({segment_text}));
+      info('Ωnql__11', insert_segment.all({segment_text}));
     }
     db.execute(SQL`commit;`);
-    info('Ωnql___8', insert_segment.all({
+    info('Ωnql__12', insert_segment.all({
       segment_text: "a somewhat longer text"
     }));
-    info('Ωnql___9', insert_segment.all({
+    info('Ωnql__13', insert_segment.all({
       segment_text: "a text"
     }));
-    info('Ωnql__10', insert_segment.all({
+    info('Ωnql__14', insert_segment.all({
       segment_text: "A"
     }));
-    info('Ωnql__11', insert_segment.all({
+    info('Ωnql__15', insert_segment.all({
       segment_text: "9"
     }));
-    urge('Ωnql__12', insert_segment.all({
+    urge('Ωnql__16', insert_segment.all({
       segment_text: "\n"
     }));
-    urge('Ωnql__13', insert_segment.all({
+    urge('Ωnql__17', insert_segment.all({
       segment_text: ""
     }));
-    urge('Ωnql__14', insert_segment.all({
+    urge('Ωnql__18', insert_segment.all({
       segment_text: "$(ls)"
     }));
-    count_segments = db.prepare(SQL`select count(*) from segments;`);
-    info('Ωnql__15', count_segments.get());
     // for { segment_text, segment_width, segment_length, } from all_segments.iterate()
-    //   info 'Ωnql__16', ( rpr segment_text ), segment_width, segment_length
+    //   info 'Ωnql__19', ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
     // some_segments = db.prepare SQL"""select * from segments where segment_text in ( $texts );"""
-    // debug 'Ωnql__17', some_segments.run { texts: [ 'a', 'b', ], }
+    // debug 'Ωnql__20', some_segments.run { texts: [ 'a', 'b', ], }
     // some_segments = db.prepare SQL"""select * from segments where segment_text in (
     //   select value from json_each(?) );"""
     // some_segments.setReturnArrays true
     // for { segment_text, segment_width, segment_length, }, idx in some_segments.all ( JSON.stringify [ 'a', 'b', ] )
-    //   urge 'Ωnql__18', idx, ( rpr segment_text ), segment_width, segment_length
+    //   urge 'Ωnql__21', idx, ( rpr segment_text ), segment_width, segment_length
     //.........................................................................................................
-    info('Ωnql__19', db.cache.size);
-    info('Ωnql__20', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
-    info('Ωnql__21', db.cache.size);
-    info('Ωnql__22', db.get_single_segment_metrics('a new text'));
-    info('Ωnql__23', db.cache.size);
-    info('Ωnql__24', count_segments.get());
-    // info 'Ωnql__25', db.cache
+    info('Ωnql__22', db.cache.size);
+    info('Ωnql__23', db.get_many_segment_metrics('A', 'a somewhat longer text', 'Z'));
+    info('Ωnql__24', db.cache.size);
+    info('Ωnql__25', db.get_single_segment_metrics('a new text'));
+    info('Ωnql__26', db.get_single_segment_metrics('another new text'));
+    info('Ωnql__27', db.get_single_segment_metrics('xxxxxxxxxxxxxxxx'));
+    info('Ωnql__28', db.cache.size);
+    info('Ωnql__29', count_segments.get());
+    // info 'Ωnql__30', db.cache
     // #.........................................................................................................
     // some_segments_with_widths = db.prepare SQL"""
     //   select
     //     $text as my_text,
     //     width_from_text( $text ) as width;"""
-    // debug 'Ωnql__26', some_segments_with_widths.all { text: '765', }
+    // debug 'Ωnql__31', some_segments_with_widths.all { text: '765', }
     //.........................................................................................................
-    debug('Ωnql__27', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
+    debug('Ωnql__32', (require('node:fs')).writeFileSync('/tmp/changeset.bin', session.patchset()));
     //.........................................................................................................
     return null;
   };
