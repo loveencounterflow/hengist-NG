@@ -166,14 +166,15 @@ Excluded:
         # wc_max_ll:  get_wc_max_line_length
       for name, fn of participants
         t0 = bigint_from_hrtime process.hrtime()
-        console.time name
+        # console.time name
         for _ in [ 0 .. 1e4 ]
           for [ probe, matcher, ] in probes_and_matchers
             w1 = fn probe
           # console.timeLog name
-        console.timeEnd name
+        # console.timeEnd name
         t1 = bigint_from_hrtime process.hrtime()
-        debug 'Ω___6', name, t1 - t0
+        # debug 'Ω___6', name, t1 - t0
+        debug 'Ω___6', name, f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
     #.......................................................................................................
     return null
