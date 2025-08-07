@@ -140,6 +140,7 @@ Excluded:
       [ 'xאבגx', 5, ]
       [ 'x۩۝۞x', 4, ]
       [ 'xདྦོང་x', 5, ]
+      [ 'x𰂀𰂁𰂂𰂃𰂄x', 12, ]
       # [ ( red 'abc' ), 3, ]
       ]
     #.......................................................................................................
@@ -167,7 +168,7 @@ Excluded:
       for name, fn of participants
         t0 = bigint_from_hrtime process.hrtime()
         # console.time name
-        for _ in [ 0 .. 1e4 ]
+        for _ in [ 0 .. 5e3 ]
           for [ probe, matcher, ] in probes_and_matchers
             w1 = fn probe
           # console.timeLog name
