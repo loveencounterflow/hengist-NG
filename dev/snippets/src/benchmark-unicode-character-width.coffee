@@ -157,6 +157,25 @@ Excluded:
       info    'Ω___3', f"#{''}:>5c; #{''}:>4c; #{error_counts[0]}:>4.0f;  #{error_counts[1]}:>4.0f;  #{error_counts[2]}:>4.0f;  #{error_counts[3]}:>4.0f; "
       return null
     #.......................................................................................................
+    do =>
+      bigint_from_hrtime = ([ s, ns, ]) -> ( BigInt s ) * 1_000_000_000n + ( BigInt ns )
+      participants =
+        siso_stwi:  siso_stwi_get_width
+        myco_wcwi:  myco_wcwi_get_width
+        mahe_wcst:  mahe_wcst_get_width
+        # wc_max_ll:  get_wc_max_line_length
+      for name, fn of participants
+        t0 = bigint_from_hrtime process.hrtime()
+        console.time name
+        for _ in [ 0 .. 1e4 ]
+          for [ probe, matcher, ] in probes_and_matchers
+            w1 = fn probe
+          # console.timeLog name
+        console.timeEnd name
+        t1 = bigint_from_hrtime process.hrtime()
+        debug 'Ω___6', name, t1 - t0
+      return null
+    #.......................................................................................................
     return null
 
 
