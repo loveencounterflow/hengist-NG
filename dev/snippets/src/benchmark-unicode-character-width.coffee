@@ -144,15 +144,17 @@ Excluded:
       ]
     #.......................................................................................................
     do =>
+      error_counts = [ 0, 0, 0, 0, ]
       for [ probe, matcher, ] in probes_and_matchers
-        w1        = siso_stwi_get_width     probe; w1r = reverse ( if w1 is matcher then green else red ) f" #{w1}:>3c; "
-        w2        = myco_wcwi_get_width     probe; w2r = reverse ( if w2 is matcher then green else red ) f" #{w2}:>3c; "
-        w3        = mahe_wcst_get_width     probe; w3r = reverse ( if w3 is matcher then green else red ) f" #{w3}:>3c; "
-        w4        = get_wc_max_line_length  probe; w4r = reverse ( if w4 is matcher then green else red ) f" #{w4}:>3c; "
+        w1        = siso_stwi_get_width     probe; w1r = reverse ( if w1 is matcher then green else do -> error_counts[ 0 ]++; red ) f" #{w1}:>3c; "
+        w2        = myco_wcwi_get_width     probe; w2r = reverse ( if w2 is matcher then green else do -> error_counts[ 1 ]++; red ) f" #{w2}:>3c; "
+        w3        = mahe_wcst_get_width     probe; w3r = reverse ( if w3 is matcher then green else do -> error_counts[ 2 ]++; red ) f" #{w3}:>3c; "
+        w4        = get_wc_max_line_length  probe; w4r = reverse ( if w4 is matcher then green else do -> error_counts[ 3 ]++; red ) f" #{w4}:>3c; "
         same      = w1 == w2 == w3 == w4 == matcher
         same_rpr  = GUY.trm.reverse GUY.trm.truth same
         whisper 'Ω___1', f"#{same_rpr}:>5c;                               12345678901234567890" unless same
         help    'Ω___2', f"#{same_rpr}:>5c; #{matcher}:>4.0f; #{w1r} #{w2r} #{w3r} #{w4r} #{rpr probe}"
+      info    'Ω___3', f"#{''}:>5c; #{''}:>4c; #{error_counts[0]}:>4.0f;  #{error_counts[1]}:>4.0f;  #{error_counts[2]}:>4.0f;  #{error_counts[3]}:>4.0f; "
       return null
     #.......................................................................................................
     return null
