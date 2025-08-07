@@ -125,6 +125,12 @@ importers:
       strip-ansi:
         specifier: ^7.1.0
         version: 7.1.0
+      wcstring:
+        specifier: ^2.1.1
+        version: 2.1.1
+      wcwidth.js:
+        specifier: ^2.0.0
+        version: 2.0.0
       zx:
         specifier: ^8.1.9
         version: 8.1.9
@@ -710,6 +716,10 @@ packages:
 
   wcstring@2.1.1:
     resolution: {integrity: sha512-81yoFUY/2Fw4RFzIkrlC47g7023/XkKofj62CNFT1kdZn6z7o2xhz8ffR7Wat76SuJTmrFNLmGDd7FLaZsIo5A==}
+
+  wcwidth.js@2.0.0:
+    resolution: {integrity: sha512-hUqARuCw/pZHnBrrc154Fbj60eZ0Z7MCAv1jrRXOL+44mwCJYdNDPfIYWcLqivMpQf1X08/bJ30nMiaQ6rVOgw==}
+    engines: {node: '>=20.0.0'}
 
   webguy@5.2.1:
     resolution: {integrity: sha512-wI3/JPpQjcnsTjZbh+dtAt2ZbSvC2pIOhheiwg2YrUY65vZSRAIP/flTn8anMmvYWTMJjxGIqxC/NvDUob2cUg==}
@@ -1435,6 +1445,8 @@ snapshots:
     dependencies:
       varsize-string: 2.2.2
       wcsize: 1.0.0
+
+  wcwidth.js@2.0.0: {}
 
   webguy@5.2.1:
     dependencies:
