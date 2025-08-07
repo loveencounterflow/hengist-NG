@@ -259,32 +259,6 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     #.......................................................................................................
     return null
 
-  #---------------------------------------------------------------------------------------------------------
-  require_ansi_chunker: ->
-    { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
-    { Ansi_chunker,               } = SFMODULES.require_ansi_chunker()
-    #.......................................................................................................
-    do =>
-      debug 'Ωbbsfm__52', require 'wcwidth.js'
-      debug 'Ωbbsfm__52', require 'wcstring'
-      ###
-      Excluded:
-
-        * [**`wcsize`**](https://github.com/martinheidegger/wcsize): not very well usable in modern
-          environments as `wcsize`, according to the docs, "differ[...]s from both [`wcwidth` and
-          `visualwidth-js`] by only returning the width of one character (as integer!)", meaning that it
-          cannot, by construction, handle composed Latin accented letters, or let alone multi-codepoint
-          emoji. It also struggles with Unicode surrogate handling, at least in trying to make sense of them
-          in the `README.md`.
-
-        * [**`visualwidth-js`**](https://github.com/tokuhirom/visualwidth-js): too old, started ca. 2011,
-          last commit from ca. 2015
-
-      ###
-      return null
-    #.......................................................................................................
-    return null
-
 
 
 #===========================================================================================================

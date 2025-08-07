@@ -109,13 +109,50 @@ Excluded:
 @benchmarks = benchmarks =
 
   #---------------------------------------------------------------------------------------------------------
-  require_ansi_chunker: ->
+  fn: ->
     # { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
     # { Ansi_chunker,               } = SFMODULES.require_ansi_chunker()
     #.......................................................................................................
+    { default: siso_stwi_get_width,  }  = require 'string-width'  ### sindresorhus/string-width ###
+    { default: myco_wcwi_get_width,  }  = require 'wcwidth.js'    ### mycoboco/wcwidth.js ###
+    _mahe_wcst_get_width                = require 'wcstring'      ### martinheidegger/wcstring ###
+    mahe_wcst_get_width                 = ( text ) -> ( _mahe_wcst_get_width text ).size()
+    { get_wc_max_line_length, }         = SFMODULES.unstable.require_command_line_tools()
+    #.......................................................................................................
+    probes_and_matchers = [
+      [ 'xxx', 3, ]
+      [ 'x🙋x', 4, ]
+      [ 'x🙋🏽x', 6, ]
+      [ 'x쒇x', 4, ]
+      [ 'x별x', 4, ]
+      [ 'xㅂ ㅕ ㄹx', 10, ]
+      [ 'xㅂㅕㄹx', 8, ]
+      [ 'xﾲￊﾩx', 5, ]
+      [ 'x별Lx', 5, ]
+      [ 'xa︠b︡x', 4, ]
+      [ 'xa︠b︡x', 4, ]
+      [ 'xâx', 3, ]
+      [ 'x𓃵x', 3, ]
+      [ 'x﷽x', 3, ]
+      [ 'b͝a', 2, ]
+      [ 'a͠o', 2, ]
+      [ 'x͸xx', 4, ]
+      [ 'xאבגx', 5, ]
+      [ 'x۩۝۞x', 4, ]
+      [ 'xདྦོང་x', 5, ]
+      # [ ( red 'abc' ), 3, ]
+      ]
+    #.......................................................................................................
     do =>
-      debug 'Ωbmwc___1', require 'wcwidth.js' ### https://github.com/mycoboco/wcwidth.js ###
-      debug 'Ωbmwc___2', require 'wcstring' ### https://github.com/martinheidegger/wcstring ###
+      for [ probe, matcher, ] in probes_and_matchers
+        w1        = siso_stwi_get_width     probe; w1r = reverse ( if w1 is matcher then green else red ) f" #{w1}:>3c; "
+        w2        = myco_wcwi_get_width     probe; w2r = reverse ( if w2 is matcher then green else red ) f" #{w2}:>3c; "
+        w3        = mahe_wcst_get_width     probe; w3r = reverse ( if w3 is matcher then green else red ) f" #{w3}:>3c; "
+        w4        = get_wc_max_line_length  probe; w4r = reverse ( if w4 is matcher then green else red ) f" #{w4}:>3c; "
+        same      = w1 == w2 == w3 == w4 == matcher
+        same_rpr  = GUY.trm.reverse GUY.trm.truth same
+        whisper 'Ω___1', f"#{same_rpr}:>5c;                               12345678901234567890" unless same
+        help    'Ω___2', f"#{same_rpr}:>5c; #{matcher}:>4.0f; #{w1r} #{w2r} #{w3r} #{w4r} #{rpr probe}"
       return null
     #.......................................................................................................
     return null
