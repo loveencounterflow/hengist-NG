@@ -112,13 +112,31 @@ Excluded:
   fn: ->
     { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
     { build_chr_gauge             } = SFMODULES.require_chr_gauge()
-    # { Ansi_chunker,               } = SFMODULES.require_ansi_chunker()
+    { Ansi_chunker,
+      js_segmentize,              } = SFMODULES.require_ansi_chunker()
     #.......................................................................................................
     { default: siso_stwi_get_width,  }  = require 'string-width'  ### sindresorhus/string-width ###
     { default: myco_wcwi_get_width,  }  = require 'wcwidth.js'    ### mycoboco/wcwidth.js ###
     _mahe_wcst_get_width                = require 'wcstring'      ### martinheidegger/wcstring ###
     mahe_wcst_get_width                 = ( text ) -> ( _mahe_wcst_get_width text ).size()
     { get_wc_max_line_length, }         = SFMODULES.unstable.require_command_line_tools()
+    #.......................................................................................................
+    cache_1 = new Map()
+    siso_cch1_get_width = ( text ) ->
+      return R if ( R = cache_1.get text )?
+      cache_1.set text, R = siso_stwi_get_width text
+      return R
+    #.......................................................................................................
+    cache_2 = new Map()
+    siso_cch2_get_width = ( text ) ->
+      R = 0
+      for segment in segments = js_segmentize text
+        unless ( width = cache_2.get segment )?
+          cache_2.set segment, width = siso_stwi_get_width segment
+        R += width
+      return R
+    #.......................................................................................................
+    gauge_60 = build_chr_gauge { length: 60, }
     #.......................................................................................................
     probes_and_matchers = [
       [ 'xxx', 3, ]
@@ -145,41 +163,44 @@ Excluded:
       [ 'x𐋡𐋢𐋣𐋤𐋥𐋦😢😣😤😴😷🙤🙥🙲🙳🙴🙼🙽🙾🙿🚇🝖🞧𝐀𝐁𝐂𝐃⟀⟁⟂⟃x', 39, ]
       [ 'x⿼⿽⿾⿿⿻x', 8, ]
       [ 'x⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻x', 26, ]
-      [ 'x᝭ᄝۍஃᏓ߿ķᛜഥ፧Ք٘🍇ੇᏉ📈፭˓🕽ࢀ௽Ⴅᛇ᝖🍻ɇ᛾⛄ኚཅᚲx', 26, ]
+      [ 'x᝭ᄝۍஃᏓ߿ķᛜഥ፧Ք٘🍇ੇᏉ📈፭˓🕽ࢀ௽Ⴅᛇ᝖🍻ɇ᛾⛄ኚཅᚲx', 35, ]
       [ 'x඗Ǚર📎^̊ྑݱ଀Ȉᇟവ💁૭Ǽᛀ։ઈ̒🔑৆ǖآάڰ৶ᔾླыବணx', 26, ]
-      [ 'xАঁААѣАܘѣॐȲАܘঁ̃ѣȲѣ̃ѣঁސݧॐ̃ॐx', 26, ]
-      [ 'xঁАސ̃ܘॐАѣȲАݧॐܘѣȲঁܘॐܘঁॐݧݧސॐx', 26, ]
-      [ 'x0Ã豲Û򸮍[頔쯞&ٸ𽃸U套9笗a䘫}ҭⴲɔI幙6󏴃エEf򒟀΁?牃x', 0, ]
-      [ 'xύ΍򋁥%əʘޜ𢍬´ِ򣑥^Γ𰛥E}aӇ{Մ$G贲]𿒕Y}򷟇򢏙x', 0, ]
-      [ 'x9󮊘ۆ󅉨򌷺󬥘کԶiޘ5罌塕Ĵ3ѷ夎uȸ򼳸󭃭񳌴Q~CK䱮᣼W>竦x', 0, ]
-      [ 'x할S􂿚󙏰r򇜅h󈫫񅦵ۿ㙛󞝶NΕ󮀞񰑸򟞮𰊦턝䑭ш򅈺ϛɠ`°jk䂾䢯􅌱곢x', 0, ]
-      [ 'x񉃓򍦎P𼻞ӏ9쯬ܼӬ撗򞅛߰梡𮦦惺o􎌕觾ץߏ㧤ၲԼ哋𛧦켈ۮ$픕祿ꉀx', 0, ]
-      [ 'x😀🐱🌟🚀🍕x', 26, ]
-      [ 'x𓀀𓁐𓃰𓆣𓂀x', 26, ]
-      [ 'xx', 26, ]
-      [ 'xx', 26, ]
+      [ 'xАঁААѣАܘѣॐȲАܘঁ̃ѣȲѣ̃ѣঁސݧॐ̃ॐx', 21, ]
+      [ 'xঁАސ̃ܘॐАѣȲАݧॐܘѣȲঁܘॐܘঁॐݧݧސॐx', 23, ]
+      [ 'x0Ã豲Û򸮍[頔쯞&ٸ𽃸U套9笗a䘫}ҭⴲɔI幙6󏴃エEf򒟀΁?牃x', 44, ]
+      [ 'xύ΍򋁥%əʘޜ𢍬´ِ򣑥^Γ𰛥E}aӇ{Մ$G贲]𿒕Y}򷟇򢏙x', 37, ]
+      [ 'x9󮊘ۆ󅉨򌷺󬥘کԶiޘ5罌塕Ĵ3ѷ夎uȸ򼳸󭃭񳌴Q~CK䱮᣼W>竦x', 39, ]
+      [ 'x할S􂿚󙏰r򇜅h󈫫񅦵ۿ㙛󞝶NΕ󮀞񰑸򟞮𰊦턝䑭ш򅈺ϛɠ`°jk䂾䢯􅌱곢x', 42, ]
+      [ 'x񉃓򍦎P𼻞ӏ9쯬ܼӬ撗򞅛߰梡𮦦惺o􎌕觾ץߏ㧤ၲԼ哋𛧦켈ۮ$픕祿ꉀx', 44, ]
+      [ 'x😀🐱🌟🚀🍕x', 12, ]
+      [ 'x𓀀𓁐𓃰𓆣𓂀x', 7, ]
+      [ 'x𝐀𝐁𝐂𝐠𝐡𝐢𝑀𝑁𝑂𝑐𝑑𝑒𝒰𝒱𝒲𝓀𝓁𝓂𝔐𝔑𝔒𝔰𝔱𝔲𝕀𝕁𝕂x', 29, ]
+      [ 'xx', 2, ]
       # [ ( red 'abc' ), 3, ]
       ]
     #.......................................................................................................
-    gauge_60 = build_chr_gauge { length: 60, }
     do =>
       error_counts = [ 0, 0, 0, 0, ]
       for [ probe, matcher, ] in probes_and_matchers
-        w1        = siso_stwi_get_width     probe; w1r = reverse ( if w1 is matcher then green else do -> error_counts[ 0 ]++; red ) f" #{w1}:>3c; "
-        w2        = myco_wcwi_get_width     probe; w2r = reverse ( if w2 is matcher then green else do -> error_counts[ 1 ]++; red ) f" #{w2}:>3c; "
-        w3        = mahe_wcst_get_width     probe; w3r = reverse ( if w3 is matcher then green else do -> error_counts[ 2 ]++; red ) f" #{w3}:>3c; "
-        w4        = get_wc_max_line_length  probe; w4r = reverse ( if w4 is matcher then green else do -> error_counts[ 3 ]++; red ) f" #{w4}:>3c; "
-        same      = w1 == w2 == w3 == w4 == matcher
+        w0        = siso_stwi_get_width     probe; w0r = reverse ( if w0 is matcher then green else do -> error_counts[ 0 ]++; red ) f" #{w1}:>3c; "
+        w1        = siso_cch1_get_width     probe; w1r = reverse ( if w1 is matcher then green else do -> error_counts[ 1 ]++; red ) f" #{w1}:>3c; "
+        w2        = siso_cch2_get_width     probe; w2r = reverse ( if w2 is matcher then green else do -> error_counts[ 2 ]++; red ) f" #{w1}:>3c; "
+        w3        = myco_wcwi_get_width     probe; w3r = reverse ( if w3 is matcher then green else do -> error_counts[ 3 ]++; red ) f" #{w2}:>3c; "
+        w4        = mahe_wcst_get_width     probe; w4r = reverse ( if w4 is matcher then green else do -> error_counts[ 4 ]++; red ) f" #{w3}:>3c; "
+        w5        = get_wc_max_line_length  probe; w5r = reverse ( if w5 is matcher then green else do -> error_counts[ 5 ]++; red ) f" #{w4}:>3c; "
+        same      = w0 = w1 == w2 == w3 == w4 == w5 == matcher
         same_rpr  = GUY.trm.reverse GUY.trm.truth same
-        whisper 'Ω___1', f"#{same_rpr}:>5c;                               #{gauge_60}" unless same
-        help    'Ω___2', f"#{same_rpr}:>5c; #{matcher}:>4.0f; #{w1r} #{w2r} #{w3r} #{w4r} #{rpr probe}"
-      info    'Ω___3', f"#{''}:>5c; #{''}:>4c; #{error_counts[0]}:>4.0f;  #{error_counts[1]}:>4.0f;  #{error_counts[2]}:>4.0f;  #{error_counts[3]}:>4.0f; "
+        echo  'Ω___1', f"#{same_rpr}:>5c;                               #{gauge_60}" unless same
+        echo  'Ω___2', f"#{same_rpr}:>5c; #{matcher}:>4.0f; #{w0r} #{w1r} #{w2r} #{w3r} #{w4r} #{w5r} #{rpr probe}"
+      echo    'Ω___3', f"#{''}:>5c; #{''}:>4c; #{error_counts[0]}:>4.0f;  #{error_counts[1]}:>4.0f;  #{error_counts[2]}:>4.0f;  #{error_counts[3]}:>4.0f; #{error_counts[4]}:>4.0f; #{error_counts[5]}:>4.0f; "
       return null
     #.......................................................................................................
     do =>
       bigint_from_hrtime = ([ s, ns, ]) -> ( BigInt s ) * 1_000_000_000n + ( BigInt ns )
       participants =
         siso_stwi:  siso_stwi_get_width
+        siso_cch1:  siso_cch1_get_width
+        siso_cch2:  siso_cch2_get_width
         myco_wcwi:  myco_wcwi_get_width
         mahe_wcst:  mahe_wcst_get_width
         # wc_max_ll:  get_wc_max_line_length
@@ -189,7 +210,7 @@ Excluded:
           for [ probe, matcher, ] in probes_and_matchers
             w1 = fn probe
         t1 = bigint_from_hrtime process.hrtime()
-        debug 'Ω___6', name, f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+        echo 'Ω___6', name, f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
     #.......................................................................................................
     return null
