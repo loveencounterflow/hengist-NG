@@ -110,7 +110,8 @@ Excluded:
 
   #---------------------------------------------------------------------------------------------------------
   fn: ->
-    # { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
+    { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
+    { build_chr_gauge             } = SFMODULES.require_chr_gauge()
     # { Ansi_chunker,               } = SFMODULES.require_ansi_chunker()
     #.......................................................................................................
     { default: siso_stwi_get_width,  }  = require 'string-width'  ### sindresorhus/string-width ###
@@ -141,9 +142,26 @@ Excluded:
       [ 'x۩۝۞x', 4, ]
       [ 'xདྦོང་x', 5, ]
       [ 'x𰂀𰂁𰂂𰂃𰂄x', 12, ]
+      [ 'x𐋡𐋢𐋣𐋤𐋥𐋦😢😣😤😴😷🙤🙥🙲🙳🙴🙼🙽🙾🙿🚇🝖🞧𝐀𝐁𝐂𝐃⟀⟁⟂⟃x', 39, ]
+      [ 'x⿼⿽⿾⿿⿻x', 8, ]
+      [ 'x⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻x', 26, ]
+      [ 'x᝭ᄝۍஃᏓ߿ķᛜഥ፧Ք٘🍇ੇᏉ📈፭˓🕽ࢀ௽Ⴅᛇ᝖🍻ɇ᛾⛄ኚཅᚲx', 26, ]
+      [ 'x඗Ǚર📎^̊ྑݱ଀Ȉᇟവ💁૭Ǽᛀ։ઈ̒🔑৆ǖآάڰ৶ᔾླыବணx', 26, ]
+      [ 'xАঁААѣАܘѣॐȲАܘঁ̃ѣȲѣ̃ѣঁސݧॐ̃ॐx', 26, ]
+      [ 'xঁАސ̃ܘॐАѣȲАݧॐܘѣȲঁܘॐܘঁॐݧݧސॐx', 26, ]
+      [ 'x0Ã豲Û򸮍[頔쯞&ٸ𽃸U套9笗a䘫}ҭⴲɔI幙6󏴃エEf򒟀΁?牃x', 0, ]
+      [ 'xύ΍򋁥%əʘޜ𢍬´ِ򣑥^Γ𰛥E}aӇ{Մ$G贲]𿒕Y}򷟇򢏙x', 0, ]
+      [ 'x9󮊘ۆ󅉨򌷺󬥘کԶiޘ5罌塕Ĵ3ѷ夎uȸ򼳸󭃭񳌴Q~CK䱮᣼W>竦x', 0, ]
+      [ 'x할S􂿚󙏰r򇜅h󈫫񅦵ۿ㙛󞝶NΕ󮀞񰑸򟞮𰊦턝䑭ш򅈺ϛɠ`°jk䂾䢯􅌱곢x', 0, ]
+      [ 'x񉃓򍦎P𼻞ӏ9쯬ܼӬ撗򞅛߰梡𮦦惺o􎌕觾ץߏ㧤ၲԼ哋𛧦켈ۮ$픕祿ꉀx', 0, ]
+      [ 'x😀🐱🌟🚀🍕x', 26, ]
+      [ 'x𓀀𓁐𓃰𓆣𓂀x', 26, ]
+      [ 'xx', 26, ]
+      [ 'xx', 26, ]
       # [ ( red 'abc' ), 3, ]
       ]
     #.......................................................................................................
+    gauge_60 = build_chr_gauge { length: 60, }
     do =>
       error_counts = [ 0, 0, 0, 0, ]
       for [ probe, matcher, ] in probes_and_matchers
@@ -153,7 +171,7 @@ Excluded:
         w4        = get_wc_max_line_length  probe; w4r = reverse ( if w4 is matcher then green else do -> error_counts[ 3 ]++; red ) f" #{w4}:>3c; "
         same      = w1 == w2 == w3 == w4 == matcher
         same_rpr  = GUY.trm.reverse GUY.trm.truth same
-        whisper 'Ω___1', f"#{same_rpr}:>5c;                               12345678901234567890" unless same
+        whisper 'Ω___1', f"#{same_rpr}:>5c;                               #{gauge_60}" unless same
         help    'Ω___2', f"#{same_rpr}:>5c; #{matcher}:>4.0f; #{w1r} #{w2r} #{w3r} #{w4r} #{rpr probe}"
       info    'Ω___3', f"#{''}:>5c; #{''}:>4c; #{error_counts[0]}:>4.0f;  #{error_counts[1]}:>4.0f;  #{error_counts[2]}:>4.0f;  #{error_counts[3]}:>4.0f; "
       return null
@@ -167,14 +185,10 @@ Excluded:
         # wc_max_ll:  get_wc_max_line_length
       for name, fn of participants
         t0 = bigint_from_hrtime process.hrtime()
-        # console.time name
         for _ in [ 0 .. 5e3 ]
           for [ probe, matcher, ] in probes_and_matchers
             w1 = fn probe
-          # console.timeLog name
-        # console.timeEnd name
         t1 = bigint_from_hrtime process.hrtime()
-        # debug 'Ω___6', name, t1 - t0
         debug 'Ω___6', name, f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
     #.......................................................................................................
