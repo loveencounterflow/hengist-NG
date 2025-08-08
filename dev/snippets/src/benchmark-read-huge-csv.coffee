@@ -99,9 +99,9 @@ Object.assign SFMODULES.unstable,
       for { line, } from walk_lines_with_positions path
         count++
         # return null if count > 100
-        echo 'Ω___3', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
+        echo 'Ω___5', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
       t1 = hrtime_as_bigint()
-      echo 'Ω___4', 'demo_fast_readline_sync', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+      echo 'Ω___6', 'demo_fast_readline_sync', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
 
     #-------------------------------------------------------------------------------------------------------
@@ -114,13 +114,60 @@ Object.assign SFMODULES.unstable,
       for { line, } from GUY.fs.walk_lines_with_positions path
         count++
         # return null if count > 100
-        echo 'Ω___5', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
+        echo 'Ω___7', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
       t1 = hrtime_as_bigint()
-      echo 'Ω___6', 'demo_guyfs_readline', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+      echo 'Ω___8', 'demo_guyfs_readline', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    demo_fast_readline_sync()
+    demo_read_write_big_map = ->
+      { hrtime_as_bigint,           } = SFMODULES.unstable.require_benchmarking()
+      { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
+      { default: _get_unique_text,  } = require 'unique-string'
+      max_count                       = 1e5
+      get_unique_text                 = -> _get_unique_text()[ .. ( GUY.rnd.random_integer 1, 15 ) ]
+      path                            = '/tmp/map-cache.jsonl'
+      FS                              = require 'node:fs'
+      #.....................................................................................................
+      write_file = ->
+        map       = new Map()
+        old_size  = 0
+        FS.writeFileSync path, ''
+        for count in [ 1 .. max_count ]
+          while map.size is old_size
+            entry = [ get_unique_text(), ( GUY.rnd.random_integer 0, 10 ), ]
+            map.set entry...
+          old_size = map.size
+        t0 = hrtime_as_bigint()
+        for entry from map
+          FS.appendFileSync path, "#{JSON.stringify entry}\n"
+        t1 = hrtime_as_bigint()
+        echo 'Ω__10', 'write_file', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+      #.....................................................................................................
+      read_file = ( map = null ) ->
+        t0  = hrtime_as_bigint()
+        map      ?= new Map()
+        for { line, } from walk_lines_with_positions path
+          map.set ( JSON.parse line )...
+        t1  = hrtime_as_bigint()
+        echo 'Ω__11', 'read_file', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+        return map
+      #.....................................................................................................
+      do =>
+        write_file()
+        return null
+      #.....................................................................................................
+      do =>
+        d   = read_file d
+        debug 'Ω__12', d.size
+        # debug 'Ω__13', d
+        return null
+      #.....................................................................................................
+      return null
+
+    #-------------------------------------------------------------------------------------------------------
+    # demo_fast_readline_sync()
+    demo_read_write_big_map()
     # await demo_fast_readline_async()
     # demo_guyfs_readline()
     #.......................................................................................................

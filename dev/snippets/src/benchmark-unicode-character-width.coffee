@@ -284,6 +284,7 @@ Excluded:
       [ '┃🇦┃', 3 ]
       [ '┃🇶┃', 3 ]
       [ '┃\u{1F636}\u{200D}\u{1F32B}\u{FE0F}┃', 3 ]
+      [ '┃🤦🏾‍♂️┃', 4 ]
 
       # [ ( red 'abc' ), 3, ]
       ]
@@ -308,7 +309,7 @@ Excluded:
       return null
     #.......................................................................................................
     do =>
-      { bigint_from_hrtime, } = SFMODULES.unstable.require_benchmarking()
+      { hrtime_as_bigint, } = SFMODULES.unstable.require_benchmarking()
       participants =
         siso_stwi:  siso_stwi_get_width
         siso_cch1:  siso_cch1_get_width
@@ -321,12 +322,12 @@ Excluded:
         array_frm:  ( text ) -> Array.from text
         # wc_max_ll:  get_wc_max_line_length
       for name, fn of participants
-        t0 = bigint_from_hrtime process.hrtime()
+        t0 = hrtime_as_bigint()
         for _ in [ 0 .. 5e2 ]
         # for _ in [ 0 .. 5e3 ]
           for [ probe, matcher, ] in probes_and_matchers
             w1 = fn probe
-        t1 = bigint_from_hrtime process.hrtime()
+        t1 = hrtime_as_bigint()
         echo 'Ω___4', name, f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       info 'Ω___5', cache_1.size, ( [ cache_1.entries()..., ][ .. 10 ].flat Infinity ).join ' '
       help 'Ω___6', cache_2.size, ( [ cache_2.entries()..., ][ .. 10 ].flat Infinity ).join ' '
