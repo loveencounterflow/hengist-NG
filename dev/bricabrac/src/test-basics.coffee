@@ -38,8 +38,96 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 @tests = tests =
 
   #---------------------------------------------------------------------------------------------------------
-  fn: ->
-    @eq ( -> 1 ), 1
+  get_random_float: ->
+    { Get_random, } = SFMODULES.unstable.require_random_tools()
+    matchers  = []
+    probes    = []
+    max_count = 1e4
+    seen      = new Set()
+    my_seed_1 = 2873462134
+    my_seed_2 = my_seed_1 + 1
+    #.......................................................................................................
+    do =>
+      get_random = new Get_random { seed: my_seed_1, }
+      for idx in [ 0 ... max_count ]
+        matchers.push t = get_random.float()
+        seen.add t
+      @eq ( Ωbrbr___1 = -> matchers.every ( t ) -> 0 <= t <= 1 ), true
+      @eq ( Ωbrbr___2 = -> seen.size ), max_count
+      return null
+    #.......................................................................................................
+    do =>
+      get_random = new Get_random { seed: my_seed_1, }
+      for idx in [ 0 ... max_count ]
+        probes.push t = get_random.float()
+      @eq ( Ωbrbr___3 = -> probes ), matchers
+      return null
+    #.......................................................................................................
+    do =>
+      get_random = new Get_random { seed: my_seed_2, }
+      count = 0
+      for idx in [ 0 ... max_count ]
+        count++ if ( t = get_random.float() ) in matchers
+      @eq ( Ωbrbr___4 = -> count ), 0
+      return null
+    #.......................................................................................................
+    do =>
+      get_random    = new Get_random()
+      count = 0
+      for idx in [ 0 ... max_count ]
+        count++ if ( t = get_random.float() ) in matchers
+      @eq ( Ωbrbr___5 = -> count < 10 ), true
+      return null
+    #.......................................................................................................
+    do =>
+      get_random  = new Get_random { seed: my_seed_1, }
+      min         = 100
+      max         = 999
+      buckets     = {}
+      for bucket in [ min ... max ]
+        buckets[ Math.floor bucket / 10 ] = 0
+      for idx in [ 0 ... max_count ]
+        t = get_random.float min, max
+        # debug 'Ωbrbr___6', t
+        bucket = Math.floor t / 10
+        buckets[ bucket ]++
+        @eq ( Ωbrbr___7 = -> min <= t <= max ), true
+      for _, count of buckets
+        @eq ( Ωbrbr___8 = -> 50 <= count <= 150 ), true
+      # for _, count of buckets
+      #   @eq ( Ωbrbr___9 = -> min <= t <= max ), true
+      # debug 'Ωbrbr__10', buckets
+      # debug 'Ωbrbr__11', counts = ( v for k, v of buckets )
+      # debug 'Ωbrbr__12', counts.length
+      return null
+    #.......................................................................................................
+    do =>
+      get_random  = new Get_random { seed: my_seed_1, }
+      min         = 100
+      max         = 999
+      buckets     = {}
+      for bucket in [ min ... max ]
+        buckets[ Math.floor bucket / 10 ] = 0
+      for idx in [ 0 ... max_count ]
+        t = get_random.integer min, max
+        # debug 'Ωbrbr__13', t
+        bucket = Math.floor t / 10
+        buckets[ bucket ]++
+        @eq ( Ωbrbr__14 = -> min <= t <= max ), true
+      for _, count of buckets
+        @eq ( Ωbrbr__15 = -> 50 <= count <= 150 ), true
+      # debug 'Ωbrbr__16', buckets
+      # debug 'Ωbrbr__17', counts = ( v for k, v of buckets )
+      # debug 'Ωbrbr__18', counts.length
+      return null
+    #.......................................................................................................
+    do =>
+      get_random  = new Get_random { seed: my_seed_1, }
+      for idx in [ 0 ... max_count ]
+        t = get_random.chr()
+        debug 'Ωbrbr__13', rpr t
+      return null
+    #.......................................................................................................
     return null
 
 #===========================================================================================================

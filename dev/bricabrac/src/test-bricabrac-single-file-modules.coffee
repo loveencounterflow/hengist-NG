@@ -174,9 +174,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   #   { get_next_free_filename,
   #     swap_suffix,            } = SFMODULES.require_next_free_filename()
   #   #.......................................................................................................
-  #   debug 'Ωbbsfm__52', intermediate_cache_path = get_next_free_filename '/path/to/reference.txt'
-  #   debug 'Ωbbsfm__52', finalized_cache_path    = swap_suffix '.finalized'
-  #   @eq     ( Ωbbsfm__37 = -> intermediate_cache_path           ), '/path/to/~.reference.txt.0001.finalized'
+  #   debug 'Ωbbsfm__37', intermediate_cache_path = get_next_free_filename '/path/to/reference.txt'
+  #   debug 'Ωbbsfm__38', finalized_cache_path    = swap_suffix '.finalized'
+  #   @eq     ( Ωbbsfm__39 = -> intermediate_cache_path           ), '/path/to/~.reference.txt.0001.finalized'
   #   rather use '/path/to/~.reference.txt.0001.bricabrac-cache.finalized'
   #   #.......................................................................................................
   #   return null
@@ -184,27 +184,27 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   #---------------------------------------------------------------------------------------------------------
   ANSI: ->
     { ANSI, } = SFMODULES.require_ansi()
-    @eq     ( Ωbbsfm__37 = -> ANSI.fg_from_hex '#a0a1a2'           ), '\x1B[38:2::160:161:162m'
-    @eq     ( Ωbbsfm__38 = -> ANSI.bg_from_hex '#a0a1a2'           ), '\x1B[48:2::160:161:162m'
-    @eq     ( Ωbbsfm__39 = -> ANSI.fg_from_dec [ 160, 161, 162 ]   ), '\x1B[38:2::160:161:162m'
-    @eq     ( Ωbbsfm__40 = -> ANSI.bg_from_dec [ 160, 161, 162 ]   ), '\x1B[48:2::160:161:162m'
-    @eq     ( Ωbbsfm__41 = -> ANSI.dec_from_hex '#a0a1a2'          ), [ 160, 161, 162 ]
-    @throws ( Ωbbsfm__42 = -> ANSI.dec_from_hex '#xxxxxx'          ), /not a proper hexadecimal RGB code: '#xxxxxx'/
-    @throws ( Ωbbsfm__43 = -> ANSI.dec_from_hex '#aaaaa'           ), /not a proper hexadecimal RGB code: '#aaaaa'/
-    @throws ( Ωbbsfm__44 = -> ANSI.dec_from_hex '#aaaaabb'         ), /not a proper hexadecimal RGB code: '#aaaaabb'/
+    @eq     ( Ωbbsfm__40 = -> ANSI.fg_from_hex '#a0a1a2'           ), '\x1B[38:2::160:161:162m'
+    @eq     ( Ωbbsfm__41 = -> ANSI.bg_from_hex '#a0a1a2'           ), '\x1B[48:2::160:161:162m'
+    @eq     ( Ωbbsfm__42 = -> ANSI.fg_from_dec [ 160, 161, 162 ]   ), '\x1B[38:2::160:161:162m'
+    @eq     ( Ωbbsfm__43 = -> ANSI.bg_from_dec [ 160, 161, 162 ]   ), '\x1B[48:2::160:161:162m'
+    @eq     ( Ωbbsfm__44 = -> ANSI.dec_from_hex '#a0a1a2'          ), [ 160, 161, 162 ]
+    @throws ( Ωbbsfm__45 = -> ANSI.dec_from_hex '#xxxxxx'          ), /not a proper hexadecimal RGB code: '#xxxxxx'/
+    @throws ( Ωbbsfm__46 = -> ANSI.dec_from_hex '#aaaaa'           ), /not a proper hexadecimal RGB code: '#aaaaa'/
+    @throws ( Ωbbsfm__47 = -> ANSI.dec_from_hex '#aaaaabb'         ), /not a proper hexadecimal RGB code: '#aaaaabb'/
     #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
   require_ansi_colors_and_effects: ->
     { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
-    @eq     ( Ωbbsfm__45 = -> C.red              ), '\x1B[38:2::255:0:16m'
-    @eq     ( Ωbbsfm__46 = -> C.bg_red           ), '\x1B[48:2::255:0:16m'
-    @eq     ( Ωbbsfm__47 = -> C.overline1        ), '\x1b[53m'
-    @eq     ( Ωbbsfm__48 = -> C.overline0        ), '\x1b[55m'
-    @eq     ( Ωbbsfm__49 = -> C.default          ), '\x1b[39m'
-    @eq     ( Ωbbsfm__50 = -> C.bg_default       ), '\x1b[49m'
-    @eq     ( Ωbbsfm__51 = -> C.reset            ), '\x1b[0m'
+    @eq     ( Ωbbsfm__48 = -> C.red              ), '\x1B[38:2::255:0:16m'
+    @eq     ( Ωbbsfm__49 = -> C.bg_red           ), '\x1B[48:2::255:0:16m'
+    @eq     ( Ωbbsfm__50 = -> C.overline1        ), '\x1b[53m'
+    @eq     ( Ωbbsfm__51 = -> C.overline0        ), '\x1b[55m'
+    @eq     ( Ωbbsfm__52 = -> C.default          ), '\x1b[39m'
+    @eq     ( Ωbbsfm__53 = -> C.bg_default       ), '\x1b[49m'
+    @eq     ( Ωbbsfm__54 = -> C.reset            ), '\x1b[0m'
     #.......................................................................................................
     return null
 
@@ -216,46 +216,73 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       echo '—————————————————————————————————————————————'
       text  = "ABC#{ C.black + C.bg_red + C.bold + 'DEF' + C.bold0 + C.default + C.bg_default }XYZ"
       ac    = new Ansi_chunker()
-      urge 'Ωbbsfm__52',                ac.chunkify text
-      # info 'Ωbbsfm__53', d for d from ( ac.chunkify text ).chunks
-      info 'Ωbbsfm__54', d for d from ac
-      info 'Ωbbsfm__55', ac.width
-      info 'Ωbbsfm__56', ac.length
-      info 'Ωbbsfm__57', ac.has_ansi
-      info 'Ωbbsfm__58', ac.text
+      urge 'Ωbbsfm__55',                ac.chunkify text
+      # info 'Ωbbsfm__56', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__57', d for d from ac
+      info 'Ωbbsfm__58', ac.width
+      info 'Ωbbsfm__59', ac.length
+      info 'Ωbbsfm__60', ac.has_ansi
+      info 'Ωbbsfm__61', ac.text
     do =>
       echo '—————————————————————————————————————————————'
       text  = 'ABCDEFXYZ'
       ac    = new Ansi_chunker()
-      urge 'Ωbbsfm__59',                ac.chunkify text
-      # info 'Ωbbsfm__60', d for d from ( ac.chunkify text ).chunks
-      info 'Ωbbsfm__61', d for d from ac
-      info 'Ωbbsfm__62', ac.width
-      info 'Ωbbsfm__63', ac.length
-      info 'Ωbbsfm__64', ac.has_ansi
-      info 'Ωbbsfm__65', ac.text
+      urge 'Ωbbsfm__62',                ac.chunkify text
+      # info 'Ωbbsfm__63', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__64', d for d from ac
+      info 'Ωbbsfm__65', ac.width
+      info 'Ωbbsfm__66', ac.length
+      info 'Ωbbsfm__67', ac.has_ansi
+      info 'Ωbbsfm__68', ac.text
     do =>
       echo '—————————————————————————————————————————————'
       text  = "#{ C.black + C.bg_red + C.bold + C.bold0 + C.default + C.bg_default }"
       ac    = new Ansi_chunker()
-      urge 'Ωbbsfm__66',                ac.chunkify text
-      # info 'Ωbbsfm__67', d for d from ( ac.chunkify text ).chunks
-      info 'Ωbbsfm__68', d for d from ac
-      info 'Ωbbsfm__69', ac.width
-      info 'Ωbbsfm__70', ac.length
-      info 'Ωbbsfm__71', ac.has_ansi
-      info 'Ωbbsfm__72', ac.text
+      urge 'Ωbbsfm__69',                ac.chunkify text
+      # info 'Ωbbsfm__70', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__71', d for d from ac
+      info 'Ωbbsfm__72', ac.width
+      info 'Ωbbsfm__73', ac.length
+      info 'Ωbbsfm__74', ac.has_ansi
+      info 'Ωbbsfm__75', ac.text
     do =>
       echo '—————————————————————————————————————————————'
       text  = ''
       ac    = new Ansi_chunker()
-      urge 'Ωbbsfm__73',                ac.chunkify text
-      # info 'Ωbbsfm__74', d for d from ( ac.chunkify text ).chunks
-      info 'Ωbbsfm__75', d for d from ac
-      info 'Ωbbsfm__76', ac.width
-      info 'Ωbbsfm__77', ac.length
-      info 'Ωbbsfm__78', ac.has_ansi
-      info 'Ωbbsfm__79', ac.text
+      urge 'Ωbbsfm__76',                ac.chunkify text
+      # info 'Ωbbsfm__77', d for d from ( ac.chunkify text ).chunks
+      info 'Ωbbsfm__78', d for d from ac
+      info 'Ωbbsfm__79', ac.width
+      info 'Ωbbsfm__80', ac.length
+      info 'Ωbbsfm__81', ac.has_ansi
+      info 'Ωbbsfm__82', ac.text
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_strip_ansi: ->
+    { strip_ansi, internals:
+      { ansi_re,
+        own_single_ansi_re,     } } = SFMODULES.require_strip_ansi()
+    { ansi_colors_and_effects: C, } = SFMODULES.require_ansi_colors_and_effects()
+    do =>
+      text  = "ABC#{ C.black + C.bg_red + C.bold + 'DEF' + C.bold0 + C.default + C.bg_default }XYZ"
+      urge 'Ωbbsfm__83', rpr strip_ansi text
+      info 'Ωbbsfm__84', rpr text.split ansi_re
+      info 'Ωbbsfm__85', rpr text.split own_single_ansi_re
+      @eq ( Ωbbsfm__86 = -> strip_ansi text ), 'ABCDEFXYZ'
+    do =>
+      text  = 'ABCDEFXYZ'
+      urge 'Ωbbsfm__87', rpr strip_ansi text
+      @eq ( Ωbbsfm__88 = -> strip_ansi text ), 'ABCDEFXYZ'
+    do =>
+      text  = "#{ C.black + C.bg_red + C.bold + C.bold0 + C.default + C.bg_default }"
+      urge 'Ωbbsfm__89', rpr strip_ansi text
+      @eq ( Ωbbsfm__90 = -> strip_ansi text ), ''
+    do =>
+      text  = ''
+      urge 'Ωbbsfm__91', rpr strip_ansi text
+      @eq ( Ωbbsfm__92 = -> strip_ansi text ), ''
     #.......................................................................................................
     return null
 
@@ -268,3 +295,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { require_strip_ansi: tests.require_strip_ansi, }

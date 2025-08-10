@@ -30,9 +30,13 @@ GUY                       = require 'guy'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
 PATH                      = require 'node:path'
+#-----------------------------------------------------------------------------------------------------------
+SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+RANDOM_TOOLS              = SFMODULES.unstable.require_random_tools()
 
+
+#===========================================================================================================
 Object.assign SFMODULES.unstable,
   #===========================================================================================================
   ### NOTE Future Single-File Module ###
@@ -65,6 +69,8 @@ Object.assign SFMODULES.unstable,
 
     #===========================================================================================================
     return exports = { walk_lines_with_positions_async, }
+
+
 
 #===========================================================================================================
 @benchmarks = benchmarks =
@@ -121,36 +127,33 @@ Object.assign SFMODULES.unstable,
 
     #-------------------------------------------------------------------------------------------------------
     demo_read_write_big_map = ->
-      { hrtime_as_bigint,           } = SFMODULES.unstable.require_benchmarking()
+      { hrtime_as_bigint,
+        timeit,                     } = SFMODULES.unstable.require_benchmarking()
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
-      { default: _get_unique_text,  } = require 'unique-string'
       max_count                       = 1e5
-      get_unique_text                 = -> _get_unique_text()[ .. ( GUY.rnd.random_integer 1, 15 ) ]
       path                            = '/tmp/map-cache.jsonl'
       FS                              = require 'node:fs'
       #.....................................................................................................
       write_file = ->
-        map       = new Map()
-        old_size  = 0
+        random_twl_map = RANDOM_TOOLS.get_texts_mapped_to_width_length { size: 10, }
+        debug 'Ω__12', random_twl_map; process.exit 111
         FS.writeFileSync path, ''
-        for count in [ 1 .. max_count ]
-          while map.size is old_size
-            entry = [ get_unique_text(), ( GUY.rnd.random_integer 0, 10 ), ]
-            map.set entry...
-          old_size = map.size
-        t0 = hrtime_as_bigint()
-        for entry from map
-          FS.appendFileSync path, "#{JSON.stringify entry}\n"
-        t1 = hrtime_as_bigint()
-        echo 'Ω__10', 'write_file', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+        #...................................................................................................
+        timeit write_file_sync = ->
+          for entry from map
+            FS.appendFileSync path, "#{JSON.stringify entry}\n"
+          return null
+        #...................................................................................................
+        return null
       #.....................................................................................................
       read_file = ( map = null ) ->
-        t0  = hrtime_as_bigint()
-        map      ?= new Map()
-        for { line, } from walk_lines_with_positions path
-          map.set ( JSON.parse line )...
-        t1  = hrtime_as_bigint()
-        echo 'Ω__11', 'read_file', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+        map  ?= new Map()
+        #...................................................................................................
+        timeit read_file_sync = ->
+          for { line, } from walk_lines_with_positions path
+            map.set ( JSON.parse line )...
+          return null
+        #...................................................................................................
         return map
       #.....................................................................................................
       do =>
@@ -158,8 +161,88 @@ Object.assign SFMODULES.unstable,
         return null
       #.....................................................................................................
       do =>
-        d   = read_file d
-        debug 'Ω__12', d.size
+        d         = read_file()
+        count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
+        info 'Ω__12', "read #{count_rpr} entries"
+        # debug 'Ω__13', d
+        return null
+      #.....................................................................................................
+      return null
+
+    #-------------------------------------------------------------------------------------------------------
+    demo_read_write_njs_sqlite = ->
+      { hrtime_as_bigint,
+        timeit,          } = SFMODULES.unstable.require_benchmarking()
+      { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
+      max_count                       = 1e5
+      path                            = '/tmp/map-cache.db'
+      FS                              = require 'node:fs'
+      SQLITE                          = require 'node:sqlite'
+      { SQL }                         = require '../../../apps/dbay'
+      #.....................................................................................................
+      statements =
+        #...................................................................................................
+        create_table_segments_free: SQL"""
+          drop table if exists segments;
+          create table segments (
+              segment_text      text    not null primary key,
+              segment_width     integer not null,
+              segment_length    integer not null );"""
+        #...................................................................................................
+        create_table_segments_checks: SQL"""
+          drop table if exists segments;
+          create table segments (
+              segment_text      text    not null primary key,
+              segment_width     integer not null,
+              segment_length    integer not null,
+            constraint segment_width_eqgt_zero  check ( segment_width  >= 0 ),
+            constraint segment_length_eqgt_zero check ( segment_length >= 0 ) );"""
+        #...................................................................................................
+        insert_segment: SQL"""
+          insert into segments  ( segment_text  )
+                        values  ( $segment_text )
+            on conflict ( segment_text ) do nothing
+            returning *;"""
+      #.....................................................................................................
+      write_db = ->
+        map       = new Map()
+        old_size  = 0
+        #...................................................................................................
+        db = new SQLITE.DatabaseSync path
+        db.exec statements.create_table_segments_free
+        insert_segment = db.prepare statements.insert_segment
+        #...................................................................................................
+        for count in [ 1 .. max_count ]
+          while map.size is old_size
+            entry = [ get_unique_text(), ( GUY.rnd.random_integer 0, 10 ), ]
+            map.set entry...
+          old_size = map.size
+        #...................................................................................................
+        timeit write_db_sync = ->
+          for entry from map
+            FS.appendFileSync path, "#{JSON.stringify entry}\n"
+          return null
+        #...................................................................................................
+        return null
+      #.....................................................................................................
+      read_db = ( map = null ) ->
+        map  ?= new Map()
+        #...................................................................................................
+        timeit read_db_sync = ->
+          for { line, } from walk_lines_with_positions path
+            map.set ( JSON.parse line )...
+          return null
+        #...................................................................................................
+        return map
+      #.....................................................................................................
+      do =>
+        write_db()
+        return null
+      #.....................................................................................................
+      do =>
+        d         = read_db()
+        count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
+        info 'Ω__12', "read #{count_rpr} entries"
         # debug 'Ω__13', d
         return null
       #.....................................................................................................
@@ -168,6 +251,7 @@ Object.assign SFMODULES.unstable,
     #-------------------------------------------------------------------------------------------------------
     # demo_fast_readline_sync()
     demo_read_write_big_map()
+    demo_read_write_njs_sqlite()
     # await demo_fast_readline_async()
     # demo_guyfs_readline()
     #.......................................................................................................
