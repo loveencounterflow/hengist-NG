@@ -39,13 +39,14 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 
   #---------------------------------------------------------------------------------------------------------
   get_random_float: ->
-    { Get_random, } = SFMODULES.unstable.require_random_tools()
-    matchers  = []
-    probes    = []
-    max_count = 1e4
-    seen      = new Set()
-    my_seed_1 = 2873462134
-    my_seed_2 = my_seed_1 + 1
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    matchers        = []
+    probes          = []
+    max_count       = 1e4
+    seen            = new Set()
+    my_seed_1       = 2873462134
+    my_seed_2       = my_seed_1 + 1
     #.......................................................................................................
     do =>
       get_random = new Get_random { seed: my_seed_1, }
@@ -87,7 +88,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       for bucket in [ min ... max ]
         buckets[ Math.floor bucket / 10 ] = 0
       for idx in [ 0 ... max_count ]
-        t = get_random.float min, max
+        t = get_random.float { min, max, }
         # debug 'Ωbrbr___6', t
         bucket = Math.floor t / 10
         buckets[ bucket ]++
@@ -109,7 +110,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       for bucket in [ min ... max ]
         buckets[ Math.floor bucket / 10 ] = 0
       for idx in [ 0 ... max_count ]
-        t = get_random.integer min, max
+        t = get_random.integer { min, max, }
         # debug 'Ωbrbr__13', t
         bucket = Math.floor t / 10
         buckets[ bucket ]++
@@ -125,7 +126,34 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       get_random  = new Get_random { seed: my_seed_1, }
       for idx in [ 0 ... max_count ]
         t = get_random.chr()
-        debug 'Ωbrbr__13', rpr t
+        # debug 'Ωbrbr__19', rpr t
+      return null
+    #.......................................................................................................
+    do =>
+      get_random  = new Get_random { seed: my_seed_1, }
+      result = ( get_random.chr { min: 'A', max: 'Z', } for _ in [ 1 .. 40 ] ).join ''
+      @eq ( Ωbrbr__20 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
+      return null
+    #.......................................................................................................
+    do =>
+      get_random  = new Get_random { seed: my_seed_2, }
+      result = ( get_random.chr { min: 'A', max: 'Z', } for _ in [ 1 .. 40 ] ).join ''
+      @eq ( Ωbrbr__21 = -> result is 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF' ), false
+      @eq ( Ωbrbr__22 = -> /^[A-Z]{40}$/.test result ), true
+      return null
+    #.......................................................................................................
+    do =>
+      get_random  = new Get_random { seed: my_seed_1, }
+      result = get_random.text { min: 'A', max: 'Z', length: 40, }
+      @eq ( Ωbrbr__23 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
+      return null
+    #.......................................................................................................
+    do =>
+      valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 150 } $ ///v
+      get_random  = new Get_random { seed: my_seed_1, }
+      for _ in [ 1 .. 10 ]
+        result = get_random.text { min: 0x00, max: 0xff, length: 150, }
+        @eq ( Ωbrbr__22 = -> valid_re.test result ), true
       return null
     #.......................................................................................................
     return null
