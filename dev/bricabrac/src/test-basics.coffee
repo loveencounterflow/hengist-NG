@@ -144,17 +144,26 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       return null
     #.......................................................................................................
     do =>
-      get_random  = new Get_random { seed: my_seed_1, }
-      result = get_random.text { min: 'A', max: 'Z', length: 40, }
-      @eq ( Ωbrbr__24 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
+      on_stats    = ( stats ) -> info 'Ωbrbr__24', stats
+      get_random  = new Get_random { seed: my_seed_1, on_stats, }
+      result      = get_random.text { min: 'A', max: 'Z', length: 40, }
+      @eq ( Ωbrbr__25 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
       return null
     #.......................................................................................................
     do =>
+      count_attempts  = ( n ) -> attempts[ n ] = ( attempts[ n ] ?= 0 ) + 1
+      attempts        = {}
+      on_stats        = ( stats ) ->
+        help 'Ωbrbr__26', stats
+        return null unless stats.name is 'chr'
+        count_attempts stats.stats.attempts
+        return null
       valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 150 } $ ///v
-      get_random  = new Get_random { seed: my_seed_1, }
+      get_random  = new Get_random { seed: null, on_stats, }
       for _ in [ 1 .. 10 ]
         result = get_random.text { min: 0x00, max: 0xff, length: 150, }
-        @eq ( Ωbrbr__25 = -> valid_re.test result ), true
+        @eq ( Ωbrbr__28 = -> valid_re.test result ), true
+      debug 'Ωbrbr__27', attempts
       return null
     #.......................................................................................................
     return null
