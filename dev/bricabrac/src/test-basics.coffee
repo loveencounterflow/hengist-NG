@@ -136,16 +136,17 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       return null
     #.......................................................................................................
     do =>
-      get_random  = new Get_random { seed: my_seed_2, }
-      result = ( get_random.chr { min: 'A', max: 'Z', } for _ in [ 1 .. 40 ] ).join ''
-      @eq ( Ωbrbr__21 = -> result is 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF' ), false
-      @eq ( Ωbrbr__22 = -> /^[A-Z]{40}$/.test result ), true
+      on_stats    = ( stats ) -> debug 'Ωbrbr__21', stats
+      get_random  = new Get_random { seed: my_seed_2, on_stats, }
+      result      = ( get_random.chr { min: 'A', max: 'Z', } for _ in [ 1 .. 40 ] ).join ''
+      @eq ( Ωbrbr__22 = -> result is 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF' ), false
+      @eq ( Ωbrbr__23 = -> /^[A-Z]{40}$/.test result ), true
       return null
     #.......................................................................................................
     do =>
       get_random  = new Get_random { seed: my_seed_1, }
       result = get_random.text { min: 'A', max: 'Z', length: 40, }
-      @eq ( Ωbrbr__23 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
+      @eq ( Ωbrbr__24 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
       return null
     #.......................................................................................................
     do =>
@@ -153,7 +154,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       get_random  = new Get_random { seed: my_seed_1, }
       for _ in [ 1 .. 10 ]
         result = get_random.text { min: 0x00, max: 0xff, length: 150, }
-        @eq ( Ωbrbr__22 = -> valid_re.test result ), true
+        @eq ( Ωbrbr__25 = -> valid_re.test result ), true
       return null
     #.......................................................................................................
     return null
