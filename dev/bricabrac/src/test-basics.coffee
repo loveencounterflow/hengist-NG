@@ -160,10 +160,27 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         return null
       valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 150 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
-      for _ in [ 1 .. 10 ]
+      for _ in [ 1 .. 1 ]
+      # for _ in [ 1 .. 10 ]
         result = get_random.text { min: 0x00, max: 0xff, length: 150, }
-        @eq ( Ωbrbr__28 = -> valid_re.test result ), true
-      debug 'Ωbrbr__27', attempts
+        @eq ( Ωbrbr__27 = -> valid_re.test result ), true
+      debug 'Ωbrbr__28', attempts
+      return null
+    #.......................................................................................................
+    do =>
+      attempts        = 0
+      on_stats        = ( stats ) ->
+        attempts += stats.stats.attempts
+        urge 'Ωbrbr__29', stats if stats.name is 'set_of_chrs'
+        return null
+      valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 50 } $ ///v
+      get_random  = new Get_random { seed: null, on_stats, }
+      for _ in [ 1 .. 20 ]
+        result  = get_random.set_of_chrs { min: 0x00, max: 0xff, size: 50, }
+        result  = [ result..., ].join ''
+        @eq ( Ωbrbr__30 = -> valid_re.test result ), true
+        debug 'Ωbrbr__32', attempts
+        attempts = 0
       return null
     #.......................................................................................................
     return null
