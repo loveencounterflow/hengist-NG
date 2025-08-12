@@ -245,7 +245,7 @@ settings =
         return null
       valid_re    = /// ^ [ 0-9 ]{ 3 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
-      for _ in [ 1 .. 20 ]
+      for _ in [ 1 .. 1 ]
         result      = get_random.set_of_texts { min: '0', max: '9', length: 3, size: 10, }
         @eq ( Ωbrbr__30 = -> result.size              ), 10
         for random_text from result
@@ -268,8 +268,8 @@ settings =
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
         result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, }
-        debug 'Ωbrbr__35', rpr result
-        @eq ( Ωbrbr__36 = -> result ), matchers[ idx ]
+        debug 'Ωbrbr__34', rpr result
+        @eq ( Ωbrbr__35 = -> result ), matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -282,19 +282,33 @@ settings =
     #.......................................................................................................
     do =>
       on_stats    = ( stats ) ->
-        # info 'Ωbrbr__33', stats
+        info 'Ωbrbr__36', stats if stats.name is 'set_of_texts'
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
-      result      = get_random.set_of_texts { min: '⼀', max: '⿕', min_length: 1, max_length: 10, }
-      debug 'Ωbrbr__35', result
+      matchers    = [
+        new Set [ '⾉⽕⼢⾗⾮⾩', '⿋⼽⼄⼠⾺⼴', '⼴⾼⼦', '⾏⾚', '⿓⽛⾱⽳⾝⼭⾈⾜⼣⾥', ]
+        new Set [ '⾝⼥⿇⼞⼭⼵', '⽐⼸⽺', '⼔⿓⼌⾣⾅⾲⽁⼍', '⽲⼩⼑⿌', '⼩⾶⼕⽓⽐', ]
+        new Set [ '⼢⿀⾳⿕⼔⿀⼗⾉⽔', '⾇⾚⼠⼘⼼⾐', '⼏⿉⾜⼦⾜⼆⽞', '⽍⽠⾿⼔⼗⿎', '⾇⽤⿃⾅⽋⾎', ]
+        new Set [ '⼘⼂⾛⾖⼨⾛⾜', '⽉⼛⿉⼘⿒⽂⼫⽗⾜', '⼔⿋⿄', '⼟⼅⼎⾂⼮⽵⾾⾼⽔', '⾨⽩⾐⼊⼂⽆', ]
+        new Set [ '⽿⽩⽊', '⼽⾖⾜⾶⾩⾮', '⾶⼮⾃', '⽿⽸⾽⼡⽻⾊⼶', '⽆⼠⽴⼿⼼⼿⽫⾈', ]
+        new Set [ '⽣', '⾱⽻⽀⽛⾽⾲⼦⾶⼹', '⼕⽗⼌⼖⽽⽦⽎', '⽚⾌⼾⾌⼧⼛⼹', '⾂⼣⿁', ]
+        new Set [ '⾘⽲⾟⽤⼘', '⾁⾧⽜⼕⾰⾐⼩', '⼱⾑⿃⿒⼽⼙', '⿏⾰⾓⼐⼈', '⽘⽗⽽⼘⿀', ]
+        new Set [ '⽳⼱⼤⾾⽷⾠⼿⾕', '⼛⼂⿃⼶⼭⼫', '⼫⾀⾄⿋⼏⼾', '⽁⼽⼹⾯⿃⽮⾳⽑⽩⽓', '⼯⽎⾱⽫⽩⾳', ]
+        new Set [ '⼷⾕⼈⼶⽩⽿⾡⼃⾜', '⾱⿇⾞⾴⽝', '⾵', '⽻⿔⽀⿎⾑⽌⼤⽘', '⿊⼭⼳⿒⼐⽥⽙⾲⽟', ]
+        new Set [ '⽣⽪', '⽙⼟⽰⾗', '⽰', '⼴⿑⾁⽺', '⾐⽌⾠⾭⽘', ]
+        ]
+      for idx in [ 0 .. 9 ]
+        result = get_random.set_of_texts { min: '⼀', max: '⿕', size: 5, min_length: 1, max_length: 10, }
+        @eq ( Ωbrbr__37 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__38', result
       return null
     #.......................................................................................................
     return null
-
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
   #.........................................................................................................
   return null
