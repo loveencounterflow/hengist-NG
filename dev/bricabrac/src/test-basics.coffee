@@ -174,7 +174,7 @@ settings =
     #.......................................................................................................
     do =>
       retries     = 0
-      on_stats    = ( stats ) -> retries += stats.stats.retries if stats.name is 'chr'
+      on_stats    = ( stats ) -> retries += stats.retries if stats.name is 'chr'
       get_random  = new Get_random { seed: settings.my_seed_2, on_stats, }
       chr         = get_random.chr_producer { max: 0xff, filter: /[aeiouyAEIOUY]/, }
       result      = ( chr() for _ in [ 1 .. 40 ] ).join ''
@@ -205,7 +205,7 @@ settings =
       on_stats        = ( stats ) ->
         # help 'Ωbrbr__26', stats
         return null unless stats.name is 'chr'
-        count_attempts stats.stats.retries
+        count_attempts stats.retries
         return null
       valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 150 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
@@ -227,7 +227,7 @@ settings =
     do =>
       retries         = 0
       on_stats        = ( stats ) ->
-        retries += stats.stats.retries
+        retries += stats.retries
         # urge 'Ωbrbr__29', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 50 } $ ///v
@@ -243,7 +243,7 @@ settings =
     do =>
       retries         = 0
       on_stats        = ( stats ) ->
-        retries += stats.stats.retries
+        retries += stats.retries
         # urge 'Ωbrbr__32', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ 0-9 ]{ 10 } $ ///v
@@ -268,7 +268,7 @@ settings =
     do =>
       retries         = 0
       on_stats        = ( stats ) ->
-        retries += stats.stats.retries
+        retries += stats.retries
         # urge 'Ωbrbr__36', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ 0-9 ]{ 3 } $ ///v
@@ -294,7 +294,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         # info 'Ωbrbr__40', stats
-        result_retries = stats.stats.retries
+        result_retries = stats.retries
         @eq ( Ωbrbr_result_retries__41 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
@@ -317,7 +317,7 @@ settings =
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
         # info 'Ωbrbr__44', idx, stats
-        result_retries = stats.stats.retries
+        result_retries = stats.retries
         @eq ( Ωbrbr_result_retries__45 = ->  result_retries ), retry_matchers[ idx ]
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
@@ -341,7 +341,7 @@ settings =
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
         # info 'Ωbrbr__49', idx, stats
-        result_retries = stats.stats.retries
+        result_retries = stats.retries
         @eq ( Ωbrbr_result_retries__50 = ->  result_retries ), retry_matchers[ idx ]
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       get_random_text = get_random.text_producer { min: 'Α', max: 'ω', min_length: 1, max_length: 5, filter: /^Α/v, }
@@ -366,7 +366,7 @@ settings =
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
         # info 'Ωbrbr__54', idx, stats
-        result_retries = stats.stats.retries
+        result_retries = stats.retries
         @eq ( Ωbrbr_result_retries__55 = ->  result_retries ), retry_matchers[ idx ]
       get_random        = new Get_random { seed: settings.my_seed_1, on_stats, }
       filter            = ( n ) -> ( Math.floor n ) %% 2 is 0
@@ -388,7 +388,7 @@ settings =
     #.......................................................................................................
     do =>
       on_stats            = ( stats ) =>
-        retries.push stats.stats.retries if stats.name is 'integer'
+        retries.push stats.retries if stats.name is 'integer'
       retries             = []
       get_random          = new Get_random { seed: settings.my_seed_1, on_stats, }
       filter              = ( n ) -> ( Math.floor n ) %% 2 is 0
@@ -412,7 +412,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         info 'Ωbrbr__61', stats if stats.name is 'set_of_texts'
-        result_retries = stats.stats.retries if stats.name is 'set_of_texts'
+        result_retries = stats.retries if stats.name is 'set_of_texts'
         @eq ( Ωbrbr_result_retries__62 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
@@ -437,7 +437,7 @@ settings =
       #.....................................................................................................
       result_retries  = null
       on_stats        = ( stats ) =>
-        result_retries = stats.stats.retries if stats.name is 'set_of_texts'
+        result_retries = stats.retries if stats.name is 'set_of_texts'
         @eq ( Ωbrbr_result_retries__65 = -> result_retries >= 0 ), true
       #.....................................................................................................
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
@@ -471,7 +471,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         # info 'Ωbrbr__68', stats if stats.name is 'walk'
-        # result_retries = stats.stats.retries if stats.name is 'walk'
+        # result_retries = stats.retries if stats.name is 'walk'
         # @eq ( Ωbrbr_result_retries__69 = -> result_retries >= 0 ), true
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       #.....................................................................................................
@@ -488,7 +488,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         # info 'Ωbrbr__71', stats if stats.name is 'walk'
-        # result_retries = stats.stats.retries if stats.name is 'walk'
+        # result_retries = stats.retries if stats.name is 'walk'
         # @eq ( Ωbrbr_result_retries__72 = -> result_retries >= 0 ), true
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       #.....................................................................................................
@@ -513,7 +513,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         info 'Ωbrbr__74', stats if stats.name is 'walk'
-        result_retries = stats.stats.retries if stats.name is 'walk'
+        result_retries = stats.retries if stats.name is 'walk'
         @eq ( Ωbrbr_result_retries__75 = -> result_retries >= 0 ), true
       #.....................................................................................................
       producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
@@ -538,7 +538,7 @@ settings =
       @throws ( Ωbrbr__80 = -> stats.retries++      ), /Cannot set property/
       @eq     ( Ωbrbr__81 = -> stats.retry()        ), internals.go_on
       @eq     ( Ωbrbr__82 = -> stats.retries        ), 1
-      stats._retries = internals.max_retries - 2
+      stats._retries = internals.max_retries - 1
       # debug 'Ωbrbr__83', stats
       # debug 'Ωbrbr__84', stats.retries
       # debug 'Ωbrbr__85', internals.max_retries
@@ -551,7 +551,7 @@ settings =
     do =>
       on_exhaustion = undefined
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      stats._retries = internals.max_retries - 2
+      stats._retries = internals.max_retries - 1
       @eq     ( Ωbrbr__90 = -> stats.retry() ), internals.go_on
       @throws ( Ωbrbr__91 = -> stats.retry() ), /exhausted/
       @throws ( Ωbrbr__92 = -> stats.retry() ), /exhausted/
@@ -560,7 +560,7 @@ settings =
     do =>
       on_exhaustion = null
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      stats._retries = internals.max_retries - 2
+      stats._retries = internals.max_retries - 1
       @eq     ( Ωbrbr__93 = -> stats.retry() ), internals.go_on
       @throws ( Ωbrbr__94 = -> stats.retry() ), /exhausted/
       @throws ( Ωbrbr__95 = -> stats.retry() ), /exhausted/
@@ -569,10 +569,31 @@ settings =
     do =>
       on_exhaustion = 'error'
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      stats._retries = internals.max_retries - 2
+      stats._retries = internals.max_retries - 1
       @eq     ( Ωbrbr__96 = -> stats.retry() ), internals.go_on
       @throws ( Ωbrbr__97 = -> stats.retry() ), /exhausted/
       @throws ( Ωbrbr__98 = -> stats.retry() ), /exhausted/
+      return null
+    #.......................................................................................................
+    do =>
+      sentinel      = Symbol 'sentinel'
+      stats_result  = null
+      on_exhaustion = -> sentinel
+      on_stats      = -> sentinel
+      max_retries   = 3
+      stats = new internals.Stats { name: 'something', on_exhaustion, on_stats, max_retries, }
+      @eq     ( Ωbrbr__99 = -> stats.retries ), 0
+      @eq     ( Ωbrbr_100 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_101 = -> stats.retries ), 1
+      @eq     ( Ωbrbr_102 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_103 = -> stats.retries ), 2
+      @eq     ( Ωbrbr_104 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_105 = -> stats.retries ), 3
+      @eq     ( Ωbrbr_106 = -> stats.retry() ), sentinel
+      @eq     ( Ωbrbr_107 = -> stats.finish 'value' ), 'value'
+      @throws ( Ωbrbr_108 = -> stats.finish 'value' ), /finished/
+      @throws ( Ωbrbr_109 = -> stats.retry() ), /finished/
+      @throws ( Ωbrbr_110 = -> stats.retry() ), /finished/
       return null
     #.......................................................................................................
     return null
@@ -581,7 +602,7 @@ settings =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { walk: tests.walk, }
   # ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
   ( new Test guytest_cfg ).test { stats: tests.stats, }
