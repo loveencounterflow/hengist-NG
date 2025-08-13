@@ -340,16 +340,64 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
-        # info 'Ωbrbr__44', idx, stats
+        # info 'Ωbrbr__49', idx, stats
         result_retries = stats.stats.retries
-        @eq ( Ωbrbr_result_retries__45 = ->  result_retries ), retry_matchers[ idx ]
+        @eq ( Ωbrbr_result_retries__50 = ->  result_retries ), retry_matchers[ idx ]
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       get_random_text = get_random.text_producer { min: 'Α', max: 'ω', min_length: 1, max_length: 5, filter: /^Α/v, }
       for idx in [ 0 .. 9 ]
         result      = get_random_text()
-        # debug 'Ωbrbr__46', rpr result
-        @eq ( Ωbrbr__47 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
-        @eq ( Ωbrbr__48 = -> result ), result_matchers[ idx ]
+        # debug 'Ωbrbr__51', rpr result
+        @eq ( Ωbrbr__52 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
+        @eq ( Ωbrbr__53 = -> result ), result_matchers[ idx ]
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  get_random_float_producer: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    result_matchers = [ 16.084712848532945, 16.42560794018209, 14.009152099024504, 18.174642121884972, 12.86115032620728, 10.208302834071219, 18.753091448452324, 12.430183209944516, 12.627715056296438, 12.425259067676961, ]
+    # retry_matchers  = [ 34, 15, 189, 121, 75, 47, 87, 43, 119, 200, ]
+    #.......................................................................................................
+    do =>
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        return null unless stats.name is 'text'
+        # info 'Ωbrbr__54', idx, stats
+        result_retries = stats.stats.retries
+        @eq ( Ωbrbr_result_retries__55 = ->  result_retries ), retry_matchers[ idx ]
+      get_random        = new Get_random { seed: settings.my_seed_1, on_stats, }
+      filter            = ( n ) -> ( Math.floor n ) %% 2 is 0
+      get_random_float  = get_random.float_producer { min: 10, max: 20, filter, }
+      for idx in [ 0 .. 9 ]
+        result      = get_random_float()
+        debug 'Ωbrbr__56', rpr result
+        @eq ( Ωbrbr__57 = -> result ), result_matchers[ idx ]
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  get_random_integer_producer: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    result_matchers = [ 16, 16, 14, 12, 18, 18, 20, 10, 12, 12, ]
+    retries_matcher = [ 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ]
+    #.......................................................................................................
+    do =>
+      on_stats            = ( stats ) =>
+        retries.push stats.stats.retries if stats.name is 'integer'
+      retries             = []
+      get_random          = new Get_random { seed: settings.my_seed_1, on_stats, }
+      filter              = ( n ) -> ( Math.floor n ) %% 2 is 0
+      get_random_integer  = get_random.integer_producer { min: 10, max: 20, filter, }
+      for idx in [ 0 .. 9 ]
+        result = get_random_integer()
+        debug 'Ωbrbr__58', rpr result
+        @eq ( Ωbrbr__59 = -> result ), result_matchers[ idx ]
+      @eq ( Ωbrbr__60 = -> retries ), retries_matcher
       return null
     #.......................................................................................................
     return null
@@ -363,9 +411,9 @@ settings =
     do =>
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__49', stats if stats.name is 'set_of_texts'
+        info 'Ωbrbr__61', stats if stats.name is 'set_of_texts'
         result_retries = stats.stats.retries if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr_result_retries__50 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__62 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
         new Set [ '⾉⽕⼢⾗⾮⾩', '⿋⼽⼄⼠⾺⼴', '⼴⾼⼦', '⾏⾚', '⿓⽛⾱⽳⾝⼭⾈⾜⼣⾥', ]
@@ -381,8 +429,8 @@ settings =
         ]
       for idx in [ 0 .. 9 ]
         result = get_random.set_of_texts { min: '⼀', max: '⿕', size: 5, min_length: 1, max_length: 10, }
-        @eq ( Ωbrbr__51 = -> result ), matchers[ idx ]
-        # debug 'Ωbrbr__52', result
+        @eq ( Ωbrbr__63 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__64', result
       return null
     #.......................................................................................................
     do =>
@@ -390,7 +438,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         result_retries = stats.stats.retries if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr_result_retries__53 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__65 = -> result_retries >= 0 ), true
       #.....................................................................................................
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
@@ -408,8 +456,8 @@ settings =
       for idx in [ 0 .. 9 ]
         result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, }
         result_rpr  = [ result..., ].join ''
-        @eq ( Ωbrbr__54 = -> result_rpr     ), matchers[ idx ].result_rpr
-        # @eq ( Ωbrbr__55 = -> result_retries ), matchers[ idx ].result_retries
+        @eq ( Ωbrbr__66 = -> result_rpr     ), matchers[ idx ].result_rpr
+        # @eq ( Ωbrbr__67 = -> result_retries ), matchers[ idx ].result_retries
       return null
     #.......................................................................................................
     return null
@@ -423,13 +471,13 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__56', stats if stats.name is 'walk'
+        info 'Ωbrbr__68', stats if stats.name is 'walk'
         result_retries = stats.stats.retries if stats.name is 'walk'
-        @eq ( Ωbrbr_result_retries__57 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__69 = -> result_retries >= 0 ), true
       #.....................................................................................................
       producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
       for x from get_random.walk { producer, n: 11, }
-        debug 'Ωbrbr__58', rpr x
+        debug 'Ωbrbr__70', rpr x
       return null
     #.......................................................................................................
     return null
@@ -439,7 +487,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { get_random_text_producer: tests.get_random_text_producer, }
-  ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
+  # ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
+  ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
   #.........................................................................................................
   return null
