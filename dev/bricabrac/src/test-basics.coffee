@@ -337,6 +337,26 @@ settings =
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  walk: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    #.......................................................................................................
+    do =>
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        info 'Ωbrbr__37', stats if stats.name is 'walk'
+        result_retries = stats.stats.retries if stats.name is 'walk'
+        @eq ( Ωbrbr_result_retries__38 = -> result_retries >= 0 ), true
+      #.....................................................................................................
+      producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
+      for x from get_random.walk { producer, n: 11, }
+        debug 'Ωbrbr__35', rpr x
+      return null
+    #.......................................................................................................
+    return null
+
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
