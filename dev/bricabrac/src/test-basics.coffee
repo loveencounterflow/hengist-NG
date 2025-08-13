@@ -263,13 +263,16 @@ settings =
     matchers        = [ 'εΧΚ', 'ονήφ', 'ΒΙ', 'ΟΠΟςΛ', 'η', 'ψψΩο', 'κΝε', 'Κμίκ', 'υΙ', 'ΟΛ', ]
     #.......................................................................................................
     do =>
-      on_stats    = ( stats ) ->
+      result_retries  = null
+      on_stats        = ( stats ) =>
         # info 'Ωbrbr__33', stats
+        result_retries = stats.stats.retries
+        @eq ( Ωbrbr_result_retries__34 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
         result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, }
-        debug 'Ωbrbr__34', rpr result
-        @eq ( Ωbrbr__35 = -> result ), matchers[ idx ]
+        debug 'Ωbrbr__35', rpr result
+        @eq ( Ωbrbr__36 = -> result ), matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -281,8 +284,11 @@ settings =
     # matchers        = [ 'εΧΚ', 'ονήφ', 'ΒΙ', 'ΟΠΟςΛ', 'η', 'ψψΩο', 'κΝε', 'Κμίκ', 'υΙ', 'ΟΛ', ]
     #.......................................................................................................
     do =>
-      on_stats    = ( stats ) ->
-        info 'Ωbrbr__36', stats if stats.name is 'set_of_texts'
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        info 'Ωbrbr__37', stats if stats.name is 'set_of_texts'
+        result_retries = stats.stats.retries if stats.name is 'set_of_texts'
+        @eq ( Ωbrbr_result_retries__38 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
         new Set [ '⾉⽕⼢⾗⾮⾩', '⿋⼽⼄⼠⾺⼴', '⼴⾼⼦', '⾏⾚', '⿓⽛⾱⽳⾝⼭⾈⾜⼣⾥', ]
@@ -298,8 +304,35 @@ settings =
         ]
       for idx in [ 0 .. 9 ]
         result = get_random.set_of_texts { min: '⼀', max: '⿕', size: 5, min_length: 1, max_length: 10, }
-        @eq ( Ωbrbr__37 = -> result ), matchers[ idx ]
-        # debug 'Ωbrbr__38', result
+        @eq ( Ωbrbr__39 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__40', result
+      return null
+    #.......................................................................................................
+    do =>
+      #.....................................................................................................
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        result_retries = stats.stats.retries if stats.name is 'set_of_texts'
+        @eq ( Ωbrbr_result_retries__41 = -> result_retries >= 0 ), true
+      #.....................................................................................................
+      get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
+      matchers    = [
+        { result_retries:  4, result_rpr: '5641793082', }
+        { result_retries: 63, result_rpr: '2816794530', }
+        { result_retries: 11, result_rpr: '4538196072', }
+        { result_retries: 20, result_rpr: '7831924056', }
+        { result_retries: 76, result_rpr: '0325467819', }
+        { result_retries:  7, result_rpr: '3149760582', }
+        { result_retries: 20, result_rpr: '2857361094', }
+        { result_retries: 31, result_rpr: '4523786091', }
+        { result_retries: 13, result_rpr: '4813560297', }
+        { result_retries: 19, result_rpr: '7491065823', }
+        ]
+      for idx in [ 0 .. 9 ]
+        result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, }
+        result_rpr  = [ result..., ].join ''
+        @eq ( Ωbrbr__42 = -> result_rpr     ), matchers[ idx ].result_rpr
+        # @eq ( Ωbrbr__43 = -> result_retries ), matchers[ idx ].result_retries
       return null
     #.......................................................................................................
     return null
