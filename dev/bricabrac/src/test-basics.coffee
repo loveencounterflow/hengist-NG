@@ -488,6 +488,24 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
-  ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
+  # ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
+  #.........................................................................................................
+  class Stats
+    constructor: ->
+      @_retries = 0
+      return undefined
+    Object.defineProperty @::, 'retries',
+      get: -> @_retries
+      set: ( value ) -> @_retries = value
+        # return value # @_retries
+  stats = new Stats()
+  # help 'Ωbrbr__71', stats.retries
+  help    'Ωbrbr__72', stats.retries
+  stats.retries++
+  help    'Ωbrbr__73', stats.retries
+  stats.retries++
+  help    'Ωbrbr__74', stats.retries
+  # hel   p 'Ωbrbr__75', stats.retries++
+  # help 'Ωbrbr__76', stats.retries++
   #.........................................................................................................
   return null
