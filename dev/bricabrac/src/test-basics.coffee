@@ -387,17 +387,19 @@ settings =
     retries_matcher = [ 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ]
     #.......................................................................................................
     do =>
-      on_stats            = ( stats ) =>
+      my_on_stats         = ( stats ) =>
+        debug 'Ωbrbr__58', stats
         retries.push stats.retries if stats.name is 'integer'
       retries             = []
-      get_random          = new Get_random { seed: settings.my_seed_1, on_stats, }
+      get_random          = new Get_random { seed: settings.my_seed_1, on_stats: my_on_stats, }
       filter              = ( n ) -> ( Math.floor n ) %% 2 is 0
       get_random_integer  = get_random.integer_producer { min: 10, max: 20, filter, }
+      debug 'Ωbrbr__18', get_random.cfg
       for idx in [ 0 .. 9 ]
         result = get_random_integer()
-        debug 'Ωbrbr__58', rpr result
-        @eq ( Ωbrbr__59 = -> result ), result_matchers[ idx ]
-      @eq ( Ωbrbr__60 = -> retries ), retries_matcher
+        debug 'Ωbrbr__59', rpr result
+        @eq ( Ωbrbr__60 = -> result ), result_matchers[ idx ]
+      @eq ( Ωbrbr__61 = -> retries ), retries_matcher
       return null
     #.......................................................................................................
     return null
@@ -411,9 +413,9 @@ settings =
     do =>
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__61', stats if stats.name is 'set_of_texts'
+        info 'Ωbrbr__62', stats if stats.name is 'set_of_texts'
         result_retries = stats.retries if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr_result_retries__62 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__63 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
         new Set [ '⾉⽕⼢⾗⾮⾩', '⿋⼽⼄⼠⾺⼴', '⼴⾼⼦', '⾏⾚', '⿓⽛⾱⽳⾝⼭⾈⾜⼣⾥', ]
@@ -429,8 +431,8 @@ settings =
         ]
       for idx in [ 0 .. 9 ]
         result = get_random.set_of_texts { min: '⼀', max: '⿕', size: 5, min_length: 1, max_length: 10, }
-        @eq ( Ωbrbr__63 = -> result ), matchers[ idx ]
-        # debug 'Ωbrbr__64', result
+        @eq ( Ωbrbr__64 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__65', result
       return null
     #.......................................................................................................
     do =>
@@ -438,7 +440,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         result_retries = stats.retries if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr_result_retries__65 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__66 = -> result_retries >= 0 ), true
       #.....................................................................................................
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
@@ -456,8 +458,8 @@ settings =
       for idx in [ 0 .. 9 ]
         result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, }
         result_rpr  = [ result..., ].join ''
-        @eq ( Ωbrbr__66 = -> result_rpr     ), matchers[ idx ].result_rpr
-        # @eq ( Ωbrbr__67 = -> result_retries ), matchers[ idx ].result_retries
+        @eq ( Ωbrbr__67 = -> result_rpr     ), matchers[ idx ].result_rpr
+        # @eq ( Ωbrbr__68 = -> result_retries ), matchers[ idx ].result_retries
       return null
     #.......................................................................................................
     return null
@@ -470,9 +472,9 @@ settings =
     do =>
       result_retries  = null
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__68', stats if stats.name is 'walk'
+        # info 'Ωbrbr__69', stats if stats.name is 'walk'
         # result_retries = stats.retries if stats.name is 'walk'
-        # @eq ( Ωbrbr_result_retries__69 = -> result_retries >= 0 ), true
+        # @eq ( Ωbrbr_result_retries__70 = -> result_retries >= 0 ), true
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       #.....................................................................................................
       cfg =
@@ -481,15 +483,15 @@ settings =
         length:         3
         filter:         /^[a-z]{3}$/
         on_exhaustion: 'error'
-      @throws ( Ωbrbr__70 = -> get_random.text cfg ), /exhausted/
+      @throws ( Ωbrbr__71 = -> get_random.text cfg ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       result_retries  = null
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__71', stats if stats.name is 'walk'
+        # info 'Ωbrbr__72', stats if stats.name is 'walk'
         # result_retries = stats.retries if stats.name is 'walk'
-        # @eq ( Ωbrbr_result_retries__72 = -> result_retries >= 0 ), true
+        # @eq ( Ωbrbr_result_retries__73 = -> result_retries >= 0 ), true
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       #.....................................................................................................
       cfg =
@@ -498,7 +500,7 @@ settings =
         length:         3
         filter:         /^[a-z]{3}$/
         on_exhaustion: -> null
-      @eq ( Ωbrbr__73 = -> get_random.text cfg ), null
+      @eq ( Ωbrbr__74 = -> get_random.text cfg ), null
       return null
     #.......................................................................................................
     return null
@@ -512,13 +514,13 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__74', stats if stats.name is 'walk'
+        info 'Ωbrbr__75', stats if stats.name is 'walk'
         result_retries = stats.retries if stats.name is 'walk'
-        @eq ( Ωbrbr_result_retries__75 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__76 = -> result_retries >= 0 ), true
       #.....................................................................................................
       producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
       for x from get_random.walk { producer, n: 11, }
-        debug 'Ωbrbr__76', rpr x
+        debug 'Ωbrbr__77', rpr x
       return null
     #.......................................................................................................
     return null
@@ -532,47 +534,47 @@ settings =
       sentinel      = Symbol 'sentinel'
       on_exhaustion = -> sentinel
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      @eq     ( Ωbrbr__77 = -> stats.name           ), 'something'
-      @eq     ( Ωbrbr__78 = -> stats.max_retries    ), internals.max_retries
-      @eq     ( Ωbrbr__79 = -> stats.retries        ), 0
-      @throws ( Ωbrbr__80 = -> stats.retries++      ), /Cannot set property/
-      @eq     ( Ωbrbr__81 = -> stats.retry()        ), internals.go_on
-      @eq     ( Ωbrbr__82 = -> stats.retries        ), 1
+      @eq     ( Ωbrbr__78 = -> stats.name           ), 'something'
+      @eq     ( Ωbrbr__79 = -> stats.max_retries    ), internals.max_retries
+      @eq     ( Ωbrbr__80 = -> stats.retries        ), 0
+      @throws ( Ωbrbr__81 = -> stats.retries++      ), /Cannot set property/
+      @eq     ( Ωbrbr__82 = -> stats.retry()        ), internals.go_on
+      @eq     ( Ωbrbr__83 = -> stats.retries        ), 1
       stats._retries = internals.max_retries - 1
-      # debug 'Ωbrbr__83', stats
-      # debug 'Ωbrbr__84', stats.retries
-      # debug 'Ωbrbr__85', internals.max_retries
-      # debug 'Ωbrbr__86', stats.max_retries
-      @eq ( Ωbrbr__87 = -> stats.retry() ), internals.go_on
-      @eq ( Ωbrbr__88 = -> stats.retry() ), sentinel
+      # debug 'Ωbrbr__84', stats
+      # debug 'Ωbrbr__85', stats.retries
+      # debug 'Ωbrbr__86', internals.max_retries
+      # debug 'Ωbrbr__87', stats.max_retries
+      @eq ( Ωbrbr__88 = -> stats.retry() ), internals.go_on
       @eq ( Ωbrbr__89 = -> stats.retry() ), sentinel
+      @eq ( Ωbrbr__90 = -> stats.retry() ), sentinel
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = undefined
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._retries = internals.max_retries - 1
-      @eq     ( Ωbrbr__90 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr__91 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr__91 = -> stats.retry() ), internals.go_on
       @throws ( Ωbrbr__92 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr__93 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = null
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._retries = internals.max_retries - 1
-      @eq     ( Ωbrbr__93 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr__94 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr__94 = -> stats.retry() ), internals.go_on
       @throws ( Ωbrbr__95 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr__96 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = 'error'
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._retries = internals.max_retries - 1
-      @eq     ( Ωbrbr__96 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr__97 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr__97 = -> stats.retry() ), internals.go_on
       @throws ( Ωbrbr__98 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr__99 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
@@ -582,18 +584,18 @@ settings =
       on_stats      = -> sentinel
       max_retries   = 3
       stats = new internals.Stats { name: 'something', on_exhaustion, on_stats, max_retries, }
-      @eq     ( Ωbrbr__99 = -> stats.retries ), 0
-      @eq     ( Ωbrbr_100 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_101 = -> stats.retries ), 1
-      @eq     ( Ωbrbr_102 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_103 = -> stats.retries ), 2
-      @eq     ( Ωbrbr_104 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_105 = -> stats.retries ), 3
-      @eq     ( Ωbrbr_106 = -> stats.retry() ), sentinel
-      @eq     ( Ωbrbr_107 = -> stats.finish 'value' ), 'value'
-      @throws ( Ωbrbr_108 = -> stats.finish 'value' ), /finished/
-      @throws ( Ωbrbr_109 = -> stats.retry() ), /finished/
+      @eq     ( Ωbrbr_100 = -> stats.retries ), 0
+      @eq     ( Ωbrbr_101 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_102 = -> stats.retries ), 1
+      @eq     ( Ωbrbr_103 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_104 = -> stats.retries ), 2
+      @eq     ( Ωbrbr_105 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_106 = -> stats.retries ), 3
+      @eq     ( Ωbrbr_107 = -> stats.retry() ), sentinel
+      @eq     ( Ωbrbr_108 = -> stats.finish 'value' ), 'value'
+      @throws ( Ωbrbr_109 = -> stats.finish 'value' ), /finished/
       @throws ( Ωbrbr_110 = -> stats.retry() ), /finished/
+      @throws ( Ωbrbr_111 = -> stats.retry() ), /finished/
       return null
     #.......................................................................................................
     return null
@@ -602,10 +604,10 @@ settings =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { walk: tests.walk, }
-  # ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
-  ( new Test guytest_cfg ).test { stats: tests.stats, }
-  # ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
+  # ( new Test guytest_cfg ).test { tests, }
+  # # ( new Test guytest_cfg ).test { walk: tests.walk, }
+  # # ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
+  # ( new Test guytest_cfg ).test { stats: tests.stats, }
+  ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
   #.........................................................................................................
   return null
