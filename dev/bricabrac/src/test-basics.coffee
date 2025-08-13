@@ -609,5 +609,10 @@ if module is require.main then await do =>
   # # ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
   # ( new Test guytest_cfg ).test { stats: tests.stats, }
   ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
+  a = {}
+  b = { o: 6, }
+  c = { o: undefined, }
+  clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
+  debug 'Ωbrbr__18', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
