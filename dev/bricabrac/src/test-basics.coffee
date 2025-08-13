@@ -168,19 +168,19 @@ settings =
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  get_random_create_chr_producer: ->
+  get_random_chr_producer: ->
     { Get_random,
       internals,  } = SFMODULES.unstable.require_random_tools()
     #.......................................................................................................
     do =>
-      on_stats    = ( stats ) ->
-        # debug 'Ωbrbr__21', stats
+      retries     = 0
+      on_stats    = ( stats ) -> retries += stats.stats.retries if stats.name is 'chr'
       get_random  = new Get_random { seed: settings.my_seed_2, on_stats, }
-      chr         = get_random.create_chr_producer { max: 0xff, filter: /[aeiouyAEIOUY]/, }
+      chr         = get_random.chr_producer { max: 0xff, filter: /[aeiouyAEIOUY]/, }
       result      = ( chr() for _ in [ 1 .. 40 ] ).join ''
-      debug 'Ωbrbr__22', rpr result
-      @eq ( Ωbrbr__23 = -> /^[aeiouyAEIOUY]{40}$/.test result ), true
-      @eq ( Ωbrbr__24 = -> result ), 'yyUyIuuUaaIuUaUIIyOIoAYEOiOYIuiOuaiAUUeE'
+      debug 'Ωbrbr__21', retries, ( rpr result )
+      @eq ( Ωbrbr__22 = -> /^[aeiouyAEIOUY]{40}$/.test result ), true
+      @eq ( Ωbrbr__23 = -> result ), 'yyUyIuuUaaIuUaUIIyOIoAYEOiOYIuiOuaiAUUeE'
       return null
     #.......................................................................................................
     return null
@@ -193,17 +193,17 @@ settings =
     #.......................................................................................................
     do =>
       on_stats    = ( stats ) ->
-        # info 'Ωbrbr__25', stats
+        # info 'Ωbrbr__24', stats
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       result      = get_random.text { min: 'A', max: 'Z', length: 40, }
-      @eq ( Ωbrbr__26 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
+      @eq ( Ωbrbr__25 = -> result ), 'PQKESUUNYHBEWGHGWECRSZZLVOSFQSETNSEXDFGF'
       return null
     #.......................................................................................................
     do =>
       count_attempts  = ( n ) -> retries[ n ] = ( retries[ n ] ?= 0 ) + 1
       retries        = {}
       on_stats        = ( stats ) ->
-        # help 'Ωbrbr__27', stats
+        # help 'Ωbrbr__26', stats
         return null unless stats.name is 'chr'
         count_attempts stats.stats.retries
         return null
@@ -212,8 +212,8 @@ settings =
       for _ in [ 1 .. 1 ]
       # for _ in [ 1 .. 10 ]
         result = get_random.text { min: 0x00, max: 0xff, length: 150, }
-        @eq ( Ωbrbr__28 = -> valid_re.test result ), true
-      # debug 'Ωbrbr__29', retries
+        @eq ( Ωbrbr__27 = -> valid_re.test result ), true
+      # debug 'Ωbrbr__28', retries
       return null
     #.......................................................................................................
     return null
@@ -228,15 +228,15 @@ settings =
       retries         = 0
       on_stats        = ( stats ) ->
         retries += stats.stats.retries
-        # urge 'Ωbrbr__30', stats if stats.name is 'set_of_chrs'
+        # urge 'Ωbrbr__29', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ \u0020-\u007e \u00a0-\u00ac \u00ae-\u00ff ]{ 50 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
       for _ in [ 1 .. 20 ]
         result      = get_random.set_of_chrs { min: 0x00, max: 0xff, size: 50, }
         result_rpr  = [ result..., ].join ''
-        @eq ( Ωbrbr__31 = -> valid_re.test result_rpr ), true
-        # debug 'Ωbrbr__32', retries
+        @eq ( Ωbrbr__30 = -> valid_re.test result_rpr ), true
+        # debug 'Ωbrbr__31', retries
         retries = 0
       return null
     #.......................................................................................................
@@ -244,16 +244,16 @@ settings =
       retries         = 0
       on_stats        = ( stats ) ->
         retries += stats.stats.retries
-        # urge 'Ωbrbr__33', stats if stats.name is 'set_of_chrs'
+        # urge 'Ωbrbr__32', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ 0-9 ]{ 10 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
       for _ in [ 1 .. 20 ]
         result      = get_random.set_of_chrs { min: '0', max: '9', size: 10, }
         result_rpr  = [ result..., ].join ''
-        @eq ( Ωbrbr__34 = -> result.size              ), 10
-        @eq ( Ωbrbr__35 = -> valid_re.test result_rpr ), true
-        # debug 'Ωbrbr__36', retries, rpr result
+        @eq ( Ωbrbr__33 = -> result.size              ), 10
+        @eq ( Ωbrbr__34 = -> valid_re.test result_rpr ), true
+        # debug 'Ωbrbr__35', retries, rpr result
         retries = 0
       return null
     #.......................................................................................................
@@ -269,16 +269,16 @@ settings =
       retries         = 0
       on_stats        = ( stats ) ->
         retries += stats.stats.retries
-        # urge 'Ωbrbr__37', stats if stats.name is 'set_of_chrs'
+        # urge 'Ωbrbr__36', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ 0-9 ]{ 3 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
       for _ in [ 1 .. 1 ]
         result      = get_random.set_of_texts { min: '0', max: '9', length: 3, size: 10, }
-        @eq ( Ωbrbr__38 = -> result.size              ), 10
+        @eq ( Ωbrbr__37 = -> result.size              ), 10
         for random_text from result
-          @eq ( Ωbrbr__39 = -> valid_re.test random_text ), true
-        # debug 'Ωbrbr__40', retries, rpr result
+          @eq ( Ωbrbr__38 = -> valid_re.test random_text ), true
+        # debug 'Ωbrbr__39', retries, rpr result
         retries = 0
       return null
     #.......................................................................................................
@@ -293,14 +293,63 @@ settings =
     do =>
       result_retries  = null
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__41', stats
+        # info 'Ωbrbr__40', stats
         result_retries = stats.stats.retries
-        @eq ( Ωbrbr_result_retries__42 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__41 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
         result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, }
-        debug 'Ωbrbr__43', rpr result
-        @eq ( Ωbrbr__44 = -> result ), matchers[ idx ]
+        debug 'Ωbrbr__42', rpr result
+        @eq ( Ωbrbr__43 = -> result ), matchers[ idx ]
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  get_random_text_of_variable_length_with_filter: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    result_matchers = [ 'Ακθ', 'ΑΣ', 'ΑΜ', 'ΑίΥΔ', 'ΑήδΛ', 'ΑήςδΠ', 'ΑξΡΤΘ', 'ΑΤΚΞ', 'ΑγιΔε', 'Αή', ]
+    retry_matchers  = [ 34, 15, 189, 121, 75, 47, 87, 43, 119, 200, ]
+    #.......................................................................................................
+    do =>
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        return null unless stats.name is 'text'
+        # info 'Ωbrbr__44', idx, stats
+        result_retries = stats.stats.retries
+        @eq ( Ωbrbr_result_retries__45 = ->  result_retries ), retry_matchers[ idx ]
+      get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
+      for idx in [ 0 .. 9 ]
+        result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, filter: /^Α/v, }
+        # debug 'Ωbrbr__46', rpr result
+        @eq ( Ωbrbr__47 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
+        @eq ( Ωbrbr__48 = -> result ), result_matchers[ idx ]
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  get_random_text_producer: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    result_matchers = [ 'Ακθ', 'ΑΣ', 'ΑΜ', 'ΑίΥΔ', 'ΑήδΛ', 'ΑήςδΠ', 'ΑξΡΤΘ', 'ΑΤΚΞ', 'ΑγιΔε', 'Αή', ]
+    retry_matchers  = [ 34, 15, 189, 121, 75, 47, 87, 43, 119, 200, ]
+    #.......................................................................................................
+    do =>
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        return null unless stats.name is 'text'
+        # info 'Ωbrbr__44', idx, stats
+        result_retries = stats.stats.retries
+        @eq ( Ωbrbr_result_retries__45 = ->  result_retries ), retry_matchers[ idx ]
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      get_random_text = get_random.text_producer { min: 'Α', max: 'ω', min_length: 1, max_length: 5, filter: /^Α/v, }
+      for idx in [ 0 .. 9 ]
+        result      = get_random_text()
+        # debug 'Ωbrbr__46', rpr result
+        @eq ( Ωbrbr__47 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
+        @eq ( Ωbrbr__48 = -> result ), result_matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -314,9 +363,9 @@ settings =
     do =>
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__45', stats if stats.name is 'set_of_texts'
+        info 'Ωbrbr__49', stats if stats.name is 'set_of_texts'
         result_retries = stats.stats.retries if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr_result_retries__46 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__50 = -> result_retries >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
         new Set [ '⾉⽕⼢⾗⾮⾩', '⿋⼽⼄⼠⾺⼴', '⼴⾼⼦', '⾏⾚', '⿓⽛⾱⽳⾝⼭⾈⾜⼣⾥', ]
@@ -332,8 +381,8 @@ settings =
         ]
       for idx in [ 0 .. 9 ]
         result = get_random.set_of_texts { min: '⼀', max: '⿕', size: 5, min_length: 1, max_length: 10, }
-        @eq ( Ωbrbr__47 = -> result ), matchers[ idx ]
-        # debug 'Ωbrbr__48', result
+        @eq ( Ωbrbr__51 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__52', result
       return null
     #.......................................................................................................
     do =>
@@ -341,7 +390,7 @@ settings =
       result_retries  = null
       on_stats        = ( stats ) =>
         result_retries = stats.stats.retries if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr_result_retries__49 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__53 = -> result_retries >= 0 ), true
       #.....................................................................................................
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
@@ -359,8 +408,8 @@ settings =
       for idx in [ 0 .. 9 ]
         result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, }
         result_rpr  = [ result..., ].join ''
-        @eq ( Ωbrbr__50 = -> result_rpr     ), matchers[ idx ].result_rpr
-        # @eq ( Ωbrbr__51 = -> result_retries ), matchers[ idx ].result_retries
+        @eq ( Ωbrbr__54 = -> result_rpr     ), matchers[ idx ].result_rpr
+        # @eq ( Ωbrbr__55 = -> result_retries ), matchers[ idx ].result_retries
       return null
     #.......................................................................................................
     return null
@@ -374,13 +423,13 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__52', stats if stats.name is 'walk'
+        info 'Ωbrbr__56', stats if stats.name is 'walk'
         result_retries = stats.stats.retries if stats.name is 'walk'
-        @eq ( Ωbrbr_result_retries__53 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__57 = -> result_retries >= 0 ), true
       #.....................................................................................................
       producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
       for x from get_random.walk { producer, n: 11, }
-        debug 'Ωbrbr__54', rpr x
+        debug 'Ωbrbr__58', rpr x
       return null
     #.......................................................................................................
     return null
@@ -390,6 +439,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
+  ( new Test guytest_cfg ).test { get_random_text_producer: tests.get_random_text_producer, }
+  ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
   #.........................................................................................................
   return null
