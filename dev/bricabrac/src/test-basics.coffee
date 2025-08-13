@@ -463,6 +463,47 @@ settings =
     return null
 
   #---------------------------------------------------------------------------------------------------------
+  exhaustion: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    #.......................................................................................................
+    do =>
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        # info 'Ωbrbr__68', stats if stats.name is 'walk'
+        # result_retries = stats.stats.retries if stats.name is 'walk'
+        # @eq ( Ωbrbr_result_retries__69 = -> result_retries >= 0 ), true
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      #.....................................................................................................
+      cfg =
+        min:            'A'
+        max:            'Z'
+        length:         3
+        filter:         /^[a-z]{3}$/
+        on_exhaustion: 'error'
+      @throws ( Ωbrbr__70 = -> get_random.text cfg ), /exhausted/
+      return null
+    #.......................................................................................................
+    do =>
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        # info 'Ωbrbr__68', stats if stats.name is 'walk'
+        # result_retries = stats.stats.retries if stats.name is 'walk'
+        # @eq ( Ωbrbr_result_retries__69 = -> result_retries >= 0 ), true
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      #.....................................................................................................
+      cfg =
+        min:            'A'
+        max:            'Z'
+        length:         3
+        filter:         /^[a-z]{3}$/
+        on_exhaustion: -> null
+      @eq ( Ωbrbr__70 = -> get_random.text cfg ), null
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   walk: ->
     { Get_random,
       internals,  } = SFMODULES.unstable.require_random_tools()
@@ -471,13 +512,13 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       result_retries  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__68', stats if stats.name is 'walk'
+        info 'Ωbrbr__71', stats if stats.name is 'walk'
         result_retries = stats.stats.retries if stats.name is 'walk'
-        @eq ( Ωbrbr_result_retries__69 = -> result_retries >= 0 ), true
+        @eq ( Ωbrbr_result_retries__72 = -> result_retries >= 0 ), true
       #.....................................................................................................
       producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
       for x from get_random.walk { producer, n: 11, }
-        debug 'Ωbrbr__70', rpr x
+        debug 'Ωbrbr__73', rpr x
       return null
     #.......................................................................................................
     return null
@@ -487,25 +528,8 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { get_random_text: tests.get_random_text, }
+  ( new Test guytest_cfg ).test { walk: tests.walk, }
+  ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
   # ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
-  #.........................................................................................................
-  class Stats
-    constructor: ->
-      @_retries = 0
-      return undefined
-    Object.defineProperty @::, 'retries',
-      get: -> @_retries
-      set: ( value ) -> @_retries = value
-        # return value # @_retries
-  stats = new Stats()
-  # help 'Ωbrbr__71', stats.retries
-  help    'Ωbrbr__72', stats.retries
-  stats.retries++
-  help    'Ωbrbr__73', stats.retries
-  stats.retries++
-  help    'Ωbrbr__74', stats.retries
-  # hel   p 'Ωbrbr__75', stats.retries++
-  # help 'Ωbrbr__76', stats.retries++
   #.........................................................................................................
   return null
