@@ -271,16 +271,15 @@ settings =
       rounds         = 0
       on_stats        = ( stats ) ->
         rounds += stats.rounds
-        # urge 'Ωbrbr__37', stats if stats.name is 'set_of_chrs'
         return null
       valid_re    = /// ^ [ 0-9 ]{ 3 } $ ///v
       get_random  = new Get_random { seed: null, on_stats, }
       for _ in [ 1 .. 1 ]
         result      = get_random.set_of_texts { min: '0', max: '9', length: 3, size: 10, }
-        @eq ( Ωbrbr__38 = -> result.size              ), 10
+        @eq ( Ωbrbr__37 = -> result.size              ), 10
         for random_text from result
-          @eq ( Ωbrbr__39 = -> valid_re.test random_text ), true
-        # debug 'Ωbrbr__40', rounds, rpr result
+          @eq ( Ωbrbr__38 = -> valid_re.test random_text ), true
+        # debug 'Ωbrbr__39', rounds, rpr result
         rounds = 0
       return null
     #.......................................................................................................
@@ -295,14 +294,14 @@ settings =
     do =>
       result_rounds   = null
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__41', stats
+        # info 'Ωbrbr__40', stats
         result_rounds = stats.rounds
-        @eq ( Ωbrbr__42 = -> result_rounds >= 0 ), true
+        @eq ( Ωbrbr__41 = -> result_rounds >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
         result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, }
-        # debug 'Ωbrbr__43', rpr result
-        @eq ( Ωbrbr__44 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__42', rpr result
+        @eq ( Ωbrbr__43 = -> result ), matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -318,15 +317,15 @@ settings =
       result_rounds  = null
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
-        # info 'Ωbrbr__45', idx, stats
+        # info 'Ωbrbr__44', idx, stats
         result_rounds = stats.rounds
-        @eq ( Ωbrbr__46 = ->  result_rounds ), round_matchers[ idx ]
+        @eq ( Ωbrbr__45 = ->  result_rounds ), round_matchers[ idx ]
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
         result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, filter: /^Α/v, }
-        # debug 'Ωbrbr__47', rpr result
-        @eq ( Ωbrbr__48 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
-        @eq ( Ωbrbr__49 = -> result ), result_matchers[ idx ]
+        # debug 'Ωbrbr__46', rpr result
+        @eq ( Ωbrbr__47 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
+        @eq ( Ωbrbr__48 = -> result ), result_matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -342,16 +341,16 @@ settings =
       result_rounds  = null
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
-        # info 'Ωbrbr__50', idx, stats
+        # info 'Ωbrbr__49', idx, stats
         result_rounds = stats.rounds
-        @eq ( Ωbrbr__51 = ->  result_rounds ), round_matchers[ idx ]
+        @eq ( Ωbrbr__50 = ->  result_rounds ), round_matchers[ idx ]
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       get_random_text = get_random.text_producer { min: 'Α', max: 'ω', min_length: 1, max_length: 5, filter: /^Α/v, }
       for idx in [ 0 .. 9 ]
         result      = get_random_text()
-        # debug 'Ωbrbr__52', rpr result
-        @eq ( Ωbrbr__53 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
-        @eq ( Ωbrbr__54 = -> result ), result_matchers[ idx ]
+        # debug 'Ωbrbr__51', rpr result
+        @eq ( Ωbrbr__52 = -> /^Α[Α-ω]{0,4}$/v.test result ), true
+        @eq ( Ωbrbr__53 = -> result ), result_matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -367,16 +366,16 @@ settings =
       result_rounds  = null
       on_stats        = ( stats ) =>
         return null unless stats.name is 'text'
-        # info 'Ωbrbr__55', idx, stats
+        # info 'Ωbrbr__54', idx, stats
         result_rounds = stats.rounds
-        @eq ( Ωbrbr__56 = ->  result_rounds ), round_matchers[ idx ]
+        @eq ( Ωbrbr__55 = ->  result_rounds ), round_matchers[ idx ]
       get_random        = new Get_random { seed: settings.my_seed_1, on_stats, }
       filter            = ( n ) -> ( Math.floor n ) %% 2 is 0
       get_random_float  = get_random.float_producer { min: 10, max: 20, filter, }
       for idx in [ 0 .. 9 ]
         result      = get_random_float()
-        # debug 'Ωbrbr__57', rpr result
-        @eq ( Ωbrbr__58 = -> result ), result_matchers[ idx ]
+        # debug 'Ωbrbr__56', rpr result
+        @eq ( Ωbrbr__57 = -> result ), result_matchers[ idx ]
       return null
     #.......................................................................................................
     return null
@@ -390,18 +389,18 @@ settings =
     #.......................................................................................................
     do =>
       my_on_stats         = ( stats ) =>
-        # debug 'Ωbrbr__59', stats
+        # debug 'Ωbrbr__58', stats
         rounds.push stats.rounds if stats.name is 'integer'
       rounds             = []
       get_random          = new Get_random { seed: settings.my_seed_1, on_stats: my_on_stats, }
       filter              = ( n ) -> ( Math.floor n ) %% 2 is 0
       get_random_integer  = get_random.integer_producer { min: 10, max: 20, filter, }
-      # debug 'Ωbrbr__60', get_random.cfg
+      # debug 'Ωbrbr__59', get_random.cfg
       for idx in [ 0 .. 9 ]
         result = get_random_integer()
-        # debug 'Ωbrbr__61', rpr result
-        @eq ( Ωbrbr__62 = -> result ), result_matchers[ idx ]
-      @eq ( Ωbrbr__63 = -> rounds ), rounds_matcher
+        # debug 'Ωbrbr__60', rpr result
+        @eq ( Ωbrbr__61 = -> result ), result_matchers[ idx ]
+      @eq ( Ωbrbr__62 = -> rounds ), rounds_matcher
       return null
     #.......................................................................................................
     return null
@@ -415,9 +414,9 @@ settings =
     do =>
       result_rounds  = null
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__64', stats if stats.name is 'set_of_texts'
+        info 'Ωbrbr__63', stats if stats.name is 'set_of_texts'
         result_rounds = stats.rounds if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr__65 = -> result_rounds >= 0 ), true
+        @eq ( Ωbrbr__64 = -> result_rounds >= 0 ), true
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
         new Set [ '⾉⽕⼢⾗⾮⾩', '⿋⼽⼄⼠⾺⼴', '⼴⾼⼦', '⾏⾚', '⿓⽛⾱⽳⾝⼭⾈⾜⼣⾥', ]
@@ -433,16 +432,19 @@ settings =
         ]
       for idx in [ 0 .. 9 ]
         result = get_random.set_of_texts { min: '⼀', max: '⿕', size: 5, min_length: 1, max_length: 10, }
-        @eq ( Ωbrbr__66 = -> result ), matchers[ idx ]
-        # debug 'Ωbrbr__67', result
+        @eq ( Ωbrbr__65 = -> result ), matchers[ idx ]
+        # debug 'Ωbrbr__66', result
       return null
     #.......................................................................................................
     do =>
       #.....................................................................................................
       result_rounds  = null
       on_stats        = ( stats ) =>
-        result_rounds = stats.rounds if stats.name is 'set_of_texts'
-        @eq ( Ωbrbr__68 = -> result_rounds >= 0 ), true
+        # debug 'Ωbrbr_161', stats
+        return null unless stats.name is 'walk_unique'
+        result_rounds = stats.rounds
+        # debug 'Ωbrbr_161', result_rounds
+        @eq ( Ωbrbr__67 = -> result_rounds ), matchers[ idx ].result_rounds
       #.....................................................................................................
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
@@ -458,7 +460,8 @@ settings =
         { result_rounds: 19, result_rpr: '7491065823', }
         ]
       for idx in [ 0 .. 9 ]
-        result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, }
+        result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, on_stats, }
+        # debug 'Ωbrbr__68', rpr result
         result_rpr  = [ result..., ].join ''
         @eq ( Ωbrbr__69 = -> result_rpr     ), matchers[ idx ].result_rpr
         # @eq ( Ωbrbr__70 = -> result_rounds ), matchers[ idx ].result_rounds
@@ -699,7 +702,7 @@ settings =
         results.push value
       @eq ( Ωbrbr_124 = -> [ seen..., ].join '' ), '236541'
       @eq ( Ωbrbr_125 = -> seen.size ), purview + 1
-      debug 'Ωbrbr_126', rpr results.join ''
+      # debug 'Ωbrbr_126', rpr results.join ''
       return null
     #.......................................................................................................
     return null
@@ -784,7 +787,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { walk_unique: tests.walk_unique, }
+  ( new Test guytest_cfg ).test { get_random_set_of_texts_of_variable_length: tests.get_random_set_of_texts_of_variable_length, }
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
     a = {}
