@@ -575,6 +575,30 @@ settings =
         @eq ( Ωbrbr__89 = -> value ), matchers[ idx ]
       return null
     #.......................................................................................................
+    do =>
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      on_stats        = ( stats ) =>
+        @eq ( Ωbrbr__90 = -> stats.rounds ), 4 if stats.name is 'walk_unique'
+      #.....................................................................................................
+      producer  = -> get_random.integer { min: 10, max: 19, on_stats, }
+      @throws ( Ωbrbr__91 = -> value for value from get_random.walk_unique { producer, n: 11, on_stats, } ), /exhausted/
+      return null
+    #.......................................................................................................
+    do =>
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      matchers        = [ 15, 16, 14, 11, 17, 19, 13, 10, 18, 12, ]
+      on_stats        = ( stats ) =>
+        # info 'Ωbrbr__92', stats
+        @eq ( Ωbrbr__93 = -> stats.rounds ), get_random.cfg.max_rounds + 1 if stats.name is 'walk_unique'
+      #.....................................................................................................
+      producer  = -> get_random.integer { min: 10, max: 19, on_stats, }
+      idx       = -1
+      for value from get_random.walk_unique { producer, n: 20, on_stats, on_exhaustion: 'stop', }
+        idx++
+        # debug 'Ωbrbr__94', idx, rpr value
+        @eq ( Ωbrbr__95 = -> value ), matchers[ idx ]
+      return null
+    #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -586,47 +610,47 @@ settings =
       sentinel      = Symbol 'sentinel'
       on_exhaustion = -> sentinel
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      @eq     ( Ωbrbr__90 = -> stats.name           ), 'something'
-      @eq     ( Ωbrbr__91 = -> stats.max_rounds     ), internals.max_rounds
-      @eq     ( Ωbrbr__92 = -> stats.rounds         ), 0
-      @throws ( Ωbrbr__93 = -> stats.rounds++       ), /Cannot set property/
-      @eq     ( Ωbrbr__94 = -> stats.retry()        ), internals.go_on
-      @eq     ( Ωbrbr__95 = -> stats.rounds         ), 1
+      @eq     ( Ωbrbr__96 = -> stats.name           ), 'something'
+      @eq     ( Ωbrbr__97 = -> stats.max_rounds     ), internals.max_rounds
+      @eq     ( Ωbrbr__98 = -> stats.rounds         ), 0
+      @throws ( Ωbrbr__99 = -> stats.rounds++       ), /Cannot set property/
+      @eq     ( Ωbrbr_100 = -> stats.retry()        ), internals.go_on
+      @eq     ( Ωbrbr_101 = -> stats.rounds         ), 1
       stats._rounds = internals.max_rounds - 1
-      # debug 'Ωbrbr__96', stats
-      # debug 'Ωbrbr__97', stats.rounds
-      # debug 'Ωbrbr__98', internals.max_rounds
-      # debug 'Ωbrbr__99', stats.max_rounds
-      @eq ( Ωbrbr_100 = -> stats.retry() ), internals.go_on
-      @eq ( Ωbrbr_101 = -> stats.retry() ), sentinel
-      @eq ( Ωbrbr_102 = -> stats.retry() ), sentinel
+      # debug 'Ωbrbr_102', stats
+      # debug 'Ωbrbr_103', stats.rounds
+      # debug 'Ωbrbr_104', internals.max_rounds
+      # debug 'Ωbrbr_105', stats.max_rounds
+      @eq ( Ωbrbr_106 = -> stats.retry() ), internals.go_on
+      @eq ( Ωbrbr_107 = -> stats.retry() ), sentinel
+      @eq ( Ωbrbr_108 = -> stats.retry() ), sentinel
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = undefined
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_103 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_104 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_105 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_109 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_110 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_111 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = null
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_106 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_107 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_108 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_112 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_113 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_114 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = 'error'
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_109 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_110 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_111 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_115 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_116 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_117 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
@@ -636,18 +660,18 @@ settings =
       on_stats      = -> sentinel
       max_rounds   = 3
       stats = new internals.Stats { name: 'something', on_exhaustion, on_stats, max_rounds, }
-      @eq     ( Ωbrbr_112 = -> stats.rounds ), 0
-      @eq     ( Ωbrbr_113 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_114 = -> stats.rounds ), 1
-      @eq     ( Ωbrbr_115 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_116 = -> stats.rounds ), 2
-      @eq     ( Ωbrbr_117 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_118 = -> stats.rounds ), 3
-      @eq     ( Ωbrbr_119 = -> stats.retry() ), sentinel
-      @eq     ( Ωbrbr_120 = -> stats.finish 'value' ), 'value'
-      @throws ( Ωbrbr_121 = -> stats.finish 'value' ), /finished/
-      @throws ( Ωbrbr_122 = -> stats.retry() ), /finished/
-      @throws ( Ωbrbr_123 = -> stats.retry() ), /finished/
+      @eq     ( Ωbrbr_118 = -> stats.rounds ), 0
+      @eq     ( Ωbrbr_119 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_120 = -> stats.rounds ), 1
+      @eq     ( Ωbrbr_121 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_122 = -> stats.rounds ), 2
+      @eq     ( Ωbrbr_123 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_124 = -> stats.rounds ), 3
+      @eq     ( Ωbrbr_125 = -> stats.retry() ), sentinel
+      @eq     ( Ωbrbr_126 = -> stats.finish 'value' ), 'value'
+      @throws ( Ωbrbr_127 = -> stats.finish 'value' ), /finished/
+      @throws ( Ωbrbr_128 = -> stats.retry() ), /finished/
+      @throws ( Ωbrbr_129 = -> stats.retry() ), /finished/
       return null
     #.......................................................................................................
     return null
@@ -664,6 +688,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_124', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_130', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
