@@ -56,7 +56,9 @@ settings =
       for idx in [ 0 ... max_count ]
         matchers.push t = get_random.float()
         seen.add t
-      @eq ( Ωbrbr___1 = -> matchers.every ( t ) -> 0 <= t <= 1 ), true
+      for value, idx in matchers
+        debug 'Ωbrbr_122', { idx, value, } unless 0 < value <= 1
+      @eq ( Ωbrbr___1 = -> matchers.every ( t ) -> 0 < t <= 1 ), true
       @eq ( Ωbrbr___2 = -> seen.size ), max_count
       return null
     #.......................................................................................................
@@ -539,59 +541,39 @@ settings =
     #   get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
     #   result_rounds  = null
     #   on_stats        = ( stats ) =>
-    #     info 'Ωbrbr__83', stats if stats.name is 'walk'
+    #     info 'Ωbrbr__82', stats if stats.name is 'walk'
     #     result_rounds = stats.rounds if stats.name is 'walk'
-    #     @eq ( Ωbrbr__84 = -> result_rounds >= 0 ), true
+    #     @eq ( Ωbrbr__83 = -> result_rounds >= 0 ), true
     #   #.....................................................................................................
     #   producer  = -> get_random.text { min: '0', max: '9', length: 1, }
     #   count     = 0
     #   seen      = new Set()
     #   for x from get_random.walk { producer, seen, n: 5, }
     #     count++
-    #     debug 'Ωbrbr__85', count, rpr x
+    #     debug 'Ωbrbr__84', count, rpr x
     #   return null
     #.......................................................................................................
     return null
 
-  # #---------------------------------------------------------------------------------------------------------
-  # walk_unique: ->
-  #   { Get_random,
-  #     internals,  } = SFMODULES.unstable.require_random_tools()
-  #   #.......................................................................................................
-  #   do =>
-  #     get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
-  #     result_rounds  = null
-  #     on_stats        = ( stats ) =>
-  #       info 'Ωbrbr__86', stats if stats.name is 'walk'
-  #       result_rounds = stats.rounds if stats.name is 'walk'
-  #       @eq ( Ωbrbr__87 = -> result_rounds >= 0 ), true
-  #     #.....................................................................................................
-  #     producer  = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
-  #     count     = 0
-  #     for x from get_random.walk { producer, n: 11, }
-  #       count++
-  #       debug 'Ωbrbr__88', count, rpr x
-  #     return null
-  #   #.......................................................................................................
-  #   do =>
-  #     get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
-  #     result_rounds  = null
-  #     on_stats        = ( stats ) =>
-  #       info 'Ωbrbr__89', stats if stats.name is 'walk'
-  #       result_rounds = stats.rounds if stats.name is 'walk'
-  #       @eq ( Ωbrbr__90 = -> result_rounds >= 0 ), true
-  #     #.....................................................................................................
-  #     results   = []
-  #     matcher   = []
-  #     producer  = -> get_random.text { min: '0', max: '9', length: 1, }
-  #     count     = 0
-  #     for x from get_random.walk { producer, seen, n: 5, }
-  #       count++
-  #       debug 'Ωbrbr__91', count, rpr x
-  #       results.push x
-
-  #     return null
-
+  #---------------------------------------------------------------------------------------------------------
+  walk_unique: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_random_tools()
+    #.......................................................................................................
+    do =>
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      result_rounds  = null
+      on_stats        = ( stats ) =>
+        info 'Ωbrbr__85', stats # if stats.name is 'walk'
+        result_rounds = stats.rounds if stats.name is 'walk'
+        @eq ( Ωbrbr__86 = -> result_rounds >= 0 ), true
+      #.....................................................................................................
+      producer  = -> get_random.integer { min: 10, max: 19, on_stats, }
+      count     = 0
+      for x from get_random.walk_unique { producer, n: 10, on_stats, }
+        count++
+        debug 'Ωbrbr__87', count, rpr x
+      return null
     #.......................................................................................................
     return null
 
@@ -604,47 +586,47 @@ settings =
       sentinel      = Symbol 'sentinel'
       on_exhaustion = -> sentinel
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      @eq     ( Ωbrbr__92 = -> stats.name           ), 'something'
-      @eq     ( Ωbrbr__93 = -> stats.max_rounds     ), internals.max_rounds
-      @eq     ( Ωbrbr__94 = -> stats.rounds         ), 0
-      @throws ( Ωbrbr__95 = -> stats.rounds++       ), /Cannot set property/
-      @eq     ( Ωbrbr__96 = -> stats.retry()        ), internals.go_on
-      @eq     ( Ωbrbr__97 = -> stats.rounds         ), 1
+      @eq     ( Ωbrbr__88 = -> stats.name           ), 'something'
+      @eq     ( Ωbrbr__89 = -> stats.max_rounds     ), internals.max_rounds
+      @eq     ( Ωbrbr__90 = -> stats.rounds         ), 0
+      @throws ( Ωbrbr__91 = -> stats.rounds++       ), /Cannot set property/
+      @eq     ( Ωbrbr__92 = -> stats.retry()        ), internals.go_on
+      @eq     ( Ωbrbr__93 = -> stats.rounds         ), 1
       stats._rounds = internals.max_rounds - 1
-      # debug 'Ωbrbr__98', stats
-      # debug 'Ωbrbr__99', stats.rounds
-      # debug 'Ωbrbr_100', internals.max_rounds
-      # debug 'Ωbrbr_101', stats.max_rounds
-      @eq ( Ωbrbr_102 = -> stats.retry() ), internals.go_on
-      @eq ( Ωbrbr_103 = -> stats.retry() ), sentinel
-      @eq ( Ωbrbr_104 = -> stats.retry() ), sentinel
+      # debug 'Ωbrbr__94', stats
+      # debug 'Ωbrbr__95', stats.rounds
+      # debug 'Ωbrbr__96', internals.max_rounds
+      # debug 'Ωbrbr__97', stats.max_rounds
+      @eq ( Ωbrbr__98 = -> stats.retry() ), internals.go_on
+      @eq ( Ωbrbr__99 = -> stats.retry() ), sentinel
+      @eq ( Ωbrbr_100 = -> stats.retry() ), sentinel
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = undefined
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_105 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_106 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_107 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_101 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_102 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_103 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = null
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_108 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_109 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_110 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_104 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_105 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_106 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = 'error'
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_111 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_112 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_113 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_107 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_108 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_109 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
@@ -654,18 +636,18 @@ settings =
       on_stats      = -> sentinel
       max_rounds   = 3
       stats = new internals.Stats { name: 'something', on_exhaustion, on_stats, max_rounds, }
-      @eq     ( Ωbrbr_114 = -> stats.rounds ), 0
+      @eq     ( Ωbrbr_110 = -> stats.rounds ), 0
+      @eq     ( Ωbrbr_111 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_112 = -> stats.rounds ), 1
+      @eq     ( Ωbrbr_113 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_114 = -> stats.rounds ), 2
       @eq     ( Ωbrbr_115 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_116 = -> stats.rounds ), 1
-      @eq     ( Ωbrbr_117 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_118 = -> stats.rounds ), 2
-      @eq     ( Ωbrbr_119 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_120 = -> stats.rounds ), 3
-      @eq     ( Ωbrbr_121 = -> stats.retry() ), sentinel
-      @eq     ( Ωbrbr_122 = -> stats.finish 'value' ), 'value'
-      @throws ( Ωbrbr_123 = -> stats.finish 'value' ), /finished/
-      @throws ( Ωbrbr_124 = -> stats.retry() ), /finished/
-      @throws ( Ωbrbr_125 = -> stats.retry() ), /finished/
+      @eq     ( Ωbrbr_116 = -> stats.rounds ), 3
+      @eq     ( Ωbrbr_117 = -> stats.retry() ), sentinel
+      @eq     ( Ωbrbr_118 = -> stats.finish 'value' ), 'value'
+      @throws ( Ωbrbr_119 = -> stats.finish 'value' ), /finished/
+      @throws ( Ωbrbr_120 = -> stats.retry() ), /finished/
+      @throws ( Ωbrbr_121 = -> stats.retry() ), /finished/
       return null
     #.......................................................................................................
     return null
@@ -675,15 +657,14 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # # ( new Test guytest_cfg ).test { walk: tests.walk, }
-  # # ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
-  # ( new Test guytest_cfg ).test { stats: tests.stats, }
+  # ( new Test guytest_cfg ).test { walk_unique: tests.walk_unique, }
+  ( new Test guytest_cfg ).test { get_random_float: tests.get_random_float, }
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
     a = {}
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_126', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_122', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
