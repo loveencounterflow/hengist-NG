@@ -518,9 +518,26 @@ settings =
         result_retries = stats.retries if stats.name is 'walk'
         @eq ( Ωbrbr_result_retries__76 = -> result_retries >= 0 ), true
       #.....................................................................................................
-      producer = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
+      producer  = -> get_random.text { min: 'A', max: 0x017f, length: 3, }
+      count     = 0
       for x from get_random.walk { producer, n: 11, }
-        debug 'Ωbrbr__77', rpr x
+        count++
+        debug 'Ωbrbr__77', count, rpr x
+      return null
+    #.......................................................................................................
+    do =>
+      get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+      result_retries  = null
+      on_stats        = ( stats ) =>
+        info 'Ωbrbr__75', stats if stats.name is 'walk'
+        result_retries = stats.retries if stats.name is 'walk'
+        @eq ( Ωbrbr_result_retries__76 = -> result_retries >= 0 ), true
+      #.....................................................................................................
+      producer  = -> get_random.text { min: '0', max: '9', length: 1, }
+      count     = 0
+      for x from get_random.walk { producer, n: 11, }
+        count++
+        debug 'Ωbrbr__77', count, rpr x
       return null
     #.......................................................................................................
     return null
@@ -604,15 +621,16 @@ settings =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { tests, }
   # # ( new Test guytest_cfg ).test { walk: tests.walk, }
   # # ( new Test guytest_cfg ).test { exhaustion: tests.exhaustion, }
   # ( new Test guytest_cfg ).test { stats: tests.stats, }
-  ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
-  a = {}
-  b = { o: 6, }
-  c = { o: undefined, }
-  clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-  debug 'Ωbrbr__18', d = { a..., ( clean b )..., ( clean c )..., }
+  demo_clean = ->
+    ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
+    a = {}
+    b = { o: 6, }
+    c = { o: undefined, }
+    clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
+    debug 'Ωbrbr__18', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
