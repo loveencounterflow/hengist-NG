@@ -160,7 +160,7 @@ settings =
         # debug 'Ωbrbr__17', stats
       get_random  = new Get_random { seed: settings.my_seed_2, on_stats, }
       result      = ( get_random.chr { max: 0xff, filter: /[aeiouyAEIOUY]/, } for _ in [ 1 .. 40 ] ).join ''
-      debug 'Ωbrbr__18', rpr result
+      # debug 'Ωbrbr__18', rpr result
       @eq ( Ωbrbr__19 = -> /^[aeiouyAEIOUY]{40}$/.test result ), true
       @eq ( Ωbrbr__20 = -> result ), 'yyUyIuuUaaIuUaUIIyOIoAYEOiOYIuiOuaiAUUeE'
       return null
@@ -178,7 +178,7 @@ settings =
       get_random  = new Get_random { seed: settings.my_seed_2, on_stats, }
       chr         = get_random.chr_producer { max: 0xff, filter: /[aeiouyAEIOUY]/, }
       result      = ( chr() for _ in [ 1 .. 40 ] ).join ''
-      debug 'Ωbrbr__21', rounds, ( rpr result )
+      # debug 'Ωbrbr__21', rounds, ( rpr result )
       @eq ( Ωbrbr__22 = -> /^[aeiouyAEIOUY]{40}$/.test result ), true
       @eq ( Ωbrbr__23 = -> result ), 'yyUyIuuUaaIuUaUIIyOIoAYEOiOYIuiOuaiAUUeE'
       return null
@@ -299,7 +299,7 @@ settings =
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       for idx in [ 0 .. 9 ]
         result      = get_random.text { min: 'Α', max: 'ω', min_length: 1, max_length: 5, }
-        debug 'Ωbrbr__42', rpr result
+        # debug 'Ωbrbr__42', rpr result
         @eq ( Ωbrbr__43 = -> result ), matchers[ idx ]
       return null
     #.......................................................................................................
@@ -373,7 +373,7 @@ settings =
       get_random_float  = get_random.float_producer { min: 10, max: 20, filter, }
       for idx in [ 0 .. 9 ]
         result      = get_random_float()
-        debug 'Ωbrbr__56', rpr result
+        # debug 'Ωbrbr__56', rpr result
         @eq ( Ωbrbr__57 = -> result ), result_matchers[ idx ]
       return null
     #.......................................................................................................
@@ -388,16 +388,16 @@ settings =
     #.......................................................................................................
     do =>
       my_on_stats         = ( stats ) =>
-        debug 'Ωbrbr__58', stats
+        # debug 'Ωbrbr__58', stats
         rounds.push stats.rounds if stats.name is 'integer'
       rounds             = []
       get_random          = new Get_random { seed: settings.my_seed_1, on_stats: my_on_stats, }
       filter              = ( n ) -> ( Math.floor n ) %% 2 is 0
       get_random_integer  = get_random.integer_producer { min: 10, max: 20, filter, }
-      debug 'Ωbrbr__59', get_random.cfg
+      # debug 'Ωbrbr__59', get_random.cfg
       for idx in [ 0 .. 9 ]
         result = get_random_integer()
-        debug 'Ωbrbr__60', rpr result
+        # debug 'Ωbrbr__60', rpr result
         @eq ( Ωbrbr__61 = -> result ), result_matchers[ idx ]
       @eq ( Ωbrbr__62 = -> rounds ), rounds_matcher
       return null
@@ -514,28 +514,25 @@ settings =
       idx             = -1
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       on_stats        = ( stats ) =>
-        info 'Ωbrbr__76', stats # if stats.name is 'walk'
+        # info 'Ωbrbr__76', idx, stats # if stats.name is 'walk'
         if stats.name is 'walk'
-          result.rounds.push value
-          @eq ( Ωbrbr__77 = -> stats.rounds ), matcher.rounds[ idx ]
+          @eq ( Ωbrbr__77 = -> stats.rounds ), matcher.rounds
         return null
       #.....................................................................................................
       result    =
         values:   []
-        rounds:  []
       matcher   =
         values:   [ 'ĂčÀ', 'tĢŅ', 'ľæű', 'Hpŗ', 'Śz^', 'ĖħŻ', 'żÉŉ', 'íĬČ', 'ĩuķ', 'ìīx', 'Ūm|' ]
-        rounds:  []
+        rounds:   0
       #.....................................................................................................
       producer  = -> get_random.text { min: 'A', max: 0x017f, length: 3, on_stats, }
       for value from get_random.walk { producer, n: 11, on_stats, }
         idx++
-        debug 'Ωbrbr__78', idx, rpr value
+        # debug 'Ωbrbr__78', idx, rpr value
         result.values.push value
         @eq ( Ωbrbr__79 = -> value ), matcher.values[ idx ]
       @eq ( Ωbrbr__80 = -> idx                    ), 10
       @eq ( Ωbrbr__81 = -> result.values.length   ), 11
-      @eq ( Ωbrbr__82 = -> result.rounds.length  ), 11
       return null
     # #.......................................................................................................
     # do =>
