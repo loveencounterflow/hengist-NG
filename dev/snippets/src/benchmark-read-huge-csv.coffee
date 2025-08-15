@@ -114,7 +114,7 @@ get_random_twl_map = ({ size = 10 }={}) ->
   { Get_random_ext,             } = SFMODULES.unstable.require_get_random_additions()
   get_random                      = new Get_random_ext()
   return get_random.get_texts_mapped_to_width_length {
-    size, min_length: 1, max_length: 20, min: 'A', max: 'z', }
+    size, min_length: 1, max_length: 20, min: 0x021, max: 0xffff, }
 
 
 #===========================================================================================================
@@ -175,12 +175,11 @@ get_random_twl_map = ({ size = 10 }={}) ->
       { hrtime_as_bigint,
         timeit,                     } = SFMODULES.unstable.require_benchmarking()
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
-      max_count                       = 1e5
       path                            = '/tmp/map-cache.jsonl'
       FS                              = require 'node:fs'
       #.....................................................................................................
       write_file = ->
-        map = get_random_twl_map()
+        map = get_random_twl_map { size: benchmark_cfg.max_count, }
         FS.writeFileSync path, ''
         #...................................................................................................
         timeit write_file_sync = ->
@@ -207,8 +206,8 @@ get_random_twl_map = ({ size = 10 }={}) ->
       do =>
         d         = read_file()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__12', "read #{count_rpr} entries"
-        # debug 'Ω__13', d
+        info 'Ω___9', "read #{count_rpr} entries"
+        # debug 'Ω__10', d
         return null
       #.....................................................................................................
       return null
@@ -218,8 +217,7 @@ get_random_twl_map = ({ size = 10 }={}) ->
       { hrtime_as_bigint,
         timeit,                     } = SFMODULES.unstable.require_benchmarking()
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
-      max_count                       = 1e5
-      path                            = '/tmp/map-cache.db'
+      path                            = '/dev/shm/map-cache.db'
       FS                              = require 'node:fs'
       SQLITE                          = require 'node:sqlite'
       { SQL }                         = require '../../../apps/dbay'
@@ -243,33 +241,38 @@ get_random_twl_map = ({ size = 10 }={}) ->
             constraint segment_length_eqgt_zero check ( segment_length >= 0 ) );"""
         #...................................................................................................
         insert_segment: SQL"""
-          insert into segments  ( segment_text  )
-                        values  ( $segment_text )
+          insert into segments  ( segment_text,  segment_width,   segment_length )
+                        values  ( $segment_text, $segment_width,  $segment_length )
             on conflict ( segment_text ) do nothing
             returning *;"""
+        #...................................................................................................
+        read_segments: SQL"""
+          select * from segments;"""
       #.....................................................................................................
       write_db = ->
-        map       = new Map()
-        old_size  = 0
-        #...................................................................................................
-        db = new SQLITE.DatabaseSync path
+        db              = new SQLITE.DatabaseSync path
         db.exec statements.create_table_segments_free
-        insert_segment = db.prepare statements.insert_segment
-        map = get_random_twl_map { size: max_count, }
+        insert_segment  = db.prepare statements.insert_segment
+        map             = get_random_twl_map { size: benchmark_cfg.max_count, }
         #...................................................................................................
+        ### TAINT use transaction ###
         timeit write_db_sync = ->
-          for entry from map
-            FS.appendFileSync path, "#{JSON.stringify entry}\n"
+          for [ segment_text, [ segment_width, segment_length, ], ] from map
+            debug 'Ω__11', { segment_text, segment_width, segment_length, }
+            insert_segment.run { segment_text, segment_width, segment_length, }
           return null
         #...................................................................................................
         return null
       #.....................................................................................................
       read_db = ( map = null ) ->
-        map  ?= new Map()
+        db              = new SQLITE.DatabaseSync path
+        read_segments   = db.prepare statements.read_segments
+        map            ?= new Map()
         #...................................................................................................
         timeit read_db_sync = ->
-          for { line, } from walk_lines_with_positions path
-            map.set ( JSON.parse line )...
+          for { segment_text, segment_width, segment_length, } from read_segments.iterate()
+            debug 'Ω__12', segment_text, [ segment_width, segment_length, ]
+            map.set segment_text, [ segment_width, segment_length, ]
           return null
         #...................................................................................................
         return map
@@ -281,8 +284,8 @@ get_random_twl_map = ({ size = 10 }={}) ->
       do =>
         d         = read_db()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__12', "read #{count_rpr} entries"
-        # debug 'Ω__13', d
+        info 'Ω__13', "read #{count_rpr} entries"
+        # debug 'Ω__14', d
         return null
       #.....................................................................................................
       return null
@@ -297,7 +300,9 @@ get_random_twl_map = ({ size = 10 }={}) ->
     return null
 
 
-
+#===========================================================================================================
+benchmark_cfg =
+  max_count: 1e2
 
 #===========================================================================================================
 if module is require.main then await do =>
