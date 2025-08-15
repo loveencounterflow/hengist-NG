@@ -34,6 +34,8 @@ PATH                      = require 'node:path'
 #-----------------------------------------------------------------------------------------------------------
 SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
 { Get_random,           } = SFMODULES.unstable.require_get_random()
+{ hrtime_as_bigint,
+  timeit,               } = SFMODULES.unstable.require_benchmarking()
 
 
 #===========================================================================================================
@@ -110,12 +112,17 @@ Object.assign SFMODULES.unstable,
 
 
 #===========================================================================================================
-get_random_twl_map = ({ size = 10 }={}) ->
+cache = new Map()
+get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
+  key = "twl_map{size:#{size}}"
+  return R if ( R = cache.get key )?
   { Get_random_ext,             } = SFMODULES.unstable.require_get_random_additions()
   get_random                      = new Get_random_ext()
-  return get_random.get_texts_mapped_to_width_length {
-    size, min_length: 1, max_length: 20, min: 0x021, max: 0xffff, }
-
+  R = get_random.get_texts_mapped_to_width_length {
+    size, min_length: 1, max_length: 20, min: 0x021, max: 0x058f, }
+    # filter: /^\p{L}+$/vi, }
+  cache.set key, R
+  return R
 
 #===========================================================================================================
 @benchmarks = benchmarks =
@@ -125,7 +132,6 @@ get_random_twl_map = ({ size = 10 }={}) ->
 
     #-------------------------------------------------------------------------------------------------------
     demo_fast_readline_async = ->
-      { hrtime_as_bigint, } = SFMODULES.unstable.require_benchmarking()
       relpath = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
       { walk_lines_with_positions_async, } = SFMODULES.unstable.require_readline_optimized()
       path = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
@@ -141,7 +147,6 @@ get_random_twl_map = ({ size = 10 }={}) ->
 
     #-------------------------------------------------------------------------------------------------------
     demo_fast_readline_sync = ->
-      { hrtime_as_bigint, } = SFMODULES.unstable.require_benchmarking()
       relpath = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
       { walk_lines_with_positions, } = SFMODULES.unstable.require_fast_linereader()
       path = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
@@ -157,7 +162,6 @@ get_random_twl_map = ({ size = 10 }={}) ->
 
     #-------------------------------------------------------------------------------------------------------
     demo_guyfs_readline = ->
-      { hrtime_as_bigint, } = SFMODULES.unstable.require_benchmarking()
       relpath = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
       path = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
       count = 0
@@ -172,8 +176,6 @@ get_random_twl_map = ({ size = 10 }={}) ->
 
     #-------------------------------------------------------------------------------------------------------
     demo_read_write_big_map = ->
-      { hrtime_as_bigint,
-        timeit,                     } = SFMODULES.unstable.require_benchmarking()
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
       path                            = '/tmp/map-cache.jsonl'
       FS                              = require 'node:fs'
@@ -214,8 +216,6 @@ get_random_twl_map = ({ size = 10 }={}) ->
 
     #-------------------------------------------------------------------------------------------------------
     demo_read_write_njs_sqlite = ->
-      { hrtime_as_bigint,
-        timeit,                     } = SFMODULES.unstable.require_benchmarking()
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
       path                            = '/dev/shm/map-cache.db'
       FS                              = require 'node:fs'
@@ -257,9 +257,11 @@ get_random_twl_map = ({ size = 10 }={}) ->
         #...................................................................................................
         ### TAINT use transaction ###
         timeit write_db_sync = ->
+          db.exec SQL"begin transaction;"
           for [ segment_text, [ segment_width, segment_length, ], ] from map
-            debug 'Ω__11', { segment_text, segment_width, segment_length, }
+            # debug 'Ω__12', { segment_text, segment_width, segment_length, }
             insert_segment.run { segment_text, segment_width, segment_length, }
+          db.exec SQL"commit;"
           return null
         #...................................................................................................
         return null
@@ -270,9 +272,11 @@ get_random_twl_map = ({ size = 10 }={}) ->
         map            ?= new Map()
         #...................................................................................................
         timeit read_db_sync = ->
+          db.exec SQL"begin transaction;"
           for { segment_text, segment_width, segment_length, } from read_segments.iterate()
-            debug 'Ω__12', segment_text, [ segment_width, segment_length, ]
+            # debug 'Ω__13', segment_text, [ segment_width, segment_length, ]
             map.set segment_text, [ segment_width, segment_length, ]
+          db.exec SQL"commit;"
           return null
         #...................................................................................................
         return map
@@ -284,8 +288,8 @@ get_random_twl_map = ({ size = 10 }={}) ->
       do =>
         d         = read_db()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__13', "read #{count_rpr} entries"
-        # debug 'Ω__14', d
+        info 'Ω__14', "read #{count_rpr} entries"
+        # debug 'Ω__15', d
         return null
       #.....................................................................................................
       return null
@@ -302,12 +306,11 @@ get_random_twl_map = ({ size = 10 }={}) ->
 
 #===========================================================================================================
 benchmark_cfg =
-  max_count: 1e2
+  # max_count: 10
+  max_count: 1e5
 
 #===========================================================================================================
 if module is require.main then await do =>
-  # demo_infinite_proxy()
-  # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   await ( new Test guytest_cfg ).async_test { benchmarks, }
