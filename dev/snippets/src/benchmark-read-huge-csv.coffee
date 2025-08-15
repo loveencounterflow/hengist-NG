@@ -33,11 +33,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
 PATH                      = require 'node:path'
 #-----------------------------------------------------------------------------------------------------------
 SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
-RANDOM_TOOLS              = SFMODULES.unstable.require_random_tools()
+{ Get_random,           } = SFMODULES.unstable.require_get_random()
 
 
 #===========================================================================================================
 Object.assign SFMODULES.unstable,
+
   #===========================================================================================================
   ### NOTE Future Single-File Module ###
   require_readline_optimized: ->
@@ -70,6 +71,50 @@ Object.assign SFMODULES.unstable,
     #===========================================================================================================
     return exports = { walk_lines_with_positions_async, }
 
+
+  #===========================================================================================================
+  ### NOTE Future Single-File Module ###
+  require_get_random_additions: ->
+    { internals, } = SFMODULES.unstable.require_get_random()
+
+    #=========================================================================================================
+    class Get_random_ext extends Get_random
+
+      #-------------------------------------------------------------------------------------------------------
+      get_texts_mapped_to_width_length: ( cfg ) ->
+        { min,
+          max,
+          length,
+          size,
+          min_length,
+          max_length,
+          filter,
+          on_stats,
+          on_exhaustion,
+          max_rounds,   } = { internals.templates.set_of_texts..., cfg..., }
+        { min_length,
+          max_length,   } = @_get_min_max_length { length, min_length, max_length, }
+        length_is_const   = min_length is max_length
+        length            = min_length
+        R                 = new Map()
+        producer          = @text_producer { min, max, length, min_length, max_length, filter, }
+        stats             = @_new_stats { name: 'set_of_texts', on_stats, on_exhaustion, max_rounds, }
+        get_width         = @integer_producer { min: 1, max: 10, }
+        #.....................................................................................................
+        for text from @walk_unique { producer, n: size, on_stats, on_exhaustion, max_rounds, }
+          R.set text, [ text.length, get_width(), ]
+        return ( stats.finish R )
+
+    #===========================================================================================================
+    return exports = { Get_random_ext, internals, }
+
+
+#===========================================================================================================
+get_random_twl_map = ({ size = 10 }={}) ->
+  { Get_random_ext,             } = SFMODULES.unstable.require_get_random_additions()
+  get_random                      = new Get_random_ext()
+  return get_random.get_texts_mapped_to_width_length {
+    size, min_length: 1, max_length: 20, min: 'A', max: 'z', }
 
 
 #===========================================================================================================
@@ -135,8 +180,7 @@ Object.assign SFMODULES.unstable,
       FS                              = require 'node:fs'
       #.....................................................................................................
       write_file = ->
-        random_twl_map = RANDOM_TOOLS.get_texts_mapped_to_width_length { size: 10, }
-        debug 'Ω__12', random_twl_map; process.exit 111
+        map = get_random_twl_map()
         FS.writeFileSync path, ''
         #...................................................................................................
         timeit write_file_sync = ->
@@ -172,7 +216,7 @@ Object.assign SFMODULES.unstable,
     #-------------------------------------------------------------------------------------------------------
     demo_read_write_njs_sqlite = ->
       { hrtime_as_bigint,
-        timeit,          } = SFMODULES.unstable.require_benchmarking()
+        timeit,                     } = SFMODULES.unstable.require_benchmarking()
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
       max_count                       = 1e5
       path                            = '/tmp/map-cache.db'
@@ -211,12 +255,7 @@ Object.assign SFMODULES.unstable,
         db = new SQLITE.DatabaseSync path
         db.exec statements.create_table_segments_free
         insert_segment = db.prepare statements.insert_segment
-        #...................................................................................................
-        for count in [ 1 .. max_count ]
-          while map.size is old_size
-            entry = [ get_unique_text(), ( GUY.rnd.random_integer 0, 10 ), ]
-            map.set entry...
-          old_size = map.size
+        map = get_random_twl_map { size: max_count, }
         #...................................................................................................
         timeit write_db_sync = ->
           for entry from map

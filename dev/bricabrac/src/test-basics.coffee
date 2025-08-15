@@ -45,7 +45,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_float: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     matchers        = []
     probes          = []
     max_count       = 1e4
@@ -107,7 +107,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_integer: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     max_count       = 1e4
     #.......................................................................................................
     do =>
@@ -132,7 +132,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_chr: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     max_count       = 1e4
     #.......................................................................................................
     do =>
@@ -172,7 +172,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_chr_producer: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     #.......................................................................................................
     do =>
       rounds      = 0
@@ -190,7 +190,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_text: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     max_count       = 1e4
     #.......................................................................................................
     do =>
@@ -223,7 +223,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_set_of_chrs: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     max_count       = 1e4
     #.......................................................................................................
     do =>
@@ -264,7 +264,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_set_of_texts: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     max_count       = 1e4
     #.......................................................................................................
     do =>
@@ -288,7 +288,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_text_of_variable_length: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     matchers        = [ 'εΧΚ', 'ονήφ', 'ΒΙ', 'ΟΠΟςΛ', 'η', 'ψψΩο', 'κΝε', 'Κμίκ', 'υΙ', 'ΟΛ', ]
     #.......................................................................................................
     do =>
@@ -309,7 +309,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_text_of_variable_length_with_filter: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     result_matchers = [ 'Ακθ', 'ΑΣ', 'ΑΜ', 'ΑίΥΔ', 'ΑήδΛ', 'ΑήςδΠ', 'ΑξΡΤΘ', 'ΑΤΚΞ', 'ΑγιΔε', 'Αή', ]
     round_matchers  = [ 34, 15, 189, 121, 75, 47, 87, 43, 119, 200, ]
     #.......................................................................................................
@@ -333,7 +333,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_text_producer: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     result_matchers = [ 'Ακθ', 'ΑΣ', 'ΑΜ', 'ΑίΥΔ', 'ΑήδΛ', 'ΑήςδΠ', 'ΑξΡΤΘ', 'ΑΤΚΞ', 'ΑγιΔε', 'Αή', ]
     round_matchers  = [ 34, 15, 189, 121, 75, 47, 87, 43, 119, 200, ]
     #.......................................................................................................
@@ -358,7 +358,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_float_producer: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     result_matchers = [ 16.084712848532945, 16.42560794018209, 14.009152099024504, 18.174642121884972, 12.86115032620728, 10.208302834071219, 18.753091448452324, 12.430183209944516, 12.627715056296438, 12.425259067676961, ]
     # round_matchers  = [ 34, 15, 189, 121, 75, 47, 87, 43, 119, 200, ]
     #.......................................................................................................
@@ -383,7 +383,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_integer_producer: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     result_matchers = [ 16, 16, 14, 12, 18, 18, 20, 10, 12, 12, ]
     rounds_matcher  = [ 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ]
     #.......................................................................................................
@@ -408,7 +408,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   get_random_set_of_texts_of_variable_length: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     # matchers        = [ 'εΧΚ', 'ονήφ', 'ΒΙ', 'ΟΠΟςΛ', 'η', 'ψψΩο', 'κΝε', 'Κμίκ', 'υΙ', 'ΟΛ', ]
     #.......................................................................................................
     do =>
@@ -472,7 +472,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   exhaustion: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     #.......................................................................................................
     do =>
       result_rounds  = null
@@ -513,7 +513,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   walk: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     #.......................................................................................................
     do =>
       idx             = -1
@@ -561,7 +561,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   walk_unique: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     #.......................................................................................................
     do =>
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
@@ -710,7 +710,7 @@ settings =
   #---------------------------------------------------------------------------------------------------------
   stats: ->
     { Get_random,
-      internals,  } = SFMODULES.unstable.require_random_tools()
+      internals,  } = SFMODULES.unstable.require_get_random()
     #.......................................................................................................
     do =>
       sentinel      = Symbol 'sentinel'
