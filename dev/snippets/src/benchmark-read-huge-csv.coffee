@@ -36,6 +36,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 { Get_random,           } = SFMODULES.unstable.require_get_random()
 { hrtime_as_bigint,
   timeit,               } = SFMODULES.unstable.require_benchmarking()
+{ nameit,               } = SFMODULES.require_nameit()
 
 
 #===========================================================================================================
@@ -93,7 +94,8 @@ Object.assign SFMODULES.unstable,
           filter,
           on_stats,
           on_exhaustion,
-          max_rounds,   } = { internals.templates.set_of_texts..., cfg..., }
+          max_rounds,
+          progress,     } = { internals.templates.set_of_texts..., cfg..., }
         { min_length,
           max_length,   } = @_get_min_max_length { length, min_length, max_length, }
         length_is_const   = min_length is max_length
@@ -104,6 +106,7 @@ Object.assign SFMODULES.unstable,
         get_width         = @integer_producer { min: 1, max: 10, }
         #.....................................................................................................
         for text from @walk_unique { producer, n: size, on_stats, on_exhaustion, max_rounds, }
+          progress() if progress?
           R.set text, [ text.length, get_width(), ]
         return ( stats.finish R )
 
@@ -113,13 +116,13 @@ Object.assign SFMODULES.unstable,
 
 #===========================================================================================================
 cache = new Map()
-get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
+get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_twl_map_ = ({ progress, }) =>
   key = "twl_map{size:#{size}}"
   return R if ( R = cache.get key )?
   { Get_random_ext,             } = SFMODULES.unstable.require_get_random_additions()
   get_random                      = new Get_random_ext()
   R = get_random.get_texts_mapped_to_width_length {
-    size, min_length: 1, max_length: 20, min: 0x021, max: 0x058f, }
+    size, min_length: 1, max_length: 20, min: 0x021, max: 0x058f, on_exhaustion: 'stop', progress, }
     # filter: /^\p{L}+$/vi, }
   cache.set key, R
   return R
@@ -181,7 +184,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
       FS                              = require 'node:fs'
       #.....................................................................................................
       write_file = ->
-        help "Ω___9 using JSON file at #{cfg.path}"
+        # help "Ω___9 using JSON file at #{cfg.path}"
         map = get_random_twl_map { size: benchmark_cfg.max_count, }
         FS.writeFileSync cfg.path, ''
         #...................................................................................................
@@ -193,7 +196,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
         return null
       #.....................................................................................................
       read_file = ( map = null ) ->
-        help "Ω__10 using JSON file at #{cfg.path}"
+        # help "Ω__10 using JSON file at #{cfg.path}"
         map  ?= new Map()
         #...................................................................................................
         timeit read_file_sync = ->
@@ -242,27 +245,51 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
             constraint segment_width_eqgt_zero  check ( segment_width  >= 0 ),
             constraint segment_length_eqgt_zero check ( segment_length >= 0 ) );"""
         #...................................................................................................
-        insert_segment: SQL"""
+        insert_segment_c0r0: SQL"""
+          insert into segments  ( segment_text,  segment_width,   segment_length )
+                        values  ( $segment_text, $segment_width,  $segment_length );"""
+        #...................................................................................................
+        insert_segment_c1r1: SQL"""
           insert into segments  ( segment_text,  segment_width,   segment_length )
                         values  ( $segment_text, $segment_width,  $segment_length )
             on conflict ( segment_text ) do nothing
+            returning *;"""
+        #...................................................................................................
+        insert_segment_c1r0: SQL"""
+          insert into segments  ( segment_text,  segment_width,   segment_length )
+                        values  ( $segment_text, $segment_width,  $segment_length )
+            on conflict ( segment_text ) do nothing;"""
+        #...................................................................................................
+        insert_segment_c0r1: SQL"""
+          insert into segments  ( segment_text,  segment_width,   segment_length )
+                        values  ( $segment_text, $segment_width,  $segment_length )
             returning *;"""
         #...................................................................................................
         read_segments: SQL"""
           select * from segments;"""
       #.....................................................................................................
       write_db = ->
-        help "Ω__13 using DB at #{cfg.path}"
+        # help "Ω__14 using DB at #{cfg.path}"
         db              = new SQLITE.DatabaseSync cfg.path
-        db.exec statements.create_table_segments_free
-        insert_segment  = db.prepare statements.insert_segment
-        map             = get_random_twl_map { size: benchmark_cfg.max_count, }
+        switch cfg.db_type
+          when 'with_checks'  then db.exec statements.create_table_segments_checks
+          when 'no_checks'    then db.exec statements.create_table_segments_free
+          else throw new Error "Ω__15 unknown value for cfg.db_type: #{rpr cfg.db_type}"
+        switch cfg.insert_type
+          when 'c0r0'         then insert_segment = db.prepare statements.insert_segment_c0r0
+          when 'c0r1'         then insert_segment = db.prepare statements.insert_segment_c0r1
+          when 'c1r0'         then insert_segment = db.prepare statements.insert_segment_c1r0
+          when 'c1r1'         then insert_segment = db.prepare statements.insert_segment_c1r1
+          else throw new Error "Ω__16 unknown value for cfg.insert_type: #{rpr cfg.insert_type}"
+        map = get_random_twl_map { size: benchmark_cfg.max_count, }
         #...................................................................................................
         ### TAINT use transaction ###
-        timeit write_db_sync = ->
+        fn_name = "write_db_sync_#{cfg.db_type}_#{cfg.insert_type}"
+        timeit { total: map.size, }, nameit fn_name, ({ progress, }) ->
           db.exec SQL"begin transaction;"
           for [ segment_text, [ segment_width, segment_length, ], ] from map
-            # debug 'Ω__14', { segment_text, segment_width, segment_length, }
+            progress()
+            # debug 'Ω__17', { segment_text, segment_width, segment_length, }
             insert_segment.run { segment_text, segment_width, segment_length, }
           db.exec SQL"commit;"
           return null
@@ -270,15 +297,15 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
         return null
       #.....................................................................................................
       read_db = ( map = null ) ->
-        help "Ω__15 using DB at #{cfg.path}"
+        # help "Ω__18 using DB at #{cfg.path}"
         db              = new SQLITE.DatabaseSync cfg.path
         read_segments   = db.prepare statements.read_segments
         map            ?= new Map()
         #...................................................................................................
-        timeit read_db_sync = ->
+        timeit nameit "read_db_sync_#{cfg.db_type}_#{cfg.insert_type}", ->
           db.exec SQL"begin transaction;"
           for { segment_text, segment_width, segment_length, } from read_segments.iterate()
-            # debug 'Ω__16', segment_text, [ segment_width, segment_length, ]
+            # debug 'Ω__19', segment_text, [ segment_width, segment_length, ]
             map.set segment_text, [ segment_width, segment_length, ]
           db.exec SQL"commit;"
           return null
@@ -292,16 +319,20 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
       do =>
         d         = read_db()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__17', "read #{count_rpr} entries"
-        # debug 'Ω__18', d
+        info 'Ω__20', "read #{count_rpr} entries"
+        # debug 'Ω__21', d
         return null
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
     # demo_fast_readline_sync()
-    demo_read_write_big_map     { path: benchmark_cfg.paths.jsonl, }
-    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, }
+    # demo_read_write_big_map     { path: benchmark_cfg.paths.jsonl, }
+    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'no_checks',   insert_type: 'c0r0', }
+    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c0r0', }
+    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c0r1', }
+    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c1r0', }
+    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c1r1', }
     # await demo_fast_readline_async()
     # demo_guyfs_readline()
     #.......................................................................................................
@@ -311,8 +342,8 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
 #===========================================================================================================
 benchmark_cfg =
   # max_count: 10
-  # max_count: 1e5
-  max_count: 1e3
+  # max_count: 1e6
+  max_count: 123456
   paths:
     db:     '/dev/shm/map-cache.db'
     jsonl:  '/dev/shm/map-cache.jsonl'
@@ -322,5 +353,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   await ( new Test guytest_cfg ).async_test { benchmarks, }
+  # debug 'Ω__22', ( new Intl.NumberFormat 'en-US' ).resolvedOptions()
   return null
 
