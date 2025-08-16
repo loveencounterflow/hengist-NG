@@ -175,27 +175,29 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    demo_read_write_big_map = ->
+    demo_read_write_big_map = ( cfg ) ->
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
-      path                            = '/tmp/map-cache.jsonl'
+      # path                            = '/tmp/myfs-mount/map-cache.jsonl'
       FS                              = require 'node:fs'
       #.....................................................................................................
       write_file = ->
+        help "Ω___9 using JSON file at #{cfg.path}"
         map = get_random_twl_map { size: benchmark_cfg.max_count, }
-        FS.writeFileSync path, ''
+        FS.writeFileSync cfg.path, ''
         #...................................................................................................
         timeit write_file_sync = ->
           for entry from map
-            FS.appendFileSync path, "#{JSON.stringify entry}\n"
+            FS.appendFileSync cfg.path, "#{JSON.stringify entry}\n"
           return null
         #...................................................................................................
         return null
       #.....................................................................................................
       read_file = ( map = null ) ->
+        help "Ω__10 using JSON file at #{cfg.path}"
         map  ?= new Map()
         #...................................................................................................
         timeit read_file_sync = ->
-          for { line, } from walk_lines_with_positions path
+          for { line, } from walk_lines_with_positions cfg.path
             map.set ( JSON.parse line )...
           return null
         #...................................................................................................
@@ -208,16 +210,16 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
       do =>
         d         = read_file()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω___9', "read #{count_rpr} entries"
-        # debug 'Ω__10', d
+        info 'Ω__11', "read #{count_rpr} entries"
+        # debug 'Ω__12', d
         return null
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    demo_read_write_njs_sqlite = ->
+    demo_read_write_njs_sqlite = ( cfg ) ->
       { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
-      path                            = '/dev/shm/map-cache.db'
+      # path                            = '/tmp/myfs-mount/map-cache.db'
       FS                              = require 'node:fs'
       SQLITE                          = require 'node:sqlite'
       { SQL }                         = require '../../../apps/dbay'
@@ -250,7 +252,8 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
           select * from segments;"""
       #.....................................................................................................
       write_db = ->
-        db              = new SQLITE.DatabaseSync path
+        help "Ω__13 using DB at #{cfg.path}"
+        db              = new SQLITE.DatabaseSync cfg.path
         db.exec statements.create_table_segments_free
         insert_segment  = db.prepare statements.insert_segment
         map             = get_random_twl_map { size: benchmark_cfg.max_count, }
@@ -259,7 +262,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
         timeit write_db_sync = ->
           db.exec SQL"begin transaction;"
           for [ segment_text, [ segment_width, segment_length, ], ] from map
-            # debug 'Ω__12', { segment_text, segment_width, segment_length, }
+            # debug 'Ω__14', { segment_text, segment_width, segment_length, }
             insert_segment.run { segment_text, segment_width, segment_length, }
           db.exec SQL"commit;"
           return null
@@ -267,14 +270,15 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
         return null
       #.....................................................................................................
       read_db = ( map = null ) ->
-        db              = new SQLITE.DatabaseSync path
+        help "Ω__15 using DB at #{cfg.path}"
+        db              = new SQLITE.DatabaseSync cfg.path
         read_segments   = db.prepare statements.read_segments
         map            ?= new Map()
         #...................................................................................................
         timeit read_db_sync = ->
           db.exec SQL"begin transaction;"
           for { segment_text, segment_width, segment_length, } from read_segments.iterate()
-            # debug 'Ω__13', segment_text, [ segment_width, segment_length, ]
+            # debug 'Ω__16', segment_text, [ segment_width, segment_length, ]
             map.set segment_text, [ segment_width, segment_length, ]
           db.exec SQL"commit;"
           return null
@@ -288,16 +292,16 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
       do =>
         d         = read_db()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__14', "read #{count_rpr} entries"
-        # debug 'Ω__15', d
+        info 'Ω__17', "read #{count_rpr} entries"
+        # debug 'Ω__18', d
         return null
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
     # demo_fast_readline_sync()
-    demo_read_write_big_map()
-    demo_read_write_njs_sqlite()
+    demo_read_write_big_map     { path: benchmark_cfg.paths.jsonl, }
+    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, }
     # await demo_fast_readline_async()
     # demo_guyfs_readline()
     #.......................................................................................................
@@ -307,7 +311,11 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit get_random_twl_map_ = =>
 #===========================================================================================================
 benchmark_cfg =
   # max_count: 10
-  max_count: 1e5
+  # max_count: 1e5
+  max_count: 1e3
+  paths:
+    db:     '/dev/shm/map-cache.db'
+    jsonl:  '/dev/shm/map-cache.jsonl'
 
 #===========================================================================================================
 if module is require.main then await do =>
