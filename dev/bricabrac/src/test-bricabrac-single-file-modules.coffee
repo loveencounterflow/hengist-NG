@@ -361,11 +361,38 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     @eq     ( Ωbbsfm_112 = -> app.version                                               ), version
     @eq     ( Ωbbsfm_113 = -> app.name                                                  ), name
     @eq     ( Ωbbsfm_114 = -> bricabrac_cfg_1.datastore.name                            ), 'hengist-ng'
-    @eq     ( Ωbbsfm_115 = -> get_bricabrac_cfg { path: 'nosuchpath', fallback, }   ), fallback
-    @throws ( Ωbbsfm_116 = -> get_bricabrac_cfg { path: 'nosuchpath', }             ), /Cannot find module/i
+    @eq     ( Ωbbsfm_115 = -> get_bricabrac_cfg { path: 'nosuchpath', fallback, }       ), fallback
+    @throws ( Ωbbsfm_116 = -> get_bricabrac_cfg { path: 'nosuchpath',           }       ), /Cannot find module/i
     @eq     ( Ωbbsfm_117 = -> bricabrac_cfg_2.datastore.name                            ), 'hengist-ng'
     @eq     ( Ωbbsfm_118 = -> bricabrac_cfg_2.datastore.path                            ), datastore_path
     @eq     ( Ωbbsfm_119 = -> bricabrac_cfg_2.app.name                                  ), name
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_dbric: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    debug 'Ωbbsfm_120', new Dbric '/dev/shm/bricabrac.sqlite'
+    do =>
+      class Dbric_store extends Dbric
+        @statements:
+          create_tables: SQL"""
+            -- drop table if exists kvps;
+            create table if not exists kvps (
+              k             text unique not null primary key,
+              v             json );"""
+          get_schema: SQL"""
+            select * from sqlite_schema order by name, type;"""
+          get_tables: SQL"""
+            select * from sqlite_schema where type is 'table' order by name, type;"""
+      debug 'Ωbbsfm_121', new Dbric_store '/dev/shm/bricabrac.sqlite'
+      debug 'Ωbbsfm_122', Dbric_store.open '/dev/shm/bricabrac.sqlite'
+      dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
+      dbs.statements.create_tables.run()
+      for row from dbs.statements.get_schema.iterate()
+        help 'Ωbbsfm_123', row
     #.......................................................................................................
     return null
 
@@ -378,5 +405,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_get_callsite: tests.require_get_callsite, }
   ( new Test guytest_cfg ).test { require_get_app_details: tests.require_get_app_details, }
+  ( new Test guytest_cfg ).test { require_dbric: tests.require_dbric, }
+
