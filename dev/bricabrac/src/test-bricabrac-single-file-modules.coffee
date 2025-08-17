@@ -286,6 +286,23 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  require_get_callsite: ->
+    { get_callsite,
+      get_app_details,
+      require_from_app_folder,
+      require_bricabrac_cfg,    } = SFMODULES.unstable.require_get_callsite()
+    debug 'Ω__21', get_callsite()
+    # debug 'Ω__22', get_app_details()
+    debug 'Ω__23', get_app_details().path
+    debug 'Ω__24', get_app_details().package_path
+    debug 'Ω__25', get_app_details().version
+    debug 'Ω__25', get_app_details().name
+    debug 'Ω__26', require_from_app_folder { path: 'bricabrac.cfg.js', }
+    debug 'Ω__27', require_bricabrac_cfg().datastore.name
+    #.......................................................................................................
+    return null
+
 
 
 #===========================================================================================================
@@ -295,4 +312,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_strip_ansi: tests.require_strip_ansi, }
+  # ( new Test guytest_cfg ).test { require_strip_ansi: tests.require_strip_ansi, }
