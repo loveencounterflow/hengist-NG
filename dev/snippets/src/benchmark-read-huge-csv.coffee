@@ -269,18 +269,18 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
           select * from segments;"""
       #.....................................................................................................
       write_db = ->
-        # help "Ω__14 using DB at #{cfg.path}"
+        # help "Ω__13 using DB at #{cfg.path}"
         db              = new SQLITE.DatabaseSync cfg.path
         switch cfg.db_type
           when 'with_checks'  then db.exec statements.create_table_segments_checks
           when 'no_checks'    then db.exec statements.create_table_segments_free
-          else throw new Error "Ω__15 unknown value for cfg.db_type: #{rpr cfg.db_type}"
+          else throw new Error "Ω__14 unknown value for cfg.db_type: #{rpr cfg.db_type}"
         switch cfg.insert_type
           when 'c0r0'         then insert_segment = db.prepare statements.insert_segment_c0r0
           when 'c0r1'         then insert_segment = db.prepare statements.insert_segment_c0r1
           when 'c1r0'         then insert_segment = db.prepare statements.insert_segment_c1r0
           when 'c1r1'         then insert_segment = db.prepare statements.insert_segment_c1r1
-          else throw new Error "Ω__16 unknown value for cfg.insert_type: #{rpr cfg.insert_type}"
+          else throw new Error "Ω__15 unknown value for cfg.insert_type: #{rpr cfg.insert_type}"
         map = get_random_twl_map { size: benchmark_cfg.max_count, }
         #...................................................................................................
         ### TAINT use transaction ###
@@ -289,7 +289,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
           db.exec SQL"begin transaction;"
           for [ segment_text, [ segment_width, segment_length, ], ] from map
             progress()
-            # debug 'Ω__17', { segment_text, segment_width, segment_length, }
+            # debug 'Ω__16', { segment_text, segment_width, segment_length, }
             insert_segment.run { segment_text, segment_width, segment_length, }
           db.exec SQL"commit;"
           return null
@@ -297,7 +297,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
         return null
       #.....................................................................................................
       read_db = ( map = null ) ->
-        # help "Ω__18 using DB at #{cfg.path}"
+        # help "Ω__17 using DB at #{cfg.path}"
         db              = new SQLITE.DatabaseSync cfg.path
         read_segments   = db.prepare statements.read_segments
         map            ?= new Map()
@@ -305,7 +305,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
         timeit nameit "read_db_sync_#{cfg.db_type}_#{cfg.insert_type}", ->
           db.exec SQL"begin transaction;"
           for { segment_text, segment_width, segment_length, } from read_segments.iterate()
-            # debug 'Ω__19', segment_text, [ segment_width, segment_length, ]
+            # debug 'Ω__18', segment_text, [ segment_width, segment_length, ]
             map.set segment_text, [ segment_width, segment_length, ]
           db.exec SQL"commit;"
           return null
@@ -319,8 +319,8 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
       do =>
         d         = read_db()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__20', "read #{count_rpr} entries"
-        # debug 'Ω__21', d
+        info 'Ω__19', "read #{count_rpr} entries"
+        # debug 'Ω__20', d
         return null
       #.....................................................................................................
       return null
@@ -343,7 +343,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
 benchmark_cfg =
   # max_count: 10
   # max_count: 1e6
-  max_count: 123456
+  max_count: 12345
   paths:
     db:     '/dev/shm/map-cache.db'
     jsonl:  '/dev/shm/map-cache.jsonl'
@@ -352,7 +352,13 @@ benchmark_cfg =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  await ( new Test guytest_cfg ).async_test { benchmarks, }
-  # debug 'Ω__22', ( new Intl.NumberFormat 'en-US' ).resolvedOptions()
+  # await ( new Test guytest_cfg ).async_test { benchmarks, }
+  { get_callsite,
+    get_app_details, } = SFMODULES.unstable.require_get_callsite()
+  debug 'Ω__21', get_callsite()
+  debug 'Ω__22', get_app_details()
+  debug 'Ω__23', get_app_details().path
+  debug 'Ω__24', get_app_details().package_path
+  debug 'Ω__25', get_app_details().package_json.version
   return null
 
