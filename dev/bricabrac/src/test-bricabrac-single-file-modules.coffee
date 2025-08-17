@@ -398,11 +398,14 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       dbs.statements.create_tables.run()
       for row from dbs.statements.get_schema.iterate()
         help 'Ωbbsfm_123', row
-      dbs.statements.insert_kvp.run { k: 'one',   v: 1, }
-      dbs.statements.insert_kvp.run { k: 'two',   v: 2, }
-      dbs.statements.insert_kvp.run { k: 'three', v: 3, }
-      dbs.statements.insert_kvp.run { k: 'three', v: 'iii', }
+      dbs.statements.insert_kvp.run { k: 'one',   v: ( JSON.stringify 1       ), }
+      dbs.statements.insert_kvp.run { k: 'two',   v: ( JSON.stringify 2       ), }
+      dbs.statements.insert_kvp.run { k: 'three', v: ( JSON.stringify 3       ), }
+      dbs.statements.insert_kvp.run { k: 'three', v: ( JSON.stringify 'iii'   ), }
+      dbs.statements.insert_kvp.run { k: 'true',  v: ( JSON.stringify true    ), }
+      dbs.statements.insert_kvp.run { k: 'false', v: ( JSON.stringify false   ), }
       for row from dbs.statements.get_kvps.iterate()
+        row = { row..., { v: ( JSON.parse row.v ), _v: row.v, }..., }
         help 'Ωbbsfm_124', row
     #.......................................................................................................
     return null
