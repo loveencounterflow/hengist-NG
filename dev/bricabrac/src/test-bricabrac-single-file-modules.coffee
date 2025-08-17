@@ -387,6 +387,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
             select * from sqlite_schema order by name, type;"""
           get_tables: SQL"""
             select * from sqlite_schema where type is 'table' order by name, type;"""
+          insert_kvp: SQL"""
+            insert into kvps ( k, v ) values ( $k, $v )
+              on conflict ( k ) update set ( v = rejected.v );"""
       debug 'Ωbbsfm_121', new Dbric_store '/dev/shm/bricabrac.sqlite'
       debug 'Ωbbsfm_122', Dbric_store.open '/dev/shm/bricabrac.sqlite'
       dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
