@@ -292,14 +292,24 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       get_app_details,
       require_from_app_folder,
       require_bricabrac_cfg,    } = SFMODULES.unstable.require_get_callsite()
-    debug 'Ω__21', get_callsite()
-    # debug 'Ω__22', get_app_details()
-    debug 'Ω__23', get_app_details().path
-    debug 'Ω__24', get_app_details().package_path
-    debug 'Ω__25', get_app_details().version
-    debug 'Ω__25', get_app_details().name
-    debug 'Ω__26', require_from_app_folder { path: 'bricabrac.cfg.js', }
-    debug 'Ω__27', require_bricabrac_cfg().datastore.name
+    PATH                          = require 'node:path'
+    URL                           = require 'node:url'
+    app_path                      = PATH.resolve PATH.join __dirname, '../../../'
+    package_path                  = PATH.join app_path, 'package.json'
+    version                       = ( require '../../../package.json' ).version
+    name                          = ( require '../../../package.json' ).name
+    bricabrac_cfg                 = require_from_app_folder { path: 'bricabrac.cfg.js', }
+    app                           = get_app_details()
+    callsite                      = get_callsite { sourcemapped: false, }
+    # debug 'Ωbbsfm__93', rpr callsite.scriptName
+    # @eq ( Ωbbsfm__94 = -> URL.fileURLToPath callsite.scriptName                 ), __filename
+    @eq ( Ωbbsfm__95 = -> callsite.scriptName                                   ), __filename
+    @eq ( Ωbbsfm__96 = -> app.path                                              ), app_path
+    @eq ( Ωbbsfm__97 = -> app.package_path                                      ), package_path
+    @eq ( Ωbbsfm__98 = -> app.version                                           ), version
+    @eq ( Ωbbsfm__99 = -> app.name                                              ), name
+    @eq ( Ωbbsfm_100 = -> bricabrac_cfg.datastore.name                          ), 'hengist-ng'
+    @eq ( Ωbbsfm_101 = -> require_bricabrac_cfg().datastore.name                ), 'hengist-ng'
     #.......................................................................................................
     return null
 
@@ -312,4 +322,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { require_strip_ansi: tests.require_strip_ansi, }
+  ( new Test guytest_cfg ).test { require_get_callsite: tests.require_get_callsite, }

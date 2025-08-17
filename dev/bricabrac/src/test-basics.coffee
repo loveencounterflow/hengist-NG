@@ -606,13 +606,14 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers        = '¨¯yD¾ÖÑõ`%AãV[åH5¶ÂüýÙÅO®ÃEÍÄGñ?XItZ-Ë¬Úd.kK2öJÞ6wsïéÜÿ9°x§ÁB_·À0ò&qè8÷ì«nµ²"½Ým<óeM{Qí@PçÐ+j¥ß^©æC¡±Óib,c\\³7£r~aê¿Ç:ÎSzùØº(|T¼¦ª/úu¢ÛY¤É#ðþø¸oFU1}p$W Õô4ÌäÈë>Ïv×LR]fg\'î´¹ûÒâÊ)»hÔ!;à*NáÆ=3l'
       results         = []
+      max_rounds      = 1_000
       on_stats        = ( stats ) =>
         # info 'Ωbrbr__96', stats
-        @eq ( Ωbrbr__97 = -> stats.rounds ), get_random.cfg.max_rounds + 1 if stats.name is 'walk_unique'
+        @eq ( Ωbrbr__97 = -> stats.rounds ), max_rounds + 1 if stats.name is 'walk_unique'
       #.....................................................................................................
       producer  = -> get_random.chr { min: 0x20, max: 0xff, on_stats, }
       idx       = -1
-      for value from get_random.walk_unique { producer, n: 200, on_stats, on_exhaustion: 'stop', }
+      for value from get_random.walk_unique { producer, n: 200, on_stats, on_exhaustion: 'stop', max_rounds, }
         idx++
         # debug 'Ωbrbr__98', idx, rpr value
         @eq ( Ωbrbr__99 = -> value ), matchers[ idx ]
@@ -624,14 +625,15 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers        = '»hÔ!;à*NáÆ=3l'
       results         = []
+      max_rounds      = 1_000
       on_stats        = ( stats ) =>
         # info 'Ωbrbr_101', stats
-        @eq ( Ωbrbr_102 = -> stats.rounds ), get_random.cfg.max_rounds + 1 if stats.name is 'walk_unique'
+        @eq ( Ωbrbr_102 = -> stats.rounds ), max_rounds + 1 if stats.name is 'walk_unique'
       #.....................................................................................................
       seen      = new Set '¨¯yD¾ÖÑõ`%AãV[åH5¶ÂüýÙÅO®ÃEÍÄGñ?XItZ-Ë¬Úd.kK2öJÞ6wsïéÜÿ9°x§ÁB_·À0ò&qè8÷ì«nµ²"½Ým<óeM{Qí@PçÐ+j¥ß^©æC¡±Óib,c\\³7£r~aê¿Ç:ÎSzùØº(|T¼¦ª/úu¢ÛY¤É#ðþø¸oFU1}p$W Õô4ÌäÈë>Ïv×LR]fg\'î´¹ûÒâÊ)'
       producer  = -> get_random.chr { min: 0x20, max: 0xff, on_stats, }
       idx       = -1
-      for value from get_random.walk_unique { producer, n: 200, seen, on_stats, on_exhaustion: 'stop', }
+      for value from get_random.walk_unique { producer, n: 200, seen, on_stats, on_exhaustion: 'stop', max_rounds, }
         idx++
         # debug 'Ωbrbr_103', idx, rpr value
         @eq ( Ωbrbr_104 = -> value ), matchers[ idx ]
@@ -787,7 +789,8 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { get_random_set_of_texts_of_variable_length: tests.get_random_set_of_texts_of_variable_length, }
+  ( new Test guytest_cfg ).test { walk_unique: tests.walk_unique, }
+  #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
     a = {}
