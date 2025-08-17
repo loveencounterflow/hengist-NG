@@ -291,7 +291,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     { get_callsite,
       get_app_details,
       require_from_app_folder,
-      require_bricabrac_cfg,    } = SFMODULES.unstable.require_get_callsite()
+      get_bricabrac_cfg,        } = SFMODULES.unstable.require_get_callsite()
     PATH                          = require 'node:path'
     URL                           = require 'node:url'
     app_path                      = PATH.resolve PATH.join __dirname, '../../../'
@@ -300,11 +300,11 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     name                          = ( require '../../../package.json' ).name
     fallback                      = Symbol 'fallback'
     bricabrac_cfg_1               = require_from_app_folder { path: 'bricabrac.cfg.js', }
-    bricabrac_cfg_2               = require_bricabrac_cfg()
+    bricabrac_cfg_2               = get_bricabrac_cfg()
     app                           = get_app_details()
     datastore_path                = PATH.join app.path, 'hengist-ng.sqlite'
     callsite                      = get_callsite { sourcemapped: false, }
-    # debug 'Ωbbsfm__93', rpr callsite.scriptName
+    debug 'Ωbbsfm__93', bricabrac_cfg_2
     # @eq ( Ωbbsfm__94 = -> URL.fileURLToPath callsite.scriptName                 ), __filename
     @eq     ( Ωbbsfm__95 = -> callsite.scriptName                                       ), __filename
     @eq     ( Ωbbsfm__96 = -> app.path                                                  ), app_path
@@ -312,11 +312,60 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     @eq     ( Ωbbsfm__98 = -> app.version                                               ), version
     @eq     ( Ωbbsfm__99 = -> app.name                                                  ), name
     @eq     ( Ωbbsfm_100 = -> bricabrac_cfg_1.datastore.name                            ), 'hengist-ng'
-    @eq     ( Ωbbsfm_101 = -> require_bricabrac_cfg { path: 'nosuchpath', fallback, }   ), fallback
-    @throws ( Ωbbsfm_102 = -> require_bricabrac_cfg { path: 'nosuchpath', }             ), /Cannot find module/i
+    @eq     ( Ωbbsfm_101 = -> get_bricabrac_cfg { path: 'nosuchpath', fallback, }   ), fallback
+    @throws ( Ωbbsfm_102 = -> get_bricabrac_cfg { path: 'nosuchpath', }             ), /Cannot find module/i
     @eq     ( Ωbbsfm_103 = -> bricabrac_cfg_2.datastore.name                            ), 'hengist-ng'
-    @eq     ( Ωbbsfm_103 = -> bricabrac_cfg_2.datastore.path                            ), datastore_path
-    @eq     ( Ωbbsfm_104 = -> bricabrac_cfg_2.app.name                                  ), name
+    @eq     ( Ωbbsfm_104 = -> bricabrac_cfg_2.datastore.path                            ), datastore_path
+    @eq     ( Ωbbsfm_105 = -> bricabrac_cfg_2.app.name                                  ), name
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_get_callsite: ->
+    { get_callsite,
+      get_callsite_path,        } = SFMODULES.unstable.require_get_callsite()
+    PATH                          = require 'node:path'
+    URL                           = require 'node:url'
+    app_path                      = PATH.resolve PATH.join __dirname, '../../../'
+    package_path                  = PATH.join app_path, 'package.json'
+    version                       = ( require '../../../package.json' ).version
+    name                          = ( require '../../../package.json' ).name
+    fallback                      = Symbol 'fallback'
+    callsite                      = get_callsite { sourcemapped: false, }
+    filename                      = __filename.replace /^(.+)\/lib\/([^\/]+?)\.js/, '$1/src/$2.coffee'
+    @eq     ( Ωbbsfm_106 = -> callsite.scriptName ), __filename
+    @eq     ( Ωbbsfm_107 = -> get_callsite_path() ), filename
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_get_app_details: ->
+    { get_app_details,
+      require_from_app_folder,
+      get_bricabrac_cfg, }        = SFMODULES.unstable.require_get_app_details()
+    PATH                          = require 'node:path'
+    URL                           = require 'node:url'
+    app_path                      = PATH.resolve PATH.join __dirname, '../../../'
+    package_path                  = PATH.join app_path, 'package.json'
+    version                       = ( require '../../../package.json' ).version
+    name                          = ( require '../../../package.json' ).name
+    fallback                      = Symbol 'fallback'
+    bricabrac_cfg_1               = require_from_app_folder { path: 'bricabrac.cfg.js', }
+    bricabrac_cfg_2               = get_bricabrac_cfg()
+    app                           = get_app_details()
+    datastore_path                = PATH.join app.path, 'hengist-ng.sqlite'
+    # debug 'Ωbbsfm_108', bricabrac_cfg_2
+    # @eq ( Ωbbsfm_109 = -> URL.fileURLToPath callsite.scriptName                 ), __filename
+    @eq     ( Ωbbsfm_110 = -> app.path                                                  ), app_path
+    @eq     ( Ωbbsfm_111 = -> app.package_path                                          ), package_path
+    @eq     ( Ωbbsfm_112 = -> app.version                                               ), version
+    @eq     ( Ωbbsfm_113 = -> app.name                                                  ), name
+    @eq     ( Ωbbsfm_114 = -> bricabrac_cfg_1.datastore.name                            ), 'hengist-ng'
+    @eq     ( Ωbbsfm_115 = -> get_bricabrac_cfg { path: 'nosuchpath', fallback, }   ), fallback
+    @throws ( Ωbbsfm_116 = -> get_bricabrac_cfg { path: 'nosuchpath', }             ), /Cannot find module/i
+    @eq     ( Ωbbsfm_117 = -> bricabrac_cfg_2.datastore.name                            ), 'hengist-ng'
+    @eq     ( Ωbbsfm_118 = -> bricabrac_cfg_2.datastore.path                            ), datastore_path
+    @eq     ( Ωbbsfm_119 = -> bricabrac_cfg_2.app.name                                  ), name
     #.......................................................................................................
     return null
 
@@ -330,3 +379,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { require_get_callsite: tests.require_get_callsite, }
+  ( new Test guytest_cfg ).test { require_get_app_details: tests.require_get_app_details, }
