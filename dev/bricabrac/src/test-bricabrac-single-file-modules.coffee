@@ -375,37 +375,42 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
     debug 'Ωbbsfm_120', new Dbric '/dev/shm/bricabrac.sqlite'
+    #=======================================================================================================
+    class Dbric_store extends Dbric
+      @statements:
+        # store_create_tables: SQL"""
+        #   """
+        store_create_tables: SQL"""
+          create table store_facets (
+            facet_key             text unique not null primary key,
+            facet_value           json );"""
+        store_insert_facet: SQL"""
+          insert into store_facets ( facet_key, facet_value ) values ( $facet_key, $facet_value )
+            on conflict ( facet_key ) do update set facet_value = excluded.facet_value;"""
+        store_get_facets: SQL"""
+          select * from store_facets order by facet_key;"""
+
+      #---------------------------------------------------------------------------------------------------
+      is_ready: ->
+        dbos = @_get_db_objects()
+        return false unless dbos.store_facets?.type is 'table'
+        return true
+
+    #=======================================================================================================
     do =>
-      class Dbric_store extends Dbric
-        @statements:
-          create_tables: SQL"""
-            -- drop table if exists kvps;
-            create table if not exists kvps (
-              k             text unique not null primary key,
-              v             json );"""
-          get_schema: SQL"""
-            select * from sqlite_schema order by name, type;"""
-          get_tables: SQL"""
-            select * from sqlite_schema where type is 'table' order by name, type;"""
-          insert_kvp: SQL"""
-            insert into kvps ( k, v ) values ( $k, $v )
-              on conflict ( k ) do update set v = excluded.v;"""
-          get_kvps: SQL"""
-            select * from kvps order by k;"""
       debug 'Ωbbsfm_121', new Dbric_store '/dev/shm/bricabrac.sqlite'
-      debug 'Ωbbsfm_122', Dbric_store.open '/dev/shm/bricabrac.sqlite'
       dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
-      dbs.statements.create_tables.run()
+      dbs.statements.store_create_tables.run()
       for row from dbs.statements.get_schema.iterate()
         help 'Ωbbsfm_123', row
-      dbs.statements.insert_kvp.run { k: 'one',   v: ( JSON.stringify 1       ), }
-      dbs.statements.insert_kvp.run { k: 'two',   v: ( JSON.stringify 2       ), }
-      dbs.statements.insert_kvp.run { k: 'three', v: ( JSON.stringify 3       ), }
-      dbs.statements.insert_kvp.run { k: 'three', v: ( JSON.stringify 'iii'   ), }
-      dbs.statements.insert_kvp.run { k: 'true',  v: ( JSON.stringify true    ), }
-      dbs.statements.insert_kvp.run { k: 'false', v: ( JSON.stringify false   ), }
-      for row from dbs.statements.get_kvps.iterate()
-        row = { row..., { v: ( JSON.parse row.v ), _v: row.v, }..., }
+      dbs.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
+      dbs.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
+      dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
+      dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
+      dbs.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
+      dbs.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
+      for row from dbs.statements.store_get_facets.iterate()
+        row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
         help 'Ωbbsfm_124', row
     #.......................................................................................................
     return null
