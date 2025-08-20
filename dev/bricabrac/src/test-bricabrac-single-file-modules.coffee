@@ -369,51 +369,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     #.......................................................................................................
     return null
 
-  #---------------------------------------------------------------------------------------------------------
-  require_dbric: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
-    debug 'Ωbbsfm_120', new Dbric '/dev/shm/bricabrac.sqlite'
-    #=======================================================================================================
-    class Dbric_store extends Dbric
-      @statements:
-        # store_create_tables: SQL"""
-        #   """
-        store_create_tables: SQL"""
-          create table store_facets (
-            facet_key             text unique not null primary key,
-            facet_value           json );"""
-        store_insert_facet: SQL"""
-          insert into store_facets ( facet_key, facet_value ) values ( $facet_key, $facet_value )
-            on conflict ( facet_key ) do update set facet_value = excluded.facet_value;"""
-        store_get_facets: SQL"""
-          select * from store_facets order by facet_key;"""
 
-      #---------------------------------------------------------------------------------------------------
-      is_ready: ->
-        dbos = @_get_db_objects()
-        return false unless dbos.store_facets?.type is 'table'
-        return true
-
-    #=======================================================================================================
-    do =>
-      debug 'Ωbbsfm_121', new Dbric_store '/dev/shm/bricabrac.sqlite'
-      dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
-      dbs.statements.store_create_tables.run()
-      for row from dbs.statements.get_schema.iterate()
-        help 'Ωbbsfm_123', row
-      dbs.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
-      for row from dbs.statements.store_get_facets.iterate()
-        row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
-        help 'Ωbbsfm_124', row
-    #.......................................................................................................
-    return null
 
 
 
@@ -425,5 +381,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { require_get_app_details: tests.require_get_app_details, }
-  ( new Test guytest_cfg ).test { require_dbric: tests.require_dbric, }
 
