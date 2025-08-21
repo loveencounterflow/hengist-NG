@@ -70,14 +70,40 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    do =>
-      debug 'Ωbbdbr___1', db = new Dbric '/dev/shm/bricabrac.sqlite'
-      debug 'Ωbbdbr___2', db._get_db_objects()
-      debug 'Ωbbdbr___3', db.is_ready
-      debug 'Ωbbdbr___4', db._procure_db_objects()
+    { temp,                     } = SFMODULES.unstable.require_temp()
+    FS                            = require 'node:fs'
+    PATH                          = require 'node:path'
+    # debug 'Ωbbdbr___1', SFMODULES.unstable.require_temp_internal_tmp()
+    temp.with_directory { keep: true, }, ({ path: folder_path, }) ->
+      db_path = PATH.join folder_path, 'bricabrac.sqlite'
+      help 'Ωbbdbr___2', { db_path, }
+      #.....................................................................................................
+      do =>
+        debug 'Ωbbdbr___3', db = Dbric.open db_path
+        debug 'Ωbbdbr___4', db._get_db_objects()
+        debug 'Ωbbdbr___5', db.is_ready
+        debug 'Ωbbdbr___6', db.build()
+      #.....................................................................................................
+      do =>
+        debug 'Ωbbdbr___7', db = new Dbric '/dev/shm/bricabrac.sqlite'
+        debug 'Ωbbdbr___8', db._get_db_objects()
+        debug 'Ωbbdbr___9', db.is_ready
+        debug 'Ωbbdbr__10', db.build()
+        db.teardown()
+        return null
+      #.....................................................................................................
+      do =>
+        debug 'Ωbbdbr__11', db = new Dbric '/dev/shm/bricabrac.sqlite'
+        debug 'Ωbbdbr__12', db._get_db_objects()
+        debug 'Ωbbdbr__13', db.is_ready
+        @eq   ( Ωbbdbr__14 = -> db.is_ready ), false
+        debug 'Ωbbdbr__15', db.build()
+        db.teardown()
+        return null
+      #.....................................................................................................
       return null
     # do =>
-    #   debug 'Ωbbdbr___5', db = Dbric.open '/dev/shm/bricabrac.sqlite'
+    #   debug 'Ωbbdbr__16', db = Dbric.open '/dev/shm/bricabrac.sqlite'
     #   return null
     #.......................................................................................................
     return null
@@ -87,7 +113,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    debug 'Ωbbdbr___6', new Dbric '/dev/shm/bricabrac.sqlite'
+    debug 'Ωbbdbr__17', new Dbric '/dev/shm/bricabrac.sqlite'
     #=======================================================================================================
     class Dbric_store extends Dbric
       @statements:
@@ -111,11 +137,11 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 
     #=======================================================================================================
     do =>
-      debug 'Ωbbdbr___7', new Dbric_store '/dev/shm/bricabrac.sqlite'
+      debug 'Ωbbdbr__18', new Dbric_store '/dev/shm/bricabrac.sqlite'
       dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
       dbs.statements.store_create_tables.run()
       for row from dbs.statements.get_schema.iterate()
-        help 'Ωbbdbr___8', row
+        help 'Ωbbdbr__19', row
       dbs.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       dbs.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -124,7 +150,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       dbs.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
       for row from dbs.statements.store_get_facets.iterate()
         row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
-        help 'Ωbbdbr___9', row
+        help 'Ωbbdbr__20', row
     #.......................................................................................................
     return null
 
@@ -137,5 +163,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
-  tests.dbric_std()
+  ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
