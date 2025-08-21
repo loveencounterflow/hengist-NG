@@ -112,13 +112,18 @@ isa_jsid  = ( x ) -> ( ( typeof x ) is 'string' ) and jsid_re.test x
 
 
 #===========================================================================================================
+templates =
+  show: { indentation: null, }
+
+#===========================================================================================================
 class Show
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ->
+  constructor: ( cfg ) ->
     me = ( x ) =>
       return ( text for text from @pen x ).join ''
     Object.setPrototypeOf me, @
+    @cfg    = { templates.show..., cfg..., }
     @state  = { level: 0, ended_with_nl: false, }
     @spacer = '\x20\x20'
     Object.defineProperty @, 'dent',
@@ -422,33 +427,35 @@ demo_show = ->
   debug 'Ω___6', show.go_down()
   debug 'Ω___7', rpr show.dent
   echo()
-  echo '-----------------------------------------------'
-  echo show "foo 'bar'"
-  echo '-----------------------------------------------'
-  echo show {}
-  echo '-----------------------------------------------'
-  echo show { kong: 108, low: 923, numbers: [ 10, 11, 12, ], }
-  echo '-----------------------------------------------'
-  echo show []
-  echo '-----------------------------------------------'
-  echo show [ 'some', 'words', 'to', 'show', 1, -1, false, ]
-  echo '-----------------------------------------------'
-  echo show new Map [ [ 'kong', 108, ], [ 'low', 923, ], [ 971, 'word', ], [ true, '+1', ], [ 'a b c', false, ] ]
-  echo '-----------------------------------------------'
-  echo show new Set [ 'some', 'words', true, false, null, undefined, 3.1415926, NaN, ]
-  echo '-----------------------------------------------'
-  echo show /abc[de]/
-  echo '-----------------------------------------------'
-  echo show Buffer.from 'abcäöü'
-  echo '-----------------------------------------------'
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_1 = "foo 'bar'"
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_2 = {}
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_3 = { kong: 108, low: 923, numbers: [ 10, 11, 12, ], }
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_4 = []
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_5 = [ 'some', 'words', 'to', 'show', 1, -1, false, ]
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_6 = new Map [ [ 'kong', 108, ], [ 'low', 923, ], [ 971, 'word', ], [ true, '+1', ], [ 'a b c', false, ] ]
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_7 = new Set [ 'some', 'words', true, false, null, undefined, 3.1415926, NaN, ]
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_8 = /abc[de]/
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_9 = Buffer.from 'abcäöü'
+  echo '————————————————————————————————————————————————————————————————'
+  echo show v_10 = { v_1, v_2, v_3, v_4, v_5, v_6, v_7, v_8, v_9, } # v_10, v_11, v_12, v_13, v_14, }
+  v_10.v_10 = v_10
+  echo '————————————————————————————————————————————————————————————————'
+  # echo show v_10 = { v_1, v_2, v_3, v_4, v_5, v_6, v_7, v_8, v_9, v_10, } # v_10, v_11, v_12, v_13, v_14, }
+  echo '————————————————————————————————————————————————————————————————'
   echo()
   return null
 
-
 #===========================================================================================================
-if module is require.main then await do =>
-  # await demo_execa()
-  demo_show()
+demo_color_effects = ->
   echo 'Ω___8', ( C.hex('#FF75D1').bold.underline 'Pink'  ), 'XXX'
   echo 'Ω___9', ( C.yellow ( C.red.bold.inverse 'Pink'      ), 'XXX' )
   echo 'Ω__10', ( C.yellow "!!! #{C.red.bold.inverse 'Pink'} XXX" )
@@ -486,6 +493,13 @@ if module is require.main then await do =>
   echo 'Ω__28', red.italic"woo"
   em = red.italic.bold.inverse
   echo 'Ω__29', em"emphasize: #{ show { d: 6, }} not bad"
+  return null
+
+#===========================================================================================================
+if module is require.main then await do =>
+  # await demo_execa()
+  demo_show()
+  # demo_color_effects()
 
 
 
