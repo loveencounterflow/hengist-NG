@@ -80,14 +80,47 @@ remove = ( path ) ->
     { esql,
       internals,                } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
-    @eq     ( Ωbbdbr___5 = -> internals.type_of esql.unquote_name ), 'function'
-    @eq     ( Ωbbdbr___6 = -> esql.unquote_name 'abc'             ), 'abc'
-    @eq     ( Ωbbdbr___7 = -> esql.unquote_name '"abc"'           ), 'abc'
-    @eq     ( Ωbbdbr___8 = -> esql.unquote_name '"ab""c"'         ), 'ab"c'
-    @throws ( Ωbbdbr___9 = -> esql.unquote_name ''                ), /expected a name/
-    @throws ( Ωbbdbr__10 = -> esql.unquote_name '"'               ), /expected a name/
-    @throws ( Ωbbdbr__11 = -> esql.unquote_name '""'              ), /expected a name/
-    @throws ( Ωbbdbr__12 = -> esql.unquote_name false             ), /expected a text, got a boolean/
+    @eq     ( Ωbbdbr___3 = -> internals.type_of esql.unquote_name ), 'function'
+    @eq     ( Ωbbdbr___4 = -> esql.unquote_name 'abc'             ), 'abc'
+    @eq     ( Ωbbdbr___5 = -> esql.unquote_name '"abc"'           ), 'abc'
+    @eq     ( Ωbbdbr___6 = -> esql.unquote_name '"ab""c"'         ), 'ab"c'
+    @throws ( Ωbbdbr___7 = -> esql.unquote_name ''                ), /expected a name/
+    @throws ( Ωbbdbr___8 = -> esql.unquote_name '"'               ), /expected a name/
+    @throws ( Ωbbdbr___9 = -> esql.unquote_name '""'              ), /expected a name/
+    @throws ( Ωbbdbr__10 = -> esql.unquote_name false             ), /expected a text, got a boolean/
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  reject_nonconformant_build_statements: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    { temp,                     } = SFMODULES.unstable.require_temp()
+    #.......................................................................................................
+    class Dbric_nonconform extends Dbric
+      @build: [
+        SQL"""
+          create table nonconform_one ( a text primary key );"""
+        SQL"""
+          -- this comment shouldn't be here
+          create view nonconform_two as select * from nonconform_one;"""
+        ]
+    #.......................................................................................................
+    temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
+      db_path = PATH.join folder_path, 'bricabrac.sqlite'
+      #.....................................................................................................
+      do =>
+        db = new Dbric_nonconform db_path
+        @throws ( Ωbbdbr__11 = -> db.is_ready ), /one or more build statements could not be parsed/
+        @eq     ( Ωbbdbr__12 = -> db._get_objects_in_build_statements()?.error_count ), 1
+        return null
+      #.....................................................................................................
+      do =>
+        @throws ( Ωbbdbr__11 = -> Dbric_nonconform.open db_path ), /one or more build statements could not be parsed/
+        return null
+      #.....................................................................................................
+      return null
     #.......................................................................................................
     return null
 
@@ -243,6 +276,6 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
   ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
-
+  ( new Test guytest_cfg ).test { reject_nonconformant_build_statements: tests.reject_nonconformant_build_statements, }
 
 
