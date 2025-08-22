@@ -1,30 +1,4 @@
 
-###
-
-
-## Applications
-
-* **RegEx Builder** (example from [Rejigs blog post](https://medium.com/@omarzawahry/rejigs-making-regular-expressions-human-readable-1fad37cb3eae))
-
-```java
-var emailRegex =
-    Rejigs.Create()
-          .AtStart()
-          .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf("._%+-"))
-          .Text("@")
-          .OneOrMore(r => r.AnyLetterOrDigit().Or().AnyOf(".-"))
-          .Text(".")
-          .AnyLetterOrDigit().AtLeast(2)
-          .AtEnd()
-          .Build();
-```
-
-* **HTML/XML Builer**
-* **SQL Builder**
-* **CLI Coloring**
-* syntax for a **Type Checker**
-
-###
 
 'use strict'
 
@@ -38,7 +12,7 @@ GUY                       = require 'guy'
   praise
   urge
   warn
-  whisper }               = GUY.trm.get_loggers 'bricabrac-single-file-modules'
+  whisper }               = GUY.trm.get_loggers 'bricabrac-dbric'
 { rpr
   inspect
   echo
@@ -112,12 +86,12 @@ remove = ( path ) ->
       #.....................................................................................................
       do =>
         db = new Dbric_nonconform db_path
-        @throws ( Ωbbdbr__11 = -> db.is_ready ), /one or more build statements could not be parsed/
+        @throws ( Ωbbdbr__11 = -> db.is_ready ), /1 out of 2 build statement\(s\) could not be parsed/
         @eq     ( Ωbbdbr__12 = -> db._get_objects_in_build_statements()?.error_count ), 1
         return null
       #.....................................................................................................
       do =>
-        @throws ( Ωbbdbr__11 = -> Dbric_nonconform.open db_path ), /one or more build statements could not be parsed/
+        @throws ( Ωbbdbr__11 = -> Dbric_nonconform.open db_path ), /1 out of 2 build statement\(s\) could not be parsed/
         return null
       #.....................................................................................................
       return null
