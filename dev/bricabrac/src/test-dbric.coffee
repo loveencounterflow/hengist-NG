@@ -76,6 +76,22 @@ remove = ( path ) ->
 @tests = tests =
 
   #---------------------------------------------------------------------------------------------------------
+  dbric_esql: ->
+    { esql,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    #.......................................................................................................
+    @eq     ( Ωbbdbr___5 = -> internals.type_of esql.unquote_name ), 'function'
+    @eq     ( Ωbbdbr___6 = -> esql.unquote_name 'abc'             ), 'abc'
+    @eq     ( Ωbbdbr___7 = -> esql.unquote_name '"abc"'           ), 'abc'
+    @eq     ( Ωbbdbr___8 = -> esql.unquote_name '"ab""c"'         ), 'ab"c'
+    @throws ( Ωbbdbr___9 = -> esql.unquote_name ''                ), /expected a name/
+    @throws ( Ωbbdbr__10 = -> esql.unquote_name '"'               ), /expected a name/
+    @throws ( Ωbbdbr__11 = -> esql.unquote_name '""'              ), /expected a name/
+    @throws ( Ωbbdbr__12 = -> esql.unquote_name false             ), /expected a text, got a boolean/
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   dbric_std: ->
     { Dbric,
       Dbric_std,
@@ -87,83 +103,83 @@ remove = ( path ) ->
       folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       db_path = PATH.join folder_path, 'bricabrac.sqlite'
       remove db_path
-      help 'Ωbbdbr___3', { db_path, }
+      help 'Ωbbdbr__13', { db_path, }
       #.....................................................................................................
       do =>
         db = new Dbric db_path
-        @eq   ( Ωbbdbr___4 = -> db.is_ready ), true
+        @eq   ( Ωbbdbr__14 = -> db.is_ready ), true
         return null
       #.....................................................................................................
       do =>
         db = Dbric.open db_path
-        @eq   ( Ωbbdbr___5 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr___6 = -> db._get_db_objects()        ), {}
-        @eq   ( Ωbbdbr___7 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr___8 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__15 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__16 = -> db._get_db_objects()        ), {}
+        @eq   ( Ωbbdbr__17 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__18 = -> db.build()                  ), 0
         return null
     #.......................................................................................................
     temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
       folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       db_path = PATH.join folder_path, 'bricabrac.sqlite'
       remove db_path
-      help 'Ωbbdbr___9', { db_path, }
+      help 'Ωbbdbr__19', { db_path, }
       #.....................................................................................................
       do =>
         db = new Dbric db_path
-        @eq   ( Ωbbdbr__10 = -> db.is_ready       ), true
-        @eq   ( Ωbbdbr__11 = -> db.cfg.prefix     ), '(NOPREFIX)'
-        @eq   ( Ωbbdbr__12 = -> db.prefix         ), ''
-        @eq   ( Ωbbdbr__13 = -> db.full_prefix    ), ''
+        @eq   ( Ωbbdbr__20 = -> db.is_ready       ), true
+        @eq   ( Ωbbdbr__21 = -> db.cfg.prefix     ), '(NOPREFIX)'
+        @eq   ( Ωbbdbr__22 = -> db.prefix         ), ''
+        @eq   ( Ωbbdbr__23 = -> db.full_prefix    ), ''
         return null
       #.....................................................................................................
       do =>
         db = new Dbric_std db_path
-        @eq   ( Ωbbdbr__14 = -> db.is_ready       ), false
-        @eq   ( Ωbbdbr__15 = -> db.cfg.prefix     ), 'std'
-        @eq   ( Ωbbdbr__16 = -> db.prefix         ), 'std'
-        @eq   ( Ωbbdbr__17 = -> db.full_prefix    ), 'std_'
+        @eq   ( Ωbbdbr__24 = -> db.is_ready       ), false
+        @eq   ( Ωbbdbr__25 = -> db.cfg.prefix     ), 'std'
+        @eq   ( Ωbbdbr__26 = -> db.prefix         ), 'std'
+        @eq   ( Ωbbdbr__27 = -> db.full_prefix    ), 'std_'
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
-        @eq   ( Ωbbdbr__18 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__19 = -> db instanceof Dbric_std     ), true
-        @eq   ( Ωbbdbr__20 = -> db._get_db_objects()        ), {
+        @eq   ( Ωbbdbr__28 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__29 = -> db instanceof Dbric_std     ), true
+        @eq   ( Ωbbdbr__30 = -> db._get_db_objects()        ), {
           std_tables:     { name: 'std_tables',     type: 'view' },
           std_views:      { name: 'std_views',      type: 'view' },
           std_relations:  { name: 'std_relations',  type: 'view' } }
-        @eq   ( Ωbbdbr__21 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__22 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__31 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__32 = -> db.build()                  ), 0
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
-        @eq   ( Ωbbdbr__23 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__24 = -> db instanceof Dbric_std     ), true
-        @eq   ( Ωbbdbr__25 = -> db._get_db_objects()        ), {
+        @eq   ( Ωbbdbr__33 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__34 = -> db instanceof Dbric_std     ), true
+        @eq   ( Ωbbdbr__35 = -> db._get_db_objects()        ), {
           std_tables:     { name: 'std_tables',     type: 'view' },
           std_views:      { name: 'std_views',      type: 'view' },
           std_relations:  { name: 'std_relations',  type: 'view' } }
-        @eq   ( Ωbbdbr__26 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__27 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__36 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__37 = -> db.build()                  ), 0
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
         ( db.prepare SQL"drop view std_tables;" ).run()
-        @eq   ( Ωbbdbr__28 = -> db.is_ready                 ), false
+        @eq   ( Ωbbdbr__38 = -> db.is_ready                 ), false
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
-        @eq   ( Ωbbdbr__29 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__30 = -> db instanceof Dbric_std     ), true
-        @eq   ( Ωbbdbr__31 = -> db._get_db_objects()        ), {
+        @eq   ( Ωbbdbr__39 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__40 = -> db instanceof Dbric_std     ), true
+        @eq   ( Ωbbdbr__41 = -> db._get_db_objects()        ), {
           std_tables:     { name: 'std_tables',     type: 'view' },
           std_views:      { name: 'std_views',      type: 'view' },
           std_relations:  { name: 'std_relations',  type: 'view' } }
-        @eq   ( Ωbbdbr__32 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__33 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__42 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__43 = -> db.build()                  ), 0
         return null
       #.....................................................................................................
       return null
@@ -175,7 +191,7 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    debug 'Ωbbdbr__34', new Dbric '/dev/shm/bricabrac.sqlite'
+    debug 'Ωbbdbr__44', new Dbric '/dev/shm/bricabrac.sqlite'
     #=======================================================================================================
     class Dbric_store extends Dbric
       @statements:
@@ -199,11 +215,11 @@ remove = ( path ) ->
 
     #=======================================================================================================
     do =>
-      debug 'Ωbbdbr__35', new Dbric_store '/dev/shm/bricabrac.sqlite'
+      debug 'Ωbbdbr__45', new Dbric_store '/dev/shm/bricabrac.sqlite'
       dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
       dbs.statements.store_create_tables.run()
       for row from dbs.statements.get_schema.iterate()
-        help 'Ωbbdbr__36', row
+        help 'Ωbbdbr__46', row
       dbs.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       dbs.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -212,7 +228,7 @@ remove = ( path ) ->
       dbs.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
       for row from dbs.statements.store_get_facets.iterate()
         row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
-        help 'Ωbbdbr__37', row
+        help 'Ωbbdbr__47', row
     #.......................................................................................................
     return null
 
@@ -225,4 +241,8 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
   ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
+
+
+
