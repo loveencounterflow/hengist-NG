@@ -804,6 +804,7 @@ settings =
       [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                                  { callee: 'wrapModuleLoad',                            path: 'node:internal/modules/cjs/loader',                        folder_path: 'node:internal/modules/cjs/',              file_name: 'loader',                   line_nr: 238,  column_nr: 24, type: 'internal',   }, ]
       [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",          { callee: 'Module.executeUserEntryPoint [as runMain]', path: 'node:internal/modules/run_main',                          folder_path: 'node:internal/modules/',                  file_name: 'run_main',                 line_nr: 154,  column_nr: 5,  type: 'internal',   }, ]
       [ """at node:internal/main/run_main_module:33:47""",                                                  { callee: '[anonymous]',                               path: 'node:internal/main/run_main_module',                      folder_path: 'node:internal/main/',                     file_name: 'run_main_module',          line_nr: 33,   column_nr: 47, type: 'internal',   }, ]
+      [ """some other format""",                                                                            { callee: '', path: '', folder_path: 'some other format', file_name: '', line_nr: '', column_nr: '', type: 'unparsable' }, ]
       ]
     #.......................................................................................................
     @eq ( Ωbrbr_163 = -> type_of format_stack.parse_line ), 'function'
@@ -839,6 +840,7 @@ settings =
       [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                            '—— node:internal/modules/cjs/——loader —— (238——:24) ——                                    —— # wrapModuleLoad() ——                              ——', ]
       [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",    '—— node:internal/modules/——run_main —— (154——:5) ——                                       —— # Module.executeUserEntryPoint [as runMain]() ——   ——', ]
       [ """at node:internal/main/run_main_module:33:47""",                                            '—— node:internal/main/——run_main_module —— (33——:47) ——                                   —— # [anonymous]() ——                                 ——', ]
+      [ """some other format""",                                                                      '—— some other format—— —— (——:) ——                                                        —— # () ——                                            ——', ]
       ]
     #.......................................................................................................
     @eq ( Ωbrbr_169 = -> type_of format_stack.cfg         ), 'pod'
