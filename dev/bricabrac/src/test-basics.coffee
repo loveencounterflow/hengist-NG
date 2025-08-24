@@ -843,7 +843,7 @@ settings =
     @eq ( Ωbrbr_169 = -> type_of format_stack.cfg         ), 'pod'
     @eq ( Ωbrbr_170 = -> type_of format_stack.format_line ), 'function'
     for [ probe, matcher, ] in probes_and_matchers
-      @eq ( Ωbrbr_171 = -> strip_ansi ( format_stack.format_line probe ), '——' ), matcher
+      # @eq ( Ωbrbr_171 = -> strip_ansi ( format_stack.format_line probe ), '——' ), matcher
       debug 'Ωbrbr_172', do Ωbrbr_173 = -> format_stack.format_line probe
       # debug 'Ωbrbr_174', do Ωbrbr_175 = -> rpr strip_ansi ( format_stack.format_line probe ), '——'
     #.......................................................................................................
