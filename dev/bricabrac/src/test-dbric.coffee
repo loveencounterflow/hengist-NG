@@ -91,7 +91,7 @@ remove = ( path ) ->
         return null
       #.....................................................................................................
       do =>
-        @throws ( Ωbbdbr__11 = -> Dbric_nonconform.open db_path ), /1 out of 2 build statement\(s\) could not be parsed/
+        @throws ( Ωbbdbr__13 = -> Dbric_nonconform.open db_path ), /1 out of 2 build statement\(s\) could not be parsed/
         return null
       #.....................................................................................................
       return null
@@ -107,86 +107,86 @@ remove = ( path ) ->
     { temp,                     } = SFMODULES.unstable.require_temp()
     #.......................................................................................................
     temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
-      folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      # folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       db_path = PATH.join folder_path, 'bricabrac.sqlite'
       remove db_path
-      help 'Ωbbdbr__13', { db_path, }
+      help 'Ωbbdbr__14', { db_path, }
       #.....................................................................................................
       do =>
         db = new Dbric db_path
-        @eq   ( Ωbbdbr__14 = -> db.is_ready ), true
+        @eq   ( Ωbbdbr__15 = -> db.is_ready ), true
         return null
       #.....................................................................................................
       do =>
         db = Dbric.open db_path
-        @eq   ( Ωbbdbr__15 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__16 = -> db._get_db_objects()        ), {}
-        @eq   ( Ωbbdbr__17 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__18 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__16 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__17 = -> db._get_db_objects()        ), {}
+        @eq   ( Ωbbdbr__18 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__19 = -> db.build()                  ), 0
         return null
     #.......................................................................................................
     temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
-      folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      # folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       db_path = PATH.join folder_path, 'bricabrac.sqlite'
       remove db_path
-      help 'Ωbbdbr__19', { db_path, }
+      help 'Ωbbdbr__20', { db_path, }
       #.....................................................................................................
       do =>
         db = new Dbric db_path
-        @eq   ( Ωbbdbr__20 = -> db.is_ready       ), true
-        @eq   ( Ωbbdbr__21 = -> db.cfg.prefix     ), '(NOPREFIX)'
-        @eq   ( Ωbbdbr__22 = -> db.prefix         ), ''
-        @eq   ( Ωbbdbr__23 = -> db.full_prefix    ), ''
+        @eq   ( Ωbbdbr__21 = -> db.is_ready       ), true
+        @eq   ( Ωbbdbr__22 = -> db.cfg.prefix     ), '(NOPREFIX)'
+        @eq   ( Ωbbdbr__23 = -> db.prefix         ), ''
+        @eq   ( Ωbbdbr__24 = -> db.full_prefix    ), ''
         return null
       #.....................................................................................................
       do =>
         db = new Dbric_std db_path
-        @eq   ( Ωbbdbr__24 = -> db.is_ready       ), false
-        @eq   ( Ωbbdbr__25 = -> db.cfg.prefix     ), 'std'
-        @eq   ( Ωbbdbr__26 = -> db.prefix         ), 'std'
-        @eq   ( Ωbbdbr__27 = -> db.full_prefix    ), 'std_'
+        @eq   ( Ωbbdbr__25 = -> db.is_ready       ), false
+        @eq   ( Ωbbdbr__26 = -> db.cfg.prefix     ), 'std'
+        @eq   ( Ωbbdbr__27 = -> db.prefix         ), 'std'
+        @eq   ( Ωbbdbr__28 = -> db.full_prefix    ), 'std_'
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
-        @eq   ( Ωbbdbr__28 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__29 = -> db instanceof Dbric_std     ), true
-        @eq   ( Ωbbdbr__30 = -> db._get_db_objects()        ), {
+        @eq   ( Ωbbdbr__29 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__30 = -> db instanceof Dbric_std     ), true
+        @eq   ( Ωbbdbr__31 = -> db._get_db_objects()        ), {
           std_tables:     { name: 'std_tables',     type: 'view' },
           std_views:      { name: 'std_views',      type: 'view' },
           std_relations:  { name: 'std_relations',  type: 'view' } }
-        @eq   ( Ωbbdbr__31 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__32 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__32 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__33 = -> db.build()                  ), 0
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
-        @eq   ( Ωbbdbr__33 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__34 = -> db instanceof Dbric_std     ), true
-        @eq   ( Ωbbdbr__35 = -> db._get_db_objects()        ), {
+        @eq   ( Ωbbdbr__34 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__35 = -> db instanceof Dbric_std     ), true
+        @eq   ( Ωbbdbr__36 = -> db._get_db_objects()        ), {
           std_tables:     { name: 'std_tables',     type: 'view' },
           std_views:      { name: 'std_views',      type: 'view' },
           std_relations:  { name: 'std_relations',  type: 'view' } }
-        @eq   ( Ωbbdbr__36 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__37 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__37 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__38 = -> db.build()                  ), 0
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
         ( db.prepare SQL"drop view std_tables;" ).run()
-        @eq   ( Ωbbdbr__38 = -> db.is_ready                 ), false
+        @eq   ( Ωbbdbr__39 = -> db.is_ready                 ), false
         return null
       #.....................................................................................................
       do =>
         db = Dbric_std.open db_path
-        @eq   ( Ωbbdbr__39 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__40 = -> db instanceof Dbric_std     ), true
-        @eq   ( Ωbbdbr__41 = -> db._get_db_objects()        ), {
+        @eq   ( Ωbbdbr__40 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__41 = -> db instanceof Dbric_std     ), true
+        @eq   ( Ωbbdbr__42 = -> db._get_db_objects()        ), {
           std_tables:     { name: 'std_tables',     type: 'view' },
           std_views:      { name: 'std_views',      type: 'view' },
           std_relations:  { name: 'std_relations',  type: 'view' } }
-        @eq   ( Ωbbdbr__42 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__43 = -> db.build()                  ), 0
+        @eq   ( Ωbbdbr__43 = -> db.is_ready                 ), true
+        @eq   ( Ωbbdbr__44 = -> db.build()                  ), 0
         return null
       #.....................................................................................................
       return null
@@ -198,7 +198,7 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    debug 'Ωbbdbr__44', new Dbric '/dev/shm/bricabrac.sqlite'
+    debug 'Ωbbdbr__45', new Dbric '/dev/shm/bricabrac.sqlite'
     #=======================================================================================================
     class Dbric_store extends Dbric
       @statements:
@@ -222,11 +222,11 @@ remove = ( path ) ->
 
     #=======================================================================================================
     do =>
-      debug 'Ωbbdbr__45', new Dbric_store '/dev/shm/bricabrac.sqlite'
+      debug 'Ωbbdbr__46', new Dbric_store '/dev/shm/bricabrac.sqlite'
       dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
       dbs.statements.store_create_tables.run()
       for row from dbs.statements.get_schema.iterate()
-        help 'Ωbbdbr__46', row
+        help 'Ωbbdbr__47', row
       dbs.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       dbs.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -235,7 +235,7 @@ remove = ( path ) ->
       dbs.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
       for row from dbs.statements.store_get_facets.iterate()
         row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
-        help 'Ωbbdbr__47', row
+        help 'Ωbbdbr__48', row
     #.......................................................................................................
     return null
 
@@ -248,8 +248,60 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
-  ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
-  ( new Test guytest_cfg ).test { reject_nonconformant_build_statements: tests.reject_nonconformant_build_statements, }
+  # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
+  # ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
+  # ( new Test guytest_cfg ).test { reject_nonconformant_build_statements: tests.reject_nonconformant_build_statements, }
 
+  throw_from = ( error_1, message ) ->
+    error_2 = new Error message
+    error_2.cause = error_1
+    throw error_2
+
+  class Division_by_zero  extends Error
+  class App_error         extends Error
+
+  #---------------------------------------------------------------------------------------------------------
+  div = ( a, b ) ->
+    throw new Division_by_zero "Ωbbdbr__49 b cannot be zero" if b is 0
+    return a / b
+
+  #---------------------------------------------------------------------------------------------------------
+  calculate = ( a, b ) ->
+    return 2 * div a, b
+
+  #=========================================================================================================
+  app_1 = ( n ) ->
+    try
+      k = calculate 100, n
+    catch error
+      throw new App_error "Ωbbdbr__50 something went wrong"
+    return { n, k, }
+
+  #=========================================================================================================
+  app_3 = ( n ) ->
+    try
+      k = calculate 100, n
+    catch cause
+      throw new App_error "Ωbbdbr__51 something went wrong", { cause, }
+    return { n, k, }
+
+  # debug 'Ωbbdbr__52', app_3 7
+  # debug 'Ωbbdbr__53', app_3
+  cause = new Error "Ωbbdbr__54"
+  try throw new Error "Ωbbdbr__55", { cause, } catch error
+    info 'Ωbbdbr__56', error.stack
+    urge 'Ωbbdbr__57', error.cause.stack
+    # d = {}
+    # urge 'Ωbbdbr__58', Error.captureStackTrace d
+    # urge 'Ωbbdbr__59', d.stack
+
+    ### NOTE setting `sourceMap` not needed when NodeJS is run with `--enable-source-maps` ###
+  { getCallSites } = require 'node:util'
+  for call_site in getCallSites { sourceMap: true, }
+    { functionName: fn_name,
+      scriptName:   path,
+      lineNumber:   line_nr,
+      columnNumber: column_nr,  } = call_site
+    fn_name = '[anonymous]' if fn_name is ''
+    urge 'Ωbbdbr__60', "#{green path}:#{blue line_nr}:#{red column_nr}:#{gold fn_name}()"
 

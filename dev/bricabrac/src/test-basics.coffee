@@ -440,11 +440,11 @@ settings =
       #.....................................................................................................
       result_rounds  = null
       on_stats        = ( stats ) =>
-        # debug 'Ωbrbr_161', stats
+        # debug 'Ωbrbr__67', stats
         return null unless stats.name is 'walk_unique'
         result_rounds = stats.rounds
-        # debug 'Ωbrbr_161', result_rounds
-        @eq ( Ωbrbr__67 = -> result_rounds ), matchers[ idx ].result_rounds
+        # debug 'Ωbrbr__68', result_rounds
+        @eq ( Ωbrbr__69 = -> result_rounds ), matchers[ idx ].result_rounds
       #.....................................................................................................
       get_random  = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers    = [
@@ -461,10 +461,10 @@ settings =
         ]
       for idx in [ 0 .. 9 ]
         result      = get_random.set_of_texts { min: '0', max: '9', size: 10, length: 1, on_stats, }
-        # debug 'Ωbrbr__68', rpr result
+        # debug 'Ωbrbr__70', rpr result
         result_rpr  = [ result..., ].join ''
-        @eq ( Ωbrbr__69 = -> result_rpr     ), matchers[ idx ].result_rpr
-        # @eq ( Ωbrbr__70 = -> result_rounds ), matchers[ idx ].result_rounds
+        @eq ( Ωbrbr__71 = -> result_rpr     ), matchers[ idx ].result_rpr
+        # @eq ( Ωbrbr__72 = -> result_rounds ), matchers[ idx ].result_rounds
       return null
     #.......................................................................................................
     return null
@@ -477,9 +477,9 @@ settings =
     do =>
       result_rounds  = null
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__71', stats if stats.name is 'walk'
+        # info 'Ωbrbr__73', stats if stats.name is 'walk'
         # result_rounds = stats.rounds if stats.name is 'walk'
-        # @eq ( Ωbrbr__72 = -> result_rounds >= 0 ), true
+        # @eq ( Ωbrbr__74 = -> result_rounds >= 0 ), true
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       #.....................................................................................................
       cfg =
@@ -488,15 +488,15 @@ settings =
         length:         3
         filter:         /^[a-z]{3}$/
         on_exhaustion: 'error'
-      @throws ( Ωbrbr__73 = -> get_random.text cfg ), /exhausted/
+      @throws ( Ωbrbr__75 = -> get_random.text cfg ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       result_rounds  = null
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__74', stats if stats.name is 'walk'
+        # info 'Ωbrbr__76', stats if stats.name is 'walk'
         # result_rounds = stats.rounds if stats.name is 'walk'
-        # @eq ( Ωbrbr__75 = -> result_rounds >= 0 ), true
+        # @eq ( Ωbrbr__77 = -> result_rounds >= 0 ), true
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       #.....................................................................................................
       cfg =
@@ -505,7 +505,7 @@ settings =
         length:         3
         filter:         /^[a-z]{3}$/
         on_exhaustion: -> null
-      @eq ( Ωbrbr__76 = -> get_random.text cfg ), null
+      @eq ( Ωbrbr__78 = -> get_random.text cfg ), null
       return null
     #.......................................................................................................
     return null
@@ -519,9 +519,9 @@ settings =
       idx             = -1
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__77', idx, stats # if stats.name is 'walk'
+        # info 'Ωbrbr__79', idx, stats # if stats.name is 'walk'
         if stats.name is 'walk'
-          @eq ( Ωbrbr__78 = -> stats.rounds ), matcher.rounds
+          @eq ( Ωbrbr__80 = -> stats.rounds ), matcher.rounds
         return null
       #.....................................................................................................
       result    =
@@ -533,27 +533,27 @@ settings =
       producer  = -> get_random.text { min: 'A', max: 0x017f, length: 3, on_stats, }
       for value from get_random.walk { producer, n: 11, on_stats, }
         idx++
-        # debug 'Ωbrbr__79', idx, rpr value
+        # debug 'Ωbrbr__81', idx, rpr value
         result.values.push value
-        @eq ( Ωbrbr__80 = -> value ), matcher.values[ idx ]
-      @eq ( Ωbrbr__81 = -> idx                    ), 10
-      @eq ( Ωbrbr__82 = -> result.values.length   ), 11
+        @eq ( Ωbrbr__82 = -> value ), matcher.values[ idx ]
+      @eq ( Ωbrbr__83 = -> idx                    ), 10
+      @eq ( Ωbrbr__84 = -> result.values.length   ), 11
       return null
     # #.......................................................................................................
     # do =>
     #   get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
     #   result_rounds  = null
     #   on_stats        = ( stats ) =>
-    #     info 'Ωbrbr__83', stats if stats.name is 'walk'
+    #     info 'Ωbrbr__85', stats if stats.name is 'walk'
     #     result_rounds = stats.rounds if stats.name is 'walk'
-    #     @eq ( Ωbrbr__84 = -> result_rounds >= 0 ), true
+    #     @eq ( Ωbrbr__86 = -> result_rounds >= 0 ), true
     #   #.....................................................................................................
     #   producer  = -> get_random.text { min: '0', max: '9', length: 1, }
     #   count     = 0
     #   seen      = new Set()
     #   for x from get_random.walk { producer, seen, n: 5, }
     #     count++
-    #     debug 'Ωbrbr__85', count, rpr x
+    #     debug 'Ωbrbr__87', count, rpr x
     #   return null
     #.......................................................................................................
     return null
@@ -567,39 +567,39 @@ settings =
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers        = [ 15, 16, 14, 11, 17, 19, 13, 10, 18, 12, ]
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__86', stats
-        @eq ( Ωbrbr__87 = -> stats.rounds ), 4 if stats.name is 'walk_unique'
+        # info 'Ωbrbr__88', stats
+        @eq ( Ωbrbr__89 = -> stats.rounds ), 4 if stats.name is 'walk_unique'
       #.....................................................................................................
       producer  = -> get_random.integer { min: 10, max: 19, on_stats, }
       idx       = -1
       for value from get_random.walk_unique { producer, n: 10, on_stats, }
         idx++
-        # debug 'Ωbrbr__88', idx, rpr value
-        @eq ( Ωbrbr__89 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr__90', idx, rpr value
+        @eq ( Ωbrbr__91 = -> value ), matchers[ idx ]
       return null
     #.......................................................................................................
     do =>
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       on_stats        = ( stats ) =>
-        @eq ( Ωbrbr__90 = -> stats.rounds ), 4 if stats.name is 'walk_unique'
+        @eq ( Ωbrbr__92 = -> stats.rounds ), 4 if stats.name is 'walk_unique'
       #.....................................................................................................
       producer  = -> get_random.integer { min: 10, max: 19, on_stats, }
-      @throws ( Ωbrbr__91 = -> value for value from get_random.walk_unique { producer, n: 11, on_stats, } ), /exhausted/
+      @throws ( Ωbrbr__93 = -> value for value from get_random.walk_unique { producer, n: 11, on_stats, } ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
       matchers        = [ 15, 16, 14, 11, 17, 19, 13, 10, 18, 12, ]
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__92', stats
-        @eq ( Ωbrbr__93 = -> stats.rounds ), get_random.cfg.max_rounds + 1 if stats.name is 'walk_unique'
+        # info 'Ωbrbr__94', stats
+        @eq ( Ωbrbr__95 = -> stats.rounds ), get_random.cfg.max_rounds + 1 if stats.name is 'walk_unique'
       #.....................................................................................................
       producer  = -> get_random.integer { min: 10, max: 19, on_stats, }
       idx       = -1
       for value from get_random.walk_unique { producer, n: 20, on_stats, on_exhaustion: 'stop', }
         idx++
-        # debug 'Ωbrbr__94', idx, rpr value
-        @eq ( Ωbrbr__95 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr__96', idx, rpr value
+        @eq ( Ωbrbr__97 = -> value ), matchers[ idx ]
       return null
     #.......................................................................................................
     do =>
@@ -608,17 +608,17 @@ settings =
       results         = []
       max_rounds      = 1_000
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr__96', stats
-        @eq ( Ωbrbr__97 = -> stats.rounds ), max_rounds + 1 if stats.name is 'walk_unique'
+        # info 'Ωbrbr__98', stats
+        @eq ( Ωbrbr__99 = -> stats.rounds ), max_rounds + 1 if stats.name is 'walk_unique'
       #.....................................................................................................
       producer  = -> get_random.chr { min: 0x20, max: 0xff, on_stats, }
       idx       = -1
       for value from get_random.walk_unique { producer, n: 200, on_stats, on_exhaustion: 'stop', max_rounds, }
         idx++
-        # debug 'Ωbrbr__98', idx, rpr value
-        @eq ( Ωbrbr__99 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr_100', idx, rpr value
+        @eq ( Ωbrbr_101 = -> value ), matchers[ idx ]
         results.push value
-      # debug 'Ωbrbr_100', rpr results.join ''
+      # debug 'Ωbrbr_102', rpr results.join ''
       return null
     #.......................................................................................................
     do =>
@@ -627,18 +627,18 @@ settings =
       results         = []
       max_rounds      = 1_000
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr_101', stats
-        @eq ( Ωbrbr_102 = -> stats.rounds ), max_rounds + 1 if stats.name is 'walk_unique'
+        # info 'Ωbrbr_103', stats
+        @eq ( Ωbrbr_104 = -> stats.rounds ), max_rounds + 1 if stats.name is 'walk_unique'
       #.....................................................................................................
       seen      = new Set '¨¯yD¾ÖÑõ`%AãV[åH5¶ÂüýÙÅO®ÃEÍÄGñ?XItZ-Ë¬Úd.kK2öJÞ6wsïéÜÿ9°x§ÁB_·À0ò&qè8÷ì«nµ²"½Ým<óeM{Qí@PçÐ+j¥ß^©æC¡±Óib,c\\³7£r~aê¿Ç:ÎSzùØº(|T¼¦ª/úu¢ÛY¤É#ðþø¸oFU1}p$W Õô4ÌäÈë>Ïv×LR]fg\'î´¹ûÒâÊ)'
       producer  = -> get_random.chr { min: 0x20, max: 0xff, on_stats, }
       idx       = -1
       for value from get_random.walk_unique { producer, n: 200, seen, on_stats, on_exhaustion: 'stop', max_rounds, }
         idx++
-        # debug 'Ωbrbr_103', idx, rpr value
-        @eq ( Ωbrbr_104 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr_105', idx, rpr value
+        @eq ( Ωbrbr_106 = -> value ), matchers[ idx ]
         results.push value
-      # debug 'Ωbrbr_105', rpr results.join ''
+      # debug 'Ωbrbr_107', rpr results.join ''
       return null
     #.......................................................................................................
     do =>
@@ -646,8 +646,8 @@ settings =
       matchers        = 'pqkesunyhbewgcrszlvofqset'
       results         = []
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr_106', stats
-        @eq ( Ωbrbr_107 = -> stats.rounds ), 7 if stats.name is 'walk_unique'
+        # info 'Ωbrbr_108', stats
+        @eq ( Ωbrbr_109 = -> stats.rounds ), 7 if stats.name is 'walk_unique'
       #.....................................................................................................
       seen      = new Set()
       purview   = 5 ### NOTE maximum size of 'window' where unqiueness is guaranteed; `seen` will not grow beyond this ###
@@ -655,12 +655,12 @@ settings =
       idx       = -1
       for value from get_random.walk_unique { producer, n: 25, seen, purview, on_stats, on_exhaustion: 'stop', }
         idx++
-        # debug 'Ωbrbr_108', idx, rpr value
-        @eq ( Ωbrbr_109 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr_110', idx, rpr value
+        @eq ( Ωbrbr_111 = -> value ), matchers[ idx ]
         results.push value
-      @eq ( Ωbrbr_110 = -> [ seen..., ].join '' ), 'ofqset'
-      @eq ( Ωbrbr_111 = -> seen.size ), purview + 1
-      # debug 'Ωbrbr_112', rpr results.join ''
+      @eq ( Ωbrbr_112 = -> [ seen..., ].join '' ), 'ofqset'
+      @eq ( Ωbrbr_113 = -> seen.size ), purview + 1
+      # debug 'Ωbrbr_114', rpr results.join ''
       return null
     #.......................................................................................................
     do =>
@@ -668,8 +668,8 @@ settings =
       matchers        = '4325614325614325614325614'
       results         = []
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr_113', stats
-        @eq ( Ωbrbr_114 = -> stats.rounds ), 64 if stats.name is 'walk_unique'
+        # info 'Ωbrbr_115', stats
+        @eq ( Ωbrbr_116 = -> stats.rounds ), 64 if stats.name is 'walk_unique'
       #.....................................................................................................
       seen      = new Set()
       purview   = 5 ### NOTE maximum size of 'window' where unqiueness is guaranteed; `seen` will not grow beyond this ###
@@ -677,12 +677,12 @@ settings =
       idx       = -1
       for value from get_random.walk_unique { producer, n: 25, seen, purview, on_stats, on_exhaustion: 'stop', }
         idx++
-        # debug 'Ωbrbr_115', idx, rpr value
-        @eq ( Ωbrbr_116 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr_117', idx, rpr value
+        @eq ( Ωbrbr_118 = -> value ), matchers[ idx ]
         results.push value
-      @eq ( Ωbrbr_117 = -> [ seen..., ].join '' ), '325614'
-      @eq ( Ωbrbr_118 = -> seen.size ), purview + 1
-      # debug 'Ωbrbr_119', rpr results.join ''
+      @eq ( Ωbrbr_119 = -> [ seen..., ].join '' ), '325614'
+      @eq ( Ωbrbr_120 = -> seen.size ), purview + 1
+      # debug 'Ωbrbr_121', rpr results.join ''
       return null
     #.......................................................................................................
     do =>
@@ -690,8 +690,8 @@ settings =
       matchers        = '532647132657432165472365172436512736541236541'
       results         = []
       on_stats        = ( stats ) =>
-        # info 'Ωbrbr_120', stats
-        @eq ( Ωbrbr_121 = -> stats.rounds ), 129 if stats.name is 'walk_unique'
+        # info 'Ωbrbr_122', stats
+        @eq ( Ωbrbr_123 = -> stats.rounds ), 129 if stats.name is 'walk_unique'
       #.....................................................................................................
       seen      = new Set()
       purview   = 5 ### NOTE maximum size of 'window' where unqiueness is guaranteed; `seen` will not grow beyond this ###
@@ -699,12 +699,12 @@ settings =
       idx       = -1
       for value from get_random.walk_unique { producer, n: 45, seen, purview, on_stats, on_exhaustion: 'stop', }
         idx++
-        # debug 'Ωbrbr_122', idx, rpr value
-        @eq ( Ωbrbr_123 = -> value ), matchers[ idx ]
+        # debug 'Ωbrbr_124', idx, rpr value
+        @eq ( Ωbrbr_125 = -> value ), matchers[ idx ]
         results.push value
-      @eq ( Ωbrbr_124 = -> [ seen..., ].join '' ), '236541'
-      @eq ( Ωbrbr_125 = -> seen.size ), purview + 1
-      # debug 'Ωbrbr_126', rpr results.join ''
+      @eq ( Ωbrbr_126 = -> [ seen..., ].join '' ), '236541'
+      @eq ( Ωbrbr_127 = -> seen.size ), purview + 1
+      # debug 'Ωbrbr_128', rpr results.join ''
       return null
     #.......................................................................................................
     return null
@@ -718,47 +718,47 @@ settings =
       sentinel      = Symbol 'sentinel'
       on_exhaustion = -> sentinel
       stats = new internals.Stats { name: 'something', on_exhaustion, }
-      @eq     ( Ωbrbr_127 = -> stats.name           ), 'something'
-      @eq     ( Ωbrbr_128 = -> stats.max_rounds     ), internals.max_rounds
-      @eq     ( Ωbrbr_129 = -> stats.rounds         ), 0
-      @throws ( Ωbrbr_130 = -> stats.rounds++       ), /Cannot set property/
-      @eq     ( Ωbrbr_131 = -> stats.retry()        ), internals.go_on
-      @eq     ( Ωbrbr_132 = -> stats.rounds         ), 1
+      @eq     ( Ωbrbr_129 = -> stats.name           ), 'something'
+      @eq     ( Ωbrbr_130 = -> stats.max_rounds     ), internals.max_rounds
+      @eq     ( Ωbrbr_131 = -> stats.rounds         ), 0
+      @throws ( Ωbrbr_132 = -> stats.rounds++       ), /Cannot set property/
+      @eq     ( Ωbrbr_133 = -> stats.retry()        ), internals.go_on
+      @eq     ( Ωbrbr_134 = -> stats.rounds         ), 1
       stats._rounds = internals.max_rounds - 1
-      # debug 'Ωbrbr_133', stats
-      # debug 'Ωbrbr_134', stats.rounds
-      # debug 'Ωbrbr_135', internals.max_rounds
-      # debug 'Ωbrbr_136', stats.max_rounds
-      @eq ( Ωbrbr_137 = -> stats.retry() ), internals.go_on
-      @eq ( Ωbrbr_138 = -> stats.retry() ), sentinel
-      @eq ( Ωbrbr_139 = -> stats.retry() ), sentinel
+      # debug 'Ωbrbr_135', stats
+      # debug 'Ωbrbr_136', stats.rounds
+      # debug 'Ωbrbr_137', internals.max_rounds
+      # debug 'Ωbrbr_138', stats.max_rounds
+      @eq ( Ωbrbr_139 = -> stats.retry() ), internals.go_on
+      @eq ( Ωbrbr_140 = -> stats.retry() ), sentinel
+      @eq ( Ωbrbr_141 = -> stats.retry() ), sentinel
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = undefined
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_140 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_141 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_142 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_142 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_143 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_144 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = null
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_143 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_144 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_145 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_145 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_146 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_147 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
       on_exhaustion = 'error'
       stats = new internals.Stats { name: 'something', on_exhaustion, }
       stats._rounds = internals.max_rounds - 1
-      @eq     ( Ωbrbr_146 = -> stats.retry() ), internals.go_on
-      @throws ( Ωbrbr_147 = -> stats.retry() ), /exhausted/
-      @throws ( Ωbrbr_148 = -> stats.retry() ), /exhausted/
+      @eq     ( Ωbrbr_148 = -> stats.retry() ), internals.go_on
+      @throws ( Ωbrbr_149 = -> stats.retry() ), /exhausted/
+      @throws ( Ωbrbr_150 = -> stats.retry() ), /exhausted/
       return null
     #.......................................................................................................
     do =>
@@ -768,28 +768,58 @@ settings =
       on_stats      = -> sentinel
       max_rounds   = 3
       stats = new internals.Stats { name: 'something', on_exhaustion, on_stats, max_rounds, }
-      @eq     ( Ωbrbr_149 = -> stats.rounds ), 0
-      @eq     ( Ωbrbr_150 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_151 = -> stats.rounds ), 1
+      @eq     ( Ωbrbr_151 = -> stats.rounds ), 0
       @eq     ( Ωbrbr_152 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_153 = -> stats.rounds ), 2
+      @eq     ( Ωbrbr_153 = -> stats.rounds ), 1
       @eq     ( Ωbrbr_154 = -> stats.retry() ), internals.go_on
-      @eq     ( Ωbrbr_155 = -> stats.rounds ), 3
-      @eq     ( Ωbrbr_156 = -> stats.retry() ), sentinel
-      @eq     ( Ωbrbr_157 = -> stats.finish 'value' ), 'value'
-      @throws ( Ωbrbr_158 = -> stats.finish 'value' ), /finished/
-      @throws ( Ωbrbr_159 = -> stats.retry() ), /finished/
-      @throws ( Ωbrbr_160 = -> stats.retry() ), /finished/
+      @eq     ( Ωbrbr_155 = -> stats.rounds ), 2
+      @eq     ( Ωbrbr_156 = -> stats.retry() ), internals.go_on
+      @eq     ( Ωbrbr_157 = -> stats.rounds ), 3
+      @eq     ( Ωbrbr_158 = -> stats.retry() ), sentinel
+      @eq     ( Ωbrbr_159 = -> stats.finish 'value' ), 'value'
+      @throws ( Ωbrbr_160 = -> stats.finish 'value' ), /finished/
+      @throws ( Ωbrbr_161 = -> stats.retry() ), /finished/
+      @throws ( Ωbrbr_162 = -> stats.retry() ), /finished/
       return null
     #.......................................................................................................
     return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_format_stack_parse_line: ->
+    { format_stack,
+      parseStackLine,
+      parseStackTrace,            } = SFMODULES.unstable.require_format_stack()
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    #.......................................................................................................
+    probes_and_matchers = [
+      [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",              { callee: '<anonymous>',                               path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', line_nr: 290,  column_nr: 11, }, ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""",       { callee: 'Object.<anonymous>',                        path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', line_nr: 245,  column_nr: 41, }, ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:3:1)""",          { callee: 'Object.<anonymous>',                        path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', line_nr: 3,    column_nr: 1,  }, ]
+      [ """at Module._compile (node:internal/modules/cjs/loader:1738:14)""",                                { callee: 'Module._compile',                           path: 'node:internal/modules/cjs/loader',                        line_nr: 1738, column_nr: 14, }, ]
+      [ """at Object..js (node:internal/modules/cjs/loader:1871:10)""",                                     { callee: 'Object..js',                                path: 'node:internal/modules/cjs/loader',                        line_nr: 1871, column_nr: 10, }, ]
+      [ """at Module.load (node:internal/modules/cjs/loader:1470:32)""",                                    { callee: 'Module.load',                               path: 'node:internal/modules/cjs/loader',                        line_nr: 1470, column_nr: 32, }, ]
+      [ """at Module._load (node:internal/modules/cjs/loader:1290:12)""",                                   { callee: 'Module._load',                              path: 'node:internal/modules/cjs/loader',                        line_nr: 1290, column_nr: 12, }, ]
+      [ """at TracingChannel.traceSync (node:diagnostics_channel:322:14)""",                                { callee: 'TracingChannel.traceSync',                  path: 'node:diagnostics_channel',                                line_nr: 322,  column_nr: 14, }, ]
+      [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                                  { callee: 'wrapModuleLoad',                            path: 'node:internal/modules/cjs/loader',                        line_nr: 238,  column_nr: 24, }, ]
+      [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",          { callee: 'Module.executeUserEntryPoint [as runMain]', path: 'node:internal/modules/run_main',                          line_nr: 154,  column_nr: 5,  }, ]
+      [ """at node:internal/main/run_main_module:33:47""",                                                  { callee: null,                                        path: 'node:internal/main/run_main_module',                      line_nr: 33,   column_nr: 47, }, ]
+      ]
+    #.......................................................................................................
+    @eq ( Ωbrbr_163 = -> type_of format_stack.parse_line ), 'function'
+    for [ probe, matcher, ] in probes_and_matchers
+      @eq ( Ωbrbr_164 = -> format_stack.parse_line probe ), matcher
+    #.......................................................................................................
+    return null
+
+
+
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { walk_unique: tests.walk_unique, }
+  # ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
   #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
@@ -797,6 +827,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_161', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_166', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
