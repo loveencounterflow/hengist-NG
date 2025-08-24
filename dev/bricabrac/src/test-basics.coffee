@@ -825,25 +825,26 @@ settings =
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     #.......................................................................................................
     probes_and_matchers = [
-      [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",              '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (290——:11) ——             —— # <anonymous>() ——', ]
-      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""",       '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (245——:41) ——             —— # Object.<anonymous>() ——', ]
-      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:3:1)""",          '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (3——:1) ——                —— # Object.<anonymous>() ——', ]
-      [ """at do_something (../whatever/src/test-dbric.coffee:3:1)""",                                      '—— ../whatever/src/——test-dbric.coffee —— (3——:1) ——                                      —— # do_something() ——', ]
-      [ """at do_something (./node_modules/test-dbric.coffee:3:1)""",                                       '—— ./node_modules/——test-dbric.coffee —— (3——:1) ——                                       —— # do_something() ——', ]
-      [ """at Module._compile (node:internal/modules/cjs/loader:1738:14)""",                                '—— node:internal/modules/cjs/——loader —— (1738——:14) ——                                   —— # Module._compile() ——', ]
-      [ """at Object..js (node:internal/modules/cjs/loader:1871:10)""",                                     '—— node:internal/modules/cjs/——loader —— (1871——:10) ——                                   —— # Object..js() ——', ]
-      [ """at Module.load (node:internal/modules/cjs/loader:1470:32)""",                                    '—— node:internal/modules/cjs/——loader —— (1470——:32) ——                                   —— # Module.load() ——', ]
-      [ """at Module._load (node:internal/modules/cjs/loader:1290:12)""",                                   '—— node:internal/modules/cjs/——loader —— (1290——:12) ——                                   —— # Module._load() ——', ]
-      [ """at TracingChannel.traceSync (node:diagnostics_channel:322:14)""",                                '—— ——node:diagnostics_channel —— (322——:14) ——                                            —— # TracingChannel.traceSync() ——', ]
-      [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                                  '—— node:internal/modules/cjs/——loader —— (238——:24) ——                                    —— # wrapModuleLoad() ——', ]
-      [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",          '—— node:internal/modules/——run_main —— (154——:5) ——                                       —— # Module.executeUserEntryPoint [as runMain]() ——', ]
-      [ """at node:internal/main/run_main_module:33:47""",                                                  '—— node:internal/main/——run_main_module —— (33——:47) ——                                   —— # [anonymous]() ——', ]
+      [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",        '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (290——:11) ——             —— # <anonymous>() ——                                 ——', ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""", '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (245——:41) ——             —— # Object.<anonymous>() ——                          ——', ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:3:1)""",    '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (3——:1) ——                —— # Object.<anonymous>() ——                          ——', ]
+      [ """at do_something (../whatever/src/test-dbric.coffee:3:1)""",                                '—— ../whatever/src/——test-dbric.coffee —— (3——:1) ——                                      —— # do_something() ——                                ——', ]
+      [ """at do_something (../node_modules/whatever/src/test-dbric.coffee:3:1)""",                   '—— ../node_modules/whatever/src/——test-dbric.coffee —— (3——:1) ——                         —— # do_something() ——                                ——', ]
+      [ """at do_something (./node_modules/test-dbric.coffee:3:1)""",                                 '—— ./node_modules/——test-dbric.coffee —— (3——:1) ——                                       —— # do_something() ——                                ——', ]
+      [ """at Module._compile (node:internal/modules/cjs/loader:1738:14)""",                          '—— node:internal/modules/cjs/——loader —— (1738——:14) ——                                   —— # Module._compile() ——                             ——', ]
+      [ """at Object..js (node:internal/modules/cjs/loader:1871:10)""",                               '—— node:internal/modules/cjs/——loader —— (1871——:10) ——                                   —— # Object..js() ——                                  ——', ]
+      [ """at Module.load (node:internal/modules/cjs/loader:1470:32)""",                              '—— node:internal/modules/cjs/——loader —— (1470——:32) ——                                   —— # Module.load() ——                                 ——', ]
+      [ """at Module._load (node:internal/modules/cjs/loader:1290:12)""",                             '—— node:internal/modules/cjs/——loader —— (1290——:12) ——                                   —— # Module._load() ——                                ——', ]
+      [ """at TracingChannel.traceSync (node:diagnostics_channel:322:14)""",                          '—— ——node:diagnostics_channel —— (322——:14) ——                                            —— # TracingChannel.traceSync() ——                    ——', ]
+      [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                            '—— node:internal/modules/cjs/——loader —— (238——:24) ——                                    —— # wrapModuleLoad() ——                              ——', ]
+      [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",    '—— node:internal/modules/——run_main —— (154——:5) ——                                       —— # Module.executeUserEntryPoint [as runMain]() ——   ——', ]
+      [ """at node:internal/main/run_main_module:33:47""",                                            '—— node:internal/main/——run_main_module —— (33——:47) ——                                   —— # [anonymous]() ——                                 ——', ]
       ]
     #.......................................................................................................
     @eq ( Ωbrbr_169 = -> type_of format_stack.cfg         ), 'pod'
     @eq ( Ωbrbr_170 = -> type_of format_stack.format_line ), 'function'
     for [ probe, matcher, ] in probes_and_matchers
-      # @eq ( Ωbrbr_171 = -> strip_ansi ( format_stack.format_line probe ), '——' ), matcher
+      @eq ( Ωbrbr_171 = -> strip_ansi ( format_stack.format_line probe ), '——' ), matcher
       echo format_stack.format_line probe
       # debug 'Ωbrbr_174', do Ωbrbr_175 = -> rpr strip_ansi ( format_stack.format_line probe ), '——'
     #.......................................................................................................
@@ -853,8 +854,6 @@ settings =
     @throws ( Ωbrbr_179 = -> format_stack.format_line "line 1\nline 2" ), /expected a single line, got a text with line breaks/
     #.......................................................................................................
     return null
-
-
 
 
 #===========================================================================================================
