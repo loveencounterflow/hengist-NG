@@ -178,7 +178,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         suffix      = ''
       p1_name = { insert_replace: 'src', publish: 'id', generic: 'inner', no_match: '', }[ pattern_name ? 'no_match' ]
       p1_name = p1_name + ':' unless p1_name is ''
-      echo f"#{color+bg_color}│#{C.overline1}#{fmt pattern_name}:<20c;│#{fmt prefix}:<10c;│#{fmt slash}:<10c;│#{fmt command}:<10c;│#{fmt disposition}:<10c;│#{fmt position}:<10c;│#{p1_name}:<10c;#{fmt p1}:<40c;│#{fmt user_eoi}:<10c;│#{fmt system_eoi}:<10c;│#{fmt suffix}:<10c;#{C.overline0}│#{C.default+C.bg_default}"
+      echo f"#{color+bg_color}│#{C.overline}#{fmt pattern_name}:<20c;│#{fmt prefix}:<10c;│#{fmt slash}:<10c;│#{fmt command}:<10c;│#{fmt disposition}:<10c;│#{fmt position}:<10c;│#{p1_name}:<10c;#{fmt p1}:<40c;│#{fmt user_eoi}:<10c;│#{fmt system_eoi}:<10c;│#{fmt suffix}:<10c;#{C.overline0}│#{C.default+C.bg_default}"
     #.......................................................................................................
     return null
 
