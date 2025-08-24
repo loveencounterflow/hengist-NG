@@ -792,22 +792,65 @@ settings =
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     #.......................................................................................................
     probes_and_matchers = [
-      [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",              { callee: '<anonymous>',                               path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', line_nr: 290,  column_nr: 11, }, ]
-      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""",       { callee: 'Object.<anonymous>',                        path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', line_nr: 245,  column_nr: 41, }, ]
-      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:3:1)""",          { callee: 'Object.<anonymous>',                        path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', line_nr: 3,    column_nr: 1,  }, ]
-      [ """at Module._compile (node:internal/modules/cjs/loader:1738:14)""",                                { callee: 'Module._compile',                           path: 'node:internal/modules/cjs/loader',                        line_nr: 1738, column_nr: 14, }, ]
-      [ """at Object..js (node:internal/modules/cjs/loader:1871:10)""",                                     { callee: 'Object..js',                                path: 'node:internal/modules/cjs/loader',                        line_nr: 1871, column_nr: 10, }, ]
-      [ """at Module.load (node:internal/modules/cjs/loader:1470:32)""",                                    { callee: 'Module.load',                               path: 'node:internal/modules/cjs/loader',                        line_nr: 1470, column_nr: 32, }, ]
-      [ """at Module._load (node:internal/modules/cjs/loader:1290:12)""",                                   { callee: 'Module._load',                              path: 'node:internal/modules/cjs/loader',                        line_nr: 1290, column_nr: 12, }, ]
-      [ """at TracingChannel.traceSync (node:diagnostics_channel:322:14)""",                                { callee: 'TracingChannel.traceSync',                  path: 'node:diagnostics_channel',                                line_nr: 322,  column_nr: 14, }, ]
-      [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                                  { callee: 'wrapModuleLoad',                            path: 'node:internal/modules/cjs/loader',                        line_nr: 238,  column_nr: 24, }, ]
-      [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",          { callee: 'Module.executeUserEntryPoint [as runMain]', path: 'node:internal/modules/run_main',                          line_nr: 154,  column_nr: 5,  }, ]
-      [ """at node:internal/main/run_main_module:33:47""",                                                  { callee: null,                                        path: 'node:internal/main/run_main_module',                      line_nr: 33,   column_nr: 47, }, ]
+      [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",              { callee: '<anonymous>',                               path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', folder_path: '/path/to/hengist-NG/dev/bricabrac/src/',  file_name: 'test-dbric.coffee',        line_nr: 290,  column_nr: 11, type: 'main',       }, ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""",       { callee: 'Object.<anonymous>',                        path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', folder_path: '/path/to/hengist-NG/dev/bricabrac/src/',  file_name: 'test-dbric.coffee',        line_nr: 245,  column_nr: 41, type: 'main',       }, ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:3:1)""",          { callee: 'Object.<anonymous>',                        path: '/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee', folder_path: '/path/to/hengist-NG/dev/bricabrac/src/',  file_name: 'test-dbric.coffee',        line_nr: 3,    column_nr: 1,  type: 'main',       }, ]
+      [ """at do_something (../whatever/src/test-dbric.coffee:3:1)""",                                      { callee: 'do_something',                              path: '../whatever/src/test-dbric.coffee',                       folder_path: '../whatever/src/',                        file_name: 'test-dbric.coffee',        line_nr: 3,    column_nr: 1,  type: 'external',   }, ]
+      [ """at do_something (./node_modules/test-dbric.coffee:3:1)""",                                       { callee: 'do_something',                              path: './node_modules/test-dbric.coffee',                        folder_path: './node_modules/',                         file_name: 'test-dbric.coffee',        line_nr: 3,    column_nr: 1,  type: 'dependency', }, ]
+      [ """at Module._compile (node:internal/modules/cjs/loader:1738:14)""",                                { callee: 'Module._compile',                           path: 'node:internal/modules/cjs/loader',                        folder_path: 'node:internal/modules/cjs/',              file_name: 'loader',                   line_nr: 1738, column_nr: 14, type: 'internal',   }, ]
+      [ """at Object..js (node:internal/modules/cjs/loader:1871:10)""",                                     { callee: 'Object..js',                                path: 'node:internal/modules/cjs/loader',                        folder_path: 'node:internal/modules/cjs/',              file_name: 'loader',                   line_nr: 1871, column_nr: 10, type: 'internal',   }, ]
+      [ """at Module.load (node:internal/modules/cjs/loader:1470:32)""",                                    { callee: 'Module.load',                               path: 'node:internal/modules/cjs/loader',                        folder_path: 'node:internal/modules/cjs/',              file_name: 'loader',                   line_nr: 1470, column_nr: 32, type: 'internal',   }, ]
+      [ """at Module._load (node:internal/modules/cjs/loader:1290:12)""",                                   { callee: 'Module._load',                              path: 'node:internal/modules/cjs/loader',                        folder_path: 'node:internal/modules/cjs/',              file_name: 'loader',                   line_nr: 1290, column_nr: 12, type: 'internal',   }, ]
+      [ """at TracingChannel.traceSync (node:diagnostics_channel:322:14)""",                                { callee: 'TracingChannel.traceSync',                  path: 'node:diagnostics_channel',                                folder_path: '',                                        file_name: 'node:diagnostics_channel', line_nr: 322,  column_nr: 14, type: 'internal',   }, ]
+      [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                                  { callee: 'wrapModuleLoad',                            path: 'node:internal/modules/cjs/loader',                        folder_path: 'node:internal/modules/cjs/',              file_name: 'loader',                   line_nr: 238,  column_nr: 24, type: 'internal',   }, ]
+      [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",          { callee: 'Module.executeUserEntryPoint [as runMain]', path: 'node:internal/modules/run_main',                          folder_path: 'node:internal/modules/',                  file_name: 'run_main',                 line_nr: 154,  column_nr: 5,  type: 'internal',   }, ]
+      [ """at node:internal/main/run_main_module:33:47""",                                                  { callee: '[anonymous]',                               path: 'node:internal/main/run_main_module',                      folder_path: 'node:internal/main/',                     file_name: 'run_main_module',          line_nr: 33,   column_nr: 47, type: 'internal',   }, ]
       ]
     #.......................................................................................................
     @eq ( Ωbrbr_163 = -> type_of format_stack.parse_line ), 'function'
     for [ probe, matcher, ] in probes_and_matchers
       @eq ( Ωbrbr_164 = -> format_stack.parse_line probe ), matcher
+    #.......................................................................................................
+    @throws ( Ωbrbr_165 = -> format_stack.parse_line 673              ), /expected a text, got a float/
+    @throws ( Ωbrbr_166 = -> format_stack.parse_line false            ), /expected a text, got a boolean/
+    @throws ( Ωbrbr_167 = -> format_stack.parse_line Symbol 'abc'     ), /expected a text, got a symbol/
+    @throws ( Ωbrbr_168 = -> format_stack.parse_line "line 1\nline 2" ), /expected a single line, got a text with line breaks/
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_format_stack_format_line: ->
+    { format_stack,
+      parseStackLine,
+      parseStackTrace,            } = SFMODULES.unstable.require_format_stack()
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    #.......................................................................................................
+    probes_and_matchers = [
+      [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",              '', ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""",       '', ]
+      [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:3:1)""",          '', ]
+      [ """at do_something (../whatever/src/test-dbric.coffee:3:1)""",                                      '', ]
+      [ """at do_something (./node_modules/test-dbric.coffee:3:1)""",                                       '', ]
+      [ """at Module._compile (node:internal/modules/cjs/loader:1738:14)""",                                '', ]
+      [ """at Object..js (node:internal/modules/cjs/loader:1871:10)""",                                     '', ]
+      [ """at Module.load (node:internal/modules/cjs/loader:1470:32)""",                                    '', ]
+      [ """at Module._load (node:internal/modules/cjs/loader:1290:12)""",                                   '', ]
+      [ """at TracingChannel.traceSync (node:diagnostics_channel:322:14)""",                                '', ]
+      [ """at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)""",                                  '', ]
+      [ """at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)""",          '', ]
+      [ """at node:internal/main/run_main_module:33:47""",                                                  '', ]
+      ]
+    #.......................................................................................................
+    @eq ( Ωbrbr_169 = -> type_of format_stack.cfg         ), 'pod'
+    @eq ( Ωbrbr_170 = -> type_of format_stack.format_line ), 'function'
+    for [ probe, matcher, ] in probes_and_matchers
+      # @eq ( Ωbrbr_171 = -> format_stack.format_line probe ), matcher
+      debug 'Ωbrbr_176', do Ωbrbr_171 = -> format_stack.format_line probe
+    #.......................................................................................................
+    @throws ( Ωbrbr_172 = -> format_stack.format_line 673              ), /expected a text, got a float/
+    @throws ( Ωbrbr_173 = -> format_stack.format_line false            ), /expected a text, got a boolean/
+    @throws ( Ωbrbr_174 = -> format_stack.format_line Symbol 'abc'     ), /expected a text, got a symbol/
+    @throws ( Ωbrbr_175 = -> format_stack.format_line "line 1\nline 2" ), /expected a single line, got a text with line breaks/
     #.......................................................................................................
     return null
 
@@ -820,6 +863,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
+  ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
@@ -827,6 +871,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_166', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_176', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
