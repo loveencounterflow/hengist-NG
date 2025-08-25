@@ -880,12 +880,12 @@ settings =
       ]
     #.......................................................................................................
     do =>
-      format_stack = new Format_stack { relative: false, padding: { path: 80, callee: 50, }, }
+      format_stack = new Format_stack { relative: false, padding: { path: 80, callee: 50, }, context: false, }
       @eq ( Ωbrbr_175 = -> type_of format_stack.cfg         ), 'pod'
       @eq ( Ωbrbr_176 = -> type_of format_stack.format_line ), 'function'
       for [ probe, matcher, ] in probes_and_matchers
         @eq ( Ωbrbr_177 = -> strip_ansi ( format_stack.format_line probe ), '——' ), matcher
-        echo format_stack.format_line probe
+        # echo format_stack.format_line probe
         # debug 'Ωbrbr_178', do Ωbrbr_179 = -> rpr strip_ansi ( format_stack.format_line probe ), '——'
       return null
     #.......................................................................................................
@@ -953,9 +953,9 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line_relative: tests.require_format_stack_parse_line_relative, }
-  # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
+  ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
+  # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
   #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
