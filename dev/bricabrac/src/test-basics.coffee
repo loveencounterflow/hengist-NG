@@ -924,7 +924,11 @@ settings =
         { stack, }  = error
         for line in stack.split '\n'
           echo format_stack.format_line line
+        echo()
+        echo()
         echo '———————————————————————————————————————————————————————————————————————————'
+        echo()
+        echo()
         echo format_stack error
         # @eq ( Ωbrbr_187 = -> type_of format_stack.cfg         ), 'pod'
         # @eq ( Ωbrbr_188 = -> type_of format_stack.format_line ), 'function'
@@ -954,7 +958,7 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line_relative: tests.require_format_stack_parse_line_relative, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
+  # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
   #.........................................................................................................
   demo_clean = ->
