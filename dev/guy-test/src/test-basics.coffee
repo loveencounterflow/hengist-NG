@@ -33,8 +33,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
   # async_eq
   # async_throws          } = GTNG
 #-----------------------------------------------------------------------------------------------------------
-types                     = require '../../../apps/intertype'
-{ $type_of: type_of, }    = types
+SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+{ type_of,              } = SFMODULES.unstable.require_type_of()
+# types                     = require '../../../apps/intertype'
+# { $type_of: type_of, }    = types
 # isa
 # type_of
 # $isa
@@ -48,9 +50,9 @@ types                     = require '../../../apps/intertype'
 
     #-------------------------------------------------------------------------------------------------------
     module_instance_and_assumptions_have_equals_method: ->
-      @eq ( Ωmodule___1       = -> type_of GTNG.equals            ), 'function'
-      @eq ( Ωinstance___2     = -> type_of ( new Test() ).equals  ), 'function'
-      @eq ( Ωassumptions___3  = -> type_of @equals                ), 'function'
+      @eq ( Ω___1 = -> type_of GTNG.equals            ), 'function'
+      @eq ( Ω___2 = -> type_of ( new Test() ).equals  ), 'function'
+      @eq ( Ω___3 = -> type_of @equals                ), 'function'
       return null
 
     # #-------------------------------------------------------------------------------------------------------
@@ -211,9 +213,9 @@ types                     = require '../../../apps/intertype'
         result      = new Map [ [ 'a', [ 1, 2, ], ], [ 'b', [ 1, 2, ], ], ]
         matcher1    = new Map [ [ 'a', [ 1, 2, ], ], [ 'b', [ 1, 2, ], ], ]
         matcher2    = new Map [ [ 'a', [ 1, 3, ], ], [ 'b', [ 1, 3, ], ], ]
-        @eq ( Ωmeqbv__52 = -> _types.type_of result     ), 'map'
-        @eq ( Ωmeqbv__53 = -> t2.equals result, matcher1  ), true
-        @eq ( Ωmeqbv__54 = -> t2.equals result, matcher2  ), false ### !!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+        @eq ( Ω__52 = -> _types.type_of result     ), 'map'
+        @eq ( Ω__53 = -> t2.equals result, matcher1  ), true
+        @eq ( Ω__54 = -> t2.equals result, matcher2  ), false ### !!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
         return null
       #.....................................................................................................
       return null
@@ -225,21 +227,27 @@ types                     = require '../../../apps/intertype'
         t2 = new Test()
         result      = { mylist: ( Array.from 'abc' ), }
         matcher     = { mylist: ( Array.from 'abc' ), }
-        @eq ( Ωmeqbv__55 = -> t2.equals result, matcher ), true
+        @eq ( Ω__55 = -> t2.equals result, matcher ), true
         return null
       #.....................................................................................................
       do =>
+        { _types  } = require '../../../apps/guy-test-NG'
         t2 = new Test()
         result      = { myset: ( new Set 'abc' ), }
         matcher     = { myset: ( new Set 'abc' ), }
-        @eq ( Ωmeqbv__56 = -> t2.equals result, matcher ), true
+        @eq ( Ω__56 = -> t2.cfg.ordered_sets              ), false
+        @eq ( Ω__57 = -> _types.type_of matcher.myset     ), 'set'
+        @eq ( Ω__58 = -> t2.equals result, matcher        ), true
         return null
       #.....................................................................................................
       do =>
+        { _types  } = require '../../../apps/guy-test-NG'
         t2 = new Test()
         result      = { mymap: ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), }
         matcher     = { mymap: ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), }
-        @eq ( Ωmeqbv__57 = -> t2.equals result, matcher ), true
+        @eq ( Ω__59 = -> t2.cfg.ordered_maps              ), false
+        @eq ( Ω__60 = -> _types.type_of matcher.mymap     ), 'map'
+        @eq ( Ω__61 = -> t2.equals result, matcher        ), true
         return null
       #.....................................................................................................
       return null
@@ -249,17 +257,17 @@ types                     = require '../../../apps/intertype'
       #.....................................................................................................
       do =>
         t2 = new Test { signed_zero: false, }
-        @eq ( Ω__58 = -> t2.equals +0, +0 ), true
-        @eq ( Ω__59 = -> t2.equals -0, -0 ), true
-        @eq ( Ω__60 = -> t2.equals +0, -0 ), true
-        @eq ( Ω__61 = -> t2.equals -0, +0 ), true
+        @eq ( Ω__62 = -> t2.equals +0, +0 ), true
+        @eq ( Ω__63 = -> t2.equals -0, -0 ), true
+        @eq ( Ω__64 = -> t2.equals +0, -0 ), true
+        @eq ( Ω__65 = -> t2.equals -0, +0 ), true
       #.....................................................................................................
       do =>
         t2 = new Test { signed_zero: true, }
-        @eq ( Ω__62 = -> t2.equals +0, +0 ), true
-        @eq ( Ω__63 = -> t2.equals -0, -0 ), true
-        @eq ( Ω__64 = -> t2.equals +0, -0 ), false
-        @eq ( Ω__65 = -> t2.equals -0, +0 ), false
+        @eq ( Ω__66 = -> t2.equals +0, +0 ), true
+        @eq ( Ω__67 = -> t2.equals -0, -0 ), true
+        @eq ( Ω__68 = -> t2.equals +0, -0 ), false
+        @eq ( Ω__69 = -> t2.equals -0, +0 ), false
       #.....................................................................................................
       return null
 
@@ -270,13 +278,13 @@ types                     = require '../../../apps/intertype'
       #.....................................................................................................
       do =>
         t2 = new Test { ordered_objects: false, }
-        @eq ( Ω__66 = -> t2.equals { a, b, }, { a, b, } ), true
-        @eq ( Ω__67 = -> t2.equals { a, b, }, { b, a, } ), true
+        @eq ( Ω__70 = -> t2.equals { a, b, }, { a, b, } ), true
+        @eq ( Ω__71 = -> t2.equals { a, b, }, { b, a, } ), true
       #.....................................................................................................
       do =>
         t2 = new Test { ordered_objects: true, }
-        @eq ( Ω__68 = -> t2.equals { a, b, }, { a, b, } ), true
-        @eq ( Ω__69 = -> t2.equals { a, b, }, { b, a, } ), false
+        @eq ( Ω__72 = -> t2.equals { a, b, }, { a, b, } ), true
+        @eq ( Ω__73 = -> t2.equals { a, b, }, { b, a, } ), false
       #.....................................................................................................
       return null
 
@@ -287,13 +295,13 @@ types                     = require '../../../apps/intertype'
       #.....................................................................................................
       do =>
         t2 = new Test { ordered_sets: false, }
-        @eq ( Ω__70 = -> t2.equals ( new Set 'ab' ), ( new Set 'ab' ) ), true
-        @eq ( Ω__71 = -> t2.equals ( new Set 'ab' ), ( new Set 'ba' ) ), true
+        @eq ( Ω__74 = -> t2.equals ( new Set 'ab' ), ( new Set 'ab' ) ), true
+        @eq ( Ω__75 = -> t2.equals ( new Set 'ab' ), ( new Set 'ba' ) ), true
       #.....................................................................................................
       do =>
         t2 = new Test { ordered_sets: true, }
-        @eq ( Ω__72 = -> t2.equals ( new Set 'ab' ), ( new Set 'ab' ) ), true
-        @eq ( Ω__73 = -> t2.equals ( new Set 'ab' ), ( new Set 'ba' ) ), false
+        @eq ( Ω__76 = -> t2.equals ( new Set 'ab' ), ( new Set 'ab' ) ), true
+        @eq ( Ω__77 = -> t2.equals ( new Set 'ab' ), ( new Set 'ba' ) ), false
       #.....................................................................................................
       return null
 
@@ -304,13 +312,13 @@ types                     = require '../../../apps/intertype'
       #.....................................................................................................
       do =>
         t2 = new Test { ordered_maps: false, }
-        @eq ( Ω__74 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ) ), true
-        @eq ( Ω__75 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'b', 2, ], [ 'a', 1, ], ] ) ), true
+        @eq ( Ω__78 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ) ), true
+        @eq ( Ω__79 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'b', 2, ], [ 'a', 1, ], ] ) ), true
       #.....................................................................................................
       do =>
         t2 = new Test { ordered_maps: true, }
-        @eq ( Ω__76 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ) ), true
-        @eq ( Ω__77 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'b', 2, ], [ 'a', 1, ], ] ) ), false
+        @eq ( Ω__80 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ) ), true
+        @eq ( Ω__81 = -> t2.equals ( new Map [ [ 'a', 1, ], [ 'b', 2, ], ] ), ( new Map [ [ 'b', 2, ], [ 'a', 1, ], ] ) ), false
       #.....................................................................................................
       return null
 
@@ -318,8 +326,8 @@ types                     = require '../../../apps/intertype'
   pass_and_fail: ->
     t2 = new Test()
     #.......................................................................................................
-    @eq ( Ω__78 = -> type_of t2.pass ), 'function'
-    @eq ( Ω__79 = -> type_of t2.fail ), 'function'
+    @eq ( Ω__82 = -> type_of t2.pass ), 'function'
+    @eq ( Ω__83 = -> type_of t2.fail ), 'function'
     tasks =
       paf_a: ->
         @pass 'paf_1', "this is good"
@@ -328,16 +336,16 @@ types                     = require '../../../apps/intertype'
         @fail 'paf_4'
     t2.test tasks
     t2.report { prefix: "TEST RESULT", }
-    @eq ( Ω__80 = -> t2.stats[ '*'           ].passes  ), 2
-    @eq ( Ω__81 = -> t2.stats[ 'paf_a.paf_1' ].passes  ), 1
-    @eq ( Ω__82 = -> t2.stats[ 'paf_a.paf_2' ].passes  ), 0
-    @eq ( Ω__83 = -> t2.stats[ 'paf_a.paf_3' ].passes  ), 1
-    @eq ( Ω__84 = -> t2.stats[ 'paf_a.paf_4' ].passes  ), 0
-    @eq ( Ω__85 = -> t2.stats[ '*'           ].fails   ), 2
-    @eq ( Ω__86 = -> t2.stats[ 'paf_a.paf_1' ].fails   ), 0
-    @eq ( Ω__87 = -> t2.stats[ 'paf_a.paf_2' ].fails   ), 1
-    @eq ( Ω__88 = -> t2.stats[ 'paf_a.paf_3' ].fails   ), 0
-    @eq ( Ω__89 = -> t2.stats[ 'paf_a.paf_4' ].fails   ), 1
+    @eq ( Ω__84 = -> t2.stats[ '*'           ].passes  ), 2
+    @eq ( Ω__85 = -> t2.stats[ 'paf_a.paf_1' ].passes  ), 1
+    @eq ( Ω__86 = -> t2.stats[ 'paf_a.paf_2' ].passes  ), 0
+    @eq ( Ω__87 = -> t2.stats[ 'paf_a.paf_3' ].passes  ), 1
+    @eq ( Ω__88 = -> t2.stats[ 'paf_a.paf_4' ].passes  ), 0
+    @eq ( Ω__89 = -> t2.stats[ '*'           ].fails   ), 2
+    @eq ( Ω__90 = -> t2.stats[ 'paf_a.paf_1' ].fails   ), 0
+    @eq ( Ω__91 = -> t2.stats[ 'paf_a.paf_2' ].fails   ), 1
+    @eq ( Ω__92 = -> t2.stats[ 'paf_a.paf_3' ].fails   ), 0
+    @eq ( Ω__93 = -> t2.stats[ 'paf_a.paf_4' ].fails   ), 1
     #.......................................................................................................
     done?()
 
@@ -348,20 +356,20 @@ types                     = require '../../../apps/intertype'
     #.......................................................................................................
     fetch_filesize = ( path ) -> ( await FS.stat path ).size
     #.......................................................................................................
-    # await async_throws  T, ( Ω__90 = -> await fetch_filesize __filename   )
-    # await async_throws  T, ( Ω__91 = -> await fetch_filesize __filename   ), "foobar"
-    # await async_throws  T, ( Ω__92 = -> await fetch_filesize __filename   ), /no such file/
+    # await async_throws  T, ( Ω__94 = -> await fetch_filesize __filename   )
+    # await async_throws  T, ( Ω__95 = -> await fetch_filesize __filename   ), "foobar"
+    # await async_throws  T, ( Ω__96 = -> await fetch_filesize __filename   ), /no such file/
     #.......................................................................................................
-    await t2.async_throws ( Ω__93 = -> await fetch_filesize 'nosuchpath' ), "foobar"
-    await t2.async_throws ( Ω__94 = -> await fetch_filesize 'nosuchpath' ), /no such file/
-    await t2.async_throws ( Ω__95 = -> await fetch_filesize 'nosuchpath' )
+    await t2.async_throws ( Ω__97 = -> await fetch_filesize 'nosuchpath' ), "foobar"
+    await t2.async_throws ( Ω__98 = -> await fetch_filesize 'nosuchpath' ), /no such file/
+    await t2.async_throws ( Ω__99 = -> await fetch_filesize 'nosuchpath' )
     # await do =>
-    #   await async_throws ( Ω__96 = ->
-    #     await t2.async_throws ( Ω__97 = -> await fetch_filesize 'nosuchpath' ), "foobar"
+    #   await async_throws ( Ω_100 = ->
+    #     await t2.async_throws ( Ω_101 = -> await fetch_filesize 'nosuchpath' ), "foobar"
     #     ), /no such file .* doesn't match 'foobar'/
     #.......................................................................................................
-    # await async_throws  T, ( Ω__98 = -> await fetch_filesize 'nosuchpath' )
-    # await async_throws  T, ( Ω__99 = -> await fetch_filesize 'nosuchpath' ), /no such file/
+    # await async_throws  T, ( Ω_102 = -> await fetch_filesize 'nosuchpath' )
+    # await async_throws  T, ( Ω_103 = -> await fetch_filesize 'nosuchpath' ), /no such file/
     #.......................................................................................................
     done?()
 
@@ -374,19 +382,19 @@ types                     = require '../../../apps/intertype'
     produce_filesize = ( path ) =>
       try
         filesize  = await fetch_filesize path
-        urge "Ω_100", { filesize, }
+        urge "Ω_104", { filesize, }
       catch error
-        warn "Ω_101", error
+        warn "Ω_105", error
       return null
     #.......................................................................................................
     echo '-------------------'
-    # try await produce_filesize 'nosuchpath' catch error then warn 'Ω_102', error.message
+    # try await produce_filesize 'nosuchpath' catch error then warn 'Ω_106', error.message
     await produce_filesize 'nosuchpath'
     echo '-------------------'
     await produce_filesize __filename
     echo '-------------------'
-    # await async_throws ( Ω_103 = -> await fetch_filesize __filename ), '???'
-    await @async_throws ( Ω_104 = -> await fetch_filesize 'nosuchpath' ), /no such file/
+    # await async_throws ( Ω_107 = -> await fetch_filesize __filename ), '???'
+    await @async_throws ( Ω_108 = -> await fetch_filesize 'nosuchpath' ), /no such file/
     echo '-------------------'
     #.......................................................................................................
     done?()
@@ -396,41 +404,41 @@ types                     = require '../../../apps/intertype'
     #.......................................................................................................
     do =>
       t2 = new Test()
-      @eq ( Ω_105 = -> Object.isFrozen t2.cfg  ), true
-      @eq ( Ω_106 = -> t2.cfg.auto_reset       ), false
-      @eq ( Ω_107 = -> t2.cfg.show_report      ), true
-      @eq ( Ω_108 = -> t2.cfg.show_results     ), true
-      @eq ( Ω_109 = -> t2.cfg.show_fails       ), true
-      @eq ( Ω_110 = -> t2.cfg.show_passes      ), true
-      @eq ( Ω_111 = -> t2.cfg.throw_on_error   ), false
-      @eq ( Ω_112 = -> t2.cfg.throw_on_fail    ), false
-      @eq ( Ω_113 = -> t2.cfg.message_width    ), 300
+      @eq ( Ω_109 = -> Object.isFrozen t2.cfg  ), true
+      @eq ( Ω_110 = -> t2.cfg.auto_reset       ), false
+      @eq ( Ω_111 = -> t2.cfg.show_report      ), true
+      @eq ( Ω_112 = -> t2.cfg.show_results     ), true
+      @eq ( Ω_113 = -> t2.cfg.show_fails       ), true
+      @eq ( Ω_114 = -> t2.cfg.show_passes      ), true
+      @eq ( Ω_115 = -> t2.cfg.throw_on_error   ), false
+      @eq ( Ω_116 = -> t2.cfg.throw_on_fail    ), false
+      @eq ( Ω_117 = -> t2.cfg.message_width    ), 300
       return null
     #.......................................................................................................
     do =>
       t2 = new Test {}
-      @eq ( Ω_114 = -> Object.isFrozen t2.cfg  ), true
-      @eq ( Ω_115 = -> t2.cfg.auto_reset       ), false
-      @eq ( Ω_116 = -> t2.cfg.show_report      ), true
-      @eq ( Ω_117 = -> t2.cfg.show_results     ), true
-      @eq ( Ω_118 = -> t2.cfg.show_fails       ), true
-      @eq ( Ω_119 = -> t2.cfg.show_passes      ), true
-      @eq ( Ω_120 = -> t2.cfg.throw_on_error   ), false
-      @eq ( Ω_121 = -> t2.cfg.throw_on_fail    ), false
-      @eq ( Ω_122 = -> t2.cfg.message_width    ), 300
+      @eq ( Ω_118 = -> Object.isFrozen t2.cfg  ), true
+      @eq ( Ω_119 = -> t2.cfg.auto_reset       ), false
+      @eq ( Ω_120 = -> t2.cfg.show_report      ), true
+      @eq ( Ω_121 = -> t2.cfg.show_results     ), true
+      @eq ( Ω_122 = -> t2.cfg.show_fails       ), true
+      @eq ( Ω_123 = -> t2.cfg.show_passes      ), true
+      @eq ( Ω_124 = -> t2.cfg.throw_on_error   ), false
+      @eq ( Ω_125 = -> t2.cfg.throw_on_fail    ), false
+      @eq ( Ω_126 = -> t2.cfg.message_width    ), 300
       return null
     #.......................................................................................................
     do =>
       t2 = new Test { message_width: 30, throw_on_error: true, }
-      @eq ( Ω_123 = -> Object.isFrozen t2.cfg  ), true
-      @eq ( Ω_124 = -> t2.cfg.auto_reset       ), false
-      @eq ( Ω_125 = -> t2.cfg.show_report      ), true
-      @eq ( Ω_126 = -> t2.cfg.show_results     ), true
-      @eq ( Ω_127 = -> t2.cfg.show_fails       ), true
-      @eq ( Ω_128 = -> t2.cfg.show_passes      ), true
-      @eq ( Ω_129 = -> t2.cfg.throw_on_error   ), true
-      @eq ( Ω_130 = -> t2.cfg.throw_on_fail    ), false
-      @eq ( Ω_131 = -> t2.cfg.message_width    ), 30
+      @eq ( Ω_127 = -> Object.isFrozen t2.cfg  ), true
+      @eq ( Ω_128 = -> t2.cfg.auto_reset       ), false
+      @eq ( Ω_129 = -> t2.cfg.show_report      ), true
+      @eq ( Ω_130 = -> t2.cfg.show_results     ), true
+      @eq ( Ω_131 = -> t2.cfg.show_fails       ), true
+      @eq ( Ω_132 = -> t2.cfg.show_passes      ), true
+      @eq ( Ω_133 = -> t2.cfg.throw_on_error   ), true
+      @eq ( Ω_134 = -> t2.cfg.throw_on_fail    ), false
+      @eq ( Ω_135 = -> t2.cfg.message_width    ), 30
     #.......................................................................................................
     return null
 
@@ -442,14 +450,14 @@ types                     = require '../../../apps/intertype'
       t2 = new Test { throw_on_error: false, show_report: false, prefix: '**T2_1**', }
       t2.test ctof_1: ->
         @throws ( ctof_2 = -> 32 ), /expected an error/
-      @eq ( Ω_132 = -> t2.stats    ), { '*': { passes: 0, fails: 1 }, 'ctof_1.ctof_2': { passes: 0, fails: 1 } }
-      @eq ( Ω_133 = -> t2.warnings ), { 'ctof_1.ctof_2': [ '(noerr) expected an error but none was thrown' ] }
+      @eq ( Ω_136 = -> t2.stats    ), { '*': { passes: 0, fails: 1 }, 'ctof_1.ctof_2': { passes: 0, fails: 1 } }
+      @eq ( Ω_137 = -> t2.warnings ), { 'ctof_1.ctof_2': [ '(noerr) expected an error but none was thrown' ] }
       return null
     #.......................................................................................................
     do =>
       t2 = new Test { throw_on_error: false, throw_on_fail: true, show_report: false, prefix: '**T2_2**', }
       @throws ( ctof_5 = -> t2.eq ( ctof_6 = -> 14 ), 15 ), /neq:/
-      # @throws ( Ω_134 = -> t2.eq ( xy1 = -> 14 ), 15 ), /---/
+      # @throws ( Ω_138 = -> t2.eq ( xy1 = -> 14 ), 15 ), /---/
       return null
     #.......................................................................................................
     return null
@@ -482,27 +490,27 @@ types                     = require '../../../apps/intertype'
         echo line; await @async_eq ( dat_19 = -> after 0, => await 32 ), 33
         echo line; await @async_eq ( dat_20 = -> after 0, => await throw new Error "fine" )
       #.....................................................................................................
-      @eq ( Ω_135 = -> t2.stats[ '*'                       ] ), { passes: 8, fails: 12 }
-      @eq ( Ω_136 = -> t2.stats[ 'assumptions_task.dat_1'  ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_137 = -> t2.stats[ 'assumptions_task.dat_2'  ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_138 = -> t2.stats[ 'assumptions_task.dat_3'  ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_139 = -> t2.stats[ 'assumptions_task.dat_4'  ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_140 = -> t2.stats[ 'assumptions_task.dat_5'  ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_141 = -> t2.stats[ 'assumptions_task.dat_6'  ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_142 = -> t2.stats[ 'assumptions_task.dat_7'  ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_143 = -> t2.stats[ 'assumptions_task.dat_8'  ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_144 = -> t2.stats[ 'assumptions_task.dat_9'  ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_145 = -> t2.stats[ 'assumptions_task.dat_10' ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_146 = -> t2.stats[ 'assumptions_task.dat_11' ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_147 = -> t2.stats[ 'assumptions_task.dat_12' ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_148 = -> t2.stats[ 'assumptions_task.dat_13' ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_149 = -> t2.stats[ 'assumptions_task.dat_14' ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_150 = -> t2.stats[ 'assumptions_task.dat_15' ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_151 = -> t2.stats[ 'assumptions_task.dat_16' ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_152 = -> t2.stats[ 'assumptions_task.dat_17' ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_153 = -> t2.stats[ 'assumptions_task.dat_18' ] ), { passes: 1, fails: 0 }
-      @eq ( Ω_154 = -> t2.stats[ 'assumptions_task.dat_19' ] ), { passes: 0, fails: 1 }
-      @eq ( Ω_155 = -> t2.stats[ 'assumptions_task.dat_20' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_139 = -> t2.stats[ '*'                       ] ), { passes: 8, fails: 12 }
+      @eq ( Ω_140 = -> t2.stats[ 'assumptions_task.dat_1'  ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_141 = -> t2.stats[ 'assumptions_task.dat_2'  ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_142 = -> t2.stats[ 'assumptions_task.dat_3'  ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_143 = -> t2.stats[ 'assumptions_task.dat_4'  ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_144 = -> t2.stats[ 'assumptions_task.dat_5'  ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_145 = -> t2.stats[ 'assumptions_task.dat_6'  ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_146 = -> t2.stats[ 'assumptions_task.dat_7'  ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_147 = -> t2.stats[ 'assumptions_task.dat_8'  ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_148 = -> t2.stats[ 'assumptions_task.dat_9'  ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_149 = -> t2.stats[ 'assumptions_task.dat_10' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_150 = -> t2.stats[ 'assumptions_task.dat_11' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_151 = -> t2.stats[ 'assumptions_task.dat_12' ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_152 = -> t2.stats[ 'assumptions_task.dat_13' ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_153 = -> t2.stats[ 'assumptions_task.dat_14' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_154 = -> t2.stats[ 'assumptions_task.dat_15' ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_155 = -> t2.stats[ 'assumptions_task.dat_16' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_156 = -> t2.stats[ 'assumptions_task.dat_17' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_157 = -> t2.stats[ 'assumptions_task.dat_18' ] ), { passes: 1, fails: 0 }
+      @eq ( Ω_158 = -> t2.stats[ 'assumptions_task.dat_19' ] ), { passes: 0, fails: 1 }
+      @eq ( Ω_159 = -> t2.stats[ 'assumptions_task.dat_20' ] ), { passes: 0, fails: 1 }
       #.....................................................................................................
       return null
 
@@ -527,21 +535,20 @@ types                     = require '../../../apps/intertype'
 
 
 # @foobar = ->
-#   debug 'Ω_156'
-#   @eq ( Ω_157 = -> 1 ), 1
+#   debug 'Ω_160'
+#   @eq ( Ω_161 = -> 1 ), 1
 #   return null
 
 #===========================================================================================================
 if module is require.main then await do =>
   cfg = { throw_on_error: true, }
   cfg = { throw_on_error: false, }
-  await ( new Test cfg ).async_test {
-    # TT: @TT,
-    Interface:  @TT.Interface,
+  await ( new Test cfg ).async_test { TT: @TT, }
+    # Interface:  @TT.Interface,
     # Equality:   @TT.Equality,
     # eq_works_correctly_with_zero:   @TT.Equality.eq_works_correctly_with_zero,
     # set_equality_by_value: @TT.Equality.set_equality_by_value,
-    }
+    # }
   # await ( new Test cfg ).async_test @TT
   # ( new Test cfg ).test @TT.pass_and_fail
   return null

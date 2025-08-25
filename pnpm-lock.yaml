@@ -54,8 +54,8 @@ importers:
         specifier: ^14.2.0
         version: 14.2.0
       guy-test:
-        specifier: ^6.0.0
-        version: 6.0.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
+        specifier: ^6.4.2
+        version: 6.4.2
       guy-test-6.1.0:
         specifier: npm:guy-test@6.1.0
         version: guy-test@6.1.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
@@ -382,11 +382,11 @@ packages:
     engines: {node: 20 || >=22}
     hasBin: true
 
-  guy-test@6.0.0:
-    resolution: {integrity: sha512-P3i5F3YiUI0dk7diC2MuX5VOBPtZkxOQ2sbzMiWSRli/6+fu3Ff2htll/RutWg/lNVCviE+SOs/kNAVD7hT+mQ==}
-
   guy-test@6.1.0:
     resolution: {integrity: sha512-h8E5OAMQd3J0+73KcTfyN4uB7tUJe4sC3f5Jh6efH6sw9mkMYgXiYEOM/HSipYWlcK7DblzfcugxvJTdcbmMCw==}
+
+  guy-test@6.4.2:
+    resolution: {integrity: sha512-v8yFHjXm9PIQKjJCPOEj/p0+LswQfJNsUs9yJr5o1sy/qeqUzRqIkbRykO423JzoAfk4Vq9NxauLVPxwd7hbCg==}
 
   guy@11.12.0:
     resolution: {integrity: sha512-lRYE5cZFTa1mNWtz2oTWxRWR8JUfGVb5kft0/rMxRYFh8zrffI+Zi5qwVGTL8G047qa8i/iNfAi/2MDc3Kufpg==}
@@ -722,6 +722,9 @@ packages:
   to-width@1.2.0:
     resolution: {integrity: sha512-ok/CRyzSZVA6xk9t5PuWuh3SHqCtKCkhI6dfF2YaVX11clXz4yAxxyesC27+m54ilrMRtqTI9UNQRct8lwVYZQ==}
 
+  to-width@1.2.1:
+    resolution: {integrity: sha512-mF1efg3VwGv5vdJ6ek8PyJQ9eA6OaaNzDfwk4a5ldWKg6ld0Ic67BIYS1/ozFczPBD8P4T1ROd7ir/ojLIbuMw==}
+
   type-fest@1.4.0:
     resolution: {integrity: sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==}
     engines: {node: '>=10'}
@@ -1023,21 +1026,6 @@ snapshots:
       package-json-from-dist: 1.0.0
       path-scurry: 2.0.0
 
-  guy-test@6.0.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3):
-    dependencies:
-      guy: 13.7.2(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
-      intertype: 203.2.0
-      to-width: 1.2.0
-      webguy: 5.2.1
-    transitivePeerDependencies:
-      - acorn
-      - acorn-loose
-      - acorn-walk
-      - astring
-      - chokidar
-      - dayjs
-      - tmp
-
   guy-test@6.1.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3):
     dependencies:
       guy: 13.7.2(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(chokidar@3.6.0)(dayjs@1.11.11)(tmp@0.2.3)
@@ -1052,6 +1040,13 @@ snapshots:
       - chokidar
       - dayjs
       - tmp
+
+  guy-test@6.4.2:
+    dependencies:
+      guy: 14.2.0
+      intertype: 203.2.0
+      to-width: 1.2.1
+      webguy: 5.2.1
 
   guy@11.12.0(acorn-loose@8.4.0)(acorn-walk@8.3.2)(acorn@8.11.3)(astring@1.8.6)(tmp@0.2.3):
     dependencies:
@@ -1473,6 +1468,11 @@ snapshots:
   to-width@1.2.0:
     dependencies:
       string-width: 4.2.3
+      wcstring: 2.1.1
+
+  to-width@1.2.1:
+    dependencies:
+      string-width: 7.2.0
       wcstring: 2.1.1
 
   type-fest@1.4.0: {}

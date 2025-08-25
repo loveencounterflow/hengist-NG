@@ -28,7 +28,7 @@ GUY                       = require 'guy'
 write                     = ( p ) -> process.stdout.write p
 C                         = require 'ansis'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
-GTNG                      = require '../../../apps/guy-test-NG'
+GTNG                      = require 'guy-test'
 { Test                  } = GTNG
 SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
 
@@ -860,7 +860,7 @@ settings =
     { Format_stack,               } = SFMODULES.unstable.require_format_stack()
     { strip_ansi,                 } = SFMODULES.require_strip_ansi()
     { type_of,                    } = SFMODULES.unstable.require_type_of()
-  #   #.......................................................................................................
+    #.......................................................................................................
     probes_and_matchers = [
       [ """at <anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:290:11)""",        '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (290——:11) ——             —— # <anonymous>() ——                                 ——', ]
       [ """at Object.<anonymous> (/path/to/hengist-NG/dev/bricabrac/src/test-dbric.coffee:245:41)""", '—— /path/to/hengist-NG/dev/bricabrac/src/——test-dbric.coffee —— (245——:41) ——             —— # Object.<anonymous>() ——                          ——', ]
@@ -880,7 +880,7 @@ settings =
       ]
     #.......................................................................................................
     do =>
-      format_stack = new Format_stack { relative: false, }
+      format_stack = new Format_stack { relative: false, padding: { path: 80, callee: 50, }, }
       @eq ( Ωbrbr_175 = -> type_of format_stack.cfg         ), 'pod'
       @eq ( Ωbrbr_176 = -> type_of format_stack.format_line ), 'function'
       for [ probe, matcher, ] in probes_and_matchers
@@ -907,15 +907,55 @@ settings =
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  require_format_stack_format_stack: ->
+    { format_stack,               } = SFMODULES.unstable.require_format_stack()
+    { strip_ansi,                 } = SFMODULES.require_strip_ansi()
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    PATH                            = require 'node:path'
+    #.......................................................................................................
+    #.......................................................................................................
+    do =>
+      try
+        cwd         = process.cwd()
+        reference   = PATH.resolve __dirname, '../../../'
+        process.cwd reference
+        error       = new Error "test"
+        { stack, }  = error
+        for line in stack.split '\n'
+          echo format_stack.format_line line
+        echo '———————————————————————————————————————————————————————————————————————————'
+        echo format_stack error
+        # @eq ( Ωbrbr_187 = -> type_of format_stack.cfg         ), 'pod'
+        # @eq ( Ωbrbr_188 = -> type_of format_stack.format_line ), 'function'
+        # for [ probe, matcher, ] in probes_and_matchers
+        #   @eq ( Ωbrbr_189 = -> strip_ansi ( format_stack.format_line probe ), '——' ), matcher
+        #   echo format_stack.format_line probe
+        #   # debug 'Ωbrbr_190', do Ωbrbr_191 = -> rpr strip_ansi ( format_stack.format_line probe ), '——'
+      finally
+        process.chdir cwd
+      return null
+    # #.......................................................................................................
+    # do =>
+    #   format_stack = new Format_stack { relative: true, }
+    #   try not_a_variable catch error
+    #     echo()
+    #     for line in error.stack.split '\n'
+    #       echo format_stack.format_line line
+    #   return null
+    #.......................................................................................................
+    return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
-  ( new Test guytest_cfg ).test { require_format_stack_parse_line_relative: tests.require_format_stack_parse_line_relative, }
-  ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
+  # ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
+  # ( new Test guytest_cfg ).test { require_format_stack_parse_line_relative: tests.require_format_stack_parse_line_relative, }
+  # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
   #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
@@ -923,6 +963,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_184', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_192', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
