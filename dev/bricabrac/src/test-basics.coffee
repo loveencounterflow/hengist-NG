@@ -957,9 +957,9 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line: tests.require_format_stack_parse_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line_relative: tests.require_format_stack_parse_line_relative, }
-  # ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
-  ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
+  # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
+  ( new Test guytest_cfg ).test { tests, }
   # tests.require_format_stack_format_stack()
   #.........................................................................................................
   demo_clean = ->
