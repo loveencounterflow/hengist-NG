@@ -913,29 +913,45 @@ settings =
     { strip_ansi,                 } = SFMODULES.require_strip_ansi()
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     PATH                            = require 'node:path'
+    separate                        = -> echo '\n\n\n———————————————————————————————————————————————————————————————————————————\n\n\n'
     #.......................................................................................................
     do =>
       try
         cwd         = process.cwd()
         reference   = PATH.resolve __dirname, '../../../'
-        process.cwd reference
+        process.chdir reference
         class Custom_error extends Error
         fn_1        = -> throw new Custom_error "oops"
         fn_2        = -> fn_1()
         fn_3        = -> fn_2()
         fn_4        = -> fn_3()
         fn_5        = -> fn_4()
-        try fn_5() catch error then null
-        { stack, }  = error
-        # for line in stack.split '\n'
-        #   echo format_stack.format_line line
-        echo()
-        echo()
-        echo '———————————————————————————————————————————————————————————————————————————'
-        echo()
-        echo()
+        fn_5()
+      catch error
+        separate()
         echo format_stack error
-        # echo stack
+      finally
+        process.chdir cwd
+      return null
+    #.......................................................................................................
+    do =>
+      try
+        cwd         = process.cwd()
+        reference   = PATH.resolve __dirname, '../../../'
+        process.chdir reference
+        # type    = error?.code ? error?.constructor?.name ? error?.name ? 'EXCEPTION'
+        class E_1 extends Error
+        class E_2 extends Error
+        class E_3 extends Error
+        fn_1 = ->                             throw new E_1 "Ωbrbr_184"
+        fn_2 = -> try fn_1() catch cause then throw new E_2 "Ωbrbr_185", { cause, }
+        fn_3 = -> try fn_2() catch cause then throw new E_3 "Ωbrbr_186", { cause, }
+        debug 'Ωbrbr_187'
+        fn_3()
+      catch error
+        separate()
+        debug 'Ωbrbr_188'
+        echo format_stack error
       finally
         process.chdir cwd
       return null
@@ -959,8 +975,8 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { require_format_stack_parse_line_relative: tests.require_format_stack_parse_line_relative, }
   # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
-  ( new Test guytest_cfg ).test { tests, }
-  # tests.require_format_stack_format_stack()
+  # ( new Test guytest_cfg ).test { tests, }
+  tests.require_format_stack_format_stack()
   #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
@@ -968,6 +984,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_192', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_189', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
