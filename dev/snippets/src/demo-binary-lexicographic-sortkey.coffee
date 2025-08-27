@@ -410,20 +410,41 @@ demo_hollerith_vdx_sortkey = ->
   help 'Ωbsk__45', VDX.encode_integer -1
   help 'Ωbsk__46', VDX.encode_integer +1
   help 'Ωbsk__47', VDX.encode_integer 10
-  help 'Ωbsk__48', VDX.encode_integer 100
-  help 'Ωbsk__49', VDX.encode_integer 127
-  help 'Ωbsk__50', VDX.encode_integer 128
-  help 'Ωbsk__51', VDX.encode_integer 129
-  help 'Ωbsk__52', VDX.encode_integer -10
-  help 'Ωbsk__53', VDX.encode_integer -100
-  help 'Ωbsk__54', VDX.encode_integer -127
-  help 'Ωbsk__55', VDX.encode_integer -128
-  help 'Ωbsk__56', VDX.encode_integer -129
-  help 'Ωbsk__57', VDX.encode_integer +123456789012345
-  help 'Ωbsk__58', VDX.encode_integer -123456789012345
-  help 'Ωbsk__59', VDX.encode_integer C.max_integer
-  help 'Ωbsk__60', VDX.encode_integer C.min_integer
-  help 'Ωbsk__61', VDX.encode [ 1, 2, 3, 100, ]
+  help 'Ωbsk__48', VDX.encode_integer 20
+  help 'Ωbsk__49', VDX.encode_integer 21
+  help 'Ωbsk__50', VDX.encode_integer 100
+  help 'Ωbsk__51', VDX.encode_integer 127
+  help 'Ωbsk__52', VDX.encode_integer 128
+  help 'Ωbsk__53', VDX.encode_integer 129
+  help 'Ωbsk__54', VDX.encode_integer +123456789012345
+  help 'Ωbsk__55', VDX.encode_integer C.max_integer
+  info 'Ωbsk__56'
+  help 'Ωbsk__57', VDX.encode_integer -10
+  help 'Ωbsk__58', VDX.encode_integer -20
+  help 'Ωbsk__59', VDX.encode_integer -21
+  help 'Ωbsk__60', VDX.encode_integer -100
+  help 'Ωbsk__61', VDX.encode_integer -127
+  help 'Ωbsk__62', VDX.encode_integer -128
+  help 'Ωbsk__63', VDX.encode_integer -129
+  help 'Ωbsk__64', VDX.encode_integer -1000
+  help 'Ωbsk__65', VDX.encode_integer -10000
+  help 'Ωbsk__66', VDX.encode_integer -100000
+  help 'Ωbsk__67', VDX.encode_integer -1000000
+  help 'Ωbsk__68', VDX.encode_integer -10000000
+  help 'Ωbsk__69', VDX.encode_integer -100000000
+  help 'Ωbsk__70', VDX.encode_integer -1000000000
+  help 'Ωbsk__71', VDX.encode_integer -10000000000
+  help 'Ωbsk__72', VDX.encode_integer -100000000000
+  help 'Ωbsk__73', VDX.encode_integer -1000000000000
+  help 'Ωbsk__74', VDX.encode_integer -10000000000000
+  help 'Ωbsk__75', VDX.encode_integer -100000000000000
+  help 'Ωbsk__76', VDX.encode_integer -123456789012345
+  help 'Ωbsk__77', VDX.encode_integer C.min_integer
+  help 'Ωbsk__78', VDX.encode_integer C.min_integer + 1
+  help 'Ωbsk__79', VDX.encode_integer C.min_integer + 2
+  help 'Ωbsk__80', VDX.encode_integer C.min_integer + 3
+  info 'Ωbsk__81'
+  help 'Ωbsk__82', VDX.encode [ 1, 2, 3, 100, ]
 
   #---------------------------------------------------------------------------------------------------------
   return null
