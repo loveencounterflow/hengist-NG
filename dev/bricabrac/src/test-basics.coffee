@@ -954,6 +954,7 @@ settings =
         echo format_stack error
       finally
         process.chdir cwd
+      # throw error
       return null
     # #.......................................................................................................
     # do =>
