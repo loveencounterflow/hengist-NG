@@ -1,4 +1,6 @@
 
+
+
 'use strict'
 
 #===========================================================================================================
@@ -168,70 +170,7 @@ demo_binary_lexicographic_sortkey = =>
 
   return null
 
-# Z    11  negative digit count
-# Y    10  negative digit count
-# X     9  negative digit count
-# W     8  negative digit count
-# V     7  negative digit count
-# U     6  negative digit count
-# T     5  negative digit count
-# S     4  negative digit count
-# R     3  negative digit count
-# Q     2  negative digit count
-# P   -16
-# O   -15
-# N   -14
-# M   -13
-# L   -12
-# K   -11
-# J   -10
-# I   -9
-# H   -8
-# G   -7
-# F   -6
-# E   -5
-# D   -4
-# C   -3
-# B   -2
-# A   -1
-# ^    0
-# a   +1
-# b   +2
-# c   +3
-# d   +4
-# e   +5
-# f   +6
-# g   +7
-# h   +8
-# i   +9
-# j   +10
-# k   +11
-# l   +12
-# m   +13
-# n   +14
-# o   +15
-# p   +16
-# q     2 positive digit count
-# r     3 positive digit count
-# s     4 positive digit count
-# t     5 positive digit count
-# u     6 positive digit count
-# v     7 positive digit count
-# w     8 positive digit count
-# x     9 positive digit count
-# y    10 positive digit count
-# z    11 positive digit count
-
-
-
-
-# z
-# {
-# |
-# }
-# ~
-
-
+#===========================================================================================================
 demo_chatgpt_solution = ->
   ```
   function encodeBigInt(num, alphabet) {
@@ -308,8 +247,9 @@ demo_chatgpt_solution = ->
     * prepend positive magnifier            (PMAG) :  1 positive digit ..  øùúûüýþÿ  ..  8 positive digits
 
   * for numbers n < -20:
-
-
+    * subtract n from `Number.MAX_SAFE_INTEGER` to obtain inverted order and convert to Base-128
+    * `Number.MAX_SAFE_INTEGER` is `2ÆÆÆÆÆÆÆ` in Base-128, meaning that leading `2Æ*` can be discarded
+    * prepend negative magnifier            (NMAG) :  1 negative digit ..  ÎÍÌËÊÉÈÇ  ..  8 negative digits
 
 
   Ç    8 negative digits
