@@ -171,7 +171,7 @@ demo_binary_lexicographic_sortkey = =>
   return null
 
 #===========================================================================================================
-demo_chatgpt_solution = ->
+TMP_require_encode_in_alphabet = ->
   ```
   function encodeBigInt(num, alphabet) {
     if (typeof num === "number") num = BigInt(num);
@@ -204,6 +204,12 @@ demo_chatgpt_solution = ->
     return num;
   }
   ```
+  return { encodeBigInt, decodeBigInt, }
+
+#===========================================================================================================
+demo_chatgpt_solution = ->
+  { encodeBigInt,
+    decodeBigInt,   } = TMP_require_encode_in_alphabet()
   urge 'Ωbsk__15', encodeBigInt 12345678, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
   # urge 'Ωbsk__16', rpr encodeBigInt 100n, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzªµºÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏɐɑɒɓɔɕɖɗɘəɚɛɜɝɞɟɠɡɢɣɤɥɦɧɨɩɪɫɬɭɮɯɰɱɲɳɴɵɶɷɸɹɺɻɼɽɾɿʀʁʂʃʄʅʆʇʈʉʊʋʌʍʎʏʐʑʒʓʔʕʖʗʘʙʚʛʜʝʞʟʠʡʢʣʤʥʦʧʨʩʪʫʬʭʮʯʰʱʲʳʴʵʶʷʸʹʺʻʼʽʾʿˀˁˆˇˈˉˊˋˌˍˎˏːˑˠˡˢˣˤˬˮͰͱͲͳʹͶͷͺͻͼͽͿΆΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϏϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϢϣϤϥϦϧϨ'
   # urge 'Ωbsk__17', rpr encodeBigInt 1000n, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzªµºÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏɐɑɒɓɔɕɖɗɘəɚɛɜɝɞɟɠɡɢɣɤɥɦɧɨɩɪɫɬɭɮɯɰɱɲɳɴɵɶɷɸɹɺɻɼɽɾɿʀʁʂʃʄʅʆʇʈʉʊʋʌʍʎʏʐʑʒʓʔʕʖʗʘʙʚʛʜʝʞʟʠʡʢʣʤʥʦʧʨʩʪʫʬʭʮʯʰʱʲʳʴʵʶʷʸʹʺʻʼʽʾʿˀˁˆˇˈˉˊˋˌˍˎˏːˑˠˡˢˣˤˬˮͰͱͲͳʹͶͷͺͻͼͽͿΆΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϏϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϢϣϤϥϦϧϨ'
@@ -336,9 +342,95 @@ demo_chatgpt_solution = ->
     R.push chr
   urge 'Ωbsk__41', rpr R.join ''
 
+#===========================================================================================================
+demo_hollerith_vdx_sortkey = ->
+  ### vectorial index, a.k.a. 'vindex', a.k.a. VDX, next version of VNR as implemented in `hollerith-codec`
+  ###
+  #=========================================================================================================
+  { encodeBigInt,
+    decodeBigInt,   } = TMP_require_encode_in_alphabet()
+
+  #---------------------------------------------------------------------------------------------------------
+  constants = C = Object.freeze
+    max_integer:  Number.MAX_SAFE_INTEGER
+    min_integer:  Number.MIN_SAFE_INTEGER
+    zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
+    nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
+    zpun_max:     +20
+    nun_min:      -20
+    base128:      '!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`' \
+                    + 'abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
+    pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
+    nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
+    nlead_re:     /^2Æ*/      # 'negative leader', discardable leading digits of lifted negative numbers
+
+  #---------------------------------------------------------------------------------------------------------
+  internals = Object.freeze { constants, }
+
+  #=========================================================================================================
+  class Vindex
+
+    #-------------------------------------------------------------------------------------------------------
+    encode: ( integer_or_list ) ->
+      ### TAINT use proper validation ###
+      if Array.isArray integer_or_list
+        return ( @encode n for n in integer_or_list ).join ''
+      #.....................................................................................................
+      n = integer_or_list
+      unless Number.isFinite n
+        type = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        throw new Error "Ωvdx__42 expected a float, got a #{type}"
+      unless C.min_integer <= n <= C.max_integer
+        throw new Error "Ωvdx__43 expected a float between #{C.min_integer} and #{C.max_integer}, got #{n}"
+      #.....................................................................................................
+      return @encode_integer n
+
+    #-------------------------------------------------------------------------------------------------------
+    encode_integer: ( n ) ->
+      ### NOTE call only where assured `n` is integer within magnitude of `Number.MAX_SAFE_INTEGER` ###
+      #.....................................................................................................
+      # Zero or small positive:
+      return ( C.zpuns.at n ) if 0          <= n <= C.zpun_max
+      #.....................................................................................................
+      # Small negative:
+      return ( C.nuns.at  n ) if C.nun_min  <= n <  0
+      #.....................................................................................................
+      # Big positive:
+      if n > C.zpun_max
+        R = encodeBigInt n, C.base128
+        return ( C.pmag.at R.length ) + R
+      #.....................................................................................................
+      # Big negative:
+      R = ( encodeBigInt ( n + C.max_integer ), C.base128 ).replace C.nlead_re, ''
+      return ( C.nmag.at R.length ) + R
+
+  #---------------------------------------------------------------------------------------------------------
+  VDX = new Vindex()
+  help 'Ωbsk__44', VDX.encode_integer 0
+  help 'Ωbsk__45', VDX.encode_integer -1
+  help 'Ωbsk__46', VDX.encode_integer +1
+  help 'Ωbsk__47', VDX.encode_integer 10
+  help 'Ωbsk__48', VDX.encode_integer 100
+  help 'Ωbsk__49', VDX.encode_integer 127
+  help 'Ωbsk__50', VDX.encode_integer 128
+  help 'Ωbsk__51', VDX.encode_integer 129
+  help 'Ωbsk__52', VDX.encode_integer -10
+  help 'Ωbsk__53', VDX.encode_integer -100
+  help 'Ωbsk__54', VDX.encode_integer -127
+  help 'Ωbsk__55', VDX.encode_integer -128
+  help 'Ωbsk__56', VDX.encode_integer -129
+  help 'Ωbsk__57', VDX.encode_integer +123456789012345
+  help 'Ωbsk__58', VDX.encode_integer -123456789012345
+  help 'Ωbsk__59', VDX.encode_integer C.max_integer
+  help 'Ωbsk__60', VDX.encode_integer C.min_integer
+  help 'Ωbsk__61', VDX.encode [ 1, 2, 3, 100, ]
+
+  #---------------------------------------------------------------------------------------------------------
+  return null
 
 #===========================================================================================================
 if module is require.main then await do =>
   demo_binary_lexicographic_sortkey()
   demo_chatgpt_solution()
+  demo_hollerith_vdx_sortkey()
   return null
