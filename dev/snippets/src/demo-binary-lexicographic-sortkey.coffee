@@ -358,7 +358,7 @@ demo_hollerith_vdx_sortkey = ->
     nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
     zpun_max:     +20
     nun_min:      -20
-    base128:      '!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`' \
+    alphabet:     '!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`' \
                     + 'abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
     pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
     nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
@@ -397,11 +397,11 @@ demo_hollerith_vdx_sortkey = ->
       #.....................................................................................................
       # Big positive:
       if n > C.zpun_max
-        R = encodeBigInt n, C.base128
+        R = encodeBigInt n, C.alphabet
         return ( C.pmag.at R.length ) + R
       #.....................................................................................................
       # Big negative:
-      R = ( encodeBigInt ( n + C.max_integer ), C.base128 ).replace C.nlead_re, ''
+      R = ( encodeBigInt ( n + C.max_integer ), C.alphabet ).replace C.nlead_re, ''
       return ( C.nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
