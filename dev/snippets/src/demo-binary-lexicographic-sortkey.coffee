@@ -382,8 +382,8 @@ demo_hollerith_vdx_sortkey = ->
     nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
 
   #---------------------------------------------------------------------------------------------------------
-  constants = C = constants_128
-  # constants = C = constants_10
+  # constants = C = constants_128
+  constants = C = constants_10
 
   #---------------------------------------------------------------------------------------------------------
   internals = Object.freeze { constants, }
@@ -458,19 +458,19 @@ demo_hollerith_vdx_sortkey = ->
   help 'Ωbsk__70', VDX.encode_integer -127
   help 'Ωbsk__71', VDX.encode_integer -128
   help 'Ωbsk__72', VDX.encode_integer -129
-  help 'Ωbsk__73', VDX.encode_integer -1000
-  help 'Ωbsk__74', VDX.encode_integer -10000
-  help 'Ωbsk__75', VDX.encode_integer -100000
-  help 'Ωbsk__76', VDX.encode_integer -1000000
-  help 'Ωbsk__77', VDX.encode_integer -10000000
-  help 'Ωbsk__78', VDX.encode_integer -100000000
-  help 'Ωbsk__79', VDX.encode_integer -1000000000
-  help 'Ωbsk__80', VDX.encode_integer -10000000000
-  help 'Ωbsk__81', VDX.encode_integer -100000000000
-  help 'Ωbsk__82', VDX.encode_integer -1000000000000
-  help 'Ωbsk__83', VDX.encode_integer -10000000000000
-  help 'Ωbsk__84', VDX.encode_integer -100000000000000
-  help 'Ωbsk__85', VDX.encode_integer -123456789012345
+  # help 'Ωbsk__73', VDX.encode_integer -1000
+  # help 'Ωbsk__74', VDX.encode_integer -10000
+  # help 'Ωbsk__75', VDX.encode_integer -100000
+  # help 'Ωbsk__76', VDX.encode_integer -1000000
+  # help 'Ωbsk__77', VDX.encode_integer -10000000
+  # help 'Ωbsk__78', VDX.encode_integer -100000000
+  # help 'Ωbsk__79', VDX.encode_integer -1000000000
+  # help 'Ωbsk__80', VDX.encode_integer -10000000000
+  # help 'Ωbsk__81', VDX.encode_integer -100000000000
+  # help 'Ωbsk__82', VDX.encode_integer -1000000000000
+  # help 'Ωbsk__83', VDX.encode_integer -10000000000000
+  # help 'Ωbsk__84', VDX.encode_integer -100000000000000
+  # help 'Ωbsk__85', VDX.encode_integer -123456789012345
   # help 'Ωbsk__86', VDX.encode_integer -800
   # help 'Ωbsk__87', VDX.encode_integer -900
   # help 'Ωbsk__88', VDX.encode_integer -950
@@ -488,7 +488,49 @@ demo_hollerith_vdx_sortkey = ->
   help 'Ωbsk_100', VDX.encode_integer C.min_integer
   info 'Ωbsk_101'
   help 'Ωbsk_102', VDX.encode [ 1, 2, 3, 100, ]
-
+  #---------------------------------------------------------------------------------------------------------
+  d = [
+    { sk: null, vdx: [ -999,           ], nr: 1,  }
+    { sk: null, vdx: [  -99,           ], nr: 2,  }
+    { sk: null, vdx: [  -90,           ], nr: 3,  }
+    { sk: null, vdx: [  -11,           ], nr: 4,  }
+    { sk: null, vdx: [  -10,           ], nr: 5,  }
+    { sk: null, vdx: [   -9,           ], nr: 6,  }
+    { sk: null, vdx: [   -8,           ], nr: 7,  }
+    { sk: null, vdx: [   -7,           ], nr: 8,  }
+    { sk: null, vdx: [   -6,           ], nr: 9,  }
+    { sk: null, vdx: [   -5,           ], nr: 10, }
+    { sk: null, vdx: [   -4,           ], nr: 11, }
+    { sk: null, vdx: [   -3,           ], nr: 12, }
+    { sk: null, vdx: [   -2,           ], nr: 13, }
+    { sk: null, vdx: [   -1,           ], nr: 14, } # !!!
+    { sk: null, vdx: [   +0,  -20,     ], nr: 15, } # !!!
+    { sk: null, vdx: [   +0,           ], nr: 16, } # !!!
+    { sk: null, vdx: [   +0,  +20,     ], nr: 17, }
+    { sk: null, vdx: [   +9,           ], nr: 18, } # !!!
+    { sk: null, vdx: [  +10,   -3,     ], nr: 19, } # !!!
+    { sk: null, vdx: [  +10,   -2,     ], nr: 20, } # !!!
+    { sk: null, vdx: [  +10,   -1,     ], nr: 21, } # !!!
+    { sk: null, vdx: [  +10,           ], nr: 22, } # !!!
+    { sk: null, vdx: [  +10,   +0,     ], nr: 23, }
+    { sk: null, vdx: [  +10,   +1,     ], nr: 24, }
+    { sk: null, vdx: [  +10,  +10, -1, ], nr: 25, } # !!!
+    { sk: null, vdx: [  +10,  +10,     ], nr: 26, } # !!!
+    { sk: null, vdx: [  +10,  +20,     ], nr: 27, }
+    { sk: null, vdx: [  +20,           ], nr: 28, }
+    { sk: null, vdx: [  +20,  +10,     ], nr: 29, }
+    { sk: null, vdx: [  +90,           ], nr: 30, }
+    { sk: null, vdx: [ +900,           ], nr: 31, }
+    ]
+  for e in d
+    try e.sk = VDX.encode e.vdx catch error
+      warn 'Ωbsk_100', e, error.message
+      e.sk = '???'
+  d.sort ( a, b ) ->
+    return -1 if a.sk < b.sk
+    return +1 if a.sk > b.sk
+    return 0
+  debug 'Ωbsk_103', e for e in d
   #---------------------------------------------------------------------------------------------------------
   return null
 
