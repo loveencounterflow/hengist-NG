@@ -103,29 +103,29 @@ demo_binary_lexicographic_sortkey = =>
     q = q.length
     help 'Ωbsk___2', "#{k}#{v} #{q}"
   ref0 = Number.MAX_SAFE_INTEGER
-  f = ( n ) ->
+  f1 = ( n ) ->
     return [  0, 'N',                                         ] if n is 0
     return [ +1, (            n.toString 32 ).toLowerCase(),  ] if n > 0
     return [ -1, ( ( ref0 + n ).toString 32 ).toLowerCase().replace /^7V*/i, '',  ]
     # 11111111111111111111111111111111111111111111111111111
   N = 'N'.codePointAt 0
-  g = ( n ) ->
-    [ sign, nrpr, ] = f n
+  g1 = ( n ) ->
+    [ sign, nrpr, ] = f1 n
     return nrpr if sign is 0
     return ( String.fromCodePoint N + nrpr.length ) + nrpr if sign is +1
     return ( String.fromCodePoint N - nrpr.length ) + nrpr
-  info 'Ωbsk___3', '0     ', ( f 0      ), ( g 0      )
-  info 'Ωbsk___4', '1     ', ( f 1      ), ( g 1      )
-  info 'Ωbsk___5', '2     ', ( f 2      ), ( g 2      )
-  info 'Ωbsk___6', '31    ', ( f 31     ), ( g 31     )
-  info 'Ωbsk___7', '32    ', ( f 32     ), ( g 32     )
-  info 'Ωbsk___8', '33    ', ( f 33     ), ( g 33     )
-  info 'Ωbsk___9', '-1    ', ( f -1     ), ( g -1     )
-  info 'Ωbsk__10', '-31   ', ( f -31    ), ( g -31    )
-  info 'Ωbsk__11', '-32   ', ( f -32    ), ( g -32    )
-  info 'Ωbsk__12', '-32767', ( f -32767 ), ( g -32767 )
-  info 'Ωbsk__13', '-32768', ( f -32768 ), ( g -32768 )
-  info 'Ωbsk__14', '-32769', ( f -32769 ), ( g -32769 )
+  info 'Ωbsk___3', '0     ', ( f1 0      ), ( g1 0      )
+  info 'Ωbsk___4', '1     ', ( f1 1      ), ( g1 1      )
+  info 'Ωbsk___5', '2     ', ( f1 2      ), ( g1 2      )
+  info 'Ωbsk___6', '31    ', ( f1 31     ), ( g1 31     )
+  info 'Ωbsk___7', '32    ', ( f1 32     ), ( g1 32     )
+  info 'Ωbsk___8', '33    ', ( f1 33     ), ( g1 33     )
+  info 'Ωbsk___9', '-1    ', ( f1 -1     ), ( g1 -1     )
+  info 'Ωbsk__10', '-31   ', ( f1 -31    ), ( g1 -31    )
+  info 'Ωbsk__11', '-32   ', ( f1 -32    ), ( g1 -32    )
+  info 'Ωbsk__12', '-32767', ( f1 -32767 ), ( g1 -32767 )
+  info 'Ωbsk__13', '-32768', ( f1 -32768 ), ( g1 -32768 )
+  info 'Ωbsk__14', '-32769', ( f1 -32769 ), ( g1 -32769 )
 
   # Number.MAX_SAFE_INTEGER.toString 32
   # '7vvvvvvvvvv'
@@ -351,18 +351,39 @@ demo_hollerith_vdx_sortkey = ->
     decodeBigInt,   } = TMP_require_encode_in_alphabet()
 
   #---------------------------------------------------------------------------------------------------------
-  constants = C = Object.freeze
+  constants_128 = Object.freeze
     max_integer:  Number.MAX_SAFE_INTEGER
     min_integer:  Number.MIN_SAFE_INTEGER
     zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
     nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
     zpun_max:     +20
     nun_min:      -20
+    zero_pad_length: 8
     alphabet:     '!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`' \
                     + 'abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
+    ### TAINT since small ints up to +/-20 are represented by uniliterals, PMAG `ø` and NMAG `Î` will never
+    be used, thus can be freed for other(?) things ###
     pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
     nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
     nlead_re:     /^2Æ*/      # 'negative leader', discardable leading digits of lifted negative numbers
+
+  #---------------------------------------------------------------------------------------------------------
+  constants_10 = Object.freeze
+    max_integer:  +999
+    min_integer:  -999
+    zpuns:        'ãäåæ' # zero and positive uniliteral numbers
+    nuns:         'ÏÐÑ'  # negative          uniliteral numbers
+    zpun_max:     +3
+    nun_min:      -3
+    zero_pad_length:  3
+    alphabet:     '0123456789'
+    pmag:         ' øùúûüýþÿ'   # positive 'magnifier' for 1 to 8 positive digits
+    nmag:         ' ÎÍÌËÊÉÈÇ'   # negative 'magnifier' for 1 to 8 negative digits
+    nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+
+  #---------------------------------------------------------------------------------------------------------
+  constants = C = constants_128
+  # constants = C = constants_10
 
   #---------------------------------------------------------------------------------------------------------
   internals = Object.freeze { constants, }
@@ -401,50 +422,72 @@ demo_hollerith_vdx_sortkey = ->
         return ( C.pmag.at R.length ) + R
       #.....................................................................................................
       # Big negative:
-      R = ( encodeBigInt ( n + C.max_integer ), C.alphabet ).replace C.nlead_re, ''
+      R = ( encodeBigInt ( n + C.max_integer + 1 ), C.alphabet )
+      if R.length < C.zero_pad_length   then  R = R.padStart C.zero_pad_length, C.alphabet.at 0
+      else                                    R = R.replace C.nlead_re, ''
       return ( C.nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
   VDX = new Vindex()
-  help 'Ωbsk__44', VDX.encode_integer 0
-  help 'Ωbsk__45', VDX.encode_integer -1
-  help 'Ωbsk__46', VDX.encode_integer +1
-  help 'Ωbsk__47', VDX.encode_integer 10
-  help 'Ωbsk__48', VDX.encode_integer 20
-  help 'Ωbsk__49', VDX.encode_integer 21
-  help 'Ωbsk__50', VDX.encode_integer 100
-  help 'Ωbsk__51', VDX.encode_integer 127
-  help 'Ωbsk__52', VDX.encode_integer 128
-  help 'Ωbsk__53', VDX.encode_integer 129
-  help 'Ωbsk__54', VDX.encode_integer +123456789012345
-  help 'Ωbsk__55', VDX.encode_integer C.max_integer
-  info 'Ωbsk__56'
-  help 'Ωbsk__57', VDX.encode_integer -10
-  help 'Ωbsk__58', VDX.encode_integer -20
-  help 'Ωbsk__59', VDX.encode_integer -21
-  help 'Ωbsk__60', VDX.encode_integer -100
-  help 'Ωbsk__61', VDX.encode_integer -127
-  help 'Ωbsk__62', VDX.encode_integer -128
-  help 'Ωbsk__63', VDX.encode_integer -129
-  help 'Ωbsk__64', VDX.encode_integer -1000
-  help 'Ωbsk__65', VDX.encode_integer -10000
-  help 'Ωbsk__66', VDX.encode_integer -100000
-  help 'Ωbsk__67', VDX.encode_integer -1000000
-  help 'Ωbsk__68', VDX.encode_integer -10000000
-  help 'Ωbsk__69', VDX.encode_integer -100000000
-  help 'Ωbsk__70', VDX.encode_integer -1000000000
-  help 'Ωbsk__71', VDX.encode_integer -10000000000
-  help 'Ωbsk__72', VDX.encode_integer -100000000000
-  help 'Ωbsk__73', VDX.encode_integer -1000000000000
-  help 'Ωbsk__74', VDX.encode_integer -10000000000000
-  help 'Ωbsk__75', VDX.encode_integer -100000000000000
-  help 'Ωbsk__76', VDX.encode_integer -123456789012345
-  help 'Ωbsk__77', VDX.encode_integer C.min_integer
-  help 'Ωbsk__78', VDX.encode_integer C.min_integer + 1
-  help 'Ωbsk__79', VDX.encode_integer C.min_integer + 2
-  help 'Ωbsk__80', VDX.encode_integer C.min_integer + 3
-  info 'Ωbsk__81'
-  help 'Ωbsk__82', VDX.encode [ 1, 2, 3, 100, ]
+  help 'Ωbsk__44', VDX.encode_integer +1
+  help 'Ωbsk__45', VDX.encode_integer +2
+  help 'Ωbsk__46', VDX.encode_integer +3
+  help 'Ωbsk__47', VDX.encode_integer +4
+  help 'Ωbsk__48', VDX.encode_integer +5
+  help 'Ωbsk__49', VDX.encode_integer 10
+  help 'Ωbsk__50', VDX.encode_integer 20
+  help 'Ωbsk__51', VDX.encode_integer 21
+  help 'Ωbsk__52', VDX.encode_integer 100
+  help 'Ωbsk__53', VDX.encode_integer 127
+  help 'Ωbsk__54', VDX.encode_integer 128
+  help 'Ωbsk__55', VDX.encode_integer 129
+  help 'Ωbsk__56', VDX.encode_integer +123456789012345
+  help 'Ωbsk__57', VDX.encode_integer C.max_integer
+  info 'Ωbsk__58'
+  help 'Ωbsk__59', VDX.encode_integer 0
+  info 'Ωbsk__60'
+  help 'Ωbsk__61', VDX.encode_integer -1
+  help 'Ωbsk__62', VDX.encode_integer -2
+  help 'Ωbsk__63', VDX.encode_integer -3
+  help 'Ωbsk__64', VDX.encode_integer -4
+  help 'Ωbsk__65', VDX.encode_integer -5
+  help 'Ωbsk__66', VDX.encode_integer -10
+  help 'Ωbsk__67', VDX.encode_integer -20
+  help 'Ωbsk__68', VDX.encode_integer -21
+  help 'Ωbsk__69', VDX.encode_integer -100
+  help 'Ωbsk__70', VDX.encode_integer -127
+  help 'Ωbsk__71', VDX.encode_integer -128
+  help 'Ωbsk__72', VDX.encode_integer -129
+  help 'Ωbsk__73', VDX.encode_integer -1000
+  help 'Ωbsk__74', VDX.encode_integer -10000
+  help 'Ωbsk__75', VDX.encode_integer -100000
+  help 'Ωbsk__76', VDX.encode_integer -1000000
+  help 'Ωbsk__77', VDX.encode_integer -10000000
+  help 'Ωbsk__78', VDX.encode_integer -100000000
+  help 'Ωbsk__79', VDX.encode_integer -1000000000
+  help 'Ωbsk__80', VDX.encode_integer -10000000000
+  help 'Ωbsk__81', VDX.encode_integer -100000000000
+  help 'Ωbsk__82', VDX.encode_integer -1000000000000
+  help 'Ωbsk__83', VDX.encode_integer -10000000000000
+  help 'Ωbsk__84', VDX.encode_integer -100000000000000
+  help 'Ωbsk__85', VDX.encode_integer -123456789012345
+  # help 'Ωbsk__86', VDX.encode_integer -800
+  # help 'Ωbsk__87', VDX.encode_integer -900
+  # help 'Ωbsk__88', VDX.encode_integer -950
+  # help 'Ωbsk__89', VDX.encode_integer -970
+  # help 'Ωbsk__90', VDX.encode_integer -980
+  # help 'Ωbsk__91', VDX.encode_integer -990
+  # help 'Ωbsk__92', VDX.encode_integer -995
+  # help 'Ωbsk__93', VDX.encode_integer -996
+  # help 'Ωbsk__94', VDX.encode_integer -997
+  # help 'Ωbsk__95', VDX.encode_integer -998
+  # help 'Ωbsk__96', VDX.encode_integer -999
+  help 'Ωbsk__97', VDX.encode_integer C.min_integer + 3
+  help 'Ωbsk__98', VDX.encode_integer C.min_integer + 2
+  help 'Ωbsk__99', VDX.encode_integer C.min_integer + 1
+  help 'Ωbsk_100', VDX.encode_integer C.min_integer
+  info 'Ωbsk_101'
+  help 'Ωbsk_102', VDX.encode [ 1, 2, 3, 100, ]
 
   #---------------------------------------------------------------------------------------------------------
   return null
@@ -454,4 +497,6 @@ if module is require.main then await do =>
   demo_binary_lexicographic_sortkey()
   demo_chatgpt_solution()
   demo_hollerith_vdx_sortkey()
+  # echo f"-#{n}:0>2.0f;" for n in [ 99 .. 0 ]
+  # echo f"+#{n}:0>2.0f;" for n in [ 0 .. 99 ]
   return null
