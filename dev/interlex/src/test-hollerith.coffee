@@ -85,63 +85,65 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         fit_pun       = regex"(?<letters> [ #{puns_letters} ]  )                                  "
         fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
         fit_pnum      = regex"(?<letters> [ #{pmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
-        fit_zero      = regex"(?<letters> [ #{zero_letters} ]+ )                                  "
+        fit_padding   = regex"(?<letters> [ #{zero_letters} ]+ ) $                                "
+        fit_zero      = regex"(?<letters> [ #{zero_letters} ]  (?= .* [^ #{zero_letters} ] ) )     "
         fit_other     = regex"(?<letters> .                    )                                  "
+        all_zero_re   = regex"^ #{zero_letters}+ $"
         #...................................................................................................
         cast_nun      = ({ data: d, }) -> d.index = ( cfg.nuns.indexOf d.letters ) - cfg.nuns.length
         cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
         cast_nnum     = ({ data: d, }) ->
           mantissa  = d.mantissa.padStart cfg.zero_pad_length, max_digit
-          # debug 'Ωilxhol___1', ( rpr d.mantissa ), ( rpr mantissa )
           d.index   = ( decode mantissa, alphabet ) - cfg.max_integer
         cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
-        cast_zero     = ({ data: d, }) -> d.index = ( 0 for _ in d.letters )
-        # cast_zero     = ( P ) -> debug 'Ωilxhol___2', P
-        cast_other    = null # ({ data: d, }) -> # debug 'Ωilxhol___3', 'other', d #; d.letters = d.letters.join '-'
+        cast_zero     = ({ data: d, }) -> d.index = 0
+        cast_padding  = null
+        cast_other    = null
         #...................................................................................................
         R           = new Grammar { emit_signals: false, }
         first       = R.new_level { name: 'first', }
-        first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,    }
-        first.new_token   { name: 'pun',      fit: fit_pun,                  cast: cast_pun,    }
-        first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,   }
-        first.new_token   { name: 'pnum',     fit: fit_pnum,                 cast: cast_pnum,   }
-        first.new_token   { name: 'zero',     fit: fit_zero,                 cast: cast_zero,   }
-        first.new_token   { name: 'other',    fit: fit_other, merge: 'list', cast: cast_other,  }
+        first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,      }
+        first.new_token   { name: 'pun',      fit: fit_pun,                  cast: cast_pun,      }
+        first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,     }
+        first.new_token   { name: 'pnum',     fit: fit_pnum,                 cast: cast_pnum,     }
+        first.new_token   { name: 'padding',  fit: fit_padding,              cast: cast_padding,  }
+        first.new_token   { name: 'zero',     fit: fit_zero,                 cast: cast_zero,     }
+        first.new_token   { name: 'other',    fit: fit_other, merge: 'list', cast: cast_other,    }
         #...................................................................................................
         return R
       #.....................................................................................................
       probes_and_matchers = [
-        [ 'B000NNNNNN', [ -999,         ], 'nnum:B,000|zero:NNNNNN',              ]
-        [ 'C00NNNNNNN', [ -99,          ], 'nnum:C,00|zero:NNNNNNN',              ]
-        [ 'C09NNNNNNN', [ -90,          ], 'nnum:C,09|zero:NNNNNNN',              ]
-        [ 'C88NNNNNNN', [ -11,          ], 'nnum:C,88|zero:NNNNNNN',              ]
-        [ 'C89NNNNNNN', [ -10,          ], 'nnum:C,89|zero:NNNNNNN',              ]
-        [ 'ENNNNNNNNN', [ -9,           ], 'nun:E|zero:NNNNNNNNN',                ]
-        [ 'FNNNNNNNNN', [ -8,           ], 'nun:F|zero:NNNNNNNNN',                ]
-        [ 'GNNNNNNNNN', [ -7,           ], 'nun:G|zero:NNNNNNNNN',                ]
-        [ 'HNNNNNNNNN', [ -6,           ], 'nun:H|zero:NNNNNNNNN',                ]
-        [ 'INNNNNNNNN', [ -5,           ], 'nun:I|zero:NNNNNNNNN',                ]
-        [ 'JNNNNNNNNN', [ -4,           ], 'nun:J|zero:NNNNNNNNN',                ]
-        [ 'KNNNNNNNNN', [ -3,           ], 'nun:K|zero:NNNNNNNNN',                ]
-        [ 'LNNNNNNNNN', [ -2,           ], 'nun:L|zero:NNNNNNNNN',                ]
-        [ 'MNNNNNNNNN', [ -1,           ], 'nun:M|zero:NNNNNNNNN',                ]
-        [ 'NC79NNNNNN', [ 0, -20,       ], 'zero:N|nnum:C,79|zero:NNNNNN',        ]
-        [ 'NNNNNNNNNN', [ 0,            ], 'zero:NNNNNNNNNN',                     ]
-        [ 'NX20NNNNNN', [ 0, 20,        ], 'zero:N|pnum:X,20|zero:NNNNNN',        ]
-        [ 'WNNNNNNNNN', [ 9,            ], 'pun:W|zero:NNNNNNNNN',               ]
-        [ 'X10KNNNNNN', [ 10, -3,       ], 'pnum:X,10|nun:K|zero:NNNNNN',         ]
-        [ 'X10LNNNNNN', [ 10, -2,       ], 'pnum:X,10|nun:L|zero:NNNNNN',         ]
-        [ 'X10MNNNNNN', [ 10, -1,       ], 'pnum:X,10|nun:M|zero:NNNNNN',         ]
-        [ 'X10NNNNNNN', [ 10,           ], 'pnum:X,10|zero:NNNNNNN',              ]
-        # [ 'X10NNNNNNN', [ 10, 0,        ], 'pnum:X,10|zero:NNNNNNN',              ]
-        [ 'X10ONNNNNN', [ 10, 1,        ], 'pnum:X,10|pun:O|zero:NNNNNN',        ]
-        [ 'X10X10MNNN', [ 10, 10, -1,   ], 'pnum:X,10|pnum:X,10|nun:M|zero:NNN',  ]
-        [ 'X10X10NNNN', [ 10, 10,       ], 'pnum:X,10|pnum:X,10|zero:NNNN',       ]
-        [ 'X10X20NNNN', [ 10, 20,       ], 'pnum:X,10|pnum:X,20|zero:NNNN',       ]
-        [ 'X20NNNNNNN', [ 20,           ], 'pnum:X,20|zero:NNNNNNN',              ]
-        [ 'X20X10NNNN', [ 20, 10,       ], 'pnum:X,20|pnum:X,10|zero:NNNN',       ]
-        [ 'X90NNNNNNN', [ 90,           ], 'pnum:X,90|zero:NNNNNNN',              ]
-        [ 'Y900NNNNNN', [ 900,          ], 'pnum:Y,900|zero:NNNNNN',              ]
+        [ 'B000NNNNNN', [ -999,         ], 'nnum:B,000|padding:NNNNNN',              ]
+        [ 'C00NNNNNNN', [ -99,          ], 'nnum:C,00|padding:NNNNNNN',              ]
+        [ 'C09NNNNNNN', [ -90,          ], 'nnum:C,09|padding:NNNNNNN',              ]
+        [ 'C88NNNNNNN', [ -11,          ], 'nnum:C,88|padding:NNNNNNN',              ]
+        [ 'C89NNNNNNN', [ -10,          ], 'nnum:C,89|padding:NNNNNNN',              ]
+        [ 'ENNNNNNNNN', [ -9,           ], 'nun:E|padding:NNNNNNNNN',                ]
+        [ 'FNNNNNNNNN', [ -8,           ], 'nun:F|padding:NNNNNNNNN',                ]
+        [ 'GNNNNNNNNN', [ -7,           ], 'nun:G|padding:NNNNNNNNN',                ]
+        [ 'HNNNNNNNNN', [ -6,           ], 'nun:H|padding:NNNNNNNNN',                ]
+        [ 'INNNNNNNNN', [ -5,           ], 'nun:I|padding:NNNNNNNNN',                ]
+        [ 'JNNNNNNNNN', [ -4,           ], 'nun:J|padding:NNNNNNNNN',                ]
+        [ 'KNNNNNNNNN', [ -3,           ], 'nun:K|padding:NNNNNNNNN',                ]
+        [ 'LNNNNNNNNN', [ -2,           ], 'nun:L|padding:NNNNNNNNN',                ]
+        [ 'MNNNNNNNNN', [ -1,           ], 'nun:M|padding:NNNNNNNNN',                ]
+        [ 'NC79NNNNNN', [ 0, -20,       ], 'zero:N|nnum:C,79|padding:NNNNNN',        ]
+        [ 'NNNNNNNNNN', [ 0,            ], 'padding:NNNNNNNNNN',                     ]
+        [ 'NX20NNNNNN', [ 0, 20,        ], 'zero:N|pnum:X,20|padding:NNNNNN',        ]
+        [ 'WNNNNNNNNN', [ 9,            ], 'pun:W|padding:NNNNNNNNN',               ]
+        [ 'X10KNNNNNN', [ 10, -3,       ], 'pnum:X,10|nun:K|padding:NNNNNN',         ]
+        [ 'X10LNNNNNN', [ 10, -2,       ], 'pnum:X,10|nun:L|padding:NNNNNN',         ]
+        [ 'X10MNNNNNN', [ 10, -1,       ], 'pnum:X,10|nun:M|padding:NNNNNN',         ]
+        [ 'X10NNNNNNN', [ 10,           ], 'pnum:X,10|padding:NNNNNNN',              ]
+        # [ 'X10NNNNNNN', [ 10, 0,        ], 'pnum:X,10|padding:NNNNNNN',              ]
+        [ 'X10ONNNNNN', [ 10, 1,        ], 'pnum:X,10|pun:O|padding:NNNNNN',        ]
+        [ 'X10X10MNNN', [ 10, 10, -1,   ], 'pnum:X,10|pnum:X,10|nun:M|padding:NNN',  ]
+        [ 'X10X10NNNN', [ 10, 10,       ], 'pnum:X,10|pnum:X,10|padding:NNNN',       ]
+        [ 'X10X20NNNN', [ 10, 20,       ], 'pnum:X,10|pnum:X,20|padding:NNNN',       ]
+        [ 'X20NNNNNNN', [ 20,           ], 'pnum:X,20|padding:NNNNNNN',              ]
+        [ 'X20X10NNNN', [ 20, 10,       ], 'pnum:X,20|pnum:X,10|padding:NNNN',       ]
+        [ 'X90NNNNNNN', [ 90,           ], 'pnum:X,90|padding:NNNNNNN',              ]
+        [ 'Y900NNNNNN', [ 900,          ], 'pnum:Y,900|padding:NNNNNN',              ]
         [ 'N',          [ 0,            ], 'zero:N' ,                             ]
         [ '5',          [               ], 'other:5',                             ]
         [ 'äöü',        [               ], 'other:äöü',                           ]
@@ -166,8 +168,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           lexemes.push { name, letters, mantissa, }
           lexeme_result.push if mantissa? then "#{name}:#{letters},#{mantissa}" else "#{name}:#{letters}"
           index_result.push lexeme.data.index if lexeme.data.index?
-        index_result    = index_result.flat()
+        # index_result    = index_result.flat()
         index_result.pop() while ( index_result.length > 1 ) and ( ( index_result.at -1 ) is 0 )
+        # index_result.push 0 if index_result.length is 0
         lexeme_result   = lexeme_result.join '|'
         # tabulate_lexemes lexemes
         # debug 'Ωilxhol___5', lexeme for lexeme in lexemes
