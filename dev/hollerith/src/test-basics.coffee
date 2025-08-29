@@ -257,18 +257,214 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ulines.sort()
       real_indexes = []
       for uline in ulines
-        # help 'Ωbsk__72', uline
+        # help 'Ωbsk__71', uline
         real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__73 = -> equals expected_indexes, real_indexes ), false
+      @eq ( Ωbsk__72 = -> equals expected_indexes, real_indexes ), false
     #.......................................................................................................
     for _ in [ 1 .. 10 ]
       plines = shuffle plines
       plines.sort()
       real_indexes = []
       for pline in plines
-        # help 'Ωbsk__74', pline
+        # help 'Ωbsk__73', pline
         real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__75 = -> equals expected_indexes, real_indexes ), true
+      @eq ( Ωbsk__74 = -> equals expected_indexes, real_indexes ), true
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  h10mvp2_sorting_2: ->
+    { Hollerith,
+      hollerith_10,
+      hollerith_10mvp2,
+      hollerith_128,
+      internals               } = require '../../../apps/hollerith'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    probes = [
+      [ [ -999,           ], 'B000',        ]
+      [ [  -99,           ], 'C00',         ]
+      [ [  -90,           ], 'C09',         ]
+      [ [  -11,           ], 'C88',         ]
+      [ [  -10,           ], 'C89',         ]
+      [ [   -9,           ], 'E',           ]
+      [ [   -8,           ], 'F',           ]
+      [ [   -7,           ], 'G',           ]
+      [ [   -6,           ], 'H',           ]
+      [ [   -5,           ], 'I',           ]
+      [ [   -4,           ], 'J',           ]
+      [ [   -3,           ], 'K',           ]
+      [ [   -2,           ], 'L',           ]
+      [ [   -1,           ], 'M',           ]
+      [ [   +0,  -20,     ], 'NC79',        ]
+      [ [   +0,           ], 'N',           ]
+      [ [   +0,  +20,     ], 'NX20',        ]
+      [ [   +9,           ], 'W',           ]
+      [ [  +10,   -3,     ], 'X10K',        ]
+      [ [  +10,   -2,     ], 'X10L',        ]
+      [ [  +10,   -1,     ], 'X10M',        ]
+      [ [  +10,           ], 'X10',         ]
+      [ [  +10,   +0,     ], 'X10N',        ]
+      [ [  +10,   +1,     ], 'X10O',        ]
+      [ [  +10,  +10, -1, ], 'X10X10M',     ]
+      [ [  +10,  +10,     ], 'X10X10',      ]
+      [ [  +10,  +20,     ], 'X10X20',      ]
+      [ [  +20,           ], 'X20',         ]
+      [ [  +20,  +10,     ], 'X20X10',      ]
+      [ [  +90,           ], 'X90',         ]
+      [ [ +900,           ], 'Y900',        ]
+      ]
+    ulines            = []
+    plines            = []
+    expected_indexes  = ( idx for idx in [ 0 ... probes.length ] )
+    shuffle           = GUY.rnd.get_shuffle 57, 88
+    for [ vdx, sk_matcher, ], idx in probes
+      usk   = hollerith_10mvp2.encode vdx
+      @eq ( Ωbsk__75 = -> usk ), sk_matcher
+      psk   = usk.padEnd 10, hollerith_10mvp2.cfg.zpuns[ 0 ]
+      usk   = usk.padEnd 10, ' '
+      ulines.push "#{usk} #{rpr vdx} #{idx}"
+      plines.push "#{psk} #{rpr vdx} #{idx}"
+    #.......................................................................................................
+    for _ in [ 1 .. 10 ]
+      ulines = shuffle ulines
+      ulines.sort()
+      real_indexes = []
+      for uline in ulines
+        # help 'Ωbsk__76', uline
+        real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
+      @eq ( Ωbsk__77 = -> equals expected_indexes, real_indexes ), false
+    #.......................................................................................................
+    for _ in [ 1 .. 10 ]
+      plines = shuffle plines
+      plines.sort()
+      real_indexes = []
+      for pline in plines
+        # help 'Ωbsk__78', pline
+        real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
+      @eq ( Ωbsk__79 = -> equals expected_indexes, real_indexes ), true
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  h10mvp2_sorting_2: ->
+    { Hollerith,
+      hollerith_128,
+      internals               } = require '../../../apps/hollerith'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    probes = [
+      [ [ -999,           ], 'Í¿;',     ]
+      [ [  -99,           ], 'Î?',      ]
+      [ [  -90,           ], 'ÎH',      ]
+      [ [  -11,           ], 'Ø',       ]
+      [ [  -10,           ], 'Ù',       ]
+      [ [   -9,           ], 'Ú',       ]
+      [ [   -8,           ], 'Û',       ]
+      [ [   -7,           ], 'Ü',       ]
+      [ [   -6,           ], 'Ý',       ]
+      [ [   -5,           ], 'Þ',       ]
+      [ [   -4,           ], 'ß',       ]
+      [ [   -3,           ], 'à',       ]
+      [ [   -2,           ], 'á',       ]
+      [ [   -1,           ], 'â',       ]
+      [ [   +0,  -20,     ], 'ãÏ',      ]
+      [ [   +0,           ], 'ã',       ]
+      [ [   +0,  +20,     ], 'ã÷',      ]
+      [ [   +9,           ], 'ì',       ]
+      [ [  +10,   -3,     ], 'íà',      ]
+      [ [  +10,   -2,     ], 'íá',      ]
+      [ [  +10,   -1,     ], 'íâ',      ]
+      [ [  +10,           ], 'í',       ]
+      [ [  +10,   +0,     ], 'íã',      ]
+      [ [  +10,   +1,     ], 'íä',      ]
+      [ [  +10,  +10, -1, ], 'ííâ',     ]
+      [ [  +10,  +10,     ], 'íí',      ]
+      [ [  +10,  +20,     ], 'í÷',      ]
+      [ [  +20,           ], '÷',       ]
+      [ [  +20,  +10,     ], '÷í',      ]
+      [ [  +90,           ], 'ø~',      ]
+      [ [ +900,           ], 'ù*&',     ]
+      ]
+    ulines            = []
+    plines            = []
+    expected_indexes  = ( idx for idx in [ 0 ... probes.length ] )
+    shuffle           = GUY.rnd.get_shuffle 57, 88
+    for [ vdx, sk_matcher, ], idx in probes
+      usk   = hollerith_128.encode vdx
+      @eq ( Ωbsk__80 = -> usk ), sk_matcher
+      # echo rpr usk
+      psk   = usk.padEnd 10, hollerith_128.cfg.zpuns[ 0 ]
+      usk   = usk.padEnd 10, ' '
+      ulines.push "#{usk} #{rpr vdx} #{idx}"
+      plines.push "#{psk} #{rpr vdx} #{idx}"
+    #.......................................................................................................
+    for _ in [ 1 .. 10 ]
+      ulines = shuffle ulines
+      ulines.sort()
+      real_indexes = []
+      for uline in ulines
+        # help 'Ωbsk__81', uline
+        real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
+      @eq ( Ωbsk__82 = -> equals expected_indexes, real_indexes ), false
+    #.......................................................................................................
+    for _ in [ 1 .. 10 ]
+      plines = shuffle plines
+      plines.sort()
+      real_indexes = []
+      for pline, idx in plines
+        help 'Ωbsk__83', rpr pline if _ is 1
+        real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
+      @eq ( Ωbsk__84 = -> equals expected_indexes, real_indexes ), true
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  h10mvp2_decode: ->
+    { Hollerith,
+      hollerith_128,
+      internals               } = require '../../../apps/hollerith'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    probes_and_matchers = [
+      [ 'Í¿;ããããããã', [ -999,         ] ]
+      [ 'Î?ãããããããã', [ -99,          ] ]
+      [ 'ÎHãããããããã', [ -90,          ] ]
+      [ 'Øããããããããã', [ -11,          ] ]
+      [ 'Ùããããããããã', [ -10,          ] ]
+      [ 'Úããããããããã', [ -9,           ] ]
+      [ 'Ûããããããããã', [ -8,           ] ]
+      [ 'Üããããããããã', [ -7,           ] ]
+      [ 'Ýããããããããã', [ -6,           ] ]
+      [ 'Þããããããããã', [ -5,           ] ]
+      [ 'ßããããããããã', [ -4,           ] ]
+      [ 'àããããããããã', [ -3,           ] ]
+      [ 'áããããããããã', [ -2,           ] ]
+      [ 'âããããããããã', [ -1,           ] ]
+      [ 'ãÏãããããããã', [ 0, -20,       ] ]
+      [ 'ãããããããããã', [ 0,            ] ]
+      [ 'ã÷ãããããããã', [ 0, 20,        ] ]
+      [ 'ìããããããããã', [ 9,            ] ]
+      [ 'íàãããããããã', [ 10, -3,       ] ]
+      [ 'íáãããããããã', [ 10, -2,       ] ]
+      [ 'íâãããããããã', [ 10, -1,       ] ]
+      [ 'íããããããããã', [ 10,           ] ]
+      [ 'íããããããããã', [ 10, 0,        ] ]
+      [ 'íäãããããããã', [ 10, 1,        ] ]
+      [ 'ííâããããããã', [ 10, 10, -1,   ] ]
+      [ 'ííãããããããã', [ 10, 10,       ] ]
+      [ 'í÷ãããããããã', [ 10, 20,       ] ]
+      [ '÷ããããããããã', [ 20,           ] ]
+      [ '÷íãããããããã', [ 20, 10,       ] ]
+      [ 'ø~ãããããããã', [ 90,           ] ]
+      [ 'ù*&ããããããã', [ 900,          ] ]
+      ]
+    #.......................................................................................................
+    for [ probe, matcher, ] in probes_and_matchers
+      debug 'Ωbsk__83', rpr hollerith_128.decode probe
     #.......................................................................................................
     return null
 
@@ -276,6 +472,6 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @hollerith
