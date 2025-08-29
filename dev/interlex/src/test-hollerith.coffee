@@ -30,6 +30,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #   isa
 #   std
 #   type_of               } = require '../../../apps/cleartype'
+SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
 
 
 ############################################################################################################
@@ -45,8 +46,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
     h10mvp2: ->
       { Grammar
         Token
-        Lexeme } = require '../../../apps/interlex'
-      { regex, } = require 'regex'
+        Lexeme                  } = require '../../../apps/interlex'
+      { regex,                  } = require 'regex'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { encode, decode,         } = SFMODULES.unstable.require_anybase()
       #.....................................................................................................
       cfg = constants_10mvp2 = Object.freeze
         max_integer:  +999
@@ -69,26 +72,41 @@ GTNG                      = require '../../../apps/guy-test-NG'
           nmag,
           pmag,
           alphabet,     } = cfg
+        # base              = alphabet.length
         #...................................................................................................
-        zero        = zpuns[  0     ]
-        puns        = zpuns[  1 ..  ]
-        nmag        = nmag[   1 ..  ]
-        pmag        = pmag[   1 ..  ]
+        nuns_letters  = nuns
+        puns_letters  = zpuns[  1 ..  ]
+        nmag_letters  = nmag[   1 ..  ]
+        pmag_letters  = pmag[   1 ..  ]
+        zero_letters  = zpuns[  0     ]
+        max_digit     = alphabet.at -1
         #...................................................................................................
-        fit_nun     = regex"(?<letters> [ #{nuns       } ]   )                                  "
-        fit_pun     = regex"(?<letters> [ #{puns       } ]   )                                  "
-        fit_nnum    = regex"(?<letters> [ #{nmag       } ]   ) (?<mantissa> [ #{alphabet}  ]* ) "
-        fit_pnum    = regex"(?<letters> [ #{pmag       } ]   ) (?<mantissa> [ #{alphabet}  ]* ) "
-        fit_zero    = regex"(?<letters> [ #{zero       } ]+  )                                  "
+        fit_nun       = regex"(?<letters> [ #{nuns_letters} ]  )                                  "
+        fit_pun       = regex"(?<letters> [ #{puns_letters} ]  )                                  "
+        fit_nnum      = regex"(?<letters> [ #{nmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
+        fit_pnum      = regex"(?<letters> [ #{pmag_letters} ]  ) (?<mantissa> [ #{alphabet}  ]* ) "
+        fit_zero      = regex"(?<letters> [ #{zero_letters} ]+ )                                  "
+        fit_other     = regex"(?<letters> .                    )                                  "
         #...................................................................................................
-        R       = new Grammar { emit_signals: false, }
-        first   = R.new_level { name: 'first', }
-        first.new_token   { name: 'nun',      fit: fit_nun,                       }
-        first.new_token   { name: 'pun',      fit: fit_pun,                       }
-        first.new_token   { name: 'nnum',     fit: fit_nnum,                      }
-        first.new_token   { name: 'pnum',     fit: fit_pnum,                      }
-        first.new_token   { name: 'zero',     fit: fit_zero,                      }
-        first.new_token   { name: 'other',    fit: /./,       merge: true,        }
+        cast_nun      = ({ data: d, }) -> d.index = ( cfg.nuns.indexOf d.letters ) - cfg.nuns.length
+        cast_pun      = ({ data: d, }) -> d.index = +cfg.zpuns.indexOf  d.letters
+        cast_nnum     = ({ data: d, }) ->
+          mantissa  = d.mantissa.padStart cfg.zero_pad_length, max_digit
+          # debug 'Ωilxhol___1', ( rpr d.mantissa ), ( rpr mantissa )
+          d.index   = ( decode mantissa, alphabet ) - cfg.max_integer
+        cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
+        cast_zero     = ({ data: d, }) -> d.index = ( 0 for _ in d.letters )
+        # cast_zero     = ( P ) -> debug 'Ωilxhol___2', P
+        cast_other    = null # ({ data: d, }) -> # debug 'Ωilxhol___3', 'other', d #; d.letters = d.letters.join '-'
+        #...................................................................................................
+        R           = new Grammar { emit_signals: false, }
+        first       = R.new_level { name: 'first', }
+        first.new_token   { name: 'nun',      fit: fit_nun,                  cast: cast_nun,    }
+        first.new_token   { name: 'pun',      fit: fit_pun,                  cast: cast_pun,    }
+        first.new_token   { name: 'nnum',     fit: fit_nnum,                 cast: cast_nnum,   }
+        first.new_token   { name: 'pnum',     fit: fit_pnum,                 cast: cast_pnum,   }
+        first.new_token   { name: 'zero',     fit: fit_zero,                 cast: cast_zero,   }
+        first.new_token   { name: 'other',    fit: fit_other, merge: 'list', cast: cast_other,  }
         #...................................................................................................
         return R
       #.....................................................................................................
@@ -115,7 +133,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         [ 'X10LNNNNNN', [ 10, -2,       ], 'pnum:X,10|nun:L|zero:NNNNNN',         ]
         [ 'X10MNNNNNN', [ 10, -1,       ], 'pnum:X,10|nun:M|zero:NNNNNN',         ]
         [ 'X10NNNNNNN', [ 10,           ], 'pnum:X,10|zero:NNNNNNN',              ]
-        [ 'X10NNNNNNN', [ 10, 0,        ], 'pnum:X,10|zero:NNNNNNN',              ]
+        # [ 'X10NNNNNNN', [ 10, 0,        ], 'pnum:X,10|zero:NNNNNNN',              ]
         [ 'X10ONNNNNN', [ 10, 1,        ], 'pnum:X,10|pun:O|zero:NNNNNN',        ]
         [ 'X10X10MNNN', [ 10, 10, -1,   ], 'pnum:X,10|pnum:X,10|nun:M|zero:NNN',  ]
         [ 'X10X10NNNN', [ 10, 10,       ], 'pnum:X,10|pnum:X,10|zero:NNNN',       ]
@@ -124,27 +142,39 @@ GTNG                      = require '../../../apps/guy-test-NG'
         [ 'X20X10NNNN', [ 20, 10,       ], 'pnum:X,20|pnum:X,10|zero:NNNN',       ]
         [ 'X90NNNNNNN', [ 90,           ], 'pnum:X,90|zero:NNNNNNN',              ]
         [ 'Y900NNNNNN', [ 900,          ], 'pnum:Y,900|zero:NNNNNN',              ]
+        [ 'N',          [ 0,            ], 'zero:N' ,                             ]
+        [ '5',          [               ], 'other:5',                             ]
+        [ 'äöü',        [               ], 'other:äöü',                           ]
+        [ 'X10',        [ 10,           ], 'pnum:X,10',                           ]
+        [ 'K',          [ -3,           ], 'nun:K',                               ]
         ]
       #.....................................................................................................
       lexer   = compile_sortkey_lexer cfg
       lexemes = lexer.scan_to_list '5'; tabulate_lexemes lexemes
       lexemes = lexer.scan_to_list 'N'; tabulate_lexemes lexemes
-      lexemes = lexer.scan_to_list 'N'; tabulate_lexemes lexemes
-      for [ probe, list_matcher, lexeme_matcher, ] in probes_and_matchers
-        # urge 'Ωilxhol___1', rpr probe
-        lexemes = []
-        lexeme_result  = []
+      lexemes = lexer.scan_to_list 'äöü'; tabulate_lexemes lexemes
+      for [ probe, index_matcher, lexeme_matcher, ] in probes_and_matchers
+        # urge 'Ωilxhol___4', rpr probe
+        lexemes         = []
+        lexeme_result   = []
+        index_result    = []
         for lexeme in lexer.scan_to_list probe
           name      = lexeme.name
           letters   = lexeme.data.letters
+          letters   = letters.join '' if ( type_of letters ) is 'list'
           mantissa  = lexeme.data.mantissa ? null
           lexemes.push { name, letters, mantissa, }
           lexeme_result.push if mantissa? then "#{name}:#{letters},#{mantissa}" else "#{name}:#{letters}"
-        lexeme_result  = lexeme_result.join '|'
+          index_result.push lexeme.data.index if lexeme.data.index?
+        index_result    = index_result.flat()
+        index_result.pop() while ( index_result.length > 1 ) and ( ( index_result.at -1 ) is 0 )
+        lexeme_result   = lexeme_result.join '|'
         # tabulate_lexemes lexemes
-        # debug 'Ωilxhol___2', lexeme for lexeme in lexemes
-        info 'Ωilxhol___3', rpr lexeme_result
-        @eq ( Ωilxhol___4 = -> lexeme_result ), lexeme_matcher
+        # debug 'Ωilxhol___5', lexeme for lexeme in lexemes
+        info 'Ωilxhol___6', ( rpr lexeme_result ), ( rpr index_result )
+        # help 'Ωilxhol___7', rpr index_result # if index_result.length > 0
+        @eq ( Ωilxhol___8 = -> lexeme_result  ), lexeme_matcher
+        @eq ( Ωilxhol___9 = -> index_result   ), index_matcher
       #.....................................................................................................
       return null
 
