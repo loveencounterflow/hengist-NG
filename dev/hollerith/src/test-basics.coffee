@@ -422,7 +422,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  h10mvp2_decode: ->
+  h128_decode: ->
     { Hollerith,
       hollerith_128,
       internals               } = require '../../../apps/hollerith'
@@ -464,7 +464,54 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ]
     #.......................................................................................................
     for [ probe, matcher, ] in probes_and_matchers
-      debug 'Ωbsk__83', rpr hollerith_128.decode probe
+      debug 'Ωbsk__85', rpr hollerith_128.decode probe
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  h10mvp2_decode: ->
+    { Hollerith,
+      hollerith_128,
+      internals               } = require '../../../apps/hollerith'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    probes_and_matchers = [
+      [ 'B000NNNNNN', [ -999,         ] ]
+      [ 'C00NNNNNNN', [ -99,          ] ]
+      [ 'C09NNNNNNN', [ -90,          ] ]
+      [ 'C88NNNNNNN', [ -11,          ] ]
+      [ 'C89NNNNNNN', [ -10,          ] ]
+      [ 'ENNNNNNNNN', [ -9,           ] ]
+      [ 'FNNNNNNNNN', [ -8,           ] ]
+      [ 'GNNNNNNNNN', [ -7,           ] ]
+      [ 'HNNNNNNNNN', [ -6,           ] ]
+      [ 'INNNNNNNNN', [ -5,           ] ]
+      [ 'JNNNNNNNNN', [ -4,           ] ]
+      [ 'KNNNNNNNNN', [ -3,           ] ]
+      [ 'LNNNNNNNNN', [ -2,           ] ]
+      [ 'MNNNNNNNNN', [ -1,           ] ]
+      [ 'NC79NNNNNN', [ 0, -20,       ] ]
+      [ 'NNNNNNNNNN', [ 0,            ] ]
+      [ 'NX20NNNNNN', [ 0, 20,        ] ]
+      [ 'WNNNNNNNNN', [ 9,            ] ]
+      [ 'X10KNNNNNN', [ 10, -3,       ] ]
+      [ 'X10LNNNNNN', [ 10, -2,       ] ]
+      [ 'X10MNNNNNN', [ 10, -1,       ] ]
+      [ 'X10NNNNNNN', [ 10,           ] ]
+      [ 'X10NNNNNNN', [ 10, 0,        ] ]
+      [ 'X10ONNNNNN', [ 10, 1,        ] ]
+      [ 'X10X10MNNN', [ 10, 10, -1,   ] ]
+      [ 'X10X10NNNN', [ 10, 10,       ] ]
+      [ 'X10X20NNNN', [ 10, 20,       ] ]
+      [ 'X20NNNNNNN', [ 20,           ] ]
+      [ 'X20X10NNNN', [ 20, 10,       ] ]
+      [ 'X90NNNNNNN', [ 90,           ] ]
+      [ 'Y900NNNNNN', [ 900,          ] ]
+      ]
+    #.......................................................................................................
+    for [ probe, matcher, ] in probes_and_matchers
+      debug 'Ωbsk__86', rpr hollerith_10mvp2.decode probe
     #.......................................................................................................
     return null
 
