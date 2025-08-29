@@ -526,6 +526,7 @@ demo_hollerith_vdx_sortkey = ->
     try e.sk = VDX.encode e.vdx catch error
       warn 'Ωbsk_100', e, error.message
       e.sk = '???'
+    e.sk += '0000000000000000000'
   d.sort ( a, b ) ->
     return -1 if a.sk < b.sk
     return +1 if a.sk > b.sk

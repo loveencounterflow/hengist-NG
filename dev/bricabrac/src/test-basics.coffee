@@ -967,6 +967,64 @@ settings =
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  require_anybase: ->
+    { encode,
+      decode,
+      encode_bigint,
+      decode_bigint,              } = SFMODULES.unstable.require_anybase()
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    { Get_random,                 } = SFMODULES.unstable.require_get_random()
+    repeat_count                    = 1000
+    #.......................................................................................................
+    do =>
+      @eq ( Ωbrbr_189 = -> type_of encode                   ), 'function'
+      @eq ( Ωbrbr_190 = -> type_of decode                   ), 'function'
+      @eq ( Ωbrbr_191 = -> type_of encode_bigint            ), 'function'
+      @eq ( Ωbrbr_192 = -> type_of decode_bigint            ), 'function'
+      return null
+    #.......................................................................................................
+    do =>
+      on_stats    = null
+      get_random  = new Get_random { seed: 798723, on_stats, }
+      #.....................................................................................................
+      producer    = -> get_random.integer { min: 0, max: Number.MAX_SAFE_INTEGER, on_stats, }
+      #.....................................................................................................
+      for probe from get_random.walk { producer, n: repeat_count, on_stats, }
+        matcher = "#{probe}"
+        @eq ( Ωbrbr_193 = -> encode         probe, '0123456789' ), matcher
+        @eq ( Ωbrbr_194 = -> encode_bigint  probe, '0123456789' ), matcher
+      return null
+    #.......................................................................................................
+    do =>
+      on_stats      = null
+      get_random    = new Get_random { seed: 798723, on_stats, }
+      big_alphabet  = '0123456789abcdefghijklmnopqrstuvwxyz'
+      #.....................................................................................................
+      producer      = ->
+        n         = get_random.integer { min: 0, max: Number.MAX_SAFE_INTEGER, }
+        base      = get_random.integer { min: 2, max: 36, }
+        alphabet  = big_alphabet[ ... base ]
+        matcher   = n.toString base
+        return { n, base, alphabet, matcher, }
+      #.....................................................................................................
+      for { n, base, alphabet, matcher, } from get_random.walk { producer, n: repeat_count, on_stats, }
+        @eq ( Ωbrbr_195 = -> encode               n, alphabet ), matcher
+        @eq ( Ωbrbr_196 = -> decode         matcher, alphabet ), n
+        @eq ( Ωbrbr_197 = -> encode_bigint        n, alphabet ), matcher
+        @eq ( Ωbrbr_198 = -> decode_bigint  matcher, alphabet ), BigInt n
+      return null
+    #.......................................................................................................
+    do =>
+      @eq ( Ωbrbr_199 = -> encode_bigint  100, '0123456789'         ), '100'
+      @eq ( Ωbrbr_200 = -> encode         100, '0123456789'         ), '100'
+      @eq ( Ωbrbr_201 = -> encode           7, '.█'                 ), '███'
+      @eq ( Ωbrbr_202 = -> encode           8, '.█'                 ), '█...'
+      @eq ( Ωbrbr_203 = -> encode         100, '.█'                 ),  '██..█..'
+      return null
+    #.......................................................................................................
+    return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -977,7 +1035,8 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
   # ( new Test guytest_cfg ).test { tests, }
-  tests.require_format_stack_format_stack()
+  ( new Test guytest_cfg ).test { require_anybase: tests.require_anybase, }
+  # tests.require_format_stack_format_stack()
   #.........................................................................................................
   demo_clean = ->
     ( new Test guytest_cfg ).test { get_random_integer_producer: tests.get_random_integer_producer, }
@@ -985,6 +1044,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_189', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_204', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
