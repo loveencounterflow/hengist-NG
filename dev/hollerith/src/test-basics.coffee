@@ -510,12 +510,15 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       [ 'Y900NNNNNN', [ 900,          ] ]
       ]
     #.......................................................................................................
-    @throws ( Ωbsk__86 = -> hollerith_10mvp2.decode null ), /expected a text/
-    @throws ( Ωbsk__87 = -> hollerith_10mvp2.decode '' ), /expected a non-empty text/
-    @throws ( Ωbsk__88 = -> hollerith_10mvp2.decode 'Ä123' ), /yyy/
+    @throws ( Ωbsk__86 = -> hollerith_10mvp2.decode null    ), /expected a text/
+    @throws ( Ωbsk__87 = -> hollerith_10mvp2.decode ''      ), /expected a non-empty text/
+    @throws ( Ωbsk__88 = -> hollerith_10mvp2.decode 'Ä123'  ), /expected a sortkey/
+    debug 'Ωbsk__89', hollerith_10mvp2.cfg.sortkey_re
+    debug 'Ωbsk__90', hollerith_10mvp2.decode 'Y900NNNNNN'
+    debug 'Ωbsk__91', hollerith_10mvp2.decode 'Y900Y900NNNNNN'
     #.......................................................................................................
     # for [ probe, matcher, ] in probes_and_matchers
-    #   debug 'Ωbsk__89', rpr hollerith_10mvp2.decode probe
+    #   debug 'Ωbsk__92', rpr hollerith_10mvp2.decode probe
     #.......................................................................................................
     return null
 
@@ -523,6 +526,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test @hollerith
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  # ( new Test guytest_cfg ).test @hollerith
+  ( new Test guytest_cfg ).test { h10mvp2_decode: @hollerith.h10mvp2_decode, }
