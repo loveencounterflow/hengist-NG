@@ -1023,6 +1023,15 @@ settings =
       @eq ( Ωbrbr_203 = -> encode         100, '.█'                 ),  '██..█..'
       return null
     #.......................................................................................................
+    do =>
+      a10 = '0123456789'
+      a16 = '0123456789abcdef'
+      n   = 1234567890;                info 'Ωbrbr_204', f"#{ rpr encode n, a10 }:>30c; #{ rpr n.toString 10 }:>30c; #{ rpr encode n, a16 }:>30c; #{ rpr n.toString 16 }:>30c;"
+      n   = 123456789012345;           info 'Ωbrbr_205', f"#{ rpr encode n, a10 }:>30c; #{ rpr n.toString 10 }:>30c; #{ rpr encode n, a16 }:>30c; #{ rpr n.toString 16 }:>30c;"
+      n   = 12345678901234567890;      info 'Ωbrbr_206', f"#{ rpr encode n, a10 }:>30c; #{ rpr n.toString 10 }:>30c; #{ rpr encode n, a16 }:>30c; #{ rpr n.toString 16 }:>30c;"
+      n   = 1234567890123456789012345; info 'Ωbrbr_207', f"#{ rpr encode n, a10 }:>30c; #{ rpr n.toString 10 }:>30c; #{ rpr encode n, a16 }:>30c; #{ rpr n.toString 16 }:>30c;"
+      return null
+    #.......................................................................................................
     return null
 
 
@@ -1044,6 +1053,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_204', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_208', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
