@@ -471,7 +471,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   #---------------------------------------------------------------------------------------------------------
   h10mvp2_decode: ->
     { Hollerith,
-      hollerith_128,
+      hollerith_10mvp2,
       internals               } = require '../../../apps/hollerith'
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals, } = require 'node:util'
@@ -510,8 +510,12 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       [ 'Y900NNNNNN', [ 900,          ] ]
       ]
     #.......................................................................................................
-    for [ probe, matcher, ] in probes_and_matchers
-      debug 'Ωbsk__86', rpr hollerith_10mvp2.decode probe
+    @throws ( Ωbsk__86 = -> hollerith_10mvp2.decode null ), /expected a text/
+    @throws ( Ωbsk__87 = -> hollerith_10mvp2.decode '' ), /expected a non-empty text/
+    @throws ( Ωbsk__88 = -> hollerith_10mvp2.decode 'Ä123' ), /yyy/
+    #.......................................................................................................
+    # for [ probe, matcher, ] in probes_and_matchers
+    #   debug 'Ωbsk__89', rpr hollerith_10mvp2.decode probe
     #.......................................................................................................
     return null
 

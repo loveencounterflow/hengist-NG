@@ -11,7 +11,7 @@ GUY                       = require 'guy'
   praise
   urge
   warn
-  whisper }               = GUY.trm.get_loggers 'intertype/test-basics'
+  whisper }               = GUY.trm.get_loggers 'demo-slevithan-regex'
 { rpr
   inspect
   echo
@@ -379,8 +379,31 @@ demo_lexer_3 = ->
   #.........................................................................................................
   return null
 
+#===========================================================================================================
+demo_character_classes = ->
+  { partial, regex, } = require 'regex'
+  { f } = require '../../../apps/effstring'
+  rx    = regex 'y'
+  #.........................................................................................................
+  letters1 = 'ABCDEFG*[]'
+  letters2 = 'abcdefg'
+  pattern = rx"""
+    ^
+    (?<sk>[#{letters1}#{letters2}]*?)
+    .. $"""
+  info 'Ω__53', pattern
+  probe = 'ab]*cdefg'
+  #.........................................................................................................
+  unless ( match = probe.match pattern )?
+    warn reverse "no match for #{rpr probe}"
+  else
+    help 'Ω__54', { match.groups..., }
+  #.........................................................................................................
+  return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
   # demo_1()
-  demo_lexer_3()
+  # demo_lexer_3()
+  demo_character_classes()
