@@ -190,8 +190,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         return +1 if a.sk > b.sk
         return null
       for entry, idx in probes
-        # debug 'Ωbsk__69', entry
-        @eq ( Ωbsk__70 = -> entry.idx ), idx
+        # debug 'Ωhllt__69', entry
+        @eq ( Ωhllt__70 = -> entry.idx ), idx
       return null
     #.......................................................................................................
     sorted_singles null
@@ -257,18 +257,18 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ulines.sort()
       real_indexes = []
       for uline in ulines
-        # help 'Ωbsk__71', uline
+        # help 'Ωhllt__71', uline
         real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__72 = -> equals expected_indexes, real_indexes ), false
+      @eq ( Ωhllt__72 = -> equals expected_indexes, real_indexes ), false
     #.......................................................................................................
     for _ in [ 1 .. 10 ]
       plines = shuffle plines
       plines.sort()
       real_indexes = []
       for pline in plines
-        # help 'Ωbsk__73', pline
+        # help 'Ωhllt__73', pline
         real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__74 = -> equals expected_indexes, real_indexes ), true
+      @eq ( Ωhllt__74 = -> equals expected_indexes, real_indexes ), true
     #.......................................................................................................
     return null
 
@@ -321,7 +321,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     shuffle           = GUY.rnd.get_shuffle 57, 88
     for [ vdx, sk_matcher, ], idx in probes
       usk   = hollerith_10mvp2.encode vdx
-      @eq ( Ωbsk__75 = -> usk ), sk_matcher
+      @eq ( Ωhllt__75 = -> usk ), sk_matcher
       psk   = usk.padEnd 10, hollerith_10mvp2.cfg.zpuns[ 0 ]
       usk   = usk.padEnd 10, ' '
       ulines.push "#{usk} #{rpr vdx} #{idx}"
@@ -332,18 +332,18 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ulines.sort()
       real_indexes = []
       for uline in ulines
-        # help 'Ωbsk__76', uline
+        # help 'Ωhllt__76', uline
         real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__77 = -> equals expected_indexes, real_indexes ), false
+      @eq ( Ωhllt__77 = -> equals expected_indexes, real_indexes ), false
     #.......................................................................................................
     for _ in [ 1 .. 10 ]
       plines = shuffle plines
       plines.sort()
       real_indexes = []
       for pline in plines
-        # help 'Ωbsk__78', pline
+        # help 'Ωhllt__78', pline
         real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__79 = -> equals expected_indexes, real_indexes ), true
+      @eq ( Ωhllt__79 = -> equals expected_indexes, real_indexes ), true
     #.......................................................................................................
     return null
 
@@ -394,7 +394,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     shuffle           = GUY.rnd.get_shuffle 57, 88
     for [ vdx, sk_matcher, ], idx in probes
       usk   = hollerith_128.encode vdx
-      @eq ( Ωbsk__80 = -> usk ), sk_matcher
+      @eq ( Ωhllt__80 = -> usk ), sk_matcher
       # echo rpr usk
       psk   = usk.padEnd 10, hollerith_128.cfg.zpuns[ 0 ]
       usk   = usk.padEnd 10, ' '
@@ -406,18 +406,18 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ulines.sort()
       real_indexes = []
       for uline in ulines
-        # help 'Ωbsk__81', uline
+        # help 'Ωhllt__81', uline
         real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__82 = -> equals expected_indexes, real_indexes ), false
+      @eq ( Ωhllt__82 = -> equals expected_indexes, real_indexes ), false
     #.......................................................................................................
     for _ in [ 1 .. 10 ]
       plines = shuffle plines
       plines.sort()
       real_indexes = []
       for pline, idx in plines
-        help 'Ωbsk__83', rpr pline if _ is 1
+        help 'Ωhllt__83', rpr pline if _ is 1
         real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωbsk__84 = -> equals expected_indexes, real_indexes ), true
+      @eq ( Ωhllt__84 = -> equals expected_indexes, real_indexes ), true
     #.......................................................................................................
     return null
 
@@ -464,64 +464,143 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ]
     #.......................................................................................................
     for [ probe, matcher, ] in probes_and_matchers
-      debug 'Ωbsk__85', rpr hollerith_128.decode probe
+      debug 'Ωhllt__85', rpr hollerith_128.decode probe
     #.......................................................................................................
     return null
 
+  # #---------------------------------------------------------------------------------------------------------
+  # h10mvp2_decode: ->
+  #   { Hollerith,
+  #     hollerith_10mvp2,
+  #     internals               } = require '../../../apps/hollerith'
+  #   { type_of,                } = SFMODULES.unstable.require_type_of()
+  #   { isDeepStrictEqual: equals, } = require 'node:util'
+  #   #.......................................................................................................
+  #   probes_and_matchers = [
+  #     [ 'B000NNNNNN', [ -999,         ] ]
+  #     [ 'C00NNNNNNN', [ -99,          ] ]
+  #     [ 'C09NNNNNNN', [ -90,          ] ]
+  #     [ 'C88NNNNNNN', [ -11,          ] ]
+  #     [ 'C89NNNNNNN', [ -10,          ] ]
+  #     [ 'ENNNNNNNNN', [ -9,           ] ]
+  #     [ 'FNNNNNNNNN', [ -8,           ] ]
+  #     [ 'GNNNNNNNNN', [ -7,           ] ]
+  #     [ 'HNNNNNNNNN', [ -6,           ] ]
+  #     [ 'INNNNNNNNN', [ -5,           ] ]
+  #     [ 'JNNNNNNNNN', [ -4,           ] ]
+  #     [ 'KNNNNNNNNN', [ -3,           ] ]
+  #     [ 'LNNNNNNNNN', [ -2,           ] ]
+  #     [ 'MNNNNNNNNN', [ -1,           ] ]
+  #     [ 'NC79NNNNNN', [ 0, -20,       ] ]
+  #     [ 'NNNNNNNNNN', [ 0,            ] ]
+  #     [ 'NX20NNNNNN', [ 0, 20,        ] ]
+  #     [ 'WNNNNNNNNN', [ 9,            ] ]
+  #     [ 'X10KNNNNNN', [ 10, -3,       ] ]
+  #     [ 'X10LNNNNNN', [ 10, -2,       ] ]
+  #     [ 'X10MNNNNNN', [ 10, -1,       ] ]
+  #     [ 'X10NNNNNNN', [ 10,           ] ]
+  #     [ 'X10NNNNNNN', [ 10, 0,        ] ]
+  #     [ 'X10ONNNNNN', [ 10, 1,        ] ]
+  #     [ 'X10X10MNNN', [ 10, 10, -1,   ] ]
+  #     [ 'X10X10NNNN', [ 10, 10,       ] ]
+  #     [ 'X10X20NNNN', [ 10, 20,       ] ]
+  #     [ 'X20NNNNNNN', [ 20,           ] ]
+  #     [ 'X20X10NNNN', [ 20, 10,       ] ]
+  #     [ 'X90NNNNNNN', [ 90,           ] ]
+  #     [ 'Y900NNNNNN', [ 900,          ] ]
+  #     ]
+  #   #.......................................................................................................
+  #   @throws ( Ωhllt__86 = -> hollerith_10mvp2.decode null    ), /expected a text/
+  #   @throws ( Ωhllt__87 = -> hollerith_10mvp2.decode ''      ), /expected a non-empty text/
+  #   @throws ( Ωhllt__88 = -> hollerith_10mvp2.decode 'Ä123'  ), /expected a sortkey/
+  #   debug 'Ωhllt__89', hollerith_10mvp2.cfg.sortkey_re
+  #   debug 'Ωhllt__90', hollerith_10mvp2.decode 'Y900NNNNNN'
+  #   debug 'Ωhllt__91', hollerith_10mvp2.decode 'Y900Y900NNNNNN'
+  #   debug 'Ωhllt__92', hollerith_10mvp2.decode 'NNNNNN'
+  #   #.......................................................................................................
+  #   # for [ probe, matcher, ] in probes_and_matchers
+  #   #   debug 'Ωhllt__93', rpr hollerith_10mvp2.decode probe
+  #   #.......................................................................................................
+  #   return null
+
+
   #---------------------------------------------------------------------------------------------------------
-  h10mvp2_decode: ->
+  h10mvp2_decode_units: ->
+    ### NOTE also see corresponding test in `hengist-NG/dev/interlex/src/test-hollerith.coffee` ###
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    #.......................................................................................................
     { Hollerith,
       hollerith_10mvp2,
       internals               } = require '../../../apps/hollerith'
-    { type_of,                } = SFMODULES.unstable.require_type_of()
-    { isDeepStrictEqual: equals, } = require 'node:util'
+    # { isDeepStrictEqual: equals, } = require 'node:util'
     #.......................................................................................................
     probes_and_matchers = [
-      [ 'B000NNNNNN', [ -999,         ] ]
-      [ 'C00NNNNNNN', [ -99,          ] ]
-      [ 'C09NNNNNNN', [ -90,          ] ]
-      [ 'C88NNNNNNN', [ -11,          ] ]
-      [ 'C89NNNNNNN', [ -10,          ] ]
-      [ 'ENNNNNNNNN', [ -9,           ] ]
-      [ 'FNNNNNNNNN', [ -8,           ] ]
-      [ 'GNNNNNNNNN', [ -7,           ] ]
-      [ 'HNNNNNNNNN', [ -6,           ] ]
-      [ 'INNNNNNNNN', [ -5,           ] ]
-      [ 'JNNNNNNNNN', [ -4,           ] ]
-      [ 'KNNNNNNNNN', [ -3,           ] ]
-      [ 'LNNNNNNNNN', [ -2,           ] ]
-      [ 'MNNNNNNNNN', [ -1,           ] ]
-      [ 'NC79NNNNNN', [ 0, -20,       ] ]
-      [ 'NNNNNNNNNN', [ 0,            ] ]
-      [ 'NX20NNNNNN', [ 0, 20,        ] ]
-      [ 'WNNNNNNNNN', [ 9,            ] ]
-      [ 'X10KNNNNNN', [ 10, -3,       ] ]
-      [ 'X10LNNNNNN', [ 10, -2,       ] ]
-      [ 'X10MNNNNNN', [ 10, -1,       ] ]
-      [ 'X10NNNNNNN', [ 10,           ] ]
-      [ 'X10NNNNNNN', [ 10, 0,        ] ]
-      [ 'X10ONNNNNN', [ 10, 1,        ] ]
-      [ 'X10X10MNNN', [ 10, 10, -1,   ] ]
-      [ 'X10X10NNNN', [ 10, 10,       ] ]
-      [ 'X10X20NNNN', [ 10, 20,       ] ]
-      [ 'X20NNNNNNN', [ 20,           ] ]
-      [ 'X20X10NNNN', [ 20, 10,       ] ]
-      [ 'X90NNNNNNN', [ 90,           ] ]
-      [ 'Y900NNNNNN', [ 900,          ] ]
+      [ 'B000NNNNNN', [ -999        ], 'nnum:B,000[-999]|padding:NNNNNN',                     ]
+      [ 'C00NNNNNNN', [ -99         ], 'nnum:C,00[-99]|padding:NNNNNNN',                      ]
+      [ 'C09NNNNNNN', [ -90         ], 'nnum:C,09[-90]|padding:NNNNNNN',                      ]
+      [ 'C88NNNNNNN', [ -11         ], 'nnum:C,88[-11]|padding:NNNNNNN',                      ]
+      [ 'C89NNNNNNN', [ -10         ], 'nnum:C,89[-10]|padding:NNNNNNN',                      ]
+      [ 'ENNNNNNNNN', [ -9          ], 'nun:E[-9]|padding:NNNNNNNNN',                         ]
+      [ 'FNNNNNNNNN', [ -8          ], 'nun:F[-8]|padding:NNNNNNNNN',                         ]
+      [ 'GNNNNNNNNN', [ -7          ], 'nun:G[-7]|padding:NNNNNNNNN',                         ]
+      [ 'HNNNNNNNNN', [ -6          ], 'nun:H[-6]|padding:NNNNNNNNN',                         ]
+      [ 'INNNNNNNNN', [ -5          ], 'nun:I[-5]|padding:NNNNNNNNN',                         ]
+      [ 'JNNNNNNNNN', [ -4          ], 'nun:J[-4]|padding:NNNNNNNNN',                         ]
+      [ 'KNNNNNNNNN', [ -3          ], 'nun:K[-3]|padding:NNNNNNNNN',                         ]
+      [ 'LNNNNNNNNN', [ -2          ], 'nun:L[-2]|padding:NNNNNNNNN',                         ]
+      [ 'MNNNNNNNNN', [ -1          ], 'nun:M[-1]|padding:NNNNNNNNN',                         ]
+      [ 'NC79NNNNNN', [ 0, -20      ], 'zero:N[0]|nnum:C,79[-20]|padding:NNNNNN',             ]
+      [ 'NNNNNNNNNN', [ 0           ], 'padding:NNNNNNNNNN[0]',                               ]
+      [ 'NX20NNNNNN', [ 0, 20       ], 'zero:N[0]|pnum:X,20[20]|padding:NNNNNN',              ]
+      [ 'WNNNNNNNNN', [ 9           ], 'pun:W[9]|padding:NNNNNNNNN',                          ]
+      [ 'X10KNNNNNN', [ 10, -3      ], 'pnum:X,10[10]|nun:K[-3]|padding:NNNNNN',              ]
+      [ 'X10LNNNNNN', [ 10, -2      ], 'pnum:X,10[10]|nun:L[-2]|padding:NNNNNN',              ]
+      [ 'X10MNNNNNN', [ 10, -1      ], 'pnum:X,10[10]|nun:M[-1]|padding:NNNNNN',              ]
+      [ 'X10NNNNNNN', [ 10          ], 'pnum:X,10[10]|padding:NNNNNNN',                       ]
+      [ 'X10ONNNNNN', [ 10, 1       ], 'pnum:X,10[10]|pun:O[1]|padding:NNNNNN',               ]
+      [ 'X10X10MNNN', [ 10, 10, -1  ], 'pnum:X,10[10]|pnum:X,10[10]|nun:M[-1]|padding:NNN',   ]
+      [ 'X10X10NNNN', [ 10, 10      ], 'pnum:X,10[10]|pnum:X,10[10]|padding:NNNN',            ]
+      [ 'X10X20NNNN', [ 10, 20      ], 'pnum:X,10[10]|pnum:X,20[20]|padding:NNNN',            ]
+      [ 'X20NNNNNNN', [ 20          ], 'pnum:X,20[20]|padding:NNNNNNN',                       ]
+      [ 'X20X10NNNN', [ 20, 10      ], 'pnum:X,20[20]|pnum:X,10[10]|padding:NNNN',            ]
+      [ 'X90NNNNNNN', [ 90          ], 'pnum:X,90[90]|padding:NNNNNNN',                       ]
+      [ 'Y900NNNNNN', [ 900         ], 'pnum:Y,900[900]|padding:NNNNNN',                      ]
+      [ 'NNNNNNNNN',  [ 0           ], 'padding:NNNNNNNNN[0]',                                ]
+      [ 'NN',         [ 0           ], 'padding:NN[0]',                                       ]
+      [ 'N',          [ 0           ], 'padding:N[0]',                                        ]
+      [ 'X10',        [ 10          ], 'pnum:X,10[10]',                                       ]
+      [ 'K',          [ -3          ], 'nun:K[-3]',                                           ]
       ]
     #.......................................................................................................
-    @throws ( Ωbsk__86 = -> hollerith_10mvp2.decode null    ), /expected a text/
-    @throws ( Ωbsk__87 = -> hollerith_10mvp2.decode ''      ), /expected a non-empty text/
-    @throws ( Ωbsk__88 = -> hollerith_10mvp2.decode 'Ä123'  ), /expected a sortkey/
-    debug 'Ωbsk__89', hollerith_10mvp2.cfg.sortkey_re
-    debug 'Ωbsk__90', hollerith_10mvp2.decode 'Y900NNNNNN'
-    debug 'Ωbsk__91', hollerith_10mvp2.decode 'Y900Y900NNNNNN'
+    for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
+      # urge 'Ωilxhol__94', rpr sortkey
+      lexemes         = []
+      unit_result     = []
+      index_result    = []
+      for unit in hollerith_10mvp2.parse sortkey
+        { name,
+          letters,
+          mantissa,
+          index,    } = unit
+        unit_rpr  = "#{name}:#{letters}"
+        unit_rpr += ",#{mantissa}"  if mantissa?
+        unit_rpr += "[#{index}]"    if index?
+        unit_result.push unit_rpr
+        index_result.push index if index?
+      unit_result   = unit_result.join '|'
+      info 'Ωilxhol__95', f"#{( rpr unit_result ) + ','}:<50c; #{rpr index_result}"
+      @eq ( Ωilxhol__96 = ->  unit_result   ),  unit_matcher
+      @eq ( Ωilxhol__97 = -> index_result   ), index_matcher
+      # echo [ sortkey, index_result, unit_result, ]
     #.......................................................................................................
-    # for [ probe, matcher, ] in probes_and_matchers
-    #   debug 'Ωbsk__92', rpr hollerith_10mvp2.decode probe
+    @throws ( Ωhllt__98 = -> hollerith_10mvp2.parse '5'         ), /not a valid sortkey: unable to parse '5' in '5'/
+    @throws ( Ωhllt__99 = -> hollerith_10mvp2.parse 'äöü'       ), /not a valid sortkey: unable to parse 'äöü' in 'äöü'/
+    @throws ( Ωhllt_100 = -> hollerith_10mvp2.parse 'Y900äöü'   ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+    # @throws ( Ωhllt_101 = -> hollerith_10mvp2.decode null    ), /expected a text/
+    # @throws ( Ωhllt_102 = -> hollerith_10mvp2.decode ''      ), /expected a non-empty text/
+    # @throws ( Ωhllt_103 = -> hollerith_10mvp2.decode 'Ä123'  ), /expected a sortkey/
     #.......................................................................................................
     return null
-
 
 
 #===========================================================================================================
@@ -529,4 +608,4 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test @hollerith
-  ( new Test guytest_cfg ).test { h10mvp2_decode: @hollerith.h10mvp2_decode, }
+  ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }

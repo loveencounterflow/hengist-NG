@@ -41,9 +41,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   #=========================================================================================================
   hollerith:
 
-
     #-------------------------------------------------------------------------------------------------------
-    h10mvp2: ->
+    h10mvp2_demo: ->
       { Grammar
         Token
         Lexeme                  } = require '../../../apps/interlex'
@@ -97,7 +96,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           d.index   = ( decode mantissa, alphabet ) - cfg.max_integer
         cast_pnum     = ({ data: d, }) -> d.index = decode d.mantissa, alphabet
         cast_zero     = ({ data: d, }) -> d.index = 0
-        cast_padding  = null
+        cast_padding  = ({ data: d, source, hit, }) -> d.index = 0 if source is hit
         cast_other    = null
         #...................................................................................................
         R           = new Grammar { emit_signals: false, }
@@ -144,7 +143,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         [ 'X20X10NNNN', [ 20, 10,       ], 'pnum:X,20|pnum:X,10|padding:NNNN',       ]
         [ 'X90NNNNNNN', [ 90,           ], 'pnum:X,90|padding:NNNNNNN',              ]
         [ 'Y900NNNNNN', [ 900,          ], 'pnum:Y,900|padding:NNNNNN',              ]
-        [ 'N',          [ 0,            ], 'zero:N' ,                             ]
+        [ 'NNNNNNNNN',  [ 0,            ], 'padding:NNNNNNNNN' ,                     ]
+        [ 'NN',         [ 0,            ], 'padding:NN' ,                            ]
+        [ 'N',          [ 0,            ], 'padding:N' ,                             ]
         [ '5',          [               ], 'other:5',                             ]
         [ 'äöü',        [               ], 'other:äöü',                           ]
         [ 'X10',        [ 10,           ], 'pnum:X,10',                           ]
@@ -152,11 +153,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         ]
       #.....................................................................................................
       lexer   = compile_sortkey_lexer cfg
-      lexemes = lexer.scan_to_list '5'; tabulate_lexemes lexemes
-      lexemes = lexer.scan_to_list 'N'; tabulate_lexemes lexemes
-      lexemes = lexer.scan_to_list 'äöü'; tabulate_lexemes lexemes
       for [ probe, index_matcher, lexeme_matcher, ] in probes_and_matchers
-        # urge 'Ωilxhol___4', rpr probe
+        # urge 'Ωilxhol___2', rpr probe
         lexemes         = []
         lexeme_result   = []
         index_result    = []
@@ -168,21 +166,13 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           lexemes.push { name, letters, mantissa, }
           lexeme_result.push if mantissa? then "#{name}:#{letters},#{mantissa}" else "#{name}:#{letters}"
           index_result.push lexeme.data.index if lexeme.data.index?
-        # index_result    = index_result.flat()
-        index_result.pop() while ( index_result.length > 1 ) and ( ( index_result.at -1 ) is 0 )
-        # index_result.push 0 if index_result.length is 0
         lexeme_result   = lexeme_result.join '|'
-        # tabulate_lexemes lexemes
-        # debug 'Ωilxhol___5', lexeme for lexeme in lexemes
-        info 'Ωilxhol___6', ( rpr lexeme_result ), ( rpr index_result )
-        # help 'Ωilxhol___7', rpr index_result # if index_result.length > 0
-        @eq ( Ωilxhol___8 = -> lexeme_result  ), lexeme_matcher
-        @eq ( Ωilxhol___9 = -> index_result   ), index_matcher
+        info 'Ωilxhol___4', f"#{( rpr lexeme_result ) + ','}:<50c; #{rpr index_result}"
+        # help 'Ωilxhol___5', rpr index_result # if index_result.length > 0
+        @eq ( Ωilxhol___6 = -> lexeme_result  ), lexeme_matcher
+        @eq ( Ωilxhol___7 = -> index_result   ), index_matcher
       #.....................................................................................................
       return null
-
-
-
 
 
 #===========================================================================================================
