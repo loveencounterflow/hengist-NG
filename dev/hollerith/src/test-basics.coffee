@@ -468,62 +468,6 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     #.......................................................................................................
     return null
 
-  # #---------------------------------------------------------------------------------------------------------
-  # h10mvp2_decode: ->
-  #   { Hollerith,
-  #     hollerith_10mvp2,
-  #     internals               } = require '../../../apps/hollerith'
-  #   { type_of,                } = SFMODULES.unstable.require_type_of()
-  #   { isDeepStrictEqual: equals, } = require 'node:util'
-  #   #.......................................................................................................
-  #   probes_and_matchers = [
-  #     [ 'B000NNNNNN', [ -999,         ] ]
-  #     [ 'C00NNNNNNN', [ -99,          ] ]
-  #     [ 'C09NNNNNNN', [ -90,          ] ]
-  #     [ 'C88NNNNNNN', [ -11,          ] ]
-  #     [ 'C89NNNNNNN', [ -10,          ] ]
-  #     [ 'ENNNNNNNNN', [ -9,           ] ]
-  #     [ 'FNNNNNNNNN', [ -8,           ] ]
-  #     [ 'GNNNNNNNNN', [ -7,           ] ]
-  #     [ 'HNNNNNNNNN', [ -6,           ] ]
-  #     [ 'INNNNNNNNN', [ -5,           ] ]
-  #     [ 'JNNNNNNNNN', [ -4,           ] ]
-  #     [ 'KNNNNNNNNN', [ -3,           ] ]
-  #     [ 'LNNNNNNNNN', [ -2,           ] ]
-  #     [ 'MNNNNNNNNN', [ -1,           ] ]
-  #     [ 'NC79NNNNNN', [ 0, -20,       ] ]
-  #     [ 'NNNNNNNNNN', [ 0,            ] ]
-  #     [ 'NX20NNNNNN', [ 0, 20,        ] ]
-  #     [ 'WNNNNNNNNN', [ 9,            ] ]
-  #     [ 'X10KNNNNNN', [ 10, -3,       ] ]
-  #     [ 'X10LNNNNNN', [ 10, -2,       ] ]
-  #     [ 'X10MNNNNNN', [ 10, -1,       ] ]
-  #     [ 'X10NNNNNNN', [ 10,           ] ]
-  #     [ 'X10NNNNNNN', [ 10, 0,        ] ]
-  #     [ 'X10ONNNNNN', [ 10, 1,        ] ]
-  #     [ 'X10X10MNNN', [ 10, 10, -1,   ] ]
-  #     [ 'X10X10NNNN', [ 10, 10,       ] ]
-  #     [ 'X10X20NNNN', [ 10, 20,       ] ]
-  #     [ 'X20NNNNNNN', [ 20,           ] ]
-  #     [ 'X20X10NNNN', [ 20, 10,       ] ]
-  #     [ 'X90NNNNNNN', [ 90,           ] ]
-  #     [ 'Y900NNNNNN', [ 900,          ] ]
-  #     ]
-  #   #.......................................................................................................
-  #   @throws ( Ωhllt__86 = -> hollerith_10mvp2.decode null    ), /expected a text/
-  #   @throws ( Ωhllt__87 = -> hollerith_10mvp2.decode ''      ), /expected a non-empty text/
-  #   @throws ( Ωhllt__88 = -> hollerith_10mvp2.decode 'Ä123'  ), /expected a sortkey/
-  #   debug 'Ωhllt__89', hollerith_10mvp2.cfg.sortkey_re
-  #   debug 'Ωhllt__90', hollerith_10mvp2.decode 'Y900NNNNNN'
-  #   debug 'Ωhllt__91', hollerith_10mvp2.decode 'Y900Y900NNNNNN'
-  #   debug 'Ωhllt__92', hollerith_10mvp2.decode 'NNNNNN'
-  #   #.......................................................................................................
-  #   # for [ probe, matcher, ] in probes_and_matchers
-  #   #   debug 'Ωhllt__93', rpr hollerith_10mvp2.decode probe
-  #   #.......................................................................................................
-  #   return null
-
-
   #---------------------------------------------------------------------------------------------------------
   h10mvp2_decode_units: ->
     ### NOTE also see corresponding test in `hengist-NG/dev/interlex/src/test-hollerith.coffee` ###
@@ -573,7 +517,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       ]
     #.......................................................................................................
     for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
-      # urge 'Ωilxhol__94', rpr sortkey
+      # urge 'Ωilxhol__86', rpr sortkey
       lexemes         = []
       unit_result     = []
       index_result    = []
@@ -588,24 +532,24 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         unit_result.push unit_rpr
         index_result.push index if index?
       unit_result   = unit_result.join '|'
-      info 'Ωilxhol__95', f"#{( rpr unit_result ) + ','}:<50c; #{rpr index_result}"
-      @eq ( Ωilxhol__96 = ->  unit_result   ),  unit_matcher
-      @eq ( Ωilxhol__97 = -> index_result   ), index_matcher
+      info 'Ωilxhol__87', f"#{( rpr unit_result ) + ','}:<50c; #{rpr index_result}"
+      @eq ( Ωilxhol__88 = ->  unit_result   ),  unit_matcher
+      @eq ( Ωilxhol__89 = -> index_result   ), index_matcher
       # echo [ sortkey, index_result, unit_result, ]
     #.......................................................................................................
-    @throws ( Ωhllt__98 = -> hollerith_10mvp2.parse '5'         ), /not a valid sortkey: unable to parse '5' in '5'/
-    @throws ( Ωhllt__99 = -> hollerith_10mvp2.parse 'äöü'       ), /not a valid sortkey: unable to parse 'äöü' in 'äöü'/
-    @throws ( Ωhllt_100 = -> hollerith_10mvp2.parse 'Y900äöü'   ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
-    # @throws ( Ωhllt_101 = -> hollerith_10mvp2.decode null    ), /expected a text/
-    # @throws ( Ωhllt_102 = -> hollerith_10mvp2.decode ''      ), /expected a non-empty text/
-    # @throws ( Ωhllt_103 = -> hollerith_10mvp2.decode 'Ä123'  ), /expected a sortkey/
+    @eq     ( Ωhllt__90 = -> hollerith_10mvp2.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+    @eq     ( Ωhllt__91 = -> hollerith_10mvp2.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    @eq     ( Ωhllt__92 = -> hollerith_10mvp2.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    @throws ( Ωhllt__93 = -> hollerith_10mvp2.decode '5'        ), /not a valid sortkey: unable to parse '5'/
+    @throws ( Ωhllt__94 = -> hollerith_10mvp2.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
+    @throws ( Ωhllt__95 = -> hollerith_10mvp2.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
     #.......................................................................................................
     return null
 
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test @hollerith
-  ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  ( new Test guytest_cfg ).test @hollerith
+  # ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
