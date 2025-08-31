@@ -23,9 +23,19 @@ GTNG                      = require '../../../apps/guy-test-NG'
 SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
 
 
+#===========================================================================================================
+helpers =
+  rpr_unit: ( unit ) ->
+    { name,
+      letters,
+      mantissa,
+      index,    } = unit
+    R  = "#{name}:#{letters}"
+    R += ",#{mantissa}"  if mantissa?
+    R += "[#{index}]"    if index?
+    return R
 
-############################################################################################################
-#
+
 #===========================================================================================================
 @hollerith =
 
@@ -430,41 +440,60 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     { isDeepStrictEqual: equals, } = require 'node:util'
     #.......................................................................................................
     probes_and_matchers = [
-      [ 'Í¿;ããããããã', [ -999,         ] ]
-      [ 'Î?ãããããããã', [ -99,          ] ]
-      [ 'ÎHãããããããã', [ -90,          ] ]
-      [ 'Øããããããããã', [ -11,          ] ]
-      [ 'Ùããããããããã', [ -10,          ] ]
-      [ 'Úããããããããã', [ -9,           ] ]
-      [ 'Ûããããããããã', [ -8,           ] ]
-      [ 'Üããããããããã', [ -7,           ] ]
-      [ 'Ýããããããããã', [ -6,           ] ]
-      [ 'Þããããããããã', [ -5,           ] ]
-      [ 'ßããããããããã', [ -4,           ] ]
-      [ 'àããããããããã', [ -3,           ] ]
-      [ 'áããããããããã', [ -2,           ] ]
-      [ 'âããããããããã', [ -1,           ] ]
-      [ 'ãÏãããããããã', [ 0, -20,       ] ]
-      [ 'ãããããããããã', [ 0,            ] ]
-      [ 'ã÷ãããããããã', [ 0, 20,        ] ]
-      [ 'ìããããããããã', [ 9,            ] ]
-      [ 'íàãããããããã', [ 10, -3,       ] ]
-      [ 'íáãããããããã', [ 10, -2,       ] ]
-      [ 'íâãããããããã', [ 10, -1,       ] ]
-      [ 'íããããããããã', [ 10,           ] ]
-      [ 'íããããããããã', [ 10, 0,        ] ]
-      [ 'íäãããããããã', [ 10, 1,        ] ]
-      [ 'ííâããããããã', [ 10, 10, -1,   ] ]
-      [ 'ííãããããããã', [ 10, 10,       ] ]
-      [ 'í÷ãããããããã', [ 10, 20,       ] ]
-      [ '÷ããããããããã', [ 20,           ] ]
-      [ '÷íãããããããã', [ 20, 10,       ] ]
-      [ 'ø~ãããããããã', [ 90,           ] ]
-      [ 'ù*&ããããããã', [ 900,          ] ]
+      [ 'Í¿;ããããããã', [ -999,         ], 'nnum:Í,¿;[-999]|padding:ããããããã',                 ]
+      [ 'Î?ãããããããã', [ -99,          ], 'nnum:Î,?[-99]|padding:ãããããããã',                  ]
+      [ 'ÎHãããããããã', [ -90,          ], 'nnum:Î,H[-90]|padding:ãããããããã',                  ]
+      [ 'Øããããããããã', [ -11,          ], 'nun:Ø[-11]|padding:ããããããããã',                    ]
+      [ 'Ùããããããããã', [ -10,          ], 'nun:Ù[-10]|padding:ããããããããã',                    ]
+      [ 'Úããããããããã', [ -9,           ], 'nun:Ú[-9]|padding:ããããããããã',                     ]
+      [ 'Ûããããããããã', [ -8,           ], 'nun:Û[-8]|padding:ããããããããã',                     ]
+      [ 'Üããããããããã', [ -7,           ], 'nun:Ü[-7]|padding:ããããããããã',                     ]
+      [ 'Ýããããããããã', [ -6,           ], 'nun:Ý[-6]|padding:ããããããããã',                     ]
+      [ 'Þããããããããã', [ -5,           ], 'nun:Þ[-5]|padding:ããããããããã',                     ]
+      [ 'ßããããããããã', [ -4,           ], 'nun:ß[-4]|padding:ããããããããã',                     ]
+      [ 'àããããããããã', [ -3,           ], 'nun:à[-3]|padding:ããããããããã',                     ]
+      [ 'áããããããããã', [ -2,           ], 'nun:á[-2]|padding:ããããããããã',                     ]
+      [ 'âããããããããã', [ -1,           ], 'nun:â[-1]|padding:ããããããããã',                     ]
+      [ 'ãÏãããããããã', [ 0, -20,       ], 'zero:ã[0]|nun:Ï[-20]|padding:ãããããããã',           ]
+      [ 'ãããããããããã', [ 0,            ], 'padding:ãããããããããã[0]',                           ]
+      [ 'ã÷ãããããããã', [ 0, 20,        ], 'zero:ã[0]|pun:÷[20]|padding:ãããããããã',            ]
+      [ 'ìããããããããã', [ 9,            ], 'pun:ì[9]|padding:ããããããããã',                      ]
+      [ 'íàãããããããã', [ 10, -3,       ], 'pun:í[10]|nun:à[-3]|padding:ãããããããã',            ]
+      [ 'íáãããããããã', [ 10, -2,       ], 'pun:í[10]|nun:á[-2]|padding:ãããããããã',            ]
+      [ 'íâãããããããã', [ 10, -1,       ], 'pun:í[10]|nun:â[-1]|padding:ãããããããã',            ]
+      [ 'íããããããããã', [ 10,           ], 'pun:í[10]|padding:ããããããããã',                     ]
+      [ 'íäãããããããã', [ 10, 1,        ], 'pun:í[10]|pun:ä[1]|padding:ãããããããã',             ]
+      [ 'ííâããããããã', [ 10, 10, -1,   ], 'pun:í[10]|pun:í[10]|nun:â[-1]|padding:ããããããã',   ]
+      [ 'ííãããããããã', [ 10, 10,       ], 'pun:í[10]|pun:í[10]|padding:ãããããããã',            ]
+      [ 'í÷ãããããããã', [ 10, 20,       ], 'pun:í[10]|pun:÷[20]|padding:ãããããããã',            ]
+      [ '÷ããããããããã', [ 20,           ], 'pun:÷[20]|padding:ããããããããã',                     ]
+      [ '÷íãããããããã', [ 20, 10,       ], 'pun:÷[20]|pun:í[10]|padding:ãããããããã',            ]
+      [ 'ø~ãããããããã', [ 90,           ], 'pnum:ø,~[90]|padding:ãããããããã',                   ]
+      [ 'ù*&ããããããã', [ 900,          ], 'pnum:ù,*&[900]|padding:ããããããã',                  ]
       ]
     #.......................................................................................................
-    for [ probe, matcher, ] in probes_and_matchers
-      debug 'Ωhllt__85', rpr hollerith_128.decode probe
+    codec = hollerith_128
+    for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
+      unit_result     = []
+      index_result    = []
+      for unit in codec.parse sortkey
+        unit_result.push  helpers.rpr_unit unit
+        index_result.push unit.index if unit.index?
+      unit_result   = unit_result.join '|'
+      info 'Ωhllt__85', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+    #   @eq ( Ωhllt__86 = ->  unit_result                     ),  unit_matcher
+      @eq ( Ωhllt__87 = -> index_result                     ), index_matcher
+      @eq ( Ωhllt__88 = -> sortkey ), ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
+      debug 'Ωhllt__89', rpr ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
+    #   @eq ( Ωhllt__90 = -> codec.decode sortkey  ), index_matcher
+    #   # echo [ sortkey, index_result, unit_result, ]
+    # #.......................................................................................................
+    # @eq     ( Ωhllt__91 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt__92 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt__93 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @throws ( Ωhllt__94 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
+    # @throws ( Ωhllt__95 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
+    # @throws ( Ωhllt__96 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
     #.......................................................................................................
     return null
 
@@ -516,40 +545,86 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       [ 'K',          [ -3          ], 'nun:K[-3]',                                           ]
       ]
     #.......................................................................................................
+    codec = hollerith_10mvp2
     for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
-      # urge 'Ωilxhol__86', rpr sortkey
-      lexemes         = []
       unit_result     = []
       index_result    = []
-      for unit in hollerith_10mvp2.parse sortkey
-        { name,
-          letters,
-          mantissa,
-          index,    } = unit
-        unit_rpr  = "#{name}:#{letters}"
-        unit_rpr += ",#{mantissa}"  if mantissa?
-        unit_rpr += "[#{index}]"    if index?
-        unit_result.push unit_rpr
-        index_result.push index if index?
+      for unit in codec.parse sortkey
+        unit_result.push  helpers.rpr_unit unit
+        index_result.push unit.index if unit.index?
       unit_result   = unit_result.join '|'
-      info 'Ωilxhol__87', f"#{( rpr unit_result ) + ','}:<50c; #{rpr index_result}"
-      @eq ( Ωilxhol__88 = ->  unit_result   ),  unit_matcher
-      @eq ( Ωilxhol__89 = -> index_result   ), index_matcher
+      info 'Ωhllt__97', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+      @eq ( Ωhllt__98 = ->  unit_result                     ),  unit_matcher
+      @eq ( Ωhllt__99 = -> index_result                     ), index_matcher
+      @eq ( Ωhllt_100 = -> codec.decode sortkey             ), index_matcher
+      @eq ( Ωhllt_101 = -> sortkey                          ), ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
       # echo [ sortkey, index_result, unit_result, ]
     #.......................................................................................................
-    @eq     ( Ωhllt__90 = -> hollerith_10mvp2.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
-    @eq     ( Ωhllt__91 = -> hollerith_10mvp2.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    @eq     ( Ωhllt__92 = -> hollerith_10mvp2.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    @throws ( Ωhllt__93 = -> hollerith_10mvp2.decode '5'        ), /not a valid sortkey: unable to parse '5'/
-    @throws ( Ωhllt__94 = -> hollerith_10mvp2.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
-    @throws ( Ωhllt__95 = -> hollerith_10mvp2.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+    @eq     ( Ωhllt_102 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+    @eq     ( Ωhllt_103 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    @eq     ( Ωhllt_104 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    @throws ( Ωhllt_105 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
+    @throws ( Ωhllt_106 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
+    @throws ( Ωhllt_107 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  h128b_decode: ->
+    { Hollerith,
+      hollerith_128,
+      hollerith_128b,
+      hollerith_10mvp,
+      internals               } = require '../../../apps/hollerith'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    # codec = hollerith_128
+    # codec = hollerith_128b
+    codec = hollerith_10mvp
+    debug 'Ωhllt__89', rpr codec.encode -1
+    debug 'Ωhllt__89', rpr codec.encode -2
+    n =   -100; urge 'Ωhllt_108', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    -21; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    -20; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    -19; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =     -1; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      0; urge 'Ωhllt_110', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      1; urge 'Ωhllt_111', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      2; urge 'Ωhllt_112', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      3; urge 'Ωhllt_113', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =     10; urge 'Ωhllt_114', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    126; urge 'Ωhllt_115', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    127; urge 'Ωhllt_116', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    128; urge 'Ωhllt_117', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    129; urge 'Ωhllt_118', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    # for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
+    #   unit_result     = []
+    #   index_result    = []
+    #   for unit in codec.parse sortkey
+    #     unit_result.push  helpers.rpr_unit unit
+    #     index_result.push unit.index if unit.index?
+    #   unit_result   = unit_result.join '|'
+    #   info 'Ωhllt_119', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+    # #   @eq ( Ωhllt_120 = ->  unit_result                     ),  unit_matcher
+    #   @eq ( Ωhllt_121 = -> index_result                     ), index_matcher
+    #   @eq ( Ωhllt_122 = -> sortkey ), ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
+    #   debug 'Ωhllt_123', rpr ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
+    #   @eq ( Ωhllt_124 = -> codec.decode sortkey  ), index_matcher
+    #   # echo [ sortkey, index_result, unit_result, ]
+    # #.......................................................................................................
+    # @eq     ( Ωhllt_125 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt_126 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt_127 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @throws ( Ωhllt_128 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
+    # @throws ( Ωhllt_129 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
+    # @throws ( Ωhllt_130 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+    #.......................................................................................................
+    return null
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test @hollerith
-  # ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
+  # ( new Test guytest_cfg ).test @hollerith
+  ( new Test guytest_cfg ).test { h128b_decode: @hollerith.h128b_decode, }
