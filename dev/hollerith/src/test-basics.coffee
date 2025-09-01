@@ -483,8 +483,8 @@ helpers =
       info 'Ωhllt__85', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
     #   @eq ( Ωhllt__86 = ->  unit_result                     ),  unit_matcher
       @eq ( Ωhllt__87 = -> index_result                     ), index_matcher
-      @eq ( Ωhllt__88 = -> sortkey ), ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
-      debug 'Ωhllt__89', rpr ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
+      @eq ( Ωhllt__88 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+      debug 'Ωhllt__89', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
     #   @eq ( Ωhllt__90 = -> codec.decode sortkey  ), index_matcher
     #   # echo [ sortkey, index_result, unit_result, ]
     # #.......................................................................................................
@@ -557,7 +557,7 @@ helpers =
       @eq ( Ωhllt__98 = ->  unit_result                     ),  unit_matcher
       @eq ( Ωhllt__99 = -> index_result                     ), index_matcher
       @eq ( Ωhllt_100 = -> codec.decode sortkey             ), index_matcher
-      @eq ( Ωhllt_101 = -> sortkey                          ), ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
+      @eq ( Ωhllt_101 = -> sortkey                          ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
       # echo [ sortkey, index_result, unit_result, ]
     #.......................................................................................................
     @eq     ( Ωhllt_102 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
@@ -582,22 +582,22 @@ helpers =
     # codec = hollerith_128
     # codec = hollerith_128b
     codec = hollerith_10mvp
-    debug 'Ωhllt__89', rpr codec.encode -1
-    debug 'Ωhllt__89', rpr codec.encode -2
-    n =   -100; urge 'Ωhllt_108', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    -21; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    -20; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    -19; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =     -1; urge 'Ωhllt_109', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      0; urge 'Ωhllt_110', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      1; urge 'Ωhllt_111', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      2; urge 'Ωhllt_112', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      3; urge 'Ωhllt_113', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =     10; urge 'Ωhllt_114', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    126; urge 'Ωhllt_115', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    127; urge 'Ωhllt_116', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    128; urge 'Ωhllt_117', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    129; urge 'Ωhllt_118', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    debug 'Ωhllt_108', rpr codec.encode -1
+    debug 'Ωhllt_109', rpr codec.encode -2
+    n =   -100; urge 'Ωhllt_110', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    -21; urge 'Ωhllt_111', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    -20; urge 'Ωhllt_112', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    -19; urge 'Ωhllt_113', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =     -1; urge 'Ωhllt_114', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      0; urge 'Ωhllt_115', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      1; urge 'Ωhllt_116', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      2; urge 'Ωhllt_117', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =      3; urge 'Ωhllt_118', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =     10; urge 'Ωhllt_119', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    126; urge 'Ωhllt_120', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    127; urge 'Ωhllt_121', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    128; urge 'Ωhllt_122', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+    n =    129; urge 'Ωhllt_123', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
     # for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
     #   unit_result     = []
     #   index_result    = []
@@ -605,26 +605,120 @@ helpers =
     #     unit_result.push  helpers.rpr_unit unit
     #     index_result.push unit.index if unit.index?
     #   unit_result   = unit_result.join '|'
-    #   info 'Ωhllt_119', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
-    # #   @eq ( Ωhllt_120 = ->  unit_result                     ),  unit_matcher
-    #   @eq ( Ωhllt_121 = -> index_result                     ), index_matcher
-    #   @eq ( Ωhllt_122 = -> sortkey ), ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
-    #   debug 'Ωhllt_123', rpr ( codec.encode index_matcher ).padEnd 10, codec.cfg.zpuns[ 0 ]
-    #   @eq ( Ωhllt_124 = -> codec.decode sortkey  ), index_matcher
+    #   info 'Ωhllt_124', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+    # #   @eq ( Ωhllt_125 = ->  unit_result                     ),  unit_matcher
+    #   @eq ( Ωhllt_126 = -> index_result                     ), index_matcher
+    #   @eq ( Ωhllt_127 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+    #   debug 'Ωhllt_128', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+    #   @eq ( Ωhllt_129 = -> codec.decode sortkey  ), index_matcher
     #   # echo [ sortkey, index_result, unit_result, ]
     # #.......................................................................................................
-    # @eq     ( Ωhllt_125 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
-    # @eq     ( Ωhllt_126 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    # @eq     ( Ωhllt_127 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    # @throws ( Ωhllt_128 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
-    # @throws ( Ωhllt_129 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
-    # @throws ( Ωhllt_130 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+    # @eq     ( Ωhllt_130 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt_131 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt_132 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @throws ( Ωhllt_133 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
+    # @throws ( Ωhllt_134 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
+    # @throws ( Ωhllt_135 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  types_bounded_list: ->
+    { internals               } = require '../../../apps/hollerith/lib/types'
+    { Bounded_list,           } = internals
+    # { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    blist = new Bounded_list 3
+    @eq ( Ωhllt_136 = -> blist.size               ), 0
+    @eq ( Ωhllt_137 = -> blist.is_empty           ), true
+    @eq ( Ωhllt_138 = -> blist.max_size           ), 3
+    @eq ( Ωhllt_139 = -> blist.at -1              ), undefined
+    #.......................................................................................................
+    data_1 = blist.current
+    @eq ( Ωhllt_140 = -> data_1                   ), {}
+    @eq ( Ωhllt_141 = -> blist.current            ), data_1
+    @eq ( Ωhllt_142 = -> blist.at -1              ), data_1
+    @eq ( Ωhllt_143 = -> blist.size               ), 1
+    @eq ( Ωhllt_144 = -> blist.is_empty           ), false
+    #.......................................................................................................
+    data_2 = blist.create()
+    @eq ( Ωhllt_145 = -> equals data_1, data_2    ), true
+    @eq ( Ωhllt_146 = -> data_1 is data_2         ), false
+    @eq ( Ωhllt_147 = -> blist.at -1              ), data_2
+    @eq ( Ωhllt_148 = -> blist.size               ), 2
+    @eq ( Ωhllt_149 = -> blist.is_empty           ), false
+    @eq ( Ωhllt_150 = -> data_2 is blist.current  ), true
+    @eq ( Ωhllt_151 = -> blist.at -1              ), data_2
+    @eq ( Ωhllt_152 = -> blist.size               ), 2
+    @eq ( Ωhllt_153 = -> blist.is_empty           ), false
+    #.......................................................................................................
+    data_3 = blist.create()
+    @eq ( Ωhllt_154 = -> equals data_2, data_3    ), true
+    @eq ( Ωhllt_155 = -> data_2 is data_3         ), false
+    @eq ( Ωhllt_156 = -> blist.at -1              ), data_3
+    @eq ( Ωhllt_157 = -> blist.size               ), 3
+    @eq ( Ωhllt_158 = -> blist.is_empty           ), false
+    @eq ( Ωhllt_159 = -> data_3 is blist.current  ), true
+    @eq ( Ωhllt_160 = -> blist.at -1              ), data_3
+    @eq ( Ωhllt_161 = -> blist.at -2              ), data_2
+    @eq ( Ωhllt_162 = -> blist.at -3              ), data_1
+    @eq ( Ωhllt_163 = -> blist.size               ), 3
+    @eq ( Ωhllt_164 = -> blist.is_empty           ), false
+    #.......................................................................................................
+    data_4 = blist.create { a: 1, b: 2, }
+    @eq ( Ωhllt_165 = -> equals data_3, data_4    ), false
+    @eq ( Ωhllt_166 = -> data_3 is data_4         ), false
+    @eq ( Ωhllt_167 = -> blist.at -1              ), { a: 1, b: 2, }
+    @eq ( Ωhllt_168 = -> blist.size               ), 3
+    @eq ( Ωhllt_169 = -> blist.is_empty           ), false
+    @eq ( Ωhllt_170 = -> blist.current            ), { a: 1, b: 2, }
+    @eq ( Ωhllt_171 = -> blist.at -1              ), { a: 1, b: 2, }
+    @eq ( Ωhllt_172 = -> blist.at -2              ), data_3
+    @eq ( Ωhllt_173 = -> blist.at -3              ), data_2
+    @eq ( Ωhllt_174 = -> blist.size               ), 3
+    @eq ( Ωhllt_175 = -> blist.is_empty           ), false
+    #.......................................................................................................
+    @eq ( Ωhllt_176 = -> [ blist.create(), blist.size, ]    ), [ {}, 3, ]
+    @eq ( Ωhllt_177 = -> [ blist.create(), blist.size, ]    ), [ {}, 3, ]
+    @eq ( Ωhllt_178 = -> [ blist.create(), blist.size, ]    ), [ {}, 3, ]
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  types: ->
+    { internals               } = require '../../../apps/hollerith/'
+    { types: T,               } = internals
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals, } = require 'node:util'
+    #.......................................................................................................
+    @eq ( Ωhllt_179 = -> T.nonempty_text.isa 4            ), false
+    @eq ( Ωhllt_180 = -> T.nonempty_text.isa false        ), false
+    @eq ( Ωhllt_181 = -> T.nonempty_text.isa ''           ), false
+    @eq ( Ωhllt_182 = -> T.nonempty_text.isa 'yes'        ), true
+    @eq ( Ωhllt_183 = -> T.incremental_text.isa 'yes'     ), false
+    @eq ( Ωhllt_184 = -> T.decremental_text.isa 'yes'     ), false
+    @eq ( Ωhllt_185 = -> T.incremental_text.data.at -1    ), { chrs: [ 'y', 'e', 's' ], fail: { x: 'yes', idx: 1, prv_chr: 'y', chr: 'e' } }
+    @eq ( Ωhllt_186 = -> T.incremental_text.isa 'abcdefz' ), true
+    @eq ( Ωhllt_187 = -> T.decremental_text.isa 'abcdefz' ), false
+    @eq ( Ωhllt_188 = -> T.incremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z', ], }
+    @eq ( Ωhllt_189 = -> T.decremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z' ], fail: { x: 'abcdefz', idx: 1, prv_chr: 'a', chr: 'b' } }
+    @eq ( Ωhllt_190 = -> T.incremental_text.isa 'abc0'    ), false
+    @eq ( Ωhllt_191 = -> T.incremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', '0', ], fail: { x: 'abc0', idx: 3, prv_chr: 'c', chr: '0' } }
+    @eq ( Ωhllt_192 = -> T.decremental_text.isa 'cba'     ), true
+    @eq ( Ωhllt_193 = -> T.decremental_text.data.at -1    ), { chrs: [ 'c', 'b', 'a', ], }
     #.......................................................................................................
     return null
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test @hollerith
-  ( new Test guytest_cfg ).test { h128b_decode: @hollerith.h128b_decode, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  ( new Test guytest_cfg ).test @hollerith
+  # ( new Test guytest_cfg ).test { h128b_decode: @hollerith.h128b_decode, }
+  # ( new Test guytest_cfg ).test { types_bounded_list: @hollerith.types_bounded_list, }
+  # ( new Test guytest_cfg ).test { types: @hollerith.types, }
+  #.........................................................................................................
+  # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
+  # ( new Test guytest_cfg ).test { h128_decode: @hollerith.h128_decode, }
+  # ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
