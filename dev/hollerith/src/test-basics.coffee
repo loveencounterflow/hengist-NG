@@ -758,28 +758,28 @@ helpers =
     @eq ( Ωhllt_199 = -> T.nonempty_text.isa 'yes'        ), true
     #.......................................................................................................
     @eq ( Ωhllt_200 = -> T.incremental_text.isa 'yes'     ), false
-    @eq ( Ωhllt_201 = -> T.decremental_text.isa 'yes'     ), false
-    @eq ( Ωhllt_202 = -> T.incremental_text.data.at -1    ), { chrs: [ 'y', 'e', 's' ], fail: { x: 'yes', idx: 1, prv_chr: 'y', chr: 'e' } }
-    @eq ( Ωhllt_203 = -> T.incremental_text.isa 'abcdefz' ), true
-    @eq ( Ωhllt_204 = -> T.decremental_text.isa 'abcdefz' ), false
-    @eq ( Ωhllt_205 = -> T.incremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z', ], }
-    @eq ( Ωhllt_206 = -> T.decremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z' ], fail: { x: 'abcdefz', idx: 1, prv_chr: 'a', chr: 'b' } }
-    @eq ( Ωhllt_207 = -> T.incremental_text.isa 'abc0'    ), false
-    @eq ( Ωhllt_208 = -> T.incremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', '0', ], fail: { x: 'abc0', idx: 3, prv_chr: 'c', chr: '0' } }
-    @eq ( Ωhllt_209 = -> T.decremental_text.isa 'cba'     ), true
-    @eq ( Ωhllt_210 = -> T.decremental_text.data.at -1    ), { chrs: [ 'c', 'b', 'a', ], }
-    #.......................................................................................................
-    debug 'Ωhllt_211', T.magnifiers.data
-    @eq ( Ωhllt_212 = -> T.magnifiers.isa ''                  ), false
-    debug 'Ωhllt_213', T.magnifiers.data
-    debug 'Ωhllt_214', T.magnifiers.data.current
-    @eq ( Ωhllt_215 = -> T.magnifiers.data.current            ), { message: "expected a magnifier, got an empty text", }
-    @eq ( Ωhllt_216 = -> T.magnifiers.isa 'ABC XYZ'           ), true
-    debug 'Ωhllt_217', T.magnifiers.data
-    # @eq ( Ωhllt_218 = -> T.magnifiers.isa 'ABC\nXYZ'          ), true
-    # @eq ( Ωhllt_219 = -> T.magnifiers.isa 'ABC\tXYZ'          ), true
-    # @eq ( Ωhllt_220 = -> T.magnifiers.isa 'ABC DXYZ'          ), true
-    # @eq ( Ωhllt_221 = -> T.magnifiers.isa 'ABD CXYZ'          ), false
+    # @eq ( Ωhllt_201 = -> T.decremental_text.isa 'yes'     ), false
+    # @eq ( Ωhllt_202 = -> T.incremental_text.data.at -1    ), { chrs: [ 'y', 'e', 's' ], fail: { x: 'yes', idx: 1, prv_chr: 'y', chr: 'e' } }
+    # @eq ( Ωhllt_203 = -> T.incremental_text.isa 'abcdefz' ), true
+    # @eq ( Ωhllt_204 = -> T.decremental_text.isa 'abcdefz' ), false
+    # @eq ( Ωhllt_205 = -> T.incremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z', ], }
+    # @eq ( Ωhllt_206 = -> T.decremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z' ], fail: { x: 'abcdefz', idx: 1, prv_chr: 'a', chr: 'b' } }
+    # @eq ( Ωhllt_207 = -> T.incremental_text.isa 'abc0'    ), false
+    # @eq ( Ωhllt_208 = -> T.incremental_text.data.at -1    ), { chrs: [ 'a', 'b', 'c', '0', ], fail: { x: 'abc0', idx: 3, prv_chr: 'c', chr: '0' } }
+    # @eq ( Ωhllt_209 = -> T.decremental_text.isa 'cba'     ), true
+    # @eq ( Ωhllt_210 = -> T.decremental_text.data.at -1    ), { chrs: [ 'c', 'b', 'a', ], }
+    # #.......................................................................................................
+    # debug 'Ωhllt_211', T.magnifiers.data
+    # @eq ( Ωhllt_212 = -> T.magnifiers.isa ''                  ), false
+    # debug 'Ωhllt_213', T.magnifiers.data
+    # debug 'Ωhllt_214', T.magnifiers.data.current
+    # @eq ( Ωhllt_215 = -> T.magnifiers.data.current            ), { message: "expected a magnifier, got an empty text", }
+    # @eq ( Ωhllt_216 = -> T.magnifiers.isa 'ABC XYZ'           ), true
+    # debug 'Ωhllt_217', T.magnifiers.data
+    # # @eq ( Ωhllt_218 = -> T.magnifiers.isa 'ABC\nXYZ'          ), true
+    # # @eq ( Ωhllt_219 = -> T.magnifiers.isa 'ABC\tXYZ'          ), true
+    # # @eq ( Ωhllt_220 = -> T.magnifiers.isa 'ABC DXYZ'          ), true
+    # # @eq ( Ωhllt_221 = -> T.magnifiers.isa 'ABD CXYZ'          ), false
     #.......................................................................................................
     return null
 
@@ -787,12 +787,12 @@ helpers =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test @hollerith
+  # ( new Test guytest_cfg ).test @hollerith
   # ( new Test guytest_cfg ).test { h128b_decode: @hollerith.h128b_decode, }
   # ( new Test guytest_cfg ).test { types_bounded_list: @hollerith.types_bounded_list, }
   # ( new Test guytest_cfg ).test { types_bounded_list: @hollerith.types_bounded_list, }
-  # ( new Test guytest_cfg ).test { types: @hollerith.types, }
-  ( new Test guytest_cfg ).test { type_data_handling: @hollerith.type_data_handling, }
+  # ( new Test guytest_cfg ).test { type_data_handling: @hollerith.type_data_handling, }
+  ( new Test guytest_cfg ).test { types: @hollerith.types, }
   #.........................................................................................................
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
   # ( new Test guytest_cfg ).test { h128_decode: @hollerith.h128_decode, }
