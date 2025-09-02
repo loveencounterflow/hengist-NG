@@ -1034,6 +1034,31 @@ settings =
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  require_clean_assign: ->
+    { clean,
+      clean_all,
+      clean_assign, } = SFMODULES.unstable.require_clean_assign()
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    #.......................................................................................................
+    d1  = { a: 1, b: 9, z: 'Z', }
+    d2  = { foo: true,      gnu: undefined, lol: null, bar: false, }
+    d3  = { foo: 333,       gnu: undefined, lol: null, bar: undefined, }
+    d4  = { foo: undefined, gnu: undefined, lol: null, bar: 444, }
+    e1  = [ d1, d2, ]
+    @eq ( Ωbrbr_208 = -> ( clean d1 ) is d1                   ), false
+    @eq ( Ωbrbr_209 = -> clean d1                             ), { a: 1, b: 9, z: 'Z', }
+    @eq ( Ωbrbr_210 = -> clean d2                             ), { foo: true, lol: null, bar: false, }
+    @eq ( Ωbrbr_211 = -> Object.keys clean d2                 ), [ 'foo', 'lol', 'bar', ]
+    @eq ( Ωbrbr_212 = -> clean_all d1, d2                     ), [ { a: 1, b: 9, z: 'Z', }, { foo: true, lol: null, bar: false, }, ]
+    @eq ( Ωbrbr_213 = -> clean_assign d1, d2                  ), { a: 1, b: 9, z: 'Z', foo: true, lol: null, bar: false, }
+    @eq ( Ωbrbr_214 = -> clean_assign e1...                   ), { a: 1, b: 9, z: 'Z', foo: true, lol: null, bar: false, }
+    @eq ( Ωbrbr_215 = -> Object.keys clean_assign d1, d2      ), [ 'a', 'b', 'z', 'foo', 'lol', 'bar', ]
+    @eq ( Ωbrbr_216 = -> clean_assign d2, d3, d4              ), { foo: 333, lol: null, bar: 444, }
+    @eq ( Ωbrbr_217 = -> Object.keys clean_assign d2, d3, d4  ), [ 'foo', 'lol', 'bar', ]
+    #.......................................................................................................
+    return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -1044,7 +1069,7 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { require_format_stack_format_line: tests.require_format_stack_format_line, }
   # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
   # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_anybase: tests.require_anybase, }
+  ( new Test guytest_cfg ).test { require_clean_assign: tests.require_clean_assign, }
   # tests.require_format_stack_format_stack()
   #.........................................................................................................
   demo_clean = ->
@@ -1053,6 +1078,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_208', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_218', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
