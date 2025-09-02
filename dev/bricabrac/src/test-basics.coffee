@@ -1046,24 +1046,29 @@ settings =
       d1      = freeze { a: 1, b: 9, z: 'Z', }
       @throws ( Ωbrbr_208 = -> clean d1 ), /unable to clean frozen object/
       return null
+    #.......................................................................................................
     do =>
       d1      = { a: 1, b: 9, z: 'Z', }
       @eq ( Ωbrbr_209 = -> ( clean d1 ) is d1                   ), true
       @eq ( Ωbrbr_210 = -> clean d1                             ), { a: 1, b: 9, z: 'Z', }
       return null
+    #.......................................................................................................
     do =>
       d2      = { foo: true,      gnu: undefined, lol: null, bar: false, }
       @eq ( Ωbrbr_211 = -> clean d2                             ), { foo: true, lol: null, bar: false, }
       return null
+    #.......................................................................................................
     do =>
       d2      = { foo: true,      gnu: undefined, lol: null, bar: false, }
       @eq ( Ωbrbr_212 = -> Object.keys clean d2                 ), [ 'foo', 'lol', 'bar', ]
       return null
+    #.......................................................................................................
     do =>
       d1      = { a: 1, b: 9, z: 'Z', }
       d2      = { foo: true,      gnu: undefined, lol: null, bar: false, }
       @eq ( Ωbrbr_213 = -> clean_all d1, d2                     ), [ { a: 1, b: 9, z: 'Z', }, { foo: true, lol: null, bar: false, }, ]
       return null
+    #.......................................................................................................
     do =>
       d1      = freeze { a: 1, b: 9, z: 'Z', }
       d2      = freeze { foo: true,      gnu: undefined, lol: null, bar: false, }
@@ -1071,6 +1076,7 @@ settings =
       @eq ( Ωbrbr_214 = -> clean_assign target, d1, d2                  ), { a: 1, b: 9, z: 'Z', foo: true, lol: null, bar: false, }
       @eq ( Ωbrbr_215 = -> ( clean_assign target, d1, d2 ) is target    ), true
       return null
+    #.......................................................................................................
     do =>
       d1      = { a: 1, b: 9, z: 'Z', }
       d2      = { foo: true,      gnu: undefined, lol: null, bar: false, }
@@ -1078,23 +1084,74 @@ settings =
       target  = {}
       @eq ( Ωbrbr_216 = -> clean_assign e1...                           ), { a: 1, b: 9, z: 'Z', foo: true, lol: null, bar: false, }
       @eq ( Ωbrbr_217 = -> ( clean_assign target, e1... ) is target     ), true
+    #.......................................................................................................
     do =>
       d1      = freeze { a: 1, b: 9, z: 'Z', }
       d2      = freeze { foo: true,      gnu: undefined, lol: null, bar: false, }
       @eq ( Ωbrbr_218 = -> Object.keys clean_assign {}, d1, d2      ), [ 'a', 'b', 'z', 'foo', 'lol', 'bar', ]
       return null
+    #.......................................................................................................
     do =>
       d2      =        { foo: true,      gnu: undefined, lol: null, bar: false, }
       d3      = freeze { foo: 333,       gnu: undefined, lol: null, bar: undefined, }
       d4      = freeze { foo: undefined, gnu: undefined, lol: null, bar: 444, }
       @eq ( Ωbrbr_219 = -> clean_assign d2, d3, d4              ), { foo: 333, lol: null, bar: 444, }
       return null
+    #.......................................................................................................
     do =>
       d2      = freeze { foo: true,      gnu: undefined, lol: null, bar: false, }
       d3      = freeze { foo: 333,       gnu: undefined, lol: null, bar: undefined, }
       d4      = freeze { foo: undefined, gnu: undefined, lol: null, bar: 444, }
       target  = {}
       @eq ( Ωbrbr_220 = -> Object.keys clean_assign target, d2, d3, d4  ), [ 'foo', 'lol', 'bar', ]
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  require_remap: ->
+    { remap, omit,                } = SFMODULES.unstable.require_remap()
+    { freeze,                     } = Object
+    { isDeepStrictEqual: equals,  } = require 'node:util'
+    #.......................................................................................................
+    do =>
+      d1      = { a1: 'A1', b1: 'b1', c1: 'C1', }
+      mapping = freeze { a1: 'A2',           c1: 'C2', }
+      result  = remap d1, mapping
+      @eq ( Ωbrbr_221 = -> result             ), { A2: 'A1', b1: 'b1', C2: 'C1', }
+      @eq ( Ωbrbr_222 = -> result             ), d1
+      @eq ( Ωbrbr_223 = -> Object.keys result ), [ 'A2', 'b1', 'C2', ]
+      return null
+    #.......................................................................................................
+    do =>
+      d1      = { address: 'Perth', name: 'Bob', job: 'employee', dob: 41, }
+      mapping = freeze { address: 'city', job: omit, dob: 'age', }
+      result  = remap d1, mapping
+      debug 'Ωbrbr_224', result
+      @eq ( Ωbrbr_227 = -> equals result, { city: 'Perth', name: 'Bob', age: 41, }  ), true
+      @eq ( Ωbrbr_228 = -> result                                                   ), d1
+      @eq ( Ωbrbr_229 = -> Object.keys result                                       ), [ 'city', 'name', 'age', ]
+      return null
+    #.......................................................................................................
+    do =>
+      d1      = { address: 'Perth', name: 'Bob', job: 'employee', age: 25, }
+      mapping = freeze { address: 'city', job: omit, age: ( v ) -> { dob: 2025 - v, }, }
+      result  = remap d1, mapping
+      debug 'Ωbrbr_230', result
+      @eq ( Ωbrbr_231 = -> result             ), { city: 'Perth', name: 'Bob', dob: 2000, }
+      @eq ( Ωbrbr_232 = -> result             ), d1
+      @eq ( Ωbrbr_233 = -> Object.keys result ), [ 'city', 'name', 'dob', ]
+      return null
+    #.......................................................................................................
+    do =>
+      d1      = { address: 'Perth', name: 'Bob', job: 'employee', weight: '98kg', }
+      weight  = ( v ) -> { weight_u: ( v.replace /^[0-9.]+/g, '' ), weight_q: ( Number v.replace /[^0-9.]+$/g, '' ) }
+      mapping = freeze { address: 'city', job: omit, weight, }
+      result  = remap d1, mapping
+      debug 'Ωbrbr_235', result
+      @eq ( Ωbrbr_236 = -> result             ), { city: 'Perth', name: 'Bob', weight_u: 'kg', weight_q: 98, }
+      @eq ( Ωbrbr_237 = -> result             ), d1
+      @eq ( Ωbrbr_238 = -> Object.keys result ), [ 'city', 'name', 'weight_u', 'weight_q', ]
       return null
     #.......................................................................................................
     return null
@@ -1110,6 +1167,7 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { require_format_stack_format_stack: tests.require_format_stack_format_stack, }
   # ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { require_clean_assign: tests.require_clean_assign, }
+  ( new Test guytest_cfg ).test { require_remap: tests.require_remap, }
   # tests.require_format_stack_format_stack()
   #.........................................................................................................
   demo_clean = ->
@@ -1118,6 +1176,6 @@ if module is require.main then await do =>
     b = { o: 6, }
     c = { o: undefined, }
     clean = ( x ) -> Object.fromEntries ( [ k, v, ] for k, v of x when v? )
-    debug 'Ωbrbr_221', d = { a..., ( clean b )..., ( clean c )..., }
+    debug 'Ωbrbr_239', d = { a..., ( clean b )..., ( clean c )..., }
   #.........................................................................................................
   return null
