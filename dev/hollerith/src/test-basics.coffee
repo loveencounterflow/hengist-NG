@@ -690,3 +690,38 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
   # ( new Test guytest_cfg ).test { h128_decode: @hollerith.h128_decode, }
   # ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
+
+  #=========================================================================================================
+  ### NOTE Future Single-File Module ###
+  show_requires = ( module_path ) ->
+    PATH                            = require 'node:path'
+    FS                              = require 'node:fs'
+    glob                            = require 'glob'
+    { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
+    folder_path                     = PATH.dirname require.resolve module_path
+    pattern                         = PATH.join folder_path, '../src/*.coffee'
+    paths                           = glob.sync PATH.join pattern
+    has_local                       = false
+    local_requires                  = []
+    for path in paths
+      for { lnr, line, } from walk_lines_with_positions path
+        continue unless ( match = line.match /require\s+'(?<module_spec>.*)'\s*$/v )?
+        { module_spec, }  = match.groups
+        is_local          = /^(\.\.\/|\/)/v.test module_spec
+        has_local       or= is_local
+        message           = f"#{path}:<70c; #{lnr}:>3.0f; #{rpr module_spec}"
+        # color             = if is_local then GUY.trm.gold else GUY.trm.grey
+        # info 'Ωhllt_168', color message
+        local_requires.push message if is_local
+    if has_local
+      exit_handler = ->
+        process.exitCode = 111
+        warn()
+        warn "Ωhllt_169 there are local requires:"
+        for message in local_requires
+          warn 'Ωhllt_170', GUY.trm.gold message
+      process.once 'uncaughtException',   exit_handler
+      process.once 'unhandledRejection',  exit_handler
+      process.once 'exit',                exit_handler
+    return null
+  show_requires '../../../apps/hollerith'
