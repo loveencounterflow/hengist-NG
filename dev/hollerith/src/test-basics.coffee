@@ -684,21 +684,23 @@ helpers =
     @eq ( Ωhllt_172 = -> T.uniliterals.isa 'VBA'                              ), false
     @eq ( Ωhllt_173 = -> T.uniliterals.isa 'EFGHIJKLM NOPQRSTUVW'             ), false
     @eq ( Ωhllt_174 = -> T.uniliterals.isa 'EFGHIJKLM N OPQRSTUVW'            ), true
+    @eq ( Ωhllt_176 = -> T.uniliterals.data                                   ), { nuns: 'EFGHIJKLM', zpuns: 'NOPQRSTUVW', nun_chrs: [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ], zpun_chrs: [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ] }
     @eq ( Ωhllt_175 = -> T.uniliterals.isa 'N'                                ), true
+    @eq ( Ωhllt_176 = -> T.uniliterals.data                                   ), { nuns: '', zpuns: 'N', nun_chrs: [], zpun_chrs: [ 'N' ] }
     #.......................................................................................................
-    @throws ( Ωhllt_176 = -> T.alphabet.validate null                         ), /not a valid alphabet/
-    @throws ( Ωhllt_177 = -> T.alphabet.validate ''                           ), /not a valid alphabet/
-    @throws ( Ωhllt_178 = -> T.alphabet.validate 'a'                          ), /not a valid alphabet/
-    @eq     ( Ωhllt_179 = -> T.alphabet.validate 'ab'                         ), 'ab'
+    @throws ( Ωhllt_177 = -> T.alphabet.validate null                         ), /not a valid alphabet/
+    @throws ( Ωhllt_178 = -> T.alphabet.validate ''                           ), /not a valid alphabet/
+    @throws ( Ωhllt_179 = -> T.alphabet.validate 'a'                          ), /not a valid alphabet/
+    @eq     ( Ωhllt_180 = -> T.alphabet.validate 'ab'                         ), 'ab'
     #.......................................................................................................
-    @throws ( Ωhllt_180 = ->   new Hollerith_typespace { blank: null }                        ), /not a valid blank/
-    @throws ( Ωhllt_181 = ->   new Hollerith_typespace { blank: ''   }                        ), /not a valid blank/
-    @throws ( Ωhllt_182 = ->   new Hollerith_typespace { blank: '--' }                        ), /not a valid blank/
-    @throws ( Ωhllt_183 = -> ( new Hollerith_typespace { blank: null } ).blank.validate null  ), /not a valid blank/
-    @throws ( Ωhllt_184 = -> ( new Hollerith_typespace { blank: ''   } ).blank.validate ''    ), /not a valid blank/
-    @throws ( Ωhllt_185 = -> ( new Hollerith_typespace { blank: '--' } ).blank.validate '--'  ), /not a valid blank/
-    @eq     ( Ωhllt_186 = -> ( new Hollerith_typespace { blank: '-'  } ).blank.validate '-'   ), '-'
-    @eq     ( Ωhllt_187 = -> ( new Hollerith_typespace { blank: ' '  } ).blank.validate ' '   ), ' '
+    @throws ( Ωhllt_181 = ->   new Hollerith_typespace { blank: null }                        ), /not a valid blank/
+    @throws ( Ωhllt_182 = ->   new Hollerith_typespace { blank: ''   }                        ), /not a valid blank/
+    @throws ( Ωhllt_183 = ->   new Hollerith_typespace { blank: '--' }                        ), /not a valid blank/
+    @throws ( Ωhllt_184 = -> ( new Hollerith_typespace { blank: null } ).blank.validate null  ), /not a valid blank/
+    @throws ( Ωhllt_185 = -> ( new Hollerith_typespace { blank: ''   } ).blank.validate ''    ), /not a valid blank/
+    @throws ( Ωhllt_186 = -> ( new Hollerith_typespace { blank: '--' } ).blank.validate '--'  ), /not a valid blank/
+    @eq     ( Ωhllt_187 = -> ( new Hollerith_typespace { blank: '-'  } ).blank.validate '-'   ), '-'
+    @eq     ( Ωhllt_188 = -> ( new Hollerith_typespace { blank: ' '  } ).blank.validate ' '   ), ' '
     #.......................................................................................................
     return null
 
@@ -721,21 +723,25 @@ helpers =
     #.......................................................................................................
     do =>
       # T = new Hollerith_typespace()
-      @throws ( Ωhllt_188 = -> Hollerith.validate_and_compile_cfg {}                  ), /not a valid alphabet/
-      @throws ( Ωhllt_189 = -> Hollerith.validate_and_compile_cfg { alphabet: ''    } ), /not a valid alphabet/
-      @throws ( Ωhllt_190 = -> Hollerith.validate_and_compile_cfg { alphabet: 'a'   } ), /not a valid alphabet/
+      @throws ( Ωhllt_189 = -> Hollerith.validate_and_compile_cfg {}                  ), /not a valid alphabet/
+      @throws ( Ωhllt_190 = -> Hollerith.validate_and_compile_cfg { alphabet: ''    } ), /not a valid alphabet/
+      @throws ( Ωhllt_191 = -> Hollerith.validate_and_compile_cfg { alphabet: 'a'   } ), /not a valid alphabet/
       cfg = Hollerith.validate_and_compile_cfg cfg_1
-      @eq ( Ωhllt_191 = -> cfg.blank                      ), ' '
-      @eq ( Ωhllt_192 = -> cfg.alphabet                   ), '0123456789'
-      @eq ( Ωhllt_193 = -> cfg.alphabet_chrs              ), Array.from '0123456789'
-      @eq ( Ωhllt_194 = -> cfg.base                       ), 10
-      @eq ( Ωhllt_195 = -> cfg.magnifiers                 ), 'ABC XYZ'
-      @eq ( Ωhllt_196 = -> cfg.nmag                       ), ' CBA'
-      @eq ( Ωhllt_197 = -> cfg.pmag                       ), ' XYZ'
-      @eq ( Ωhllt_198 = -> cfg.nmag_chrs                  ), Array.from ' CBA'
-      @eq ( Ωhllt_199 = -> cfg.pmag_chrs                  ), Array.from ' XYZ'
-      @eq ( Ωhllt_200 = -> cfg.uniliterals                ), 'EFGHIJKLM N OPQRSTUVW'
-      @eq ( Ωhllt_201 = -> is_frozen cfg.alphabet_chrs    ), true
+      @eq ( Ωhllt_192 = -> cfg.blank                      ), ' '
+      @eq ( Ωhllt_193 = -> cfg.alphabet                   ), '0123456789'
+      @eq ( Ωhllt_194 = -> cfg.alphabet_chrs              ), Array.from '0123456789'
+      @eq ( Ωhllt_195 = -> cfg.base                       ), 10
+      @eq ( Ωhllt_196 = -> cfg.magnifiers                 ), 'ABC XYZ'
+      @eq ( Ωhllt_197 = -> cfg.nmag                       ), ' CBA'
+      @eq ( Ωhllt_198 = -> cfg.pmag                       ), ' XYZ'
+      @eq ( Ωhllt_199 = -> cfg.nmag_chrs                  ), Array.from ' CBA'
+      @eq ( Ωhllt_200 = -> cfg.pmag_chrs                  ), Array.from ' XYZ'
+      @eq ( Ωhllt_201 = -> cfg.uniliterals                ), 'EFGHIJKLM N OPQRSTUVW'
+      @eq ( Ωhllt_135 = -> cfg.nuns                       ), 'EFGHIJKLM',
+      @eq ( Ωhllt_135 = -> cfg.zpuns                      ), 'NOPQRSTUVW',
+      @eq ( Ωhllt_135 = -> cfg.nun_chrs                   ), [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
+      @eq ( Ωhllt_135 = -> cfg.zpun_chrs                  ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ]
+      @eq ( Ωhllt_202 = -> is_frozen cfg.alphabet_chrs    ), true
       return null
     #.......................................................................................................
     return null
