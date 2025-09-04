@@ -622,248 +622,70 @@ helpers =
     #.......................................................................................................
     return null
 
-  #---------------------------------------------------------------------------------------------------------
-  types_bounded_list: ->
-    { internals               } = require '../../../apps/hollerith/lib/types'
-    { Bounded_list,           } = internals
-    # { type_of,                } = SFMODULES.unstable.require_type_of()
-    { isDeepStrictEqual: equals, } = require 'node:util'
-    #.......................................................................................................
-    blist = new Bounded_list 3
-    @eq ( Ωhllt_136 = -> blist.size               ), 0
-    @eq ( Ωhllt_137 = -> blist.is_empty           ), true
-    @eq ( Ωhllt_138 = -> blist.max_size           ), 3
-    @eq ( Ωhllt_139 = -> blist.at -1              ), undefined
-    #.......................................................................................................
-    data_1 = blist.current
-    @eq ( Ωhllt_140 = -> data_1                   ), {}
-    @eq ( Ωhllt_141 = -> blist.current            ), data_1
-    @eq ( Ωhllt_142 = -> blist.at -1              ), data_1
-    @eq ( Ωhllt_143 = -> blist.size               ), 1
-    @eq ( Ωhllt_144 = -> blist.is_empty           ), false
-    #.......................................................................................................
-    data_2 = blist.create()
-    @eq ( Ωhllt_145 = -> equals data_1, data_2    ), true
-    @eq ( Ωhllt_146 = -> data_1 is data_2         ), false
-    @eq ( Ωhllt_147 = -> blist.at -1              ), data_2
-    @eq ( Ωhllt_148 = -> blist.size               ), 2
-    @eq ( Ωhllt_149 = -> blist.is_empty           ), false
-    @eq ( Ωhllt_150 = -> data_2 is blist.current  ), true
-    @eq ( Ωhllt_151 = -> blist.at -1              ), data_2
-    @eq ( Ωhllt_152 = -> blist.size               ), 2
-    @eq ( Ωhllt_153 = -> blist.is_empty           ), false
-    #.......................................................................................................
-    data_3 = blist.create()
-    @eq ( Ωhllt_154 = -> equals data_2, data_3    ), true
-    @eq ( Ωhllt_155 = -> data_2 is data_3         ), false
-    @eq ( Ωhllt_156 = -> blist.at -1              ), data_3
-    @eq ( Ωhllt_157 = -> blist.size               ), 3
-    @eq ( Ωhllt_158 = -> blist.is_empty           ), false
-    @eq ( Ωhllt_159 = -> data_3 is blist.current  ), true
-    @eq ( Ωhllt_160 = -> blist.at -1              ), data_3
-    @eq ( Ωhllt_161 = -> blist.at -2              ), data_2
-    @eq ( Ωhllt_162 = -> blist.at -3              ), data_1
-    @eq ( Ωhllt_163 = -> blist.size               ), 3
-    @eq ( Ωhllt_164 = -> blist.is_empty           ), false
-    #.......................................................................................................
-    data_4 = blist.create { a: 1, b: 2, }
-    @eq ( Ωhllt_165 = -> equals data_3, data_4    ), false
-    @eq ( Ωhllt_166 = -> data_3 is data_4         ), false
-    @eq ( Ωhllt_167 = -> blist.at -1              ), { a: 1, b: 2, }
-    @eq ( Ωhllt_168 = -> blist.size               ), 3
-    @eq ( Ωhllt_169 = -> blist.is_empty           ), false
-    @eq ( Ωhllt_170 = -> blist.current            ), { a: 1, b: 2, }
-    @eq ( Ωhllt_171 = -> blist.at -1              ), { a: 1, b: 2, }
-    @eq ( Ωhllt_172 = -> blist.at -2              ), data_3
-    @eq ( Ωhllt_173 = -> blist.at -3              ), data_2
-    @eq ( Ωhllt_174 = -> blist.size               ), 3
-    @eq ( Ωhllt_175 = -> blist.is_empty           ), false
-    #.......................................................................................................
-    @eq ( Ωhllt_176 = -> [ blist.create(), blist.size, ]    ), [ {}, 3, ]
-    @eq ( Ωhllt_177 = -> [ blist.create(), blist.size, ]    ), [ {}, 3, ]
-    @eq ( Ωhllt_178 = -> [ blist.create(), blist.size, ]    ), [ {}, 3, ]
-    #.......................................................................................................
-    blist = new Bounded_list 3
-    @eq ( Ωhllt_179 = -> [ ( blist.assign { message: 'oops',        } ), blist.size, blist.current, ] ), [ { message: 'oops'        }, 1, { message: 'oops'        } ]
-    @eq ( Ωhllt_180 = -> [ ( blist.assign { message: 'over', x: 1,  } ), blist.size, blist.current, ] ), [ { message: 'over', x: 1, }, 1, { message: 'over', x: 1, } ]
-    #.......................................................................................................
-    return null
-
-  #---------------------------------------------------------------------------------------------------------
-  type_data_handling: ->
-    { internals               } = require '../../../apps/hollerith/lib/types'
-    { Type,
-      Typespace,
-      Bounded_list,           } = internals
-    #.......................................................................................................
-    do =>
-      class My_typespace extends Typespace
-        #...................................................................................................
-        @integer: ( x ) ->
-          @assign { x, }
-          return true if Number.isSafeInteger x
-          return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
-          return @fail "#{rpr x} is not even a finite number"
-        #...................................................................................................
-        @even_integer: ( x ) ->
-          return ( @fail "not an integer"     ) unless @T.integer.isa x
-          return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
-          return true
-      #.....................................................................................................
-      T = new My_typespace()
-      @eq ( Ωhllt_181 = -> T.integer.isa 9987           ), true
-      @eq ( Ωhllt_182 = -> T.integer.data               ), { x: 9987, }
-      @eq ( Ωhllt_183 = -> T.integer.isa 9987.125       ), false
-      @eq ( Ωhllt_184 = -> T.integer.data               ), { x: 9987.125, message: '9987.125 is a non-integer number', fraction: 0.125, }
-      @eq ( Ωhllt_185 = -> T.even_integer.isa 33.125    ), false
-      @eq ( Ωhllt_186 = -> T.integer.data               ), { x: 33.125, message: '33.125 is a non-integer number', fraction: 0.125, }
-      @eq ( Ωhllt_187 = -> T.even_integer.data          ), { message: 'not an integer' }
-      @eq ( Ωhllt_188 = -> T.even_integer.isa 777       ), false
-      @eq ( Ωhllt_189 = -> T.integer.data               ), { x: 777, }
-      @eq ( Ωhllt_190 = -> T.even_integer.data          ), { message: 'detected remainder' }
-      @eq ( Ωhllt_191 = -> T.even_integer.isa 888       ), true
-      @eq ( Ωhllt_192 = -> T.integer.data               ), { x: 888, }
-      @eq ( Ωhllt_193 = -> T.even_integer.data          ), {}
-      #.....................................................................................................
-      return null
-    #.......................................................................................................
-    do =>
-      class My_typespace extends Typespace
-        #...................................................................................................
-        @integer: ( x ) ->
-          @assign { x, }
-          return true if Number.isSafeInteger x
-          return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
-          return @fail "#{rpr x} is not even a finite number"
-        #...................................................................................................
-        @even_integer: ( x ) ->
-          # unless @T.integer.isame @, x
-          #   debug 'Ωhllt_194', @data
-          return ( @fail "not an integer"     ) unless @T.integer.isame @, x
-          return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
-          return true
-      #.....................................................................................................
-      T = new My_typespace()
-      T.even_integer.isa 'what?'
-      @eq ( Ωhllt_195 = -> T.integer.data       ), {}
-      @eq ( Ωhllt_196 = -> T.even_integer.data  ), { x: 'what?', message: "not an integer", }
-      #.....................................................................................................
-      return null
-    #.......................................................................................................
-    do =>
-      class My_typespace extends Typespace
-        #...................................................................................................
-        @integer: ( x ) ->
-          @assign { me: 'integer', }
-          @assign { x, }
-          return true if Number.isSafeInteger x
-          return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
-          return @fail "#{rpr x} is not even a finite number"
-        #...................................................................................................
-        @even_integer: ( x ) ->
-          @assign { me: 'even_integer', }
-          unless @T.integer.isame @, { me: 'integer_me', message: 'message_from_integer', }, x
-            return ( @fail "not an integer: #{rpr @data.message_from_integer}" )
-          return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
-          return true
-      #.....................................................................................................
-      T = new My_typespace()
-      T.even_integer.isa 'what?'
-      @eq ( Ωhllt_197 = -> T.integer.data       ), {}
-      @eq ( Ωhllt_198 = -> T.even_integer.data  ), {
-        me:                     'even_integer',
-        integer_me:             'integer',
-        x:                      'what?',
-        message_from_integer:   "'what?' is not even a finite number",
-        message:                """not an integer: "'what?' is not even a finite number\"""", }
-      #.....................................................................................................
-      T.even_integer.isa 26
-      debug 'Ωhllt_199', T.integer.data
-      debug 'Ωhllt_200', T.even_integer.data
-      #.....................................................................................................
-      return null
-    #.......................................................................................................
-    do =>
-      class My_typespace extends Typespace
-        #...................................................................................................
-        @integer: ( x ) ->
-          @assign { me: 'integer', }
-          @assign { x, }
-          return true if Number.isSafeInteger x
-          return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
-          return @fail "#{rpr x} is not even a finite number"
-        #...................................................................................................
-        @even_integer: ( x ) ->
-          @assign { me: 'even_integer', }
-          unless @T.integer.isa2 x, @data, { me: 'integer_me', message: 'message_from_integer', }
-            return ( @fail "not an integer: #{rpr @data.message_from_integer}" )
-          return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
-          return true
-      #.....................................................................................................
-      T = new My_typespace()
-      T.even_integer.isa 'what?'
-      @eq ( Ωhllt_201 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
-      @eq ( Ωhllt_202 = -> T.even_integer.data  ), {
-        me:                     'even_integer',
-        integer_me:             'integer',
-        x:                      'what?',
-        message_from_integer:   "'what?' is not even a finite number",
-        message:                """not an integer: "'what?' is not even a finite number\"""", }
-      #.....................................................................................................
-      T.even_integer.isa 26
-      debug 'Ωhllt_203', T.integer.data
-      debug 'Ωhllt_204', T.even_integer.data
-      #.....................................................................................................
-      return null
-    return null
 
   #---------------------------------------------------------------------------------------------------------
   types: ->
-    { internals               } = require '../../../apps/hollerith/'
-    { types: T,               } = internals
-    { type_of,                } = SFMODULES.unstable.require_type_of()
-    { isDeepStrictEqual: equals, } = require 'node:util'
+    { internals,
+      Hollerith_typespace,
+      CFG,                        } = require '../../../apps/hollerith/lib/types'
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    { isDeepStrictEqual: equals,  } = require 'node:util'
     #.......................................................................................................
-    @eq ( Ωhllt_205 = -> T.nonempty_text.isa 4            ), false
-    @eq ( Ωhllt_206 = -> T.nonempty_text.isa false        ), false
-    @eq ( Ωhllt_207 = -> T.nonempty_text.isa ''           ), false
-    @eq ( Ωhllt_208 = -> T.nonempty_text.isa 'yes'        ), true
+    do =>
+      T = new Hollerith_typespace()
+      @eq ( Ωhllt_136 = -> T[CFG].blank                     ), '\x20'
+      return null
     #.......................................................................................................
-    @eq ( Ωhllt_209 = -> T.incremental_text.isa 'yes'     ), false
-    @eq ( Ωhllt_210 = -> T.decremental_text.isa 'yes'     ), false
-    @eq ( Ωhllt_211 = -> T.incremental_text.data          ), { chrs: [ 'y', 'e', 's' ], fail: { x: 'yes', idx: 1, prv_chr: 'y', chr: 'e' } }
-    @eq ( Ωhllt_212 = -> T.incremental_text.isa 'abcdefz' ), true
-    @eq ( Ωhllt_213 = -> T.decremental_text.isa 'abcdefz' ), false
-    @eq ( Ωhllt_214 = -> T.incremental_text.data          ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z', ], }
-    @eq ( Ωhllt_215 = -> T.decremental_text.data          ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z' ], fail: { x: 'abcdefz', idx: 1, prv_chr: 'a', chr: 'b' } }
-    @eq ( Ωhllt_216 = -> T.incremental_text.isa 'abc0'    ), false
-    @eq ( Ωhllt_217 = -> T.incremental_text.data          ), { chrs: [ 'a', 'b', 'c', '0', ], fail: { x: 'abc0', idx: 3, prv_chr: 'c', chr: '0' } }
-    @eq ( Ωhllt_218 = -> T.decremental_text.isa 'cba'     ), true
-    @eq ( Ωhllt_219 = -> T.decremental_text.data          ), { chrs: [ 'c', 'b', 'a', ], }
+    do =>
+      T = new Hollerith_typespace { blank: '#', }
+      @eq ( Ωhllt_137 = -> T[CFG].blank                     ), '#'
+      @eq ( Ωhllt_138 = -> T.magnifiers.isa 'ABC DXYZ'      ), false
+      @eq ( Ωhllt_139 = -> T.magnifiers.isa 'ABC#DXYZ'      ), true
+      @eq ( Ωhllt_140 = -> T.blank.isa ' '                  ), false
+      @eq ( Ωhllt_141 = -> T.blank.isa '#'                  ), true
+      @eq ( Ωhllt_142 = -> T.blank.isa T[CFG].blank         ), true
+      return null
     #.......................................................................................................
-    debug 'Ωhllt_220', T.magnifiers.data
-    @eq ( Ωhllt_221 = -> T.magnifiers.isa ''                  ), false
-    debug 'Ωhllt_222', T.magnifiers.data
-    debug 'Ωhllt_223', T.magnifiers.data.current
-    @eq ( Ωhllt_224 = -> T.magnifiers.data.current            ), { message: "expected a magnifier, got an empty text", }
-    @eq ( Ωhllt_225 = -> T.magnifiers.isa 'ABC XYZ'           ), true
-    debug 'Ωhllt_226', T.magnifiers.data
-    # # @eq ( Ωhllt_227 = -> T.magnifiers.isa 'ABC\nXYZ'          ), true
-    # # @eq ( Ωhllt_228 = -> T.magnifiers.isa 'ABC\tXYZ'          ), true
-    # # @eq ( Ωhllt_229 = -> T.magnifiers.isa 'ABC DXYZ'          ), true
-    # # @eq ( Ωhllt_230 = -> T.magnifiers.isa 'ABD CXYZ'          ), false
+    T = new Hollerith_typespace()
+    @eq ( Ωhllt_143 = -> T.nonempty_text.isa 4            ), false
+    @eq ( Ωhllt_144 = -> T.nonempty_text.isa false        ), false
+    @eq ( Ωhllt_145 = -> T.nonempty_text.isa ''           ), false
+    @eq ( Ωhllt_146 = -> T.nonempty_text.isa 'yes'        ), true
+    #.......................................................................................................
+    @eq ( Ωhllt_147 = -> T.incremental_text.isa 'yes'     ), false
+    @eq ( Ωhllt_148 = -> T.decremental_text.isa 'yes'     ), false
+    @eq ( Ωhllt_149 = -> T.incremental_text.data          ), { chrs: [ 'y', 'e', 's' ], fail: { x: 'yes', idx: 1, prv_chr: 'y', chr: 'e' } }
+    @eq ( Ωhllt_150 = -> T.incremental_text.isa 'abcdefz' ), true
+    @eq ( Ωhllt_151 = -> T.decremental_text.isa 'abcdefz' ), false
+    @eq ( Ωhllt_152 = -> T.incremental_text.data          ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z', ], }
+    @eq ( Ωhllt_153 = -> T.decremental_text.data          ), { chrs: [ 'a', 'b', 'c', 'd', 'e', 'f', 'z' ], fail: { x: 'abcdefz', idx: 1, prv_chr: 'a', chr: 'b' } }
+    @eq ( Ωhllt_154 = -> T.incremental_text.isa 'abc0'    ), false
+    @eq ( Ωhllt_155 = -> T.incremental_text.data          ), { chrs: [ 'a', 'b', 'c', '0', ], fail: { x: 'abc0', idx: 3, prv_chr: 'c', chr: '0' } }
+    @eq ( Ωhllt_156 = -> T.decremental_text.isa 'cba'     ), true
+    @eq ( Ωhllt_157 = -> T.decremental_text.data          ), { chrs: [ 'c', 'b', 'a', ], }
+    #.......................................................................................................
+    @eq ( Ωhllt_158 = -> T.magnifiers.isa ''                                  ), false
+    @eq ( Ωhllt_159 = -> T.magnifiers.data                                    ), { message: "expected a magnifier, got an empty text", }
+    @eq ( Ωhllt_160 = -> T.magnifiers.isa 'ABC XYZ'                           ), true
+    @eq ( Ωhllt_161 = -> T.magnifiers.data                                    ), { nmag_chrs_reversed: [ 'A', 'B', 'C' ], pmag_chrs: [ 'X', 'Y', 'Z' ], nmag: ' CBA', pmag: ' XYZ' }
+    @eq ( Ωhllt_162 = -> Object.isFrozen T.magnifiers.data.nmag_chrs_reversed ), true
+    @eq ( Ωhllt_163 = -> Object.isFrozen T.magnifiers.data.pmag_chrs          ), true
+    @eq ( Ωhllt_164 = -> T.magnifiers.isa 'ABC\nXYZ'                          ), false
+    @eq ( Ωhllt_165 = -> T.magnifiers.isa 'ABC\tXYZ'                          ), false
+    @eq ( Ωhllt_166 = -> T.magnifiers.isa 'ABC DXYZ'                          ), true
+    @eq ( Ωhllt_167 = -> T.magnifiers.isa 'ABD CXYZ'                          ), false
     #.......................................................................................................
     return null
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @hollerith
   # ( new Test guytest_cfg ).test { h128b_decode: @hollerith.h128b_decode, }
   # ( new Test guytest_cfg ).test { types_bounded_list: @hollerith.types_bounded_list, }
-  ( new Test guytest_cfg ).test { type_data_handling: @hollerith.type_data_handling, }
-  # ( new Test guytest_cfg ).test { types: @hollerith.types, }
+  # ( new Test guytest_cfg ).test { type_data_handling: @hollerith.type_data_handling, }
+  ( new Test guytest_cfg ).test { types: @hollerith.types, }
   #.........................................................................................................
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
   # ( new Test guytest_cfg ).test { h128_decode: @hollerith.h128_decode, }
