@@ -630,6 +630,7 @@ helpers =
       CFG,                        } = require '../../../apps/hollerith/lib/types'
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals,  } = require 'node:util'
+    { pick,                       } = SFMODULES.unstable.require_pick()
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
@@ -667,18 +668,37 @@ helpers =
     @eq ( Ωhllt_158 = -> T.magnifiers.isa ''                                  ), false
     @eq ( Ωhllt_159 = -> T.magnifiers.data                                    ), { message: "expected a magnifier, got an empty text", }
     @eq ( Ωhllt_160 = -> T.magnifiers.isa 'ABC XYZ'                           ), true
-    @eq ( Ωhllt_161 = -> T.magnifiers.data                                    ), { nmag_chrs_reversed: [ 'A', 'B', 'C' ], pmag_chrs: [ 'X', 'Y', 'Z' ], nmag: ' CBA', pmag: ' XYZ' }
+    @eq ( Ωhllt_161 = -> pick T.magnifiers.data, \
+                       [ 'nmag_chrs_reversed', 'pmag_chrs', 'nmag', 'pmag', ] ), { nmag_chrs_reversed: [ 'A', 'B', 'C' ], pmag_chrs: [ ' ', 'X', 'Y', 'Z' ], nmag: ' CBA', pmag: ' XYZ' }
     @eq ( Ωhllt_162 = -> Object.isFrozen T.magnifiers.data.nmag_chrs_reversed ), true
     @eq ( Ωhllt_163 = -> Object.isFrozen T.magnifiers.data.pmag_chrs          ), true
     @eq ( Ωhllt_164 = -> T.magnifiers.isa 'ABC\nXYZ'                          ), false
     @eq ( Ωhllt_165 = -> T.magnifiers.isa 'ABC\tXYZ'                          ), false
     @eq ( Ωhllt_166 = -> T.magnifiers.isa 'ABC DXYZ'                          ), true
-    @eq ( Ωhllt_167 = -> T.magnifiers.isa 'ABD CXYZ'                          ), false
+    @eq ( Ωhllt_167 = -> T.magnifiers.isa 'ABC  DXYZ'                         ), true
+    @eq ( Ωhllt_168 = -> T.magnifiers.isa 'ABC DX YZ'                         ), false
+    @eq ( Ωhllt_169 = -> T.magnifiers.isa 'ABD CXYZ'                          ), false
     #.......................................................................................................
-    @throws ( Ωhllt_168 = -> T.alphabet.validate null                         ), /not a valid alphabet/
-    @throws ( Ωhllt_169 = -> T.alphabet.validate ''                           ), /not a valid alphabet/
-    @throws ( Ωhllt_170 = -> T.alphabet.validate 'a'                          ), /not a valid alphabet/
-    @eq     ( Ωhllt_171 = -> T.alphabet.validate 'ab'                         ), 'ab'
+    @eq ( Ωhllt_170 = -> T.uniliterals.isa null                               ), false
+    @eq ( Ωhllt_171 = -> T.uniliterals.isa ''                                 ), false
+    @eq ( Ωhllt_172 = -> T.uniliterals.isa 'VBA'                              ), false
+    @eq ( Ωhllt_173 = -> T.uniliterals.isa 'EFGHIJKLM NOPQRSTUVW'             ), false
+    @eq ( Ωhllt_174 = -> T.uniliterals.isa 'EFGHIJKLM N OPQRSTUVW'            ), true
+    @eq ( Ωhllt_175 = -> T.uniliterals.isa 'N'                                ), true
+    #.......................................................................................................
+    @throws ( Ωhllt_176 = -> T.alphabet.validate null                         ), /not a valid alphabet/
+    @throws ( Ωhllt_177 = -> T.alphabet.validate ''                           ), /not a valid alphabet/
+    @throws ( Ωhllt_178 = -> T.alphabet.validate 'a'                          ), /not a valid alphabet/
+    @eq     ( Ωhllt_179 = -> T.alphabet.validate 'ab'                         ), 'ab'
+    #.......................................................................................................
+    @throws ( Ωhllt_180 = ->   new Hollerith_typespace { blank: null }                        ), /not a valid blank/
+    @throws ( Ωhllt_181 = ->   new Hollerith_typespace { blank: ''   }                        ), /not a valid blank/
+    @throws ( Ωhllt_182 = ->   new Hollerith_typespace { blank: '--' }                        ), /not a valid blank/
+    @throws ( Ωhllt_183 = -> ( new Hollerith_typespace { blank: null } ).blank.validate null  ), /not a valid blank/
+    @throws ( Ωhllt_184 = -> ( new Hollerith_typespace { blank: ''   } ).blank.validate ''    ), /not a valid blank/
+    @throws ( Ωhllt_185 = -> ( new Hollerith_typespace { blank: '--' } ).blank.validate '--'  ), /not a valid blank/
+    @eq     ( Ωhllt_186 = -> ( new Hollerith_typespace { blank: '-'  } ).blank.validate '-'   ), '-'
+    @eq     ( Ωhllt_187 = -> ( new Hollerith_typespace { blank: ' '  } ).blank.validate ' '   ), ' '
     #.......................................................................................................
     return null
 
@@ -690,16 +710,32 @@ helpers =
       CFG,                        } = require '../../../apps/hollerith/lib/types'
     # { type_of,                    } = SFMODULES.unstable.require_type_of()
     # { isDeepStrictEqual: equals,  } = require 'node:util'
+    { isFrozen: is_frozen,        } = Object
+    #.......................................................................................................
+    cfg_1 =
+      blank:        ' '                       # separator used in `magnifiers` and `uniliterals`
+      alphabet:     '0123456789'              # digits; length of `alphabet` is the `base`
+      magnifiers:   'ABC XYZ'                 #
+      uniliterals:  'EFGHIJKLM N OPQRSTUVW'   # negative uniliterals, blank, zero uniliteral, blank, positive uniliterals
+      dimension:    3                         # number of indices supported
     #.......................................................................................................
     do =>
       # T = new Hollerith_typespace()
-      @throws ( Ωhllt_172 = -> Hollerith.validate_and_compile_cfg {}                  ), /not a valid alphabet/
-      @throws ( Ωhllt_173 = -> Hollerith.validate_and_compile_cfg { alphabet: ''    } ), /not a valid alphabet/
-      @throws ( Ωhllt_174 = -> Hollerith.validate_and_compile_cfg { alphabet: 'a'   } ), /not a valid alphabet/
-      cfg = Hollerith.validate_and_compile_cfg { alphabet: 'ab'  }
-      @eq ( Ωhllt_175 = -> cfg.blank            ), ' '
-      @eq ( Ωhllt_176 = -> cfg.alphabet         ), 'ab'
-      @eq ( Ωhllt_177 = -> cfg.alphabet_chrs    ), [ 'a', 'b' ]
+      @throws ( Ωhllt_188 = -> Hollerith.validate_and_compile_cfg {}                  ), /not a valid alphabet/
+      @throws ( Ωhllt_189 = -> Hollerith.validate_and_compile_cfg { alphabet: ''    } ), /not a valid alphabet/
+      @throws ( Ωhllt_190 = -> Hollerith.validate_and_compile_cfg { alphabet: 'a'   } ), /not a valid alphabet/
+      cfg = Hollerith.validate_and_compile_cfg cfg_1
+      @eq ( Ωhllt_191 = -> cfg.blank                      ), ' '
+      @eq ( Ωhllt_192 = -> cfg.alphabet                   ), '0123456789'
+      @eq ( Ωhllt_193 = -> cfg.alphabet_chrs              ), Array.from '0123456789'
+      @eq ( Ωhllt_194 = -> cfg.base                       ), 10
+      @eq ( Ωhllt_195 = -> cfg.magnifiers                 ), 'ABC XYZ'
+      @eq ( Ωhllt_196 = -> cfg.nmag                       ), ' CBA'
+      @eq ( Ωhllt_197 = -> cfg.pmag                       ), ' XYZ'
+      @eq ( Ωhllt_198 = -> cfg.nmag_chrs                  ), Array.from ' CBA'
+      @eq ( Ωhllt_199 = -> cfg.pmag_chrs                  ), Array.from ' XYZ'
+      @eq ( Ωhllt_200 = -> cfg.uniliterals                ), 'EFGHIJKLM N OPQRSTUVW'
+      @eq ( Ωhllt_201 = -> is_frozen cfg.alphabet_chrs    ), true
       return null
     #.......................................................................................................
     return null
