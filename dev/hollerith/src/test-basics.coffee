@@ -822,38 +822,52 @@ helpers =
 
 #===========================================================================================================
 demo_max_integer = ->
-  logxb = ( x, b ) -> ( Math.log x ) / ( Math.log b )
+  log_to_base       = ( n, base ) -> ( Math.log n ) / ( Math.log base )
+  required_digits   = ( n, base ) -> Math.ceil log_to_base n, base
+  max_niners        = ( n, base ) -> ( required_digits n, base ) - 1
   info 'Ωhllt_245', Number.MAX_SAFE_INTEGER.toString 16
   info 'Ωhllt_246', Number.MAX_SAFE_INTEGER.toString 32
   whisper '—————————————————————————————————'
   info 'Ωhllt_247', ( 32 ** 4 - 1 ).toString 32
   info 'Ωhllt_248', ( 32 ** 4 - 1 ).toString 32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_249', Math.ceil logxb 32, 32
-  info 'Ωhllt_250', Math.ceil logxb 32 ** 6, 32
-  info 'Ωhllt_251', Math.ceil logxb 1e6, 10
-  info 'Ωhllt_252', Math.ceil logxb 20, 10
+  info 'Ωhllt_249', required_digits 32,       32
+  info 'Ωhllt_250', required_digits 32 ** 6,  32
+  info 'Ωhllt_251', required_digits 1e6,      10
+  info 'Ωhllt_252', required_digits 20,       10
   whisper '—————————————————————————————————'
-  info 'Ωhllt_253', digits_10_for_lessthan_maxint  = ( Math.ceil logxb Number.MAX_SAFE_INTEGER, 10  ) - 1
-  info 'Ωhllt_254', digits_16_for_lessthan_maxint  = ( Math.ceil logxb Number.MAX_SAFE_INTEGER, 16  ) - 1
-  info 'Ωhllt_255', digits_32_for_lessthan_maxint  = ( Math.ceil logxb Number.MAX_SAFE_INTEGER, 32  ) - 1
-  info 'Ωhllt_256', digits_36_for_lessthan_maxint  = ( Math.ceil logxb Number.MAX_SAFE_INTEGER, 36  ) - 1
-  info 'Ωhllt_257', digits_128_for_lessthan_maxint = ( Math.ceil logxb Number.MAX_SAFE_INTEGER, 128 ) - 1
+  info 'Ωhllt_253', max_digits_base_10    = max_niners Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_254', max_digits_base_16    = max_niners Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_255', max_digits_base_32    = max_niners Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_256', max_digits_base_36    = max_niners Number.MAX_SAFE_INTEGER, 36
+  info 'Ωhllt_257', max_digits_1base_28   = max_niners Number.MAX_SAFE_INTEGER, 128
   # for base in [ 2 .. 128 ]
-  #   info 'Ωhllt_258', { base, }, ( Math.ceil logxb Number.MAX_SAFE_INTEGER, base ) - 1
+  #   info 'Ωhllt_258', { base, }, ( Math.ceil log_to_base Number.MAX_SAFE_INTEGER, base ) - 1
   whisper '—————————————————————————————————'
-  info 'Ωhllt_259', '9'.repeat digits_10_for_lessthan_maxint
-  info 'Ωhllt_260', 'f'.repeat digits_16_for_lessthan_maxint
-  info 'Ωhllt_261', 'v'.repeat digits_32_for_lessthan_maxint
+  info 'Ωhllt_259', '9'.repeat max_digits_base_10
+  info 'Ωhllt_260', 'f'.repeat max_digits_base_16
+  info 'Ωhllt_261', 'v'.repeat max_digits_base_32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_262', ( parseInt ( '9'.repeat digits_10_for_lessthan_maxint ), 10 )
-  info 'Ωhllt_263', ( parseInt ( 'f'.repeat digits_16_for_lessthan_maxint ), 16 )
-  info 'Ωhllt_264', ( parseInt ( 'v'.repeat digits_32_for_lessthan_maxint ), 32 )
-  info 'Ωhllt_265', ( parseInt ( 'z'.repeat digits_36_for_lessthan_maxint ), 36 )
-  info 'Ωhllt_266', ( parseInt ( '9'.repeat digits_10_for_lessthan_maxint ), 10 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_267', ( parseInt ( 'f'.repeat digits_16_for_lessthan_maxint ), 16 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_268', ( parseInt ( 'v'.repeat digits_32_for_lessthan_maxint ), 32 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_269', ( parseInt ( 'z'.repeat digits_36_for_lessthan_maxint ), 36 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_262', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
+  info 'Ωhllt_263', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
+  info 'Ωhllt_264', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
+  info 'Ωhllt_265', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
+  info 'Ωhllt_266', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_267', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_268', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_269', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
+  whisper '—————————————————————————————————'
+  info 'Ωhllt_270', +999 + -999
+  info 'Ωhllt_271', +999 + -1
+  info 'Ωhllt_272', -( -999 - 1 ) + -999
+  info 'Ωhllt_273', -( -999 - 1 ) + -998
+  info 'Ωhllt_274', -( -999 - 1 ) + -997
+  info 'Ωhllt_275', -( -999 - 1 ) + -3
+  info 'Ωhllt_276', -( -999 - 1 ) + -2
+  info 'Ωhllt_277', -( -999 - 1 ) + -1
+  info 'Ωhllt_275', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_276', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_277', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
   return null
 
 

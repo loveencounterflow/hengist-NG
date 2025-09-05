@@ -46,19 +46,19 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           return true
       #.....................................................................................................
       T = new My_typespace()
-      @eq ( Ωhllt_136 = -> T.integer.isa 9987           ), true
-      @eq ( Ωhllt_137 = -> T.integer.data               ), { x: 9987, }
-      @eq ( Ωhllt_138 = -> T.integer.isa 9987.125       ), false
-      @eq ( Ωhllt_139 = -> T.integer.data               ), { x: 9987.125, message: '9987.125 is a non-integer number', fraction: 0.125, }
-      @eq ( Ωhllt_140 = -> T.even_integer.isa 33.125    ), false
-      @eq ( Ωhllt_141 = -> T.integer.data               ), { x: 33.125, message: '33.125 is a non-integer number', fraction: 0.125, }
-      @eq ( Ωhllt_142 = -> T.even_integer.data          ), { message: 'not an integer' }
-      @eq ( Ωhllt_143 = -> T.even_integer.isa 777       ), false
-      @eq ( Ωhllt_144 = -> T.integer.data               ), { x: 777, }
-      @eq ( Ωhllt_145 = -> T.even_integer.data          ), { message: 'detected remainder' }
-      @eq ( Ωhllt_146 = -> T.even_integer.isa 888       ), true
-      @eq ( Ωhllt_147 = -> T.integer.data               ), { x: 888, }
-      @eq ( Ωhllt_148 = -> T.even_integer.data          ), {}
+      @eq ( Ωhllt___1 = -> T.integer.isa 9987           ), true
+      @eq ( Ωhllt___2 = -> T.integer.data               ), { x: 9987, }
+      @eq ( Ωhllt___3 = -> T.integer.isa 9987.125       ), false
+      @eq ( Ωhllt___4 = -> T.integer.data               ), { x: 9987.125, message: '9987.125 is a non-integer number', fraction: 0.125, }
+      @eq ( Ωhllt___5 = -> T.even_integer.isa 33.125    ), false
+      @eq ( Ωhllt___6 = -> T.integer.data               ), { x: 33.125, message: '33.125 is a non-integer number', fraction: 0.125, }
+      @eq ( Ωhllt___7 = -> T.even_integer.data          ), { message: 'not an integer' }
+      @eq ( Ωhllt___8 = -> T.even_integer.isa 777       ), false
+      @eq ( Ωhllt___9 = -> T.integer.data               ), { x: 777, }
+      @eq ( Ωhllt__10 = -> T.even_integer.data          ), { message: 'detected remainder' }
+      @eq ( Ωhllt__11 = -> T.even_integer.isa 888       ), true
+      @eq ( Ωhllt__12 = -> T.integer.data               ), { x: 888, }
+      @eq ( Ωhllt__13 = -> T.even_integer.data          ), {}
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -73,15 +73,15 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         #...................................................................................................
         @even_integer: ( x ) ->
           # unless @T.integer.isa x, @data
-          #   debug 'Ωhllt_149', @data
+          #   debug 'Ωhllt__14', @data
           return ( @fail "not an integer"     ) unless @T.integer.isa x, @data
           return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
           return true
       #.....................................................................................................
       T = new My_typespace()
       T.even_integer.isa 'what?'
-      @eq ( Ωhllt_150 = -> T.integer.data       ), { x: 'what?', message: "'what?' is not even a finite number", }
-      @eq ( Ωhllt_151 = -> T.even_integer.data  ), { x: 'what?', message: "not an integer", }
+      @eq ( Ωhllt__15 = -> T.integer.data       ), { x: 'what?', message: "'what?' is not even a finite number", }
+      @eq ( Ωhllt__16 = -> T.even_integer.data  ), { x: 'what?', message: "not an integer", }
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -104,8 +104,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       #.....................................................................................................
       T = new My_typespace()
       T.even_integer.isa 'what?'
-      @eq ( Ωhllt_152 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
-      @eq ( Ωhllt_153 = -> T.even_integer.data  ), {
+      @eq ( Ωhllt__17 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
+      @eq ( Ωhllt__18 = -> T.even_integer.data  ), {
         me:                     'even_integer',
         integer_me:             'integer',
         x:                      'what?',
@@ -113,8 +113,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         message:                """not an integer: "'what?' is not even a finite number\"""", }
       #.....................................................................................................
       T.even_integer.isa 26
-      debug 'Ωhllt_154', T.integer.data
-      debug 'Ωhllt_155', T.even_integer.data
+      debug 'Ωhllt__19', T.integer.data
+      debug 'Ωhllt__20', T.even_integer.data
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -137,8 +137,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       #.....................................................................................................
       T = new My_typespace()
       T.even_integer.isa 'what?'
-      @eq ( Ωhllt_156 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
-      @eq ( Ωhllt_157 = -> T.even_integer.data  ), {
+      @eq ( Ωhllt__21 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
+      @eq ( Ωhllt__22 = -> T.even_integer.data  ), {
         me:                     'even_integer',
         integer_me:             'integer',
         x:                      'what?',
@@ -146,8 +146,50 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         message:                """not an integer: "'what?' is not even a finite number\"""", }
       #.....................................................................................................
       T.even_integer.isa 26
-      debug 'Ωhllt_158', T.integer.data
-      debug 'Ωhllt_159', T.even_integer.data
+      debug 'Ωhllt__23', T.integer.data
+      debug 'Ωhllt__24', T.even_integer.data
+      #.....................................................................................................
+      return null
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  composed_types: ->
+    { Type,
+      Typespace,              } = SFMODULES.unstable.require_nanotypes()
+    #.......................................................................................................
+    do =>
+      class My_typespace extends Typespace
+        #...................................................................................................
+        @integer: ( x ) ->
+          @assign { x, }
+          return true if Number.isSafeInteger x
+          return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
+          return @fail "#{rpr x} is not even a finite number"
+        #...................................................................................................
+        @even_integer: ( x ) ->
+          return ( @fail "not an integer"     ) unless @T.integer.isa x
+          return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
+          return true
+        #...................................................................................................
+        @list:
+          isa:      ( x ) -> Array.isArray x
+          values:   ( x ) -> yield from x
+      #.....................................................................................................
+      T = new My_typespace()
+      { each,
+        any,
+        list,
+        integer,  } = T
+      # @eq ( Ωhllt__25 = -> each.isa       list, integer, [ 9987, ]           ), true
+      # @eq ( Ωhllt__26 = -> any.isa        list, integer, [ 9987, ]           ), true
+      # @eq ( Ωhllt__27 = -> each.validate  list, integer, [ 9987, ]           ), true
+      # @eq ( Ωhllt__28 = -> any.validate   list, integer, [ 9987, ]           ), true
+      @eq ( Ωhllt__29 = -> list.isa       each integer, [ 9987, ]           ), true
+      @eq ( Ωhllt__30 = -> list.validate  each integer, [ 9987, ]           ), true
+      # @eq ( Ωhllt__29 = -> list.isa       list.isa each integer, [ 9987, ]           ), true
+      debug 'Ωhllt__31', list.isa
+      debug 'Ωhllt__32', list.isa.values
+      # debug 'Ωhllt__33', list.isa []
       #.....................................................................................................
       return null
     return null
