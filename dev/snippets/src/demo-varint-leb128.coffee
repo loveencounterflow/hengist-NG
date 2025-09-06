@@ -101,8 +101,73 @@ demo_big_varint = ->
     urge 'Ωvi__15', number
   return null
 
+```
+// thx to https://en.wikipedia.org/wiki/LEB128
+const encodeSignedLeb128FromBigInt = (value) => {
+  value = BigInt(value);
+  const result = [];
+  while (true) {
+    const byte_ = Number(value & 0x7fn);
+    value >>= 7n;
+    if (
+      (value === 0n && (byte_ & 0x40) === 0) ||
+      (value === -1n && (byte_ & 0x40) !== 0)
+    ) {
+      result.push(byte_);
+      return result;
+    }
+    result.push(byte_ | 0x80);
+  }
+};
+const decodeSignedBigInt = (input) => {
+  let result = 0n;
+  let shift = 0;
+  while (true) {
+    const byte = input.shift();
+    result |= BigInt((byte & 0x7f) << shift);
+    shift += 7;
+    if ((byte & 0x80) === 0) {
+      // "sign-extending" does not apply to bigint because it has no fixed size
+      // instead, we work by handling it as a two's complement of "shift" bits long,
+      // which is provided by BigInt.asIntN
+      return BigInt.asIntN(shift, result);
+    }
+  }
+};
+
+```
+#===========================================================================================================
+demo_big_leb128 = ->
+  encode          = encodeSignedLeb128FromBigInt
+  decode          = decodeSignedBigInt
+  info 'Ωvi__16', '-123n', encode -123n
+  info 'Ωvi__17', '-1n  ', encode -1n
+  info 'Ωvi__18', '1n   ', encode 1n
+  info 'Ωvi__19', '123n ', encode 123n
+  debug 'Ωvi__20', hex_from_typed_array encode 123n
+  debug 'Ωvi__21', hex_from_typed_array encode 123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123_123n
+  numbers = [ [ -3 .. +3 ]..., -127n, 127n, ]
+  varints = ( encode ( BigInt n ) for n in numbers )
+  help 'Ωvi__22', varints
+  varints.sort ( a, b ) ->
+    return +1 if a[ 0 ] > b[ 0 ]
+    return -1 if a[ 0 ] < b[ 0 ]
+    return  0
+  for varint in varints
+    help 'Ωvi__23', decode varint
+  numbers.sort ( a, b ) ->
+    return +1 if a > b
+    return -1 if a < b
+    return  0
+  for number in numbers
+    urge 'Ωvi__24', number
+  debug 'Ωvi__21', numbers
+  return null
+
+
 #===========================================================================================================
 if module is require.main then await do =>
   demo_varint()
   demo_big_varint()
+  demo_big_leb128()
 

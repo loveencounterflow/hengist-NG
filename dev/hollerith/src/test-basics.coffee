@@ -822,25 +822,26 @@ helpers =
 
 #===========================================================================================================
 demo_max_integer = ->
-  log_to_base       = ( n, base ) -> ( Math.log n ) / ( Math.log base )
-  required_digits   = ( n, base ) -> Math.ceil log_to_base n, base
-  max_niners        = ( n, base ) -> ( required_digits n, base ) - 1
+  log_to_base         = ( n, base ) -> ( Math.log n ) / ( Math.log base )
+  get_required_digits = ( n, base ) -> Math.ceil log_to_base n, base
+  get_max_niners      = ( n, base ) -> ( get_required_digits n, base ) - 1
+  get_max_integer     = ( n, base ) -> ( base ** get_max_niners n, base ) - 1
   info 'Ωhllt_245', Number.MAX_SAFE_INTEGER.toString 16
   info 'Ωhllt_246', Number.MAX_SAFE_INTEGER.toString 32
   whisper '—————————————————————————————————'
   info 'Ωhllt_247', ( 32 ** 4 - 1 ).toString 32
   info 'Ωhllt_248', ( 32 ** 4 - 1 ).toString 32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_249', required_digits 32,       32
-  info 'Ωhllt_250', required_digits 32 ** 6,  32
-  info 'Ωhllt_251', required_digits 1e6,      10
-  info 'Ωhllt_252', required_digits 20,       10
+  info 'Ωhllt_249', get_required_digits 32,       32
+  info 'Ωhllt_250', get_required_digits 32 ** 6,  32
+  info 'Ωhllt_251', get_required_digits 1e6,      10
+  info 'Ωhllt_252', get_required_digits 20,       10
   whisper '—————————————————————————————————'
-  info 'Ωhllt_253', max_digits_base_10    = max_niners Number.MAX_SAFE_INTEGER, 10
-  info 'Ωhllt_254', max_digits_base_16    = max_niners Number.MAX_SAFE_INTEGER, 16
-  info 'Ωhllt_255', max_digits_base_32    = max_niners Number.MAX_SAFE_INTEGER, 32
-  info 'Ωhllt_256', max_digits_base_36    = max_niners Number.MAX_SAFE_INTEGER, 36
-  info 'Ωhllt_257', max_digits_1base_28   = max_niners Number.MAX_SAFE_INTEGER, 128
+  info 'Ωhllt_253', max_digits_base_10    = get_max_niners Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_254', max_digits_base_16    = get_max_niners Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_255', max_digits_base_32    = get_max_niners Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_256', max_digits_base_36    = get_max_niners Number.MAX_SAFE_INTEGER, 36
+  info 'Ωhllt_257', max_digits_1base_28   = get_max_niners Number.MAX_SAFE_INTEGER, 128
   # for base in [ 2 .. 128 ]
   #   info 'Ωhllt_258', { base, }, ( Math.ceil log_to_base Number.MAX_SAFE_INTEGER, base ) - 1
   whisper '—————————————————————————————————'
@@ -848,26 +849,36 @@ demo_max_integer = ->
   info 'Ωhllt_260', 'f'.repeat max_digits_base_16
   info 'Ωhllt_261', 'v'.repeat max_digits_base_32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_262', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
-  info 'Ωhllt_263', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
-  info 'Ωhllt_264', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
-  info 'Ωhllt_265', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
-  info 'Ωhllt_266', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_267', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_268', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_269', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_262', ( ( base = 10 ) ** max_digits_base_10 ) - 1
+  info 'Ωhllt_263', ( ( base = 16 ) ** max_digits_base_16 ) - 1
+  info 'Ωhllt_264', ( ( base = 32 ) ** max_digits_base_32 ) - 1
+  info 'Ωhllt_265', ( ( base = 36 ) ** max_digits_base_36 ) - 1
   whisper '—————————————————————————————————'
-  info 'Ωhllt_270', +999 + -999
-  info 'Ωhllt_271', +999 + -1
-  info 'Ωhllt_272', -( -999 - 1 ) + -999
-  info 'Ωhllt_273', -( -999 - 1 ) + -998
-  info 'Ωhllt_274', -( -999 - 1 ) + -997
-  info 'Ωhllt_275', -( -999 - 1 ) + -3
-  info 'Ωhllt_276', -( -999 - 1 ) + -2
-  info 'Ωhllt_277', -( -999 - 1 ) + -1
-  info 'Ωhllt_275', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
-  info 'Ωhllt_276', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
-  info 'Ωhllt_277', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_266', get_max_integer Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_267', get_max_integer Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_268', get_max_integer Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_269', get_max_integer Number.MAX_SAFE_INTEGER, 36
+  whisper '—————————————————————————————————'
+  info 'Ωhllt_270', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
+  info 'Ωhllt_271', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
+  info 'Ωhllt_272', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
+  info 'Ωhllt_273', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
+  info 'Ωhllt_274', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_275', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_276', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_277', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
+  whisper '—————————————————————————————————'
+  info 'Ωhllt_278', +999 + -999
+  info 'Ωhllt_279', +999 + -1
+  info 'Ωhllt_280', -( -999 - 1 ) + -999
+  info 'Ωhllt_281', -( -999 - 1 ) + -998
+  info 'Ωhllt_282', -( -999 - 1 ) + -997
+  info 'Ωhllt_283', -( -999 - 1 ) + -3
+  info 'Ωhllt_284', -( -999 - 1 ) + -2
+  info 'Ωhllt_285', -( -999 - 1 ) + -1
+  info 'Ωhllt_286', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_287', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_288', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
   return null
 
 
