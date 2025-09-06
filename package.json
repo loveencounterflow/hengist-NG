@@ -16,6 +16,7 @@
     "@clack/prompts": "^0.7.0",
     "@iarna/toml": "^2.2.5",
     "ansis": "^4.1.0",
+    "big-varint": "^0.2.1",
     "d3-format": "^3.1.0",
     "env-paths": "^3.0.0",
     "execa": "^9.4.0",
@@ -54,6 +55,7 @@
     "string-width": "^7.2.0",
     "strip-ansi": "^7.1.0",
     "unique-string": "^3.0.0",
+    "varint": "^6.0.0",
     "wcstring": "^2.1.1",
     "wcwidth.js": "^2.0.0",
     "zx": "^8.1.9"
