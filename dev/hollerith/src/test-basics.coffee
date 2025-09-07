@@ -767,55 +767,59 @@ helpers =
       @eq ( Ωhllt_201 = -> cfg.blank                                              ), ' '
       @eq ( Ωhllt_202 = -> cfg.alphabet                                           ), '0123456789'
       @eq ( Ωhllt_203 = -> cfg.alphabet_chrs                                      ), Array.from '0123456789'
-      @eq ( Ωhllt_204 = -> is_frozen cfg.alphabet_chrs                            ), true
-      @eq ( Ωhllt_205 = -> cfg.base                                               ), 10
-      @eq ( Ωhllt_206 = -> cfg.magnifiers                                         ), 'ABC XYZ'
-      @eq ( Ωhllt_207 = -> cfg.nmag                                               ), ' CBA'
-      @eq ( Ωhllt_208 = -> cfg.pmag                                               ), ' XYZ'
-      @eq ( Ωhllt_209 = -> cfg.nmag_chrs                                          ), Array.from ' CBA'
-      @eq ( Ωhllt_210 = -> cfg.pmag_chrs                                          ), Array.from ' XYZ'
-      @eq ( Ωhllt_211 = -> cfg.uniliterals                                        ), 'EFGHIJKLM N OPQRSTUVW'
-      @eq ( Ωhllt_212 = -> cfg.nuns                                               ), 'EFGHIJKLM',
-      @eq ( Ωhllt_213 = -> cfg.zpuns                                              ), 'NOPQRSTUVW',
-      @eq ( Ωhllt_214 = -> cfg.nun_chrs                                           ), [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
-      @eq ( Ωhllt_215 = -> cfg.zpun_chrs                                          ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ]
-      @eq ( Ωhllt_216 = -> cfg.dimension                                          ), 3
-      @eq ( Ωhllt_217 = -> +( ( cfg.base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), +999
-      @eq ( Ωhllt_218 = -> -( ( cfg.base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), -999
-      @eq ( Ωhllt_219 = -> cfg.max_integer                                        ), +999
-      @eq ( Ωhllt_220 = -> cfg.min_integer                                        ), -999
-      @eq ( Ωhllt_221 = -> cfg.max_digits                                         ), 3
-      @eq ( Ωhllt_222 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
+      @eq ( Ωhllt_204 = -> cfg.niner                                              ), ( Array.from cfg.alphabet ).at -1
+      @eq ( Ωhllt_205 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )*? (?= . $ ) ///gv
+      @eq ( Ωhllt_206 = -> is_frozen cfg.alphabet_chrs                            ), true
+      @eq ( Ωhllt_207 = -> cfg.base                                               ), 10
+      @eq ( Ωhllt_208 = -> cfg.magnifiers                                         ), 'ABC XYZ'
+      @eq ( Ωhllt_209 = -> cfg.nmag                                               ), ' CBA'
+      @eq ( Ωhllt_210 = -> cfg.pmag                                               ), ' XYZ'
+      @eq ( Ωhllt_211 = -> cfg.nmag_chrs                                          ), Array.from ' CBA'
+      @eq ( Ωhllt_212 = -> cfg.pmag_chrs                                          ), Array.from ' XYZ'
+      @eq ( Ωhllt_213 = -> cfg.uniliterals                                        ), 'EFGHIJKLM N OPQRSTUVW'
+      @eq ( Ωhllt_214 = -> cfg.nuns                                               ), 'EFGHIJKLM',
+      @eq ( Ωhllt_215 = -> cfg.zpuns                                              ), 'NOPQRSTUVW',
+      @eq ( Ωhllt_216 = -> cfg.nun_chrs                                           ), [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
+      @eq ( Ωhllt_217 = -> cfg.zpun_chrs                                          ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ]
+      @eq ( Ωhllt_218 = -> cfg.dimension                                          ), 3
+      @eq ( Ωhllt_219 = -> +( ( cfg.base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), +999
+      @eq ( Ωhllt_220 = -> -( ( cfg.base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), -999
+      @eq ( Ωhllt_221 = -> cfg.max_integer                                        ), +999
+      @eq ( Ωhllt_222 = -> cfg.min_integer                                        ), -999
+      @eq ( Ωhllt_223 = -> cfg.max_digits                                         ), 3
+      @eq ( Ωhllt_224 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       return null
     #.......................................................................................................
     do =>
       cfg = Hollerith.validate_and_compile_cfg cfg_128
-      @eq ( Ωhllt_223 = -> cfg.blank                                              ), ' '
-      @eq ( Ωhllt_224 = -> cfg.alphabet                                           ), '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+      @eq ( Ωhllt_225 = -> cfg.blank                                              ), ' '
+      @eq ( Ωhllt_226 = -> cfg.alphabet                                           ), '!#$%&()*+,-./0123456789:;<=>?@AB' + \
                                                                                      'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
                                                                                      'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
                                                                                      '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
-      @eq ( Ωhllt_225 = -> cfg.alphabet_chrs                                      ), Array.from cfg.alphabet
-      @eq ( Ωhllt_226 = -> cfg.magnifiers                                         ), 'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
-      @eq ( Ωhllt_227 = -> cfg.nmag                                               ), ' ÎÍÌËÊÉÈÇ'
-      @eq ( Ωhllt_228 = -> cfg.pmag                                               ), ' øùúûüýþÿ'
-      @eq ( Ωhllt_229 = -> cfg.nmag_chrs                                          ), Array.from ' ÎÍÌËÊÉÈÇ'
-      @eq ( Ωhllt_230 = -> cfg.pmag_chrs                                          ), Array.from ' øùúûüýþÿ'
-      @eq ( Ωhllt_231 = -> cfg.uniliterals                                        ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-      @eq ( Ωhllt_232 = -> cfg.nuns                                               ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
-      @eq ( Ωhllt_233 = -> cfg.zpuns                                              ), 'ãäåæçèéêëìíîïðñòóôõö÷'
-      @eq ( Ωhllt_234 = -> cfg.nun_chrs                                           ), Array.from 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
-      @eq ( Ωhllt_235 = -> cfg.zpun_chrs                                          ), Array.from 'ãäåæçèéêëìíîïðñòóôõö÷'
-      @eq ( Ωhllt_236 = -> +( ( cfg.base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), Number.MAX_SAFE_INTEGER - 1
-      @eq ( Ωhllt_237 = -> -( ( cfg.base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), Number.MIN_SAFE_INTEGER + 1
-      # @eq ( Ωhllt_238 = -> cfg.max_integer                                        ), Number.MAX_SAFE_INTEGER - 1
-      # @eq ( Ωhllt_239 = -> cfg.min_integer                                        ), Number.MIN_SAFE_INTEGER + 1
-      # @eq ( Ωhllt_240 = -> cfg.max_digits                                         ), 3
-      # @eq ( Ωhllt_241 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
+      @eq ( Ωhllt_227 = -> cfg.alphabet_chrs                                      ), Array.from cfg.alphabet
+      @eq ( Ωhllt_228 = -> cfg.niner                                              ), ( Array.from cfg.alphabet ).at -1
+      @eq ( Ωhllt_229 = -> cfg.leading_niners_re                                  ), /// ^ (?: Æ )*? (?= . $ ) ///gv
+      @eq ( Ωhllt_230 = -> cfg.magnifiers                                         ), 'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
+      @eq ( Ωhllt_231 = -> cfg.nmag                                               ), ' ÎÍÌËÊÉÈÇ'
+      @eq ( Ωhllt_232 = -> cfg.pmag                                               ), ' øùúûüýþÿ'
+      @eq ( Ωhllt_233 = -> cfg.nmag_chrs                                          ), Array.from ' ÎÍÌËÊÉÈÇ'
+      @eq ( Ωhllt_234 = -> cfg.pmag_chrs                                          ), Array.from ' øùúûüýþÿ'
+      @eq ( Ωhllt_235 = -> cfg.uniliterals                                        ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
+      @eq ( Ωhllt_236 = -> cfg.nuns                                               ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
+      @eq ( Ωhllt_237 = -> cfg.zpuns                                              ), 'ãäåæçèéêëìíîïðñòóôõö÷'
+      @eq ( Ωhllt_238 = -> cfg.nun_chrs                                           ), Array.from 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
+      @eq ( Ωhllt_239 = -> cfg.zpun_chrs                                          ), Array.from 'ãäåæçèéêëìíîïðñòóôõö÷'
+      @eq ( Ωhllt_240 = -> +( ( cfg.base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), Number.MAX_SAFE_INTEGER - 1
+      @eq ( Ωhllt_241 = -> -( ( cfg.base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), Number.MIN_SAFE_INTEGER + 1
+      # @eq ( Ωhllt_242 = -> cfg.max_integer                                        ), Number.MAX_SAFE_INTEGER - 1
+      # @eq ( Ωhllt_243 = -> cfg.min_integer                                        ), Number.MIN_SAFE_INTEGER + 1
+      # @eq ( Ωhllt_244 = -> cfg.max_digits                                         ), 3
+      # @eq ( Ωhllt_245 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       #.....................................................................................................
-      @eq ( Ωhllt_242 = -> is_frozen cfg.alphabet_chrs                            ), true
-      @eq ( Ωhllt_243 = -> cfg.base                                               ), 128
-      @eq ( Ωhllt_244 = -> cfg.dimension                                          ), 5
+      @eq ( Ωhllt_246 = -> is_frozen cfg.alphabet_chrs                            ), true
+      @eq ( Ωhllt_247 = -> cfg.base                                               ), 128
+      @eq ( Ωhllt_248 = -> cfg.dimension                                          ), 5
       return null
     #.......................................................................................................
     return null
@@ -826,59 +830,59 @@ demo_max_integer = ->
   get_required_digits = ( n, base ) -> Math.ceil log_to_base n, base
   get_max_niners      = ( n, base ) -> ( get_required_digits n, base ) - 1
   get_max_integer     = ( n, base ) -> ( base ** get_max_niners n, base ) - 1
-  info 'Ωhllt_245', Number.MAX_SAFE_INTEGER.toString 16
-  info 'Ωhllt_246', Number.MAX_SAFE_INTEGER.toString 32
+  info 'Ωhllt_249', Number.MAX_SAFE_INTEGER.toString 16
+  info 'Ωhllt_250', Number.MAX_SAFE_INTEGER.toString 32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_247', ( 32 ** 4 - 1 ).toString 32
-  info 'Ωhllt_248', ( 32 ** 4 - 1 ).toString 32
+  info 'Ωhllt_251', ( 32 ** 4 - 1 ).toString 32
+  info 'Ωhllt_252', ( 32 ** 4 - 1 ).toString 32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_249', get_required_digits 32,       32
-  info 'Ωhllt_250', get_required_digits 32 ** 6,  32
-  info 'Ωhllt_251', get_required_digits 1e6,      10
-  info 'Ωhllt_252', get_required_digits 20,       10
+  info 'Ωhllt_253', get_required_digits 32,       32
+  info 'Ωhllt_254', get_required_digits 32 ** 6,  32
+  info 'Ωhllt_255', get_required_digits 1e6,      10
+  info 'Ωhllt_256', get_required_digits 20,       10
   whisper '—————————————————————————————————'
-  info 'Ωhllt_253', max_digits_base_10    = get_max_niners Number.MAX_SAFE_INTEGER, 10
-  info 'Ωhllt_254', max_digits_base_16    = get_max_niners Number.MAX_SAFE_INTEGER, 16
-  info 'Ωhllt_255', max_digits_base_32    = get_max_niners Number.MAX_SAFE_INTEGER, 32
-  info 'Ωhllt_256', max_digits_base_36    = get_max_niners Number.MAX_SAFE_INTEGER, 36
-  info 'Ωhllt_257', max_digits_1base_28   = get_max_niners Number.MAX_SAFE_INTEGER, 128
+  info 'Ωhllt_257', max_digits_base_10    = get_max_niners Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_258', max_digits_base_16    = get_max_niners Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_259', max_digits_base_32    = get_max_niners Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_260', max_digits_base_36    = get_max_niners Number.MAX_SAFE_INTEGER, 36
+  info 'Ωhllt_261', max_digits_1base_28   = get_max_niners Number.MAX_SAFE_INTEGER, 128
   # for base in [ 2 .. 128 ]
-  #   info 'Ωhllt_258', { base, }, ( Math.ceil log_to_base Number.MAX_SAFE_INTEGER, base ) - 1
+  #   info 'Ωhllt_262', { base, }, ( Math.ceil log_to_base Number.MAX_SAFE_INTEGER, base ) - 1
   whisper '—————————————————————————————————'
-  info 'Ωhllt_259', '9'.repeat max_digits_base_10
-  info 'Ωhllt_260', 'f'.repeat max_digits_base_16
-  info 'Ωhllt_261', 'v'.repeat max_digits_base_32
+  info 'Ωhllt_263', '9'.repeat max_digits_base_10
+  info 'Ωhllt_264', 'f'.repeat max_digits_base_16
+  info 'Ωhllt_265', 'v'.repeat max_digits_base_32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_262', ( ( base = 10 ) ** max_digits_base_10 ) - 1
-  info 'Ωhllt_263', ( ( base = 16 ) ** max_digits_base_16 ) - 1
-  info 'Ωhllt_264', ( ( base = 32 ) ** max_digits_base_32 ) - 1
-  info 'Ωhllt_265', ( ( base = 36 ) ** max_digits_base_36 ) - 1
+  info 'Ωhllt_266', ( ( base = 10 ) ** max_digits_base_10 ) - 1
+  info 'Ωhllt_267', ( ( base = 16 ) ** max_digits_base_16 ) - 1
+  info 'Ωhllt_268', ( ( base = 32 ) ** max_digits_base_32 ) - 1
+  info 'Ωhllt_269', ( ( base = 36 ) ** max_digits_base_36 ) - 1
   whisper '—————————————————————————————————'
-  info 'Ωhllt_266', get_max_integer Number.MAX_SAFE_INTEGER, 10
-  info 'Ωhllt_267', get_max_integer Number.MAX_SAFE_INTEGER, 16
-  info 'Ωhllt_268', get_max_integer Number.MAX_SAFE_INTEGER, 32
-  info 'Ωhllt_269', get_max_integer Number.MAX_SAFE_INTEGER, 36
+  info 'Ωhllt_270', get_max_integer Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_271', get_max_integer Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_272', get_max_integer Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_273', get_max_integer Number.MAX_SAFE_INTEGER, 36
   whisper '—————————————————————————————————'
-  info 'Ωhllt_270', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
-  info 'Ωhllt_271', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
-  info 'Ωhllt_272', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
-  info 'Ωhllt_273', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
-  info 'Ωhllt_274', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_275', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_276', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_277', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_274', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
+  info 'Ωhllt_275', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
+  info 'Ωhllt_276', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
+  info 'Ωhllt_277', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
+  info 'Ωhllt_278', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_279', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_280', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_281', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
   whisper '—————————————————————————————————'
-  info 'Ωhllt_278', +999 + -999
-  info 'Ωhllt_279', +999 + -1
-  info 'Ωhllt_280', -( -999 - 1 ) + -999
-  info 'Ωhllt_281', -( -999 - 1 ) + -998
-  info 'Ωhllt_282', -( -999 - 1 ) + -997
-  info 'Ωhllt_283', -( -999 - 1 ) + -3
-  info 'Ωhllt_284', -( -999 - 1 ) + -2
-  info 'Ωhllt_285', -( -999 - 1 ) + -1
-  info 'Ωhllt_286', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
-  info 'Ωhllt_287', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
-  info 'Ωhllt_288', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_282', +999 + -999
+  info 'Ωhllt_283', +999 + -1
+  info 'Ωhllt_284', -( -999 - 1 ) + -999
+  info 'Ωhllt_285', -( -999 - 1 ) + -998
+  info 'Ωhllt_286', -( -999 - 1 ) + -997
+  info 'Ωhllt_287', -( -999 - 1 ) + -3
+  info 'Ωhllt_288', -( -999 - 1 ) + -2
+  info 'Ωhllt_289', -( -999 - 1 ) + -1
+  info 'Ωhllt_290', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_291', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_292', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
   return null
 
 
@@ -892,7 +896,7 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { type_data_handling: @hollerith.type_data_handling, }
   ( new Test guytest_cfg ).test { types: @hollerith.types, }
   ( new Test guytest_cfg ).test { validate_and_compile_cfg: @hollerith.validate_and_compile_cfg, }
-  demo_max_integer()
+  # demo_max_integer()
   #.........................................................................................................
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
   # ( new Test guytest_cfg ).test { h128_decode: @hollerith.h128_decode, }
