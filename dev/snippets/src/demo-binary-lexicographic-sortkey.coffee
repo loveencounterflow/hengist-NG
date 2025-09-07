@@ -352,8 +352,8 @@ demo_hollerith_vdx_sortkey = ->
 
   #---------------------------------------------------------------------------------------------------------
   constants_128 = Object.freeze
-    max_integer:  Number.MAX_SAFE_INTEGER
-    min_integer:  Number.MIN_SAFE_INTEGER
+    max_integer:  +562_949_953_421_311
+    min_integer:  -562_949_953_421_311
     zpuns:        'ãäåæçèéêëìíîïðñòóôõö÷' # zero and positive uniliteral numbers
     nuns:         'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'  # negative          uniliteral numbers
     zpun_max:     +20
@@ -365,7 +365,7 @@ demo_hollerith_vdx_sortkey = ->
     be used, thus can be freed for other(?) things ###
     pmag:         ' øùúûüýþÿ'  # positive 'magnifier' for 1 to 8 positive digits
     nmag:         ' ÎÍÌËÊÉÈÇ'  # negative 'magnifier' for 1 to 8 negative digits
-    nlead_re:     /^2Æ*/      # 'negative leader', discardable leading digits of lifted negative numbers
+    leading_niners_re:     /// ^ (?: Æ )*? (?= . $ ) ///gv      # 'negative leader', discardable leading digits of lifted negative numbers
 
   #---------------------------------------------------------------------------------------------------------
   constants_10 = Object.freeze
@@ -379,7 +379,7 @@ demo_hollerith_vdx_sortkey = ->
     alphabet:     '0123456789'
     pmag:         ' øùúûüýþÿ'   # positive 'magnifier' for 1 to 8 positive digits
     nmag:         ' ÎÍÌËÊÉÈÇ'   # negative 'magnifier' for 1 to 8 negative digits
-    nlead_re:     /^9*(?=[0-9])/         # 'negative leader', discardable leading digits of lifted negative numbers
+    leading_niners_re:     /// ^ (?: 9 )*? (?= . $ ) ///gv         # 'negative leader', discardable leading digits of lifted negative numbers
 
   #---------------------------------------------------------------------------------------------------------
   # constants = C = constants_128
@@ -424,7 +424,7 @@ demo_hollerith_vdx_sortkey = ->
       # Big negative:
       R = ( encodeBigInt ( n + C.max_integer + 1 ), C.alphabet )
       if R.length < C.zero_pad_length   then  R = R.padStart C.zero_pad_length, C.alphabet.at 0
-      else                                    R = R.replace C.nlead_re, ''
+      else                                    R = R.replace C.leading_niners_re, ''
       return ( C.nmag.at R.length ) + R
 
   #---------------------------------------------------------------------------------------------------------
