@@ -524,22 +524,22 @@ demo_hollerith_vdx_sortkey = ->
     ]
   for e in d
     try e.sk = VDX.encode e.vdx catch error
-      warn 'Ωbsk_100', e, error.message
+      warn 'Ωbsk_103', e, error.message
       e.sk = '???'
     e.sk += '0000000000000000000'
   d.sort ( a, b ) ->
     return -1 if a.sk < b.sk
     return +1 if a.sk > b.sk
     return 0
-  debug 'Ωbsk_103', e for e in d
+  debug 'Ωbsk_104', e for e in d
   #---------------------------------------------------------------------------------------------------------
   return null
 
 #===========================================================================================================
 if module is require.main then await do =>
   demo_binary_lexicographic_sortkey()
-  demo_chatgpt_solution()
-  demo_hollerith_vdx_sortkey()
+  # demo_chatgpt_solution()
+  # demo_hollerith_vdx_sortkey()
   # echo f"-#{n}:0>2.0f;" for n in [ 99 .. 0 ]
   # echo f"+#{n}:0>2.0f;" for n in [ 0 .. 99 ]
   return null
