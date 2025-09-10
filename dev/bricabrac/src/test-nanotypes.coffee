@@ -46,19 +46,19 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           return true
       #.....................................................................................................
       T = new My_typespace()
-      @eq ( Ωhllt___1 = -> T.integer.isa 9987           ), true
-      @eq ( Ωhllt___2 = -> T.integer.data               ), { x: 9987, }
-      @eq ( Ωhllt___3 = -> T.integer.isa 9987.125       ), false
-      @eq ( Ωhllt___4 = -> T.integer.data               ), { x: 9987.125, message: '9987.125 is a non-integer number', fraction: 0.125, }
-      @eq ( Ωhllt___5 = -> T.even_integer.isa 33.125    ), false
-      @eq ( Ωhllt___6 = -> T.integer.data               ), { x: 33.125, message: '33.125 is a non-integer number', fraction: 0.125, }
-      @eq ( Ωhllt___7 = -> T.even_integer.data          ), { message: 'not an integer' }
-      @eq ( Ωhllt___8 = -> T.even_integer.isa 777       ), false
-      @eq ( Ωhllt___9 = -> T.integer.data               ), { x: 777, }
-      @eq ( Ωhllt__10 = -> T.even_integer.data          ), { message: 'detected remainder' }
-      @eq ( Ωhllt__11 = -> T.even_integer.isa 888       ), true
-      @eq ( Ωhllt__12 = -> T.integer.data               ), { x: 888, }
-      @eq ( Ωhllt__13 = -> T.even_integer.data          ), {}
+      @eq ( Ωbbntt___1 = -> T.integer.isa 9987           ), true
+      @eq ( Ωbbntt___2 = -> T.integer.data               ), { x: 9987, }
+      @eq ( Ωbbntt___3 = -> T.integer.isa 9987.125       ), false
+      @eq ( Ωbbntt___4 = -> T.integer.data               ), { x: 9987.125, message: '9987.125 is a non-integer number', fraction: 0.125, }
+      @eq ( Ωbbntt___5 = -> T.even_integer.isa 33.125    ), false
+      @eq ( Ωbbntt___6 = -> T.integer.data               ), { x: 33.125, message: '33.125 is a non-integer number', fraction: 0.125, }
+      @eq ( Ωbbntt___7 = -> T.even_integer.data          ), { message: 'not an integer' }
+      @eq ( Ωbbntt___8 = -> T.even_integer.isa 777       ), false
+      @eq ( Ωbbntt___9 = -> T.integer.data               ), { x: 777, }
+      @eq ( Ωbbntt__10 = -> T.even_integer.data          ), { message: 'detected remainder' }
+      @eq ( Ωbbntt__11 = -> T.even_integer.isa 888       ), true
+      @eq ( Ωbbntt__12 = -> T.integer.data               ), { x: 888, }
+      @eq ( Ωbbntt__13 = -> T.even_integer.data          ), {}
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -73,15 +73,15 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         #...................................................................................................
         @even_integer: ( x ) ->
           # unless @T.integer.isa x, @data
-          #   debug 'Ωhllt__14', @data
+          #   debug 'Ωbbntt__14', @data
           return ( @fail "not an integer"     ) unless @T.integer.isa x, @data
           return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
           return true
       #.....................................................................................................
       T = new My_typespace()
       T.even_integer.isa 'what?'
-      @eq ( Ωhllt__15 = -> T.integer.data       ), { x: 'what?', message: "'what?' is not even a finite number", }
-      @eq ( Ωhllt__16 = -> T.even_integer.data  ), { x: 'what?', message: "not an integer", }
+      @eq ( Ωbbntt__15 = -> T.integer.data       ), { x: 'what?', message: "'what?' is not even a finite number", }
+      @eq ( Ωbbntt__16 = -> T.even_integer.data  ), { x: 'what?', message: "not an integer", }
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -104,8 +104,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       #.....................................................................................................
       T = new My_typespace()
       T.even_integer.isa 'what?'
-      @eq ( Ωhllt__17 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
-      @eq ( Ωhllt__18 = -> T.even_integer.data  ), {
+      @eq ( Ωbbntt__17 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
+      @eq ( Ωbbntt__18 = -> T.even_integer.data  ), {
         me:                     'even_integer',
         integer_me:             'integer',
         x:                      'what?',
@@ -113,8 +113,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         message:                """not an integer: "'what?' is not even a finite number\"""", }
       #.....................................................................................................
       T.even_integer.isa 26
-      debug 'Ωhllt__19', T.integer.data
-      debug 'Ωhllt__20', T.even_integer.data
+      debug 'Ωbbntt__19', T.integer.data
+      debug 'Ωbbntt__20', T.even_integer.data
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -137,8 +137,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       #.....................................................................................................
       T = new My_typespace()
       T.even_integer.isa 'what?'
-      @eq ( Ωhllt__21 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
-      @eq ( Ωhllt__22 = -> T.even_integer.data  ), {
+      @eq ( Ωbbntt__21 = -> T.integer.data       ), { me: 'integer', x: 'what?', message: "'what?' is not even a finite number" }
+      @eq ( Ωbbntt__22 = -> T.even_integer.data  ), {
         me:                     'even_integer',
         integer_me:             'integer',
         x:                      'what?',
@@ -146,8 +146,8 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         message:                """not an integer: "'what?' is not even a finite number\"""", }
       #.....................................................................................................
       T.even_integer.isa 26
-      debug 'Ωhllt__23', T.integer.data
-      debug 'Ωhllt__24', T.even_integer.data
+      debug 'Ωbbntt__23', T.integer.data
+      debug 'Ωbbntt__24', T.even_integer.data
       #.....................................................................................................
       return null
     return null
@@ -167,54 +167,46 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           return @fail "#{rpr x} is not even a finite number"
         #...................................................................................................
         @even_integer: ( x ) ->
-          return ( @fail "not an integer"     ) unless @T.integer.isa x
-          return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
+          return ( @fail "#{rpr x} isn't an integer"  ) unless @T.integer.isa x
+          return ( @fail "#{rpr x} isn't even"        ) unless ( x %% 2 ) is 0
           return true
         #...................................................................................................
         @list: ( x ) -> Array.isArray x
         #...................................................................................................
         @list_of: ( x, element_type = null ) ->
-          info 'Ωhllt__25', 'list_of', { x, element_type, }
+          # info 'Ωbbntt__25', 'list_of', { x, element_type, }
           return ( @fail "not a list" ) unless @T.list.isa x
           return true unless element_type?
+          #.................................................................................................
+          @data.$name = "#{@name} #{element_type.name}"
           for element, idx in x
-            return ( @fail "element at index #{idx} isn't a #{element_type.name}" ) unless element_type.isa element
+            unless element_type.isa element
+              message   = "element at index #{idx} isn't a #{element_type.name}"
+              message  += " – #{element_type.data.message}" if element_type?.data?.message?
+              return ( @fail message )
           return true
       #.....................................................................................................
       T = new My_typespace()
       do =>
-        whisper 'Ωhllt__26', '—————————————————————————————————————————————————————————————————————————————'
-        help 'Ωhllt__27', T.list.isa    [ 2, 4, 6, ]
-        help 'Ωhllt__28', T.list_of.isa [ 2, 4, 6, ];                 warn 'Ωhllt__29', T.list_of.data
-        help 'Ωhllt__30', T.list_of.isa [ 2, 4, 6, ], T.even_integer; warn 'Ωhllt__31', T.list_of.data
-        help 'Ωhllt__32', T.list_of.isa [ 2, 4, 7, ], T.even_integer; warn 'Ωhllt__33', T.list_of.data
+        whisper 'Ωbbntt__26', '—————————————————————————————————————————————————————————————————————————————'
+        help 'Ωbbntt__27', T.list.isa    [ 2, 4, 6, ]
+        help 'Ωbbntt__28', T.list_of.isa [ 2, 4, 6, ];                 warn 'Ωbbntt__29', T.list_of.data
+        help 'Ωbbntt__30', T.list_of.isa [ 2, 4, 6, ], T.even_integer; warn 'Ωbbntt__31', T.list_of.data
+        help 'Ωbbntt__32', T.list_of.isa [ 2, 4, 7, ], T.even_integer; warn 'Ωbbntt__33', T.list_of.data
         return null
       #.....................................................................................................
       do =>
-        whisper 'Ωhllt__34', '—————————————————————————————————————————————————————————————————————————————'
+        whisper 'Ωbbntt__34', '—————————————————————————————————————————————————————————————————————————————'
         data = {}
-        help 'Ωhllt__35', T.list_of.isa_datmap [ [ 2, 4, 7, ], T.even_integer, ], data, { message: 'msg', }
-        warn 'Ωhllt__36', T.list_of.data
-        warn 'Ωhllt__37', data
-        return null
-      #.....................................................................................................
-      do =>
-        whisper 'Ωhllt__38', '—————————————————————————————————————————————————————————————————————————————'
-        help 'Ωhllt__39', T.list_of.isa_datmap [ [ 2, 4, 7, ], T.even_integer, ], null, { message: 'msg', }
-        warn 'Ωhllt__40', T.list_of.data
-        return null
-      #.....................................................................................................
-      do =>
-        whisper 'Ωhllt__41', '—————————————————————————————————————————————————————————————————————————————'
-        help 'Ωhllt__42', T.list_of.datmap_isa null, { message: 'msg', }, [ 2, 4, 7, ], T.even_integer
-        warn 'Ωhllt__43', T.list_of.data
-        return null
-      #.....................................................................................................
-      do =>
-        whisper 'Ωhllt__41', '—————————————————————————————————————————————————————————————————————————————'
-        dm = ( data, mapping, fn ) ->
-        help 'Ωhllt__42', dm null, { message: 'msg', }, -> T.list_of.isa [ 2, 4, 7, ], T.even_integer
-        warn 'Ωhllt__43', T.list_of.data
+        help 'Ωbbntt__35', T.list_of.dm data, { message: 'msg', }, -> T.list_of.isa [ 2, 4, 7, ], T.even_integer
+        @eq     ( Ωbbntt__36 = -> T.list_of.data ), { '$name': 'list_of even_integer', message: "element at index 2 isn't a even_integer – 7 isn't even" }
+        @eq     ( Ωbbntt__37 = -> data           ), { '$name': 'list_of even_integer',     msg: "element at index 2 isn't a even_integer – 7 isn't even" }
+        try T.list_of.validate [ 2, 4, 7, ],  T.even_integer catch e then warn 'Ωbbntt__38', reverse e.message
+        try T.list_of.validate true,          T.even_integer catch e then warn 'Ωbbntt__39', reverse e.message
+        try T.list_of.validate [],            T.even_integer catch e then warn 'Ωbbntt__40', reverse e.message
+        try T.list_of.validate [ 1.3, ],      T.even_integer catch e then warn 'Ωbbntt__41', reverse e.message
+        @throws ( Ωbbntt__42 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 7, ], T.even_integer ), /not a valid list_of/
+        @eq     ( Ωbbntt__43 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 8, ], T.even_integer ), [ 2, 4, 8, ]
         return null
       #.....................................................................................................
       return null
