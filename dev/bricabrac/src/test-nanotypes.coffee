@@ -153,9 +153,9 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  composed_types: ->
+  nanotypes_v2_parametrized_types: ->
     { Type,
-      Typespace,              } = SFMODULES.unstable.require_nanotypes()
+      Typespace,              } = SFMODULES.unstable.require_nanotypes_v2()
     #.......................................................................................................
     do =>
       class My_typespace extends Typespace
@@ -171,25 +171,51 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           return ( @fail "detected remainder" ) unless ( x %% 2 ) is 0
           return true
         #...................................................................................................
-        @list:
-          isa:      ( x ) -> Array.isArray x
-          values:   ( x ) -> yield from x
+        @list: ( x ) -> Array.isArray x
+        #...................................................................................................
+        @list_of: ( x, element_type = null ) ->
+          info 'Ωhllt__25', 'list_of', { x, element_type, }
+          return ( @fail "not a list" ) unless @T.list.isa x
+          return true unless element_type?
+          for element, idx in x
+            return ( @fail "element at index #{idx} isn't a #{element_type.name}" ) unless element_type.isa element
+          return true
       #.....................................................................................................
       T = new My_typespace()
-      { each,
-        any,
-        list,
-        integer,  } = T
-      # @eq ( Ωhllt__25 = -> each.isa       list, integer, [ 9987, ]           ), true
-      # @eq ( Ωhllt__26 = -> any.isa        list, integer, [ 9987, ]           ), true
-      # @eq ( Ωhllt__27 = -> each.validate  list, integer, [ 9987, ]           ), true
-      # @eq ( Ωhllt__28 = -> any.validate   list, integer, [ 9987, ]           ), true
-      @eq ( Ωhllt__29 = -> list.isa       each integer, [ 9987, ]           ), true
-      @eq ( Ωhllt__30 = -> list.validate  each integer, [ 9987, ]           ), true
-      # @eq ( Ωhllt__29 = -> list.isa       list.isa each integer, [ 9987, ]           ), true
-      debug 'Ωhllt__31', list.isa
-      debug 'Ωhllt__32', list.isa.values
-      # debug 'Ωhllt__33', list.isa []
+      do =>
+        whisper 'Ωhllt__26', '—————————————————————————————————————————————————————————————————————————————'
+        help 'Ωhllt__27', T.list.isa    [ 2, 4, 6, ]
+        help 'Ωhllt__28', T.list_of.isa [ 2, 4, 6, ];                 warn 'Ωhllt__29', T.list_of.data
+        help 'Ωhllt__30', T.list_of.isa [ 2, 4, 6, ], T.even_integer; warn 'Ωhllt__31', T.list_of.data
+        help 'Ωhllt__32', T.list_of.isa [ 2, 4, 7, ], T.even_integer; warn 'Ωhllt__33', T.list_of.data
+        return null
+      #.....................................................................................................
+      do =>
+        whisper 'Ωhllt__34', '—————————————————————————————————————————————————————————————————————————————'
+        data = {}
+        help 'Ωhllt__35', T.list_of.isa_datmap [ [ 2, 4, 7, ], T.even_integer, ], data, { message: 'msg', }
+        warn 'Ωhllt__36', T.list_of.data
+        warn 'Ωhllt__37', data
+        return null
+      #.....................................................................................................
+      do =>
+        whisper 'Ωhllt__38', '—————————————————————————————————————————————————————————————————————————————'
+        help 'Ωhllt__39', T.list_of.isa_datmap [ [ 2, 4, 7, ], T.even_integer, ], null, { message: 'msg', }
+        warn 'Ωhllt__40', T.list_of.data
+        return null
+      #.....................................................................................................
+      do =>
+        whisper 'Ωhllt__41', '—————————————————————————————————————————————————————————————————————————————'
+        help 'Ωhllt__42', T.list_of.datmap_isa null, { message: 'msg', }, [ 2, 4, 7, ], T.even_integer
+        warn 'Ωhllt__43', T.list_of.data
+        return null
+      #.....................................................................................................
+      do =>
+        whisper 'Ωhllt__41', '—————————————————————————————————————————————————————————————————————————————'
+        dm = ( data, mapping, fn ) ->
+        help 'Ωhllt__42', dm null, { message: 'msg', }, -> T.list_of.isa [ 2, 4, 7, ], T.even_integer
+        warn 'Ωhllt__43', T.list_of.data
+        return null
       #.....................................................................................................
       return null
     return null
