@@ -214,8 +214,29 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
         try T.list_of.validate true,          T.even_integer catch e then warn 'Ωbbntt__46', reverse e.message
         try T.list_of.validate [],            T.even_integer catch e then warn 'Ωbbntt__47', reverse e.message
         try T.list_of.validate [ 1.3, ],      T.even_integer catch e then warn 'Ωbbntt__48', reverse e.message
-        # @throws ( Ωbbntt__49 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 7, ], T.even_integer ), /not a valid list_of/
-        # @eq     ( Ωbbntt__50 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 8, ], T.even_integer ), [ 2, 4, 8, ]
+      #.....................................................................................................
+      do =>
+        data = {}
+        @throws ( Ωbbntt__49 = -> T.list_of.dm_validate data, { message: 'msg', }, [ 2, 4, 7, ], T.even_integer ), /not a valid list_of/
+        @eq     ( Ωbbntt__50 = -> data ), { msg: "element at index 2 isn't a even_integer – 7 isn't even" }
+        return null
+      #.....................................................................................................
+      do =>
+        data = {}
+        @eq     ( Ωbbntt__51 = -> T.even_integer.dm_isa       data, { message: 'msg', }, 123456 ), true
+        @eq     ( Ωbbntt__52 = -> data ), {}
+        return null
+      #.....................................................................................................
+      do =>
+        data = {}
+        @eq     ( Ωbbntt__53 = -> T.even_integer.dm_validate  data, { message: 'msg', }, 123456 ), 123456
+        @eq     ( Ωbbntt__54 = -> data ), {}
+        return null
+      #.....................................................................................................
+      do =>
+        data = {}
+        @eq     ( Ωbbntt__55 = -> T.list_of.dm_validate data, { message: 'msg', }, [ 2, 4, 8, ], T.even_integer ), [ 2, 4, 8, ]
+        @eq     ( Ωbbntt__56 = -> data ), {}
         return null
       #.....................................................................................................
       return null
