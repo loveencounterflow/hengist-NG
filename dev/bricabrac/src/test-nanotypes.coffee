@@ -178,35 +178,45 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
           return ( @fail "not a list" ) unless @T.list.isa x
           return true unless element_type?
           #.................................................................................................
-          @data.$name = "#{@name} #{element_type.name}"
           for element, idx in x
             unless element_type.isa element
-              message   = "element at index #{idx} isn't a #{element_type.name}"
+              message   = "element at index #{idx} isn't a #{element_type.full_name}"
               message  += " – #{element_type.data.message}" if element_type?.data?.message?
               return ( @fail message )
           return true
       #.....................................................................................................
       T = new My_typespace()
+      #.....................................................................................................
       do =>
         whisper 'Ωbbntt__26', '—————————————————————————————————————————————————————————————————————————————'
-        help 'Ωbbntt__27', T.list.isa    [ 2, 4, 6, ]
-        help 'Ωbbntt__28', T.list_of.isa [ 2, 4, 6, ];                 warn 'Ωbbntt__29', T.list_of.data
-        help 'Ωbbntt__30', T.list_of.isa [ 2, 4, 6, ], T.even_integer; warn 'Ωbbntt__31', T.list_of.data
-        help 'Ωbbntt__32', T.list_of.isa [ 2, 4, 7, ], T.even_integer; warn 'Ωbbntt__33', T.list_of.data
+        help 'Ωbbntt__27', T.list_of.name
+        help 'Ωbbntt__28', T.list_of.full_name
+        help 'Ωbbntt__29', T.list_of.isa [ 5, ], T.integer
+        info 'Ωbbntt__30', T.list_of.inputs
+        info 'Ωbbntt__31', T.list_of.inputs[ 0 ]
+        help 'Ωbbntt__32', T.list_of.full_name
         return null
       #.....................................................................................................
       do =>
-        whisper 'Ωbbntt__34', '—————————————————————————————————————————————————————————————————————————————'
+        whisper 'Ωbbntt__33', '—————————————————————————————————————————————————————————————————————————————'
+        help 'Ωbbntt__34', T.list.isa    [ 2, 4, 6, ]
+        help 'Ωbbntt__35', T.list_of.isa [ 2, 4, 6, ];                 warn 'Ωbbntt__36', T.list_of.data
+        help 'Ωbbntt__37', T.list_of.isa [ 2, 4, 6, ], T.even_integer; warn 'Ωbbntt__38', T.list_of.data
+        help 'Ωbbntt__39', T.list_of.isa [ 2, 4, 7, ], T.even_integer; warn 'Ωbbntt__40', T.list_of.data
+        return null
+      #.....................................................................................................
+      do =>
+        whisper 'Ωbbntt__41', '—————————————————————————————————————————————————————————————————————————————'
         data = {}
-        help 'Ωbbntt__35', T.list_of.dm data, { message: 'msg', }, -> T.list_of.isa [ 2, 4, 7, ], T.even_integer
-        @eq     ( Ωbbntt__36 = -> T.list_of.data ), { '$name': 'list_of even_integer', message: "element at index 2 isn't a even_integer – 7 isn't even" }
-        @eq     ( Ωbbntt__37 = -> data           ), { '$name': 'list_of even_integer',     msg: "element at index 2 isn't a even_integer – 7 isn't even" }
-        try T.list_of.validate [ 2, 4, 7, ],  T.even_integer catch e then warn 'Ωbbntt__38', reverse e.message
-        try T.list_of.validate true,          T.even_integer catch e then warn 'Ωbbntt__39', reverse e.message
-        try T.list_of.validate [],            T.even_integer catch e then warn 'Ωbbntt__40', reverse e.message
-        try T.list_of.validate [ 1.3, ],      T.even_integer catch e then warn 'Ωbbntt__41', reverse e.message
-        @throws ( Ωbbntt__42 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 7, ], T.even_integer ), /not a valid list_of/
-        @eq     ( Ωbbntt__43 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 8, ], T.even_integer ), [ 2, 4, 8, ]
+        help 'Ωbbntt__42', T.list_of.dm data, { message: 'msg', }, -> T.list_of.isa [ 2, 4, 7, ], T.even_integer
+        @eq     ( Ωbbntt__43 = -> T.list_of.data ), { message: "element at index 2 isn't a even_integer – 7 isn't even" }
+        @eq     ( Ωbbntt__44 = -> data           ), {     msg: "element at index 2 isn't a even_integer – 7 isn't even" }
+        try T.list_of.validate [ 2, 4, 7, ],  T.even_integer catch e then warn 'Ωbbntt__45', reverse e.message
+        try T.list_of.validate true,          T.even_integer catch e then warn 'Ωbbntt__46', reverse e.message
+        try T.list_of.validate [],            T.even_integer catch e then warn 'Ωbbntt__47', reverse e.message
+        try T.list_of.validate [ 1.3, ],      T.even_integer catch e then warn 'Ωbbntt__48', reverse e.message
+        @throws ( Ωbbntt__49 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 7, ], T.even_integer ), /not a valid list_of/
+        @eq     ( Ωbbntt__50 = -> T.list_of.dm data, { message: 'msg', }, -> T.list_of.validate [ 2, 4, 8, ], T.even_integer ), [ 2, 4, 8, ]
         return null
       #.....................................................................................................
       return null
@@ -218,4 +228,3 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @tasks
-  # ( new Test guytest_cfg ).test { type_data_handling: @tasks.type_data_handling, }
