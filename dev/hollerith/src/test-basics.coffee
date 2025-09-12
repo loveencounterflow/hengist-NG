@@ -956,7 +956,7 @@ helpers =
   #---------------------------------------------------------------------------------------------------------
   types: ->
     { Hollerith_typespace,
-      create_max_integer_$x_for_$base,
+      create_max_integer_$,
       CFG,                        } = require '../../../apps/hollerith/lib/types'
     #.......................................................................................................
     do =>
@@ -965,34 +965,34 @@ helpers =
       @eq     ( Ωhllt_324 = -> T.base.isa  0                                                        ), false
       @eq     ( Ωhllt_325 = -> T.base.isa +1                                                        ), false
       @eq     ( Ωhllt_326 = -> T.base.isa +2                                                        ), true
-      @throws ( Ωhllt_327 = -> T._max_integer_$x_for_$base.isa null                                    ), /Cannot destructure/
-      @eq     ( Ωhllt_328 = -> T._max_integer_$x_for_$base.isa { x: 9,          base: 10, }         ), true
-      @eq     ( Ωhllt_329 = -> T._max_integer_$x_for_$base.isa { x: 99,         base: 10, }         ), true
-      @eq     ( Ωhllt_330 = -> T._max_integer_$x_for_$base.isa { x: 99999999,   base: 10, }         ), true
-      @eq     ( Ωhllt_331 = -> T._max_integer_$x_for_$base.isa { x: -10,        base: 10, }         ), false
-      @eq     ( Ωhllt_332 = -> /not a positive safe integer/.test T._max_integer_$x_for_$base.data.message  ), true
-      @eq     ( Ωhllt_333 = -> T._max_integer_$x_for_$base.isa { x: 0xffff,     base: 16, }         ), true
-      @eq     ( Ωhllt_334 = -> T._max_integer_$x_for_$base.isa { x: 0x7fffffff, base: 16, }         ), false
-      @throws ( Ωhllt_335 = -> T._max_integer_$x_for_$base.validate [ 5, 10, ]                      ), /not a valid _max_integer_\$x_for_\$base: 5,10/
+      @eq     ( Ωhllt_327 = -> T._max_integer_$.isa null                                            ), false
+      @eq     ( Ωhllt_328 = -> T._max_integer_$.isa 9,          10                                  ), true
+      @eq     ( Ωhllt_329 = -> T._max_integer_$.isa 99,         10                                  ), true
+      @eq     ( Ωhllt_330 = -> T._max_integer_$.isa 99999999,   10                                  ), true
+      @eq     ( Ωhllt_331 = -> T._max_integer_$.isa -10,        10                                  ), false
+      @eq     ( Ωhllt_332 = -> /not a positive safe integer/.test T._max_integer_$.data.message     ), true
+      @eq     ( Ωhllt_333 = -> T._max_integer_$.isa 0xffff,     16                                  ), true
+      @eq     ( Ωhllt_334 = -> T._max_integer_$.isa 0x7fffffff, 16                                  ), false
+      @throws ( Ωhllt_335 = -> T._max_integer_$.validate 5, 10                                      ), /\(_max_integer_\$\) not a valid _max_integer_\$: 5 – x not a positive all-niners/
       return null
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
       R = { base: 16, _max_digits_per_idx: 4, }
-      @eq     ( Ωhllt_336 = -> T._max_integer_$x_for_$base.isa { x: ( R.base ** R._max_digits_per_idx ) - 1, base: R.base, } ), true
+      @eq     ( Ωhllt_336 = -> T._max_integer_$.isa ( R.base ** R._max_digits_per_idx ) - 1, R.base ), true
       return null
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      @eq     ( Ωhllt_337 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 1 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_338 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 2 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_339 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 3 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_340 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 4 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_341 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 5 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_342 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 6 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_343 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 7 ) - 1, base: 128, } ), true
-      @eq     ( Ωhllt_344 = -> T._max_integer_$x_for_$base.isa { x: ( 128 ** 8 ) - 1, base: 128, } ), false
-      @eq     ( Ωhllt_345 = -> T.create_max_integer_$x_for_$base { base: 10, digits: 2, }  ), 99
+      @eq     ( Ωhllt_337 = -> T._max_integer_$.isa ( 128 ** 1 ) - 1, 128       ), true
+      @eq     ( Ωhllt_338 = -> T._max_integer_$.isa ( 128 ** 2 ) - 1, 128       ), true
+      @eq     ( Ωhllt_339 = -> T._max_integer_$.isa ( 128 ** 3 ) - 1, 128       ), true
+      @eq     ( Ωhllt_340 = -> T._max_integer_$.isa ( 128 ** 4 ) - 1, 128       ), true
+      @eq     ( Ωhllt_341 = -> T._max_integer_$.isa ( 128 ** 5 ) - 1, 128       ), true
+      @eq     ( Ωhllt_342 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128       ), true
+      @eq     ( Ωhllt_343 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128       ), true
+      @eq     ( Ωhllt_344 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128       ), false
+      @eq     ( Ωhllt_345 = -> T.create_max_integer_$ { base: 10, digits: 2, }  ), 99
       return null
     #.......................................................................................................
     return null
@@ -1068,9 +1068,10 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @hollerith
+  # ( new Test guytest_cfg ).test { h128_16383_sorting_2: @hollerith.h128_16383_sorting_2, }
+
   # ( new Test guytest_cfg ).test { types: @hollerith.types, }
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
-  ( new Test guytest_cfg ).test { h128_16383_sorting_2: @hollerith.h128_16383_sorting_2, }
   # ( new Test guytest_cfg ).test { validate_and_compile_cfg_10: @hollerith.validate_and_compile_cfg_10, }
   # ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
   # ( new Test guytest_cfg ).test { get_niners_re: @hollerith.get_niners_re, }
