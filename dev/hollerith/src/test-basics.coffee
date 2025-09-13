@@ -239,9 +239,7 @@ helpers =
   #---------------------------------------------------------------------------------------------------------
   h10mvp_sorting_2: ->
     { Hollerith,
-      hollerith_10,
       hollerith_10mvp,
-      hollerith_128,
       internals               } = require '../../../apps/hollerith'
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals, } = require 'node:util'
@@ -311,7 +309,7 @@ helpers =
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  h10mvp2_sorting_2: ->
+  h10mvp2_big_shuffle: ->
     { Hollerith,
       hollerith_10mvp2,
       internals               } = require '../../../apps/hollerith'
@@ -319,69 +317,81 @@ helpers =
     { isDeepStrictEqual: equals, } = require 'node:util'
     #.......................................................................................................
     probes = [
-      [ [ -999,           ], 'A000',        ]
-      [ [  -99,           ], 'B00',         ]
-      [ [  -90,           ], 'B09',         ]
-      [ [  -11,           ], 'B88',         ]
-      [ [  -10,           ], 'B89',         ]
-      [ [   -9,           ], 'E',           ]
-      [ [   -8,           ], 'F',           ]
-      [ [   -7,           ], 'G',           ]
-      [ [   -6,           ], 'H',           ]
-      [ [   -5,           ], 'I',           ]
-      [ [   -4,           ], 'J',           ]
-      [ [   -3,           ], 'K',           ]
-      [ [   -2,           ], 'L',           ]
-      [ [   -1,           ], 'M',           ]
-      [ [   +0,  -20,     ], 'NB79',        ]
-      [ [   +0,           ], 'N',           ]
-      [ [   +0,  +20,     ], 'NY20',        ]
-      [ [   +9,           ], 'W',           ]
-      [ [  +10,   -3,     ], 'Y10K',        ]
-      [ [  +10,   -2,     ], 'Y10L',        ]
-      [ [  +10,   -1,     ], 'Y10M',        ]
-      [ [  +10,           ], 'Y10',         ]
-      [ [  +10,   +0,     ], 'Y10N',        ]
-      [ [  +10,   +1,     ], 'Y10O',        ]
-      [ [  +10,  +10, -1, ], 'Y10Y10M',     ]
-      [ [  +10,  +10,     ], 'Y10Y10',      ]
-      [ [  +10,  +20,     ], 'Y10Y20',      ]
-      [ [  +20,           ], 'Y20',         ]
-      [ [  +20,  +10,     ], 'Y20Y10',      ]
-      [ [  +90,           ], 'Y90',         ]
-      [ [ +900,           ], 'Z900',        ]
-      [ [ +999,           ], 'Z999',        ]
+      [ -999,           ]
+      [  -99,           ]
+      [  -90,           ]
+      [  -11,           ]
+      [  -10,           ]
+      [   -9,           ]
+      [   -8,           ]
+      [   -7,           ]
+      [   -6,           ]
+      [   -5,           ]
+      [   -4,           ]
+      [   -3,           ]
+      [   -2,           ]
+      [   -1,           ]
+      [   +0,  -20,     ]
+      [   +0,           ]
+      [   +0,  +20,     ]
+      [   +9,           ]
+      [  +10,   -3,     ]
+      [  +10,   -2,     ]
+      [  +10,   -1,     ]
+      [  +10,           ]
+      [  +10,   +0,     ]
+      [  +10,   +1,     ]
+      [  +10,  +10, -1, ]
+      [  +10,  +10,     ]
+      [  +10,  +20,     ]
+      [  +20,           ]
+      [  +20,  +10,     ]
+      [  +90,           ]
+      [ +900,           ]
+      [ +999,           ]
       ]
-    ulines            = []
-    plines            = []
-    expected_indexes  = ( idx for idx in [ 0 ... probes.length ] )
     shuffle           = GUY.rnd.get_shuffle 57, 88
-    for [ vdx, sk_matcher, ], idx in probes
-      usk   = hollerith_10mvp2.encode vdx
-      @eq ( Ωhllt__90 = -> usk ), sk_matcher
-      psk   = usk.padEnd 10, hollerith_10mvp2.cfg.zpuns[ 0 ]
-      usk   = usk.padEnd 10, ' '
-      ulines.push "#{usk} #{rpr vdx} #{idx}"
-      plines.push "#{psk} #{rpr vdx} #{idx}"
-    #.......................................................................................................
-    for _ in [ 1 .. 10 ]
-      ulines = shuffle ulines
-      ulines.sort()
-      real_indexes = []
-      for uline in ulines
-        # help 'Ωhllt__91', uline
-        real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωhllt__92 = -> equals expected_indexes, real_indexes ), false
-    #.......................................................................................................
-    for _ in [ 1 .. 10 ]
-      plines = shuffle plines
-      plines.sort()
-      real_indexes = []
-      for pline in plines
-        # help 'Ωhllt__93', pline
-        real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
-      @eq ( Ωhllt__94 = -> equals expected_indexes, real_indexes ), true
-    #.......................................................................................................
+    probes_2          = probes[ .. ]
+    probes_2          = shuffle probes_2
+    probes_2.sort ( a, b ) ->
+      for idx in [ 0 ... ( Math.max a.length, b.length ) ]
+        da = a[ idx ] ? 0
+        db = b[ idx ] ? 0
+        continue if da is db
+        return -1 if da < db
+        return +1
+      return null
+    for vdx in probes_2
+      debug 'Ωhllt_391', vdx
+    # ulines            = []
+    # plines            = []
+    # expected_indexes  = ( idx for idx in [ 0 ... probes.length ] )
+    # for [ vdx, sk_matcher, ], idx in probes
+    #   usk   = hollerith_10mvp2.encode vdx
+    #   @eq ( Ωhllt__90 = -> usk ), sk_matcher
+    #   psk   = usk.padEnd 10, hollerith_10mvp2.cfg.zpuns[ 0 ]
+    #   usk   = usk.padEnd 10, ' '
+    #   ulines.push "#{usk} #{rpr vdx} #{idx}"
+    #   plines.push "#{psk} #{rpr vdx} #{idx}"
+    # #.......................................................................................................
+    # for _ in [ 1 .. 10 ]
+    #   ulines = shuffle ulines
+    #   ulines.sort()
+    #   real_indexes = []
+    #   for uline in ulines
+    #     # help 'Ωhllt__91', uline
+    #     real_indexes.push Number uline.replace /^.*?\s([0-9]+)$/, '$1'
+    #   @eq ( Ωhllt__92 = -> equals expected_indexes, real_indexes ), false
+    # #.......................................................................................................
+    # for _ in [ 1 .. 10 ]
+    #   plines = shuffle plines
+    #   plines.sort()
+    #   real_indexes = []
+    #   for pline in plines
+    #     # help 'Ωhllt__93', pline
+    #     real_indexes.push Number pline.replace /^.*?\s([0-9]+)$/, '$1'
+    #   @eq ( Ωhllt__94 = -> equals expected_indexes, real_indexes ), true
+    # #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -433,15 +443,15 @@ helpers =
     expected_indexes  = ( idx for idx in [ 0 ... probes.length ] )
     shuffle           = GUY.rnd.get_shuffle 57, 88
     codec             = hollerith_128_16383
-    debug 'Ωhllt__95', codec.cfg._max_digits_per_idx
-    debug 'Ωhllt__96', codec.cfg.zero_pad_length
+    # debug 'Ωhllt__95', codec.cfg._max_digits_per_idx
+    # debug 'Ωhllt__96', codec.cfg.zero_pad_length
     @eq ( Ωhllt__97 = -> codec.cfg.base                                     ), 128
     @eq ( Ωhllt__98 = -> codec.cfg._max_integer                             ), +16383
     @eq ( Ωhllt__99 = -> codec.cfg._min_integer                             ), -16383
     @eq ( Ωhllt_100 = -> codec.cfg.pmag_chrs[ 2 ]                           ), 'ù'
     @eq ( Ωhllt_101 = -> codec.cfg.nmag_chrs[ 2 ]                           ), 'Í'
-    @eq ( Ωhllt_102 = -> codec.encode codec.cfg._max_integer  ), 'ùÆÆ'
-    @eq ( Ωhllt_103 = -> codec.encode codec.cfg._min_integer  ), 'Í!!'
+    @eq ( Ωhllt_102 = -> codec.encode codec.cfg._max_integer                ), 'ùÆÆ'
+    @eq ( Ωhllt_103 = -> codec.encode codec.cfg._min_integer                ), 'Í!!'
     @eq ( Ωhllt_104 = -> codec.decode 'Í!!'                                 ), [ -16383 ]
     @throws ( Ωhllt_105 = -> codec.decode 'Ç!!!!!!!!'                       ), /not a valid sortkey/
     #.......................................................................................................
@@ -569,23 +579,24 @@ helpers =
         unit_result.push  helpers.rpr_unit unit
         index_result.push unit.index if unit.index?
       unit_result   = unit_result.join '|'
-      info 'Ωhllt_155', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+      # info 'Ωhllt_155', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
     #   @eq ( Ωhllt_156 = ->  unit_result                     ),  unit_matcher
       @eq ( Ωhllt_157 = -> index_result                     ), index_matcher
       @eq ( Ωhllt_158 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
-      debug 'Ωhllt_159', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
-    #   @eq ( Ωhllt_160 = -> codec.decode sortkey  ), index_matcher
-    #   # echo [ sortkey, index_result, unit_result, ]
-    # #.......................................................................................................
-    # @eq     ( Ωhllt_161 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
-    # @eq     ( Ωhllt_162 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    # @eq     ( Ωhllt_163 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    # @throws ( Ωhllt_164 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
-    # @throws ( Ωhllt_165 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
-    # @throws ( Ωhllt_166 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+      # debug 'Ωhllt_159', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+      @eq ( Ωhllt_160 = -> codec.decode sortkey  ), index_matcher
+      # echo [ sortkey, index_result, unit_result, ]
     #.......................................................................................................
-    debug 'Ωhllt_167', rpr codec.encode -90 #    [ 'Í¿;ããããããã', [ -999,         ], 'nnum:Í,¿;[-999]|padding:ããããããã',                 ]
-    debug 'Ωhllt_169', rpr codec.decode 'Ç!ÆÆÆÆÆÆH' #    [ 'Í¿;ããããããã', [ -999,         ], 'nnum:Í,¿;[-999]|padding:ããããããã',                 ]
+    # @eq     ( Ωhllt_161 = -> codec.parse '5'          ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt_162 = -> codec.parse 'äöü'        ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @eq     ( Ωhllt_163 = -> codec.parse 'Y900äöü'    ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+    # @throws ( Ωhllt_164 = -> codec.decode '5'         ), /not a valid sortkey: unable to parse '5'/
+    # @throws ( Ωhllt_165 = -> codec.decode 'äöü'       ), /not a valid sortkey: unable to parse 'äöü'/
+    # @throws ( Ωhllt_166 = -> codec.decode 'äöü'       ), /not a valid sortkey: unable to parse 'ü' in 'Y900äöü'/
+    # @throws ( Ωhllt_167 = -> codec.decode 'Y900äöü'   ), /not a valid sortkey: unable to parse 'Y900' in 'Y900äöü'/
+    #.......................................................................................................
+    # debug 'Ωhllt_168', rpr codec.encode -90 #    [ 'Í¿;ããããããã', [ -999,         ], 'nnum:Í,¿;[-999]|padding:ããããããã',                 ]
+    # debug 'Ωhllt_169', rpr codec.decode 'Ç!ÆÆÆÆÆÆH' #    [ 'Í¿;ããããããã', [ -999,         ], 'nnum:Í,¿;[-999]|padding:ããããããã',                 ]
     return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -646,7 +657,7 @@ helpers =
         unit_result.push  helpers.rpr_unit unit
         index_result.push unit.index if unit.index?
       unit_result   = unit_result.join '|'
-      info 'Ωhllt_170', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+      # info 'Ωhllt_170', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
       @eq ( Ωhllt_171 = -> unit_result                      ), unit_matcher
       @eq ( Ωhllt_172 = -> index_result                     ), index_matcher
       @eq ( Ωhllt_173 = -> codec.decode sortkey             ), index_matcher
@@ -662,56 +673,56 @@ helpers =
     #.......................................................................................................
     return null
 
-  #---------------------------------------------------------------------------------------------------------
-  h128b_decode: ->
-    { Hollerith,
-      hollerith_128,
-      hollerith_10mvp,
-      internals               } = require '../../../apps/hollerith'
-    { type_of,                } = SFMODULES.unstable.require_type_of()
-    { isDeepStrictEqual: equals, } = require 'node:util'
-    #.......................................................................................................
-    # codec = hollerith_128
-    codec = hollerith_10mvp
-    debug 'Ωhllt_181', rpr codec.encode -1
-    debug 'Ωhllt_182', rpr codec.encode -2
-    n =   -100; urge 'Ωhllt_183', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    -21; urge 'Ωhllt_184', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    -20; urge 'Ωhllt_185', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    -19; urge 'Ωhllt_186', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =     -1; urge 'Ωhllt_187', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      0; urge 'Ωhllt_188', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      1; urge 'Ωhllt_189', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      2; urge 'Ωhllt_190', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =      3; urge 'Ωhllt_191', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =     10; urge 'Ωhllt_192', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    126; urge 'Ωhllt_193', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    127; urge 'Ωhllt_194', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    128; urge 'Ωhllt_195', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    n =    129; urge 'Ωhllt_196', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
-    # for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
-    #   unit_result     = []
-    #   index_result    = []
-    #   for unit in codec.parse sortkey
-    #     unit_result.push  helpers.rpr_unit unit
-    #     index_result.push unit.index if unit.index?
-    #   unit_result   = unit_result.join '|'
-    #   info 'Ωhllt_197', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
-    # #   @eq ( Ωhllt_198 = ->  unit_result                     ),  unit_matcher
-    #   @eq ( Ωhllt_199 = -> index_result                     ), index_matcher
-    #   @eq ( Ωhllt_200 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
-    #   debug 'Ωhllt_201', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
-    #   @eq ( Ωhllt_202 = -> codec.decode sortkey  ), index_matcher
-    #   # echo [ sortkey, index_result, unit_result, ]
-    # #.......................................................................................................
-    # @eq     ( Ωhllt_203 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
-    # @eq     ( Ωhllt_204 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    # @eq     ( Ωhllt_205 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
-    # @throws ( Ωhllt_206 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
-    # @throws ( Ωhllt_207 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
-    # @throws ( Ωhllt_208 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
-    #.......................................................................................................
-    return null
+  # #---------------------------------------------------------------------------------------------------------
+  # h128b_decode: ->
+  #   { Hollerith,
+  #     hollerith_128,
+  #     hollerith_10mvp,
+  #     internals               } = require '../../../apps/hollerith'
+  #   { type_of,                } = SFMODULES.unstable.require_type_of()
+  #   { isDeepStrictEqual: equals, } = require 'node:util'
+  #   #.......................................................................................................
+  #   # codec = hollerith_128
+  #   codec = hollerith_10mvp
+  #   debug 'Ωhllt_181', rpr codec.encode -1
+  #   debug 'Ωhllt_182', rpr codec.encode -2
+  #   n =   -100; urge 'Ωhllt_183', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    -21; urge 'Ωhllt_184', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    -20; urge 'Ωhllt_185', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    -19; urge 'Ωhllt_186', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =     -1; urge 'Ωhllt_187', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =      0; urge 'Ωhllt_188', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =      1; urge 'Ωhllt_189', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =      2; urge 'Ωhllt_190', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =      3; urge 'Ωhllt_191', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =     10; urge 'Ωhllt_192', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    126; urge 'Ωhllt_193', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    127; urge 'Ωhllt_194', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    128; urge 'Ωhllt_195', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   n =    129; urge 'Ωhllt_196', f"#{ rpr [ n, ] }:>10c; #{rpr sk = codec.encode n}:<5c; #{ rpr codec.decode sk}:>10c;"
+  #   # for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
+  #   #   unit_result     = []
+  #   #   index_result    = []
+  #   #   for unit in codec.parse sortkey
+  #   #     unit_result.push  helpers.rpr_unit unit
+  #   #     index_result.push unit.index if unit.index?
+  #   #   unit_result   = unit_result.join '|'
+  #   #   info 'Ωhllt_197', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
+  #   # #   @eq ( Ωhllt_198 = ->  unit_result                     ),  unit_matcher
+  #   #   @eq ( Ωhllt_199 = -> index_result                     ), index_matcher
+  #   #   @eq ( Ωhllt_200 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+  #   #   debug 'Ωhllt_201', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+  #   #   @eq ( Ωhllt_202 = -> codec.decode sortkey  ), index_matcher
+  #   #   # echo [ sortkey, index_result, unit_result, ]
+  #   # #.......................................................................................................
+  #   # @eq     ( Ωhllt_203 = -> codec.parse '5'         ), [ { name: 'other', letters: '5', mantissa: null, index: null } ]
+  #   # @eq     ( Ωhllt_204 = -> codec.parse 'äöü'       ), [ { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+  #   # @eq     ( Ωhllt_205 = -> codec.parse 'Y900äöü'   ), [ { name: 'pnum', letters: 'Y', mantissa: '900', index: 900 }, { name: 'other', letters: 'äöü', mantissa: null, index: null } ]
+  #   # @throws ( Ωhllt_206 = -> codec.decode '5'        ), /not a valid sortkey: unable to parse '5'/
+  #   # @throws ( Ωhllt_207 = -> codec.decode 'äöü'      ), /not a valid sortkey: unable to parse 'äöü'/
+  #   # @throws ( Ωhllt_208 = -> codec.decode 'Y900äöü'  ), /not a valid sortkey: unable to parse 'äöü' in 'Y900äöü'/
+  #   #.......................................................................................................
+  #   return null
 
 
   #---------------------------------------------------------------------------------------------------------
@@ -1116,7 +1127,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @hollerith
-  # ( new Test guytest_cfg ).test { h128_decode: @hollerith.h128_decode, }
+  ( new Test guytest_cfg ).test { h10mvp2_big_shuffle: @hollerith.h10mvp2_big_shuffle, }
 
   # ( new Test guytest_cfg ).test { types: @hollerith.types, }
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
