@@ -1173,12 +1173,66 @@ settings =
     return null
 
 
+  #---------------------------------------------------------------------------------------------------------
+  get_random_vdx: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_get_random()
+    #.......................................................................................................
+    do =>
+      on_stats        = ( stats ) =>
+        # info 'Ωbrbr_248', idx, stats # if stats.name is 'walk'
+        if stats.name is 'walk'
+          @eq ( Ωbrbr_249 = -> stats.rounds ), matcher.rounds
+        return null
+      # get_random      = new Get_random { seed: 838472384, on_stats, }
+      get_random      = new Get_random { seed: null, on_stats, }
+      get_rnd_length  = get_random.integer_producer { min:    1, max:     5, }
+      get_rnd_idx     = get_random.integer_producer { min: -999, max:  +999, }
+      get_rnd_vdx     = -> ( get_rnd_idx() for _ in [ 0 .. get_rnd_length() ] )
+      for n in [ 0 .. 50 ]
+        debug 'Ωbrbr_250', get_rnd_vdx()
+      # #.....................................................................................................
+      # result    =
+      #   values:   []
+      # matcher   =
+      #   values:   [ 'ĂčÀ', 'tĢŅ', 'ľæű', 'Hpŗ', 'Śz^', 'ĖħŻ', 'żÉŉ', 'íĬČ', 'ĩuķ', 'ìīx', 'Ūm|' ]
+      #   rounds:   0
+      # #.....................................................................................................
+      # producer  = -> get_random.text { min: 'A', max: 0x017f, length: 3, on_stats, }
+      # for value from get_random.walk { producer, n: 11, on_stats, }
+      #   idx++
+      #   # debug 'Ωbrbr_256', idx, rpr value
+      #   result.values.push value
+      #   @eq ( Ωbrbr_257 = -> value ), matcher.values[ idx ]
+      # @eq ( Ωbrbr_258 = -> idx                    ), 10
+      # @eq ( Ωbrbr_259 = -> result.values.length   ), 11
+      # return null
+    # #.......................................................................................................
+    # do =>
+    #   get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
+    #   result_rounds  = null
+    #   on_stats        = ( stats ) =>
+    #     info 'Ωbrbr_260', stats if stats.name is 'walk'
+    #     result_rounds = stats.rounds if stats.name is 'walk'
+    #     @eq ( Ωbrbr_261 = -> result_rounds >= 0 ), true
+    #   #.....................................................................................................
+    #   producer  = -> get_random.text { min: '0', max: '9', length: 1, }
+    #   count     = 0
+    #   seen      = new Set()
+    #   for x from get_random.walk { producer, seen, n: 5, }
+    #     count++
+    #     debug 'Ωbrbr_262', count, rpr x
+    #   return null
+    #.......................................................................................................
+    return null
+
+
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_anybase: tests.require_anybase, }
-  # ( new Test guytest_cfg ).test { require_remap: tests.require_remap, }
+  ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { require_anybase: tests.require_anybase, }
+  ( new Test guytest_cfg ).test { get_random_vdx: tests.get_random_vdx, }
   #.........................................................................................................
   return null
