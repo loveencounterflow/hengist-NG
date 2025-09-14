@@ -526,7 +526,7 @@ helpers =
       padded_lines.push "#{psk} #{rpr vdx} #{idx}"
     #.......................................................................................................
     @eq ( Ωhllt_112 = -> codec.cfg._max_digits_per_idx                        ), 2
-    @eq ( Ωhllt_113 = -> codec.cfg.zpun_max                                   ), 20
+    @eq ( Ωhllt_113 = -> codec.cfg._max_zpun                                   ), 20
     @eq ( Ωhllt_114 = -> codec.cfg._naught                                    ), '!'
     @eq ( Ωhllt_115 = -> codec.cfg._nova                                      ), 'Æ'
     @eq ( Ωhllt_116 = -> codec.cfg._cipher                                    ), 'ã'
@@ -921,19 +921,19 @@ helpers =
       @eq ( Ωhllt_282 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_283 = -> cfg._leading_novas_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_284 = -> is_frozen cfg._digits_list                             ), true
-      @eq ( Ωhllt_285 = -> cfg._base                                               ), 10
+      @eq ( Ωhllt_285 = -> cfg._base                                              ), 10
       @eq ( Ωhllt_286 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_287 = -> cfg.nmag                                               ), ' CBA'
       @eq ( Ωhllt_288 = -> cfg.pmag                                               ), ' XYZ'
-      @eq ( Ωhllt_289 = -> cfg._nmag_list                                          ), Array.from ' CBA'
-      @eq ( Ωhllt_290 = -> cfg._pmag_list                                          ), Array.from ' XYZ'
+      @eq ( Ωhllt_289 = -> cfg._nmag_list                                         ), Array.from ' CBA'
+      @eq ( Ωhllt_290 = -> cfg._pmag_list                                         ), Array.from ' XYZ'
       @eq ( Ωhllt_291 = -> cfg.uniliterals                                        ), 'FGHIJKLM N OPQRSTUV'
-      @eq ( Ωhllt_292 = -> cfg._nuns                                               ), 'FGHIJKLM'
-      @eq ( Ωhllt_293 = -> cfg._zpuns                                              ), 'NOPQRSTUV'
-      @eq ( Ωhllt_294 = -> cfg.zpun_max                                           ), 8
-      @eq ( Ωhllt_295 = -> cfg.nun_min                                            ), -8
-      @eq ( Ωhllt_296 = -> cfg._nuns_list                                           ), [ 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
-      @eq ( Ωhllt_297 = -> cfg._zpuns_list                                          ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', ]
+      @eq ( Ωhllt_292 = -> cfg._nuns                                              ), 'FGHIJKLM'
+      @eq ( Ωhllt_293 = -> cfg._zpuns                                             ), 'NOPQRSTUV'
+      @eq ( Ωhllt_294 = -> cfg._max_zpun                                           ), 8
+      @eq ( Ωhllt_295 = -> cfg._min_nun                                           ), -8
+      @eq ( Ωhllt_296 = -> cfg._nuns_list                                         ), [ 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
+      @eq ( Ωhllt_297 = -> cfg._zpuns_list                                        ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', ]
       @eq ( Ωhllt_298 = -> cfg.dimension                                          ), 3
       @eq ( Ωhllt_299 = -> +( ( cfg._base ** ( cfg._pmag_list.length - 1 )  ) - 1 ) ), +999
       @eq ( Ωhllt_300 = -> -( ( cfg._base ** ( cfg._nmag_list.length - 1 )  ) - 1 ) ), -999
