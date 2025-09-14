@@ -86,19 +86,19 @@ helpers =
       return null
     #.......................................................................................................
     do =>
-      leading_niners_re = get_niners_re '9'
-      @eq     ( Ωanybt___6 = -> '9999'.replace leading_niners_re, '' ), '9'
-      @eq     ( Ωanybt___7 = ->  '999'.replace leading_niners_re, '' ), '9'
-      @eq     ( Ωanybt___8 = ->   '99'.replace leading_niners_re, '' ), '9'
-      @eq     ( Ωanybt___9 = ->    '9'.replace leading_niners_re, '' ), '9'
-      @eq     ( Ωanybt__10 = -> '9989'.replace leading_niners_re, '' ), '89'
-      @eq     ( Ωanybt__11 = ->  '989'.replace leading_niners_re, '' ), '89'
-      @eq     ( Ωanybt__12 = ->   '89'.replace leading_niners_re, '' ), '89'
-      @eq     ( Ωanybt__13 = -> '9992'.replace leading_niners_re, '' ), '2'
-      @eq     ( Ωanybt__14 = ->  '992'.replace leading_niners_re, '' ), '2'
-      @eq     ( Ωanybt__15 = ->   '92'.replace leading_niners_re, '' ), '2'
-      @eq     ( Ωanybt__16 = ->    '7'.replace leading_niners_re, '' ), '7'
-      @eq     ( Ωanybt__17 = ->     ''.replace leading_niners_re, '' ), ''
+      _leading_novas_re = get_niners_re '9'
+      @eq     ( Ωanybt___6 = -> '9999'.replace _leading_novas_re, '' ), '9'
+      @eq     ( Ωanybt___7 = ->  '999'.replace _leading_novas_re, '' ), '9'
+      @eq     ( Ωanybt___8 = ->   '99'.replace _leading_novas_re, '' ), '9'
+      @eq     ( Ωanybt___9 = ->    '9'.replace _leading_novas_re, '' ), '9'
+      @eq     ( Ωanybt__10 = -> '9989'.replace _leading_novas_re, '' ), '89'
+      @eq     ( Ωanybt__11 = ->  '989'.replace _leading_novas_re, '' ), '89'
+      @eq     ( Ωanybt__12 = ->   '89'.replace _leading_novas_re, '' ), '89'
+      @eq     ( Ωanybt__13 = -> '9992'.replace _leading_novas_re, '' ), '2'
+      @eq     ( Ωanybt__14 = ->  '992'.replace _leading_novas_re, '' ), '2'
+      @eq     ( Ωanybt__15 = ->   '92'.replace _leading_novas_re, '' ), '2'
+      @eq     ( Ωanybt__16 = ->    '7'.replace _leading_novas_re, '' ), '7'
+      @eq     ( Ωanybt__17 = ->     ''.replace _leading_novas_re, '' ), ''
     #.......................................................................................................
     return null
 
@@ -919,7 +919,7 @@ helpers =
       @eq ( Ωhllt_280 = -> cfg.digitset                                           ), '0123456789'
       @eq ( Ωhllt_281 = -> cfg._digits_list                                       ), Array.from '0123456789'
       @eq ( Ωhllt_282 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
-      @eq ( Ωhllt_283 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
+      @eq ( Ωhllt_283 = -> cfg._leading_novas_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_284 = -> is_frozen cfg._digits_list                             ), true
       @eq ( Ωhllt_285 = -> cfg.base                                               ), 10
       @eq ( Ωhllt_286 = -> cfg.magnifiers                                         ), 'ABC XYZ'
@@ -988,7 +988,7 @@ helpers =
       @eq ( Ωhllt_324 = -> cfg.digitset                                           ), '0123456789'
       @eq ( Ωhllt_325 = -> cfg._digits_list                                       ), Array.from '0123456789'
       @eq ( Ωhllt_326 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
-      @eq ( Ωhllt_327 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
+      @eq ( Ωhllt_327 = -> cfg._leading_novas_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_328 = -> is_frozen cfg._digits_list                             ), true
       @eq ( Ωhllt_329 = -> cfg.base                                               ), 10
       @eq ( Ωhllt_330 = -> cfg.magnifiers                                         ), 'ABC XYZ'
@@ -1046,7 +1046,7 @@ helpers =
                                                                                      '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
       @eq ( Ωhllt_351 = -> cfg._digits_list                                       ), Array.from cfg.digitset
       @eq ( Ωhllt_352 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
-      @eq ( Ωhllt_353 = -> cfg.leading_niners_re                                  ), /// ^ (?: Æ )* (?= .+ $ ) ///gv
+      @eq ( Ωhllt_353 = -> cfg._leading_novas_re                                  ), /// ^ (?: Æ )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_354 = -> cfg.magnifiers                                         ), 'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
       @eq ( Ωhllt_355 = -> cfg.nmag                                               ), ' ÎÍÌËÊÉÈÇ'
       @eq ( Ωhllt_356 = -> cfg.pmag                                               ), ' øùúûüýþÿ'
