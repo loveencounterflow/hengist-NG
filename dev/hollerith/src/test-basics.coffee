@@ -858,10 +858,10 @@ helpers =
     @eq ( Ωhllt_261 = -> T.uniliterals.isa 'N'                                ), true
     @eq ( Ωhllt_262 = -> T.uniliterals.data                                   ), { nuns: '', zpuns: 'N', nun_chrs: [], zpun_chrs: [ 'N' ] }
     #.......................................................................................................
-    @throws ( Ωhllt_263 = -> T.alphabet.validate null                         ), /not a valid alphabet/
-    @throws ( Ωhllt_264 = -> T.alphabet.validate ''                           ), /not a valid alphabet/
-    @throws ( Ωhllt_265 = -> T.alphabet.validate 'a'                          ), /not a valid alphabet/
-    @eq     ( Ωhllt_266 = -> T.alphabet.validate 'ab'                         ), 'ab'
+    @throws ( Ωhllt_263 = -> T.digitset.validate null                         ), /not a valid digitset/
+    @throws ( Ωhllt_264 = -> T.digitset.validate ''                           ), /not a valid digitset/
+    @throws ( Ωhllt_265 = -> T.digitset.validate 'a'                          ), /not a valid digitset/
+    @eq     ( Ωhllt_266 = -> T.digitset.validate 'ab'                         ), 'ab'
     #.......................................................................................................
     @throws ( Ωhllt_267 = ->   new Hollerith_typespace { blank: null }                        ), /not a valid blank/
     @throws ( Ωhllt_268 = ->   new Hollerith_typespace { blank: ''   }                        ), /not a valid blank/
@@ -889,9 +889,9 @@ helpers =
     #.......................................................................................................
     do =>
       # T = new Hollerith_typespace()
-      @throws ( Ωhllt_276 = -> Hollerith.validate_and_compile_cfg {}                  ), /not a valid alphabet/
-      @throws ( Ωhllt_277 = -> Hollerith.validate_and_compile_cfg { alphabet: ''    } ), /not a valid alphabet/
-      @throws ( Ωhllt_278 = -> Hollerith.validate_and_compile_cfg { alphabet: 'a'   } ), /not a valid alphabet/
+      @throws ( Ωhllt_276 = -> Hollerith.validate_and_compile_cfg {}                  ), /not a valid digitset/
+      @throws ( Ωhllt_277 = -> Hollerith.validate_and_compile_cfg { digitset: ''    } ), /not a valid digitset/
+      @throws ( Ωhllt_278 = -> Hollerith.validate_and_compile_cfg { digitset: 'a'   } ), /not a valid digitset/
       return null
     #.......................................................................................................
     return null
@@ -908,7 +908,7 @@ helpers =
     #.......................................................................................................
     cfg_10 =
       blank:        ' '                       # separator used in `magnifiers` and `uniliterals`
-      alphabet:     '0123456789'              # digits; length of `alphabet` is the `base`
+      digitset:     '0123456789'              # digits; length of `digitset` is the `base`
       magnifiers:   'ABC XYZ'                 #
       uniliterals:  'FGHIJKLM N OPQRSTUV'     # negative uniliterals, blank, zero uniliteral, blank, positive uniliterals
       dimension:    3                         # number of indices supported
@@ -916,11 +916,11 @@ helpers =
     do =>
       cfg = Hollerith.validate_and_compile_cfg cfg_10
       @eq ( Ωhllt_279 = -> cfg.blank                                              ), ' '
-      @eq ( Ωhllt_280 = -> cfg.alphabet                                           ), '0123456789'
-      @eq ( Ωhllt_281 = -> cfg.alphabet_chrs                                      ), Array.from '0123456789'
-      @eq ( Ωhllt_282 = -> cfg._nova                                              ), ( Array.from cfg.alphabet ).at -1
+      @eq ( Ωhllt_280 = -> cfg.digitset                                           ), '0123456789'
+      @eq ( Ωhllt_281 = -> cfg.digits_lstof                                       ), Array.from '0123456789'
+      @eq ( Ωhllt_282 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_283 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
-      @eq ( Ωhllt_284 = -> is_frozen cfg.alphabet_chrs                            ), true
+      @eq ( Ωhllt_284 = -> is_frozen cfg.digits_lstof                             ), true
       @eq ( Ωhllt_285 = -> cfg.base                                               ), 10
       @eq ( Ωhllt_286 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_287 = -> cfg.nmag                                               ), ' CBA'
@@ -977,7 +977,7 @@ helpers =
     #.......................................................................................................
     cfg_10_no_uniliterals =
       blank:        ' '                       # separator used in `magnifiers` and `uniliterals`
-      alphabet:     '0123456789'              # digits; length of `alphabet` is the `base`
+      digitset:     '0123456789'              # digits; length of `digitset` is the `base`
       magnifiers:   'ABC XYZ'                 #
       uniliterals:  'N'                       # only has zero uniliteral
       dimension:    3                         # number of indices supported
@@ -985,11 +985,11 @@ helpers =
     do =>
       cfg = Hollerith.validate_and_compile_cfg cfg_10_no_uniliterals
       @eq ( Ωhllt_323 = -> cfg.blank                                              ), ' '
-      @eq ( Ωhllt_324 = -> cfg.alphabet                                           ), '0123456789'
-      @eq ( Ωhllt_325 = -> cfg.alphabet_chrs                                      ), Array.from '0123456789'
-      @eq ( Ωhllt_326 = -> cfg._nova                                              ), ( Array.from cfg.alphabet ).at -1
+      @eq ( Ωhllt_324 = -> cfg.digitset                                           ), '0123456789'
+      @eq ( Ωhllt_325 = -> cfg.digits_lstof                                       ), Array.from '0123456789'
+      @eq ( Ωhllt_326 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_327 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
-      @eq ( Ωhllt_328 = -> is_frozen cfg.alphabet_chrs                            ), true
+      @eq ( Ωhllt_328 = -> is_frozen cfg.digits_lstof                             ), true
       @eq ( Ωhllt_329 = -> cfg.base                                               ), 10
       @eq ( Ωhllt_330 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_331 = -> cfg.nmag                                               ), ' CBA'
@@ -1029,7 +1029,7 @@ helpers =
     cfg_128 =
       ###                     1         2         3       ###
       ###            12345678901234567890123456789012     ###
-      alphabet:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+      digitset:     '!#$%&()*+,-./0123456789:;<=>?@AB' + \
                     'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
                     'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
                     '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
@@ -1040,12 +1040,12 @@ helpers =
     do =>
       cfg = Hollerith.validate_and_compile_cfg cfg_128
       @eq ( Ωhllt_349 = -> cfg.blank                                              ), ' '
-      @eq ( Ωhllt_350 = -> cfg.alphabet                                           ), '!#$%&()*+,-./0123456789:;<=>?@AB' + \
+      @eq ( Ωhllt_350 = -> cfg.digitset                                           ), '!#$%&()*+,-./0123456789:;<=>?@AB' + \
                                                                                      'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
                                                                                      'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
                                                                                      '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
-      @eq ( Ωhllt_351 = -> cfg.alphabet_chrs                                      ), Array.from cfg.alphabet
-      @eq ( Ωhllt_352 = -> cfg._nova                                              ), ( Array.from cfg.alphabet ).at -1
+      @eq ( Ωhllt_351 = -> cfg.digits_lstof                                       ), Array.from cfg.digitset
+      @eq ( Ωhllt_352 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_353 = -> cfg.leading_niners_re                                  ), /// ^ (?: Æ )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_354 = -> cfg.magnifiers                                         ), 'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
       @eq ( Ωhllt_355 = -> cfg.nmag                                               ), ' ÎÍÌËÊÉÈÇ'
@@ -1062,7 +1062,7 @@ helpers =
       # @eq ( Ωhllt_366 = -> cfg._max_digits_per_idx                                         ), 3
       # @eq ( Ωhllt_367 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       #.....................................................................................................
-      @eq ( Ωhllt_368 = -> is_frozen cfg.alphabet_chrs                            ), true
+      @eq ( Ωhllt_368 = -> is_frozen cfg.digits_lstof                             ), true
       @eq ( Ωhllt_369 = -> cfg.base                                               ), 128
       @eq ( Ωhllt_370 = -> cfg.dimension                                          ), 5
       #.....................................................................................................
