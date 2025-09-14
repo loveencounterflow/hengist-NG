@@ -709,7 +709,7 @@ helpers =
       ]
     #.......................................................................................................
     codec           = hollerith_10mvp2
-    sortkey_padder  = codec.cfg.zpun_chrs[ 0 ]
+    sortkey_padder  = codec.cfg._zpuns_list[ 0 ]
     #.......................................................................................................
     for [ sortkey, index_matcher, unit_matcher, ] in probes_and_matchers
       unit_result     = []
@@ -854,9 +854,9 @@ helpers =
     @eq ( Ωhllt_257 = -> T.uniliterals.isa 'VBA'                              ), false
     @eq ( Ωhllt_258 = -> T.uniliterals.isa 'EFGHIJKLM NOPQRSTUVW'             ), false
     @eq ( Ωhllt_259 = -> T.uniliterals.isa 'EFGHIJKLM N OPQRSTUVW'            ), true
-    @eq ( Ωhllt_260 = -> T.uniliterals.data                                   ), { _nuns: 'EFGHIJKLM', _zpuns: 'NOPQRSTUVW', nun_chrs: [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ], zpun_chrs: [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ] }
+    @eq ( Ωhllt_260 = -> T.uniliterals.data                                   ), { _nuns: 'EFGHIJKLM', _zpuns: 'NOPQRSTUVW', _nuns_list: [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ], _zpuns_list: [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ] }
     @eq ( Ωhllt_261 = -> T.uniliterals.isa 'N'                                ), true
-    @eq ( Ωhllt_262 = -> T.uniliterals.data                                   ), { _nuns: '', _zpuns: 'N', nun_chrs: [], zpun_chrs: [ 'N' ] }
+    @eq ( Ωhllt_262 = -> T.uniliterals.data                                   ), { _nuns: '', _zpuns: 'N', _nuns_list: [], _zpuns_list: [ 'N' ] }
     #.......................................................................................................
     @throws ( Ωhllt_263 = -> T.digitset.validate null                         ), /not a valid digitset/
     @throws ( Ωhllt_264 = -> T.digitset.validate ''                           ), /not a valid digitset/
@@ -932,8 +932,8 @@ helpers =
       @eq ( Ωhllt_293 = -> cfg._zpuns                                              ), 'NOPQRSTUV'
       @eq ( Ωhllt_294 = -> cfg.zpun_max                                           ), 8
       @eq ( Ωhllt_295 = -> cfg.nun_min                                            ), -8
-      @eq ( Ωhllt_296 = -> cfg.nun_chrs                                           ), [ 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
-      @eq ( Ωhllt_297 = -> cfg.zpun_chrs                                          ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', ]
+      @eq ( Ωhllt_296 = -> cfg._nuns_list                                           ), [ 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
+      @eq ( Ωhllt_297 = -> cfg._zpuns_list                                          ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', ]
       @eq ( Ωhllt_298 = -> cfg.dimension                                          ), 3
       @eq ( Ωhllt_299 = -> +( ( cfg._base ** ( cfg._pmag_list.length - 1 )  ) - 1 ) ), +999
       @eq ( Ωhllt_300 = -> -( ( cfg._base ** ( cfg._nmag_list.length - 1 )  ) - 1 ) ), -999
@@ -999,8 +999,8 @@ helpers =
       @eq ( Ωhllt_335 = -> cfg.uniliterals                                        ), 'N'
       @eq ( Ωhllt_336 = -> cfg._nuns                                               ), ''
       @eq ( Ωhllt_337 = -> cfg._zpuns                                              ), 'N'
-      @eq ( Ωhllt_338 = -> cfg.nun_chrs                                           ), []
-      @eq ( Ωhllt_339 = -> cfg.zpun_chrs                                          ), [ 'N', ]
+      @eq ( Ωhllt_338 = -> cfg._nuns_list                                           ), []
+      @eq ( Ωhllt_339 = -> cfg._zpuns_list                                          ), [ 'N', ]
       @eq ( Ωhllt_340 = -> cfg.dimension                                          ), 3
       @eq ( Ωhllt_341 = -> +( ( cfg._base ** ( cfg._pmag_list.length - 1 )  ) - 1 ) ), +999
       @eq ( Ωhllt_342 = -> -( ( cfg._base ** ( cfg._nmag_list.length - 1 )  ) - 1 ) ), -999
@@ -1055,8 +1055,8 @@ helpers =
       @eq ( Ωhllt_359 = -> cfg.uniliterals                                        ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
       @eq ( Ωhllt_360 = -> cfg._nuns                                               ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
       @eq ( Ωhllt_361 = -> cfg._zpuns                                              ), 'ãäåæçèéêëìíîïðñòóôõö÷'
-      @eq ( Ωhllt_362 = -> cfg.nun_chrs                                           ), Array.from 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
-      @eq ( Ωhllt_363 = -> cfg.zpun_chrs                                          ), Array.from 'ãäåæçèéêëìíîïðñòóôõö÷'
+      @eq ( Ωhllt_362 = -> cfg._nuns_list                                           ), Array.from 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
+      @eq ( Ωhllt_363 = -> cfg._zpuns_list                                          ), Array.from 'ãäåæçèéêëìíîïðñòóôõö÷'
       @eq ( Ωhllt_364 = -> cfg._min_integer                                       ), -( ( 128 ** 7 ) - 1 )
       @eq ( Ωhllt_365 = -> cfg._max_integer                                       ), +( ( 128 ** 7 ) - 1 )
       # @eq ( Ωhllt_366 = -> cfg._max_digits_per_idx                                         ), 3
