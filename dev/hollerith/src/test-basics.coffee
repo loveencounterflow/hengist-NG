@@ -241,7 +241,7 @@ helpers =
         ]
       for probe, idx in probes
         sk            = hollerith_10mvp.encode probe
-        sk            = sk.padEnd padding, hollerith_10mvp.cfg.zpuns[ 0 ] if padding?
+        sk            = sk.padEnd padding, hollerith_10mvp.cfg._zpuns[ 0 ] if padding?
         probes[ idx ] = { sk, probe, idx, }
       probes.sort ( a, b ) ->
         return -1 if a.sk < b.sk
@@ -303,7 +303,7 @@ helpers =
     shuffle           = GUY.rnd.get_shuffle 57, 88
     for [ vdx, sk_matcher, ], idx in probes
       usk   = hollerith_10mvp.encode vdx
-      psk   = usk.padEnd 10, hollerith_10mvp.cfg.zpuns[ 0 ]
+      psk   = usk.padEnd 10, hollerith_10mvp.cfg._zpuns[ 0 ]
       usk   = usk.padEnd 10, ' '
       ulines.push "#{usk} #{rpr vdx} #{idx}"
       plines.push "#{psk} #{rpr vdx} #{idx}"
@@ -643,8 +643,8 @@ helpers =
       # info 'Ωhllt_160', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
     #   @eq ( Ωhllt_161 = ->  unit_result                     ),  unit_matcher
       @eq ( Ωhllt_162 = -> index_result                     ), index_matcher
-      @eq ( Ωhllt_163 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
-      # debug 'Ωhllt_164', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+      @eq ( Ωhllt_163 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg._zpuns[ 0 ]
+      # debug 'Ωhllt_164', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg._zpuns[ 0 ]
       @eq ( Ωhllt_165 = -> codec.decode sortkey  ), index_matcher
       # echo [ sortkey, index_result, unit_result, ]
     #.......................................................................................................
@@ -771,8 +771,8 @@ helpers =
   #   #   info 'Ωhllt_202', f"#{( rpr unit_result ) + ','}:<60c; #{rpr index_result}"
   #   # #   @eq ( Ωhllt_203 = ->  unit_result                     ),  unit_matcher
   #   #   @eq ( Ωhllt_204 = -> index_result                     ), index_matcher
-  #   #   @eq ( Ωhllt_205 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
-  #   #   debug 'Ωhllt_206', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg.zpuns[ 0 ]
+  #   #   @eq ( Ωhllt_205 = -> sortkey ), ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg._zpuns[ 0 ]
+  #   #   debug 'Ωhllt_206', rpr ( codec.encode index_matcher ).padEnd sortkey.length, codec.cfg._zpuns[ 0 ]
   #   #   @eq ( Ωhllt_207 = -> codec.decode sortkey  ), index_matcher
   #   #   # echo [ sortkey, index_result, unit_result, ]
   #   # #.......................................................................................................
@@ -854,9 +854,9 @@ helpers =
     @eq ( Ωhllt_257 = -> T.uniliterals.isa 'VBA'                              ), false
     @eq ( Ωhllt_258 = -> T.uniliterals.isa 'EFGHIJKLM NOPQRSTUVW'             ), false
     @eq ( Ωhllt_259 = -> T.uniliterals.isa 'EFGHIJKLM N OPQRSTUVW'            ), true
-    @eq ( Ωhllt_260 = -> T.uniliterals.data                                   ), { nuns: 'EFGHIJKLM', zpuns: 'NOPQRSTUVW', nun_chrs: [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ], zpun_chrs: [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ] }
+    @eq ( Ωhllt_260 = -> T.uniliterals.data                                   ), { _nuns: 'EFGHIJKLM', _zpuns: 'NOPQRSTUVW', nun_chrs: [ 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ], zpun_chrs: [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W' ] }
     @eq ( Ωhllt_261 = -> T.uniliterals.isa 'N'                                ), true
-    @eq ( Ωhllt_262 = -> T.uniliterals.data                                   ), { nuns: '', zpuns: 'N', nun_chrs: [], zpun_chrs: [ 'N' ] }
+    @eq ( Ωhllt_262 = -> T.uniliterals.data                                   ), { _nuns: '', _zpuns: 'N', nun_chrs: [], zpun_chrs: [ 'N' ] }
     #.......................................................................................................
     @throws ( Ωhllt_263 = -> T.digitset.validate null                         ), /not a valid digitset/
     @throws ( Ωhllt_264 = -> T.digitset.validate ''                           ), /not a valid digitset/
@@ -928,8 +928,8 @@ helpers =
       @eq ( Ωhllt_289 = -> cfg._nmag_list                                          ), Array.from ' CBA'
       @eq ( Ωhllt_290 = -> cfg._pmag_list                                          ), Array.from ' XYZ'
       @eq ( Ωhllt_291 = -> cfg.uniliterals                                        ), 'FGHIJKLM N OPQRSTUV'
-      @eq ( Ωhllt_292 = -> cfg.nuns                                               ), 'FGHIJKLM'
-      @eq ( Ωhllt_293 = -> cfg.zpuns                                              ), 'NOPQRSTUV'
+      @eq ( Ωhllt_292 = -> cfg._nuns                                               ), 'FGHIJKLM'
+      @eq ( Ωhllt_293 = -> cfg._zpuns                                              ), 'NOPQRSTUV'
       @eq ( Ωhllt_294 = -> cfg.zpun_max                                           ), 8
       @eq ( Ωhllt_295 = -> cfg.nun_min                                            ), -8
       @eq ( Ωhllt_296 = -> cfg.nun_chrs                                           ), [ 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
@@ -997,8 +997,8 @@ helpers =
       @eq ( Ωhllt_333 = -> cfg._nmag_list                                          ), Array.from ' CBA'
       @eq ( Ωhllt_334 = -> cfg._pmag_list                                          ), Array.from ' XYZ'
       @eq ( Ωhllt_335 = -> cfg.uniliterals                                        ), 'N'
-      @eq ( Ωhllt_336 = -> cfg.nuns                                               ), ''
-      @eq ( Ωhllt_337 = -> cfg.zpuns                                              ), 'N'
+      @eq ( Ωhllt_336 = -> cfg._nuns                                               ), ''
+      @eq ( Ωhllt_337 = -> cfg._zpuns                                              ), 'N'
       @eq ( Ωhllt_338 = -> cfg.nun_chrs                                           ), []
       @eq ( Ωhllt_339 = -> cfg.zpun_chrs                                          ), [ 'N', ]
       @eq ( Ωhllt_340 = -> cfg.dimension                                          ), 3
@@ -1053,8 +1053,8 @@ helpers =
       @eq ( Ωhllt_357 = -> cfg._nmag_list                                          ), Array.from ' ÎÍÌËÊÉÈÇ'
       @eq ( Ωhllt_358 = -> cfg._pmag_list                                          ), Array.from ' øùúûüýþÿ'
       @eq ( Ωhllt_359 = -> cfg.uniliterals                                        ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ ã äåæçèéêëìíîïðñòóôõö÷'
-      @eq ( Ωhllt_360 = -> cfg.nuns                                               ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
-      @eq ( Ωhllt_361 = -> cfg.zpuns                                              ), 'ãäåæçèéêëìíîïðñòóôõö÷'
+      @eq ( Ωhllt_360 = -> cfg._nuns                                               ), 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
+      @eq ( Ωhllt_361 = -> cfg._zpuns                                              ), 'ãäåæçèéêëìíîïðñòóôõö÷'
       @eq ( Ωhllt_362 = -> cfg.nun_chrs                                           ), Array.from 'ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâ'
       @eq ( Ωhllt_363 = -> cfg.zpun_chrs                                          ), Array.from 'ãäåæçèéêëìíîïðñòóôõö÷'
       @eq ( Ωhllt_364 = -> cfg._min_integer                                       ), -( ( 128 ** 7 ) - 1 )
