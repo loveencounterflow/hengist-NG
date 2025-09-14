@@ -940,7 +940,7 @@ helpers =
       @eq ( Ωhllt_301 = -> cfg._max_integer                                       ), +999
       @eq ( Ωhllt_302 = -> cfg._min_integer                                       ), -999
       @eq ( Ωhllt_303 = -> cfg._max_digits_per_idx                                         ), 3
-      @eq ( Ωhllt_304 = -> cfg.TMP_alphabet                                       ), '0123456789ABCFGHIJKLMNOPQRSTUVXYZ'
+      @eq ( Ωhllt_304 = -> cfg._alphabet                                          ), '0123456789ABCFGHIJKLMNOPQRSTUVXYZ'
       #.....................................................................................................
       h = new Hollerith cfg_10
       @eq ( Ωhllt_305 = -> h.cfg ), cfg
@@ -1007,7 +1007,7 @@ helpers =
       @eq ( Ωhllt_343 = -> cfg._max_integer                                       ), +999
       @eq ( Ωhllt_344 = -> cfg._min_integer                                       ), -999
       @eq ( Ωhllt_345 = -> cfg._max_digits_per_idx                                         ), 3
-      @eq ( Ωhllt_346 = -> cfg.TMP_alphabet                                       ), '0123456789ABCNXYZ'
+      @eq ( Ωhllt_346 = -> cfg._alphabet                                          ), '0123456789ABCNXYZ'
       #.....................................................................................................
       h = new Hollerith cfg_10_no_uniliterals
       @eq ( Ωhllt_347 = -> h.cfg ), cfg
@@ -1060,7 +1060,7 @@ helpers =
       @eq ( Ωhllt_364 = -> cfg._min_integer                                       ), -( ( 128 ** 7 ) - 1 )
       @eq ( Ωhllt_365 = -> cfg._max_integer                                       ), +( ( 128 ** 7 ) - 1 )
       # @eq ( Ωhllt_366 = -> cfg._max_digits_per_idx                                         ), 3
-      # @eq ( Ωhllt_367 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
+      # @eq ( Ωhllt_367 = -> cfg._alphabet                                          ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       #.....................................................................................................
       @eq ( Ωhllt_368 = -> is_frozen cfg._digits_list                             ), true
       @eq ( Ωhllt_369 = -> cfg.base                                               ), 128
