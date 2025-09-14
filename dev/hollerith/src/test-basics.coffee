@@ -1104,15 +1104,15 @@ helpers =
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      @eq     ( Ωhllt_387 = -> T._max_integer_$.isa ( 128 ** 1 ) - 1, 128           ), true
-      @eq     ( Ωhllt_388 = -> T._max_integer_$.isa ( 128 ** 2 ) - 1, 128           ), true
-      @eq     ( Ωhllt_389 = -> T._max_integer_$.isa ( 128 ** 3 ) - 1, 128           ), true
-      @eq     ( Ωhllt_390 = -> T._max_integer_$.isa ( 128 ** 4 ) - 1, 128           ), true
-      @eq     ( Ωhllt_391 = -> T._max_integer_$.isa ( 128 ** 5 ) - 1, 128           ), true
-      @eq     ( Ωhllt_392 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128           ), true
-      @eq     ( Ωhllt_393 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128           ), true
-      @eq     ( Ωhllt_394 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128           ), false
-      @eq     ( Ωhllt_395 = -> T.create_max_integer_$ { base: 10, digit_count: 2, } ), 99
+      @eq     ( Ωhllt_387 = -> T._max_integer_$.isa ( 128 ** 1 ) - 1, 128             ), true
+      @eq     ( Ωhllt_388 = -> T._max_integer_$.isa ( 128 ** 2 ) - 1, 128             ), true
+      @eq     ( Ωhllt_389 = -> T._max_integer_$.isa ( 128 ** 3 ) - 1, 128             ), true
+      @eq     ( Ωhllt_390 = -> T._max_integer_$.isa ( 128 ** 4 ) - 1, 128             ), true
+      @eq     ( Ωhllt_391 = -> T._max_integer_$.isa ( 128 ** 5 ) - 1, 128             ), true
+      @eq     ( Ωhllt_392 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128             ), true
+      @eq     ( Ωhllt_393 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128             ), true
+      @eq     ( Ωhllt_394 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128             ), false
+      @eq     ( Ωhllt_395 = -> T.create_max_integer_$ { base: 10, digits_numof: 2, }  ), 99
       return null
     #.......................................................................................................
     return null
