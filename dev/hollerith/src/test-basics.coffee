@@ -506,7 +506,7 @@ helpers =
     codec             = hollerith_128_16383
     # debug 'Ωhllt_100', codec.cfg._max_digits_per_idx
     # debug 'Ωhllt_101', codec.cfg.zero_pad_length
-    @eq ( Ωhllt_102 = -> codec.cfg.base                                     ), 128
+    @eq ( Ωhllt_102 = -> codec.cfg._base                                    ), 128
     @eq ( Ωhllt_103 = -> codec.cfg._max_integer                             ), +16383
     @eq ( Ωhllt_104 = -> codec.cfg._min_integer                             ), -16383
     @eq ( Ωhllt_105 = -> codec.cfg.pmag_chrs[ 2 ]                           ), 'ù'
@@ -908,7 +908,7 @@ helpers =
     #.......................................................................................................
     cfg_10 =
       blank:        ' '                       # separator used in `magnifiers` and `uniliterals`
-      digitset:     '0123456789'              # digits; length of `digitset` is the `base`
+      digitset:     '0123456789'              # digits; length of `digitset` is the `_base`
       magnifiers:   'ABC XYZ'                 #
       uniliterals:  'FGHIJKLM N OPQRSTUV'     # negative uniliterals, blank, zero uniliteral, blank, positive uniliterals
       dimension:    3                         # number of indices supported
@@ -921,7 +921,7 @@ helpers =
       @eq ( Ωhllt_282 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_283 = -> cfg._leading_novas_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_284 = -> is_frozen cfg._digits_list                             ), true
-      @eq ( Ωhllt_285 = -> cfg.base                                               ), 10
+      @eq ( Ωhllt_285 = -> cfg._base                                               ), 10
       @eq ( Ωhllt_286 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_287 = -> cfg.nmag                                               ), ' CBA'
       @eq ( Ωhllt_288 = -> cfg.pmag                                               ), ' XYZ'
@@ -935,8 +935,8 @@ helpers =
       @eq ( Ωhllt_296 = -> cfg.nun_chrs                                           ), [ 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M' ],
       @eq ( Ωhllt_297 = -> cfg.zpun_chrs                                          ), [ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', ]
       @eq ( Ωhllt_298 = -> cfg.dimension                                          ), 3
-      @eq ( Ωhllt_299 = -> +( ( cfg.base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), +999
-      @eq ( Ωhllt_300 = -> -( ( cfg.base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), -999
+      @eq ( Ωhllt_299 = -> +( ( cfg._base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), +999
+      @eq ( Ωhllt_300 = -> -( ( cfg._base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), -999
       @eq ( Ωhllt_301 = -> cfg._max_integer                                       ), +999
       @eq ( Ωhllt_302 = -> cfg._min_integer                                       ), -999
       @eq ( Ωhllt_303 = -> cfg._max_digits_per_idx                                         ), 3
@@ -977,7 +977,7 @@ helpers =
     #.......................................................................................................
     cfg_10_no_uniliterals =
       blank:        ' '                       # separator used in `magnifiers` and `uniliterals`
-      digitset:     '0123456789'              # digits; length of `digitset` is the `base`
+      digitset:     '0123456789'              # digits; length of `digitset` is the `_base`
       magnifiers:   'ABC XYZ'                 #
       uniliterals:  'N'                       # only has zero uniliteral
       dimension:    3                         # number of indices supported
@@ -990,7 +990,7 @@ helpers =
       @eq ( Ωhllt_326 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_327 = -> cfg._leading_novas_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_328 = -> is_frozen cfg._digits_list                             ), true
-      @eq ( Ωhllt_329 = -> cfg.base                                               ), 10
+      @eq ( Ωhllt_329 = -> cfg._base                                               ), 10
       @eq ( Ωhllt_330 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_331 = -> cfg.nmag                                               ), ' CBA'
       @eq ( Ωhllt_332 = -> cfg.pmag                                               ), ' XYZ'
@@ -1002,8 +1002,8 @@ helpers =
       @eq ( Ωhllt_338 = -> cfg.nun_chrs                                           ), []
       @eq ( Ωhllt_339 = -> cfg.zpun_chrs                                          ), [ 'N', ]
       @eq ( Ωhllt_340 = -> cfg.dimension                                          ), 3
-      @eq ( Ωhllt_341 = -> +( ( cfg.base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), +999
-      @eq ( Ωhllt_342 = -> -( ( cfg.base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), -999
+      @eq ( Ωhllt_341 = -> +( ( cfg._base ** ( cfg.pmag_chrs.length - 1 )  ) - 1 ) ), +999
+      @eq ( Ωhllt_342 = -> -( ( cfg._base ** ( cfg.nmag_chrs.length - 1 )  ) - 1 ) ), -999
       @eq ( Ωhllt_343 = -> cfg._max_integer                                       ), +999
       @eq ( Ωhllt_344 = -> cfg._min_integer                                       ), -999
       @eq ( Ωhllt_345 = -> cfg._max_digits_per_idx                                         ), 3
@@ -1063,7 +1063,7 @@ helpers =
       # @eq ( Ωhllt_367 = -> cfg._alphabet                                          ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       #.....................................................................................................
       @eq ( Ωhllt_368 = -> is_frozen cfg._digits_list                             ), true
-      @eq ( Ωhllt_369 = -> cfg.base                                               ), 128
+      @eq ( Ωhllt_369 = -> cfg._base                                               ), 128
       @eq ( Ωhllt_370 = -> cfg.dimension                                          ), 5
       #.....................................................................................................
       h = new Hollerith cfg_128
@@ -1081,10 +1081,10 @@ helpers =
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      @eq     ( Ωhllt_373 = -> T.base.isa -1                                                        ), false
-      @eq     ( Ωhllt_374 = -> T.base.isa  0                                                        ), false
-      @eq     ( Ωhllt_375 = -> T.base.isa +1                                                        ), false
-      @eq     ( Ωhllt_376 = -> T.base.isa +2                                                        ), true
+      @eq     ( Ωhllt_373 = -> T._base.isa -1                                                        ), false
+      @eq     ( Ωhllt_374 = -> T._base.isa  0                                                        ), false
+      @eq     ( Ωhllt_375 = -> T._base.isa +1                                                        ), false
+      @eq     ( Ωhllt_376 = -> T._base.isa +2                                                        ), true
       @eq     ( Ωhllt_377 = -> T._max_integer_$.isa null                                            ), false
       @eq     ( Ωhllt_378 = -> T._max_integer_$.isa 9,          10                                  ), true
       @eq     ( Ωhllt_379 = -> T._max_integer_$.isa 99,         10                                  ), true
@@ -1098,8 +1098,8 @@ helpers =
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      R = { base: 16, _max_digits_per_idx: 4, }
-      @eq     ( Ωhllt_386 = -> T._max_integer_$.isa ( R.base ** R._max_digits_per_idx ) - 1, R.base ), true
+      R = { _base: 16, _max_digits_per_idx: 4, }
+      @eq     ( Ωhllt_386 = -> T._max_integer_$.isa ( R._base ** R._max_digits_per_idx ) - 1, R._base ), true
       return null
     #.......................................................................................................
     do =>
@@ -1112,7 +1112,7 @@ helpers =
       @eq     ( Ωhllt_392 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128             ), true
       @eq     ( Ωhllt_393 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128             ), true
       @eq     ( Ωhllt_394 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128             ), false
-      @eq     ( Ωhllt_395 = -> T.create_max_integer_$ { base: 10, digits_numof: 2, }  ), 99
+      @eq     ( Ωhllt_395 = -> T.create_max_integer_$ { _base: 10, digits_numof: 2, }  ), 99
       return null
     #.......................................................................................................
     return null
