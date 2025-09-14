@@ -1104,15 +1104,15 @@ helpers =
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      @eq     ( Ωhllt_387 = -> T._max_integer_$.isa ( 128 ** 1 ) - 1, 128       ), true
-      @eq     ( Ωhllt_388 = -> T._max_integer_$.isa ( 128 ** 2 ) - 1, 128       ), true
-      @eq     ( Ωhllt_389 = -> T._max_integer_$.isa ( 128 ** 3 ) - 1, 128       ), true
-      @eq     ( Ωhllt_390 = -> T._max_integer_$.isa ( 128 ** 4 ) - 1, 128       ), true
-      @eq     ( Ωhllt_391 = -> T._max_integer_$.isa ( 128 ** 5 ) - 1, 128       ), true
-      @eq     ( Ωhllt_392 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128       ), true
-      @eq     ( Ωhllt_393 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128       ), true
-      @eq     ( Ωhllt_394 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128       ), false
-      @eq     ( Ωhllt_395 = -> T.create_max_integer_$ { base: 10, digits: 2, }  ), 99
+      @eq     ( Ωhllt_387 = -> T._max_integer_$.isa ( 128 ** 1 ) - 1, 128           ), true
+      @eq     ( Ωhllt_388 = -> T._max_integer_$.isa ( 128 ** 2 ) - 1, 128           ), true
+      @eq     ( Ωhllt_389 = -> T._max_integer_$.isa ( 128 ** 3 ) - 1, 128           ), true
+      @eq     ( Ωhllt_390 = -> T._max_integer_$.isa ( 128 ** 4 ) - 1, 128           ), true
+      @eq     ( Ωhllt_391 = -> T._max_integer_$.isa ( 128 ** 5 ) - 1, 128           ), true
+      @eq     ( Ωhllt_392 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128           ), true
+      @eq     ( Ωhllt_393 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128           ), true
+      @eq     ( Ωhllt_394 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128           ), false
+      @eq     ( Ωhllt_395 = -> T.create_max_integer_$ { base: 10, digit_count: 2, } ), 99
       return null
     #.......................................................................................................
     return null
@@ -1187,7 +1187,7 @@ if module is require.main then await do =>
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test @hollerith
+  ( new Test guytest_cfg ).test @hollerith
   ( new Test guytest_cfg ).test { hollerith_10mvp2_big_shuffle: @hollerith.hollerith_10mvp2_big_shuffle, }
   ( new Test guytest_cfg ).test { hollerith_128_big_shuffle: @hollerith.hollerith_128_big_shuffle, }
 
