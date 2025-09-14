@@ -75,18 +75,18 @@ helpers =
       return null
 
   #---------------------------------------------------------------------------------------------------------
-  get_niners_re: ->
+  get_leading_novas_re: ->
     { internals: { types, }   } = require '../../../apps/hollerith'
-    { get_niners_re,          } = types.internals
+    { get_leading_novas_re,   } = types.internals
     # debug 'Ωhllt___3', '987'.replace /// ^ (?: 9 )*? (?= . $ ) ///gv, ''
     #.......................................................................................................
     do =>
-      @eq     ( Ωanybt___4 = -> get_niners_re '9' ), /// ^ (?: 9  )* (?= .+ $ ) ///gv
-      @eq     ( Ωanybt___5 = -> get_niners_re '*' ), /// ^ (?: \* )* (?= .+ $ ) ///gv
+      @eq     ( Ωanybt___4 = -> get_leading_novas_re '9' ), /// ^ (?: 9  )* (?= .+ $ ) ///gv
+      @eq     ( Ωanybt___5 = -> get_leading_novas_re '*' ), /// ^ (?: \* )* (?= .+ $ ) ///gv
       return null
     #.......................................................................................................
     do =>
-      _leading_novas_re = get_niners_re '9'
+      _leading_novas_re = get_leading_novas_re '9'
       @eq     ( Ωanybt___6 = -> '9999'.replace _leading_novas_re, '' ), '9'
       @eq     ( Ωanybt___7 = ->  '999'.replace _leading_novas_re, '' ), '9'
       @eq     ( Ωanybt___8 = ->   '99'.replace _leading_novas_re, '' ), '9'
@@ -1195,7 +1195,7 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
   # ( new Test guytest_cfg ).test { validate_and_compile_cfg_10: @hollerith.validate_and_compile_cfg_10, }
   # ( new Test guytest_cfg ).test { h10mvp2_decode_units: @hollerith.h10mvp2_decode_units, }
-  # ( new Test guytest_cfg ).test { get_niners_re: @hollerith.get_niners_re, }
+  # ( new Test guytest_cfg ).test { get_leading_novas_re: @hollerith.get_leading_novas_re, }
   # ( new Test guytest_cfg ).test { validate_and_compile_cfg: @hollerith.validate_and_compile_cfg, }
   # demo_max_integer()
 
