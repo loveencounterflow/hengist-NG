@@ -917,10 +917,10 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg cfg_10
       @eq ( Ωhllt_279 = -> cfg.blank                                              ), ' '
       @eq ( Ωhllt_280 = -> cfg.digitset                                           ), '0123456789'
-      @eq ( Ωhllt_281 = -> cfg.digits_lstof                                       ), Array.from '0123456789'
+      @eq ( Ωhllt_281 = -> cfg._digits_list                                       ), Array.from '0123456789'
       @eq ( Ωhllt_282 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_283 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
-      @eq ( Ωhllt_284 = -> is_frozen cfg.digits_lstof                             ), true
+      @eq ( Ωhllt_284 = -> is_frozen cfg._digits_list                             ), true
       @eq ( Ωhllt_285 = -> cfg.base                                               ), 10
       @eq ( Ωhllt_286 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_287 = -> cfg.nmag                                               ), ' CBA'
@@ -986,10 +986,10 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg cfg_10_no_uniliterals
       @eq ( Ωhllt_323 = -> cfg.blank                                              ), ' '
       @eq ( Ωhllt_324 = -> cfg.digitset                                           ), '0123456789'
-      @eq ( Ωhllt_325 = -> cfg.digits_lstof                                       ), Array.from '0123456789'
+      @eq ( Ωhllt_325 = -> cfg._digits_list                                       ), Array.from '0123456789'
       @eq ( Ωhllt_326 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_327 = -> cfg.leading_niners_re                                  ), /// ^ (?: 9 )* (?= .+ $ ) ///gv
-      @eq ( Ωhllt_328 = -> is_frozen cfg.digits_lstof                             ), true
+      @eq ( Ωhllt_328 = -> is_frozen cfg._digits_list                             ), true
       @eq ( Ωhllt_329 = -> cfg.base                                               ), 10
       @eq ( Ωhllt_330 = -> cfg.magnifiers                                         ), 'ABC XYZ'
       @eq ( Ωhllt_331 = -> cfg.nmag                                               ), ' CBA'
@@ -1044,7 +1044,7 @@ helpers =
                                                                                      'CDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc' + \
                                                                                      'defghijklmnopqrstuvwxyz{|}~¡¢£¤¥' + \
                                                                                      '¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆ'
-      @eq ( Ωhllt_351 = -> cfg.digits_lstof                                       ), Array.from cfg.digitset
+      @eq ( Ωhllt_351 = -> cfg._digits_list                                       ), Array.from cfg.digitset
       @eq ( Ωhllt_352 = -> cfg._nova                                              ), ( Array.from cfg.digitset ).at -1
       @eq ( Ωhllt_353 = -> cfg.leading_niners_re                                  ), /// ^ (?: Æ )* (?= .+ $ ) ///gv
       @eq ( Ωhllt_354 = -> cfg.magnifiers                                         ), 'ÇÈÉÊËÌÍÎ øùúûüýþÿ'
@@ -1062,7 +1062,7 @@ helpers =
       # @eq ( Ωhllt_366 = -> cfg._max_digits_per_idx                                         ), 3
       # @eq ( Ωhllt_367 = -> cfg.TMP_alphabet                                       ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       #.....................................................................................................
-      @eq ( Ωhllt_368 = -> is_frozen cfg.digits_lstof                             ), true
+      @eq ( Ωhllt_368 = -> is_frozen cfg._digits_list                             ), true
       @eq ( Ωhllt_369 = -> cfg.base                                               ), 128
       @eq ( Ωhllt_370 = -> cfg.dimension                                          ), 5
       #.....................................................................................................
