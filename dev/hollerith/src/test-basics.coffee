@@ -1074,7 +1074,7 @@ helpers =
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  can_set_either_max_int_or_max_idx_digits: ->
+  can_set_max_idx_digits: ->
     { internals,
       Hollerith,                  } = require '../../../apps/hollerith'
     { Hollerith_typespace,
@@ -1091,7 +1091,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_373 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_374 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_375 = -> cfg.max_idx_digits            ), 3
+      @eq ( Ωhllt_375 = -> cfg.max_idx_digits             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_376 = -> h.cfg                          ), cfg
@@ -1107,7 +1107,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_378 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_379 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_380 = -> cfg.max_idx_digits            ), 3
+      @eq ( Ωhllt_380 = -> cfg.max_idx_digits             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_381 = -> h.cfg                          ), cfg
@@ -1123,7 +1123,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_383 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_384 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_385 = -> cfg.max_idx_digits            ), 3
+      @eq ( Ωhllt_385 = -> cfg.max_idx_digits             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_386 = -> h.cfg                          ), cfg
@@ -1138,7 +1138,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_388 = -> cfg._min_integer               ), -99_999
       @eq ( Ωhllt_389 = -> cfg._max_integer               ), +99_999
-      @eq ( Ωhllt_390 = -> cfg.max_idx_digits            ), 5
+      @eq ( Ωhllt_390 = -> cfg.max_idx_digits             ), 5
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_391 = -> h.cfg                          ), cfg
@@ -1152,9 +1152,9 @@ helpers =
         magnifiers:         '?@ABC XYZ^_'
         _max_integer:       999
       cfg = Hollerith.validate_and_compile_cfg user_cfg
-      @eq ( Ωhllt_393 = -> cfg._min_integer               ), -999
-      @eq ( Ωhllt_394 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_395 = -> cfg.max_idx_digits            ), 3
+      @eq ( Ωhllt_393 = -> cfg._min_integer               ), -99_999
+      @eq ( Ωhllt_394 = -> cfg._max_integer               ), +99_999
+      @eq ( Ωhllt_395 = -> cfg.max_idx_digits             ), 5
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_396 = -> h.cfg                          ), cfg
@@ -1166,11 +1166,11 @@ helpers =
         uniliterals:        'EFGHIJKLM N OPQRSTUVW'
         digitset:           '0123456789'
         magnifiers:         '?@ABC XYZ^_'
-        max_idx_digits:    3
+        max_idx_digits:     3
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_398 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_399 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_400 = -> cfg.max_idx_digits            ), 3
+      @eq ( Ωhllt_400 = -> cfg.max_idx_digits             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_401 = -> h.cfg                          ), cfg
@@ -1296,7 +1296,7 @@ if module is require.main then await do =>
   ( new Test guytest_cfg ).test @hollerith
   # ( new Test guytest_cfg ).test { hollerith_10mvp2_big_shuffle: @hollerith.hollerith_10mvp2_big_shuffle, }
   # ( new Test guytest_cfg ).test { hollerith_128_big_shuffle: @hollerith.hollerith_128_big_shuffle, }
-  ( new Test guytest_cfg ).test { can_set_either_max_int_or_max_idx_digits: @hollerith.can_set_either_max_int_or_max_idx_digits, }
+  ( new Test guytest_cfg ).test { can_set_max_idx_digits: @hollerith.can_set_max_idx_digits, }
 
   # ( new Test guytest_cfg ).test { types: @hollerith.types, }
   # ( new Test guytest_cfg ).test { h10mvp2_sorting_2: @hollerith.h10mvp2_sorting_2, }
