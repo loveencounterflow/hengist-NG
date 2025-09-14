@@ -504,7 +504,7 @@ helpers =
     expected_indexes  = ( idx for idx in [ 0 ... probes.length ] )
     shuffle           = GUY.rnd.get_shuffle 57, 88
     codec             = hollerith_128_16383
-    # debug 'Ωhllt_100', codec.cfg.max_idx_digits
+    # debug 'Ωhllt_100', codec.cfg.digits_per_idx
     # debug 'Ωhllt_101', codec.cfg.zero_pad_length
     @eq ( Ωhllt_102 = -> codec.cfg._base                                    ), 128
     @eq ( Ωhllt_103 = -> codec.cfg._max_integer                             ), +16383
@@ -525,14 +525,14 @@ helpers =
       unpadded_lines.push "#{usk} #{rpr vdx} #{idx}"
       padded_lines.push "#{psk} #{rpr vdx} #{idx}"
     #.......................................................................................................
-    @eq ( Ωhllt_112 = -> codec.cfg.max_idx_digits                            ), 2
+    @eq ( Ωhllt_112 = -> codec.cfg.digits_per_idx                            ), 2
     @eq ( Ωhllt_113 = -> codec.cfg._max_zpun                                  ), 20
     @eq ( Ωhllt_114 = -> codec.cfg._naught                                    ), '!'
     @eq ( Ωhllt_115 = -> codec.cfg._nova                                      ), 'Æ'
     @eq ( Ωhllt_116 = -> codec.cfg._cipher                                    ), 'ã'
     @eq ( Ωhllt_117 = -> codec.cfg._nmag                                      ), ' ÎÍ'
     @eq ( Ωhllt_118 = -> codec.cfg._pmag                                      ), ' øù'
-    @eq ( Ωhllt_119 = -> codec.cfg._pmag_list[ codec.cfg.max_idx_digits ]    ), 'ù'
+    @eq ( Ωhllt_119 = -> codec.cfg._pmag_list[ codec.cfg.digits_per_idx ]    ), 'ù'
     @eq ( Ωhllt_120 = -> codec.encode -16383                                  ), 'Í!!'
     @eq ( Ωhllt_121 = -> codec.encode -16382                                  ), 'Í!#'
     @eq ( Ωhllt_122 = -> codec.encode -129                                    ), 'ÍÅÅ'
@@ -939,7 +939,7 @@ helpers =
       @eq ( Ωhllt_300 = -> -( ( cfg._base ** ( cfg._nmag_list.length - 1 )  ) - 1 ) ), -999
       @eq ( Ωhllt_301 = -> cfg._max_integer                                       ), +999
       @eq ( Ωhllt_302 = -> cfg._min_integer                                       ), -999
-      @eq ( Ωhllt_303 = -> cfg.max_idx_digits                                         ), 3
+      @eq ( Ωhllt_303 = -> cfg.digits_per_idx                                         ), 3
       @eq ( Ωhllt_304 = -> cfg._alphabet                                          ), '0123456789ABCFGHIJKLMNOPQRSTUVXYZ'
       #.....................................................................................................
       h = new Hollerith cfg_10
@@ -1006,7 +1006,7 @@ helpers =
       @eq ( Ωhllt_342 = -> -( ( cfg._base ** ( cfg._nmag_list.length - 1 )  ) - 1 ) ), -999
       @eq ( Ωhllt_343 = -> cfg._max_integer                                       ), +999
       @eq ( Ωhllt_344 = -> cfg._min_integer                                       ), -999
-      @eq ( Ωhllt_345 = -> cfg.max_idx_digits                                         ), 3
+      @eq ( Ωhllt_345 = -> cfg.digits_per_idx                                         ), 3
       @eq ( Ωhllt_346 = -> cfg._alphabet                                          ), '0123456789ABCNXYZ'
       #.....................................................................................................
       h = new Hollerith cfg_10_no_uniliterals
@@ -1059,7 +1059,7 @@ helpers =
       @eq ( Ωhllt_363 = -> cfg._zpuns_list                                          ), Array.from 'ãäåæçèéêëìíîïðñòóôõö÷'
       @eq ( Ωhllt_364 = -> cfg._min_integer                                       ), -( ( 128 ** 7 ) - 1 )
       @eq ( Ωhllt_365 = -> cfg._max_integer                                       ), +( ( 128 ** 7 ) - 1 )
-      # @eq ( Ωhllt_366 = -> cfg.max_idx_digits                                         ), 3
+      # @eq ( Ωhllt_366 = -> cfg.digits_per_idx                                         ), 3
       # @eq ( Ωhllt_367 = -> cfg._alphabet                                          ), '0123456789ABCEFGHIJKLMNOPQRSTUVWXYZ'
       #.....................................................................................................
       @eq ( Ωhllt_368 = -> is_frozen cfg._digits_list                             ), true
@@ -1091,7 +1091,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_373 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_374 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_375 = -> cfg.max_idx_digits             ), 3
+      @eq ( Ωhllt_375 = -> cfg.digits_per_idx             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_376 = -> h.cfg                          ), cfg
@@ -1107,7 +1107,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_378 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_379 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_380 = -> cfg.max_idx_digits             ), 3
+      @eq ( Ωhllt_380 = -> cfg.digits_per_idx             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_381 = -> h.cfg                          ), cfg
@@ -1119,11 +1119,11 @@ helpers =
         uniliterals:        'EFGHIJKLM N OPQRSTUVW'
         digitset:           '0123456789'
         magnifiers:         'ABC XYZ'
-        max_idx_digits:    3
+        digits_per_idx:    3
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_383 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_384 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_385 = -> cfg.max_idx_digits             ), 3
+      @eq ( Ωhllt_385 = -> cfg.digits_per_idx             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_386 = -> h.cfg                          ), cfg
@@ -1138,7 +1138,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_388 = -> cfg._min_integer               ), -99_999
       @eq ( Ωhllt_389 = -> cfg._max_integer               ), +99_999
-      @eq ( Ωhllt_390 = -> cfg.max_idx_digits             ), 5
+      @eq ( Ωhllt_390 = -> cfg.digits_per_idx             ), 5
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_391 = -> h.cfg                          ), cfg
@@ -1154,7 +1154,7 @@ helpers =
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_393 = -> cfg._min_integer               ), -99_999
       @eq ( Ωhllt_394 = -> cfg._max_integer               ), +99_999
-      @eq ( Ωhllt_395 = -> cfg.max_idx_digits             ), 5
+      @eq ( Ωhllt_395 = -> cfg.digits_per_idx             ), 5
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_396 = -> h.cfg                          ), cfg
@@ -1166,11 +1166,11 @@ helpers =
         uniliterals:        'EFGHIJKLM N OPQRSTUVW'
         digitset:           '0123456789'
         magnifiers:         '?@ABC XYZ^_'
-        max_idx_digits:     3
+        digits_per_idx:     3
       cfg = Hollerith.validate_and_compile_cfg user_cfg
       @eq ( Ωhllt_398 = -> cfg._min_integer               ), -999
       @eq ( Ωhllt_399 = -> cfg._max_integer               ), +999
-      @eq ( Ωhllt_400 = -> cfg.max_idx_digits             ), 3
+      @eq ( Ωhllt_400 = -> cfg.digits_per_idx             ), 3
       #.....................................................................................................
       h = new Hollerith user_cfg
       @eq ( Ωhllt_401 = -> h.cfg                          ), cfg
@@ -1182,7 +1182,7 @@ helpers =
   #---------------------------------------------------------------------------------------------------------
   types: ->
     { Hollerith_typespace,
-      create_max_integer_$,
+      create_max_integer,
       CFG,                        } = require '../../../apps/hollerith/lib/types'
     #.......................................................................................................
     do =>
@@ -1204,8 +1204,8 @@ helpers =
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      R = { _base: 16, max_idx_digits: 4, }
-      @eq     ( Ωhllt_416 = -> T._max_integer_$.isa ( R._base ** R.max_idx_digits ) - 1, R._base ), true
+      R = { _base: 16, digits_per_idx: 4, }
+      @eq     ( Ωhllt_416 = -> T._max_integer_$.isa ( R._base ** R.digits_per_idx ) - 1, R._base ), true
       return null
     #.......................................................................................................
     do =>
@@ -1218,7 +1218,7 @@ helpers =
       @eq     ( Ωhllt_422 = -> T._max_integer_$.isa ( 128 ** 6 ) - 1, 128             ), true
       @eq     ( Ωhllt_423 = -> T._max_integer_$.isa ( 128 ** 7 ) - 1, 128             ), true
       @eq     ( Ωhllt_424 = -> T._max_integer_$.isa ( 128 ** 8 ) - 1, 128             ), false
-      @eq     ( Ωhllt_425 = -> T.create_max_integer_$ { _base: 10, digits_numof: 2, }  ), 99
+      @eq     ( Ωhllt_425 = -> T.create_max_integer { _base: 10, digits_per_idx: 2, } ), 99
       return null
     #.......................................................................................................
     return null
