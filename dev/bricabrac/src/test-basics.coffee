@@ -1172,7 +1172,6 @@ settings =
     #.......................................................................................................
     return null
 
-
   #---------------------------------------------------------------------------------------------------------
   get_random_vdx: ->
     { Get_random,
@@ -1201,28 +1200,45 @@ settings =
       # producer  = -> get_random.text { min: 'A', max: 0x017f, length: 3, on_stats, }
       # for value from get_random.walk { producer, n: 11, on_stats, }
       #   idx++
-      #   # debug 'Ωbrbr_256', idx, rpr value
+      #   # debug 'Ωbrbr_251', idx, rpr value
       #   result.values.push value
-      #   @eq ( Ωbrbr_257 = -> value ), matcher.values[ idx ]
-      # @eq ( Ωbrbr_258 = -> idx                    ), 10
-      # @eq ( Ωbrbr_259 = -> result.values.length   ), 11
+      #   @eq ( Ωbrbr_252 = -> value ), matcher.values[ idx ]
+      # @eq ( Ωbrbr_253 = -> idx                    ), 10
+      # @eq ( Ωbrbr_254 = -> result.values.length   ), 11
       # return null
     # #.......................................................................................................
     # do =>
     #   get_random      = new Get_random { seed: settings.my_seed_1, on_stats, }
     #   result_rounds  = null
     #   on_stats        = ( stats ) =>
-    #     info 'Ωbrbr_260', stats if stats.name is 'walk'
+    #     info 'Ωbrbr_255', stats if stats.name is 'walk'
     #     result_rounds = stats.rounds if stats.name is 'walk'
-    #     @eq ( Ωbrbr_261 = -> result_rounds >= 0 ), true
+    #     @eq ( Ωbrbr_256 = -> result_rounds >= 0 ), true
     #   #.....................................................................................................
     #   producer  = -> get_random.text { min: '0', max: '9', length: 1, }
     #   count     = 0
     #   seen      = new Set()
     #   for x from get_random.walk { producer, seen, n: 5, }
     #     count++
-    #     debug 'Ωbrbr_262', count, rpr x
+    #     debug 'Ωbrbr_257', count, rpr x
     #   return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  get_random_shuffle: ->
+    { Get_random,
+      internals,  } = SFMODULES.unstable.require_get_random()
+    #.......................................................................................................
+    seed        = 876
+    factor      = 1
+    # factor      = 0.01
+    get_random  = new Get_random { seed, }
+    get_list    = -> Array.from 'abcdefghijk'
+    @eq ( Ωbrbr_258 = -> ( get_random.shuffle get_list(), factor ).join '' ), 'ajckdbigfeh'
+    @eq ( Ωbrbr_259 = -> ( get_random.shuffle get_list(), factor ).join '' ), 'adgiecfhbjk'
+    @eq ( Ωbrbr_260 = -> ( get_random.shuffle get_list(), factor ).join '' ), 'hcijgedbfak'
+    @eq ( Ωbrbr_261 = -> ( get_random.shuffle get_list(), factor ).join '' ), 'icfakgbhjde'
     #.......................................................................................................
     return null
 
@@ -1231,8 +1247,9 @@ settings =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { require_anybase: tests.require_anybase, }
-  ( new Test guytest_cfg ).test { get_random_vdx: tests.get_random_vdx, }
+  # ( new Test guytest_cfg ).test { get_random_vdx: tests.get_random_vdx, }
+  ( new Test guytest_cfg ).test { get_random_shuffle: tests.get_random_shuffle, }
   #.........................................................................................................
   return null
