@@ -1234,17 +1234,23 @@ helpers =
     { Test_hollerith,             } = test
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     #=======================================================================================================
-    @throws ( Ωhllt_422 = -> new Test_hollerith '???'                               ), /not a valid hollerith/
+    @throws ( Ωhllt_421 = -> new Test_hollerith '???'                               ), /not a valid hollerith/
     #.......................................................................................................
-    t = new Test_hollerith hollerith_10mvp2
-    @eq     ( Ωhllt_421 = -> type_of t.test_sorting                                 ), 'function'
-    #.......................................................................................................
-    test_result = t.test_sorting hollerith_10mvp2
-    @eq     ( Ωhllt_423 = -> type_of test_result                                    ), 'pod'
-    @eq     ( Ωhllt_424 = -> test_result.success                                    ), true
-    @eq     ( Ωhllt_425 = -> type_of test_result.probe_count                        ), 'float'
-    @eq     ( Ωhllt_426 = -> type_of test_result.hit_count                          ), 'float'
-    @eq     ( Ωhllt_427 = -> type_of test_result.miss_count                         ), 'float'
+    for name, cfg of internals
+      continue unless name.startsWith 'constants_'
+      codec       = new Hollerith cfg
+      t           = new Test_hollerith codec
+      test_result = t.test_sorting()
+      @eq ( Ωhllt_422 = -> type_of t.test_sorting                                 ), 'function'
+      @eq ( Ωhllt_423 = -> type_of test_result                                    ), 'pod'
+      @eq ( Ωhllt_424 = -> test_result.success                                    ), true
+      @eq ( Ωhllt_425 = -> type_of test_result.probe_count                        ), 'float'
+      @eq ( Ωhllt_426 = -> type_of test_result.hit_count                          ), 'float'
+      @eq ( Ωhllt_427 = -> type_of test_result.miss_count                         ), 'float'
+      for _ in [ 0 ... test_result.hit_count ]
+        @eq ( Ωhllt_428 = -> true ), true
+      for _ in [ 0 ... test_result.miss_count ]
+        @eq ( Ωhllt_429 = -> true ), false
     #.......................................................................................................
     return null
 
@@ -1256,38 +1262,38 @@ helpers =
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      @eq     ( Ωhllt_428 = -> T._base.isa -1                                                        ), false
-      @eq     ( Ωhllt_429 = -> T._base.isa  0                                                        ), false
-      @eq     ( Ωhllt_430 = -> T._base.isa +1                                                        ), false
-      @eq     ( Ωhllt_431 = -> T._base.isa +2                                                        ), true
-      @eq     ( Ωhllt_432 = -> T._max_integer.isa null                                            ), false
-      @eq     ( Ωhllt_433 = -> T._max_integer.isa 9,          10                                  ), true
-      @eq     ( Ωhllt_434 = -> T._max_integer.isa 99,         10                                  ), true
-      @eq     ( Ωhllt_435 = -> T._max_integer.isa 99999999,   10                                  ), true
-      @eq     ( Ωhllt_436 = -> T._max_integer.isa -10,        10                                  ), false
-      @eq     ( Ωhllt_437 = -> /not a positive safe integer/.test T._max_integer.data.message     ), true
-      @eq     ( Ωhllt_438 = -> T._max_integer.isa 0xffff,     16                                  ), true
-      @eq     ( Ωhllt_439 = -> T._max_integer.isa 0x7fffffff, 16                                  ), false
-      @throws ( Ωhllt_440 = -> T._max_integer.validate 5, 10                                      ), /\(_max_integer\) not a valid _max_integer: 5 – x not a positive all-niners/
+      @eq     ( Ωhllt_430 = -> T._base.isa -1                                                        ), false
+      @eq     ( Ωhllt_431 = -> T._base.isa  0                                                        ), false
+      @eq     ( Ωhllt_432 = -> T._base.isa +1                                                        ), false
+      @eq     ( Ωhllt_433 = -> T._base.isa +2                                                        ), true
+      @eq     ( Ωhllt_434 = -> T._max_integer.isa null                                            ), false
+      @eq     ( Ωhllt_435 = -> T._max_integer.isa 9,          10                                  ), true
+      @eq     ( Ωhllt_436 = -> T._max_integer.isa 99,         10                                  ), true
+      @eq     ( Ωhllt_437 = -> T._max_integer.isa 99999999,   10                                  ), true
+      @eq     ( Ωhllt_438 = -> T._max_integer.isa -10,        10                                  ), false
+      @eq     ( Ωhllt_439 = -> /not a positive safe integer/.test T._max_integer.data.message     ), true
+      @eq     ( Ωhllt_440 = -> T._max_integer.isa 0xffff,     16                                  ), true
+      @eq     ( Ωhllt_441 = -> T._max_integer.isa 0x7fffffff, 16                                  ), false
+      @throws ( Ωhllt_442 = -> T._max_integer.validate 5, 10                                      ), /\(_max_integer\) not a valid _max_integer: 5 – x not a positive all-niners/
       return null
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
       R = { _base: 16, digits_per_idx: 4, }
-      @eq     ( Ωhllt_441 = -> T._max_integer.isa ( R._base ** R.digits_per_idx ) - 1, R._base ), true
+      @eq     ( Ωhllt_443 = -> T._max_integer.isa ( R._base ** R.digits_per_idx ) - 1, R._base ), true
       return null
     #.......................................................................................................
     do =>
       T = new Hollerith_typespace()
-      @eq     ( Ωhllt_442 = -> T._max_integer.isa ( 128 ** 1 ) - 1, 128             ), true
-      @eq     ( Ωhllt_443 = -> T._max_integer.isa ( 128 ** 2 ) - 1, 128             ), true
-      @eq     ( Ωhllt_444 = -> T._max_integer.isa ( 128 ** 3 ) - 1, 128             ), true
-      @eq     ( Ωhllt_445 = -> T._max_integer.isa ( 128 ** 4 ) - 1, 128             ), true
-      @eq     ( Ωhllt_446 = -> T._max_integer.isa ( 128 ** 5 ) - 1, 128             ), true
-      @eq     ( Ωhllt_447 = -> T._max_integer.isa ( 128 ** 6 ) - 1, 128             ), true
-      @eq     ( Ωhllt_448 = -> T._max_integer.isa ( 128 ** 7 ) - 1, 128             ), true
-      @eq     ( Ωhllt_449 = -> T._max_integer.isa ( 128 ** 8 ) - 1, 128             ), false
-      @eq     ( Ωhllt_450 = -> T.create_max_integer { _base: 10, digits_per_idx: 2, } ), 99
+      @eq     ( Ωhllt_444 = -> T._max_integer.isa ( 128 ** 1 ) - 1, 128             ), true
+      @eq     ( Ωhllt_445 = -> T._max_integer.isa ( 128 ** 2 ) - 1, 128             ), true
+      @eq     ( Ωhllt_446 = -> T._max_integer.isa ( 128 ** 3 ) - 1, 128             ), true
+      @eq     ( Ωhllt_447 = -> T._max_integer.isa ( 128 ** 4 ) - 1, 128             ), true
+      @eq     ( Ωhllt_448 = -> T._max_integer.isa ( 128 ** 5 ) - 1, 128             ), true
+      @eq     ( Ωhllt_449 = -> T._max_integer.isa ( 128 ** 6 ) - 1, 128             ), true
+      @eq     ( Ωhllt_450 = -> T._max_integer.isa ( 128 ** 7 ) - 1, 128             ), true
+      @eq     ( Ωhllt_451 = -> T._max_integer.isa ( 128 ** 8 ) - 1, 128             ), false
+      @eq     ( Ωhllt_452 = -> T.create_max_integer { _base: 10, digits_per_idx: 2, } ), 99
       return null
     #.......................................................................................................
     return null
@@ -1298,60 +1304,60 @@ demo_max_integer = ->
   get_required_digits       = ( n, base ) -> Math.ceil log_to_base n, base
   get_max_niner_digit_count = ( n, base ) -> ( get_required_digits n, base ) - 1
   get_max_integer           = ( n, base ) -> ( base ** get_max_niner_digit_count n, base ) - 1
-  info 'Ωhllt_451', Number.MAX_SAFE_INTEGER.toString 16
-  info 'Ωhllt_452', Number.MAX_SAFE_INTEGER.toString 32
+  info 'Ωhllt_453', Number.MAX_SAFE_INTEGER.toString 16
+  info 'Ωhllt_454', Number.MAX_SAFE_INTEGER.toString 32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_453', ( 32 ** 4 - 1 ).toString 32
-  info 'Ωhllt_454', ( 32 ** 4 - 1 ).toString 32
+  info 'Ωhllt_455', ( 32 ** 4 - 1 ).toString 32
+  info 'Ωhllt_456', ( 32 ** 4 - 1 ).toString 32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_455', get_required_digits 32,       32
-  info 'Ωhllt_456', get_required_digits 32 ** 6,  32
-  info 'Ωhllt_457', get_required_digits 1e6,      10
-  info 'Ωhllt_458', get_required_digits 20,       10
+  info 'Ωhllt_457', get_required_digits 32,       32
+  info 'Ωhllt_458', get_required_digits 32 ** 6,  32
+  info 'Ωhllt_459', get_required_digits 1e6,      10
+  info 'Ωhllt_460', get_required_digits 20,       10
   whisper '—————————————————————————————————'
-  info 'Ωhllt_459', max_digits_base_10    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 10
-  info 'Ωhllt_460', max_digits_base_16    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 16
-  info 'Ωhllt_461', max_digits_base_32    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 32
-  info 'Ωhllt_462', max_digits_base_36    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 36
-  info 'Ωhllt_463', max_digits_1base_28   = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 128
+  info 'Ωhllt_461', max_digits_base_10    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_462', max_digits_base_16    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_463', max_digits_base_32    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_464', max_digits_base_36    = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 36
+  info 'Ωhllt_465', max_digits_1base_28   = get_max_niner_digit_count Number.MAX_SAFE_INTEGER, 128
   # for base in [ 2 .. 128 ]
-  #   info 'Ωhllt_464', { base, }, ( Math.ceil log_to_base Number.MAX_SAFE_INTEGER, base ) - 1
+  #   info 'Ωhllt_466', { base, }, ( Math.ceil log_to_base Number.MAX_SAFE_INTEGER, base ) - 1
   whisper '—————————————————————————————————'
-  info 'Ωhllt_465', '9'.repeat max_digits_base_10
-  info 'Ωhllt_466', 'f'.repeat max_digits_base_16
-  info 'Ωhllt_467', 'v'.repeat max_digits_base_32
+  info 'Ωhllt_467', '9'.repeat max_digits_base_10
+  info 'Ωhllt_468', 'f'.repeat max_digits_base_16
+  info 'Ωhllt_469', 'v'.repeat max_digits_base_32
   whisper '—————————————————————————————————'
-  info 'Ωhllt_468', ( ( base = 10 ) ** max_digits_base_10 ) - 1
-  info 'Ωhllt_469', ( ( base = 16 ) ** max_digits_base_16 ) - 1
-  info 'Ωhllt_470', ( ( base = 32 ) ** max_digits_base_32 ) - 1
-  info 'Ωhllt_471', ( ( base = 36 ) ** max_digits_base_36 ) - 1
+  info 'Ωhllt_470', ( ( base = 10 ) ** max_digits_base_10 ) - 1
+  info 'Ωhllt_471', ( ( base = 16 ) ** max_digits_base_16 ) - 1
+  info 'Ωhllt_472', ( ( base = 32 ) ** max_digits_base_32 ) - 1
+  info 'Ωhllt_473', ( ( base = 36 ) ** max_digits_base_36 ) - 1
   whisper '—————————————————————————————————'
-  info 'Ωhllt_472', get_max_integer Number.MAX_SAFE_INTEGER, 10
-  info 'Ωhllt_473', get_max_integer Number.MAX_SAFE_INTEGER, 16
-  info 'Ωhllt_474', get_max_integer Number.MAX_SAFE_INTEGER, 32
-  info 'Ωhllt_475', get_max_integer Number.MAX_SAFE_INTEGER, 36
-  info 'Ωhllt_476', get_max_integer Number.MAX_SAFE_INTEGER, 128
+  info 'Ωhllt_474', get_max_integer Number.MAX_SAFE_INTEGER, 10
+  info 'Ωhllt_475', get_max_integer Number.MAX_SAFE_INTEGER, 16
+  info 'Ωhllt_476', get_max_integer Number.MAX_SAFE_INTEGER, 32
+  info 'Ωhllt_477', get_max_integer Number.MAX_SAFE_INTEGER, 36
+  info 'Ωhllt_478', get_max_integer Number.MAX_SAFE_INTEGER, 128
   whisper '—————————————————————————————————'
-  info 'Ωhllt_477', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
-  info 'Ωhllt_478', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
-  info 'Ωhllt_479', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
-  info 'Ωhllt_480', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
-  info 'Ωhllt_481', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_482', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_483', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
-  info 'Ωhllt_484', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_479', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 )
+  info 'Ωhllt_480', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 )
+  info 'Ωhllt_481', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 )
+  info 'Ωhllt_482', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 )
+  info 'Ωhllt_483', ( parseInt ( '9'.repeat max_digits_base_10 ), 10 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_484', ( parseInt ( 'f'.repeat max_digits_base_16 ), 16 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_485', ( parseInt ( 'v'.repeat max_digits_base_32 ), 32 ) <= Number.MAX_SAFE_INTEGER
+  info 'Ωhllt_486', ( parseInt ( 'z'.repeat max_digits_base_36 ), 36 ) <= Number.MAX_SAFE_INTEGER
   whisper '—————————————————————————————————'
-  info 'Ωhllt_485', +999 + -999
-  info 'Ωhllt_486', +999 + -1
-  info 'Ωhllt_487', -( -999 - 1 ) + -999
-  info 'Ωhllt_488', -( -999 - 1 ) + -998
-  info 'Ωhllt_489', -( -999 - 1 ) + -997
-  info 'Ωhllt_490', -( -999 - 1 ) + -3
-  info 'Ωhllt_491', -( -999 - 1 ) + -2
-  info 'Ωhllt_492', -( -999 - 1 ) + -1
-  info 'Ωhllt_493', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
-  info 'Ωhllt_494', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
-  info 'Ωhllt_495', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_487', +999 + -999
+  info 'Ωhllt_488', +999 + -1
+  info 'Ωhllt_489', -( -999 - 1 ) + -999
+  info 'Ωhllt_490', -( -999 - 1 ) + -998
+  info 'Ωhllt_491', -( -999 - 1 ) + -997
+  info 'Ωhllt_492', -( -999 - 1 ) + -3
+  info 'Ωhllt_493', -( -999 - 1 ) + -2
+  info 'Ωhllt_494', -( -999 - 1 ) + -1
+  info 'Ωhllt_495', "#{ -( -999 - 1 ) + -3 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_496', "#{ -( -999 - 1 ) + -2 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
+  info 'Ωhllt_497', "#{ -( -999 - 1 ) + -1 }".replace /// ^ 9*? (?= . $ ) ///gv, ''
   return null
 
 
