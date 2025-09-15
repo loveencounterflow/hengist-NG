@@ -1020,7 +1020,7 @@ helpers =
       @eq ( Ωhllt_337 = -> cfg._nmag_list                                             ), Array.from ' CBA'
       @eq ( Ωhllt_338 = -> cfg._pmag_list                                             ), Array.from ' XYZ'
       @eq ( Ωhllt_339 = -> cfg.uniliterals                                            ), 'N'
-      @eq ( Ωhllt_340 = -> cfg._nuns                                                  ), ''
+      @eq ( Ωhllt_340 = -> cfg._nuns                                                  ), null
       @eq ( Ωhllt_341 = -> cfg._zpuns                                                 ), 'N'
       @eq ( Ωhllt_342 = -> cfg._nuns_list                                             ), []
       @eq ( Ωhllt_343 = -> cfg._zpuns_list                                            ), [ 'N', ]
@@ -1124,7 +1124,8 @@ helpers =
       @eq     ( Ωhllt_386 = -> h.encode [ 999, ]                                  ), 'Z999NNNNNNNN'
       @eq     ( Ωhllt_387 = -> h.encode     0                                     ), 'N'
       @eq     ( Ωhllt_388 = -> h.encode   999                                     ), 'Z999'
-      @throws ( Ωhllt_389 = -> h.encode [  -1, ]                                  ), /yyy/
+      # @throws ( Ωhllt_389 = -> h.encode [  -1, ]                                  ), /unable to encode negative idx -1 with cardinals-only codec/
+      @throws ( Ωhllt_389 = -> h.encode [  -1, ]                                  ), /not a valid idx/
       return null
     #.......................................................................................................
     return null
