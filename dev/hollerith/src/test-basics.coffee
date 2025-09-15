@@ -340,7 +340,7 @@ helpers =
   hollerith_10mvp2_big_shuffle: ->
     { Hollerith,
       hollerith_10mvp2,
-      test_hollerith,
+      test,
       internals               } = require '../../../apps/hollerith'
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals, } = require 'node:util'
@@ -353,7 +353,7 @@ helpers =
       max_idx:      Math.min codec.cfg._max_integer, +2000
     # debug 'Ωhllt__94', rnd_vdx_cfg
     # debug 'Ωhllt__95', codec.cfg._sortkey_width
-    get_random_vdx              = test_hollerith.get_random_vdx_producer rnd_vdx_cfg
+    get_random_vdx              = test.internals.get_random_vdx_producer rnd_vdx_cfg
     probe_sub_count             = 3
     shuffle                     = GUY.rnd.get_shuffle 57, 88
     encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
@@ -400,7 +400,7 @@ helpers =
     { Hollerith,
       hollerith_128,
       hollerith_10mvp2,
-      test_hollerith,
+      test,
       internals               } = require '../../../apps/hollerith'
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals, } = require 'node:util'
@@ -414,7 +414,7 @@ helpers =
       max_idx:      Math.min codec.cfg._max_integer, +2000
     # debug 'Ωhllt__98', rnd_vdx_cfg
     # debug 'Ωhllt__99', codec.cfg._sortkey_width
-    get_random_vdx              = test_hollerith.get_random_vdx_producer rnd_vdx_cfg
+    get_random_vdx              = test.internals.get_random_vdx_producer rnd_vdx_cfg
     probe_sub_count             = 3
     shuffle                     = GUY.rnd.get_shuffle 57, 88
     encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
@@ -1230,13 +1230,16 @@ helpers =
     { internals,
       Hollerith,
       hollerith_10mvp2,
-      test_hollerith,             } = require '../../../apps/hollerith'
+      test,                       } = require '../../../apps/hollerith'
+    { Test_hollerith,             } = test
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     #=======================================================================================================
-    @eq     ( Ωhllt_421 = -> type_of test_hollerith.test_sorting                    ), 'function'
-    @throws ( Ωhllt_422 = -> type_of test_hollerith.test_sorting '???'              ), /not a valid hollerith/
+    @throws ( Ωhllt_422 = -> new Test_hollerith '???'                               ), /not a valid hollerith/
     #.......................................................................................................
-    test_result = test_hollerith.test_sorting hollerith_10mvp2
+    t = new Test_hollerith hollerith_10mvp2
+    @eq     ( Ωhllt_421 = -> type_of t.test_sorting                                 ), 'function'
+    #.......................................................................................................
+    test_result = t.test_sorting hollerith_10mvp2
     @eq     ( Ωhllt_423 = -> type_of test_result                                    ), 'pod'
     @eq     ( Ωhllt_424 = -> test_result.success                                    ), true
     @eq     ( Ωhllt_425 = -> type_of test_result.probe_count                        ), 'float'
@@ -1359,7 +1362,7 @@ if module is require.main then await do =>
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test @hollerith
+  ( new Test guytest_cfg ).test @hollerith
   ( new Test guytest_cfg ).test { test_test_hollerith: @hollerith.test_test_hollerith, }
   # ( new Test guytest_cfg ).test { validate_and_compile_cfg_10_cardinals: @hollerith.validate_and_compile_cfg_10_cardinals, }
   # ( new Test guytest_cfg ).test { hollerith_10mvp2_big_shuffle: @hollerith.hollerith_10mvp2_big_shuffle, }
