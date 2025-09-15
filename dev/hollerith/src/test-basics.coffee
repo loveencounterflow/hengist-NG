@@ -41,19 +41,6 @@ helpers =
     R += "[#{index}]"    if index?
     return R
 
-  #---------------------------------------------------------------------------------------------------------
-  get_random_vdx_producer: ({
-    seed        = null,
-    min_length  = 1,
-    max_length  = 5,
-    min_idx     = -999,
-    max_idx     = +999, }={}) ->
-    { Get_random,
-      internals,  } = SFMODULES.unstable.require_get_random()
-    get_random      = new Get_random { seed: null, on_stats: null, }
-    get_rnd_length  = get_random.integer_producer { min: min_length, max: max_length, }
-    get_rnd_idx     = get_random.integer_producer { min: min_idx,    max: max_idx,    }
-    return get_rnd_vdx = -> ( get_rnd_idx() for _ in [ 1 .. get_rnd_length() ] )
 
 
 #===========================================================================================================
@@ -353,6 +340,7 @@ helpers =
   hollerith_10mvp2_big_shuffle: ->
     { Hollerith,
       hollerith_10mvp2,
+      test_hollerith,
       internals               } = require '../../../apps/hollerith'
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals, } = require 'node:util'
@@ -365,7 +353,7 @@ helpers =
       max_idx:      Math.min codec.cfg._max_integer, +2000
     # debug 'Ωhllt__94', rnd_vdx_cfg
     # debug 'Ωhllt__95', codec.cfg._sortkey_width
-    get_random_vdx              = helpers.get_random_vdx_producer rnd_vdx_cfg
+    get_random_vdx              = test_hollerith.get_random_vdx_producer rnd_vdx_cfg
     probe_sub_count             = 3
     shuffle                     = GUY.rnd.get_shuffle 57, 88
     encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
@@ -412,6 +400,7 @@ helpers =
     { Hollerith,
       hollerith_128,
       hollerith_10mvp2,
+      test_hollerith,
       internals               } = require '../../../apps/hollerith'
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { isDeepStrictEqual: equals, } = require 'node:util'
@@ -425,7 +414,7 @@ helpers =
       max_idx:      Math.min codec.cfg._max_integer, +2000
     # debug 'Ωhllt__98', rnd_vdx_cfg
     # debug 'Ωhllt__99', codec.cfg._sortkey_width
-    get_random_vdx              = helpers.get_random_vdx_producer rnd_vdx_cfg
+    get_random_vdx              = test_hollerith.get_random_vdx_producer rnd_vdx_cfg
     probe_sub_count             = 3
     shuffle                     = GUY.rnd.get_shuffle 57, 88
     encode                      = ( vdx ) -> ( codec.encode vdx ).padEnd codec.cfg._sortkey_width, codec.cfg._cipher
@@ -1237,6 +1226,20 @@ helpers =
     return null
 
   #---------------------------------------------------------------------------------------------------------
+  test_test_hollerith: ->
+    { internals,
+      Hollerith,
+      hollerith_10mvp2,
+      test_hollerith,             } = require '../../../apps/hollerith'
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    #=======================================================================================================
+    @eq     ( Ωhllt_443 = -> type_of test_hollerith.test_sorting                    ), 'function'
+    @throws ( Ωhllt_443 = -> type_of test_hollerith.test_sorting '???'              ), /not a valid hollerith/
+    @eq     ( Ωhllt_443 = -> test_hollerith.test_sorting hollerith_10mvp2           ), true
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   types: ->
     { Hollerith_typespace,
       create_max_integer,
@@ -1351,7 +1354,8 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @hollerith
-  ( new Test guytest_cfg ).test { validate_and_compile_cfg_10_cardinals: @hollerith.validate_and_compile_cfg_10_cardinals, }
+  ( new Test guytest_cfg ).test { test_test_hollerith: @hollerith.test_test_hollerith, }
+  # ( new Test guytest_cfg ).test { validate_and_compile_cfg_10_cardinals: @hollerith.validate_and_compile_cfg_10_cardinals, }
   # ( new Test guytest_cfg ).test { hollerith_10mvp2_big_shuffle: @hollerith.hollerith_10mvp2_big_shuffle, }
   # ( new Test guytest_cfg ).test { hollerith_128_big_shuffle: @hollerith.hollerith_128_big_shuffle, }
   # ( new Test guytest_cfg ).test { can_set_max_idx_digits: @hollerith.can_set_max_idx_digits, }
