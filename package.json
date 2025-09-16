@@ -31,6 +31,7 @@
     "guy": "^14.2.0",
     "guy-test": "^6.4.2",
     "guy-test-6.1.0": "npm:guy-test@6.1.0",
+    "hollerith-reference-1201": "npm:hollerith@12.0.1",
     "intertype": "^203.2.0",
     "intertype-10.0.0": "npm:intertype@10.0.0",
     "intertype-10.1.0": "npm:intertype@10.1.0",
