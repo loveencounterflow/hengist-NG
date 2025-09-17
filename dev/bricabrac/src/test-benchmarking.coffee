@@ -34,21 +34,24 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
   basics: ->
     { bigint_from_hrtime,
       hrtime_as_bigint,
-      timeit,                 } = SFMODULES.unstable.require_benchmarking()
+      timeit,
+      Benchmarker,            } = SFMODULES.unstable.require_benchmarking()
     { type_of,                } = SFMODULES.unstable.require_type_of()
     { with_capture_output,    } = SFMODULES.unstable.require_capture_output()
     { strip_ansi,             } = SFMODULES.require_strip_ansi()
     #.......................................................................................................
     do =>
-      output = []
-      output_handler = ( text ) -> output.push text
-      # output_handler = ( text ) -> output += text
-      result = with_capture_output output_handler, =>
-        @eq ( Ωbbbt___1 = -> type_of timeit abc = -> debug "Ωbbbt___2 just a test"; return 9876 ), 'pod'
-      output = strip_ansi ( output.join '' )
-      echo reverse white output
-      @eq ( Ωbbbt___3 = -> /\babc:\s+[0-9.]+/v.test output  ), true
-      @eq ( Ωbbbt___4 = -> result                           ), 9876
+      output = ''
+      output_handler  = ( text ) -> output += text
+      inner_result    = null
+      outer_result    = with_capture_output output_handler, =>
+        inner_result = timeit abc = -> debug "Ωbbbt___1 just a test"; return 9876
+      output          = strip_ansi output
+      # echo 'Ωbbbt___2', reverse white rpr output
+      @eq ( Ωbbbt___3 = -> /just a test/v.test      output  ), true
+      @eq ( Ωbbbt___4 = -> /\babc:\s+[0-9.]+/v.test output  ), true
+      @eq ( Ωbbbt___5 = -> inner_result                     ), 9876
+      @eq ( Ωbbbt___6 = -> outer_result                     ), inner_result
       return null
     #.......................................................................................................
     return null
