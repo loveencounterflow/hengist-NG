@@ -27,7 +27,7 @@ PATH                      = require 'node:path'
 # GTNG                      = require '../../../apps/guy-test-NG'
 # { Test                  } = GTNG
 { f }                     = require '../../../apps/effstring'
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 { Benchmarker,
   timeit,               } = SFMODULES.unstable.require_benchmarking()
 { with_capture_output,  } = SFMODULES.unstable.require_capture_output()
@@ -41,8 +41,8 @@ class Benchmarks
     @benchmarker = new Benchmarker()
     @_run 'hollerith-reference-1201'
     @_run '../../../apps/hollerith'
-    help 'Ωhllt___2', @benchmarker.get_averages_by_brands()
-    help 'Ωhllt___3', @benchmarker.get_averages_by_tasks()
+    help 'Ωhllt___2', @benchmarke.rget_averages_by_brands()
+    help 'Ωhllt___3', @benchmarke.rget_averages_by_tasks()
     return null
 
   #---------------------------------------------------------------------------------------------------------

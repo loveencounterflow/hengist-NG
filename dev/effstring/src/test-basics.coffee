@@ -480,7 +480,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         bold                            } = GUY.trm
       #.....................................................................................................
       do =>
-        SFMODULES_dev = require '../../../apps/bricabrac-single-file-modules'
+        SFMODULES_dev = require '../../../apps/bricabrac-sfmodules'
         { ansi_colors_and_effects: C, } = SFMODULES_dev.require_ansi_colors_and_effects()
         @eq ( Ωfstr_202 = ->         width_of C.red + 'abc' + C.default           ), 3
         @eq ( Ωfstr_203 = ->     string_width C.red + 'abc' + C.default           ), 3

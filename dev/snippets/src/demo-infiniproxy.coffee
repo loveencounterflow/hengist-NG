@@ -57,7 +57,7 @@ C                         = require 'ansis'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 
 
 

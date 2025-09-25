@@ -33,7 +33,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
   # async_eq
   # async_throws          } = GTNG
 #-----------------------------------------------------------------------------------------------------------
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 { type_of,              } = SFMODULES.unstable.require_type_of()
 # types                     = require '../../../apps/intertype'
 # { $type_of: type_of, }    = types

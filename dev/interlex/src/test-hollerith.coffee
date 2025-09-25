@@ -30,7 +30,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #   isa
 #   std
 #   type_of               } = require '../../../apps/cleartype'
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 
 
 ############################################################################################################

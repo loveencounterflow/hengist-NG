@@ -32,7 +32,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 PATH                      = require 'node:path'
 #-----------------------------------------------------------------------------------------------------------
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 { Get_random,           } = SFMODULES.unstable.require_get_random()
 { hrtime_as_bigint,
   timeit,               } = SFMODULES.unstable.require_benchmarking()

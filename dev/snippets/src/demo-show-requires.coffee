@@ -21,7 +21,7 @@ GUY                       = require 'guy'
   reverse
   log     }               = GUY.trm
 { f }                     = require '../../../apps/effstring'
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 
 
 

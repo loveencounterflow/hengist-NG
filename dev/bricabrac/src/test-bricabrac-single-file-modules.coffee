@@ -38,7 +38,7 @@ GUY                       = require 'guy'
   praise
   urge
   warn
-  whisper }               = GUY.trm.get_loggers 'bricabrac-single-file-modules'
+  whisper }               = GUY.trm.get_loggers 'bricabrac-sfmodules'
 { rpr
   inspect
   echo
@@ -56,7 +56,7 @@ GUY                       = require 'guy'
 { nfa }                   = require '../../../apps/normalize-function-arguments'
 GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 
 
 

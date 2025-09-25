@@ -40,7 +40,7 @@ GUY                       = require 'guy'
 # { default: \
 #   on_process_exit,      } = require 'exit-hook'
 # FS                        = require 'node:fs'
-SFMODULES                 = require '../../../apps/bricabrac-single-file-modules'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 { hide,
   set_getter,           } = SFMODULES.require_managed_property_tools()
 { timeit,               } = SFMODULES.unstable.require_benchmarking()
