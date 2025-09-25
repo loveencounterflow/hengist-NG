@@ -30,7 +30,7 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 #===========================================================================================================
 @tasks =
 
-  #=========================================================================================================
+  #---------------------------------------------------------------------------------------------------------
   basics: ->
     { bigint_from_hrtime,
       hrtime_as_bigint,
@@ -93,11 +93,42 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
       help 'Ωbbbt__26', "brands:  ", timings.brands
       # help 'Ωbbbt__27', "tasks:   ", timings.tasks
       help 'Ωbbbt__28', bm.get_averages_by_brands()
-      # help 'Ωbbbt__29', bm.get_averages_by_tasks()
+      help 'Ωbbbt__29', bm.get_averages_by_tasks()
       return null
     #.......................................................................................................
-    do =>
+    await do =>
       bm = new Benchmarker()
+      my_async_task = ->
+        R = []
+        for t in [ 1 .. 1e6 ]
+          R.push t ** 2
+        # return R.length
+        return await R.length
+      urge 'Ωbbbt__30', my_async_task
+      # urge 'Ωbbbt__31', bm.timeit m_async_task
+      urge 'Ωbbbt__32', bm.format_dt await bm.timeit my_async_task
+      help 'Ωbbbt__33', bm.get_averages_by_brands()
+      help 'Ωbbbt__34', bm.get_averages_by_tasks()
+      return null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  fetch_example_com: ->
+    { bigint_from_hrtime,
+      hrtime_as_bigint,
+      Benchmarker,            } = SFMODULES.unstable.require_benchmarking()
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { with_capture_output,    } = SFMODULES.unstable.require_capture_output()
+    { strip_ansi,             } = SFMODULES.require_strip_ansi()
+    #.......................................................................................................
+    do =>
+      bm      = new Benchmarker()
+      brand   = 'node_fetch'
+      rsp     = await bm.timeit { brand, }, fetch_website  = -> await fetch 'http://example.com'
+      body    = await bm.timeit { brand, }, read_body      = -> await rsp.text()
+      info 'Ωbbbt__35', bm.get_averages_by_brands()
+      info 'Ωbbbt__36', bm.get_averages_by_tasks()
       return null
     #.......................................................................................................
     return null
@@ -108,5 +139,20 @@ SFMODULES                 = require '../../../apps/bricabrac-single-file-modules
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: true, }
-  ( new Test guytest_cfg ).test @tasks
-  # ( new Test guytest_cfg ).test @tasks.builtins
+  # ( new Test guytest_cfg ).async_test @tasks
+  ( new Test guytest_cfg ).test { fetch_example_com: @tasks.fetch_example_com, }
+
+  # nodexh ~/hengist-NG/dev/snippets/lib/benchmark-unicode-character-width.js
+  # nodexh ~/hengist-NG/dev/snippets/lib/demo-build-unicode-ranges.js
+  # nodexh ~/hengist-NG/dev/snippets/lib/benchmark-read-huge-csv.js
+  # nodexh ~/hengist-NG/dev/snippets/lib/demo-binary-lexicographic-sortkey.js
+  # nodexh ~/hengist-NG/dev/snippets/lib/demo-varint-leb128.js
+  # nodexh ~/hengist-NG/dev/hollerith/lib/benchmarks.js
+
+  # debug 'Ωbbbt__37', require '../../snippets/lib/benchmark-unicode-character-width.js'
+  # debug 'Ωbbbt__38', require '../../snippets/lib/demo-build-unicode-ranges.js'
+  # debug 'Ωbbbt__39', require '../../snippets/lib/benchmark-read-huge-csv.js'
+  # debug 'Ωbbbt__40', require '../../snippets/lib/demo-binary-lexicographic-sortkey.js'
+  # debug 'Ωbbbt__41', require '../../snippets/lib/demo-varint-leb128.js'
+  # debug 'Ωbbbt__42', ( require '../../hollerith/lib/benchmarks.js' ).run()
+
