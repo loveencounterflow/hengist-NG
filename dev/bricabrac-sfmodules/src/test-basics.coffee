@@ -60,32 +60,34 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @throws ( Ωkvr___5 = -> expand_recursive_keys strings ), /cyclic reference detected for \$\{greet\}/
         @eq     ( Ωkvr___6 = -> strings                       ), strings_copy
         return null
-      path = require 'node:path'
-      replacement = '/D/'
-      debug 'Ωkvr___7', "abcd/efdklm/dgoo/d/yy".replaceAll 'd', ( match, index, original ) ->
-        chunk = original[ index - 1 .. index + match.length ]
-        # debug 'Ωkvr___8', { match, index, original }, rpr chunk
-        # marker = '.L'[ +replacement.startsWith '/' ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
-        marker = './'[ +( ( replacement.startsWith '/' ) and ( chunks.startsWith '/' ) ) ] + '_' + './'[ +( ( replacement.endsWith '/' ) and ( chunks.endsWith '/' ) ) ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
-        debug 'Ωkvr___7', { chunk, replacement, marker, }
-        return switch marker
-          when '....' then replacement
-          when '..L.' then replacement
-          when '..LR' then replacement
-          when '...R' then replacement
-          when 'L...' then replacement
-          when 'L.L.' then replacement
-          when 'L.LR' then replacement
-          when 'L..R' then replacement
-          when 'LR..' then replacement
-          when 'LRL.' then replacement
-          when 'LRLR' then replacement.replace /^\/(.*)\/$/, '$1'
-          when 'LR.R' then replacement.replace /\/$/, ''
-          when '.R..' then replacement
-          when '.RL.' then replacement
-          when '.RLR' then replacement.replace /\/$/, ''
-          when '.R.R' then replacement.replace /\/$/, ''
-          else throw new Error "Ωkvr___7 internal error"
+      #.....................................................................................................
+      do =>
+        strings =
+          '/(user)/':     "/Alice/"
+          '(schema)//':   "https://"
+          '(server)/':    "(schema)//example.com/"
+          '(folder)':     "(server)/(user)/data"
+          '::file::':     "(folder)/file.txt"
+        for key, value of expand_recursive_keys strings
+          debug 'Ωkvr___7', f"#{key}:<20c; #{rpr value}"
+        return null
+      # #.....................................................................................................
+      # do =>
+      # # replacement = '/D/'
+      # # debug 'Ωkvr___7', "abcd/efdklm/dgoo/d/yy".replaceAll 'd', ( match, index, original ) ->
+      # #   chunk = original[ index - 1 .. index + match.length ]
+      # #   # debug 'Ωkvr___8', { match, index, original }, rpr chunk
+      # #   # marker = '.L'[ +replacement.startsWith '/' ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
+      # #   marker = './'[ +( ( replacement.startsWith '/' ) and ( chunk.startsWith '/' ) ) ] + '_' + './'[ +( ( replacement.endsWith '/' ) and ( chunk.endsWith '/' ) ) ]
+      # #   debug 'Ωkvr___7', { chunk, replacement, marker, }
+      # #   return switch marker
+      # #     when '._.' then replacement
+      # #     when '._/' then replacement[    ... replacement.length - 1 ]
+      # #     when '/_.' then replacement[ 1  ...                        ]
+      # #     when '/_/' then replacement[ 1  ... replacement.length - 1 ]
+      # #     else throw new Error "Ωkvr___7 internal error"
+
+      #   return null
       #.....................................................................................................
       return null
 
