@@ -65,7 +65,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
       debug 'Ωkvr___7', "abcd/efdklm/dgoo/d/yy".replaceAll 'd', ( match, index, original ) ->
         chunk = original[ index - 1 .. index + match.length ]
         # debug 'Ωkvr___8', { match, index, original }, rpr chunk
-        marker = '.L'[ +replacement.startsWith '/' ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
+        # marker = '.L'[ +replacement.startsWith '/' ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
+        marker = './'[ +( ( replacement.startsWith '/' ) and ( chunks.startsWith '/' ) ) ] + '_' + './'[ +( ( replacement.endsWith '/' ) and ( chunks.endsWith '/' ) ) ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
         debug 'Ωkvr___7', { chunk, replacement, marker, }
         return switch marker
           when '....' then replacement
