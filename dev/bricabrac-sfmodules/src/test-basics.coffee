@@ -60,6 +60,31 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @throws ( Ωkvr___5 = -> expand_recursive_keys strings ), /cyclic reference detected for \$\{greet\}/
         @eq     ( Ωkvr___6 = -> strings                       ), strings_copy
         return null
+      path = require 'node:path'
+      replacement = '/D/'
+      debug 'Ωkvr___7', "abcd/efdklm/dgoo/d/yy".replaceAll 'd', ( match, index, original ) ->
+        chunk = original[ index - 1 .. index + match.length ]
+        # debug 'Ωkvr___8', { match, index, original }, rpr chunk
+        marker = '.L'[ +replacement.startsWith '/' ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
+        debug 'Ωkvr___7', { chunk, replacement, marker, }
+        return switch marker
+          when '....' then replacement
+          when '..L.' then replacement
+          when '..LR' then replacement
+          when '...R' then replacement
+          when 'L...' then replacement
+          when 'L.L.' then replacement
+          when 'L.LR' then replacement
+          when 'L..R' then replacement
+          when 'LR..' then replacement
+          when 'LRL.' then replacement
+          when 'LRLR' then replacement.replace /^\/(.*)\/$/, '$1'
+          when 'LR.R' then replacement.replace /\/$/, ''
+          when '.R..' then replacement
+          when '.RL.' then replacement
+          when '.RLR' then replacement.replace /\/$/, ''
+          when '.R.R' then replacement.replace /\/$/, ''
+          else throw new Error "Ωkvr___7 internal error"
       #.....................................................................................................
       return null
 
