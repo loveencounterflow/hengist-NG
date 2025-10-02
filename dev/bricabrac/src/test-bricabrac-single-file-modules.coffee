@@ -369,6 +369,19 @@ SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  require_loupe: ->
+    LOUPE = SFMODULES.require_loupe()
+    #.......................................................................................................
+    @eq     ( Ωbbsfm_120 = -> typeof LOUPE.rpr                                  ), 'function'
+    @eq     ( Ωbbsfm_121 = -> LOUPE.rpr {}                                      ), '{}'
+    @eq     ( Ωbbsfm_121 = -> LOUPE.rpr +0                                      ), '0'
+    @eq     ( Ωbbsfm_121 = -> LOUPE.rpr -0                                      ), '0'
+    @eq     ( Ωbbsfm_122 = -> LOUPE.rpr "'\n'"                                  ), "'\\'\\n\\''"
+    @eq     ( Ωbbsfm_122 = -> LOUPE.rpr '"\n"'                                  ), """'"\\n"'"""
+    #.......................................................................................................
+    return null
+
 
 
 
@@ -379,6 +392,7 @@ if module is require.main then await do =>
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { require_get_app_details: tests.require_get_app_details, }
+  # ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { require_get_app_details: tests.require_get_app_details, }
+  ( new Test guytest_cfg ).test { require_loupe: tests.require_loupe, }
 
