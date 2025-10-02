@@ -33,32 +33,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
       SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { expand_recursive_keys,  } = SFMODULES.require_expand_recursive_keys()
-      @eq ( Ωrxrk___1 = -> type_of expand_recursive_keys               ), 'function'
-      strings =
-        '${greet}':   "Hello ${who}"
-        '${who}':     "dear ${target}"
-        '${target}':  "world"
-      strings_error =
-        '${greet}':   "Hello ${who}"
-        '${who}':     "dear ${target}"
-        '${target}':  "world ${greet}"
+      #.....................................................................................................
+      @eq ( Ωkvr___1 = -> type_of expand_recursive_keys ), 'function'
       do =>
-        expanded = expand_recursive_keys strings
-        info 'Ωkvr___2', strings
-        help 'Ωkvr___3', expanded
-        help 'Ωkvr___4', expanded is strings
+        strings =
+          '${greet}':   "Hello ${who}"
+          '${who}':     "dear ${target}"
+          '${target}':  "world"
+        matcher =
+          '${greet}':   "Hello dear world"
+          '${who}':     "dear world"
+          '${target}':  "world"
+        strings_copy  = { strings..., }
+        expanded      = expand_recursive_keys strings
+        @eq     ( Ωkvr___2 = -> strings             ), strings_copy
+        @eq     ( Ωkvr___3 = -> expanded            ), matcher
+        @eq     ( Ωkvr___4 = -> expanded is strings ), false
         return null
-      # =>
-      # { greet: "Hello dear world"
-      #   who:   "dear world"
-      #   target:"world" }
-      do ( strings = strings_error ) =>
-        error = null
-        try expanded = expand_recursive_keys strings
-        catch error then warn 'Ωkvr___5', error.message
-        warn 'Ωkvr___6', "expected error, none was thrown" unless error?
-        info 'Ωkvr___7', strings
-        help 'Ωkvr___8', expanded
+      #.....................................................................................................
+      do =>
+        strings =
+          '${greet}':   "Hello ${who}"
+          '${who}':     "dear ${target}"
+          '${target}':  "world ${greet}"
+        strings_copy  = { strings..., }
+        @throws ( Ωkvr___5 = -> expand_recursive_keys strings ), /cyclic reference detected for \$\{greet\}/
+        @eq     ( Ωkvr___6 = -> strings                       ), strings_copy
         return null
       #.....................................................................................................
       return null
@@ -68,7 +68,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @tasks
   # ( new Test guytest_cfg ).test @tasks.builtins
