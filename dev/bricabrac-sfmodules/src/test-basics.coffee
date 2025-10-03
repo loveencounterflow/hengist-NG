@@ -71,23 +71,31 @@ GTNG                      = require '../../../apps/guy-test-NG'
         for key, value of expand_recursive_keys strings
           debug 'Ωkvr___7', f"#{key}:<20c; #{rpr value}"
         return null
-      # #.....................................................................................................
-      # do =>
-      # # replacement = '/D/'
-      # # debug 'Ωkvr___7', "abcd/efdklm/dgoo/d/yy".replaceAll 'd', ( match, index, original ) ->
-      # #   chunk = original[ index - 1 .. index + match.length ]
-      # #   # debug 'Ωkvr___8', { match, index, original }, rpr chunk
-      # #   # marker = '.L'[ +replacement.startsWith '/' ] + '.R'[ +replacement.endsWith '/' ] + '.L'[ +chunk.startsWith '/' ] + '.R'[ +chunk.endsWith '/' ]
-      # #   marker = './'[ +( ( replacement.startsWith '/' ) and ( chunk.startsWith '/' ) ) ] + '_' + './'[ +( ( replacement.endsWith '/' ) and ( chunk.endsWith '/' ) ) ]
-      # #   debug 'Ωkvr___7', { chunk, replacement, marker, }
-      # #   return switch marker
-      # #     when '._.' then replacement
-      # #     when '._/' then replacement[    ... replacement.length - 1 ]
-      # #     when '/_.' then replacement[ 1  ...                        ]
-      # #     when '/_/' then replacement[ 1  ... replacement.length - 1 ]
-      # #     else throw new Error "Ωkvr___7 internal error"
+      #.....................................................................................................
+      return null
 
-      #   return null
+    #-------------------------------------------------------------------------------------------------------
+    require_get_local_destinations: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { get_local_destinations, } = SFMODULES.require_get_local_destinations()
+      PATH                        = require 'node:path'
+      #.....................................................................................................
+      @eq ( Ωkvr___8 = -> type_of get_local_destinations ), 'function'
+      do =>
+        app_name      = 'my-app-name'
+        destinations  = get_local_destinations app_name
+        @eq ( Ωgld___9 = -> type_of destinations.data               ), 'text'
+        @eq ( Ωgld__10 = -> type_of destinations.config             ), 'text'
+        @eq ( Ωgld__11 = -> type_of destinations.cache              ), 'text'
+        @eq ( Ωgld__12 = -> type_of destinations.log                ), 'text'
+        @eq ( Ωgld__13 = -> type_of destinations.temp               ), 'text'
+        @eq ( Ωgld__14 = -> PATH.basename destinations.data         ), app_name
+        @eq ( Ωgld__15 = -> PATH.basename destinations.config       ), app_name
+        @eq ( Ωgld__16 = -> PATH.basename destinations.cache        ), app_name
+        @eq ( Ωgld__17 = -> PATH.basename destinations.log          ), app_name
+        @eq ( Ωgld__18 = -> PATH.basename destinations.temp         ), app_name
+        return null
       #.....................................................................................................
       return null
 
