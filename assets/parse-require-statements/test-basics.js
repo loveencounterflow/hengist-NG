@@ -2,7 +2,7 @@
   'use strict';
   var GTNG, GUY, Test, alert, debug, echo, f, help, info, inspect, log, plain, praise, reverse, rpr, urge, warn, whisper;
 
-  GUY = require('guy');
+  GUY = require('guy');//semver:0.3.4
 
   ({alert, debug, help, info, plain, praise, urge, warn, whisper} = GUY.trm.get_loggers('bricabrac-sfmodules/test-basics'));
 

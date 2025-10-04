@@ -1,5 +1,7 @@
 
 'use strict'
+require 'fs'#semver:0.3.4
+require 'fs' ### block comment ###
 
 GUY                       = require 'guy'
 { alert
@@ -283,12 +285,31 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { walk_require_statements,  } = SFMODULES.require_parse_require_statements()
       PATH                          = require 'node:path'
       #.....................................................................................................
-      @eq ( Ωkvr__92 = -> type_of walk_require_statements ), 'generatorfunction'
+      @eq ( Ωkvr__88 = -> type_of walk_require_statements ), 'generatorfunction'
       #.....................................................................................................
       do =>
         path          = PATH.resolve __dirname, '../../../assets/parse-require-statements/test-basics.js'
-        for d from walk_require_statements path
-          debug 'Ωkvr__93', d
+        # for d from walk_require_statements path
+        #   debug 'Ωkvr__89', d
+        tokens        = walk_require_statements path
+        @eq ( Ωkvr__90 = -> tokens.next().value ), { type: 'require', line_nr: 5, package_type: 'npm', package_name: 'guy' }
+        @eq ( Ωkvr__91 = -> tokens.next().value ), { type: 'require', line_nr: 12, package_type: 'local', package_name: '../../../apps/guy-test-NG' }
+        @eq ( Ωkvr__92 = -> tokens.next().value ), { type: 'require', line_nr: 16, package_type: 'local', package_name: '../../../apps/effstring' }
+        @eq ( Ωkvr__93 = -> tokens.next().value ), { type: 'require', line_nr: 25, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
+        @eq ( Ωkvr__94 = -> tokens.next().value ), { type: 'require', line_nr: 162, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
+        @eq ( Ωkvr__95 = -> tokens.next().value ), { type: 'require', line_nr: 165, package_type: 'node', package_name: 'node:path' }
+        @eq ( Ωkvr__96 = -> tokens.next().value ), { type: 'require', line_nr: 166, package_type: 'node', package_name: 'node:os' }
+        @eq ( Ωkvr__97 = -> tokens.next().value ), { type: 'require', line_nr: 167, package_type: 'node', package_name: 'node:fs' }
+        @eq ( Ωkvr__98 = -> tokens.next().value ), { type: 'require', line_nr: 399, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
+        @eq ( Ωkvr__99 = -> tokens.next().value ), { type: 'require', line_nr: 465, package_type: 'node', package_name: 'node:fs' }
+        @eq ( Ωkvr_100 = -> tokens.next().value ), { type: 'require', line_nr: 466, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
+        @eq ( Ωkvr_101 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 554: '        require;'", line: '        require;', line_nr: 554 }
+        @eq ( Ωkvr_102 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 555: '        require(true);'", line: '        require(true);', line_nr: 555 }
+        @eq ( Ωkvr_103 = -> tokens.next().value ), { type: 'require', line_nr: 556, package_type: 'npm', package_name: 'pkg#1' }
+        @eq ( Ωkvr_104 = -> tokens.next().value ), { type: 'require', line_nr: 557, package_type: 'npm', package_name: 'pkg#2' }
+        @eq ( Ωkvr_105 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 558: '        return require( `pkg#3` + \\'suffix\\' );'", line: "        return require( `pkg#3` + 'suffix' );", line_nr: 558 }
+        @eq ( Ωkvr_106 = -> tokens.next().value ), { type: 'require', line_nr: 566, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
+        @eq ( Ωkvr_107 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 602: '  if (module === require.main) {'", line: '  if (module === require.main) {', line_nr: 602 }
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -300,15 +321,15 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { rpr_string,             } = SFMODULES.require_rpr_string()
       #.....................................................................................................
-      @eq ( Ωkvr__94 = -> type_of rpr_string ), 'function'
+      @eq ( Ωkvr_108 = -> type_of rpr_string ), 'function'
       #.....................................................................................................
       do =>
-        @eq ( Ωgld__95 = -> rpr_string ''       ), """''"""
-        @eq ( Ωgld__96 = -> rpr_string '"'      ), """'"'"""
-        @eq ( Ωgld__97 = -> rpr_string "'"      ), """'\\''"""
-        @eq ( Ωgld__98 = -> rpr_string 'pop'    ), """'pop'"""
-        @eq ( Ωgld__99 = -> rpr_string '"pop"'  ), """'"pop"'"""
-        @eq ( Ωgld_100 = -> rpr_string "'pop'"  ), """'\\'pop\\''"""
+        @eq ( Ωgld_109 = -> rpr_string ''       ), """''"""
+        @eq ( Ωgld_110 = -> rpr_string '"'      ), """'"'"""
+        @eq ( Ωgld_111 = -> rpr_string "'"      ), """'\\''"""
+        @eq ( Ωgld_112 = -> rpr_string 'pop'    ), """'pop'"""
+        @eq ( Ωgld_113 = -> rpr_string '"pop"'  ), """'"pop"'"""
+        @eq ( Ωgld_114 = -> rpr_string "'pop'"  ), """'\\'pop\\''"""
         #...................................................................................................
         return null
       #.....................................................................................................
