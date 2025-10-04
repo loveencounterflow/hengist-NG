@@ -1,7 +1,5 @@
 
 'use strict'
-require 'fs'#semver:0.3.4
-require 'fs' ### block comment ###
 
 GUY                       = require 'guy'
 { alert
@@ -37,7 +35,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { expand_dictionary,      } = SFMODULES.require_dictionary_tools()
       { get_local_destinations, } = SFMODULES.require_get_local_destinations()
       #.....................................................................................................
-      @eq ( Ωkvr___1 = -> type_of expand_dictionary ), 'function'
+      @eq ( Ωkvrt___1 = -> type_of expand_dictionary ), 'function'
       do =>
         strings =
           '${greet}':   "Hello ${who}"
@@ -49,9 +47,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
           '${target}':  "world"
         strings_copy  = { strings..., }
         expanded      = expand_dictionary strings
-        @eq     ( Ωkvr___2 = -> strings             ), strings_copy
-        @eq     ( Ωkvr___3 = -> expanded            ), matcher
-        @eq     ( Ωkvr___4 = -> expanded is strings ), false
+        @eq     ( Ωkvrt___2 = -> strings             ), strings_copy
+        @eq     ( Ωkvrt___3 = -> expanded            ), matcher
+        @eq     ( Ωkvrt___4 = -> expanded is strings ), false
         return null
       #.....................................................................................................
       do =>
@@ -60,8 +58,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
           '${who}':     "dear ${target}"
           '${target}':  "world ${greet}"
         strings_copy  = { strings..., }
-        @throws ( Ωkvr___5 = -> expand_dictionary strings ), /cyclic reference detected for \$\{greet\}/
-        @eq     ( Ωkvr___6 = -> strings                       ), strings_copy
+        @throws ( Ωkvrt___5 = -> expand_dictionary strings ), /cyclic reference detected for \$\{greet\}/
+        @eq     ( Ωkvrt___6 = -> strings                       ), strings_copy
         return null
       #.....................................................................................................
       do =>
@@ -72,7 +70,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
           '(folder)':     "(server)/(user)/data"
           '::file::':     "(folder)/file.txt"
         for key, value of expand_dictionary strings
-          debug 'Ωkvr___7', f"#{key}:<20c; #{rpr value}"
+          debug 'Ωkvrt___7', f"#{key}:<20c; #{rpr value}"
         return null
       #.....................................................................................................
       do =>
@@ -106,14 +104,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
           result.mappings[ target_path ] = source_spec
           for pattern_key, pattern_value of result.strings
             result.mappings[ target_path ] = result.mappings[ target_path ].replaceAll pattern_key, pattern_value
-        # debug 'Ωkvr___8', result
-        @eq ( Ωkvr___9 = -> false ), "resolve home directory with os.homedir() / local-destination.brics"
-        @eq ( Ωkvr__10 = -> Object.keys result ), Object.keys _bricabrac_compiled_json
+        # debug 'Ωkvrt___8', result
+        @eq ( Ωkvrt___9 = -> false ), "resolve home directory with os.homedir() / local-destination.brics"
+        @eq ( Ωkvrt__10 = -> Object.keys result ), Object.keys _bricabrac_compiled_json
         for key, value of result.strings
-          @eq ( Ωkvr__11 = -> value ), _bricabrac_compiled_json.strings[ key ]
+          @eq ( Ωkvrt__11 = -> value ), _bricabrac_compiled_json.strings[ key ]
         for key, value of result.mappings
-          @eq ( Ωkvr__12 = -> value ), _bricabrac_compiled_json.mappings[ key ]
-        # debug 'Ωkvr__13', ( get_local_destinations null ).home
+          @eq ( Ωkvrt__12 = -> value ), _bricabrac_compiled_json.mappings[ key ]
+        # debug 'Ωkvrt__13', ( get_local_destinations null ).home
         return null
       #.....................................................................................................
       return null
@@ -143,7 +141,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #   user: { name: 'flow', home: '/home/flow', temp: '/tmp' }
       # }
       #.....................................................................................................
-      @eq ( Ωkvr__14 = -> type_of get_local_destinations ), 'function'
+      @eq ( Ωkvrt__14 = -> type_of get_local_destinations ), 'function'
       #.....................................................................................................
       do =>
         app_name      = 'my-app-name'
@@ -152,27 +150,27 @@ GTNG                      = require '../../../apps/guy-test-NG'
         home          = FS.realpathSync OS.homedir()
         temp          = FS.realpathSync OS.tmpdir()
         #...................................................................................................
-        @eq ( Ωgld__15 = -> ( Object.keys dst ).sort()       ), [ 'app', 'user', ]
-        @eq ( Ωgld__16 = -> ( Object.keys dst.app ).sort()   ), [ 'cache', 'config', 'data', 'dep_bin', 'home', 'log', 'name', 'node_modules', 'own_bin', 'temp' ]
-        @eq ( Ωgld__17 = -> ( Object.keys dst.user ).sort()  ), [ 'home', 'name', 'temp', ]
+        @eq ( Ωkvrt__15 = -> ( Object.keys dst ).sort()       ), [ 'app', 'user', ]
+        @eq ( Ωkvrt__16 = -> ( Object.keys dst.app ).sort()   ), [ 'cache', 'config', 'data', 'dep_bin', 'home', 'log', 'name', 'node_modules', 'own_bin', 'temp' ]
+        @eq ( Ωkvrt__17 = -> ( Object.keys dst.user ).sort()  ), [ 'home', 'name', 'temp', ]
         #...................................................................................................
-        @eq ( Ωgld__18 = -> type_of dst.app                  ), 'pod'
-        @eq ( Ωgld__19 = -> type_of dst.user                 ), 'pod'
+        @eq ( Ωkvrt__18 = -> type_of dst.app                  ), 'pod'
+        @eq ( Ωkvrt__19 = -> type_of dst.user                 ), 'pod'
         #...................................................................................................
-        @eq ( Ωgld__20 = -> PATH.basename dst.app.cache      ), app_name
-        @eq ( Ωgld__21 = -> PATH.basename dst.app.config     ), app_name
-        @eq ( Ωgld__22 = -> PATH.basename dst.app.data       ), app_name
-        @eq ( Ωgld__23 = -> dst.app.dep_bin                  ), PATH.resolve home, app_name, 'node_modules', '.bin'
-        @eq ( Ωgld__24 = -> dst.app.home                     ), PATH.resolve home, app_name
-        @eq ( Ωgld__25 = -> PATH.basename dst.app.log        ), app_name
-        @eq ( Ωgld__26 = -> dst.app.name                     ), app_name
-        @eq ( Ωgld__27 = -> dst.app.node_modules             ), PATH.resolve home, app_name, 'node_modules'
-        @eq ( Ωgld__28 = -> dst.app.own_bin                  ), PATH.resolve home, app_name, 'bin'
-        @eq ( Ωgld__29 = -> dst.app.temp                     ), PATH.resolve dst.user.temp, dst.user.name, app_name
+        @eq ( Ωkvrt__20 = -> PATH.basename dst.app.cache      ), app_name
+        @eq ( Ωkvrt__21 = -> PATH.basename dst.app.config     ), app_name
+        @eq ( Ωkvrt__22 = -> PATH.basename dst.app.data       ), app_name
+        @eq ( Ωkvrt__23 = -> dst.app.dep_bin                  ), PATH.resolve home, app_name, 'node_modules', '.bin'
+        @eq ( Ωkvrt__24 = -> dst.app.home                     ), PATH.resolve home, app_name
+        @eq ( Ωkvrt__25 = -> PATH.basename dst.app.log        ), app_name
+        @eq ( Ωkvrt__26 = -> dst.app.name                     ), app_name
+        @eq ( Ωkvrt__27 = -> dst.app.node_modules             ), PATH.resolve home, app_name, 'node_modules'
+        @eq ( Ωkvrt__28 = -> dst.app.own_bin                  ), PATH.resolve home, app_name, 'bin'
+        @eq ( Ωkvrt__29 = -> dst.app.temp                     ), PATH.resolve dst.user.temp, dst.user.name, app_name
         #...................................................................................................
-        @eq ( Ωgld__30 = -> dst.user.home                    ), home
-        @eq ( Ωgld__31 = -> dst.user.name                    ), user_nfo.username
-        @eq ( Ωgld__32 = -> dst.user.temp                    ), temp
+        @eq ( Ωkvrt__30 = -> dst.user.home                    ), home
+        @eq ( Ωkvrt__31 = -> dst.user.name                    ), user_nfo.username
+        @eq ( Ωkvrt__32 = -> dst.user.temp                    ), temp
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -183,27 +181,27 @@ GTNG                      = require '../../../apps/guy-test-NG'
         home          = FS.realpathSync OS.homedir()
         temp          = FS.realpathSync OS.tmpdir()
         #...................................................................................................
-        @eq ( Ωgld__33 = -> ( Object.keys dst ).sort()       ), [ 'app', 'user', ]
-        @eq ( Ωgld__34 = -> ( Object.keys dst.app ).sort()   ), [ 'cache', 'config', 'data', 'dep_bin', 'home', 'log', 'name', 'node_modules', 'own_bin', 'temp' ]
-        @eq ( Ωgld__35 = -> ( Object.keys dst.user ).sort()  ), [ 'home', 'name', 'temp', ]
+        @eq ( Ωkvrt__33 = -> ( Object.keys dst ).sort()       ), [ 'app', 'user', ]
+        @eq ( Ωkvrt__34 = -> ( Object.keys dst.app ).sort()   ), [ 'cache', 'config', 'data', 'dep_bin', 'home', 'log', 'name', 'node_modules', 'own_bin', 'temp' ]
+        @eq ( Ωkvrt__35 = -> ( Object.keys dst.user ).sort()  ), [ 'home', 'name', 'temp', ]
         #...................................................................................................
-        @eq ( Ωgld__36 = -> type_of dst.app                  ), 'pod'
-        @eq ( Ωgld__37 = -> type_of dst.user                 ), 'pod'
+        @eq ( Ωkvrt__36 = -> type_of dst.app                  ), 'pod'
+        @eq ( Ωkvrt__37 = -> type_of dst.user                 ), 'pod'
         #...................................................................................................
-        @eq ( Ωgld__38 = -> PATH.basename dst.app.cache      ), '<YOUR-APP-NAME-HERE>'
-        @eq ( Ωgld__39 = -> PATH.basename dst.app.config     ), '<YOUR-APP-NAME-HERE>'
-        @eq ( Ωgld__40 = -> PATH.basename dst.app.data       ), '<YOUR-APP-NAME-HERE>'
-        @eq ( Ωgld__41 = -> dst.app.dep_bin                  ), PATH.resolve home, '<YOUR-APP-NAME-HERE>', 'node_modules', '.bin'
-        @eq ( Ωgld__42 = -> dst.app.home                     ), PATH.resolve home, '<YOUR-APP-NAME-HERE>'
-        @eq ( Ωgld__43 = -> PATH.basename dst.app.log        ), '<YOUR-APP-NAME-HERE>'
-        @eq ( Ωgld__44 = -> dst.app.name                     ), '<YOUR-APP-NAME-HERE>'
-        @eq ( Ωgld__45 = -> dst.app.node_modules             ), PATH.resolve home, '<YOUR-APP-NAME-HERE>', 'node_modules'
-        @eq ( Ωgld__46 = -> dst.app.own_bin                  ), PATH.resolve home, '<YOUR-APP-NAME-HERE>', 'bin'
-        @eq ( Ωgld__47 = -> dst.app.temp                     ), PATH.resolve dst.user.temp, dst.user.name, '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__38 = -> PATH.basename dst.app.cache      ), '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__39 = -> PATH.basename dst.app.config     ), '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__40 = -> PATH.basename dst.app.data       ), '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__41 = -> dst.app.dep_bin                  ), PATH.resolve home, '<YOUR-APP-NAME-HERE>', 'node_modules', '.bin'
+        @eq ( Ωkvrt__42 = -> dst.app.home                     ), PATH.resolve home, '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__43 = -> PATH.basename dst.app.log        ), '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__44 = -> dst.app.name                     ), '<YOUR-APP-NAME-HERE>'
+        @eq ( Ωkvrt__45 = -> dst.app.node_modules             ), PATH.resolve home, '<YOUR-APP-NAME-HERE>', 'node_modules'
+        @eq ( Ωkvrt__46 = -> dst.app.own_bin                  ), PATH.resolve home, '<YOUR-APP-NAME-HERE>', 'bin'
+        @eq ( Ωkvrt__47 = -> dst.app.temp                     ), PATH.resolve dst.user.temp, dst.user.name, '<YOUR-APP-NAME-HERE>'
         #...................................................................................................
-        @eq ( Ωgld__48 = -> dst.user.home                    ), home
-        @eq ( Ωgld__49 = -> dst.user.name                    ), user_nfo.username
-        @eq ( Ωgld__50 = -> dst.user.temp                    ), temp
+        @eq ( Ωkvrt__48 = -> dst.user.home                    ), home
+        @eq ( Ωkvrt__49 = -> dst.user.name                    ), user_nfo.username
+        @eq ( Ωkvrt__50 = -> dst.user.temp                    ), temp
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -215,27 +213,27 @@ GTNG                      = require '../../../apps/guy-test-NG'
         home          = FS.realpathSync OS.homedir()
         temp          = FS.realpathSync OS.tmpdir()
         #...................................................................................................
-        @eq ( Ωgld__51 = -> ( Object.keys dst ).sort()       ), [ 'app', 'user', ]
-        @eq ( Ωgld__52 = -> ( Object.keys dst.app ).sort()   ), [ 'cache', 'config', 'data', 'dep_bin', 'home', 'log', 'name', 'node_modules', 'own_bin', 'temp' ]
-        @eq ( Ωgld__53 = -> ( Object.keys dst.user ).sort()  ), [ 'home', 'name', 'temp', ]
+        @eq ( Ωkvrt__51 = -> ( Object.keys dst ).sort()       ), [ 'app', 'user', ]
+        @eq ( Ωkvrt__52 = -> ( Object.keys dst.app ).sort()   ), [ 'cache', 'config', 'data', 'dep_bin', 'home', 'log', 'name', 'node_modules', 'own_bin', 'temp' ]
+        @eq ( Ωkvrt__53 = -> ( Object.keys dst.user ).sort()  ), [ 'home', 'name', 'temp', ]
         #...................................................................................................
-        @eq ( Ωgld__54 = -> type_of dst.app                  ), 'pod'
-        @eq ( Ωgld__55 = -> type_of dst.user                 ), 'pod'
+        @eq ( Ωkvrt__54 = -> type_of dst.app                  ), 'pod'
+        @eq ( Ωkvrt__55 = -> type_of dst.user                 ), 'pod'
         #...................................................................................................
-        @eq ( Ωgld__56 = -> PATH.basename dst.app.cache      ), app_name
-        @eq ( Ωgld__57 = -> PATH.basename dst.app.config     ), app_name
-        @eq ( Ωgld__58 = -> PATH.basename dst.app.data       ), app_name
-        @eq ( Ωgld__59 = -> dst.app.dep_bin                  ), PATH.resolve home, app_home, app_name, 'node_modules', '.bin'
-        @eq ( Ωgld__60 = -> dst.app.home                     ), PATH.resolve home, app_home, app_name
-        @eq ( Ωgld__61 = -> PATH.basename dst.app.log        ), app_name
-        @eq ( Ωgld__62 = -> dst.app.name                     ), app_name
-        @eq ( Ωgld__63 = -> dst.app.node_modules             ), PATH.resolve home, app_home, app_name, 'node_modules'
-        @eq ( Ωgld__64 = -> dst.app.own_bin                  ), PATH.resolve home, app_home, app_name, 'bin'
-        @eq ( Ωgld__65 = -> dst.app.temp                     ), PATH.resolve dst.user.temp, dst.user.name, app_name
+        @eq ( Ωkvrt__56 = -> PATH.basename dst.app.cache      ), app_name
+        @eq ( Ωkvrt__57 = -> PATH.basename dst.app.config     ), app_name
+        @eq ( Ωkvrt__58 = -> PATH.basename dst.app.data       ), app_name
+        @eq ( Ωkvrt__59 = -> dst.app.dep_bin                  ), PATH.resolve home, app_home, app_name, 'node_modules', '.bin'
+        @eq ( Ωkvrt__60 = -> dst.app.home                     ), PATH.resolve home, app_home, app_name
+        @eq ( Ωkvrt__61 = -> PATH.basename dst.app.log        ), app_name
+        @eq ( Ωkvrt__62 = -> dst.app.name                     ), app_name
+        @eq ( Ωkvrt__63 = -> dst.app.node_modules             ), PATH.resolve home, app_home, app_name, 'node_modules'
+        @eq ( Ωkvrt__64 = -> dst.app.own_bin                  ), PATH.resolve home, app_home, app_name, 'bin'
+        @eq ( Ωkvrt__65 = -> dst.app.temp                     ), PATH.resolve dst.user.temp, dst.user.name, app_name
         #...................................................................................................
-        @eq ( Ωgld__66 = -> dst.user.home                    ), home
-        @eq ( Ωgld__67 = -> dst.user.name                    ), user_nfo.username
-        @eq ( Ωgld__68 = -> dst.user.temp                    ), temp
+        @eq ( Ωkvrt__66 = -> dst.user.home                    ), home
+        @eq ( Ωkvrt__67 = -> dst.user.name                    ), user_nfo.username
+        @eq ( Ωkvrt__68 = -> dst.user.temp                    ), temp
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -249,30 +247,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
         walk_essential_js_tokens,
         summarize,              } = SFMODULES.require_walk_js_tokens()
       #.....................................................................................................
-      @eq ( Ωkvr__69 = -> type_of walk_js_tokens            ), 'generatorfunction'
-      @eq ( Ωkvr__70 = -> type_of walk_essential_js_tokens  ), 'generatorfunction'
+      @eq ( Ωkvrt__69 = -> type_of walk_js_tokens            ), 'generatorfunction'
+      @eq ( Ωkvrt__70 = -> type_of walk_essential_js_tokens  ), 'generatorfunction'
       #.....................................................................................................
       do =>
-        @eq ( Ωgld__71 = -> type_of walk_js_tokens ''                                 ), 'generator'
-        @eq ( Ωgld__72 = -> [ ( walk_js_tokens '' )..., ]                             ), []
-        @eq ( Ωgld__73 = -> summarize walk_js_tokens            'var a = 9;'          ), "&&&IdentifierName'var'&&&WhiteSpace' '&&&IdentifierName'a'&&&WhiteSpace' '&&&Punctuator'='&&&WhiteSpace' '&&&NumericLiteral'9'&&&Punctuator';'&&&"
-        @eq ( Ωgld__74 = -> summarize walk_essential_js_tokens  'var a = 9;'          ), "&&&IdentifierName'var'&&&IdentifierName'a'&&&Punctuator'='&&&NumericLiteral'9'&&&Punctuator';'&&&"
-        @eq ( Ωgld__75 = -> summarize walk_essential_js_tokens  '"y"'                 ), """&&&StringLiteral'"y"'&&&"""
-        @eq ( Ωgld__76 = -> summarize walk_essential_js_tokens  "'y'"                 ), "&&&StringLiteral'\\'y\\''&&&"
-        @eq ( Ωgld__77 = -> summarize walk_essential_js_tokens  "`A${'y'}Z`"          ), "&&&TemplateHead'`A${'&&&StringLiteral'\\'y\\''&&&TemplateTail'}Z`'&&&"
-        @eq ( Ωgld__78 = -> summarize walk_essential_js_tokens  "f`A${'y'}Z`"         ), "&&&IdentifierName'f'&&&TemplateHead'`A${'&&&StringLiteral'\\'y\\''&&&TemplateTail'}Z`'&&&"
-        @eq ( Ωgld__79 = -> summarize walk_essential_js_tokens  "`A${`y`}Z`"          ), "&&&TemplateHead'`A${'&&&NoSubstitutionTemplate'`y`'&&&TemplateTail'}Z`'&&&"
-        @eq ( Ωgld__80 = -> summarize walk_essential_js_tokens  "`A${require(`y`)}Z`" ), "&&&TemplateHead'`A${'&&&IdentifierName'require'&&&Punctuator'('&&&NoSubstitutionTemplate'`y`'&&&Punctuator')'&&&TemplateTail'}Z`'&&&"
-        @eq ( Ωgld__81 = -> summarize walk_essential_js_tokens  "require = 777"       ), "&&&IdentifierName'require'&&&Punctuator'='&&&NumericLiteral'777'&&&"
-        # @eq ( Ωgld__82 = -> summarize walk_essential_js_tokens  "true"                ), null
-        # @eq ( Ωgld__83 = -> summarize walk_essential_js_tokens  "false"               ), null
-        # @eq ( Ωgld__84 = -> summarize walk_essential_js_tokens  "undefined"           ), null
-        # @eq ( Ωgld__85 = -> summarize walk_essential_js_tokens  "null"                ), null
+        @eq ( Ωkvrt__71 = -> type_of walk_js_tokens ''                                         ), 'generator'
+        @eq ( Ωkvrt__72 = -> [ ( walk_js_tokens '' )..., ]                                     ), [ { type: 'eof', }, ]
+        @eq ( Ωkvrt__73 = -> summarize walk_js_tokens            'var a = 9;'                  ), "&&&IdentifierName'var'&&&WhiteSpace' '&&&IdentifierName'a'&&&WhiteSpace' '&&&Punctuator'='&&&WhiteSpace' '&&&NumericLiteral'9'&&&Punctuator';'&&&eof&&&"
+        @eq ( Ωkvrt__74 = -> summarize walk_essential_js_tokens  'var a = 9;'                  ), "&&&IdentifierName'var'&&&IdentifierName'a'&&&Punctuator'='&&&NumericLiteral'9'&&&Punctuator';'&&&eof&&&"
+        @eq ( Ωkvrt__75 = -> summarize walk_essential_js_tokens  '"y"'                         ), """&&&StringLiteral'"y"'&&&eof&&&"""
+        @eq ( Ωkvrt__76 = -> summarize walk_essential_js_tokens  "'y'"                         ), "&&&StringLiteral'\\'y\\''&&&eof&&&"
+        @eq ( Ωkvrt__77 = -> summarize walk_essential_js_tokens  "`A${'y'}Z`"                  ), "&&&TemplateHead'`A${'&&&StringLiteral'\\'y\\''&&&TemplateTail'}Z`'&&&eof&&&"
+        @eq ( Ωkvrt__78 = -> summarize walk_essential_js_tokens  "f`A${'y'}Z`"                 ), "&&&IdentifierName'f'&&&TemplateHead'`A${'&&&StringLiteral'\\'y\\''&&&TemplateTail'}Z`'&&&eof&&&"
+        @eq ( Ωkvrt__79 = -> summarize walk_essential_js_tokens  "`A${`y`}Z`"                  ), "&&&TemplateHead'`A${'&&&NoSubstitutionTemplate'`y`'&&&TemplateTail'}Z`'&&&eof&&&"
+        @eq ( Ωkvrt__80 = -> summarize walk_essential_js_tokens  "`A${require(`y`)}Z`"         ), "&&&TemplateHead'`A${'&&&IdentifierName'require'&&&Punctuator'('&&&NoSubstitutionTemplate'`y`'&&&Punctuator')'&&&TemplateTail'}Z`'&&&eof&&&"
+        @eq ( Ωkvrt__81 = -> summarize walk_essential_js_tokens  "require = 777"               ), "&&&IdentifierName'require'&&&Punctuator'='&&&NumericLiteral'777'&&&eof&&&"
+        @eq ( Ωkvrt__82 = -> summarize walk_essential_js_tokens  "require = 777 // foo: bar"   ), "&&&IdentifierName'require'&&&Punctuator'='&&&NumericLiteral'777'&&&eof&&&"
+        @eq ( Ωkvrt__83 = -> summarize walk_essential_js_tokens  "require = 777; // foo: bar"  ), "&&&IdentifierName'require'&&&Punctuator'='&&&NumericLiteral'777'&&&Punctuator';'&&&eof&&&"
+        # @eq ( Ωkvrt__84 = -> summarize walk_essential_js_tokens  "true"                ), null
+        # @eq ( Ωkvrt__85 = -> summarize walk_essential_js_tokens  "false"               ), null
+        # @eq ( Ωkvrt__86 = -> summarize walk_essential_js_tokens  "undefined"           ), null
+        # @eq ( Ωkvrt__87 = -> summarize walk_essential_js_tokens  "null"                ), null
         #...................................................................................................
         source = "const { d, } = require( 'some-module' ); /* require( 'other-module' ) */"
         for token from walk_essential_js_tokens source
-          info 'Ωkvr__86', f"#{token.type}:>20c; #{rpr token.value}"
-        @eq ( Ωgld__87 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
+          info 'Ωkvrt__88', f"#{token.type}:>20c; #{rpr token.value}"
+        @eq ( Ωkvrt__89 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&eof&&&"
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -283,35 +283,57 @@ GTNG                      = require '../../../apps/guy-test-NG'
       SFMODULES                     = require '../../../apps/bricabrac-sfmodules'
       { type_of,                  } = SFMODULES.unstable.require_type_of()
       { walk_require_statements,  } = SFMODULES.require_parse_require_statements()
+      { walk_js_tokens,
+        walk_essential_js_tokens,
+        summarize,                } = SFMODULES.require_walk_js_tokens()
       PATH                          = require 'node:path'
       #.....................................................................................................
-      @eq ( Ωkvr__88 = -> type_of walk_require_statements ), 'generatorfunction'
+      @eq ( Ωkvrt__90 = -> type_of walk_require_statements ), 'function'
       #.....................................................................................................
       do =>
-        path          = PATH.resolve __dirname, '../../../assets/parse-require-statements/test-basics.js'
+        path          = PATH.resolve __dirname, '../../../assets/bricabrac/parse-require-statements/test-basics.js'
         # for d from walk_require_statements path
-        #   debug 'Ωkvr__89', d
+        #   debug 'Ωkvrt__91', d
         tokens        = walk_require_statements path
-        @eq ( Ωkvr__90 = -> tokens.next().value ), { type: 'require', line_nr: 5, package_type: 'npm', package_name: 'guy' }
-        @eq ( Ωkvr__91 = -> tokens.next().value ), { type: 'require', line_nr: 12, package_type: 'local', package_name: '../../../apps/guy-test-NG' }
-        @eq ( Ωkvr__92 = -> tokens.next().value ), { type: 'require', line_nr: 16, package_type: 'local', package_name: '../../../apps/effstring' }
-        @eq ( Ωkvr__93 = -> tokens.next().value ), { type: 'require', line_nr: 25, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
-        @eq ( Ωkvr__94 = -> tokens.next().value ), { type: 'require', line_nr: 162, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
-        @eq ( Ωkvr__95 = -> tokens.next().value ), { type: 'require', line_nr: 165, package_type: 'node', package_name: 'node:path' }
-        @eq ( Ωkvr__96 = -> tokens.next().value ), { type: 'require', line_nr: 166, package_type: 'node', package_name: 'node:os' }
-        @eq ( Ωkvr__97 = -> tokens.next().value ), { type: 'require', line_nr: 167, package_type: 'node', package_name: 'node:fs' }
-        @eq ( Ωkvr__98 = -> tokens.next().value ), { type: 'require', line_nr: 399, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
-        @eq ( Ωkvr__99 = -> tokens.next().value ), { type: 'require', line_nr: 465, package_type: 'node', package_name: 'node:fs' }
-        @eq ( Ωkvr_100 = -> tokens.next().value ), { type: 'require', line_nr: 466, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
-        @eq ( Ωkvr_101 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 554: '        require;'", line: '        require;', line_nr: 554 }
-        @eq ( Ωkvr_102 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 555: '        require(true);'", line: '        require(true);', line_nr: 555 }
-        @eq ( Ωkvr_103 = -> tokens.next().value ), { type: 'require', line_nr: 556, package_type: 'npm', package_name: 'pkg#1' }
-        @eq ( Ωkvr_104 = -> tokens.next().value ), { type: 'require', line_nr: 557, package_type: 'npm', package_name: 'pkg#2' }
-        @eq ( Ωkvr_105 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 558: '        return require( `pkg#3` + \\'suffix\\' );'", line: "        return require( `pkg#3` + 'suffix' );", line_nr: 558 }
-        @eq ( Ωkvr_106 = -> tokens.next().value ), { type: 'require', line_nr: 566, package_type: 'local', package_name: '../../../apps/bricabrac-sfmodules' }
-        @eq ( Ωkvr_107 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 602: '  if (module === require.main) {'", line: '  if (module === require.main) {', line_nr: 602 }
+        @eq ( Ωkvrt__92 = -> tokens.next().value ), { type: 'require', line_nr: 5, package_type: 'npm', package_name: 'guy', annotation: 'semver:0.3.4', }
+        @eq ( Ωkvrt__93 = -> tokens.next().value ), { type: 'require', line_nr: 12, package_type: 'inside', package_name: '../../../apps/guy-test-NG', annotation: null, }
+        @eq ( Ωkvrt__94 = -> tokens.next().value ), { type: 'require', line_nr: 16, package_type: 'inside', package_name: '../../../apps/effstring', annotation: null, }
+        @eq ( Ωkvrt__95 = -> tokens.next().value ), { type: 'require', line_nr: 25, package_type: 'inside', package_name: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt__96 = -> tokens.next().value ), { type: 'require', line_nr: 162, package_type: 'inside', package_name: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt__97 = -> tokens.next().value ), { type: 'require', line_nr: 165, package_type: 'node', package_name: 'node:path', annotation: null, }
+        @eq ( Ωkvrt__98 = -> tokens.next().value ), { type: 'require', line_nr: 166, package_type: 'node', package_name: 'node:os', annotation: null, }
+        @eq ( Ωkvrt__99 = -> tokens.next().value ), { type: 'require', line_nr: 167, package_type: 'node', package_name: 'node:fs', annotation: null, }
+        @eq ( Ωkvrt_100 = -> tokens.next().value ), { type: 'require', line_nr: 399, package_type: 'inside', package_name: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt_101 = -> tokens.next().value ), { type: 'require', line_nr: 465, package_type: 'node', package_name: 'node:fs', annotation: null, }
+        @eq ( Ωkvrt_102 = -> tokens.next().value ), { type: 'require', line_nr: 466, package_type: 'inside', package_name: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt_103 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 554: '        require;'", line: '        require;', line_nr: 554 }
+        @eq ( Ωkvrt_104 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 555: '        require(true);'", line: '        require(true);', line_nr: 555 }
+        @eq ( Ωkvrt_105 = -> tokens.next().value ), { type: 'require', line_nr: 556, package_type: 'npm', package_name: 'pkg#1', annotation: null, }
+        @eq ( Ωkvrt_106 = -> tokens.next().value ), { type: 'require', line_nr: 557, package_type: 'npm', package_name: 'pkg#2', annotation: null, }
+        @eq ( Ωkvrt_107 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 558: '        return require( `pkg#3` + \\'suffix\\' );'", line: "        return require( `pkg#3` + 'suffix' );", line_nr: 558 }
+        @eq ( Ωkvrt_108 = -> tokens.next().value ), { type: 'require', line_nr: 566, package_type: 'inside', package_name: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt_109 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 602: '  if (module === require.main) {'", line: '  if (module === require.main) {', line_nr: 602 }
+        @eq ( Ωkvrt_110 = -> tokens.next().value ), { type: 'require', line_nr: 626, package_type: 'outside', package_name: '../../../../whatever', annotation: null }
         #...................................................................................................
         return null
+      #.....................................................................................................
+      do =>
+        #...................................................................................................
+        whisper '————————————————————————————————————–'
+        for d from walk_require_statements { source: 'require("xxx");', }
+          info 'Ωkvrt_111', d
+        #...................................................................................................
+        whisper '————————————————————————————————————–'
+        for d from walk_require_statements { source: 'require("xxx") // semver: 5.6.7', }
+          urge 'Ωkvrt_112', d
+        #...................................................................................................
+        whisper '————————————————————————————————————–'
+        for token from walk_js_tokens 'require("xxx"); // semver: 5.6.7'
+          help 'Ωkvrt_113', token
+        #...................................................................................................
+        whisper '————————————————————————————————————–'
+        for d from walk_require_statements { source: 'require("xxx"); // semver: 5.6.7', }
+          info 'Ωkvrt_114', d
       #.....................................................................................................
       return null
 
@@ -321,15 +343,15 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { rpr_string,             } = SFMODULES.require_rpr_string()
       #.....................................................................................................
-      @eq ( Ωkvr_108 = -> type_of rpr_string ), 'function'
+      @eq ( Ωkvrt_115 = -> type_of rpr_string ), 'function'
       #.....................................................................................................
       do =>
-        @eq ( Ωgld_109 = -> rpr_string ''       ), """''"""
-        @eq ( Ωgld_110 = -> rpr_string '"'      ), """'"'"""
-        @eq ( Ωgld_111 = -> rpr_string "'"      ), """'\\''"""
-        @eq ( Ωgld_112 = -> rpr_string 'pop'    ), """'pop'"""
-        @eq ( Ωgld_113 = -> rpr_string '"pop"'  ), """'"pop"'"""
-        @eq ( Ωgld_114 = -> rpr_string "'pop'"  ), """'\\'pop\\''"""
+        @eq ( Ωkvrt_116 = -> rpr_string ''       ), """''"""
+        @eq ( Ωkvrt_117 = -> rpr_string '"'      ), """'"'"""
+        @eq ( Ωkvrt_118 = -> rpr_string "'"      ), """'\\''"""
+        @eq ( Ωkvrt_119 = -> rpr_string 'pop'    ), """'pop'"""
+        @eq ( Ωkvrt_120 = -> rpr_string '"pop"'  ), """'"pop"'"""
+        @eq ( Ωkvrt_121 = -> rpr_string "'pop'"  ), """'\\'pop\\''"""
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -342,7 +364,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test @tasks
+  ( new Test guytest_cfg ).test @tasks
   # ( new Test guytest_cfg ).test { require_get_local_destinations: @tasks.require_get_local_destinations, }
   # ( new Test guytest_cfg ).test { require_walk_js_tokens: @tasks.require_walk_js_tokens, }
   ( new Test guytest_cfg ).test { require_parse_require_statements: @tasks.require_parse_require_statements, }
