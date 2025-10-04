@@ -286,11 +286,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         history     = 0
-        literal_pkg = null
+        pkg_name    = null
         line_nr     = null
         reset       = ->
           history     = 0
-          literal_pkg = null
+          pkg_name    = null
           line_nr     = null
           return null
         source      = FS.readFileSync __filename, { encoding: 'utf-8', }
@@ -316,14 +316,14 @@ GTNG                      = require '../../../apps/guy-test-NG'
               unless ( token.type is 'StringLiteral' )
                 reset()
                 continue
-              literal_pkg = token.value
+              pkg_name    = eval token.value
               history     = 3
             #...............................................................................................
             when 3
               unless ( token.type is 'Punctuator' ) and ( token.value is ')' )
                 reset()
                 continue
-              debug 'Ωkvr___7', "line #{line_nr} found require #{literal_pkg}"
+              debug 'Ωkvr___7', "line #{line_nr} found require #{rpr pkg_name}"
               reset()
         # @eq ( Ωgld__81 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
         #...................................................................................................
