@@ -285,41 +285,46 @@ GTNG                      = require '../../../apps/guy-test-NG'
       # @eq ( Ωkvr__70 = -> type_of walk_essential_js_tokens  ), 'generatorfunction'
       #.....................................................................................................
       do =>
-        history     = null
+        history     = 0
         literal_pkg = null
         line_nr     = null
-        reset       = -> history = literal_pkg = line_nr = null
+        reset       = ->
+          history     = 0
+          literal_pkg = null
+          line_nr     = null
+          return null
         source      = FS.readFileSync __filename, { encoding: 'utf-8', }
         for token from walk_essential_js_tokens source
           # info 'Ωkvr__80', f"#{token.type}:>20c; #{rpr token.value}"
           #.................................................................................................
           switch history
             #...............................................................................................
-            when null
+            when 0
               unless ( token.type is 'IdentifierName' ) and ( token.value is 'require' )
                 reset()
                 continue
-              history = rpr_token token
+              history = 1
               line_nr = token.line_nr
             #...............................................................................................
-            when "IdentifierName'require'"
+            when 1
               unless ( token.type is 'Punctuator' ) and ( token.value is '(' )
                 reset()
                 continue
-              history += ';' + rpr_token token
+              history = 2
             #...............................................................................................
-            when "IdentifierName'require';Punctuator'('"
+            when 2
               unless ( token.type is 'StringLiteral' )
                 reset()
                 continue
               literal_pkg = token.value
-              history += ';' + '[literal]'
+              history     = 3
             #...............................................................................................
-            when "IdentifierName'require';Punctuator'(';[literal]"
+            when 3
               unless ( token.type is 'Punctuator' ) and ( token.value is ')' )
                 reset()
                 continue
               debug 'Ωkvr___7', "line #{line_nr} found require #{literal_pkg}"
+              reset()
         # @eq ( Ωgld__81 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
         #...................................................................................................
         return null
