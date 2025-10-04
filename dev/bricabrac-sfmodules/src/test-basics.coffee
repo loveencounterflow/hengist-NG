@@ -260,13 +260,17 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @eq ( Ωgld__77 = -> summarize walk_essential_js_tokens  "`A${'y'}Z`"          ), "&&&TemplateHead'`A${'&&&StringLiteral'\\'y\\''&&&TemplateTail'}Z`'&&&"
         @eq ( Ωgld__78 = -> summarize walk_essential_js_tokens  "f`A${'y'}Z`"         ), "&&&IdentifierName'f'&&&TemplateHead'`A${'&&&StringLiteral'\\'y\\''&&&TemplateTail'}Z`'&&&"
         @eq ( Ωgld__79 = -> summarize walk_essential_js_tokens  "`A${`y`}Z`"          ), "&&&TemplateHead'`A${'&&&NoSubstitutionTemplate'`y`'&&&TemplateTail'}Z`'&&&"
-        @eq ( Ωgld__79 = -> summarize walk_essential_js_tokens  "`A${require(`y`)}Z`" ), "&&&TemplateHead'`A${'&&&IdentifierName'require'&&&Punctuator'('&&&NoSubstitutionTemplate'`y`'&&&Punctuator')'&&&TemplateTail'}Z`'&&&"
-        @eq ( Ωgld__79 = -> summarize walk_essential_js_tokens  "require = 777"       ), "&&&IdentifierName'require'&&&Punctuator'='&&&NumericLiteral'777'&&&"
+        @eq ( Ωgld__80 = -> summarize walk_essential_js_tokens  "`A${require(`y`)}Z`" ), "&&&TemplateHead'`A${'&&&IdentifierName'require'&&&Punctuator'('&&&NoSubstitutionTemplate'`y`'&&&Punctuator')'&&&TemplateTail'}Z`'&&&"
+        @eq ( Ωgld__81 = -> summarize walk_essential_js_tokens  "require = 777"       ), "&&&IdentifierName'require'&&&Punctuator'='&&&NumericLiteral'777'&&&"
+        # @eq ( Ωgld__82 = -> summarize walk_essential_js_tokens  "true"                ), null
+        # @eq ( Ωgld__83 = -> summarize walk_essential_js_tokens  "false"               ), null
+        # @eq ( Ωgld__84 = -> summarize walk_essential_js_tokens  "undefined"           ), null
+        # @eq ( Ωgld__85 = -> summarize walk_essential_js_tokens  "null"                ), null
         #...................................................................................................
         source = "const { d, } = require( 'some-module' ); /* require( 'other-module' ) */"
         for token from walk_essential_js_tokens source
-          info 'Ωkvr__80', f"#{token.type}:>20c; #{rpr token.value}"
-        @eq ( Ωgld__81 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
+          info 'Ωkvr__86', f"#{token.type}:>20c; #{rpr token.value}"
+        @eq ( Ωgld__87 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -282,20 +286,29 @@ GTNG                      = require '../../../apps/guy-test-NG'
         rpr_token,
         summarize,              } = SFMODULES.require_walk_js_tokens()
       #.....................................................................................................
-      # @eq ( Ωkvr__70 = -> type_of walk_essential_js_tokens  ), 'generatorfunction'
+      # @eq ( Ωkvr__88 = -> type_of walk_essential_js_tokens  ), 'generatorfunction'
       #.....................................................................................................
       do =>
+        source      = FS.readFileSync __filename, { encoding: 'utf-8', }
+        lines       = null
+        #...................................................................................................
+        warnings    = []
         history     = 0
         pkg_name    = null
         line_nr     = null
+        #...................................................................................................
         reset       = ->
           history     = 0
           pkg_name    = null
           line_nr     = null
           return null
-        source      = FS.readFileSync __filename, { encoding: 'utf-8', }
+        #...................................................................................................
+        compile_warning = ( token ) ->
+          lines  ?= [ null, ( source.split '\n' )..., ]
+          line    = lines[ token.line_nr ] ? "(ERROR: UNABLE TO RETRIEVE SOURCE)"
+          message = "Ωkvr__89 ignoring possible `require` on line #{token.line_nr}: #{rpr line}"
         for token from walk_essential_js_tokens source
-          # info 'Ωkvr__80', f"#{token.type}:>20c; #{rpr token.value}"
+          # info 'Ωkvr__90', token
           #.................................................................................................
           switch history
             #...............................................................................................
@@ -308,12 +321,16 @@ GTNG                      = require '../../../apps/guy-test-NG'
             #...............................................................................................
             when 1
               unless ( token.type is 'Punctuator' ) and ( token.value is '(' )
+                warn 'Ωkvr__91', token
+                warnings.push compile_warning token
                 reset()
                 continue
               history = 2
             #...............................................................................................
             when 2
-              unless ( token.type is 'StringLiteral' )
+              unless ( token.categories.has 'string_literals' )
+                warn 'Ωkvr__92', token
+                warnings.push compile_warning token
                 reset()
                 continue
               pkg_name    = eval token.value
@@ -321,13 +338,23 @@ GTNG                      = require '../../../apps/guy-test-NG'
             #...............................................................................................
             when 3
               unless ( token.type is 'Punctuator' ) and ( token.value is ')' )
+                warn 'Ωkvr__93', token
+                warnings.push compile_warning token
                 reset()
                 continue
-              debug 'Ωkvr___7', "line #{line_nr} found require #{rpr pkg_name}"
+              debug 'Ωkvr__94', "line #{line_nr} found require #{rpr pkg_name}"
               reset()
-        # @eq ( Ωgld__81 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
+        # @eq ( Ωgld__95 = -> summarize walk_essential_js_tokens source ), "&&&IdentifierName'const'&&&Punctuator'{'&&&IdentifierName'd'&&&Punctuator','&&&Punctuator'}'&&&Punctuator'='&&&IdentifierName'require'&&&Punctuator'('&&&StringLiteral'\\'some-module\\''&&&Punctuator')'&&&Punctuator';'&&&"
+        if warnings.length > 0
+          warn "There have been warnings:"
+          warn 'Ωkvr__96', warning for warning in warnings
         #...................................................................................................
         return null
+        require
+        require true
+        require 'pkg#1'
+        require ``` `pkg#2` ```
+        require ``` `pkg#3` + 'suffix' ```
       #.....................................................................................................
       return null
 
@@ -337,15 +364,15 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { rpr_string,             } = SFMODULES.require_rpr_string()
       #.....................................................................................................
-      @eq ( Ωkvr__82 = -> type_of rpr_string ), 'function'
+      @eq ( Ωkvr__97 = -> type_of rpr_string ), 'function'
       #.....................................................................................................
       do =>
-        @eq ( Ωgld__83 = -> rpr_string ''       ), """''"""
-        @eq ( Ωgld__84 = -> rpr_string '"'      ), """'"'"""
-        @eq ( Ωgld__85 = -> rpr_string "'"      ), """'\\''"""
-        @eq ( Ωgld__86 = -> rpr_string 'pop'    ), """'pop'"""
-        @eq ( Ωgld__87 = -> rpr_string '"pop"'  ), """'"pop"'"""
-        @eq ( Ωgld__88 = -> rpr_string "'pop'"  ), """'\\'pop\\''"""
+        @eq ( Ωgld__98 = -> rpr_string ''       ), """''"""
+        @eq ( Ωgld__99 = -> rpr_string '"'      ), """'"'"""
+        @eq ( Ωgld_100 = -> rpr_string "'"      ), """'\\''"""
+        @eq ( Ωgld_101 = -> rpr_string 'pop'    ), """'pop'"""
+        @eq ( Ωgld_102 = -> rpr_string '"pop"'  ), """'"pop"'"""
+        @eq ( Ωgld_103 = -> rpr_string "'pop'"  ), """'\\'pop\\''"""
         #...................................................................................................
         return null
       #.....................................................................................................
