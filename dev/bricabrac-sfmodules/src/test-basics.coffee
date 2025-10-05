@@ -357,7 +357,47 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    require_path_tools: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { is_inside,              } = SFMODULES.require_path_tools()
+      #.....................................................................................................
+      @eq ( Ωkvrt_122 = -> type_of is_inside ), 'function'
+      #.....................................................................................................
+      do =>
+        @throws ( Ωkvrt_123 = -> is_inside '../path/to/file',       '/'                 ), /expected an absolute path as anchor/
+        @throws ( Ωkvrt_124 = -> is_inside '../path/to/file',       'wat'               ), /expected an absolute path as anchor/
+        @throws ( Ωkvrt_125 = -> is_inside '../path/to/file',       '../path/to/file'   ), /expected an absolute path as anchor/
+        @throws ( Ωkvrt_126 = -> is_inside 'path/to/file',          '../path/to/file'   ), /expected an absolute path as anchor/
+        #...................................................................................................
+        @eq     ( Ωkvrt_127 = -> is_inside '/',                     '/path/to/file'     ), true
+        @eq     ( Ωkvrt_128 = -> is_inside '/path/to/file',         '/path/to/file'     ), true
+        @eq     ( Ωkvrt_129 = -> is_inside '/path/to/file',         'oops'              ), true
+        @eq     ( Ωkvrt_130 = -> is_inside '/path/../file',         '/file'             ), true
+        @eq     ( Ωkvrt_131 = -> is_inside '/path/../file/.',       '/file'             ), true
+        @eq     ( Ωkvrt_132 = -> is_inside '/path/../file/./././.', '/file'             ), true
+        @eq     ( Ωkvrt_133 = -> is_inside '/path/to/file',         '.\\./oops'         ), true
+        @eq     ( Ωkvrt_134 = -> is_inside '/path/to/file',         '..\\/oops'         ), true
+        #...................................................................................................
+        @eq     ( Ωkvrt_135 = -> is_inside '/path/to/file/wat',     '/path/to/file'     ), false
+        @eq     ( Ωkvrt_136 = -> is_inside '/path/to/file',         '../oops'           ), false
+        @eq     ( Ωkvrt_137 = -> is_inside '/path/to/file',         '/oops'             ), false
+        @eq     ( Ωkvrt_138 = -> is_inside '/path/to/file',         '/'                 ), false
+        @eq     ( Ωkvrt_139 = -> is_inside '/path/../file',         '/path'             ), false
+        #...................................................................................................
+        return null
+      #.....................................................................................................
+      return null
 
+
+#===========================================================================================================
+demo_improved_structure = ->
+  help 'Ωkvrt_140', require '../../../apps/bricabrac-sfmodules'
+  DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
+  help 'Ωkvrt_141', DIS
+  DIS.demo_attached()
+  return null
 
 
 #===========================================================================================================
@@ -367,4 +407,6 @@ if module is require.main then await do =>
   ( new Test guytest_cfg ).test @tasks
   # ( new Test guytest_cfg ).test { require_get_local_destinations: @tasks.require_get_local_destinations, }
   # ( new Test guytest_cfg ).test { require_walk_js_tokens: @tasks.require_walk_js_tokens, }
-  ( new Test guytest_cfg ).test { require_parse_require_statements: @tasks.require_parse_require_statements, }
+  # ( new Test guytest_cfg ).test { require_parse_require_statements: @tasks.require_parse_require_statements, }
+  ( new Test guytest_cfg ).test { require_path_tools: @tasks.require_path_tools, }
+  # demo_improved_structure()
