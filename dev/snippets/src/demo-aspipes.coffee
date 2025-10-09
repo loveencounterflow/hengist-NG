@@ -21,6 +21,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 { f }                     = require '../../../apps/effstring'
 { createAsPipes,        } = require 'aspipes'
+SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
+
 
 #===========================================================================================================
 demo = ->
@@ -43,20 +45,66 @@ demo = ->
 
 #===========================================================================================================
 demo_2 = ->
-  dec       = ( pipeline, gfn ) ->
-    my_idx = pipeline.length
-    pipeline.push ( d ) ->
-      unless ( successor = pipeline[ my_idx + 1 ] )?
-        yield from gfn d
-        return null
-      for e from gfn d
-        yield from successor e
+  { nameit,               } = SFMODULES.require_nameit()
+  CFG                       = Symbol 'CFG'
+  misfit                    = Symbol 'misfit'
+  #---------------------------------------------------------------------------------------------------------
+  $ = ( cfg, fn ) ->
+    fn[CFG] = cfg
+    return fn
+  #---------------------------------------------------------------------------------------------------------
+  push = ( pipeline, gfn ) ->
+    my_idx      = pipeline.length
+    first       = null
+    last        = null
+    has_first   = false
+    has_last    = false
+    #.......................................................................................................
+    if ( cfg = gfn[ CFG ] )?
+      has_first   = Reflect.has cfg, 'first'
+      has_last    = Reflect.has cfg, 'last'
+      first       = cfg.first if has_first
+      last        = cfg.last  if has_last
+      # debug 'Ωap___5', { first, gfn, }
+    #.......................................................................................................
+    nxt         = null
+    has_nxt     = null
+    #.......................................................................................................
+    R = nameit gfn.name, ( d ) ->
+      unless nxt? # nxt is misfit
+        nxt             = pipeline[ my_idx + 1 ]
+        has_nxt         = nxt?
+      #.....................................................................................................
+      yield from gfn first if has_first
+      for j from gfn d
+        if has_nxt then yield from nxt j
+        else            yield j
+      yield from gfn last if has_last
+      return null
+    #.......................................................................................................
+    pipeline.push R
+    return R
+  #.........................................................................................................
+  do ->
+    first                     = Symbol '(first)'
+    last                      = Symbol '(last)'
+    pipeline  = []
+    push pipeline, upper    = ( d              ) -> urge 'Ωap___6', 'upper:  ', rpr d; yield d.toUpperCase()
+    push pipeline, ex       = ( d, mark = '!'  ) -> urge 'Ωap___7', 'ex:     ', rpr d; yield d + mark
+    # push pipeline, nothing  = ( d              ) -> urge 'Ωap___8', 'nothing:', rpr d; yield return null
+    # push pipeline, add      = ( d              ) -> urge 'Ωap___9', 'add:    ', rpr d; yield """Let's say: \""""; yield d; yield '".'
+    push pipeline, $ { first, last, }, add_2 = ( d ) ->
+      urge 'Ωap__10', 'add_2:    ', rpr d
+      return yield """Let's say: \"""" if d is first
+      return yield '".' if d is last
+      yield d
+    #.........................................................................................................
+    debug 'Ωap__11', pipeline
+    info 'Ωap__12', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ]
+    info 'Ωap__13', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ].join ''
+    info 'Ωap__13', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ].join ''
     return null
-  pipeline  = []
-  dec pipeline, ( d              ) -> urge 'Ωap___5', 'upper:  ', rpr d; yield d.toUpperCase()
-  dec pipeline, ( d, mark = '!'  ) -> urge 'Ωap___6', 'ex:     ', rpr d; yield d; yield mark
-  debug 'Ωap___7', pipeline
-  info 'Ωap___8', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ]
+  #.........................................................................................................
   return null
 
 
