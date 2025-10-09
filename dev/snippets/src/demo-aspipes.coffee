@@ -47,7 +47,7 @@ demo = ->
 demo_2 = ->
   { nameit,               } = SFMODULES.require_nameit()
   CFG                       = Symbol 'CFG'
-  misfit                    = Symbol 'misfit'
+  # misfit                    = Symbol 'misfit'
   #---------------------------------------------------------------------------------------------------------
   $ = ( cfg, fn ) ->
     fn[CFG] = cfg
