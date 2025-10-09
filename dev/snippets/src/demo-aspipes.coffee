@@ -148,21 +148,23 @@ demo_2 = ->
     debug 'Ωap__15', type_of ( new Pipeline() )
     debug 'Ωap__16', type_of ( new Pipeline() ) 'data'
     debug 'Ωap__17', [ ( ( new Pipeline() ) 'data' )..., ]
+    collector = []
     #.......................................................................................................
     p_1 = new Pipeline()
-    p_1.push ( d ) -> debug 'Ωap__18 p_1'; yield d + ' № 1'
-    p_1.push ( d ) -> debug 'Ωap__19 p_1'; yield d + ' № 2'
+    p_1.push ( d ) -> collector.push 'p_1_t_1'; yield d + ' № 1'
+    p_1.push ( d ) -> collector.push 'p_1_t_1'; yield d + ' № 2'
     #.......................................................................................................
     p_2 = new Pipeline()
-    p_2.push ( d ) -> debug 'Ωap__20 p_2_t_1'; yield d + ' № 3'
+    p_2.push ( d ) -> collector.push 'p_2_t_1'; yield d + ' № 3'
     p_2.push p_1
-    p_2.push ( d ) -> debug 'Ωap__21 p_2_t_2'; yield d + ' № 4'
+    p_2.push ( d ) -> collector.push 'p_2_t_2'; yield d + ' № 4'
     #.......................................................................................................
     p_3 = new Pipeline()
-    p_3.push ( d ) -> debug 'Ωap__22 p_3_t_1'; yield d + ' № 5'
+    p_3.push ( d ) -> collector.push 'p_3_t_1'; yield d + ' № 5'
     p_3.push p_2
-    p_3.push ( d ) -> debug 'Ωap__23 p_3_t_2'; yield d + ' № 6'
-    info 'Ωap__24', d for d from p_3 'my-data'
+    p_3.push ( d ) -> collector.push 'p_3_t_2'; yield d + ' № 6'
+    info 'Ωap__18', d for d from p_3 'my-data'
+    help 'Ωap__19', collector
   #.........................................................................................................
   return null
 
