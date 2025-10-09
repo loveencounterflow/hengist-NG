@@ -398,84 +398,87 @@ GTNG                      = require '../../../apps/guy-test-NG'
       SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { Jetstream,
-        $,                      } = SFMODULES.require_jetstream()
+        $,
+        internals,              } = SFMODULES.require_jetstream()
       #.....................................................................................................
-      @eq ( Ωkvrt_140 = -> type_of ( new Jetstream() )          ), 'function'
-      @eq ( Ωkvrt_141 = -> type_of ( new Jetstream() ) 'data'   ), 'generator'
+      @eq ( Ωkvrt_140 = -> type_of ( new Jetstream() )              ), 'object'
+      @eq ( Ωkvrt_141 = -> type_of ( new Jetstream() ).walk 'data'  ), 'generator'
       #.....................................................................................................
       do =>
         first     = Symbol 'first'
         last      = Symbol 'last'
         stream    = new Jetstream()
         #...................................................................................................
-        @eq ( Ωap_142 = -> stream.size                                         ), 0
+        @eq ( Ωap_142 = -> stream.length                                       ), 0
         @eq ( Ωap_143 = -> stream.is_empty                                     ), true
         #...................................................................................................
-        stream.push upper    = ( d              ) -> debug 'Ωap_144 upper'; yield d.toUpperCase()
-        stream.push ex       = ( d, mark = '!'  ) -> debug 'Ωap_145 ex'; yield d + mark
-        stream.push watch = ( d ) -> help 'Ωap_146', rpr d
+        watched = []
+        stream.push upper = ( d              ) -> yield d.toUpperCase()
+        stream.push ex    = ( d, mark = '!'  ) -> yield d + mark
+        stream.push watch = ( d              ) -> help 'Ωap_144', rpr d; watched.push d
         stream.push $ { first, last, }, add_2 = ( d ) ->
-          debug 'Ωkvrt_147', 'add_2', ( rpr d ), d is first, d is last
           return yield """Let's say: \""""  if d is first
           return yield '".'                 if d is last
           yield d
-        # stream.push $ { first, last, }, add_2 = ( d ) ->
-        #   return null if d in [ first, last, ]
-        #   yield """Let's say: \""""  # if d is first
-        #   yield d
-        #   yield '".'                 # if d is last
-        # stream.push watch = ( d ) -> urge 'Ωap_148', rpr d
+        stream.push watch = ( d              ) -> urge 'Ωap_145', rpr d; watched.push d
         #...................................................................................................
-        @eq ( Ωap_149 = -> stream.size                                         ), 5
-        @eq ( Ωap_150 = -> stream.is_empty                                     ), false
-        @eq ( Ωap_151 = -> [ ( d for d from stream 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
-        # @eq ( Ωap_152 = -> [ ( d for d from stream 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
-        # @eq ( Ωap_153 = -> [ ( d for d from stream 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωap_146 = -> stream.length                                            ), 5
+        @eq ( Ωap_147 = -> stream.is_empty                                          ), false
+        @eq ( Ωap_148 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
+        @eq ( Ωap_149 = -> watched                                                  ), [ 'hidey-ho', """Let's say: \"""", 'HIDEY-HO!', '".', ]
+        @eq ( Ωap_150 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωap_151 = -> (   d for d from stream.run  'hidey-ho'       ).join ''  ), """Let's say: "HIDEY-HO!"."""
         return null
       #.....................................................................................................
       do =>
         stream    = new Jetstream()
         #...................................................................................................
-        stream.push add_1    = ( d              ) -> debug 'Ωap_154 add_1'; yield d + 1
-        stream.push add_1    = ( d              ) -> debug 'Ωap_155 add_1'; yield d + 1
-        stream.push add_1    = ( d              ) -> debug 'Ωap_156 add_1'; yield d + 1
-        stream.push add_1    = ( d              ) -> debug 'Ωap_157 add_1'; yield d + 1
-        stream.push add_1    = ( d              ) -> debug 'Ωap_158 add_1'; yield d + 1
+        stream.push add_1 = ( d ) -> yield d + 1
+        stream.push add_1 = ( d ) -> yield d + 1
+        stream.push add_1 = ( d ) -> yield d + 1
+        stream.push add_1 = ( d ) -> yield d + 1
+        stream.push add_1 = ( d ) -> yield d + 1
         #...................................................................................................
-        @eq ( Ωap_161 = -> [ ( d for d from stream 0 )..., ]          ), [ 5, ]
+        @eq ( Ωap_152 = -> [ ( d for d from stream.walk 0 )..., ]          ), [ 5, ]
         return null
       #.....................................................................................................
       do =>
         ### empty pipeline is a pipeline without transforms, so data is passed through untransformed: ###
-        debug 'Ωap_164', [ ( ( new Jetstream() ) 'data' )..., ]
-        collector = []
-        #...................................................................................................
-        p_1 = new Jetstream()
-        p_1.push ( d ) -> collector.push 'p1-t1'; yield d + ' № 1'
-        p_1.push ( d ) -> collector.push 'p1-t2'; yield d + ' № 2'
-        #...................................................................................................
-        p_2 = new Jetstream()
-        p_2.push ( d ) -> collector.push 'p2-t1'; yield d + ' № 3'
-        p_2.push p_1
-        p_2.push ( d ) -> collector.push 'p2-t2'; yield d + ' № 4'
-        #...................................................................................................
-        p_3 = new Jetstream()
-        p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
-        p_3.push p_2
-        p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
-        info 'Ωap_165', d for d from p_3 'my-data'
-        help 'Ωap_166', collector
-        #...................................................................................................
+        @eq ( Ωap_153 = -> [ ( ( new Jetstream() ).walk 'data' )...,  ] ), [ 'data', ]
+        @eq ( Ωap_154 = ->     ( new Jetstream() ).run  'data'          ), [ 'data', ]
         return null
+      # #.....................................................................................................
+      # do =>
+      #   collector = []
+      #   #...................................................................................................
+      #   p_1 = new Jetstream()
+      #   p_1.push ( d ) -> collector.push 'p1-t1'; yield d + ' № 1'
+      #   p_1.push ( d ) -> collector.push 'p1-t2'; yield d + ' № 2'
+      #   #...................................................................................................
+      #   p_2 = new Jetstream()
+      #   p_2.push ( d ) -> collector.push 'p2-t1'; yield d + ' № 3'
+      #   p_2.push p_1
+      #   p_2.push ( d ) -> collector.push 'p2-t2'; yield d + ' № 4'
+      #   #...................................................................................................
+      #   p_3 = new Jetstream()
+      #   p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
+      #   p_3.push p_2
+      #   p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
+      #   info 'Ωap_155', d for d from p_3 'my-data'
+      #   help 'Ωap_156', collector
+      #   #...................................................................................................
+        return null
+      #.....................................................................................................
+      do =>
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_167', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_157', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_168', DIS
+  help 'Ωkvrt_158', DIS
   DIS.demo_attached()
   return null
 
