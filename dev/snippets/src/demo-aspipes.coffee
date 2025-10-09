@@ -50,16 +50,29 @@ demo_2 = ->
   CFG                       = Symbol 'CFG'
   # misfit                    = Symbol 'misfit'
   #---------------------------------------------------------------------------------------------------------
+  class Pipeline
+    constructor: ->
+      ### TAINT use Object.freeze, push sets new array ###
+      @transforms = []
+      ### TAINT what happens with empty pipeline? ###
+      callable    = ( d ) -> yield from @transforms[ 0 ] d
+      Object.setPrototypeOf callable, @
+      return callable
+  #---------------------------------------------------------------------------------------------------------
   $ = ( cfg, fn ) ->
     fn[CFG] = cfg
     return fn
   #---------------------------------------------------------------------------------------------------------
   push = ( pipeline, gfn ) ->
     switch type = type_of gfn
-      when 'function'           then role = 'watcher'
-      when 'generatorfunction'  then role = 'transform'
+      when 'function'
+        # role = 'watcher'
+        original_gfn  = gfn
+        gfn           = ( d ) -> original_gfn d; yield d
+      when 'generatorfunction'
+        null
+        # role = 'transform'
       else "throw new Error expect a synchronous function or a synchronous generator function, got a #{type}"
-    warn 'Ωap___5', gfn, role
     #.......................................................................................................
     my_idx      = pipeline.length
     first       = null
@@ -72,7 +85,7 @@ demo_2 = ->
       has_last    = Reflect.has cfg, 'last'
       first       = cfg.first if has_first
       last        = cfg.last  if has_last
-      # debug 'Ωap___6', { first, gfn, }
+      # debug 'Ωap___5', { first, gfn, }
     #.......................................................................................................
     nxt         = null
     has_nxt     = null
@@ -83,17 +96,14 @@ demo_2 = ->
         has_nxt         = nxt?
       #.....................................................................................................
       if has_first
-        result = gfn first
-        yield from result unless role is 'watcher'
+        yield from gfn first
       #.....................................................................................................
-      result = gfn d
-      for j from ( if ( role is 'watcher' ) then [ d, ] else result )
+      for j from gfn d
         if has_nxt then yield from nxt j
         else            yield j
       #.....................................................................................................
       if has_last
-        result = gfn last
-        yield from result unless role is 'watcher'
+        yield from gfn last
       #.....................................................................................................
       return null
     #.......................................................................................................
@@ -104,21 +114,22 @@ demo_2 = ->
     first                     = Symbol '(first)'
     last                      = Symbol '(last)'
     pipeline  = []
-    push pipeline, upper    = ( d              ) -> urge 'Ωap___7', 'upper:  ', rpr d; yield d.toUpperCase()
-    push pipeline, ex       = ( d, mark = '!'  ) -> urge 'Ωap___8', 'ex:     ', rpr d; yield d + mark
-    # push pipeline, nothing  = ( d              ) -> urge 'Ωap___9', 'nothing:', rpr d; yield return null
-    # push pipeline, add      = ( d              ) -> urge 'Ωap__10', 'add:    ', rpr d; yield """Let's say: \""""; yield d; yield '".'
-    push pipeline, watch = ( d ) -> help 'Ωap__11', rpr d
+    push pipeline, upper    = ( d              ) -> yield d.toUpperCase()
+    push pipeline, ex       = ( d, mark = '!'  ) -> yield d + mark
+    # push pipeline, nothing  = ( d              ) -> urge 'Ωap___6', 'nothing:', rpr d; yield return null
+    # push pipeline, add      = ( d              ) -> urge 'Ωap___7', 'add:    ', rpr d; yield """Let's say: \""""; yield d; yield '".'
+    push pipeline, watch = ( d ) -> help 'Ωap___8', rpr d
     push pipeline, $ { first, last, }, add_2 = ( d ) ->
-      urge 'Ωap__12', 'add_2:    ', rpr d
-      return yield """Let's say: \"""" if d is first
-      return yield '".' if d is last
+      # urge 'Ωap___9', 'add_2:    ', rpr d
+      return yield """Let's say: \""""  if d is first
+      return yield '".'                 if d is last
       yield d
+    push pipeline, watch = ( d ) -> urge 'Ωap__10', rpr d
     #.........................................................................................................
-    debug 'Ωap__13', pipeline
-    info 'Ωap__14', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ]
-    info 'Ωap__15', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ].join ''
-    info 'Ωap__16', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ].join ''
+    debug 'Ωap__11', pipeline
+    info 'Ωap__12', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ]
+    info 'Ωap__13', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ].join ''
+    info 'Ωap__14', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ].join ''
     return null
   #.........................................................................................................
   return null
