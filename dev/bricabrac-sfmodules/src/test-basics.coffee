@@ -298,25 +298,25 @@ GTNG                      = require '../../../apps/guy-test-NG'
         # for d from walk_require_statements path
         #   debug 'Ωkvrt__91', d
         tokens        = walk_require_statements { path: wouldbe_path, source, }
-        @eq ( Ωkvrt__92 = -> tokens.next().value ), { type: 'require', line_nr: 5, pkg_disposition: 'npm', pkg_selector: 'guy', annotation: 'semver:0.3.4', }
-        @eq ( Ωkvrt__93 = -> tokens.next().value ), { type: 'require', line_nr: 12, pkg_disposition: 'inside', pkg_selector: '../../../apps/guy-test-NG', annotation: null, }
-        @eq ( Ωkvrt__94 = -> tokens.next().value ), { type: 'require', line_nr: 16, pkg_disposition: 'inside', pkg_selector: '../../../apps/effstring', annotation: null, }
-        @eq ( Ωkvrt__95 = -> tokens.next().value ), { type: 'require', line_nr: 25, pkg_disposition: 'inside', pkg_selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
-        @eq ( Ωkvrt__96 = -> tokens.next().value ), { type: 'require', line_nr: 162, pkg_disposition: 'inside', pkg_selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
-        @eq ( Ωkvrt__97 = -> tokens.next().value ), { type: 'require', line_nr: 165, pkg_disposition: 'node', pkg_selector: 'node:path', annotation: null, }
-        @eq ( Ωkvrt__98 = -> tokens.next().value ), { type: 'require', line_nr: 166, pkg_disposition: 'node', pkg_selector: 'node:os', annotation: null, }
-        @eq ( Ωkvrt__99 = -> tokens.next().value ), { type: 'require', line_nr: 167, pkg_disposition: 'node', pkg_selector: 'node:fs', annotation: null, }
-        @eq ( Ωkvrt_100 = -> tokens.next().value ), { type: 'require', line_nr: 399, pkg_disposition: 'inside', pkg_selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
-        @eq ( Ωkvrt_101 = -> tokens.next().value ), { type: 'require', line_nr: 465, pkg_disposition: 'node', pkg_selector: 'node:fs', annotation: null, }
-        @eq ( Ωkvrt_102 = -> tokens.next().value ), { type: 'require', line_nr: 466, pkg_disposition: 'inside', pkg_selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt__92 = -> tokens.next().value ), { type: 'require', line_nr: 5, disposition: 'npm', selector: 'guy', annotation: 'semver:0.3.4', }
+        @eq ( Ωkvrt__93 = -> tokens.next().value ), { type: 'require', line_nr: 12, disposition: 'inside', selector: '../../../apps/guy-test-NG', annotation: null, }
+        @eq ( Ωkvrt__94 = -> tokens.next().value ), { type: 'require', line_nr: 16, disposition: 'inside', selector: '../../../apps/effstring', annotation: null, }
+        @eq ( Ωkvrt__95 = -> tokens.next().value ), { type: 'require', line_nr: 25, disposition: 'inside', selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt__96 = -> tokens.next().value ), { type: 'require', line_nr: 162, disposition: 'inside', selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt__97 = -> tokens.next().value ), { type: 'require', line_nr: 165, disposition: 'node', selector: 'node:path', annotation: null, }
+        @eq ( Ωkvrt__98 = -> tokens.next().value ), { type: 'require', line_nr: 166, disposition: 'node', selector: 'node:os', annotation: null, }
+        @eq ( Ωkvrt__99 = -> tokens.next().value ), { type: 'require', line_nr: 167, disposition: 'node', selector: 'node:fs', annotation: null, }
+        @eq ( Ωkvrt_100 = -> tokens.next().value ), { type: 'require', line_nr: 399, disposition: 'inside', selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt_101 = -> tokens.next().value ), { type: 'require', line_nr: 465, disposition: 'node', selector: 'node:fs', annotation: null, }
+        @eq ( Ωkvrt_102 = -> tokens.next().value ), { type: 'require', line_nr: 466, disposition: 'inside', selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
         @eq ( Ωkvrt_103 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 554: '        require;'", line: '        require;', line_nr: 554 }
         @eq ( Ωkvrt_104 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 555: '        require(true);'", line: '        require(true);', line_nr: 555 }
-        @eq ( Ωkvrt_105 = -> tokens.next().value ), { type: 'require', line_nr: 556, pkg_disposition: 'npm', pkg_selector: 'pkg#1', annotation: null, }
-        @eq ( Ωkvrt_106 = -> tokens.next().value ), { type: 'require', line_nr: 557, pkg_disposition: 'npm', pkg_selector: 'pkg#2', annotation: null, }
+        @eq ( Ωkvrt_105 = -> tokens.next().value ), { type: 'require', line_nr: 556, disposition: 'npm', selector: 'pkg#1', annotation: null, }
+        @eq ( Ωkvrt_106 = -> tokens.next().value ), { type: 'require', line_nr: 557, disposition: 'npm', selector: 'pkg#2', annotation: null, }
         @eq ( Ωkvrt_107 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 558: '        return require( `pkg#3` + \\'suffix\\' );'", line: "        return require( `pkg#3` + 'suffix' );", line_nr: 558 }
-        @eq ( Ωkvrt_108 = -> tokens.next().value ), { type: 'require', line_nr: 566, pkg_disposition: 'inside', pkg_selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
+        @eq ( Ωkvrt_108 = -> tokens.next().value ), { type: 'require', line_nr: 566, disposition: 'inside', selector: '../../../apps/bricabrac-sfmodules', annotation: null, }
         @eq ( Ωkvrt_109 = -> tokens.next().value ), { type: 'warning', message: "ignoring possible `require` on line 602: '  if (module === require.main) {'", line: '  if (module === require.main) {', line_nr: 602 }
-        @eq ( Ωkvrt_110 = -> tokens.next().value ), { type: 'require', line_nr: 626, pkg_disposition: 'outside', pkg_selector: '../../../../whatever', annotation: null }
+        @eq ( Ωkvrt_110 = -> tokens.next().value ), { type: 'require', line_nr: 626, disposition: 'outside', selector: '../../../../whatever', annotation: null }
         #...................................................................................................
         return null
       #.....................................................................................................

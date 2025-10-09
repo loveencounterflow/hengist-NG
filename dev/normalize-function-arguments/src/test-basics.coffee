@@ -370,7 +370,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
   #---------------------------------------------------------------------------------------------------------
   use_isa_setting_sfmodule: ->
     # NFA = require '../../../apps/normalize-function-arguments'
-    NFA = require '../../../apps/normalize-function-arguments/dist/main.js'
+    NFA = require '../../../apps/normalize-function-arguments'
     { nfa
       internals } = NFA
     { gnd       } = internals
@@ -408,13 +408,76 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  unknown_bug: ->
+    # NFA = require '../../../apps/normalize-function-arguments'
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      internals } = NFA
+    { gnd       } = internals
+    #.......................................................................................................
+    object_prototype            = Object.getPrototypeOf {}
+    types                       =
+      pod:                      isa: ( x ) -> x? and ( Object.getPrototypeOf x ) in [ null, object_prototype, ]
+      text:                     isa: ( x ) -> ( typeof x ) is 'string'
+      nonempty_text:            isa: ( x ) -> ( types.text.isa x ) and ( x.length > 0 )
+      optional_nonempty_text:   isa: ( x ) -> ( not x? ) or ( types.nonempty_text.isa x )
+    walk_require_statements_cfg =
+      template:   { path: null, source: null, }
+      isa:        ( x ) ->
+        return false unless types.pod.isa x
+        return false unless types.optional_nonempty_text.isa x.path
+        return false unless types.optional_nonempty_text.isa x.source
+        return true if (     x.path? ) and (     x.source? )
+        return true if (     x.path? )
+        return true if (     x.source? )
+        return false
+   #=======================================================================================================
+    do =>
+      wrs = walk_require_statements = nfa ( path, cfg ) -> cfg
+      @eq ( Ωnfat_118 = -> wrs 'mypath'                     ), { path: 'mypath', }
+      @eq ( Ωnfat_119 = -> wrs { source: 'mysource', }      ), { source: 'mysource', path: undefined }
+    #.......................................................................................................
+    do =>
+      wrs = walk_require_statements = nfa ( path, cfg ) -> yield cfg
+      @eq ( Ωnfat_120 = -> [ ( wrs 'mypath'                )..., ]  ), [ { path: 'mypath', }, ]
+      @eq ( Ωnfat_121 = -> [ ( wrs { source: 'mysource', } )..., ]  ), [ { source: 'mysource', path: undefined }, ]
+    #.......................................................................................................
+    do =>
+      wrs = walk_require_statements = nfa ( path, cfg ) -> await cfg
+      @eq ( Ωnfat_122 = -> await wrs 'mypath'                     ), { path: 'mypath', }
+      @eq ( Ωnfat_123 = -> await wrs { source: 'mysource', }      ), { source: 'mysource', path: undefined }
+    #-------------------------------------------------------------------------------------------------------
+    do =>
+      wrs = walk_require_statements = nfa walk_require_statements_cfg, ( path, cfg ) -> cfg
+      @eq ( Ωnfat_124 = -> wrs 'mypath'                     ), { path: 'mypath', source: null }
+      @eq ( Ωnfat_125 = -> wrs { source: 'mysource', }      ), { path: null, source: 'mysource' }
+    #.......................................................................................................
+    do =>
+      wrs = walk_require_statements = nfa walk_require_statements_cfg, ( path, cfg ) -> yield cfg
+      @eq ( Ωnfat_126 = -> [ ( wrs 'mypath'                )..., ]     ), [ { path: 'mypath', source: null }, ]
+      @eq ( Ωnfat_127 = -> [ ( wrs { source: 'mysource', } )..., ]     ), [ { path: null, source: 'mysource' }, ]
+    #.......................................................................................................
+    do =>
+      wrs = walk_require_statements = nfa walk_require_statements_cfg, ( path, cfg ) -> await cfg
+      @eq ( Ωnfat_128 = -> await wrs 'mypath'                     ), { path: 'mypath', source: null }
+      @eq ( Ωnfat_129 = -> await wrs { source: 'mysource', }      ), { path: null, source: 'mysource' }
+    #.......................................................................................................
+    return null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: true,  report_checks: false, }
-  ( new Test guytest_cfg ).test @nfa_tasks
-  ( new Test guytest_cfg ).test { accepts_callable_rejects_others: @nfa_tasks.accepts_callable_rejects_others }
+  await ( new Test guytest_cfg ).async_test @nfa_tasks
+  # await ( new Test guytest_cfg ).async_test { unknown_bug: @nfa_tasks.unknown_bug }
 
+  # f = -> await 994
+  # debug 'Ωnfat_130', f()
+  # debug 'Ωnfat_131', await f()
+  # g = -> f.call @
+  # debug 'Ωnfat_132', g()
+  # debug 'Ωnfat_133', await g()
 
 
