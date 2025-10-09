@@ -53,10 +53,10 @@ demo_2 = ->
         yield from successor e
     return null
   pipeline  = []
-  dec pipeline, ( d              ) -> debug 'Ωap___5', 'upper:  ', rpr d; yield d.toUpperCase()
-  dec pipeline, ( d, mark = '!'  ) -> urge  'Ωap___6', 'ex:     ', rpr d; yield d; yield mark
+  dec pipeline, ( d              ) -> urge 'Ωap___5', 'upper:  ', rpr d; yield d.toUpperCase()
+  dec pipeline, ( d, mark = '!'  ) -> urge 'Ωap___6', 'ex:     ', rpr d; yield d; yield mark
   debug 'Ωap___7', pipeline
-  debug 'Ωap___7', d for d from pipeline[ 0 ] 'hidey-ho'
+  info 'Ωap___8', [ ( d for d from pipeline[ 0 ] 'hidey-ho' )..., ]
   return null
 
 
