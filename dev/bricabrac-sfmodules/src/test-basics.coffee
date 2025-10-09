@@ -400,57 +400,71 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Jetstream,
         $,                      } = SFMODULES.require_jetstream()
       #.....................................................................................................
-      # @eq ( Ωkvrt_122 = -> type_of is_inside ), 'function'
+      @eq ( Ωkvrt_140 = -> type_of ( new Jetstream() )          ), 'function'
+      @eq ( Ωkvrt_141 = -> type_of ( new Jetstream() ) 'data'   ), 'generator'
       #.....................................................................................................
       do =>
-        # @throws ( Ωkvrt_123 = -> is_inside '../path/to/file',       '/'                 ), /expected an absolute path as anchor/
+        first     = Symbol 'first'
+        last      = Symbol 'last'
+        stream    = new Jetstream()
         #...................................................................................................
-        # @eq     ( Ωkvrt_127 = -> is_inside '/',                     '/path/to/file'     ), true
-      #.........................................................................................................
-      do ->
-        first   = Symbol '(first)'
-        last    = Symbol '(last)'
-        p       = new Pipeline()
-        p.push upper    = ( d              ) -> yield d.toUpperCase()
-        p.push ex       = ( d, mark = '!'  ) -> yield d + mark
-        # p.push nothing  = ( d              ) -> urge 'Ωap___6', 'nothing:', rpr d; yield return null
-        # p.push add      = ( d              ) -> urge 'Ωap___7', 'add:    ', rpr d; yield """Let's say: \""""; yield d; yield '".'
-        p.push watch = ( d ) -> help 'Ωap___8', rpr d
-        p.push $ { first, last, }, add_2 = ( d ) ->
-          # urge 'Ωap___9', 'add_2:    ', rpr d
+        @eq ( Ωap_142 = -> stream.size                                         ), 0
+        @eq ( Ωap_143 = -> stream.is_empty                                     ), true
+        #...................................................................................................
+        stream.push upper    = ( d              ) -> debug 'Ωap_144 upper'; yield d.toUpperCase()
+        stream.push ex       = ( d, mark = '!'  ) -> debug 'Ωap_145 ex'; yield d + mark
+        stream.push watch = ( d ) -> help 'Ωap_146', rpr d
+        stream.push $ { first, last, }, add_2 = ( d ) ->
+          debug 'Ωkvrt_147', 'add_2', ( rpr d ), d is first, d is last
           return yield """Let's say: \""""  if d is first
           return yield '".'                 if d is last
           yield d
-        p.push watch = ( d ) -> urge 'Ωap__10', rpr d
-        #.......................................................................................................
-        debug 'Ωap__11', p
-        info 'Ωap__12', [ ( d for d from p 'hidey-ho' )..., ]
-        info 'Ωap__13', [ ( d for d from p 'hidey-ho' )..., ].join ''
-        info 'Ωap__14', [ ( d for d from p 'hidey-ho' )..., ].join ''
+        # stream.push $ { first, last, }, add_2 = ( d ) ->
+        #   return null if d in [ first, last, ]
+        #   yield """Let's say: \""""  # if d is first
+        #   yield d
+        #   yield '".'                 # if d is last
+        # stream.push watch = ( d ) -> urge 'Ωap_148', rpr d
+        #...................................................................................................
+        @eq ( Ωap_149 = -> stream.size                                         ), 5
+        @eq ( Ωap_150 = -> stream.is_empty                                     ), false
+        @eq ( Ωap_151 = -> [ ( d for d from stream 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
+        # @eq ( Ωap_152 = -> [ ( d for d from stream 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
+        # @eq ( Ωap_153 = -> [ ( d for d from stream 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
         return null
-      #.........................................................................................................
-      do ->
+      #.....................................................................................................
+      do =>
+        stream    = new Jetstream()
+        #...................................................................................................
+        stream.push add_1    = ( d              ) -> debug 'Ωap_154 add_1'; yield d + 1
+        stream.push add_1    = ( d              ) -> debug 'Ωap_155 add_1'; yield d + 1
+        stream.push add_1    = ( d              ) -> debug 'Ωap_156 add_1'; yield d + 1
+        stream.push add_1    = ( d              ) -> debug 'Ωap_157 add_1'; yield d + 1
+        stream.push add_1    = ( d              ) -> debug 'Ωap_158 add_1'; yield d + 1
+        #...................................................................................................
+        @eq ( Ωap_161 = -> [ ( d for d from stream 0 )..., ]          ), [ 5, ]
+        return null
+      #.....................................................................................................
+      do =>
         ### empty pipeline is a pipeline without transforms, so data is passed through untransformed: ###
-        debug 'Ωap__15', type_of ( new Pipeline() )
-        debug 'Ωap__16', type_of ( new Pipeline() ) 'data'
-        debug 'Ωap__17', [ ( ( new Pipeline() ) 'data' )..., ]
+        debug 'Ωap_164', [ ( ( new Jetstream() ) 'data' )..., ]
         collector = []
-        #.......................................................................................................
-        p_1 = new Pipeline()
+        #...................................................................................................
+        p_1 = new Jetstream()
         p_1.push ( d ) -> collector.push 'p1-t1'; yield d + ' № 1'
         p_1.push ( d ) -> collector.push 'p1-t2'; yield d + ' № 2'
-        #.......................................................................................................
-        p_2 = new Pipeline()
+        #...................................................................................................
+        p_2 = new Jetstream()
         p_2.push ( d ) -> collector.push 'p2-t1'; yield d + ' № 3'
         p_2.push p_1
         p_2.push ( d ) -> collector.push 'p2-t2'; yield d + ' № 4'
-        #.......................................................................................................
-        p_3 = new Pipeline()
+        #...................................................................................................
+        p_3 = new Jetstream()
         p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
         p_3.push p_2
         p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
-        info 'Ωap__18', d for d from p_3 'my-data'
-        help 'Ωap__19', collector
+        info 'Ωap_165', d for d from p_3 'my-data'
+        help 'Ωap_166', collector
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -459,9 +473,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_140', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_167', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_141', DIS
+  help 'Ωkvrt_168', DIS
   DIS.demo_attached()
   return null
 
@@ -473,6 +487,7 @@ if module is require.main then await do =>
   ( new Test guytest_cfg ).test @tasks
   # ( new Test guytest_cfg ).test { require_get_local_destinations: @tasks.require_get_local_destinations, }
   # ( new Test guytest_cfg ).test { require_walk_js_tokens: @tasks.require_walk_js_tokens, }
-  ( new Test guytest_cfg ).test { require_parse_require_statements: @tasks.require_parse_require_statements, }
+  # ( new Test guytest_cfg ).test { require_parse_require_statements: @tasks.require_parse_require_statements, }
+  ( new Test guytest_cfg ).test { require_jetstream: @tasks.require_jetstream, }
   # ( new Test guytest_cfg ).test { require_path_tools: @tasks.require_path_tools, }
   # demo_improved_structure()
