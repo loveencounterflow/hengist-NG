@@ -101,15 +101,10 @@ demo_2 = ->
           nxt             = me.transforms[ my_idx + 1 ]
           has_nxt         = nxt?
         #.....................................................................................................
-        if has_first
-          yield from gfn first
-        #.....................................................................................................
-        for j from gfn d
-          if has_nxt then yield from nxt j
-          else            yield j
-        #.....................................................................................................
-        if has_last
-          yield from gfn last
+        yield from gfn first if has_first
+        if has_nxt  then  ( yield from nxt j  ) for j from gfn d
+        else              ( yield j           ) for j from gfn d
+        yield from gfn last if has_last
         #.....................................................................................................
         return null
       #.......................................................................................................
