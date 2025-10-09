@@ -482,29 +482,29 @@ GTNG                      = require '../../../apps/guy-test-NG'
         last          = Symbol 'last'
         stream        = new Jetstream()
         g             = ( d ) ->
-          return yield 0 if d is first
-          return yield 1 if d is last
-          yield d * 2
+          debug 'Ωkvrt_163', d
+          yield 0 if d is first
+          yield d * 2 unless d in [ first, last, ]
+          yield 1 if d is last
         transform_1   = $ { first,  }, g
         transform_2   = $ { last,   }, g
         stream.push transform_1
         stream.push transform_2
-        @eq ( Ωkvrt_163 = -> transform_1[ internals.CFG ] ), { first,  }
-        @eq ( Ωkvrt_164 = -> transform_2[ internals.CFG ] ), { last,   }
-        debug 'Ωkvrt_165', stream.run 22
+        debug 'Ωkvrt_164', stream
+        @eq ( Ωkvrt_165 = -> transform_1[ internals.CFG ] ), { first,  }
+        @eq ( Ωkvrt_166 = -> transform_2[ internals.CFG ] ), { last,   }
+        @eq ( Ωkvrt_167 = -> stream.run 22                ), [ 0, 1, 88, 1, ]
         #...................................................................................................
         return null
-      #.....................................................................................................
-      do =>
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_166', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_168', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_167', DIS
+  help 'Ωkvrt_169', DIS
   DIS.demo_attached()
   return null
 
