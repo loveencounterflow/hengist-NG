@@ -412,22 +412,30 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @eq ( Ωap_142 = -> stream.length                                       ), 0
         @eq ( Ωap_143 = -> stream.is_empty                                     ), true
         #...................................................................................................
-        watched = []
+        watched_1 = []
+        watched_2 = []
+        watched_3 = []
+        watched_4 = []
+        stream.push watch = ( d              ) -> help 'Ωap_144', rpr d; watched_1.push d
         stream.push upper = ( d              ) -> yield d.toUpperCase()
+        stream.push watch = ( d              ) -> info 'Ωap_145', rpr d; watched_2.push d
         stream.push ex    = ( d, mark = '!'  ) -> yield d + mark
-        stream.push watch = ( d              ) -> help 'Ωap_144', rpr d; watched.push d
-        stream.push $ { first, last, }, add_2 = ( d ) ->
+        stream.push watch = ( d              ) -> help 'Ωap_146', rpr d; watched_3.push d
+        stream.push $ { first, last, }, surround = ( d ) ->
           return yield """Let's say: \""""  if d is first
           return yield '".'                 if d is last
           yield d
-        stream.push watch = ( d              ) -> urge 'Ωap_145', rpr d; watched.push d
+        stream.push watch = ( d              ) -> urge 'Ωap_147', rpr d; watched_4.push d
         #...................................................................................................
-        @eq ( Ωap_146 = -> stream.length                                            ), 5
-        @eq ( Ωap_147 = -> stream.is_empty                                          ), false
-        @eq ( Ωap_148 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
-        @eq ( Ωap_149 = -> watched                                                  ), [ 'hidey-ho', """Let's say: \"""", 'HIDEY-HO!', '".', ]
-        @eq ( Ωap_150 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
-        @eq ( Ωap_151 = -> (   d for d from stream.run  'hidey-ho'       ).join ''  ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωap_148 = -> stream.length                                            ), 7
+        @eq ( Ωap_149 = -> stream.is_empty                                          ), false
+        @eq ( Ωap_150 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
+        @eq ( Ωap_151 = -> watched_1                                                ), [ 'hidey-ho'                               ]
+        @eq ( Ωap_152 = -> watched_2                                                ), [ 'HIDEY-HO'                               ]
+        @eq ( Ωap_153 = -> watched_3                                                ), [ 'HIDEY-HO!'                              ]
+        @eq ( Ωap_154 = -> watched_4                                                ), [ """Let's say: \"""", 'HIDEY-HO!', '".'   ]
+        @eq ( Ωap_155 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωap_156 = -> (   d for d from stream.run  'hidey-ho'       ).join ''  ), """Let's say: "HIDEY-HO!"."""
         return null
       #.....................................................................................................
       do =>
@@ -439,13 +447,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
         stream.push add_1 = ( d ) -> yield d + 1
         stream.push add_1 = ( d ) -> yield d + 1
         #...................................................................................................
-        @eq ( Ωap_152 = -> [ ( d for d from stream.walk 0 )..., ]          ), [ 5, ]
+        @eq ( Ωap_157 = -> [ ( d for d from stream.walk 0 )..., ]          ), [ 5, ]
         return null
       #.....................................................................................................
       do =>
         ### empty pipeline is a pipeline without transforms, so data is passed through untransformed: ###
-        @eq ( Ωap_153 = -> [ ( ( new Jetstream() ).walk 'data' )...,  ] ), [ 'data', ]
-        @eq ( Ωap_154 = ->     ( new Jetstream() ).run  'data'          ), [ 'data', ]
+        @eq ( Ωap_158 = -> [ ( ( new Jetstream() ).walk 'data' )...,  ] ), [ 'data', ]
+        @eq ( Ωap_159 = ->     ( new Jetstream() ).run  'data'          ), [ 'data', ]
         return null
       # #.....................................................................................................
       # do =>
@@ -464,8 +472,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #   p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
       #   p_3.push p_2
       #   p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
-      #   info 'Ωap_155', d for d from p_3 'my-data'
-      #   help 'Ωap_156', collector
+      #   info 'Ωap_160', d for d from p_3 'my-data'
+      #   help 'Ωap_161', collector
       #   #...................................................................................................
         return null
       #.....................................................................................................
@@ -476,9 +484,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_157', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_162', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_158', DIS
+  help 'Ωkvrt_163', DIS
   DIS.demo_attached()
   return null
 
