@@ -455,26 +455,44 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @eq ( Ωap_158 = -> [ ( ( new Jetstream() ).walk 'data' )...,  ] ), [ 'data', ]
         @eq ( Ωap_159 = ->     ( new Jetstream() ).run  'data'          ), [ 'data', ]
         return null
-      # #.....................................................................................................
-      # do =>
-      #   collector = []
-      #   #...................................................................................................
-      #   p_1 = new Jetstream()
-      #   p_1.push ( d ) -> collector.push 'p1-t1'; yield d + ' № 1'
-      #   p_1.push ( d ) -> collector.push 'p1-t2'; yield d + ' № 2'
-      #   #...................................................................................................
-      #   p_2 = new Jetstream()
-      #   p_2.push ( d ) -> collector.push 'p2-t1'; yield d + ' № 3'
-      #   p_2.push p_1
-      #   p_2.push ( d ) -> collector.push 'p2-t2'; yield d + ' № 4'
-      #   #...................................................................................................
-      #   p_3 = new Jetstream()
-      #   p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
-      #   p_3.push p_2
-      #   p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
-      #   info 'Ωap_160', d for d from p_3 'my-data'
-      #   help 'Ωap_161', collector
-      #   #...................................................................................................
+      #.....................................................................................................
+      do =>
+        collector = []
+        #...................................................................................................
+        p_1 = new Jetstream()
+        p_1.push ( d ) -> collector.push 'p1-t1'; yield d + ' № 1'
+        p_1.push ( d ) -> collector.push 'p1-t2'; yield d + ' № 2'
+        #...................................................................................................
+        p_2 = new Jetstream()
+        p_2.push ( d ) -> collector.push 'p2-t1'; yield d + ' № 3'
+        p_2.push p_1
+        p_2.push ( d ) -> collector.push 'p2-t2'; yield d + ' № 4'
+        #...................................................................................................
+        p_3 = new Jetstream()
+        p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
+        p_3.push p_2
+        p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
+        @eq ( Ωap_160 = -> p_3.run        'my-data' ), [ 'my-data № 5 № 3 № 1 № 2 № 4 № 6' , ]
+        @eq ( Ωap_161 = -> collector                ), [ 'p3-t1', 'p2-t1', 'p1-t1', 'p1-t2', 'p2-t2', 'p3-t2' ]
+        @eq ( Ωap_162 = -> p_3.get_first  'my-data' ), 'my-data № 5 № 3 № 1 № 2 № 4 № 6'
+        return null
+      #.....................................................................................................
+      do =>
+        first         = Symbol 'first'
+        last          = Symbol 'last'
+        stream        = new Jetstream()
+        g             = ( d ) ->
+          return yield 0 if d is first
+          return yield 1 if d is last
+          yield d * 2
+        transform_1   = $ { first,  }, g
+        transform_2   = $ { last,   }, g
+        stream.push transform_1
+        stream.push transform_2
+        @eq ( Ωkvrt_163 = -> transform_1[ internals.CFG ] ), { first,  }
+        @eq ( Ωkvrt_164 = -> transform_2[ internals.CFG ] ), { last,   }
+        debug 'Ωkvrt_165', stream.run 22
+        #...................................................................................................
         return null
       #.....................................................................................................
       do =>
@@ -484,9 +502,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_162', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_166', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_163', DIS
+  help 'Ωkvrt_167', DIS
   DIS.demo_attached()
   return null
 
