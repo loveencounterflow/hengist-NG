@@ -393,6 +393,69 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       return null
 
+    #-------------------------------------------------------------------------------------------------------
+    require_jetstream: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { Jetstream,
+        $,                      } = SFMODULES.require_jetstream()
+      #.....................................................................................................
+      # @eq ( Ωkvrt_122 = -> type_of is_inside ), 'function'
+      #.....................................................................................................
+      do =>
+        # @throws ( Ωkvrt_123 = -> is_inside '../path/to/file',       '/'                 ), /expected an absolute path as anchor/
+        #...................................................................................................
+        # @eq     ( Ωkvrt_127 = -> is_inside '/',                     '/path/to/file'     ), true
+      #.........................................................................................................
+      do ->
+        first   = Symbol '(first)'
+        last    = Symbol '(last)'
+        p       = new Pipeline()
+        p.push upper    = ( d              ) -> yield d.toUpperCase()
+        p.push ex       = ( d, mark = '!'  ) -> yield d + mark
+        # p.push nothing  = ( d              ) -> urge 'Ωap___6', 'nothing:', rpr d; yield return null
+        # p.push add      = ( d              ) -> urge 'Ωap___7', 'add:    ', rpr d; yield """Let's say: \""""; yield d; yield '".'
+        p.push watch = ( d ) -> help 'Ωap___8', rpr d
+        p.push $ { first, last, }, add_2 = ( d ) ->
+          # urge 'Ωap___9', 'add_2:    ', rpr d
+          return yield """Let's say: \""""  if d is first
+          return yield '".'                 if d is last
+          yield d
+        p.push watch = ( d ) -> urge 'Ωap__10', rpr d
+        #.......................................................................................................
+        debug 'Ωap__11', p
+        info 'Ωap__12', [ ( d for d from p 'hidey-ho' )..., ]
+        info 'Ωap__13', [ ( d for d from p 'hidey-ho' )..., ].join ''
+        info 'Ωap__14', [ ( d for d from p 'hidey-ho' )..., ].join ''
+        return null
+      #.........................................................................................................
+      do ->
+        ### empty pipeline is a pipeline without transforms, so data is passed through untransformed: ###
+        debug 'Ωap__15', type_of ( new Pipeline() )
+        debug 'Ωap__16', type_of ( new Pipeline() ) 'data'
+        debug 'Ωap__17', [ ( ( new Pipeline() ) 'data' )..., ]
+        collector = []
+        #.......................................................................................................
+        p_1 = new Pipeline()
+        p_1.push ( d ) -> collector.push 'p1-t1'; yield d + ' № 1'
+        p_1.push ( d ) -> collector.push 'p1-t2'; yield d + ' № 2'
+        #.......................................................................................................
+        p_2 = new Pipeline()
+        p_2.push ( d ) -> collector.push 'p2-t1'; yield d + ' № 3'
+        p_2.push p_1
+        p_2.push ( d ) -> collector.push 'p2-t2'; yield d + ' № 4'
+        #.......................................................................................................
+        p_3 = new Pipeline()
+        p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
+        p_3.push p_2
+        p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
+        info 'Ωap__18', d for d from p_3 'my-data'
+        help 'Ωap__19', collector
+        #...................................................................................................
+        return null
+      #.....................................................................................................
+      return null
+
 
 #===========================================================================================================
 demo_improved_structure = ->
