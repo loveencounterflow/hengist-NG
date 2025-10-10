@@ -482,19 +482,55 @@ GTNG                      = require '../../../apps/guy-test-NG'
         last          = Symbol 'last'
         stream        = new Jetstream()
         g             = ( d ) ->
-          debug 'Ωkvrt_163', d
+          urge 'Ωkvrt_163', d
+          info 'Ωkvrt_164', "yield for first" if d is first
           yield 0 if d is first
+          info 'Ωkvrt_165', "yield for data" unless d in [ first, last, ]
           yield d * 2 unless d in [ first, last, ]
+          info 'Ωkvrt_166', "yield for last" if d is last
           yield 1 if d is last
         transform_1   = $ { first,  }, g
         transform_2   = $ { last,   }, g
         stream.push transform_1
         stream.push transform_2
-        debug 'Ωkvrt_164', stream
-        @eq ( Ωkvrt_165 = -> transform_1[ internals.CFG ] ), { first,  }
-        @eq ( Ωkvrt_166 = -> transform_2[ internals.CFG ] ), { last,   }
-        @eq ( Ωkvrt_167 = -> stream.run 22                ), [ 0, 1, 88, 1, ]
-        #...................................................................................................
+        debug 'Ωkvrt_167', stream
+        whisper 'Ωkvrt_168', '————————————————————————————————————–'
+        @eq ( Ωkvrt_169 = -> transform_1[ internals.CFG ] ), { first,  }
+        @eq ( Ωkvrt_170 = -> transform_2[ internals.CFG ] ), { last,   }
+        @eq ( Ωkvrt_171 = -> stream.run 22                ), [ 0, 1, 88, 1, ]
+        whisper 'Ωkvrt_172', '————————————————————————————————————–'
+        return null
+      #.....................................................................................................
+      do => ### same as above but the transforms are seperate ###
+        first         = Symbol 'first'
+        last          = Symbol 'last'
+        stream        = new Jetstream()
+        g1            = ( d ) ->
+          urge 'Ωkvrt_173 g1', d
+          info 'Ωkvrt_174 g1', "yield for first" if d is first
+          yield 0 if d is first
+          info 'Ωkvrt_175 g1', "yield for data" unless d in [ first, last, ]
+          yield d * 2 unless d in [ first, last, ]
+          info 'Ωkvrt_176 g1', "yield for last" if d is last
+          yield 1 if d is last
+        g2            = ( d ) ->
+          urge 'Ωkvrt_177 g2', d
+          info 'Ωkvrt_178 g2', "yield for first" if d is first
+          yield 0 if d is first
+          info 'Ωkvrt_179 g2', "yield for data" unless d in [ first, last, ]
+          yield d * 2 unless d in [ first, last, ]
+          info 'Ωkvrt_180 g2', "yield for last" if d is last
+          yield 1 if d is last
+        transform_1   = $ { first,  }, g1
+        transform_2   = $ { last,   }, g2
+        stream.push transform_1
+        stream.push transform_2
+        debug 'Ωkvrt_181', stream
+        whisper 'Ωkvrt_182', '————————————————————————————————————–'
+        @eq ( Ωkvrt_183 = -> transform_1[ internals.CFG ] ), { first,  }
+        @eq ( Ωkvrt_184 = -> transform_2[ internals.CFG ] ), { last,   }
+        @eq ( Ωkvrt_185 = -> stream.run 22                ), [ 0, 1, 88, 1, ]
+        whisper 'Ωkvrt_186', '————————————————————————————————————–'
         return null
       #.....................................................................................................
       return null
@@ -502,9 +538,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_168', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_187', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_169', DIS
+  help 'Ωkvrt_188', DIS
   DIS.demo_attached()
   return null
 
