@@ -407,47 +407,47 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         first     = Symbol 'first'
         last      = Symbol 'last'
-        stream    = new Jetstream()
+        jet    = new Jetstream()
         #...................................................................................................
-        @eq ( Ωap_142 = -> stream.length                                       ), 0
-        @eq ( Ωap_143 = -> stream.is_empty                                     ), true
+        @eq ( Ωap_142 = -> jet.length                                       ), 0
+        @eq ( Ωap_143 = -> jet.is_empty                                     ), true
         #...................................................................................................
         watched_1 = []
         watched_2 = []
         watched_3 = []
         watched_4 = []
-        stream.push watch = ( d              ) -> help 'Ωap_144', rpr d; watched_1.push d
-        stream.push upper = ( d              ) -> yield d.toUpperCase()
-        stream.push watch = ( d              ) -> info 'Ωap_145', rpr d; watched_2.push d
-        stream.push ex    = ( d, mark = '!'  ) -> yield d + mark
-        stream.push watch = ( d              ) -> help 'Ωap_146', rpr d; watched_3.push d
-        stream.push $ { first, last, }, surround = ( d ) ->
+        jet.push watch = ( d              ) -> help 'Ωap_144', rpr d; watched_1.push d
+        jet.push upper = ( d              ) -> yield d.toUpperCase()
+        jet.push watch = ( d              ) -> info 'Ωap_145', rpr d; watched_2.push d
+        jet.push ex    = ( d, mark = '!'  ) -> yield d + mark
+        jet.push watch = ( d              ) -> help 'Ωap_146', rpr d; watched_3.push d
+        jet.push $ { first, last, }, surround = ( d ) ->
           return yield """Let's say: \""""  if d is first
           return yield '".'                 if d is last
           yield d
-        stream.push watch = ( d              ) -> urge 'Ωap_147', rpr d; watched_4.push d
+        jet.push watch = ( d              ) -> urge 'Ωap_147', rpr d; watched_4.push d
         #...................................................................................................
-        @eq ( Ωap_148 = -> stream.length                                            ), 7
-        @eq ( Ωap_149 = -> stream.is_empty                                          ), false
-        @eq ( Ωap_150 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
+        @eq ( Ωap_148 = -> jet.length                                            ), 7
+        @eq ( Ωap_149 = -> jet.is_empty                                          ), false
+        @eq ( Ωap_150 = -> [ ( d for d from jet.walk 'hidey-ho' )..., ]          ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
         @eq ( Ωap_151 = -> watched_1                                                ), [ 'hidey-ho'                               ]
         @eq ( Ωap_152 = -> watched_2                                                ), [ 'HIDEY-HO'                               ]
         @eq ( Ωap_153 = -> watched_3                                                ), [ 'HIDEY-HO!'                              ]
         @eq ( Ωap_154 = -> watched_4                                                ), [ """Let's say: \"""", 'HIDEY-HO!', '".'   ]
-        @eq ( Ωap_155 = -> [ ( d for d from stream.walk 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
-        @eq ( Ωap_156 = -> (   d for d from stream.run  'hidey-ho'       ).join ''  ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωap_155 = -> [ ( d for d from jet.walk 'hidey-ho' )..., ].join ''  ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωap_156 = -> (   d for d from jet.run  'hidey-ho'       ).join ''  ), """Let's say: "HIDEY-HO!"."""
         return null
       #.....................................................................................................
       do =>
-        stream    = new Jetstream()
+        jet    = new Jetstream()
         #...................................................................................................
-        stream.push add_1 = ( d ) -> yield d + 1
-        stream.push add_1 = ( d ) -> yield d + 1
-        stream.push add_1 = ( d ) -> yield d + 1
-        stream.push add_1 = ( d ) -> yield d + 1
-        stream.push add_1 = ( d ) -> yield d + 1
+        jet.push add_1 = ( d ) -> yield d + 1
+        jet.push add_1 = ( d ) -> yield d + 1
+        jet.push add_1 = ( d ) -> yield d + 1
+        jet.push add_1 = ( d ) -> yield d + 1
+        jet.push add_1 = ( d ) -> yield d + 1
         #...................................................................................................
-        @eq ( Ωap_157 = -> [ ( d for d from stream.walk 0 )..., ]          ), [ 5, ]
+        @eq ( Ωap_157 = -> [ ( d for d from jet.walk 0 )..., ]          ), [ 5, ]
         return null
       #.....................................................................................................
       do =>
@@ -480,7 +480,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         first         = Symbol 'first'
         last          = Symbol 'last'
-        stream        = new Jetstream()
+        jet        = new Jetstream()
         g             = ( d ) ->
           urge 'Ωkvrt_163', d
           info 'Ωkvrt_164', "yield for first" if d is first
@@ -491,20 +491,20 @@ GTNG                      = require '../../../apps/guy-test-NG'
           yield 1 if d is last
         transform_1   = $ { first,  }, g
         transform_2   = $ { last,   }, g
-        stream.push transform_1
-        stream.push transform_2
-        debug 'Ωkvrt_167', stream
+        jet.push transform_1
+        jet.push transform_2
+        debug 'Ωkvrt_167', jet
         whisper 'Ωkvrt_168', '————————————————————————————————————–'
         @eq ( Ωkvrt_169 = -> transform_1[ internals.CFG ] ), { first,  }
         @eq ( Ωkvrt_170 = -> transform_2[ internals.CFG ] ), { last,   }
-        @eq ( Ωkvrt_171 = -> stream.run 22                ), [ 0, 1, 88, 1, ]
+        @eq ( Ωkvrt_171 = -> jet.run 22                ), [ 0, 1, 88, 1, ]
         whisper 'Ωkvrt_172', '————————————————————————————————————–'
         return null
       #.....................................................................................................
       do => ### same as above but the transforms are seperate ###
         first         = Symbol 'first'
         last          = Symbol 'last'
-        stream        = new Jetstream()
+        jet        = new Jetstream()
         g1            = ( d ) ->
           urge 'Ωkvrt_173 g1', d
           info 'Ωkvrt_174 g1', "yield for first" if d is first
@@ -523,24 +523,168 @@ GTNG                      = require '../../../apps/guy-test-NG'
           yield 1 if d is last
         transform_1   = $ { first,  }, g1
         transform_2   = $ { last,   }, g2
-        stream.push transform_1
-        stream.push transform_2
-        debug 'Ωkvrt_181', stream
+        jet.push transform_1
+        jet.push transform_2
+        debug 'Ωkvrt_181', jet
         whisper 'Ωkvrt_182', '————————————————————————————————————–'
         @eq ( Ωkvrt_183 = -> transform_1[ internals.CFG ] ), { first,  }
         @eq ( Ωkvrt_184 = -> transform_2[ internals.CFG ] ), { last,   }
-        @eq ( Ωkvrt_185 = -> stream.run 22                ), [ 0, 1, 88, 1, ]
+        @eq ( Ωkvrt_185 = -> jet.run 22                ), [ 0, 1, 88, 1, ]
         whisper 'Ωkvrt_186', '————————————————————————————————————–'
         return null
+      #.....................................................................................................
+      return null
+
+    #-------------------------------------------------------------------------------------------------------
+    jetstream_selectors: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { Jetstream,
+        $,
+        internals,              } = SFMODULES.require_jetstream()
+      #.....................................................................................................
+      # @eq ( Ωkvrt_187 = -> type_of ( new Jetstream() )              ), 'object'
+      #.....................................................................................................
+      do =>
+        stream_items = [
+          Symbol 'start'
+          Symbol.for 'start'
+          Symbol 'end'
+          Symbol.for 'end'
+          76.9
+          "Mexico"
+          ]
+        selectors = [
+          { probe: null,                        normalized: ( new Set [ 'data',                 ] ) }
+          { probe: '',                          normalized: ( new Set [ '',                     ] ) }
+          { probe: 'data',                      normalized: ( new Set [ 'data',                 ] ) }
+          { probe: [ 'data', 'cue', ],          normalized: ( new Set [ 'data', 'cue',          ] ) }
+          { probe: 'data, cue',                 normalized: ( new Set [ 'data', 'cue',          ] ) }
+          { probe: 'cue',                       normalized: ( new Set [ 'cue',                  ] ) }
+          { probe: 'cue#end',                   normalized: ( new Set [ 'cue#end',              ] ) }
+          { probe: '#end',                      normalized: ( new Set [ 'cue#end',              ] ) }
+          { probe: 'cue#start',                 normalized: ( new Set [ 'cue#start',            ] ) }
+          { probe: '#start',                    normalized: ( new Set [ 'cue#start',            ] ) }
+          { probe: 'cue#start,cue#end',         normalized: ( new Set [ 'cue#start', 'cue#end', ] ) }
+          { probe: [ 'cue#start', 'cue#end', ], normalized: ( new Set [ 'cue#start', 'cue#end', ] ) }
+          { probe: '#start,#end',               normalized: ( new Set [ 'cue#start', 'cue#end', ] ) }
+          { probe: [ '#start', '#end', ],       normalized: ( new Set [ 'cue#start', 'cue#end', ] ) }
+          ]
+        #=====================================================================================================
+        class Selector
+          constructor: ( selectors... ) ->
+            @all_data   = true
+            @all_cues   = false
+            @some_data  = true
+            @some_cues  = false
+            @no_data    = false
+            @no_cues    = true
+            @data_ids   = new Set()
+            @cue_ids    = new Set()
+            return undefined
+
+          #---------------------------------------------------------------------------------------------------
+          select: ( item ) ->
+            is_cue  = ( typeof item ) is 'symbol'
+            is_data = not is_cue
+            return true   if is_cue   and @all_cues
+            return true   if is_data  and @all_data
+            return false  if is_cue   and @no_cues
+            return false  if is_data  and @no_data
+            return false
+
+          #---------------------------------------------------------------------------------------------------
+          toString: ->
+            R = []
+            if @all_cues  then R.push '+cue'
+            if @no_cues   then R.push '-cue'
+            if @all_data  then R.push '+data'
+            if @no_data   then R.push '-data'
+            return R.join '^'
+
+        #=====================================================================================================
+        class Selector_parser
+
+          #---------------------------------------------------------------------------------------------------
+          normalize_selectors: ( selectors... ) ->
+            selectors = @_as_flat_list selectors...
+            R         = new Set()
+            for selector in selectors
+              switch true
+                when selector.startsWith '#'  then R.add "cue#{selector}"
+                when ( selector isnt '' ) and ( not /#/.test selector ) then R.add "#{selector}#*"
+                else R.add selector
+            R.add 'data#*' if R.size is 0
+            R.delete '' if R.size isnt 1
+            return R
+
+          #---------------------------------------------------------------------------------------------------
+          _as_flat_list: ( selectors... ) ->
+            return [] if selectors.length is 0
+            selectors = selectors.flat Infinity
+            return [] if selectors.length is 0
+            return [ '', ] if selectors.length is 1 and selectors[ 0 ] is ''
+            selectors = selectors.join ','
+            selectors = selectors.replace /\s+/g, '' ### TAINT not generally possible ###
+            selectors = selectors.split ',' ### TAINT not generally possible ###
+            return selectors
+
+          #---------------------------------------------------------------------------------------------------
+          normalize_selectors_2: ( selectors... ) ->
+            selectors = @normalize_selectors_1 selectors...
+            selectors = new Set selectors
+            # selectors
+          # #---------------------------------------------------------------------------------------------------
+          # select: ( selectors..., item ) ->
+          #   selectors = @normalize_selectors_1 selectors...
+          #   is_cue = ( typeof selector ) is 'symbol'
+          #   # return ( if is_cue then false else true ) if
+          #   return null
+          #---------------------------------------------------------------------------------------------------
+          # select_with_: ( selectors..., item ) ->
+        #===================================================================================================
+        parser = new Selector_parser()
+        debug 'Ωkvrt_188', rpr parser._as_flat_list ''
+        debug 'Ωkvrt_189', rpr parser._as_flat_list [ [ '', ], ]
+        debug 'Ωkvrt_190', rpr parser._as_flat_list()
+        debug 'Ωkvrt_191', rpr parser._as_flat_list []
+        debug 'Ωkvrt_192', rpr parser._as_flat_list [[]]
+        debug 'Ωkvrt_193', rpr parser._as_flat_list 'data'
+        debug 'Ωkvrt_194', rpr parser._as_flat_list 'cue'
+        debug 'Ωkvrt_195', rpr parser._as_flat_list 'cue', 'data'
+        debug 'Ωkvrt_196', rpr parser._as_flat_list ' cue#start, cue#end '
+        debug 'Ωkvrt_197', rpr parser._as_flat_list '#start'
+        debug 'Ωkvrt_198', rpr parser._as_flat_list '#start,#end'
+        debug 'Ωkvrt_199', rpr parser._as_flat_list '#end,#start'
+        debug 'Ωkvrt_200', rpr parser._as_flat_list '#end,#start,'
+        debug 'Ωkvrt_201', '————————————————————————————————————–'
+        debug 'Ωkvrt_202', rpr parser.normalize_selectors ''
+        debug 'Ωkvrt_203', rpr parser.normalize_selectors [ [ '', ], ]
+        debug 'Ωkvrt_204', rpr parser.normalize_selectors()
+        debug 'Ωkvrt_205', rpr parser.normalize_selectors []
+        debug 'Ωkvrt_206', rpr parser.normalize_selectors [[]]
+        debug 'Ωkvrt_207', rpr parser.normalize_selectors 'data'
+        debug 'Ωkvrt_208', rpr parser.normalize_selectors 'cue'
+        debug 'Ωkvrt_209', rpr parser.normalize_selectors 'cue', 'data'
+        debug 'Ωkvrt_210', rpr parser.normalize_selectors ' cue#start, cue#end '
+        debug 'Ωkvrt_211', rpr parser.normalize_selectors '#start'
+        debug 'Ωkvrt_212', rpr parser.normalize_selectors '#start,#end'
+        debug 'Ωkvrt_213', rpr parser.normalize_selectors '#end,#start'
+        debug 'Ωkvrt_214', rpr parser.normalize_selectors '#end,#start,'
+        # selector = new Selector()
+        # # for selector_text in selectors
+        # selector_text = selector.toString()
+        # for item in stream_items
+        #   help 'Ωkvrt_215', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_187', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_216', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_188', DIS
+  help 'Ωkvrt_217', DIS
   DIS.demo_attached()
   return null
 
@@ -553,6 +697,7 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { require_get_local_destinations: @tasks.require_get_local_destinations, }
   # ( new Test guytest_cfg ).test { require_walk_js_tokens: @tasks.require_walk_js_tokens, }
   # ( new Test guytest_cfg ).test { require_parse_require_statements: @tasks.require_parse_require_statements, }
-  ( new Test guytest_cfg ).test { require_jetstream: @tasks.require_jetstream, }
+  # ( new Test guytest_cfg ).test { require_jetstream: @tasks.require_jetstream, }
+  ( new Test guytest_cfg ).test { jetstream_selectors: @tasks.jetstream_selectors, }
   # ( new Test guytest_cfg ).test { require_path_tools: @tasks.require_path_tools, }
   # demo_improved_structure()
