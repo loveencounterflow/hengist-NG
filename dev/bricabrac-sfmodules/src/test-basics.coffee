@@ -669,6 +669,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
           if p.error?
             @throws ( Ωjstrm_190 = -> new Selector p.probe ), p.error
             continue
+
           probe           = p.probe
           sel_list        = selectors_as_list   probe
           nrm_sel         = [ ( normalize_selectors probe)..., ]
