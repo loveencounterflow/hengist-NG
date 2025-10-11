@@ -580,7 +580,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
           { probe: ' cue#start, cue#end ',     sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: true, cues: [ 'start', 'end' ],  accept_all: false, }
           { probe: 'data#',                    sel_list: [ 'data#'                ], nrm_sel: [ 'data#*'               ], sel_rpr: 'data#',              data: true, cues: false,               accept_all: false, }
           #.................................................................................................
-          # { probe: 'data#foo#bar',             }
+          { probe: 'data#foo#bar', error: /IDs on data items not supported/, }
           ]
         #=====================================================================================================
         class Selector
@@ -666,6 +666,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
         #===================================================================================================
         for p in probes_and_matchers
+          if p.error?
+            @throws ( Ωjstrm_190 = -> new Selector p.probe ), p.error
+            continue
           probe           = p.probe
           sel_list        = selectors_as_list   probe
           nrm_sel         = [ ( normalize_selectors probe)..., ]
@@ -677,80 +680,80 @@ GTNG                      = require '../../../apps/guy-test-NG'
           data            = [ ( data )..., ] unless data in [ true, false, ]
           cues            = [ ( cues )..., ] unless cues in [ true, false, ]
           echo { probe, sel_list, nrm_sel, sel_rpr, data, cues, accept_all, }
-          @eq ( Ωjstrm_190 = -> sel_list    ), p.sel_list
-          @eq ( Ωjstrm_191 = -> nrm_sel     ), p.nrm_sel
-          @eq ( Ωjstrm_192 = -> sel_rpr     ), p.sel_rpr
-          @eq ( Ωjstrm_193 = -> data        ), p.data
-          @eq ( Ωjstrm_194 = -> cues        ), p.cues
-          @eq ( Ωjstrm_195 = -> accept_all  ), p.accept_all
+          @eq ( Ωjstrm_191 = -> sel_list    ), p.sel_list
+          @eq ( Ωjstrm_192 = -> nrm_sel     ), p.nrm_sel
+          @eq ( Ωjstrm_193 = -> sel_rpr     ), p.sel_rpr
+          @eq ( Ωjstrm_194 = -> data        ), p.data
+          @eq ( Ωjstrm_195 = -> cues        ), p.cues
+          @eq ( Ωjstrm_196 = -> accept_all  ), p.accept_all
 
-        # debug 'Ωkvrt_196', rpr selectors_as_list ''
-        # debug 'Ωkvrt_197', rpr selectors_as_list [ [ '', ], ]
-        # debug 'Ωkvrt_198', rpr selectors_as_list()
-        # debug 'Ωkvrt_199', rpr selectors_as_list []
-        # debug 'Ωkvrt_200', rpr selectors_as_list [[]]
-        # debug 'Ωkvrt_201', rpr selectors_as_list 'data'
-        # debug 'Ωkvrt_202', rpr selectors_as_list 'cue'
-        # debug 'Ωkvrt_203', rpr selectors_as_list 'cue', 'data'
-        # debug 'Ωkvrt_204', rpr selectors_as_list ' cue#start, cue#end '
-        # debug 'Ωkvrt_205', rpr selectors_as_list '#start'
-        # debug 'Ωkvrt_206', rpr selectors_as_list '#start,#end'
-        # debug 'Ωkvrt_207', rpr selectors_as_list '#end,#start'
-        # debug 'Ωkvrt_208', rpr selectors_as_list '#end,#start,'
-        # debug 'Ωkvrt_209', rpr selectors_as_list '#'
-        # debug 'Ωkvrt_210', rpr selectors_as_list 'data#'
-        # debug 'Ωkvrt_211', rpr selectors_as_list 'data#foo#bar'
-        # debug 'Ωkvrt_212', rpr selectors_as_list '#foo#bar'
-        # debug 'Ωkvrt_213', '————————————————————————————————————–'
-        # debug 'Ωkvrt_214', rpr normalize_selectors ''
-        # debug 'Ωkvrt_215', rpr normalize_selectors [ [ '', ], ]
-        # debug 'Ωkvrt_216', rpr normalize_selectors()
-        # debug 'Ωkvrt_217', rpr normalize_selectors []
-        # debug 'Ωkvrt_218', rpr normalize_selectors [[]]
-        # debug 'Ωkvrt_219', rpr normalize_selectors 'data'
-        # debug 'Ωkvrt_220', rpr normalize_selectors 'cue'
-        # debug 'Ωkvrt_221', rpr normalize_selectors 'cue', 'data'
-        # debug 'Ωkvrt_222', rpr normalize_selectors ' cue#start, cue#end '
-        # debug 'Ωkvrt_223', rpr normalize_selectors '#start'
-        # debug 'Ωkvrt_224', rpr normalize_selectors '#start,#end'
-        # debug 'Ωkvrt_225', rpr normalize_selectors '#end,#start'
-        # debug 'Ωkvrt_226', rpr normalize_selectors '#end,#start,'
-        # debug 'Ωkvrt_227', rpr normalize_selectors '#'
-        # debug 'Ωkvrt_228', rpr normalize_selectors 'data#'
-        # debug 'Ωkvrt_229', rpr normalize_selectors 'data#foo#bar'
-        # debug 'Ωkvrt_230', rpr normalize_selectors '#foo#bar'
-        # debug 'Ωkvrt_231', '————————————————————————————————————–'
-        # debug 'Ωkvrt_232', new Selector ''
-        # debug 'Ωkvrt_233', new Selector [ [ '', ], ]
-        # debug 'Ωkvrt_234', new Selector()
-        # debug 'Ωkvrt_235', new Selector []
-        # debug 'Ωkvrt_236', new Selector [[]]
-        # debug 'Ωkvrt_237', new Selector 'data'
-        # debug 'Ωkvrt_238', new Selector 'cue'
-        # debug 'Ωkvrt_239', new Selector 'cue', 'data'
-        # debug 'Ωkvrt_240', new Selector ' cue#start, cue#end '
-        # debug 'Ωkvrt_241', new Selector '#start'
-        # debug 'Ωkvrt_242', new Selector '#start,#end'
-        # debug 'Ωkvrt_243', new Selector '#end,#start'
-        # debug 'Ωkvrt_244', new Selector '#end,#start,'
-        # debug 'Ωkvrt_245', new Selector '#'
-        # debug 'Ωkvrt_246', new Selector 'data#'
-        # # debug 'Ωkvrt_247', new Selector 'data#foo#bar'
-        # debug 'Ωkvrt_248', new Selector '#foo#bar'
+        # debug 'Ωkvrt_197', rpr selectors_as_list ''
+        # debug 'Ωkvrt_198', rpr selectors_as_list [ [ '', ], ]
+        # debug 'Ωkvrt_199', rpr selectors_as_list()
+        # debug 'Ωkvrt_200', rpr selectors_as_list []
+        # debug 'Ωkvrt_201', rpr selectors_as_list [[]]
+        # debug 'Ωkvrt_202', rpr selectors_as_list 'data'
+        # debug 'Ωkvrt_203', rpr selectors_as_list 'cue'
+        # debug 'Ωkvrt_204', rpr selectors_as_list 'cue', 'data'
+        # debug 'Ωkvrt_205', rpr selectors_as_list ' cue#start, cue#end '
+        # debug 'Ωkvrt_206', rpr selectors_as_list '#start'
+        # debug 'Ωkvrt_207', rpr selectors_as_list '#start,#end'
+        # debug 'Ωkvrt_208', rpr selectors_as_list '#end,#start'
+        # debug 'Ωkvrt_209', rpr selectors_as_list '#end,#start,'
+        # debug 'Ωkvrt_210', rpr selectors_as_list '#'
+        # debug 'Ωkvrt_211', rpr selectors_as_list 'data#'
+        # debug 'Ωkvrt_212', rpr selectors_as_list 'data#foo#bar'
+        # debug 'Ωkvrt_213', rpr selectors_as_list '#foo#bar'
+        # debug 'Ωkvrt_214', '————————————————————————————————————–'
+        # debug 'Ωkvrt_215', rpr normalize_selectors ''
+        # debug 'Ωkvrt_216', rpr normalize_selectors [ [ '', ], ]
+        # debug 'Ωkvrt_217', rpr normalize_selectors()
+        # debug 'Ωkvrt_218', rpr normalize_selectors []
+        # debug 'Ωkvrt_219', rpr normalize_selectors [[]]
+        # debug 'Ωkvrt_220', rpr normalize_selectors 'data'
+        # debug 'Ωkvrt_221', rpr normalize_selectors 'cue'
+        # debug 'Ωkvrt_222', rpr normalize_selectors 'cue', 'data'
+        # debug 'Ωkvrt_223', rpr normalize_selectors ' cue#start, cue#end '
+        # debug 'Ωkvrt_224', rpr normalize_selectors '#start'
+        # debug 'Ωkvrt_225', rpr normalize_selectors '#start,#end'
+        # debug 'Ωkvrt_226', rpr normalize_selectors '#end,#start'
+        # debug 'Ωkvrt_227', rpr normalize_selectors '#end,#start,'
+        # debug 'Ωkvrt_228', rpr normalize_selectors '#'
+        # debug 'Ωkvrt_229', rpr normalize_selectors 'data#'
+        # debug 'Ωkvrt_230', rpr normalize_selectors 'data#foo#bar'
+        # debug 'Ωkvrt_231', rpr normalize_selectors '#foo#bar'
+        # debug 'Ωkvrt_232', '————————————————————————————————————–'
+        # debug 'Ωkvrt_233', new Selector ''
+        # debug 'Ωkvrt_234', new Selector [ [ '', ], ]
+        # debug 'Ωkvrt_235', new Selector()
+        # debug 'Ωkvrt_236', new Selector []
+        # debug 'Ωkvrt_237', new Selector [[]]
+        # debug 'Ωkvrt_238', new Selector 'data'
+        # debug 'Ωkvrt_239', new Selector 'cue'
+        # debug 'Ωkvrt_240', new Selector 'cue', 'data'
+        # debug 'Ωkvrt_241', new Selector ' cue#start, cue#end '
+        # debug 'Ωkvrt_242', new Selector '#start'
+        # debug 'Ωkvrt_243', new Selector '#start,#end'
+        # debug 'Ωkvrt_244', new Selector '#end,#start'
+        # debug 'Ωkvrt_245', new Selector '#end,#start,'
+        # debug 'Ωkvrt_246', new Selector '#'
+        # debug 'Ωkvrt_247', new Selector 'data#'
+        # # debug 'Ωkvrt_248', new Selector 'data#foo#bar'
+        # debug 'Ωkvrt_249', new Selector '#foo#bar'
         # selector = new Selector()
         # # for selector_text in selectors
         # selector_text = selector.toString()
         # for item in stream_items
-        #   help 'Ωkvrt_249', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
+        #   help 'Ωkvrt_250', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_250', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_251', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_251', DIS
+  help 'Ωkvrt_252', DIS
   DIS.demo_attached()
   return null
 
