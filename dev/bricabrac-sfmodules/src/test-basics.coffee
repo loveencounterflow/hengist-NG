@@ -573,25 +573,35 @@ GTNG                      = require '../../../apps/guy-test-NG'
         #=====================================================================================================
         class Selector
           constructor: ( selectors... ) ->
-            @all_data   = true
-            @all_cues   = false
-            @some_data  = true
-            @some_cues  = false
-            @no_data    = false
-            @no_cues    = true
-            @data_ids   = new Set()
-            @cue_ids    = new Set()
+            selectors       = normalize_selectors selectors...
+            @reject_all     = false
+            @data           = true
+            @cues           = false
+            ignore_cue_ids  = false
+            for selector from selectors
+              switch true
+                when selector is 'data#*' then @data = true
+                when selector is 'cue#*' then @cues = true
+                when ( match = selector.match /^data#(?<id>.+)$/ )?
+                  ### TAINT mention original selector next to normalized form ###
+                  throw new Error "Ωjstrm_188 IDs on data items not supported, got #{selector}"
+                when ( match = selector.match /^cue#(?<id>.+)$/ )?
+                  @cues = new Set() unless ( typeof @cues is 'set' )
+                  @cues.add match.groups.id
+                else null
             return undefined
 
           #---------------------------------------------------------------------------------------------------
           select: ( item ) ->
-            is_cue  = ( typeof item ) is 'symbol'
-            is_data = not is_cue
-            return true   if is_cue   and @all_cues
-            return true   if is_data  and @all_data
-            return false  if is_cue   and @no_cues
-            return false  if is_data  and @no_data
-            return false
+            return false if @reject_all
+            if is_cue = ( typeof item ) is 'symbol'
+              return true   if @cues is true
+              return false  if @cues is false
+              return @cues.has id_from_symbol item
+            return true   if @data is true
+            return false  if @data is false
+            throw new Error "Ωjstrm_188 IDs on data items not supported"
+            # return @data.has id_from_value item
 
           #---------------------------------------------------------------------------------------------------
           toString: ->
@@ -602,89 +612,106 @@ GTNG                      = require '../../../apps/guy-test-NG'
             if @no_data   then R.push '-data'
             return R.join '^'
 
-        #=====================================================================================================
-        class Selector_parser
+        #---------------------------------------------------------------------------------------------------
+        id_from_symbol = ( symbol ) ->
+          R = String symbol
+          return ( R )[ 7 ... R.length - 1 ]
 
-          #---------------------------------------------------------------------------------------------------
-          normalize_selectors: ( selectors... ) ->
-            selectors = @_as_flat_list selectors...
-            R         = new Set()
-            for selector in selectors
-              switch true
-                when selector.startsWith '#'  then R.add "cue#{selector}"
-                when ( selector isnt '' ) and ( not /#/.test selector ) then R.add "#{selector}#*"
-                else R.add selector
-            R.add 'data#*' if R.size is 0
-            R.delete '' if R.size isnt 1
-            return R
+        #---------------------------------------------------------------------------------------------------
+        selectors_as_list = ( selectors... ) ->
+          return [] if selectors.length is 0
+          selectors = selectors.flat Infinity
+          return [] if selectors.length is 0
+          return [ '', ] if selectors.length is 1 and selectors[ 0 ] is ''
+          selectors = selectors.join ','
+          selectors = selectors.replace /\s+/g, '' ### TAINT not generally possible ###
+          selectors = selectors.split ',' ### TAINT not generally possible ###
+          return selectors
 
-          #---------------------------------------------------------------------------------------------------
-          _as_flat_list: ( selectors... ) ->
-            return [] if selectors.length is 0
-            selectors = selectors.flat Infinity
-            return [] if selectors.length is 0
-            return [ '', ] if selectors.length is 1 and selectors[ 0 ] is ''
-            selectors = selectors.join ','
-            selectors = selectors.replace /\s+/g, '' ### TAINT not generally possible ###
-            selectors = selectors.split ',' ### TAINT not generally possible ###
-            return selectors
+        #---------------------------------------------------------------------------------------------------
+        normalize_selectors = ( selectors... ) ->
+          selectors = selectors_as_list selectors...
+          R         = new Set()
+          for selector in selectors
+            switch true
+              when selector is ''             then null
+              when selector is '#'            then R.add "cue#*"
+              when /^#.+/.test selector       then R.add "cue#{selector}"
+              when /.+#$/.test selector       then R.add "#{selector}*"
+              when not /#/.test selector      then R.add "#{selector}#*"
+              else R.add selector
+          R.add 'data#*' if R.size is 0
+          R.delete '' if R.size isnt 1
+          return R
 
-          #---------------------------------------------------------------------------------------------------
-          normalize_selectors_2: ( selectors... ) ->
-            selectors = @normalize_selectors_1 selectors...
-            selectors = new Set selectors
-            # selectors
-          # #---------------------------------------------------------------------------------------------------
-          # select: ( selectors..., item ) ->
-          #   selectors = @normalize_selectors_1 selectors...
-          #   is_cue = ( typeof selector ) is 'symbol'
-          #   # return ( if is_cue then false else true ) if
-          #   return null
-          #---------------------------------------------------------------------------------------------------
-          # select_with_: ( selectors..., item ) ->
         #===================================================================================================
-        parser = new Selector_parser()
-        debug 'Ωkvrt_188', rpr parser._as_flat_list ''
-        debug 'Ωkvrt_189', rpr parser._as_flat_list [ [ '', ], ]
-        debug 'Ωkvrt_190', rpr parser._as_flat_list()
-        debug 'Ωkvrt_191', rpr parser._as_flat_list []
-        debug 'Ωkvrt_192', rpr parser._as_flat_list [[]]
-        debug 'Ωkvrt_193', rpr parser._as_flat_list 'data'
-        debug 'Ωkvrt_194', rpr parser._as_flat_list 'cue'
-        debug 'Ωkvrt_195', rpr parser._as_flat_list 'cue', 'data'
-        debug 'Ωkvrt_196', rpr parser._as_flat_list ' cue#start, cue#end '
-        debug 'Ωkvrt_197', rpr parser._as_flat_list '#start'
-        debug 'Ωkvrt_198', rpr parser._as_flat_list '#start,#end'
-        debug 'Ωkvrt_199', rpr parser._as_flat_list '#end,#start'
-        debug 'Ωkvrt_200', rpr parser._as_flat_list '#end,#start,'
-        debug 'Ωkvrt_201', '————————————————————————————————————–'
-        debug 'Ωkvrt_202', rpr parser.normalize_selectors ''
-        debug 'Ωkvrt_203', rpr parser.normalize_selectors [ [ '', ], ]
-        debug 'Ωkvrt_204', rpr parser.normalize_selectors()
-        debug 'Ωkvrt_205', rpr parser.normalize_selectors []
-        debug 'Ωkvrt_206', rpr parser.normalize_selectors [[]]
-        debug 'Ωkvrt_207', rpr parser.normalize_selectors 'data'
-        debug 'Ωkvrt_208', rpr parser.normalize_selectors 'cue'
-        debug 'Ωkvrt_209', rpr parser.normalize_selectors 'cue', 'data'
-        debug 'Ωkvrt_210', rpr parser.normalize_selectors ' cue#start, cue#end '
-        debug 'Ωkvrt_211', rpr parser.normalize_selectors '#start'
-        debug 'Ωkvrt_212', rpr parser.normalize_selectors '#start,#end'
-        debug 'Ωkvrt_213', rpr parser.normalize_selectors '#end,#start'
-        debug 'Ωkvrt_214', rpr parser.normalize_selectors '#end,#start,'
+        debug 'Ωkvrt_189', rpr selectors_as_list ''
+        debug 'Ωkvrt_190', rpr selectors_as_list [ [ '', ], ]
+        debug 'Ωkvrt_191', rpr selectors_as_list()
+        debug 'Ωkvrt_192', rpr selectors_as_list []
+        debug 'Ωkvrt_193', rpr selectors_as_list [[]]
+        debug 'Ωkvrt_194', rpr selectors_as_list 'data'
+        debug 'Ωkvrt_195', rpr selectors_as_list 'cue'
+        debug 'Ωkvrt_196', rpr selectors_as_list 'cue', 'data'
+        debug 'Ωkvrt_197', rpr selectors_as_list ' cue#start, cue#end '
+        debug 'Ωkvrt_198', rpr selectors_as_list '#start'
+        debug 'Ωkvrt_199', rpr selectors_as_list '#start,#end'
+        debug 'Ωkvrt_200', rpr selectors_as_list '#end,#start'
+        debug 'Ωkvrt_201', rpr selectors_as_list '#end,#start,'
+        debug 'Ωkvrt_202', rpr selectors_as_list '#'
+        debug 'Ωkvrt_203', rpr selectors_as_list 'data#'
+        debug 'Ωkvrt_204', rpr selectors_as_list 'data#foo#bar'
+        debug 'Ωkvrt_205', rpr selectors_as_list '#foo#bar'
+        debug 'Ωkvrt_206', '————————————————————————————————————–'
+        debug 'Ωkvrt_207', rpr normalize_selectors ''
+        debug 'Ωkvrt_208', rpr normalize_selectors [ [ '', ], ]
+        debug 'Ωkvrt_209', rpr normalize_selectors()
+        debug 'Ωkvrt_210', rpr normalize_selectors []
+        debug 'Ωkvrt_211', rpr normalize_selectors [[]]
+        debug 'Ωkvrt_212', rpr normalize_selectors 'data'
+        debug 'Ωkvrt_213', rpr normalize_selectors 'cue'
+        debug 'Ωkvrt_214', rpr normalize_selectors 'cue', 'data'
+        debug 'Ωkvrt_215', rpr normalize_selectors ' cue#start, cue#end '
+        debug 'Ωkvrt_216', rpr normalize_selectors '#start'
+        debug 'Ωkvrt_217', rpr normalize_selectors '#start,#end'
+        debug 'Ωkvrt_218', rpr normalize_selectors '#end,#start'
+        debug 'Ωkvrt_219', rpr normalize_selectors '#end,#start,'
+        debug 'Ωkvrt_220', rpr normalize_selectors '#'
+        debug 'Ωkvrt_221', rpr normalize_selectors 'data#'
+        debug 'Ωkvrt_222', rpr normalize_selectors 'data#foo#bar'
+        debug 'Ωkvrt_223', rpr normalize_selectors '#foo#bar'
+        debug 'Ωkvrt_206', '————————————————————————————————————–'
+        debug 'Ωkvrt_207', new Selector ''
+        debug 'Ωkvrt_208', new Selector [ [ '', ], ]
+        debug 'Ωkvrt_209', new Selector()
+        debug 'Ωkvrt_210', new Selector []
+        debug 'Ωkvrt_211', new Selector [[]]
+        debug 'Ωkvrt_212', new Selector 'data'
+        debug 'Ωkvrt_213', new Selector 'cue'
+        debug 'Ωkvrt_214', new Selector 'cue', 'data'
+        debug 'Ωkvrt_215', new Selector ' cue#start, cue#end '
+        debug 'Ωkvrt_216', new Selector '#start'
+        debug 'Ωkvrt_217', new Selector '#start,#end'
+        debug 'Ωkvrt_218', new Selector '#end,#start'
+        debug 'Ωkvrt_219', new Selector '#end,#start,'
+        debug 'Ωkvrt_220', new Selector '#'
+        debug 'Ωkvrt_221', new Selector 'data#'
+        # debug 'Ωkvrt_222', new Selector 'data#foo#bar'
+        debug 'Ωkvrt_223', new Selector '#foo#bar'
         # selector = new Selector()
         # # for selector_text in selectors
         # selector_text = selector.toString()
         # for item in stream_items
-        #   help 'Ωkvrt_215', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
+        #   help 'Ωkvrt_224', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_216', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_225', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_217', DIS
+  help 'Ωkvrt_226', DIS
   DIS.demo_attached()
   return null
 
