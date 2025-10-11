@@ -590,7 +590,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
             @selectors_rpr  = selectors_rpr
             @data           = true
             @cues           = false
-            @accept_all     = ( @data is true ) and ( @cues is true )
             for selector from selectors
               switch true
                 when selector is 'data#*' then @data = true
@@ -602,6 +601,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
                   @cues = new Set() if @cues in [ true, false, ]
                   @cues.add match.groups.id
                 else null
+            @accept_all     = ( @data is true ) and ( @cues is true )
             return undefined
 
           #---------------------------------------------------------------------------------------------------
