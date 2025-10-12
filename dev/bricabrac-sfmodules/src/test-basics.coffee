@@ -550,51 +550,90 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       # @eq ( Ωkvrt_187 = -> type_of ( new Jetstream() )              ), 'object'
       #.....................................................................................................
+      stream_items = [
+        Symbol 'start'
+        Symbol 'end'
+        76.9
+        "Mexico"
+        null
+        ]
+      probes_and_matchers = [
+        { probe: 'cue',                      sel_list: [ 'cue'                  ], nrm_sel: [ 'cue#*'                ], sel_rpr: 'cue',                data: false, cues: true,                accept_all: false,  }
+        { probe: '#',                        sel_list: [ '#'                    ], nrm_sel: [ 'cue#*'                ], sel_rpr: '#',                  data: false, cues: true,                accept_all: false,  }
+        #...................................................................................................
+        { probe: 'cue#end',                  sel_list: [ 'cue#end'              ], nrm_sel: [ 'cue#end'              ], sel_rpr: 'cue#end',            data: false, cues: [ 'end' ],           accept_all: false, }
+        { probe: '#end',                     sel_list: [ '#end'                 ], nrm_sel: [ 'cue#end'              ], sel_rpr: '#end',               data: false, cues: [ 'end' ],           accept_all: false, }
+        #...................................................................................................
+        { probe: '#end,#start,',             sel_list: [ '#end', '#start', ''   ], nrm_sel: [ 'cue#end', 'cue#start' ], sel_rpr: '#end, #start, ',     data: false, cues: [ 'end', 'start' ],  accept_all: false, }
+        { probe: '#end,#start',              sel_list: [ '#end', '#start'       ], nrm_sel: [ 'cue#end', 'cue#start' ], sel_rpr: '#end, #start',       data: false, cues: [ 'end', 'start' ],  accept_all: false, }
+        #...................................................................................................
+        { probe: 'cue#foo#bar',              sel_list: [ 'cue#foo#bar'          ], nrm_sel: [ 'cue#foo#bar'          ], sel_rpr: 'cue#foo#bar',        data: false, cues: [ 'foo#bar' ],       accept_all: false, }
+        { probe: '#foo#bar',                 sel_list: [ '#foo#bar'             ], nrm_sel: [ 'cue#foo#bar'          ], sel_rpr: '#foo#bar',           data: false, cues: [ 'foo#bar' ],       accept_all: false, }
+        #...................................................................................................
+        { probe: 'cue#start',                sel_list: [ 'cue#start'            ], nrm_sel: [ 'cue#start'            ], sel_rpr: 'cue#start',          data: false, cues: [ 'start' ],         accept_all: false, }
+        { probe: '#start',                   sel_list: [ '#start'               ], nrm_sel: [ 'cue#start'            ], sel_rpr: '#start',             data: false, cues: [ 'start' ],         accept_all: false, }
+        #...................................................................................................
+        { probe: [ 'cue#start', 'cue#end' ], sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: false, cues: [ 'start', 'end' ],  accept_all: false, }
+        { probe: [ '#start', '#end' ],       sel_list: [ '#start', '#end'       ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: '#start, #end',       data: false, cues: [ 'start', 'end' ],  accept_all: false, }
+        { probe: 'cue#start,cue#end',        sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: false, cues: [ 'start', 'end' ],  accept_all: false, }
+        { probe: '#start,#end',              sel_list: [ '#start', '#end'       ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: '#start, #end',       data: false, cues: [ 'start', 'end' ],  accept_all: false, }
+        { probe: ' cue#start, cue#end ',     sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: false, cues: [ 'start', 'end' ],  accept_all: false, }
+        #...................................................................................................
+        { probe: null,                       sel_list: [ ''                     ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
+        { probe: [],                         sel_list: [                        ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
+        { probe: [ [] ],                     sel_list: [                        ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
+        { probe: [ [ '' ] ],                 sel_list: [ ''                     ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
+        { probe: 'data',                     sel_list: [ 'data'                 ], nrm_sel: [ 'data#*'               ], sel_rpr: 'data',               data: true, cues: false,               accept_all: false, }
+        { probe: '',                         sel_list: [ ''                     ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
+        { probe: 'data#',                    sel_list: [ 'data#'                ], nrm_sel: [ 'data#*'               ], sel_rpr: 'data#',              data: true, cues: false,               accept_all: false, }
+        #...................................................................................................
+        { probe: [ 'data', 'cue' ],          sel_list: [ 'data', 'cue'          ], nrm_sel: [ 'data#*', 'cue#*'      ], sel_rpr: 'data, cue',          data: true, cues: true,                accept_all: true,  }
+        { probe: 'data, cue',                sel_list: [ 'data', 'cue'          ], nrm_sel: [ 'data#*', 'cue#*'      ], sel_rpr: 'data, cue',          data: true, cues: true,                accept_all: true,  }
+        #...................................................................................................
+        { probe: 'data#foo#bar', error: /IDs on data items not supported/, }
+        ]
+      selectors_and_selections = [
+        { sel: 'cue',                      nrm: 'cue#*',             'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: '#',                        nrm: 'cue#*',             'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        #...................................................................................................
+        { sel: 'cue#end',                  nrm: 'cue#end',           'Symbol(start)': false, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: '#end',                     nrm: 'cue#end',           'Symbol(start)': false, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        #...................................................................................................
+        { sel: '#end,#start,',             nrm: 'cue#end,cue#start', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: '#end,#start',              nrm: 'cue#end,cue#start', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        #...................................................................................................
+        { sel: 'cue#foo#bar',              nrm: 'cue#foo#bar',       'Symbol(start)': false, 'Symbol(end)': false, '76.9': false, "'Mexico'": false, null: false }
+        { sel: '#foo#bar',                 nrm: 'cue#foo#bar',       'Symbol(start)': false, 'Symbol(end)': false, '76.9': false, "'Mexico'": false, null: false }
+        #...................................................................................................
+        { sel: 'cue#start',                nrm: 'cue#start',         'Symbol(start)': true, 'Symbol(end)': false, '76.9': false, "'Mexico'": false, null: false }
+        { sel: '#start',                   nrm: 'cue#start',         'Symbol(start)': true, 'Symbol(end)': false, '76.9': false, "'Mexico'": false, null: false }
+        #...................................................................................................
+        { sel: [ 'cue#start', 'cue#end' ], nrm: 'cue#start,cue#end', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: [ '#start', '#end' ],       nrm: 'cue#start,cue#end', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: 'cue#start,cue#end',        nrm: 'cue#start,cue#end', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: '#start,#end',              nrm: 'cue#start,cue#end', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        { sel: ' cue#start, cue#end ',     nrm: 'cue#start,cue#end', 'Symbol(start)': true, 'Symbol(end)': true, '76.9': false, "'Mexico'": false, null: false }
+        #...................................................................................................
+        { sel: null,                       nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        { sel: [],                         nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        { sel: [ [] ],                     nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        { sel: [ [ '' ] ],                 nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        { sel: 'data',                     nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        { sel: '',                         nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        { sel: 'data#',                    nrm: 'data#*',            'Symbol(start)': false, 'Symbol(end)': false, '76.9': true, "'Mexico'": true, null: true }
+        #...................................................................................................
+        { sel: [ 'data', 'cue' ],          nrm: 'data#*,cue#*',      'Symbol(start)': true, 'Symbol(end)': true, '76.9': true, "'Mexico'": true, null: true }
+        { sel: 'data, cue',                nrm: 'data#*,cue#*',      'Symbol(start)': true, 'Symbol(end)': true, '76.9': true, "'Mexico'": true, null: true }
+        ]
+      #=====================================================================================================
       do =>
-        stream_items = [
-          Symbol 'start'
-          Symbol.for 'start'
-          Symbol 'end'
-          Symbol.for 'end'
-          76.9
-          "Mexico"
-          ]
-        probes_and_matchers = [
-          { probe: null,                       sel_list: [ ''                     ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
-          { probe: [],                         sel_list: [                        ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
-          { probe: [ [] ],                     sel_list: [                        ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
-          { probe: [ [ '' ] ],                 sel_list: [ ''                     ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
-          { probe: [ 'data', 'cue' ],          sel_list: [ 'data', 'cue'          ], nrm_sel: [ 'data#*', 'cue#*'      ], sel_rpr: 'data, cue',          data: true, cues: true,                accept_all: true,  }
-          { probe: [ 'cue#start', 'cue#end' ], sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: true, cues: [ 'start', 'end' ],  accept_all: false, }
-          { probe: [ '#start', '#end' ],       sel_list: [ '#start', '#end'       ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: '#start, #end',       data: true, cues: [ 'start', 'end' ],  accept_all: false, }
-          { probe: 'data, cue',                sel_list: [ 'data', 'cue'          ], nrm_sel: [ 'data#*', 'cue#*'      ], sel_rpr: 'data, cue',          data: true, cues: true,                accept_all: true,  }
-          { probe: 'data',                     sel_list: [ 'data'                 ], nrm_sel: [ 'data#*'               ], sel_rpr: 'data',               data: true, cues: false,               accept_all: false, }
-          { probe: 'cue#foo#bar',              sel_list: [ 'cue#foo#bar'          ], nrm_sel: [ 'cue#foo#bar'          ], sel_rpr: 'cue#foo#bar',        data: true, cues: [ 'foo#bar' ],       accept_all: false, }
-          { probe: 'cue',                      sel_list: [ 'cue'                  ], nrm_sel: [ 'cue#*'                ], sel_rpr: 'cue',                data: true, cues: true,                accept_all: true,  }
-          { probe: 'cue#start,cue#end',        sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: true, cues: [ 'start', 'end' ],  accept_all: false, }
-          { probe: 'cue#start',                sel_list: [ 'cue#start'            ], nrm_sel: [ 'cue#start'            ], sel_rpr: 'cue#start',          data: true, cues: [ 'start' ],         accept_all: false, }
-          { probe: 'cue#end',                  sel_list: [ 'cue#end'              ], nrm_sel: [ 'cue#end'              ], sel_rpr: 'cue#end',            data: true, cues: [ 'end' ],           accept_all: false, }
-          { probe: '',                         sel_list: [ ''                     ], nrm_sel: [ 'data#*'               ], sel_rpr: '',                   data: true, cues: false,               accept_all: false, }
-          { probe: '#start,#end',              sel_list: [ '#start', '#end'       ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: '#start, #end',       data: true, cues: [ 'start', 'end' ],  accept_all: false, }
-          { probe: '#start',                   sel_list: [ '#start'               ], nrm_sel: [ 'cue#start'            ], sel_rpr: '#start',             data: true, cues: [ 'start' ],         accept_all: false, }
-          { probe: '#foo#bar',                 sel_list: [ '#foo#bar'             ], nrm_sel: [ 'cue#foo#bar'          ], sel_rpr: '#foo#bar',           data: true, cues: [ 'foo#bar' ],       accept_all: false, }
-          { probe: '#end,#start,',             sel_list: [ '#end', '#start', ''   ], nrm_sel: [ 'cue#end', 'cue#start' ], sel_rpr: '#end, #start, ',     data: true, cues: [ 'end', 'start' ],  accept_all: false, }
-          { probe: '#end,#start',              sel_list: [ '#end', '#start'       ], nrm_sel: [ 'cue#end', 'cue#start' ], sel_rpr: '#end, #start',       data: true, cues: [ 'end', 'start' ],  accept_all: false, }
-          { probe: '#end',                     sel_list: [ '#end'                 ], nrm_sel: [ 'cue#end'              ], sel_rpr: '#end',               data: true, cues: [ 'end' ],           accept_all: false, }
-          { probe: '#',                        sel_list: [ '#'                    ], nrm_sel: [ 'cue#*'                ], sel_rpr: '#',                  data: true, cues: true,                accept_all: true,  }
-          { probe: ' cue#start, cue#end ',     sel_list: [ 'cue#start', 'cue#end' ], nrm_sel: [ 'cue#start', 'cue#end' ], sel_rpr: 'cue#start, cue#end', data: true, cues: [ 'start', 'end' ],  accept_all: false, }
-          { probe: 'data#',                    sel_list: [ 'data#'                ], nrm_sel: [ 'data#*'               ], sel_rpr: 'data#',              data: true, cues: false,               accept_all: false, }
-          #.................................................................................................
-          { probe: 'data#foo#bar', error: /IDs on data items not supported/, }
-          ]
-        #===================================================================================================
         for p in probes_and_matchers
           if p.error?
-            @throws ( Ωjstrm_190 = -> new Selector p.probe ), p.error
+            @throws ( Ωjstrm_188 = -> new Selector p.probe ), p.error
             continue
           probe           = p.probe
           sel_list        = selectors_as_list   probe
-          nrm_sel         = [ ( normalize_selectors probe)..., ]
+          nrm_sel         = [ ( normalize_selectors probe )..., ]
           sel             = new Selector        probe
           sel_rpr         = sel.toString()
           { data,
@@ -603,24 +642,40 @@ GTNG                      = require '../../../apps/guy-test-NG'
           data            = [ ( data )..., ] unless data in [ true, false, ]
           cues            = [ ( cues )..., ] unless cues in [ true, false, ]
           # echo { probe, sel_list, nrm_sel, sel_rpr, data, cues, accept_all, }
-          @eq ( Ωjstrm_191 = -> sel_list    ), p.sel_list
-          @eq ( Ωjstrm_192 = -> nrm_sel     ), p.nrm_sel
-          @eq ( Ωjstrm_193 = -> sel_rpr     ), p.sel_rpr
-          @eq ( Ωjstrm_194 = -> data        ), p.data
-          @eq ( Ωjstrm_195 = -> cues        ), p.cues
-          @eq ( Ωjstrm_196 = -> accept_all  ), p.accept_all
-
-        # for item in stream_items
-        #   help 'Ωkvrt_250', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
+          @eq ( Ωjstrm_189 = -> sel_list    ), p.sel_list
+          @eq ( Ωjstrm_190 = -> nrm_sel     ), p.nrm_sel
+          @eq ( Ωjstrm_191 = -> sel_rpr     ), p.sel_rpr
+          @eq ( Ωjstrm_192 = -> data        ), p.data
+          @eq ( Ωjstrm_193 = -> cues        ), p.cues
+          @eq ( Ωjstrm_194 = -> accept_all  ), p.accept_all
+        return null
+      #-----------------------------------------------------------------------------------------------------
+      do =>
+        display_matcher = true
+        display_matcher = false
+        for entry in selectors_and_selections
+          selector  = new Selector entry.sel
+          nrm       = [ ( normalize_selectors entry.sel )..., ].join ','
+          line      = { sel: entry.sel, nrm, }
+          for item in stream_items
+            result            = selector.select item
+            line[ rpr item ]  = selector.select item
+            unless display_matcher
+              if result isnt entry[ rpr item ]
+                echo { selector: entry.sel, nrm, item, result, }
+              @eq ( Ωkvrt_195 = -> result ), entry[ rpr item ]
+          if display_matcher
+            echo line
+        return null
       #.....................................................................................................
       return null
 
 
 #===========================================================================================================
 demo_improved_structure = ->
-  help 'Ωkvrt_251', require '../../../apps/bricabrac-sfmodules'
+  help 'Ωkvrt_196', require '../../../apps/bricabrac-sfmodules'
   DIS = require '../../../apps/bricabrac-sfmodules/lib/_demo-improved-structure'
-  help 'Ωkvrt_252', DIS
+  help 'Ωkvrt_197', DIS
   DIS.demo_attached()
   return null
 
