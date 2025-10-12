@@ -542,6 +542,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Jetstream,
         $,
         internals,              } = SFMODULES.require_jetstream()
+      { Selector,
+        _normalize_selectors,
+        normalize_selectors,
+        selectors_as_list,
+        id_from_symbol,         } = internals
       #.....................................................................................................
       # @eq ( Ωkvrt_187 = -> type_of ( new Jetstream() )              ), 'object'
       #.....................................................................................................
@@ -582,94 +587,11 @@ GTNG                      = require '../../../apps/guy-test-NG'
           #.................................................................................................
           { probe: 'data#foo#bar', error: /IDs on data items not supported/, }
           ]
-        #=====================================================================================================
-        class Selector
-          constructor: ( selectors... ) ->
-            { selectors_rpr,
-              selectors,  } = _normalize_selectors selectors...
-            @selectors_rpr  = selectors_rpr
-            @data           = true
-            @cues           = false
-            for selector from selectors
-              switch true
-                when selector is 'data#*' then @data = true
-                when selector is 'cue#*' then @cues = true
-                when ( match = selector.match /^data#(?<id>.+)$/ )?
-                  ### TAINT mention original selector next to normalized form ###
-                  throw new Error "Ωjstrm_188 IDs on data items not supported, got #{selector}"
-                when ( match = selector.match /^cue#(?<id>.+)$/ )?
-                  @cues = new Set() if @cues in [ true, false, ]
-                  @cues.add match.groups.id
-                else null
-            @accept_all     = ( @data is true ) and ( @cues is true )
-            return undefined
-
-          #---------------------------------------------------------------------------------------------------
-          _get_excerpt: -> { data: @data, cues: @cues, accept_all: @accept_all, }
-
-          #---------------------------------------------------------------------------------------------------
-          select: ( item ) ->
-            return true if @accept_all
-            if is_cue = ( typeof item ) is 'symbol'
-              return true   if @cues is true
-              return false  if @cues is false
-              return @cues.has id_from_symbol item
-            return true   if @data is true
-            return false  if @data is false
-            throw new Error "Ωjstrm_189 IDs on data items not supported in selector #{rpr @toString}"
-            # return @data.has id_from_value item
-
-          #---------------------------------------------------------------------------------------------------
-          toString: -> @selectors_rpr
-            # R = []
-            # if @all_cues  then R.push '+cue'
-            # if @no_cues   then R.push '-cue'
-            # if @all_data  then R.push '+data'
-            # if @no_data   then R.push '-data'
-            # return R.join '^'
-
-        #---------------------------------------------------------------------------------------------------
-        id_from_symbol = ( symbol ) ->
-          R = String symbol
-          return ( R )[ 7 ... R.length - 1 ]
-
-        #---------------------------------------------------------------------------------------------------
-        selectors_as_list = ( selectors... ) ->
-          return [] if selectors.length is 0
-          selectors = selectors.flat Infinity
-          return [] if selectors.length is 0
-          return [ '', ] if selectors.length is 1 and selectors[ 0 ] is ''
-          selectors = selectors.join ','
-          selectors = selectors.replace /\s+/g, '' ### TAINT not generally possible ###
-          selectors = selectors.split ',' ### TAINT not generally possible ###
-          return selectors
-
-        #---------------------------------------------------------------------------------------------------
-        normalize_selectors = ( selectors... ) -> ( _normalize_selectors selectors... ).selectors
-
-        #---------------------------------------------------------------------------------------------------
-        _normalize_selectors = ( selectors... ) ->
-          selectors     = selectors_as_list selectors...
-          selectors_rpr = selectors.join ', '
-          R             = new Set()
-          for selector in selectors
-            switch true
-              when selector is ''             then null
-              when selector is '#'            then R.add "cue#*"
-              when /^#.+/.test selector       then R.add "cue#{selector}"
-              when /.+#$/.test selector       then R.add "#{selector}*"
-              when not /#/.test selector      then R.add "#{selector}#*"
-              else R.add selector
-          R.add 'data#*' if R.size is 0
-          R.delete '' if R.size isnt 1
-          return { selectors: R, selectors_rpr, }
-
         #===================================================================================================
         for p in probes_and_matchers
           if p.error?
             @throws ( Ωjstrm_190 = -> new Selector p.probe ), p.error
             continue
-
           probe           = p.probe
           sel_list        = selectors_as_list   probe
           nrm_sel         = [ ( normalize_selectors probe)..., ]
@@ -680,7 +602,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
             accept_all, } = sel._get_excerpt()
           data            = [ ( data )..., ] unless data in [ true, false, ]
           cues            = [ ( cues )..., ] unless cues in [ true, false, ]
-          echo { probe, sel_list, nrm_sel, sel_rpr, data, cues, accept_all, }
+          # echo { probe, sel_list, nrm_sel, sel_rpr, data, cues, accept_all, }
           @eq ( Ωjstrm_191 = -> sel_list    ), p.sel_list
           @eq ( Ωjstrm_192 = -> nrm_sel     ), p.nrm_sel
           @eq ( Ωjstrm_193 = -> sel_rpr     ), p.sel_rpr
@@ -688,62 +610,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
           @eq ( Ωjstrm_195 = -> cues        ), p.cues
           @eq ( Ωjstrm_196 = -> accept_all  ), p.accept_all
 
-        # debug 'Ωkvrt_197', rpr selectors_as_list ''
-        # debug 'Ωkvrt_198', rpr selectors_as_list [ [ '', ], ]
-        # debug 'Ωkvrt_199', rpr selectors_as_list()
-        # debug 'Ωkvrt_200', rpr selectors_as_list []
-        # debug 'Ωkvrt_201', rpr selectors_as_list [[]]
-        # debug 'Ωkvrt_202', rpr selectors_as_list 'data'
-        # debug 'Ωkvrt_203', rpr selectors_as_list 'cue'
-        # debug 'Ωkvrt_204', rpr selectors_as_list 'cue', 'data'
-        # debug 'Ωkvrt_205', rpr selectors_as_list ' cue#start, cue#end '
-        # debug 'Ωkvrt_206', rpr selectors_as_list '#start'
-        # debug 'Ωkvrt_207', rpr selectors_as_list '#start,#end'
-        # debug 'Ωkvrt_208', rpr selectors_as_list '#end,#start'
-        # debug 'Ωkvrt_209', rpr selectors_as_list '#end,#start,'
-        # debug 'Ωkvrt_210', rpr selectors_as_list '#'
-        # debug 'Ωkvrt_211', rpr selectors_as_list 'data#'
-        # debug 'Ωkvrt_212', rpr selectors_as_list 'data#foo#bar'
-        # debug 'Ωkvrt_213', rpr selectors_as_list '#foo#bar'
-        # debug 'Ωkvrt_214', '————————————————————————————————————–'
-        # debug 'Ωkvrt_215', rpr normalize_selectors ''
-        # debug 'Ωkvrt_216', rpr normalize_selectors [ [ '', ], ]
-        # debug 'Ωkvrt_217', rpr normalize_selectors()
-        # debug 'Ωkvrt_218', rpr normalize_selectors []
-        # debug 'Ωkvrt_219', rpr normalize_selectors [[]]
-        # debug 'Ωkvrt_220', rpr normalize_selectors 'data'
-        # debug 'Ωkvrt_221', rpr normalize_selectors 'cue'
-        # debug 'Ωkvrt_222', rpr normalize_selectors 'cue', 'data'
-        # debug 'Ωkvrt_223', rpr normalize_selectors ' cue#start, cue#end '
-        # debug 'Ωkvrt_224', rpr normalize_selectors '#start'
-        # debug 'Ωkvrt_225', rpr normalize_selectors '#start,#end'
-        # debug 'Ωkvrt_226', rpr normalize_selectors '#end,#start'
-        # debug 'Ωkvrt_227', rpr normalize_selectors '#end,#start,'
-        # debug 'Ωkvrt_228', rpr normalize_selectors '#'
-        # debug 'Ωkvrt_229', rpr normalize_selectors 'data#'
-        # debug 'Ωkvrt_230', rpr normalize_selectors 'data#foo#bar'
-        # debug 'Ωkvrt_231', rpr normalize_selectors '#foo#bar'
-        # debug 'Ωkvrt_232', '————————————————————————————————————–'
-        # debug 'Ωkvrt_233', new Selector ''
-        # debug 'Ωkvrt_234', new Selector [ [ '', ], ]
-        # debug 'Ωkvrt_235', new Selector()
-        # debug 'Ωkvrt_236', new Selector []
-        # debug 'Ωkvrt_237', new Selector [[]]
-        # debug 'Ωkvrt_238', new Selector 'data'
-        # debug 'Ωkvrt_239', new Selector 'cue'
-        # debug 'Ωkvrt_240', new Selector 'cue', 'data'
-        # debug 'Ωkvrt_241', new Selector ' cue#start, cue#end '
-        # debug 'Ωkvrt_242', new Selector '#start'
-        # debug 'Ωkvrt_243', new Selector '#start,#end'
-        # debug 'Ωkvrt_244', new Selector '#end,#start'
-        # debug 'Ωkvrt_245', new Selector '#end,#start,'
-        # debug 'Ωkvrt_246', new Selector '#'
-        # debug 'Ωkvrt_247', new Selector 'data#'
-        # # debug 'Ωkvrt_248', new Selector 'data#foo#bar'
-        # debug 'Ωkvrt_249', new Selector '#foo#bar'
-        # selector = new Selector()
-        # # for selector_text in selectors
-        # selector_text = selector.toString()
         # for item in stream_items
         #   help 'Ωkvrt_250', f"#{rpr selector_text}:<20c; #{rpr item}:<20c; #{selector.select item}"
       #.....................................................................................................
