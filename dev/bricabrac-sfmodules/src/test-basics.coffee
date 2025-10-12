@@ -480,7 +480,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         first         = Symbol 'first'
         last          = Symbol 'last'
-        jet        = new Jetstream()
+        jet           = new Jetstream()
         g             = ( d ) ->
           urge 'Ωkvrt_163', d
           info 'Ωkvrt_164', "yield for first" if d is first
@@ -504,7 +504,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do => ### same as above but the transforms are seperate ###
         first         = Symbol 'first'
         last          = Symbol 'last'
-        jet        = new Jetstream()
+        jet           = new Jetstream()
         g1            = ( d ) ->
           urge 'Ωkvrt_173 g1', d
           info 'Ωkvrt_174 g1', "yield for first" if d is first
