@@ -35,47 +35,47 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { Jetstream,
         internals,              } = SFMODULES.require_jetstream()
       #.....................................................................................................
-      @eq ( Ωkvrt___1 = -> type_of ( new Jetstream() )              ), 'object'
-      @eq ( Ωkvrt___2 = -> type_of ( new Jetstream() ).walk 'data'  ), 'generator'
+      @eq ( Ωjtstm___1 = -> type_of ( new Jetstream() )              ), 'object'
+      @eq ( Ωjtstm___2 = -> type_of ( new Jetstream() ).walk 'data'  ), 'generator'
       #.....................................................................................................
       do =>
         first     = { 'first',  }
         last      = { 'last',   }
         jet       = new Jetstream()
         #...................................................................................................
-        @eq ( Ωap___3 = -> jet.length                                       ), 0
-        @eq ( Ωap___4 = -> jet.is_empty                                     ), true
+        @eq ( Ωjtstm___3 = -> jet.length                                       ), 0
+        @eq ( Ωjtstm___4 = -> jet.is_empty                                     ), true
         #...................................................................................................
         watched_1 = []
         watched_2 = []
         watched_3 = []
         watched_4 = []
-        jet.push watch = ( d              ) -> help 'Ωap___5', rpr d; watched_1.push d
+        jet.push watch = ( d              ) -> help 'Ωjtstm___5', rpr d; watched_1.push d
         jet.push upper = ( d              ) ->
           return yield d unless ( typeof d ) is 'string'
           yield d.toUpperCase()
-        jet.push watch = ( d              ) -> info 'Ωap___6', rpr d; watched_2.push d
+        jet.push watch = ( d              ) -> info 'Ωjtstm___6', rpr d; watched_2.push d
         jet.push ex    = ( d, mark = '!'  ) ->
           return yield d if d in [ first, last, ]
           yield d + mark
-        jet.push watch = ( d              ) -> help 'Ωap___7', rpr d; watched_3.push d
+        jet.push watch = ( d              ) -> help 'Ωjtstm___7', rpr d; watched_3.push d
         jet.push surround = ( d ) ->
           return yield """Let's say: \""""  if d is first
           return yield '".'                 if d is last
           yield d
         jet.push filter = ( d              ) -> yield d unless d in [ first, last, ]
-        jet.push watch  = ( d              ) -> urge 'Ωap___8', rpr d; watched_4.push d
+        jet.push watch  = ( d              ) -> urge 'Ωjtstm___8', rpr d; watched_4.push d
         #...................................................................................................
-        @eq ( Ωap___9 = -> jet.length                                               ), 8
-        @eq ( Ωap__10 = -> jet.is_empty                                             ), false
-        @eq ( Ωap__11 = -> jet.send first, 'hidey-ho', last                         ), null
-        @eq ( Ωap__12 = -> [ ( d for d from jet.walk() )..., ]                      ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
-        @eq ( Ωap__13 = -> watched_1                                                ), [ first, 'hidey-ho',   last, ]
-        @eq ( Ωap__14 = -> watched_2                                                ), [ first, 'HIDEY-HO',   last, ]
-        @eq ( Ωap__15 = -> watched_3                                                ), [ first, 'HIDEY-HO!',  last, ]
-        @eq ( Ωap__16 = -> watched_4                                                ), [ """Let's say: \"""", 'HIDEY-HO!', '".'   ]
-        @eq ( Ωap__17 = -> [ ( d for d from jet.walk first, 'hidey-ho', last )..., ].join ''     ), """Let's say: "HIDEY-HO!"."""
-        @eq ( Ωap__18 = -> (   d for d from jet.run  first, 'hidey-ho', last       ).join ''     ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωjtstm___9 = -> jet.length                                               ), 8
+        @eq ( Ωjtstm__10 = -> jet.is_empty                                             ), false
+        @eq ( Ωjtstm__11 = -> jet.send first, 'hidey-ho', last                         ), null
+        @eq ( Ωjtstm__12 = -> [ ( d for d from jet.walk() )..., ]                      ), [ """Let's say: \"""", 'HIDEY-HO!', '".' ]
+        @eq ( Ωjtstm__13 = -> watched_1                                                ), [ first, 'hidey-ho',   last, ]
+        @eq ( Ωjtstm__14 = -> watched_2                                                ), [ first, 'HIDEY-HO',   last, ]
+        @eq ( Ωjtstm__15 = -> watched_3                                                ), [ first, 'HIDEY-HO!',  last, ]
+        @eq ( Ωjtstm__16 = -> watched_4                                                ), [ """Let's say: \"""", 'HIDEY-HO!', '".'   ]
+        @eq ( Ωjtstm__17 = -> [ ( d for d from jet.walk first, 'hidey-ho', last )..., ].join ''     ), """Let's say: "HIDEY-HO!"."""
+        @eq ( Ωjtstm__18 = -> (   d for d from jet.run  first, 'hidey-ho', last       ).join ''     ), """Let's say: "HIDEY-HO!"."""
         return null
       #.....................................................................................................
       return null
@@ -96,7 +96,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet.push add_1 = ( d ) -> yield d + 1
         jet.push add_1 = ( d ) -> yield d + 1
         #...................................................................................................
-        @eq ( Ωap__19 = -> [ ( d for d from jet.walk 0 )..., ]          ), [ 5, ]
+        @eq ( Ωjtstm__19 = -> [ ( d for d from jet.walk 0 )..., ]          ), [ 5, ]
         return null
       #.....................................................................................................
       return null
@@ -110,8 +110,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       do =>
         ### empty pipeline is a pipeline without transforms, so data is passed through untransformed: ###
-        @eq ( Ωap__20 = -> [ ( ( new Jetstream() ).walk 'data' )...,  ] ), [ 'data', ]
-        @eq ( Ωap__21 = ->     ( new Jetstream() ).run  'data'          ), [ 'data', ]
+        @eq ( Ωjtstm__20 = -> [ ( ( new Jetstream() ).walk 'data' )...,  ] ), [ 'data', ]
+        @eq ( Ωjtstm__21 = ->     ( new Jetstream() ).run  'data'          ), [ 'data', ]
         return null
       #.....................................................................................................
       return null
@@ -139,9 +139,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
         p_3.push ( d ) -> collector.push 'p3-t1'; yield d + ' № 5'
         p_3.push p_2
         p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
-        @eq ( Ωap__22 = -> p_3.run        'my-data' ), [ 'my-data № 5 № 3 № 1 № 2 № 4 № 6' , ]
-        @eq ( Ωap__23 = -> collector                ), [ 'p3-t1', 'p2-t1', 'p1-t1', 'p1-t2', 'p2-t2', 'p3-t2' ]
-        @eq ( Ωap__24 = -> p_3.get_first  'my-data' ), 'my-data № 5 № 3 № 1 № 2 № 4 № 6'
+        @eq ( Ωjtstm__22 = -> p_3.run        'my-data' ), [ 'my-data № 5 № 3 № 1 № 2 № 4 № 6' , ]
+        @eq ( Ωjtstm__23 = -> collector                ), [ 'p3-t1', 'p2-t1', 'p1-t1', 'p1-t2', 'p2-t2', 'p3-t2' ]
+        @eq ( Ωjtstm__24 = -> p_3.get_first  'my-data' ), 'my-data № 5 № 3 № 1 № 2 № 4 № 6'
         return null
       #.....................................................................................................
       return null
@@ -158,7 +158,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         last          = { 'last',   }
         jet           = new Jetstream()
         g1            = ( d ) ->
-          urge 'Ωkvrt__25 g1', d
+          urge 'Ωjtstm__25 g1', d
           switch d
             when first
               yield d
@@ -169,7 +169,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
             else
               yield d * 2
         g2            = ( d ) ->
-          urge 'Ωkvrt__26 g2', d
+          urge 'Ωjtstm__26 g2', d
           switch d
             when first
               yield d
@@ -182,10 +182,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet.push g1
         jet.push g2
         jet.push ( d ) -> yield d unless d in [ first, last, ]
-        debug 'Ωkvrt__27', jet
-        whisper 'Ωkvrt__28', '————————————————————————————————————–'
-        @eq ( Ωkvrt__29 = -> jet.run first, 22, last                   ), [ 0, 0, 88, 2, 1 ]
-        whisper 'Ωkvrt__30', '————————————————————————————————————–'
+        debug 'Ωjtstm__27', jet
+        whisper 'Ωjtstm__28', '————————————————————————————————————–'
+        @eq ( Ωjtstm__29 = -> jet.run first, 22, last                   ), [ 0, 0, 88, 2, 1 ]
+        whisper 'Ωjtstm__30', '————————————————————————————————————–'
         return null
       #.....................................................................................................
       return null
@@ -202,7 +202,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         selectors_as_list,
         id_from_symbol,         } = internals
       #.....................................................................................................
-      # @eq ( Ωkvrt__31 = -> type_of ( new Jetstream() )              ), 'object'
+      # @eq ( Ωjtstm__31 = -> type_of ( new Jetstream() )              ), 'object'
       #.....................................................................................................
       stream_items = [
         Symbol 'start'
@@ -283,7 +283,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
       do =>
         for p in probes_and_matchers
           if p.error?
-            @throws ( Ωjstrm__32 = -> new Selector p.probe ), p.error
+            @throws ( Ωjtstm__32 = -> new Selector p.probe ), p.error
             continue
           probe           = p.probe
           sel_list        = selectors_as_list   probe
@@ -296,12 +296,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
           data            = [ ( data )..., ] unless data in [ true, false, ]
           cues            = [ ( cues )..., ] unless cues in [ true, false, ]
           # echo { probe, sel_list, nrm_sel, sel_rpr, data, cues, accept_all, }
-          @eq ( Ωjstrm__33 = -> sel_list    ), p.sel_list
-          @eq ( Ωjstrm__34 = -> nrm_sel     ), p.nrm_sel
-          @eq ( Ωjstrm__35 = -> sel_rpr     ), p.sel_rpr
-          @eq ( Ωjstrm__36 = -> data        ), p.data
-          @eq ( Ωjstrm__37 = -> cues        ), p.cues
-          @eq ( Ωjstrm__38 = -> accept_all  ), p.accept_all
+          @eq ( Ωjtstm__33 = -> sel_list    ), p.sel_list
+          @eq ( Ωjtstm__34 = -> nrm_sel     ), p.nrm_sel
+          @eq ( Ωjtstm__35 = -> sel_rpr     ), p.sel_rpr
+          @eq ( Ωjtstm__36 = -> data        ), p.data
+          @eq ( Ωjtstm__37 = -> cues        ), p.cues
+          @eq ( Ωjtstm__38 = -> accept_all  ), p.accept_all
         return null
       #-----------------------------------------------------------------------------------------------------
       do =>
@@ -317,7 +317,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
             unless display_matcher
               if result isnt entry[ rpr item ]
                 echo { selector: entry.sel, nrm, item, result, }
-              @eq ( Ωkvrt__39 = -> result ), entry[ rpr item ]
+              @eq ( Ωjtstm__39 = -> result ), entry[ rpr item ]
           if display_matcher
             echo line
         return null
@@ -340,64 +340,61 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet = new Jetstream()
         jet.push prepend = ( d ) -> yield '(' + d
         jet.push apppend = ( d ) -> yield d + ')'
-        @eq ( Ωkvrt__40 = -> jet.get_first 'string' ), '(string)'
+        @eq ( Ωjtstm__40 = -> jet.get_first 'string' ), '(string)'
         return null
       #.....................................................................................................
       do =>
         jet = new Jetstream()
         jet.push prepend = ( d ) -> yield '(' + d
         jet.push apppend = ( d ) -> yield d + ')'
-        @eq ( Ωkvrt__41 = -> jet.send 'string'  ), null
-        @eq ( Ωkvrt__42 = -> jet.shelf          ), [ 'string', ]
-        @eq ( Ωkvrt__43 = -> jet.send 'other'  ), null
-        @eq ( Ωkvrt__44 = -> jet.shelf          ), [ 'string', 'other', ]
-        @eq ( Ωkvrt__45 = -> jet.get_first()    ), '(string)'
-        @eq ( Ωkvrt__46 = -> jet.shelf          ), []
-        @eq ( Ωkvrt__47 = -> jet.run()          ), []
+        @eq ( Ωjtstm__41 = -> jet.send 'string'  ), null
+        @eq ( Ωjtstm__42 = -> jet.shelf          ), [ 'string', ]
+        @eq ( Ωjtstm__43 = -> jet.send 'other'  ), null
+        @eq ( Ωjtstm__44 = -> jet.shelf          ), [ 'string', 'other', ]
+        @eq ( Ωjtstm__45 = -> jet.get_first()    ), '(string)'
+        @eq ( Ωjtstm__46 = -> jet.shelf          ), []
+        @eq ( Ωjtstm__47 = -> jet.run()          ), []
       #.....................................................................................................
       do =>
         jet = new Jetstream()
         jet.push prepend = ( d ) -> yield '(' + d
         jet.push apppend = ( d ) -> yield d + ')'
-        @eq ( Ωkvrt__48 = -> jet.send 'string'  ), null
-        @eq ( Ωkvrt__49 = -> jet.shelf          ), [ 'string', ]
-        @eq ( Ωkvrt__50 = -> jet.send 'other'  ), null
+        @eq ( Ωjtstm__48 = -> jet.send 'string'  ), null
+        @eq ( Ωjtstm__49 = -> jet.shelf          ), [ 'string', ]
+        @eq ( Ωjtstm__50 = -> jet.send 'other'  ), null
         iterator = jet.walk()
-        @eq ( Ωkvrt__51 = -> jet.shelf          ), [ 'string', 'other', ]
-        @eq ( Ωkvrt__52 = -> iterator.next()    ), { done: false,  value: '(string)', }
-        @eq ( Ωkvrt__53 = -> jet.shelf          ), [ 'other', ]
-        @eq ( Ωkvrt__54 = -> iterator.next()    ), { done: false,  value: '(other)', }
-        @eq ( Ωkvrt__55 = -> jet.shelf          ), []
-        @eq ( Ωkvrt__56 = -> iterator.next()    ), { done: true,   value: null, }
+        @eq ( Ωjtstm__51 = -> jet.shelf          ), [ 'string', 'other', ]
+        @eq ( Ωjtstm__52 = -> iterator.next()    ), { done: false,  value: '(string)', }
+        @eq ( Ωjtstm__53 = -> jet.shelf          ), [ 'other', ]
+        @eq ( Ωjtstm__54 = -> iterator.next()    ), { done: false,  value: '(other)', }
+        @eq ( Ωjtstm__55 = -> jet.shelf          ), []
+        @eq ( Ωjtstm__56 = -> iterator.next()    ), { done: true,   value: null, }
         return null
       #.....................................................................................................
       do =>
         jet = new Jetstream()
         jet.push prepend = ( d ) -> yield '(' + d
         jet.push apppend = ( d ) -> yield d + ')'
-        @eq ( Ωkvrt__57 = -> jet.send 'string'  ), null
-        @eq ( Ωkvrt__58 = -> jet.shelf          ), [ 'string', ]
-        @eq ( Ωkvrt__59 = -> jet.send 'other'  ), null
+        @eq ( Ωjtstm__57 = -> jet.send 'string'  ), null
+        @eq ( Ωjtstm__58 = -> jet.shelf          ), [ 'string', ]
+        @eq ( Ωjtstm__59 = -> jet.send 'other'  ), null
         iterator = jet.walk 'trois', 'quatre'
-        @eq ( Ωkvrt__60 = -> jet.shelf          ), [ 'string', 'other', 'trois', 'quatre', ]
-        @eq ( Ωkvrt__61 = -> iterator.next()    ), { done: false,  value: '(string)', }
-        @eq ( Ωkvrt__62 = -> jet.shelf          ), [ 'other', 'trois', 'quatre', ]
-        @eq ( Ωkvrt__63 = -> iterator.next()    ), { done: false,  value: '(other)', }
-        @eq ( Ωkvrt__64 = -> jet.shelf          ), [ 'trois', 'quatre', ]
-        @eq ( Ωkvrt__65 = -> iterator.next()    ), { done: false,  value: '(trois)', }
-        @eq ( Ωkvrt__66 = -> jet.shelf          ), [ 'quatre', ]
-        @eq ( Ωkvrt__67 = -> iterator.next()    ), { done: false,  value: '(quatre)', }
-        @eq ( Ωkvrt__68 = -> jet.shelf          ), []
-        @eq ( Ωkvrt__69 = -> iterator.next()    ), { done: true,   value: null, }
+        @eq ( Ωjtstm__60 = -> jet.shelf          ), [ 'string', 'other', 'trois', 'quatre', ]
+        @eq ( Ωjtstm__61 = -> iterator.next()    ), { done: false,  value: '(string)', }
+        @eq ( Ωjtstm__62 = -> jet.shelf          ), [ 'other', 'trois', 'quatre', ]
+        @eq ( Ωjtstm__63 = -> iterator.next()    ), { done: false,  value: '(other)', }
+        @eq ( Ωjtstm__64 = -> jet.shelf          ), [ 'trois', 'quatre', ]
+        @eq ( Ωjtstm__65 = -> iterator.next()    ), { done: false,  value: '(trois)', }
+        @eq ( Ωjtstm__66 = -> jet.shelf          ), [ 'quatre', ]
+        @eq ( Ωjtstm__67 = -> iterator.next()    ), { done: false,  value: '(quatre)', }
+        @eq ( Ωjtstm__68 = -> jet.shelf          ), []
+        @eq ( Ωjtstm__69 = -> iterator.next()    ), { done: true,   value: null, }
         return null
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
     configure_transforms: ->
-      return null
-
-
       SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { Jetstream,
@@ -409,14 +406,23 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #   id_from_symbol,         } = internals
       #.....................................................................................................
       do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
         jet = new Jetstream()
         jet.push 'data,#last', prepend = ( d ) ->
-          return yield 'yay' if d is last
-          yield '(' + d
-        jet.push apppend = ( d ) -> yield d + ')'
-        debug 'Ωkvrt__70', jet.run 'birdistheword'
-        # @eq ( Ωkvrt__71 = -> jet.get_first 'string' ), '(string)'
+          switch d
+            when last   then yield 'yay';   yield d
+            when first  then yield 'oops';  yield d
+            else yield '(' + d
+          return null
+        jet.push                  apppend = ( d ) -> yield d + ')'
+        jet.push '#first,#last',  filter  = ( d ) -> debug 'Ωjtstm__70', d; yield return
+        #...................................................................................................
+        debug 'Ωjtstm__71', jet.run first, 'birdistheword', last
+        # @eq ( Ωjtstm__72 = -> jet.get_first 'string' ), '(string)'
         return null
+      #.....................................................................................................
+      return null
 
 
 
