@@ -278,6 +278,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         #...................................................................................................
         { sel: [ 'data', 'cue' ],          nrm: 'data#*,cue#*',      'Symbol(start)': true, 'Symbol(end)': true, '76.9': true, "'Mexico'": true, null: true }
         { sel: 'data, cue',                nrm: 'data#*,cue#*',      'Symbol(start)': true, 'Symbol(end)': true, '76.9': true, "'Mexico'": true, null: true }
+        { sel: '*',                        nrm: 'data#*,cue#*',      'Symbol(start)': true, 'Symbol(end)': true, '76.9': true, "'Mexico'": true, null: true }
         ]
       #=====================================================================================================
       do =>
@@ -409,17 +410,226 @@ GTNG                      = require '../../../apps/guy-test-NG'
         first = Symbol 'first'
         last  = Symbol 'last'
         jet = new Jetstream()
-        jet.push 'data,#last', prepend = ( d ) ->
-          switch d
-            when last   then yield 'yay';   yield d
-            when first  then yield 'oops';  yield d
-            else yield '(' + d
-          return null
-        jet.push                  apppend = ( d ) -> yield d + ')'
-        jet.push '#first,#last',  filter  = ( d ) -> debug 'Ωjtstm__70', d; yield return
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) ->
+          return yield from [ d, '(', ] if d is first
+          yield 'error#1'
+        jet.push '#last', append = ( d ) ->
+          return yield from [ ')', d, ] if d is last
+          yield 'error#2'
         #...................................................................................................
-        debug 'Ωjtstm__71', jet.run first, 'birdistheword', last
-        # @eq ( Ωjtstm__72 = -> jet.get_first 'string' ), '(string)'
+        @eq ( Ωjtstm__70 = -> jet.run first, 'birdistheword', last ), [ '(', '*birdistheword*', ')', ]
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream()
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        #...................................................................................................
+        @eq ( Ωjtstm__71 = -> jet.run first, 'birdistheword', last ), [ '(', '*birdistheword*', ')', ]
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream { outlet: 'data,cue', }
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        #...................................................................................................
+        @eq ( Ωjtstm__72 = -> jet.run first, 'birdistheword', last ), [ first, '(', '*birdistheword*', ')', last, ]
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream { outlet: '*', }
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        #...................................................................................................
+        @eq ( Ωjtstm__73 = -> jet.run first, 'birdistheword', last ), [ first, '(', '*birdistheword*', ')', last, ]
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream()
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        jet.configure { outlet: '*', }
+        #...................................................................................................
+        @eq ( Ωjtstm__74 = -> jet.run first, 'birdistheword', last ), [ first, '(', '*birdistheword*', ')', last, ]
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream()
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        jet.configure { pick: 'first', }
+        #...................................................................................................
+        @eq ( Ωjtstm__75 = -> jet.run first, 'birdistheword', last ), '('
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream()
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        jet.configure { outlet: 'data,cue', pick: 'first', }
+        #...................................................................................................
+        @eq ( Ωjtstm__76 = -> jet.run first, 'birdistheword', last ), first
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream()
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        jet.configure { pick: 'last', }
+        #...................................................................................................
+        @eq ( Ωjtstm__77 = -> jet.cfg.pick                          ), 'last'
+        @eq ( Ωjtstm__78 = -> jet.run first, 'birdistheword', last  ), ')'
+        return null
+      #.....................................................................................................
+      do =>
+        first = Symbol 'first'
+        last  = Symbol 'last'
+        jet   = new Jetstream { pick: 'first', }
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push '#first', prepend = ( d ) -> yield from [ d, '(', ]; null
+        jet.push '#last',  append  = ( d ) -> yield from [ ')', d, ]; null
+        #...................................................................................................
+        @throws ( Ωjtstm__79 = -> jet.run() ), /no results/
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'first', fallback, }
+        jet.push ( d ) -> yield "*#{d}*"
+        jet.push ( d ) -> yield from [ d, '(', ]; null
+        jet.push ( d ) -> yield from [ ')', d, ]; null
+        #...................................................................................................
+        @eq ( Ωjtstm__80 = -> jet.run() ), fallback
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'first', fallback, }
+        ordering  = []
+        jet.push a = ( d ) -> ordering.push "a#{d}"; yield d * 2
+        jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
+        jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
+        #...................................................................................................
+        @eq ( Ωjtstm__81 = -> [ ( jet.walk 1, 2, 3 )..., ]                  ), [ 30, ]
+        @eq ( Ωjtstm__82 = -> R = ordering.join ' '; ordering.length = 0; R ), 'a1 b2 c6 a2 b4 c12 a3 b6 c18'
+        @eq ( Ωjtstm__83 = -> jet.run 1, 2, 3                               ), 30
+        @eq ( Ωjtstm__84 = -> R = ordering.join ' '; ordering.length = 0; R ), 'a1 b2 c6 a2 b4 c12 a3 b6 c18'
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'last', fallback, }
+        ordering  = []
+        jet.push a = ( d ) -> ordering.push "a#{d}"; yield d * 2
+        jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
+        jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
+        #...................................................................................................
+        jet.send 1, 2, 3
+        generator = jet.walk()
+        @eq ( Ωjtstm__85 = -> generator.next()                                ), { value: 90, done: false, }
+        @eq ( Ωjtstm__86 = -> R = ordering.join ' '; ordering.length = 0; R   ), 'a1 b2 c6 a2 b4 c12 a3 b6 c18'
+        @eq ( Ωjtstm__87 = -> jet.shelf                                       ), []
+        @eq ( Ωjtstm__88 = -> generator.next()                                ), { value: null, done: true, }
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'first', fallback, }
+        ordering  = []
+        jet.push a = ( d ) -> ordering.push "a#{d}"; yield d * 2
+        jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
+        jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
+        #...................................................................................................
+        jet.send 1, 2, 3
+        # debug 'Ωjtstm__89', [ ( jet.walk() )..., ]
+        generator = jet.walk()
+        @eq ( Ωjtstm__90 = -> generator.next()                                ), { value: 30, done: false, }
+        @eq ( Ωjtstm__91 = -> R = ordering.join ' '; ordering.length = 0; R   ), 'a1 b2 c6'
+        @eq ( Ωjtstm__92 = -> generator.next()                                ), { value: null, done: true, }
+        @eq ( Ωjtstm__93 = -> R = ordering.join ' '; ordering.length = 0; R   ), 'a2 b4 c12 a3 b6 c18'
+        @eq ( Ωjtstm__94 = -> generator.next()                                ), { value: undefined, done: true, }
+        @eq ( Ωjtstm__95 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        return null
+      #.....................................................................................................
+      do =>
+        jet       = new Jetstream { pick: 'first', }
+        ordering  = []
+        jet.push a = ( d ) -> ordering.push "a#{d}"; yield d * 2
+        jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
+        jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
+        #...................................................................................................
+        @eq     ( Ωjtstm_110 = -> [ ( jet.walk() )..., ]                          ), []
+        @eq     ( Ωjtstm_111 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        @throws ( Ωjtstm_112 = -> jet.run()                                       ), /no results/
+        @eq     ( Ωjtstm_113 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        return null
+      #.....................................................................................................
+      do =>
+        jet       = new Jetstream { pick: 'last', }
+        ordering  = []
+        jet.push a = ( d ) -> ordering.push "a#{d}"; yield d * 2
+        jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
+        jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
+        #...................................................................................................
+        @eq     ( Ωjtstm_114 = -> [ ( jet.walk() )..., ]                          ), []
+        @eq     ( Ωjtstm_115 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        @throws ( Ωjtstm_116 = -> jet.run()                                       ), /no results/
+        @eq     ( Ωjtstm_117 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'first', fallback, }
+        ordering  = []
+        #...................................................................................................
+        @eq ( Ωjtstm_118 = -> [ ( jet.walk() )..., ]                              ), []
+        @eq ( Ωjtstm_119 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_120 = -> jet.run()                                           ), fallback
+        @eq ( Ωjtstm_121 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'first', fallback, }
+        ordering  = []
+        #...................................................................................................
+        @eq ( Ωjtstm_122 = -> [ ( jet.walk 1, 2, 3 )..., ]                        ), [ 1, ]
+        @eq ( Ωjtstm_123 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_124 = -> jet.run 1, 2, 3                                     ), 1
+        @eq ( Ωjtstm_125 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { pick: 'last', fallback, }
+        ordering  = []
+        #...................................................................................................
+        @eq ( Ωjtstm_126 = -> [ ( jet.walk 1, 2, 3 )..., ]                        ), [ 3, ]
+        @eq ( Ωjtstm_127 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_128 = -> jet.run 1, 2, 3                                     ), 3
+        @eq ( Ωjtstm_129 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
         return null
       #.....................................................................................................
       return null
