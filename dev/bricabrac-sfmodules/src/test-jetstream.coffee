@@ -331,11 +331,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { Jetstream,
         internals,              } = SFMODULES.require_jetstream()
-      # { Selector,
-      #   _normalize_selectors,
-      #   normalize_selectors,
-      #   selectors_as_list,
-      #   id_from_symbol,         } = internals
       #.....................................................................................................
       do =>
         jet = new Jetstream()
@@ -400,11 +395,6 @@ GTNG                      = require '../../../apps/guy-test-NG'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { Jetstream,
         internals,              } = SFMODULES.require_jetstream()
-      # { Selector,
-      #   _normalize_selectors,
-      #   normalize_selectors,
-      #   selectors_as_list,
-      #   id_from_symbol,         } = internals
       #.....................................................................................................
       do =>
         first = Symbol 'first'
@@ -645,18 +635,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       return null
 
-
     #-------------------------------------------------------------------------------------------------------
-    jetsream_cue: ->
+    jetstream_cue: ->
       SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
       { type_of,                } = SFMODULES.unstable.require_type_of()
       { Jetstream,
         internals,              } = SFMODULES.require_jetstream()
-      # { Selector,
-      #   _normalize_selectors,
-      #   normalize_selectors,
-      #   selectors_as_list,
-      #   id_from_symbol,         } = internals
       #.....................................................................................................
       do =>
         fallback  = Symbol 'fallback'
@@ -687,6 +671,36 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       ;null
 
+    #-------------------------------------------------------------------------------------------------------
+    async_jetstream: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { Jetstream,
+        Async_jetstream,
+        internals,              } = SFMODULES.require_jetstream()
+      #.....................................................................................................
+      await do =>
+        stream = new Async_jetstream()
+        debug 'Ωjtstm_128', stream
+        stream.push ( d ) ->
+          await GUY.async.sleep 0.05
+          yield d * 2
+        # debug 'Ωjtstm_129', stream.run 123, 555
+        debug 'Ωjtstm_130', await stream.run 123, 555
+        debug 'Ωjtstm_131', await stream.pick_first 123, 555
+        debug 'Ωjtstm_132', await stream.pick_last 123, 555
+        ;null
+      #.....................................................................................................
+      await do =>
+        stream  = new Jetstream()
+        tfm     = ( d ) -> yield await d
+        @eq     ( Ωjtstm_134 = -> internals.type_of tfm   ), 'asyncgeneratorfunction'
+        @throws ( Ωjtstm_135 = -> stream.push tfm         ), /cannot use async transform in sync jetstream, got a asyncgeneratorfunction/
+        # debug 'Ωjtstm_136', stream.run 1
+        ;null
+      #.....................................................................................................
+      ;null
+
 
 
 #===========================================================================================================
@@ -698,39 +712,37 @@ demo_async = ->
     await sleep 0.25
     yield 2
     ;null
-  # #.........................................................................................................
-  # g = ->  ### do not use ###
-  #   await yield from f() # -> await ( yield* f() );
-  #   ;null
   #.........................................................................................................
   i = ->
     # renaming `yield from` as `delegate`, this one becomes
     # 'delegate await generator'
     yield from await f() # -> yield* ( await f() )
     ;null
-  # #.........................................................................................................
-  # k = ->
-  #   yield from f()
-  #   ;null
   #.........................................................................................................
-  for await n from f()
-    debug 'Ωjtstm_128', n
-  # #.........................................................................................................
-  # for await n from g()
-  #   debug 'Ωjtstm_129', n
+  j = ->
+    for await value from f()
+      yield value
+    ;null
   #.........................................................................................................
+  for await value from f()
+    debug 'Ωjtstm_137', value
+  #.........................................................................................................
+  whisper '————————————————————————————————————–'
   help i
   help i()
   help await i
   help await i()
+  whisper '————————————————————————————————————–'
+  help j
+  help j()
+  help await j
+  help await j()
+  whisper '————————————————————————————————————–'
   for await n from i()
-    debug 'Ωjtstm_130', n
-  # for await n from k()
-  #   debug 'Ωjtstm_131', n
-  # #.........................................................................................................
-  # for n from await i() ### TypeError: (intermediate value) is not iterable  ###
-  #   debug 'Ωjtstm_132', n
-  #.........................................................................................................
+    debug 'Ωjtstm_138', n
+  for await n from j()
+    debug 'Ωjtstm_139', n
+
   ###
 
   for       value from       gf()
@@ -753,9 +765,9 @@ demo_async = ->
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test @tasks
-  # # ( new Test guytest_cfg ).test { jetstream_1: @tasks.jetstream_1, }
-  # ( new Test guytest_cfg ).test { jetsream_cue: @tasks.jetsream_cue, }
+  await ( new Test guytest_cfg ).async_test @tasks
+  # await ( new Test guytest_cfg ).async_test { jetstream_1: @tasks.jetstream_1, }
+  await ( new Test guytest_cfg ).async_test { async_jetstream: @tasks.async_jetstream, }
 
-  await demo_async()
+  # await demo_async()
 
