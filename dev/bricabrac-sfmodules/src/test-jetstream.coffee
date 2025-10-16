@@ -141,7 +141,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         p_3.push ( d ) -> collector.push 'p3-t2'; yield d + ' № 6'
         @eq ( Ωjtstm__22 = -> p_3.run        'my-data' ), [ 'my-data № 5 № 3 № 1 № 2 № 4 № 6' , ]
         @eq ( Ωjtstm__23 = -> collector                ), [ 'p3-t1', 'p2-t1', 'p1-t1', 'p1-t2', 'p2-t2', 'p3-t2' ]
-        @eq ( Ωjtstm__24 = -> p_3.get_first  'my-data' ), 'my-data № 5 № 3 № 1 № 2 № 4 № 6'
+        @eq ( Ωjtstm__24 = -> p_3.pick_first  'my-data' ), 'my-data № 5 № 3 № 1 № 2 № 4 № 6'
         return null
       #.....................................................................................................
       return null
@@ -341,7 +341,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet = new Jetstream()
         jet.push prepend = ( d ) -> yield '(' + d
         jet.push apppend = ( d ) -> yield d + ')'
-        @eq ( Ωjtstm__40 = -> jet.get_first 'string' ), '(string)'
+        @eq ( Ωjtstm__40 = -> jet.pick_first 'string' ), '(string)'
         return null
       #.....................................................................................................
       do =>
@@ -352,7 +352,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         @eq ( Ωjtstm__42 = -> jet.shelf          ), [ 'string', ]
         @eq ( Ωjtstm__43 = -> jet.send 'other'  ), null
         @eq ( Ωjtstm__44 = -> jet.shelf          ), [ 'string', 'other', ]
-        @eq ( Ωjtstm__45 = -> jet.get_first()    ), '(string)'
+        @eq ( Ωjtstm__45 = -> jet.pick_first()    ), '(string)'
         @eq ( Ωjtstm__46 = -> jet.shelf          ), []
         @eq ( Ωjtstm__47 = -> jet.run()          ), []
       #.....................................................................................................
@@ -580,10 +580,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
         jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
         #...................................................................................................
-        @eq     ( Ωjtstm_110 = -> [ ( jet.walk() )..., ]                          ), []
-        @eq     ( Ωjtstm_111 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
-        @throws ( Ωjtstm_112 = -> jet.run()                                       ), /no results/
-        @eq     ( Ωjtstm_113 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        @eq     ( Ωjtstm__96 = -> [ ( jet.walk() )..., ]                          ), []
+        @eq     ( Ωjtstm__97 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        @throws ( Ωjtstm__98 = -> jet.run()                                       ), /no results/
+        @eq     ( Ωjtstm__99 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
         return null
       #.....................................................................................................
       do =>
@@ -593,10 +593,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet.push b = ( d ) -> ordering.push "b#{d}"; yield d * 3
         jet.push c = ( d ) -> ordering.push "c#{d}"; yield d * 5
         #...................................................................................................
-        @eq     ( Ωjtstm_114 = -> [ ( jet.walk() )..., ]                          ), []
-        @eq     ( Ωjtstm_115 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
-        @throws ( Ωjtstm_116 = -> jet.run()                                       ), /no results/
-        @eq     ( Ωjtstm_117 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        @eq     ( Ωjtstm_100 = -> [ ( jet.walk() )..., ]                          ), []
+        @eq     ( Ωjtstm_101 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
+        @throws ( Ωjtstm_102 = -> jet.run()                                       ), /no results/
+        @eq     ( Ωjtstm_103 = -> R = ordering.join ' '; ordering.length = 0; R   ), ''
         return null
       #.....................................................................................................
       do =>
@@ -604,10 +604,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet       = new Jetstream { pick: 'first', fallback, }
         ordering  = []
         #...................................................................................................
-        @eq ( Ωjtstm_118 = -> [ ( jet.walk() )..., ]                              ), []
-        @eq ( Ωjtstm_119 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
-        @eq ( Ωjtstm_120 = -> jet.run()                                           ), fallback
-        @eq ( Ωjtstm_121 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_104 = -> [ ( jet.walk() )..., ]                              ), []
+        @eq ( Ωjtstm_105 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_106 = -> jet.run()                                           ), fallback
+        @eq ( Ωjtstm_107 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
         return null
       #.....................................................................................................
       do =>
@@ -615,10 +615,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet       = new Jetstream { pick: 'first', fallback, }
         ordering  = []
         #...................................................................................................
-        @eq ( Ωjtstm_122 = -> [ ( jet.walk 1, 2, 3 )..., ]                        ), [ 1, ]
-        @eq ( Ωjtstm_123 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
-        @eq ( Ωjtstm_124 = -> jet.run 1, 2, 3                                     ), 1
-        @eq ( Ωjtstm_125 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_108 = -> [ ( jet.walk 1, 2, 3 )..., ]                        ), [ 1, ]
+        @eq ( Ωjtstm_109 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_110 = -> jet.run 1, 2, 3                                     ), 1
+        @eq ( Ωjtstm_111 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
         return null
       #.....................................................................................................
       do =>
@@ -626,21 +626,136 @@ GTNG                      = require '../../../apps/guy-test-NG'
         jet       = new Jetstream { pick: 'last', fallback, }
         ordering  = []
         #...................................................................................................
-        @eq ( Ωjtstm_126 = -> [ ( jet.walk 1, 2, 3 )..., ]                        ), [ 3, ]
-        @eq ( Ωjtstm_127 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
-        @eq ( Ωjtstm_128 = -> jet.run 1, 2, 3                                     ), 3
-        @eq ( Ωjtstm_129 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_112 = -> [ ( jet.walk 1, 2, 3 )..., ]                        ), [ 3, ]
+        @eq ( Ωjtstm_113 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        @eq ( Ωjtstm_114 = -> jet.run 1, 2, 3                                     ), 3
+        @eq ( Ωjtstm_115 = -> R = ordering.join ' '; ordering.length = 0; R       ), ''
+        return null
+      #.....................................................................................................
+      do =>
+        fallback  = null
+        jet       = new Jetstream { fallback, }
+        jet.push ( d ) -> yield 10 + d; yield 20 + d ;null
+        #...................................................................................................
+        @eq ( Ωjtstm_116 = -> jet.pick_first 1, 2, 3    ), 11
+        @eq ( Ωjtstm_117 = -> jet.pick_last 1, 2, 3     ), 23
+        @eq ( Ωjtstm_118 = -> jet.pick_first()          ), fallback
+        @eq ( Ωjtstm_119 = -> jet.pick_last()           ), fallback
         return null
       #.....................................................................................................
       return null
 
 
+    #-------------------------------------------------------------------------------------------------------
+    jetsream_cue: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { Jetstream,
+        internals,              } = SFMODULES.require_jetstream()
+      # { Selector,
+      #   _normalize_selectors,
+      #   normalize_selectors,
+      #   selectors_as_list,
+      #   id_from_symbol,         } = internals
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { fallback, outlet: '*', }
+        jet.push '*', ( d ) -> help 'Ωjtstm_120', d; yield d ;null
+        jet.cue 'first'
+        @eq ( Ωjtstm_121 = -> jet.shelf         ), [ ( Symbol.for 'first' ), ]
+        @eq ( Ωjtstm_122 = -> jet.pick_first()  ), Symbol.for 'first'
+        ;null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { fallback, outlet: '*', }
+        jet.push '*', ( d ) ->
+          help 'Ωjtstm_123', d
+          if d is Symbol.for 'first'
+            jet.cue 'other-start'
+            jet.send 5
+            jet.cue 'other-end'
+          yield d
+          ;null
+        jet.cue 'first'
+        @eq ( Ωjtstm_124 = -> jet.shelf                       ), [ ( Symbol.for 'first' ), ]
+        @eq ( Ωjtstm_125 = -> jet.pick_first()                ), Symbol.for 'first'
+        @eq ( Ωjtstm_126 = -> jet.pick_all()                  ), []
+        @eq ( Ωjtstm_127 = -> jet.pick_all Symbol.for 'first' ), [ ( Symbol.for 'first' ), ( Symbol.for 'other-start' ), 5, ( Symbol.for 'other-end' ) ]
+        ;null
+      #.....................................................................................................
+      ;null
+
+
+
+#===========================================================================================================
+demo_async = ->
+  { sleep, }     = GUY.async
+  #.........................................................................................................
+  f = ->
+    yield 1
+    await sleep 0.25
+    yield 2
+    ;null
+  # #.........................................................................................................
+  # g = ->  ### do not use ###
+  #   await yield from f() # -> await ( yield* f() );
+  #   ;null
+  #.........................................................................................................
+  i = ->
+    # renaming `yield from` as `delegate`, this one becomes
+    # 'delegate await generator'
+    yield from await f() # -> yield* ( await f() )
+    ;null
+  # #.........................................................................................................
+  # k = ->
+  #   yield from f()
+  #   ;null
+  #.........................................................................................................
+  for await n from f()
+    debug 'Ωjtstm_128', n
+  # #.........................................................................................................
+  # for await n from g()
+  #   debug 'Ωjtstm_129', n
+  #.........................................................................................................
+  help i
+  help i()
+  help await i
+  help await i()
+  for await n from i()
+    debug 'Ωjtstm_130', n
+  # for await n from k()
+  #   debug 'Ωjtstm_131', n
+  # #.........................................................................................................
+  # for n from await i() ### TypeError: (intermediate value) is not iterable  ###
+  #   debug 'Ωjtstm_132', n
+  #.........................................................................................................
+  ###
+
+  for       value from       gf()
+  for await value from async_gf()
+
+  JS `yield* ...` translates to CS `yield from` and is as inseparable as `yield*`
+
+        yield from       gf()
+  await yield from async_gf()
+
+  yield from             gf()
+  yield from await async_gf()
+
+  ###
+  #.........................................................................................................
+  ;null
 
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test @tasks
-  # ( new Test guytest_cfg ).test { jetstream_1: @tasks.jetstream_1, }
-  ( new Test guytest_cfg ).test { configure_transforms: @tasks.configure_transforms, }
+  # ( new Test guytest_cfg ).test @tasks
+  # # ( new Test guytest_cfg ).test { jetstream_1: @tasks.jetstream_1, }
+  # ( new Test guytest_cfg ).test { jetsream_cue: @tasks.jetsream_cue, }
+
+  await demo_async()
+
