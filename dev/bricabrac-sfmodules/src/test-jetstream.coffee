@@ -681,22 +681,23 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       await do =>
         stream = new Async_jetstream()
-        debug 'Ωjtstm_128', stream
+        # debug 'Ωjtstm_128', stream
         stream.push ( d ) ->
           await GUY.async.sleep 0.05
           yield d * 2
         # debug 'Ωjtstm_129', stream.run 123, 555
-        debug 'Ωjtstm_130', await stream.run 123, 555
-        debug 'Ωjtstm_131', await stream.pick_first 123, 555
-        debug 'Ωjtstm_132', await stream.pick_last 123, 555
+        ### TAINT gotta check how to make async tests work ###
+        d = await stream.run        123, 555; @eq ( ( Ωjtstm_130 = -> d )), [ 246, 1110, ]
+        d = await stream.pick_first 123, 555; @eq ( ( Ωjtstm_131 = -> d )), 246
+        d = await stream.pick_last  123, 555; @eq ( ( Ωjtstm_132 = -> d )), 1110
         ;null
       #.....................................................................................................
       await do =>
         stream  = new Jetstream()
         tfm     = ( d ) -> yield await d
-        @eq     ( Ωjtstm_134 = -> internals.type_of tfm   ), 'asyncgeneratorfunction'
-        @throws ( Ωjtstm_135 = -> stream.push tfm         ), /cannot use async transform in sync jetstream, got a asyncgeneratorfunction/
-        # debug 'Ωjtstm_136', stream.run 1
+        @eq     ( Ωjtstm_133 = -> internals.type_of tfm   ), 'asyncgeneratorfunction'
+        @throws ( Ωjtstm_134 = -> stream.push tfm         ), /cannot use async transform in sync jetstream, got a asyncgeneratorfunction/
+        # debug 'Ωjtstm_135', stream.run 1
         ;null
       #.....................................................................................................
       ;null
@@ -725,7 +726,7 @@ demo_async = ->
     ;null
   #.........................................................................................................
   for await value from f()
-    debug 'Ωjtstm_137', value
+    debug 'Ωjtstm_136', value
   #.........................................................................................................
   whisper '————————————————————————————————————–'
   help i
@@ -739,9 +740,9 @@ demo_async = ->
   help await j()
   whisper '————————————————————————————————————–'
   for await n from i()
-    debug 'Ωjtstm_138', n
+    debug 'Ωjtstm_137', n
   for await n from j()
-    debug 'Ωjtstm_139', n
+    debug 'Ωjtstm_138', n
 
   ###
 
