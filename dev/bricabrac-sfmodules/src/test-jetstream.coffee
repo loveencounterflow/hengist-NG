@@ -703,6 +703,26 @@ GTNG                      = require '../../../apps/guy-test-NG'
       ;null
 
 
+#===========================================================================================================
+demo_await_fetch_website = ->
+  await do =>
+    stream  = new Async_jetstream()
+    stream.push ( address ) -> info "Ωjtstm_136 fetching #{address}"
+    stream.push ( address ) ->
+      rsp = await fetch address
+      info "Ωjtstm_137 got response from #{address}"
+      yield rsp
+    stream.push ( rsp     ) ->
+      text = await rsp.text()
+      info 'Ωjtstm_138', "retrieved response text"
+      yield text
+    # stream.push ( body    ) -> yield body.read()
+    result = await stream.pick_first 'https://example.com'
+    help 'Ωjtstm_139', rpr result
+    # await @eq ( Ωjtstm_140 = -> await stream.pick_first 'https://example.com' ), 0
+    @eq ( Ωjtstm_141 = -> result.startsWith '<!doctype html>' ), true
+    # debug 'Ωjtstm_142', stream.run 1
+    ;null
 
 #===========================================================================================================
 demo_async = ->
@@ -726,7 +746,7 @@ demo_async = ->
     ;null
   #.........................................................................................................
   for await value from f()
-    debug 'Ωjtstm_136', value
+    debug 'Ωjtstm_143', value
   #.........................................................................................................
   whisper '————————————————————————————————————–'
   help i
@@ -740,9 +760,9 @@ demo_async = ->
   help await j()
   whisper '————————————————————————————————————–'
   for await n from i()
-    debug 'Ωjtstm_137', n
+    debug 'Ωjtstm_144', n
   for await n from j()
-    debug 'Ωjtstm_138', n
+    debug 'Ωjtstm_145', n
 
   ###
 
