@@ -61,14 +61,27 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 
 
-#===========================================================================================================
-@tests = tests =
+# #===========================================================================================================
+# @tests =
 
-  #---------------------------------------------------------------------------------------------------------
-  test: ->
-    SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
-    @eq ( Ωbbbt___8 = -> false ), false
-    ;null
+#   #---------------------------------------------------------------------------------------------------------
+#   using_dbrics_to_set_file_permissions: ->
+#     SFMODULES                     = require '../../../apps/bricabrac-sfmodules'
+#     UP                            = require 'unix-permissions'
+#     PATH                          = require 'node:path'
+#     # FS                            = require 'node:fs'
+#     { Dbric,
+#       Dbric_std,
+#       internals,                } = SFMODULES.unstable.require_dbric()
+#     #.......................................................................................................
+#     ref_path = PATH.resolve __dirname, '../'
+#     db_path = PATH.resolve __dirname, '../'
+#     #.......................................................................................................
+#     ;null
+
+
+
+
 
 
 
@@ -78,7 +91,7 @@ if module is require.main then await do =>
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { require_get_app_details: tests.require_get_app_details, }
-  ( new Test guytest_cfg ).test { require_loupe: tests.require_loupe, }
+  # ( new Test guytest_cfg ).test { require_loupe: tests.require_loupe, }
 

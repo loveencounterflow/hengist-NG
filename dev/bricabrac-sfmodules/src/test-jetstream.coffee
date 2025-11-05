@@ -786,9 +786,24 @@ demo_async = ->
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  await ( new Test guytest_cfg ).async_test @tasks
+  # await ( new Test guytest_cfg ).async_test @tasks
   # await ( new Test guytest_cfg ).async_test { jetstream_1: @tasks.jetstream_1, }
   await ( new Test guytest_cfg ).async_test { async_jetstream: @tasks.async_jetstream, }
 
   # await demo_async()
+
+  # debug 'Ωjtstm_146', { namedpipe:    0x1000, }
+  # debug 'Ωjtstm_147', { chrdevice:    0x2000, }
+  # debug 'Ωjtstm_148', { folder:       0x4000, }
+  # debug 'Ωjtstm_149', { blockdevice:  0x6000, }
+  # debug 'Ωjtstm_150', { file:         0x8000, }
+  # debug 'Ωjtstm_151', { symlink:      0xa000, }
+  # debug 'Ωjtstm_152', { socket:       0xc000, }
+  url_nfo = new URL 'https://example.com#fragment'
+  debug 'Ωjtstm_153', ( k for k of url_nfo )
+  debug 'Ωjtstm_153', rpr url_nfo.protocol
+  debug 'Ωjtstm_154', rpr url_nfo.hash
+
+  for page_nr in [ 473 .. 489 ]
+    echo "p#{page_nr} A: (cont.); p#{page_nr} B: (cont.)"
 
