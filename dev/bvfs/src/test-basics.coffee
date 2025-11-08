@@ -58,7 +58,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
         oprm = '0o' + ( nprm.toString  8 ).padStart  8, '0'
         xprm = '0x' + ( nprm.toString 16 ).padStart  8, '0'
         bprm = '__' + ( nprm.toString  2 ).padStart 16, '0'
-        debug 'Ωlfp___5', f"#{nprm}:>10c; #{oprm}:>10c; #{xprm}:>10c; #{bprm}:>20c; #{sprm}:>10c; "
+        debug 'Ωbvfs___1', f"#{nprm}:>10c; #{oprm}:>10c; #{xprm}:>10c; #{bprm}:>20c; #{sprm}:>10c; "
       ;null
     #.......................................................................................................
     ;null
@@ -68,32 +68,32 @@ GTNG                      = require '../../../apps/guy-test-NG'
     SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
     UP                        = require 'unix-permissions'
     FS                        = require 'node:fs'
-    debug 'Ωbbbt___1', ( k for k of UP )
-    debug 'Ωbbbt___2', UP.convert.object ( FS.statSync '/etc/passwd' ).mode
-    debug 'Ωbbbt___3', f"#{UP.convert.number 'a-w'}:>#03o;"
-    debug 'Ωbbbt___4', f"#{UP.convert.number 'a+w'}:>#03o;"
-    debug 'Ωbbbt___5', f"#{UP.convert.number 'u+w'}:>#03o;"
-    debug 'Ωbbbt___6', f"#{UP.convert.number 'u+r'}:>#03o;"
-    debug 'Ωbbbt___7', f"#{UP.convert.number 'u-w,g-w,o-w'}:>#03o;"
-    debug 'Ωbbbt___8', f"#{UP.convert.number 'u+w,g+w,o+w'}:>#03o;"
-    debug 'Ωbbbt___9', f"  #{UP.convert.symbolic 'u+w,g+w,o+w'}:>20c;"
-    help 'Ωbbbt__10', f"  #{UP.convert.symbolic 0o775}:>20c;"
-    help 'Ωbbbt__11', f"  #{UP.convert.symbolic 0o664}:>20c;"
-    help 'Ωbbbt__12', f"  #{UP.convert.symbolic 0o555}:>20c;"
-    help 'Ωbbbt__13', f"  #{UP.convert.symbolic 0o444}:>20c;"
-    help 'Ωbbbt__14'
-    help 'Ωbbbt__15', f"  #{UP.convert.symbolic 0o000775}:>20c;"
-    help 'Ωbbbt__16', f"  #{UP.convert.symbolic 0o040555}:>20c;"
-    help 'Ωbbbt__17', f"  #{UP.convert.symbolic 0o100444}:>20c;"
-    help 'Ωbbbt__18'
-    help 'Ωbbbt__19', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
-    help 'Ωbbbt__20', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
-    help 'Ωbbbt__21', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x01b4 }:>20c;" ### 0o664 .rw-rw-r-- file open ###
-    help 'Ωbbbt__22'
-    help 'Ωbbbt__23', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
-    help 'Ωbbbt__24', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
-    help 'Ωbbbt__25', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x0124 }:>20c;" ### 0o444 .r--r--r-- file closed ###
-    # @eq ( Ωbbbt__26 = -> false ), false
+    debug 'Ωbbbt___2', ( k for k of UP )
+    debug 'Ωbbbt___3', UP.convert.object ( FS.statSync '/etc/passwd' ).mode
+    debug 'Ωbbbt___4', f"#{UP.convert.number 'a-w'}:>#03o;"
+    debug 'Ωbbbt___5', f"#{UP.convert.number 'a+w'}:>#03o;"
+    debug 'Ωbbbt___6', f"#{UP.convert.number 'u+w'}:>#03o;"
+    debug 'Ωbbbt___7', f"#{UP.convert.number 'u+r'}:>#03o;"
+    debug 'Ωbbbt___8', f"#{UP.convert.number 'u-w,g-w,o-w'}:>#03o;"
+    debug 'Ωbbbt___9', f"#{UP.convert.number 'u+w,g+w,o+w'}:>#03o;"
+    debug 'Ωbbbt__10', f"  #{UP.convert.symbolic 'u+w,g+w,o+w'}:>20c;"
+    help 'Ωbbbt__11', f"  #{UP.convert.symbolic 0o775}:>20c;"
+    help 'Ωbbbt__12', f"  #{UP.convert.symbolic 0o664}:>20c;"
+    help 'Ωbbbt__13', f"  #{UP.convert.symbolic 0o555}:>20c;"
+    help 'Ωbbbt__14', f"  #{UP.convert.symbolic 0o444}:>20c;"
+    help 'Ωbbbt__15'
+    help 'Ωbbbt__16', f"  #{UP.convert.symbolic 0o000775}:>20c;"
+    help 'Ωbbbt__17', f"  #{UP.convert.symbolic 0o040555}:>20c;"
+    help 'Ωbbbt__18', f"  #{UP.convert.symbolic 0o100444}:>20c;"
+    help 'Ωbbbt__19'
+    help 'Ωbbbt__20', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
+    help 'Ωbbbt__21', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
+    help 'Ωbbbt__22', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x01b4 }:>20c;" ### 0o664 .rw-rw-r-- file open ###
+    help 'Ωbbbt__23'
+    help 'Ωbbbt__24', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
+    help 'Ωbbbt__25', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
+    help 'Ωbbbt__26', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x0124 }:>20c;" ### 0o444 .r--r--r-- file closed ###
+    # @eq ( Ωbbbt__27 = -> false ), false
     ;null
 
   #---------------------------------------------------------------------------------------------------------
@@ -120,26 +120,93 @@ GTNG                      = require '../../../apps/guy-test-NG'
           select * from bb_list;"""
       walk_fs_objects: -> yield from @statements.get_fs_objects.iterate()
     #.......................................................................................................
-    ref_path    = PATH.resolve __dirname, '../../../apps/bricabrac-filemirror'
-    db_path     = PATH.join ref_path, 'bricabracfs.sqlite'
+    ref_path    = PATH.resolve __dirname, '../../../apps/bvfs'
+    db_path     = PATH.join ref_path, 'bvfs.db'
     mount_path  = PATH.join ref_path, 'mount'
     #.......................................................................................................
     shell_cfg   = { cwd: ref_path, lines: true, }
     shell       = ( cmd, P... ) -> ( execaSync cmd, P, shell_cfg ).stdout
     #.......................................................................................................
     db          = Sqlitefs_db.open db_path
-    debug 'Ωlfp___1', db.statements
+    debug 'Ωbvfs__28', db.statements
     paths       = []
+    #.......................................................................................................
+    do =>
+      for line in shell 'show-layout', mount_path
+        echo line
+    #.......................................................................................................
+    # mode = 'close'
+    # mode = 'open'
+    mode = 'nothing'
+    switch mode
+      when 'open' then do =>
+        debug 'Ωbvfs__29', db.execute SQL"""
+        update metadata set mode = s.open_mode
+          from metadata           as m
+          join bb_standard_modes  as s on ( m.id = s.file_id );"""
+        ;null
+      when 'close' then do =>
+        debug 'Ωbvfs__30', db.execute SQL"""
+        update metadata set mode = s.closed_mode
+          from metadata           as m
+          join bb_standard_modes  as s on ( m.id = s.file_id );"""
+        ;null
+      when 'nothing' then null
+      else throw new Error "unknown mode: #{rpr mode}"
+    #.......................................................................................................
     for d from db.walk_fs_objects()
       full_path = PATH.join mount_path, d.path
       paths.push full_path
-      urge 'Ωlfp___2', d.mode_o, d.path # { d..., full_path, }
+      urge 'Ωbvfs__31', d.mode_o, d.path # { d..., full_path, }
     #.......................................................................................................
-    for path in paths
-      for line in shell 'ls', '-AlF', path # 'mount/origin/https'
-        info 'Ωlfp___4', rpr line
-    for line in shell 'show-layout', mount_path
-      echo line
+    do =>
+      for line in shell 'show-layout', mount_path
+        echo line
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  scripts_: ->
+    SFMODULES                     = require '../../../apps/bricabrac-sfmodules'
+    { type_of,                  } = SFMODULES.unstable.require_type_of()
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    PATH                          = require 'node:path'
+    { execaSync,                } = require 'execa'
+    #.......................................................................................................
+    ref_path    = PATH.resolve __dirname, '../../../apps/bvfs'
+    db_path     = PATH.join ref_path, 'bvfs.db'
+    mount_path  = PATH.join ref_path, 'mount'
+    shell_cfg   = { cwd: ref_path, lines: true, }
+    #.......................................................................................................
+    _validate_shell_arguments = ( cfg, cmd, parameters... ) ->
+      # whisper 'Ωbbbt__32', { cfg, cmd, parameters, }
+      switch type = type_of cfg
+        when 'text'
+          if cmd is undefined then  [ cfg, cmd, parameters..., ] = [ {}, cfg,       parameters..., ]
+          else                      [ cfg, cmd, parameters..., ] = [ {}, cfg, cmd,  parameters..., ]
+        when 'pod'  then null
+        else throw new Error "Ωbvfs__33 expected a pod or a text, got a #{type}"
+      unless ( type = type_of cmd ) is 'text'
+        throw new Error "Ωbvfs__34 expected a text, got a #{type}"
+      cfg = { shell_cfg..., cfg..., }
+      # info 'Ωbbbt__35', { cfg, cmd, parameters, }
+      return { cfg, cmd, parameters, }
+    #.......................................................................................................
+    shell = ( cfg, cmd, parameters... ) ->
+      { cfg, cmd, parameters, } = _validate_shell_arguments cfg, cmd, parameters...
+      return ( execaSync cmd, parameters, cfg ).stdout
+    #.......................................................................................................
+    # trash bvfs.db && bin/sqlite-fs mount -- ./bvfs.db & disown && sqlite3 bvfs.db ".dump" > bvfs.dump.sql
+    #.......................................................................................................
+    @throws ( Ωbvfs__36 = -> _validate_shell_arguments null               ), /expected a pod or a text, got a/
+    @throws ( Ωbvfs__37 = -> _validate_shell_arguments []                 ), /expected a pod or a text, got a/
+    @throws ( Ωbvfs__38 = -> _validate_shell_arguments {}                 ), /expected a text, got a/
+    @eq     ( Ωbbbt__39 = -> _validate_shell_arguments 'ls'               ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [] }
+    @eq     ( Ωbbbt__40 = -> _validate_shell_arguments 'ls', '-AlF'       ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', ] }
+    @eq     ( Ωbbbt__41 = -> _validate_shell_arguments 'ls', '-AlF', '.'  ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', '.', ] }
+    debug 'Ωbbbt__42', shell 'ls'
     #.......................................................................................................
     ;null
 
@@ -149,7 +216,21 @@ GTNG                      = require '../../../apps/guy-test-NG'
 if module is require.main then do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { access_fs_with_db: @tasks.access_fs_with_db, }
+  # ( new Test guytest_cfg ).test { access_fs_with_db: @tasks.access_fs_with_db, }
+  ( new Test guytest_cfg ).test { scripts_: @tasks.scripts_, }
+
+  # p = 0b0000000_010_010_000; urge f"#{p}:>#08o; #{p}:>#06x;"
+  # p = 0b1111111_101_101_111; urge f"#{p}:>#08o; #{p}:>#06x;"
+  # p = 0b11111111111111111111111000000000; urge f"#{p}:>#08o; #{p}:>#06x;"
+  # p = 0o777; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
+  # p = 0o775; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
+  # p = 0o664; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
+  # urge 'Ωbvfs__43'
+  # p = 0o777; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
+  # p = 0o555; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
+  # p = 0o444; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
+
+
 
 ###
 │      21 │         1 │ folder │   509 │ drwxrwxr-x │ ?rwsrwsr-t    │ .Trash-1000                              │ /.Trash-1000
