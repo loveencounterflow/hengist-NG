@@ -178,7 +178,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
     ref_path    = PATH.resolve __dirname, '../../../apps/bvfs'
     db_path     = PATH.join ref_path, 'bvfs.db'
     mount_path  = PATH.join ref_path, 'mount'
-    shell_cfg   = { cwd: ref_path, lines: true, }
+    shell_cfg   = { cwd: ref_path, lines: true, only_stdout: true, }
     #.......................................................................................................
     _validate_shell_arguments = ( cfg, cmd, parameters... ) ->
       # whisper 'Ωbbbt__32', { cfg, cmd, parameters, }
@@ -194,19 +194,73 @@ GTNG                      = require '../../../apps/guy-test-NG'
       # info 'Ωbbbt__35', { cfg, cmd, parameters, }
       return { cfg, cmd, parameters, }
     #.......................................................................................................
+    decode_octal = ( text ) -> text.replace /(?<!\\)\\([0-7]{3})/gv, ( $0, $1 ) ->
+      return String.fromCodePoint parseInt $1, 8
+    #.......................................................................................................
     shell = ( cfg, cmd, parameters... ) ->
       { cfg, cmd, parameters, } = _validate_shell_arguments cfg, cmd, parameters...
-      return ( execaSync cmd, parameters, cfg ).stdout
+      # debug 'Ωbbbt__36', cfg
+      R         = execaSync cmd, parameters, cfg
+      # debug 'Ωbbbt__37', R
+      # if cfg.decode_octal
+      #   if cfg.lines then R.stdout = ( decode_octal line for line in R.stdout )
+      #   else              R.stdout = decode_octal R.stdout
+      return R.stdout if cfg.only_stdout
+      return R
+    #.......................................................................................................
+    match_all_fs_mounts = ( cfg ) ->
+      R     = []
+      lines = shell { only_stdout: true, }, 'cat', '/etc/mtab'
+      for line in lines
+        [ device,
+          path,
+          type,   ] = line.split /\x20/
+        continue if cfg.device? and ( device isnt cfg.device )
+        path        = decode_octal path
+        continue if cfg.path?   and ( path   isnt cfg.path   )
+        continue if cfg.type?   and ( type   isnt cfg.type   )
+        R.push { device, path, type, }
+      return R
+    #.......................................................................................................
+    is_mounted = ( cfg ) ->
+      switch ( mounts = match_all_fs_mounts cfg ).length
+        when 0 then return false
+        when 1 then return true
+      throw new Error "Ωbvfs__38 expected 0 or 1 match, got #{mounts.length}: #{rpr mounts}"
+    #.......................................................................................................
+    @throws ( Ωbvfs__39 = -> _validate_shell_arguments null               ), /expected a pod or a text, got a/
+    @throws ( Ωbvfs__40 = -> _validate_shell_arguments []                 ), /expected a pod or a text, got a/
+    @throws ( Ωbvfs__41 = -> _validate_shell_arguments {}                 ), /expected a text, got a/
+    @eq     ( Ωbbbt__42 = -> _validate_shell_arguments 'ls'               ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [] }
+    @eq     ( Ωbbbt__43 = -> _validate_shell_arguments 'ls', '-AlF'       ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', ] }
+    @eq     ( Ωbbbt__44 = -> _validate_shell_arguments 'ls', '-AlF', '.'  ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', '.', ] }
+    #.......................................................................................................
+    debug 'Ωbbbt__45', shell 'ls'
+    debug 'Ωbbbt__46', shell 'grep', '-Pi', 'sqlitefs', '/etc/mtab'
+    try help 'Ωbbbt__47', shell 'grep', '-Pi', 'sqlitefs', '/etc/mtab'         catch e then warn 'Ωbbbt__48', reverse e.message
+    try help 'Ωbbbt__49', shell 'grep', '-Pi', 'sqlitefsYYYY', '/etc/mtab'     catch e then warn 'Ωbbbt__50', reverse e.message
+    try help 'Ωbbbt__51', shell 'grep', '-Pi', 'sqlitefsYYYY', '/etc/mtabYYYY' catch e then warn 'Ωbbbt__52', reverse e.message
+    #.......................................................................................................
+    info 'Ωbbbt__53', match_all_fs_mounts { device: 'sqlitefs', }
+    info 'Ωbbbt__54', match_all_fs_mounts { device: 'sqlitefs', type: 'sqlfs', }
+    info 'Ωbbbt__55', match_all_fs_mounts { device: 'sqlitefs', type: 'fuse', }
+    #.......................................................................................................
+    info 'Ωbbbt__56', is_mounted { device: 'sqlitefs', }
+    info 'Ωbbbt__57', is_mounted { device: 'sqlitefs', type: 'sqlfs', }
+    info 'Ωbbbt__58', is_mounted { device: 'sqlitefs', type: 'fuse', }
+    try info 'Ωbbbt__59', is_mounted {} catch e then warn 'Ωbbbt__60', reverse e.message
+    #.......................................................................................................
+    ###
+    Output when mount point name is 'm o u n t':
+      [ 'sqlitefs /home/flow/jzr/bvfs/m\\040o\\040u\\040n\\040t fuse rw,nosuid,nodev,relatime,user_id=1000,group_id=1000,default_permissions,allow_other 0 0' ]
+    Output when mount point name is '𫝀':
+      [ 'sqlitefs /home/flow/jzr/bvfs/𫝀 fuse rw,nosuid,nodev,relatime,user_id=1000,group_id=1000,default_permissions,allow_other 0 0' ]
+    ###
+    # sqlitefs /home/flow/jzr/bvfs/mount fuse rw,nosuid,nodev,relatime,user_id=1000,group_id=1000,default_permissions,allow_other 0 0
+    # grep: /etc/mtabYYYY: No such file or directory
+    #  $$$    /// 2 х  bvfs @ 1.0.0 pkg  at 11:15:36
     #.......................................................................................................
     # trash bvfs.db && bin/sqlite-fs mount -- ./bvfs.db & disown && sqlite3 bvfs.db ".dump" > bvfs.dump.sql
-    #.......................................................................................................
-    @throws ( Ωbvfs__36 = -> _validate_shell_arguments null               ), /expected a pod or a text, got a/
-    @throws ( Ωbvfs__37 = -> _validate_shell_arguments []                 ), /expected a pod or a text, got a/
-    @throws ( Ωbvfs__38 = -> _validate_shell_arguments {}                 ), /expected a text, got a/
-    @eq     ( Ωbbbt__39 = -> _validate_shell_arguments 'ls'               ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [] }
-    @eq     ( Ωbbbt__40 = -> _validate_shell_arguments 'ls', '-AlF'       ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', ] }
-    @eq     ( Ωbbbt__41 = -> _validate_shell_arguments 'ls', '-AlF', '.'  ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', '.', ] }
-    debug 'Ωbbbt__42', shell 'ls'
     #.......................................................................................................
     ;null
 
@@ -225,7 +279,7 @@ if module is require.main then do =>
   # p = 0o777; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
   # p = 0o775; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
   # p = 0o664; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
-  # urge 'Ωbvfs__43'
+  # urge 'Ωbvfs__61'
   # p = 0o777; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
   # p = 0o555; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
   # p = 0o444; urge f"#{p}:>#08o; #{p}:>#06x; #{p}:>#016b;"
