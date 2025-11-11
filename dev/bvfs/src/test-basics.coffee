@@ -269,9 +269,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
     { $,                        } = require 'execa'
     { Shell,                    } = require '../../../apps/bvfs'
     { Async_jetstream,
+      Jetstream,
       internals,                } = SFMODULES.require_jetstream()
     { lets,
       freeze,                   } = require '../../../apps/letsfreezethat'
+    create_glob_matcher           = require 'picomatch'
+    { regex,                    } = require 'regex'
     #.........................................................................................................
     decode_octal = ( text ) -> text.replace /(?<!\\)\\([0-7]{3})/gv, ( $0, $1 ) ->
       return String.fromCodePoint parseInt $1, 8
@@ -302,12 +305,12 @@ GTNG                      = require '../../../apps/guy-test-NG'
         \x20 \(         (?<options>  [^\x20]+ ) \)
         $ ///v
       #.....................................................................................................
-      sh_mount_jet = new Async_jetstream { empty_call: null, }
+      sh_mount_jet = new Jetstream { empty_call: null, }
       #.....................................................................................................
       sh_mount_jet.push ( NN ) ->
         # { stdout, } = await $( { lines: true, verbose: 'none', } )"mount"
         yield from GUY.fs.walk_lines '/etc/mtab'
-        #   debug 'Ωbbbt__10',
+        #   debug 'Ωbbbt__65',
         #    line.split '\x20'
         # for line in stdout
         #   yield line
@@ -320,7 +323,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
           type
           options ] = line.split '\x20'
         if [ device, path, type, options, ].some ( e ) -> ( not e? ) or ( e is '' )
-          throw new Error "Ωbvfs__38 unable to parse line #{rpr line}"
+          throw new Error "Ωbvfs__66 unable to parse line #{rpr line}"
         yield freeze { device, path, type, options, }
       #.....................................................................................................
       sh_mount_jet.push ( d ) ->
@@ -329,35 +332,57 @@ GTNG                      = require '../../../apps/guy-test-NG'
           d.path    = decode_octal d.path
         ;null
       #.....................................................................................................
-      walk_sh_mount_matches = ({ device = null, path = null, type = null, }={}) ->
+      create_regex_matcher = ( pattern ) ->
+        return ( -> true ) unless pattern?
+        switch type = type_of pattern
+          when 'regex'
+            re = pattern
+          when 'text'
+            re = regex"#{pattern}"
+          else throw new Error "Ωbvfs__38 expected a regex or a text, got a #{type}"
+        return ( x ) -> re.lastIndex = 0; re.test x
+      #.....................................................................................................
+      walk_sh_mount_matches = ({ device = null, path = null, glob = null, type = null, }={}) ->
+        if glob?
+          if path?
+            throw new Error "Ωbvfs__67 expected either glob or path, got both"
+          match_glob  = create_glob_matcher glob
+        else
+          match_glob  = -> true
+        match_device  = create_regex_matcher device
+        match_path    = create_regex_matcher path
+        match_type    = create_regex_matcher type
         ### TAINT allow regexes ###
-        for await d from sh_mount_jet.walk()
-          continue if ( device? ) and not ( device is d.device )
-          continue if ( path?   ) and not ( path is d.path     )
-          continue if ( type?   ) and not ( type is d.type     )
+        for d from sh_mount_jet.walk()
+          continue unless match_device  d.device
+          continue unless match_glob    d.path
+          continue unless match_path    d.path
+          continue unless match_type    d.type
           yield d
         ;null
       #.....................................................................................................
       has_mount = ( P... ) ->
-        mounts = [ ( d for await d from walk_sh_mount_matches P... )..., ]
+        mounts = [ ( walk_sh_mount_matches P... )..., ]
         return switch count = mounts.length
           when 0 then false
           when 1 then true
-        throw new Error "Ωbvfs__66 expected zero or one results, got #{count}"
+        throw new Error "Ωbvfs__68 expected zero or one results, got #{count}"
       #.....................................................................................................
       # for await d from walk_sh_mount_matches { device: 'sqlitefs', }
       for await d from walk_sh_mount_matches()
-        urge 'Ωbbbt__68', d
+        urge 'Ωbbbt__69', d
       result = [ ( d for await d from walk_sh_mount_matches { device: 'tmpfs', } )..., ]
-      @eq ( Ωbvfs__69 = -> result.length > 1 ), true
+      @eq ( Ωbvfs__70 = -> result.length > 1 ), true
       #.....................................................................................................
       error = null
       try await has_mount { device: 'tmpfs', } catch error
-        @eq ( Ωbvfs__70 = -> /expected zero or one results, got \d+/.test error.message ), true
-      @eq ( Ωbvfs__71 = -> error is null ), false
+        @eq ( Ωbvfs__71 = -> /expected zero or one results, got \d+/.test error.message ), true
+      @eq ( Ωbvfs__72 = -> error is null ), false
       #.....................................................................................................
-      d = await has_mount { path: '/dev/shm',       }; @eq ( Ωbbbt__72 = -> d ), true
-      d = await has_mount { path: '/no/such/path',  }; @eq ( Ωbbbt__73 = -> d ), false
+      @eq ( Ωbbbt__73 = -> has_mount { path: '/dev/shm',       } ), true
+      @eq ( Ωbbbt__74 = -> has_mount { path: /^\/dev\/shm$/v,  } ), true
+      @eq ( Ωbbbt__75 = -> has_mount { glob: '/*/shm',         } ), true
+      @eq ( Ωbbbt__76 = -> has_mount { path: '/no/such/path',  } ), false
     #.......................................................................................................
     ;null
 
@@ -365,8 +390,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
 
 #===========================================================================================================
 if module is require.main then await do =>
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { access_fs_with_db: @tasks.access_fs_with_db, }
   # ( new Test guytest_cfg ).test { scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY: @tasks.scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY, }
   await ( new Test guytest_cfg ).async_test { async_shell: @tasks.async_shell, }
