@@ -702,26 +702,74 @@ GTNG                      = require '../../../apps/guy-test-NG'
       #.....................................................................................................
       ;null
 
+    #-------------------------------------------------------------------------------------------------------
+    result_of_empty_call: ->
+      SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+      { type_of,                } = SFMODULES.unstable.require_type_of()
+      { Async_jetstream,
+        Jetstream,
+        internals,              } = SFMODULES.require_jetstream()
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { fallback, outlet: '*', empty_call: null, }
+        jet.push ( d ) -> yield from [ 'a', 'e', 'i', ] ;null
+        jet.push '*', ( d ) -> help 'Ωjtstm_136', d; yield d ;null
+        # jet.cue 'first'
+        @eq ( Ωjtstm_137 = -> jet.cfg.empty_call  ), null
+        @eq ( Ωjtstm_138 = -> jet.run()           ), [ 'a', 'e', 'i', ]
+        ;null
+      #.....................................................................................................
+      do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Jetstream { fallback, outlet: '*', empty_call: null, }
+        jet.push ( d ) -> yield from [ 'a', 'e', 'i', ] ;null
+        jet.push '*', ( d ) -> help 'Ωjtstm_139', d; yield d ;null
+        jet.send 'first'
+        @eq ( Ωjtstm_140 = -> jet.run()           ), [ 'a', 'e', 'i', ]
+        ;null
+      #.....................................................................................................
+      await do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Async_jetstream { fallback, outlet: '*', empty_call: null, }
+        jet.push ( d ) -> yield from [ 'a', 'e', 'i', ] ;null
+        jet.push '*', ( d ) -> help 'Ωjtstm_141', d; yield d ;null
+        # jet.cue 'first'
+        @eq ( Ωjtstm_142 = -> jet.cfg.empty_call  ), null
+        d = await jet.run(); @eq ( Ωjtstm_143 = -> d ), [ 'a', 'e', 'i', ]
+        ;null
+      #.....................................................................................................
+      await do =>
+        fallback  = Symbol 'fallback'
+        jet       = new Async_jetstream { fallback, outlet: '*', empty_call: null, }
+        jet.push ( d ) -> yield from [ 'a', 'e', 'i', ] ;null
+        jet.push '*', ( d ) -> help 'Ωjtstm_144', d; yield d ;null
+        jet.send 'first'
+        d = await jet.run(); @eq ( Ωjtstm_145 = -> d ), [ 'a', 'e', 'i', ]
+        ;null
+      #.....................................................................................................
+      ;null
+
 
 #===========================================================================================================
 demo_await_fetch_website = ->
   await do =>
     stream  = new Async_jetstream()
-    stream.push ( address ) -> info "Ωjtstm_136 fetching #{address}"
+    stream.push ( address ) -> info "Ωjtstm_146 fetching #{address}"
     stream.push ( address ) ->
       rsp = await fetch address
-      info "Ωjtstm_137 got response from #{address}"
+      info "Ωjtstm_147 got response from #{address}"
       yield rsp
     stream.push ( rsp     ) ->
       text = await rsp.text()
-      info 'Ωjtstm_138', "retrieved response text"
+      info 'Ωjtstm_148', "retrieved response text"
       yield text
     # stream.push ( body    ) -> yield body.read()
     result = await stream.pick_first 'https://example.com'
-    help 'Ωjtstm_139', rpr result
-    # await @eq ( Ωjtstm_140 = -> await stream.pick_first 'https://example.com' ), 0
-    @eq ( Ωjtstm_141 = -> result.startsWith '<!doctype html>' ), true
-    # debug 'Ωjtstm_142', stream.run 1
+    help 'Ωjtstm_149', rpr result
+    # await @eq ( Ωjtstm_150 = -> await stream.pick_first 'https://example.com' ), 0
+    @eq ( Ωjtstm_151 = -> result.startsWith '<!doctype html>' ), true
+    # debug 'Ωjtstm_152', stream.run 1
     ;null
 
 #===========================================================================================================
@@ -746,7 +794,7 @@ demo_async = ->
     ;null
   #.........................................................................................................
   for await value from f()
-    debug 'Ωjtstm_143', value
+    debug 'Ωjtstm_153', value
   #.........................................................................................................
   whisper '————————————————————————————————————–'
   help i
@@ -760,9 +808,9 @@ demo_async = ->
   help await j()
   whisper '————————————————————————————————————–'
   for await n from i()
-    debug 'Ωjtstm_144', n
+    debug 'Ωjtstm_154', n
   for await n from j()
-    debug 'Ωjtstm_145', n
+    debug 'Ωjtstm_155', n
 
   ###
 
@@ -786,24 +834,25 @@ demo_async = ->
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # await ( new Test guytest_cfg ).async_test @tasks
+  await ( new Test guytest_cfg ).async_test @tasks
   # await ( new Test guytest_cfg ).async_test { jetstream_1: @tasks.jetstream_1, }
-  await ( new Test guytest_cfg ).async_test { async_jetstream: @tasks.async_jetstream, }
+  # await ( new Test guytest_cfg ).async_test { async_jetstream: @tasks.async_jetstream, }
+  await ( new Test guytest_cfg ).async_test { result_of_empty_call: @tasks.result_of_empty_call, }
 
   # await demo_async()
 
-  # debug 'Ωjtstm_146', { namedpipe:    0x1000, }
-  # debug 'Ωjtstm_147', { chrdevice:    0x2000, }
-  # debug 'Ωjtstm_148', { folder:       0x4000, }
-  # debug 'Ωjtstm_149', { blockdevice:  0x6000, }
-  # debug 'Ωjtstm_150', { file:         0x8000, }
-  # debug 'Ωjtstm_151', { symlink:      0xa000, }
-  # debug 'Ωjtstm_152', { socket:       0xc000, }
-  url_nfo = new URL 'https://example.com#fragment'
-  debug 'Ωjtstm_153', ( k for k of url_nfo )
-  debug 'Ωjtstm_153', rpr url_nfo.protocol
-  debug 'Ωjtstm_154', rpr url_nfo.hash
+  # debug 'Ωjtstm_156', { namedpipe:    0x1000, }
+  # debug 'Ωjtstm_157', { chrdevice:    0x2000, }
+  # debug 'Ωjtstm_158', { folder:       0x4000, }
+  # debug 'Ωjtstm_159', { blockdevice:  0x6000, }
+  # debug 'Ωjtstm_160', { file:         0x8000, }
+  # debug 'Ωjtstm_161', { symlink:      0xa000, }
+  # debug 'Ωjtstm_162', { socket:       0xc000, }
+  # url_nfo = new URL 'https://example.com#fragment'
+  # debug 'Ωjtstm_163', ( k for k of url_nfo )
+  # debug 'Ωjtstm_164', rpr url_nfo.protocol
+  # debug 'Ωjtstm_165', rpr url_nfo.hash
 
-  for page_nr in [ 473 .. 489 ]
-    echo "p#{page_nr} A: (cont.); p#{page_nr} B: (cont.)"
+  # for page_nr in [ 473 .. 489 ]
+  #   echo "p#{page_nr} A: (cont.); p#{page_nr} B: (cont.)"
 

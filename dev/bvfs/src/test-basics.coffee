@@ -268,8 +268,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
     PATH                          = require 'node:path'
     { $,                        } = require 'execa'
     { Shell,                    } = require '../../../apps/bvfs'
-    { Jetstream,
+    { Async_jetstream,
       internals,                } = SFMODULES.require_jetstream()
+    { lets,
+      freeze,                   } = require '../../../apps/letsfreezethat'
+    #.........................................................................................................
+    decode_octal = ( text ) -> text.replace /(?<!\\)\\([0-7]{3})/gv, ( $0, $1 ) ->
+      return String.fromCodePoint parseInt $1, 8
     #.........................................................................................................
     await $({verbose: 'full'})"cat package.json"
     await $({verbose: 'full'})"cat .gitignore"
@@ -286,43 +291,73 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     await do =>
       # fallback  = Symbol 'fallback'
+      ### TAINT the output of `mount` is not escaped and not quoted, so there's lots of opportunities
+      for paths and device names with spaces or parens to cause the match to fail; consider to use
+      `cat /etc/mtab` instead which uses octal escapes for filenames with spaces. ###
       pattern   = ///
         ^
                         (?<device>   [^\x20]+ )
-        \x20 on   \x20  (?<path>     [^\x20]+ )
+        \x20 on   \x20  (?<path>     .+?      )
         \x20 type \x20  (?<type>     [^\x20]+ )
         \x20 \(         (?<options>  [^\x20]+ ) \)
         $ ///v
       #.....................................................................................................
-      sh_mount_jet = new Jetstream() # { fallback, outlet: '*', }
-      # #.....................................................................................................
-      # sh_mount_jet.push '*', ( d ) -> help 'Ωbbbt__65', rpr d
+      sh_mount_jet = new Async_jetstream { empty_call: null, }
       #.....................................................................................................
-      sh_mount_jet.push ( d ) ->
-        return null unless ( match = d.match pattern )?
-        # help 'Ωbbbt__66', match.groups
-        yield { match.groups..., }
-      #.....................................................................................................
-      sh_mount_jet.push ( d ) -> d.options = d.options.split ','
-      #.....................................................................................................
-      walk_sh_mount = ->
-        { stdout, } = await $( { lines: true, verbose: 'none', } )"mount"
-        for line in stdout
-          yield sh_mount_jet.pick_first line ### TAINT use `fallback` to prevent error in case of no results ###
+      sh_mount_jet.push ( NN ) ->
+        # { stdout, } = await $( { lines: true, verbose: 'none', } )"mount"
+        yield from GUY.fs.walk_lines '/etc/mtab'
+        #   debug 'Ωbbbt__10',
+        #    line.split '\x20'
+        # for line in stdout
+        #   yield line
         ;null
       #.....................................................................................................
-      walk_sh_mount_match = ({ device = null, path = null, type = null, }={}) ->
+      sh_mount_jet.push ( line ) ->
+        return null if line is ''
+        [ device
+          path
+          type
+          options ] = line.split '\x20'
+        if [ device, path, type, options, ].some ( e ) -> ( not e? ) or ( e is '' )
+          throw new Error "Ωbvfs__38 unable to parse line #{rpr line}"
+        yield freeze { device, path, type, options, }
+      #.....................................................................................................
+      sh_mount_jet.push ( d ) ->
+        yield lets d, ( d ) ->
+          d.options = d.options.split ','
+          d.path    = decode_octal d.path
+        ;null
+      #.....................................................................................................
+      walk_sh_mount_matches = ({ device = null, path = null, type = null, }={}) ->
         ### TAINT allow regexes ###
-        for await d from walk_sh_mount()
+        for await d from sh_mount_jet.walk()
           continue if ( device? ) and not ( device is d.device )
           continue if ( path?   ) and not ( path is d.path     )
           continue if ( type?   ) and not ( type is d.type     )
           yield d
         ;null
       #.....................................................................................................
-      # debug 'Ωbbbt__68', d for await d from walk_sh_mount()
-      debug 'Ωbbbt__68', d for await d from walk_sh_mount_match { device: 'sqlitefs', }
-      debug 'Ωbbbt__68', d for await d from walk_sh_mount_match { device: 'tmpfs', }
+      has_mount = ( P... ) ->
+        mounts = [ ( d for await d from walk_sh_mount_matches P... )..., ]
+        return switch count = mounts.length
+          when 0 then false
+          when 1 then true
+        throw new Error "Ωbvfs__66 expected zero or one results, got #{count}"
+      #.....................................................................................................
+      # for await d from walk_sh_mount_matches { device: 'sqlitefs', }
+      for await d from walk_sh_mount_matches()
+        urge 'Ωbbbt__68', d
+      result = [ ( d for await d from walk_sh_mount_matches { device: 'tmpfs', } )..., ]
+      @eq ( Ωbvfs__69 = -> result.length > 1 ), true
+      #.....................................................................................................
+      error = null
+      try await has_mount { device: 'tmpfs', } catch error
+        @eq ( Ωbvfs__70 = -> /expected zero or one results, got \d+/.test error.message ), true
+      @eq ( Ωbvfs__71 = -> error is null ), false
+      #.....................................................................................................
+      d = await has_mount { path: '/dev/shm',       }; @eq ( Ωbbbt__72 = -> d ), true
+      d = await has_mount { path: '/no/such/path',  }; @eq ( Ωbbbt__73 = -> d ), false
     #.......................................................................................................
     ;null
 
@@ -331,7 +366,7 @@ GTNG                      = require '../../../apps/guy-test-NG'
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   # ( new Test guytest_cfg ).test { access_fs_with_db: @tasks.access_fs_with_db, }
   # ( new Test guytest_cfg ).test { scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY: @tasks.scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY, }
   await ( new Test guytest_cfg ).async_test { async_shell: @tasks.async_shell, }
