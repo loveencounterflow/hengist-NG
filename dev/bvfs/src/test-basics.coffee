@@ -369,8 +369,8 @@ GTNG                      = require '../../../apps/guy-test-NG'
         throw new Error "Ωbvfs__68 expected zero or one results, got #{count}"
       #.....................................................................................................
       # for await d from walk_sh_mount_matches { device: 'sqlitefs', }
-      for await d from walk_sh_mount_matches()
-        urge 'Ωbbbt__69', d
+      # for await d from walk_sh_mount_matches()
+      #   urge 'Ωbbbt__69', d
       result = [ ( d for await d from walk_sh_mount_matches { device: 'tmpfs', } )..., ]
       @eq ( Ωbvfs__70 = -> result.length > 1 ), true
       #.....................................................................................................
@@ -383,6 +383,26 @@ GTNG                      = require '../../../apps/guy-test-NG'
       @eq ( Ωbbbt__74 = -> has_mount { path: /^\/dev\/shm$/v,  } ), true
       @eq ( Ωbbbt__75 = -> has_mount { glob: '/*/shm',         } ), true
       @eq ( Ωbbbt__76 = -> has_mount { path: '/no/such/path',  } ), false
+      ###
+      in /etc/mtab:
+      (1) /home/flow/jzr/bvfs/mou\134nt instead of /home/flow/jzr/bvfs/mou\012t
+      (2) /home/flow/jzr/bvfs/mou\134tt instead of /home/flow/jzr/bvfs/mou\011t
+      (3) /home/flow/jzr/bvfs/mou\134x01t instead of /home/flow/jzr/bvfs/mou\001t
+      (4) /home/flow/jzr/bvfs/mou\134x7ft instead of /home/flow/jzr/bvfs/mou\177t
+      (5) /home/flow/jzr/bvfs/mou\134u2029t literally '/home/flow/jzr/bvfs/mou\u2029t' with the backslash escaped
+      where '\134' is 0x5c `\\` (backslash)
+
+      `mount` command output:
+      (4) /home/flow/jzr/bvfs/mou\x7ft
+      (5) /home/flow/jzr/bvfs/mou\u2029t
+
+      `mount` 'helpfully' resolves the top-level escaping (i.e. the octal escapes) but leaves the symbolic
+      `\n`, `\t`, `\x..`, `\u....` in place; unfortunately, this results in filenames where the most
+      notorious offender—ASCII space—is left unescaped, with no quotes around the path and no way to safely
+      reconstruct the path except matching on how it probably ends (with a `type ...` and a parenthesized
+      list of options that hopefully don't use any special characters).
+
+      ###
     #.......................................................................................................
     ;null
 
