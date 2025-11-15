@@ -194,48 +194,134 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  require_dbric: ->
+  disallow_overwriting_properties_with_functions: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    debug 'Ωbbdbr__45', new Dbric '/dev/shm/bricabrac.sqlite'
+    # debug 'Ωbbdbr__45', new Dbric '/dev/shm/bricabrac.sqlite'
+    do =>
+      db        = ( new Dbric ':memory:' )
+      db_proto  = Object.getPrototypeOf db
+      debug 'Ωbbdbr__46', Object.getOwnPropertyDescriptor db_proto, 'is_ready'
+      debug 'Ωbbdbr__47', Object.getOwnPropertyDescriptor db_proto, '_get_is_ready'
+      ;null
+    #-------------------------------------------------------------------------------------------------------
+    ### use derived classes to assert that property descriptors are searched for in the prototype chain: ###
+    class Dbric_A extends Dbric
+    class Dbric_B extends Dbric_A
+    class Dbric_C extends Dbric_B
+    class Dbric_Z extends Dbric_C
+    #-------------------------------------------------------------------------------------------------------
+    do =>
+      class Dbric_nonconform extends Dbric_Z
+        is_ready: ->
+      @throws ( Ωbbdbr__48 = -> new Dbric_nonconform() ), /not allowed to override property 'is_ready'; use '_get_is_ready instead/
+      ;null
+    #-------------------------------------------------------------------------------------------------------
+    do =>
+      class Dbric_nonconform extends Dbric_Z
+        prefix: ->
+      @throws ( Ωbbdbr__49 = -> new Dbric_nonconform() ), /not allowed to override property 'prefix'; use '_get_prefix instead/
+      ;null
+    #-------------------------------------------------------------------------------------------------------
+    do =>
+      class Dbric_nonconform extends Dbric_Z
+        full_prefix: ->
+      @throws ( Ωbbdbr__50 = -> new Dbric_nonconform() ), /not allowed to override property 'full_prefix'; use '_get_full_prefix instead/
+      ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  sample_db: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    # debug 'Ωbbdbr__51', new Dbric '/dev/shm/bricabrac.sqlite'
     #=======================================================================================================
     class Dbric_store extends Dbric
+      @build: [
+        SQL"""create table store_facets (
+          facet_key             text unique not null primary key,
+          facet_value           json );"""
+        ]
       @statements:
         # store_create_tables: SQL"""
         #   """
-        store_procure: SQL"""
-          create table store_facets (
-            facet_key             text unique not null primary key,
-            facet_value           json );"""
         store_insert_facet: SQL"""
           insert into store_facets ( facet_key, facet_value ) values ( $facet_key, $facet_value )
             on conflict ( facet_key ) do update set facet_value = excluded.facet_value;"""
         store_get_facets: SQL"""
           select * from store_facets order by facet_key;"""
-
-      #---------------------------------------------------------------------------------------------------
-      is_ready: ->
-        dbos = @_get_db_objects()
-        return false unless dbos.store_facets?.type is 'table'
-        return true
-
     #=======================================================================================================
     do =>
-      debug 'Ωbbdbr__46', new Dbric_store '/dev/shm/bricabrac.sqlite'
-      dbs = Dbric_store.open '/dev/shm/bricabrac.sqlite'
-      dbs.statements.store_create_tables.run()
-      for row from dbs.statements.get_schema.iterate()
-        help 'Ωbbdbr__47', row
-      dbs.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
-      dbs.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
-      for row from dbs.statements.store_get_facets.iterate()
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      store     = Dbric_store.open db_path
+      # store.statements.store_create_tables.run()
+      # for row from store.statements.get_schema.iterate()
+      #   help 'Ωbbdbr__52', row
+      store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
+      store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
+      store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
+      store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
+      store.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
+      store.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
+      for row from store.statements.store_get_facets.iterate()
         row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
-        help 'Ωbbdbr__48', row
+        help 'Ωbbdbr__53', row
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  sample_db_with_better_sqlite3: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    _Bsql3                        = require 'better-sqlite3'
+    #=======================================================================================================
+    class Bsql3 extends _Bsql3
+    #=======================================================================================================
+    class Dbric_store extends Dbric
+      @db_class: Bsql3
+      @build: [
+        SQL"""create table store_facets (
+          facet_key             text unique not null primary key,
+          facet_value           json );"""
+        ]
+      @statements:
+        # store_create_tables: SQL"""
+        #   """
+        store_insert_facet: SQL"""
+          insert into store_facets ( facet_key, facet_value ) values ( $facet_key, $facet_value )
+            on conflict ( facet_key ) do update set facet_value = excluded.facet_value;"""
+        store_get_facets: SQL"""
+          select * from store_facets order by facet_key;"""
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      store     = Dbric_store.open db_path
+      debug 'Ωbbdbr__54', store
+      @eq ( Ωbbdbr__55 = -> store.db instanceof Bsql3     ), true
+      @eq ( Ωbbdbr__56 = -> store.db instanceof _Bsql3    ), true
+      # store.statements.store_create_tables.run()
+      # for row from store.statements.get_schema.iterate()
+      #   help 'Ωbbdbr__57', row
+      store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
+      store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
+      store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
+      store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
+      store.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
+      store.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
+      cast_row = ( row ) ->
+        return row unless row?
+        return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
+      rows = store.statements.store_get_facets.iterate()
+      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), undefined
     #.......................................................................................................
     return null
 
@@ -245,63 +331,7 @@ remove = ( path ) ->
 if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
+  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
-  # ( new Test guytest_cfg ).test { dbric_std: tests.dbric_std, }
-  # ( new Test guytest_cfg ).test { reject_nonconformant_build_statements: tests.reject_nonconformant_build_statements, }
-
-  throw_from = ( error_1, message ) ->
-    error_2 = new Error message
-    error_2.cause = error_1
-    throw error_2
-
-  class Division_by_zero  extends Error
-  class App_error         extends Error
-
-  #---------------------------------------------------------------------------------------------------------
-  div = ( a, b ) ->
-    throw new Division_by_zero "Ωbbdbr__49 b cannot be zero" if b is 0
-    return a / b
-
-  #---------------------------------------------------------------------------------------------------------
-  calculate = ( a, b ) ->
-    return 2 * div a, b
-
-  #=========================================================================================================
-  app_1 = ( n ) ->
-    try
-      k = calculate 100, n
-    catch error
-      throw new App_error "Ωbbdbr__50 something went wrong"
-    return { n, k, }
-
-  #=========================================================================================================
-  app_3 = ( n ) ->
-    try
-      k = calculate 100, n
-    catch cause
-      throw new App_error "Ωbbdbr__51 something went wrong", { cause, }
-    return { n, k, }
-
-  # debug 'Ωbbdbr__52', app_3 7
-  # debug 'Ωbbdbr__53', app_3
-  cause = new Error "Ωbbdbr__54"
-  try throw new Error "Ωbbdbr__55", { cause, } catch error
-    info 'Ωbbdbr__56', error.stack
-    urge 'Ωbbdbr__57', error.cause.stack
-    # d = {}
-    # urge 'Ωbbdbr__58', Error.captureStackTrace d
-    # urge 'Ωbbdbr__59', d.stack
-
-    ### NOTE setting `sourceMap` not needed when NodeJS is run with `--enable-source-maps` ###
-  { getCallSites } = require 'node:util'
-  for call_site in getCallSites { sourceMap: true, }
-    { functionName: fn_name,
-      scriptName:   path,
-      lineNumber:   line_nr,
-      columnNumber: column_nr,  } = call_site
-    fn_name = '[anonymous]' if fn_name is ''
-    urge 'Ωbbdbr__60', "#{green path}:#{blue line_nr}:#{red column_nr}:#{gold fn_name}()"
-
+  ( new Test guytest_cfg ).test { sample_db_with_better_sqlite3: tests.sample_db_with_better_sqlite3, }

@@ -18,9 +18,20 @@ GUY                       = require 'guy'
   log     }               = GUY.trm
 # WGUY                      = require '../../../apps/webguy'
 GTNG                      = require '../../../apps/guy-test-NG'
-{ Test                  } = GTNG
-{ f }                     = require '../../../apps/effstring'
+{ Test,                 } = GTNG
+{ f,                    } = require '../../../apps/effstring'
+PATH                      = require 'node:path'
+{ $,                    } = require 'execa'
 
+#===========================================================================================================
+get_paths = ->
+  hengist_path  = PATH.resolve __dirname, '../../..'
+  ref_path      = PATH.join hengist_path, 'apps/bvfs'
+  db_path       = PATH.join ref_path, 'bvfs.db'
+  mount_path    = PATH.join ref_path, 'mount'
+  assets_path   = PATH.join hengist_path, 'assets/bvfs'
+  arena_path    = PATH.join hengist_path, 'arena/bvfs'
+  return { ref_path, db_path, mount_path, assets_path, arena_path, }
 
 
 ############################################################################################################
@@ -128,9 +139,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
           select * from bb_list;"""
       walk_fs_objects: -> yield from @statements.get_fs_objects.iterate()
     #.......................................................................................................
-    ref_path    = PATH.resolve __dirname, '../../../apps/bvfs'
-    db_path     = PATH.join ref_path, 'bvfs.db'
-    mount_path  = PATH.join ref_path, 'mount'
+    { ref_path,
+      db_path,
+      mount_path, } = get_paths()
     #.......................................................................................................
     shell_cfg   = { cwd: ref_path, lines: true, }
     shell       = ( cmd, P... ) -> ( execaSync cmd, P, shell_cfg ).stdout
@@ -184,9 +195,9 @@ GTNG                      = require '../../../apps/guy-test-NG'
     { execaSync,                } = require 'execa'
     { Shell,                    } = require '../../../apps/bvfs'
     #.......................................................................................................
-    ref_path    = PATH.resolve __dirname, '../../../apps/bvfs'
-    db_path     = PATH.join ref_path, 'bvfs.db'
-    mount_path  = PATH.join ref_path, 'mount'
+    { ref_path,
+      db_path,
+      mount_path, } = get_paths()
     shell_cfg   = { cwd: ref_path, lines: true, only_stdout: true, }
     #.......................................................................................................
     match_all_fs_mounts = ( cfg ) ->
@@ -339,13 +350,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
             re = pattern
           when 'text'
             re = regex"#{pattern}"
-          else throw new Error "Ωbvfs__38 expected a regex or a text, got a #{type}"
+          else throw new Error "Ωbvfs__67 expected a regex or a text, got a #{type}"
         return ( x ) -> re.lastIndex = 0; re.test x
       #.....................................................................................................
       walk_sh_mount_matches = ({ device = null, path = null, glob = null, type = null, }={}) ->
         if glob?
           if path?
-            throw new Error "Ωbvfs__67 expected either glob or path, got both"
+            throw new Error "Ωbvfs__68 expected either glob or path, got both"
           match_glob  = create_glob_matcher glob
         else
           match_glob  = -> true
@@ -366,23 +377,23 @@ GTNG                      = require '../../../apps/guy-test-NG'
         return switch count = mounts.length
           when 0 then false
           when 1 then true
-        throw new Error "Ωbvfs__68 expected zero or one results, got #{count}"
+        throw new Error "Ωbvfs__69 expected zero or one results, got #{count}"
       #.....................................................................................................
       # for await d from walk_sh_mount_matches { device: 'sqlitefs', }
       # for await d from walk_sh_mount_matches()
-      #   urge 'Ωbbbt__69', d
+      #   urge 'Ωbbbt__70', d
       result = [ ( d for await d from walk_sh_mount_matches { device: 'tmpfs', } )..., ]
-      @eq ( Ωbvfs__70 = -> result.length > 1 ), true
+      @eq ( Ωbvfs__71 = -> result.length > 1 ), true
       #.....................................................................................................
       error = null
       try await has_mount { device: 'tmpfs', } catch error
-        @eq ( Ωbvfs__71 = -> /expected zero or one results, got \d+/.test error.message ), true
-      @eq ( Ωbvfs__72 = -> error is null ), false
+        @eq ( Ωbvfs__72 = -> /expected zero or one results, got \d+/.test error.message ), true
+      @eq ( Ωbvfs__73 = -> error is null ), false
       #.....................................................................................................
-      @eq ( Ωbbbt__73 = -> has_mount { path: '/dev/shm',       } ), true
-      @eq ( Ωbbbt__74 = -> has_mount { path: /^\/dev\/shm$/v,  } ), true
-      @eq ( Ωbbbt__75 = -> has_mount { glob: '/*/shm',         } ), true
-      @eq ( Ωbbbt__76 = -> has_mount { path: '/no/such/path',  } ), false
+      @eq ( Ωbbbt__74 = -> has_mount { path: '/dev/shm',       } ), true
+      @eq ( Ωbbbt__75 = -> has_mount { path: /^\/dev\/shm$/v,  } ), true
+      @eq ( Ωbbbt__76 = -> has_mount { glob: '/*/shm',         } ), true
+      @eq ( Ωbbbt__77 = -> has_mount { path: '/no/such/path',  } ), false
       ###
       in /etc/mtab:
       (1) /home/flow/jzr/bvfs/mou\134nt instead of /home/flow/jzr/bvfs/mou\012t
@@ -406,7 +417,69 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     ;null
 
+# #===========================================================================================================
+# ensure_empty_dir = ( path ) ->
+#   try await result = $( { reject: false, } )"trash #{path}" catch error
+#     debug 'Ωbbbt__78', rpr error.exitCode
+#     debug 'Ωbbbt__79', rpr error.name
+#     debug 'Ωbbbt__80', rpr error.code
+#     debug 'Ωbbbt__81', rpr error.message
+#     debug 'Ωbbbt__82', rpr error.originalMessage
+#     debug 'Ωbbbt__83', rpr error.cause
+#     process.exit 111
+#     throw error
+#   info 'Ωbbbt__84', rpr result
+#   info 'Ωbbbt__85', rpr result?.exitCode
+#   info 'Ωbbbt__86', rpr result?.name
+#   info 'Ωbbbt__87', rpr result?.code
+#   info 'Ωbbbt__88', rpr result?.message
+#   info 'Ωbbbt__89', rpr result?.originalMessage
+#   info 'Ωbbbt__90', rpr result?.cause
+#   ;null
 
+#===========================================================================================================
+demo_create_mount_folders_with_strange_names = ->
+  { ref_path,
+    db_path,
+    assets_path,
+    arena_path,
+    mount_path, } = get_paths()
+  # debug 'Ωbbbt__91', { assets_path, }
+  # debug 'Ωbbbt__92', { arena_path, }
+  # await ensure_empty_dir arena_path
+  { mkdirp, } = require 'mkdirp'
+  # debug 'Ωbbbt__93', mkdirp
+  await mkdirp PATH.join arena_path, 'test'
+  await mkdirp PATH.join arena_path, 'äöü'
+  await mkdirp PATH.join arena_path, 'mou\nt'
+  await mkdirp PATH.join arena_path, 'mou t'
+  await mkdirp PATH.join arena_path, 'mou*t'
+  await mkdirp PATH.join arena_path, 'mou?t'
+  await mkdirp PATH.join arena_path, 'mou𬺱t'
+  await mkdirp PATH.join arena_path, 'mou　t'
+  await mkdirp PATH.join arena_path, 'mou t'
+  await mkdirp PATH.join arena_path, 'mou t'
+  await mkdirp PATH.join arena_path, 'mou‪t'
+  await mkdirp PATH.join arena_path, 'mou‫t'
+  await mkdirp PATH.join arena_path, 'mou‬t'
+  await mkdirp PATH.join arena_path, 'mou‭t'
+  await mkdirp PATH.join arena_path, 'mou‮t'
+  await mkdirp PATH.join arena_path, 'a\x01z'
+  await mkdirp PATH.join arena_path, 'a\\x01z'
+  await mkdirp PATH.join arena_path, 'mou\tt'
+# drwxrwxr-x     - flow 2025-11-12 10:05 -- - -    mou*nt
+# drwxrwxr-x     - flow 2025-11-12 10:05 -- - -    mou?nt
+# drwxrwxrwx     - root 2025-11-08 16:02 -- - -    mou\012t
+# drwxrwxr-x     - flow 2025-11-12 10:05 -- - -    mou\nt
+# drwxrwxr-x     - flow 2025-11-12 10:14 -- - -    mou\tt
+# drwxrwxr-x     - flow 2025-11-12 10:26 -- - -    mou\u2029t
+# drwxrwxr-x     - flow 2025-11-12 10:15 -- - -    mou\x01t
+# drwxrwxr-x     - flow 2025-11-12 10:21 -- - -    mou\x7ft
+# drwxrwxr-x     - flow 2025-11-12 10:23 -- - -    mou\x80t
+# drwxrwxr-x     - flow 2025-11-07 09:25 -I - -    mount
+# drwxrwxr-x     - flow 2025-11-09 11:50 -- - -    'mou t'
+
+  ;null
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -414,5 +487,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { access_fs_with_db: @tasks.access_fs_with_db, }
   # ( new Test guytest_cfg ).test { scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY: @tasks.scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY, }
-  await ( new Test guytest_cfg ).async_test { async_shell: @tasks.async_shell, }
+  # await ( new Test guytest_cfg ).async_test { async_shell: @tasks.async_shell, }
+  await demo_create_mount_folders_with_strange_names()
 
