@@ -266,9 +266,18 @@ remove = ( path ) ->
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
       store.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
       store.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
-      for row from store.statements.store_get_facets.iterate()
-        row = { row..., { facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }..., }
-        help 'Ωbbdbr__53', row
+      #.....................................................................................................
+      cast_row = ( row ) ->
+        return row unless row?
+        return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
+      #.....................................................................................................
+      rows = store.statements.store_get_facets.iterate()
+      @eq ( Ωbbdbr__53 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      @eq ( Ωbbdbr__54 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr__55 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr__56 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr__57 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr__58 = -> cast_row rows.next().value ), null ### NOTE different from better-sqlite3 below ###
     #.......................................................................................................
     return null
 
@@ -300,28 +309,194 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       store     = Dbric_store.open db_path
-      debug 'Ωbbdbr__54', store
-      @eq ( Ωbbdbr__55 = -> store.db instanceof Bsql3     ), true
-      @eq ( Ωbbdbr__56 = -> store.db instanceof _Bsql3    ), true
+      debug 'Ωbbdbr__59', store
+      @eq ( Ωbbdbr__60 = -> store.db instanceof Bsql3     ), true
+      @eq ( Ωbbdbr__61 = -> store.db instanceof _Bsql3    ), true
       # store.statements.store_create_tables.run()
       # for row from store.statements.get_schema.iterate()
-      #   help 'Ωbbdbr__57', row
+      #   help 'Ωbbdbr__62', row
       store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
       store.statements.store_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
       store.statements.store_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
+      #.....................................................................................................
       cast_row = ( row ) ->
         return row unless row?
         return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
+      #.....................................................................................................
       rows = store.statements.store_get_facets.iterate()
       @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
-      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
-      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
-      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
-      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
-      @eq ( Ωbbdbr__63 = -> cast_row rows.next().value ), undefined
+      @eq ( Ωbbdbr__64 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr__65 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr__66 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr__67 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr__68 = -> cast_row rows.next().value ), undefined
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  udfs_with_better_sqlite3: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    templates =
+      create_function_cfg:
+        deterministic:  true
+        varargs:        false
+        directOnly:     false
+      #.....................................................................................................
+      create_aggregate_function_cfg:
+        deterministic:  true
+        varargs:        false
+        directOnly:     false
+        start:          null
+      #.....................................................................................................
+      create_window_function_cfg:
+        deterministic:  true
+        varargs:        false
+        directOnly:     false
+        start:          null
+      #.....................................................................................................
+      create_table_function_cfg:
+        deterministic:  true
+        varargs:        false
+        directOnly:     false
+      #.....................................................................................................
+      create_virtual_table_cfg: {}
+
+    #=======================================================================================================
+    class Dbric_squares extends Dbric
+
+      #-----------------------------------------------------------------------------------------------------
+      @db_class: Bsql3
+
+      #-----------------------------------------------------------------------------------------------------
+      create_function:           ( cfg ) ->
+        { name,
+          call,
+          directOnly,
+          deterministic,
+          varargs,        } = { templates.create_function_cfg..., cfg..., }
+        return @db.function name, { deterministic, varargs, directOnly, }, call
+
+      #-----------------------------------------------------------------------------------------------------
+      create_aggregate_function: ( cfg ) ->
+        { name,
+          start,
+          step,
+          result,
+          directOnly,
+          deterministic,
+          varargs,        } = { templates.create_aggregate_function_cfg..., cfg..., }
+        return @db.aggregate name, { start, step, result, deterministic, varargs, directOnly, }
+
+      #-----------------------------------------------------------------------------------------------------
+      create_window_function:    ( cfg ) ->
+        { name,
+          start,
+          step,
+          inverse,
+          result,
+          directOnly,
+          deterministic,
+          varargs,        } = { templates.create_window_function_cfg..., cfg..., }
+        return @db.aggregate name, { start, step, inverse, result, deterministic, varargs, directOnly, }
+
+      #-----------------------------------------------------------------------------------------------------
+      create_table_function:     ( cfg ) ->
+        { name,
+          parameters,
+          columns,
+          rows,
+          directOnly,
+          deterministic,
+          varargs,        } = { templates.create_table_function_cfg..., cfg..., }
+        return @db.table name, { parameters, columns, rows, deterministic, varargs, directOnly, }
+
+      #-----------------------------------------------------------------------------------------------------
+      create_virtual_table:      ( cfg ) ->
+        { name, create,   } = { templates.create_virtual_table_cfg..., cfg..., }
+        return @db.table name, create
+
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""create table numbers (
+            n number unique not null primary key );"""
+        SQL"""create view squares as select
+            n,
+            square( n ) as square
+          from numbers
+          order by n;"""
+        ]
+
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        insert_number: SQL"""insert into numbers ( n ) values ( $n )
+          on conflict ( n ) do nothing;"""
+        select_from_squares: SQL"""select
+            n,
+            square
+          from squares
+          order by n;"""
+
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        @create_function
+          name:           'square'
+          deterministic:  true
+          varargs:        false
+          call:           ( n ) -> n ** 2
+        ;null
+
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      squares   = Dbric_squares.open db_path
+      @eq ( Ωbbdbr__69 = -> squares.db instanceof Bsql3     ), true
+      debug 'Ωbbdbr__70', squares
+      for n in [ 0 ... 10 ]
+        squares.statements.insert_number.run { n, }
+      for row from squares.statements.select_from_squares.iterate()
+        debug 'Ωbbdbr__71', row
+      # squares.execute SQL"""
+      #   create view squares as select
+      #       n,
+      #       square( n ) as square
+      #     from numbers
+      #     order by n;"""
+      # result  = squares.all_rows SQL"select * from squares;"
+      # console.table result
+      # matcher = [ 0, 1, 2.25, 4, 5.289999999999999, 9, 9.610000000000001, 16, 25, 36, 49, 64, 81, 100, 121, 144 ]
+      # result  = ( row.square for row in result )
+      # debug '^984^', result
+      # T?.eq result, matcher
+      # #.....................................................................................................
+      # # squares.statements.squares_create_tables.run()
+      # # for row from squares.statements.get_schema.iterate()
+      # #   help 'Ωbbdbr__72', row
+      # squares.statements.squares_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
+      # squares.statements.squares_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
+      # squares.statements.squares_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
+      # squares.statements.squares_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
+      # squares.statements.squares_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
+      # squares.statements.squares_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
+      # #.....................................................................................................
+      # cast_row = ( row ) ->
+      #   return row unless row?
+      #   return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
+      # #.....................................................................................................
+      # rows = squares.statements.squares_get_facets.iterate()
+      # @eq ( Ωbbdbr__73 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      # @eq ( Ωbbdbr__74 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      # @eq ( Ωbbdbr__75 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      # @eq ( Ωbbdbr__76 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      # @eq ( Ωbbdbr__77 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      # @eq ( Ωbbdbr__78 = -> cast_row rows.next().value ), undefined
     #.......................................................................................................
     return null
 
@@ -331,7 +506,8 @@ remove = ( path ) ->
 if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
-  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { sample_db_with_better_sqlite3: tests.sample_db_with_better_sqlite3, }
+  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
+  ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { sample_db_with_better_sqlite3: tests.sample_db_with_better_sqlite3, }
+  ( new Test guytest_cfg ).test { udfs_with_better_sqlite3: tests.udfs_with_better_sqlite3, }
