@@ -678,7 +678,7 @@ remove = ( path ) ->
             file_lines( ds.path ) as fl
           order by ds.dskey, fl.line_nr;"""
         SQL"""create table keywords (
-            dskey   text    unique not null,
+            dskey   text    not null,
             line_nr integer not null,
             keyword text    not null,
           foreign key ( dskey ) references datasources ( dskey ),
@@ -686,11 +686,17 @@ remove = ( path ) ->
         ]
       #-----------------------------------------------------------------------------------------------------
       @statements:
+        #...................................................................................................
         insert_datasource: SQL"""insert into datasources ( dskey, path ) values ( $dskey, $path )
           on conflict ( dskey ) do update set path = $path;"""
+        #...................................................................................................
         insert_keyword: SQL"""insert into keywords ( dskey, line_nr, keyword ) values ( $dskey, $line_nr, $keyword )
           on conflict ( dskey, line_nr, keyword ) do nothing;"""
+        #...................................................................................................
         select_from_datasources:  SQL"""select * from datasources order by dskey;"""
+        #...................................................................................................
+        select_from_keywords:  SQL"""select * from keywords order by keyword, dskey, line_nr;"""
+        #...................................................................................................
         select_from_mirror:       SQL"""select * from mirror order by dskey;"""
       #-----------------------------------------------------------------------------------------------------
       initialize: ->
@@ -708,6 +714,7 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       phrases   = Dbric_phrases.open db_path
+      phrases_w = Dbric_phrases.open db_path
       @eq ( Ωbbdbr_117 = -> phrases.db instanceof Bsql3     ), true
       # #.....................................................................................................
       # do =>
@@ -727,10 +734,13 @@ remove = ( path ) ->
       echo()
       #.....................................................................................................
       for { dskey, line_nr, line, } from phrases.statements.select_from_mirror.iterate()
-        debug 'Ωbbdbr_118', line_nr, rpr ( word for word in line.split /[-\x20:.;\/]+/ when word isnt '' )
-        phrases.statements.insert_keyword.run { }
-      # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
-      # echo()
+        keywords = ( keyword for keyword in line.split /[-\x20:.;\/]+/ when keyword isnt '' )
+        debug 'Ωbbdbr_118', line_nr, rpr keywords
+        for keyword in keywords
+          phrases_w.statements.insert_keyword.run { dskey, line_nr, keyword, }
+      #.....................................................................................................
+      echo row for row from phrases.statements.select_from_keywords.iterate()
+      echo()
       #.....................................................................................................
       # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
       # rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
