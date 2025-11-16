@@ -794,6 +794,9 @@ remove = ( path ) ->
         select_from_datasources: SQL"""select * from datasources order by dskey;"""
         #...................................................................................................
         select_from_keywords: SQL"""select * from keywords order by keyword, dskey, line_nr;"""
+        locations_from_keyword: SQL"""select * from keywords
+          where keyword = $keyword
+          order by keyword, dskey, line_nr;"""
         #...................................................................................................
         select_from_mirror: SQL"""select * from mirror order by dskey;"""
         #...................................................................................................
@@ -844,27 +847,35 @@ remove = ( path ) ->
       @eq ( Ωbbdbr_124 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
       @eq ( Ωbbdbr_125 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
       @eq ( Ωbbdbr_126 = -> phrases.db instanceof Bsql3     ), true
-      # #.....................................................................................................
-      # do =>
-      #   dskey = 'readme'
-      #   path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/README.md'
-      #   phrases.statements.insert_datasource.run { dskey, path }
       #.....................................................................................................
       do =>
-        dskey = 'package-json'
-        path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/package.json'
+        dskey = 'humdum'
+        path  = PATH.resolve __dirname, '../../../assets/bricabrac/humpty-dumpty.md'
         phrases.statements.insert_datasource.run { dskey, path }
-      #.....................................................................................................
-      # echo row for row from phrases.statements.select_from_datasources.iterate()
-      # echo()
-      # #.....................................................................................................
-      # echo row for row from phrases.statements.select_from_mirror.iterate()
-      # echo()
       #.....................................................................................................
       debug 'Ωbbdbr_127', phrases.statements.populate_keywords.run()
       #.....................................................................................................
-      echo row for row from phrases.statements.select_from_keywords.iterate()
+      echo row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
       echo()
+      rows = phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
+      @eq ( Ωbbdbr_128 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
+      @eq ( Ωbbdbr_129 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
+      @eq ( Ωbbdbr_130 = -> rows.next().value ), undefined
+      #.....................................................................................................
+      echo row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
+      echo()
+      rows = phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
+      @eq ( Ωbbdbr_131 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
+      @eq ( Ωbbdbr_132 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
+      @eq ( Ωbbdbr_133 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
+      @eq ( Ωbbdbr_134 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
+      @eq ( Ωbbdbr_135 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
+      @eq ( Ωbbdbr_136 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
+      @eq ( Ωbbdbr_137 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
+      @eq ( Ωbbdbr_138 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
+      @eq ( Ωbbdbr_139 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
+      @eq ( Ωbbdbr_140 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
+      @eq ( Ωbbdbr_141 = -> rows.next().value ), undefined
       #.....................................................................................................
       ;null
     #.......................................................................................................
