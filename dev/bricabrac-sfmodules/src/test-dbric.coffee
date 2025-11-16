@@ -658,7 +658,7 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  file_reader_as_table_function: ->
+  file_mirror_as_table_function: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
@@ -668,15 +668,18 @@ remove = ( path ) ->
       @db_class: Bsql3
       #-----------------------------------------------------------------------------------------------------
       @build: [
+        #...................................................................................................
         SQL"""create table datasources (
             dskey text unique not null primary key,
             path text not null );"""
+        #...................................................................................................
         SQL"""create view mirror as select
             *
           from
             datasources as ds,
             file_lines( ds.path ) as fl
           order by ds.dskey, fl.line_nr;"""
+        #...................................................................................................
         SQL"""create table keywords (
             dskey   text    not null,
             line_nr integer not null,
@@ -693,11 +696,11 @@ remove = ( path ) ->
         insert_keyword: SQL"""insert into keywords ( dskey, line_nr, keyword ) values ( $dskey, $line_nr, $keyword )
           on conflict ( dskey, line_nr, keyword ) do nothing;"""
         #...................................................................................................
-        select_from_datasources:  SQL"""select * from datasources order by dskey;"""
+        select_from_datasources: SQL"""select * from datasources order by dskey;"""
         #...................................................................................................
-        select_from_keywords:  SQL"""select * from keywords order by keyword, dskey, line_nr;"""
+        select_from_keywords: SQL"""select * from keywords order by keyword, dskey, line_nr;"""
         #...................................................................................................
-        select_from_mirror:       SQL"""select * from mirror order by dskey;"""
+        select_from_mirror: SQL"""select * from mirror order by dskey;"""
       #-----------------------------------------------------------------------------------------------------
       initialize: ->
         super()
@@ -714,8 +717,9 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       phrases   = Dbric_phrases.open db_path
-      phrases_w = Dbric_phrases.open db_path
-      @eq ( Ωbbdbr_117 = -> phrases.db instanceof Bsql3     ), true
+      @eq ( Ωbbdbr_117 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
+      @eq ( Ωbbdbr_118 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
+      @eq ( Ωbbdbr_119 = -> phrases.db instanceof Bsql3     ), true
       # #.....................................................................................................
       # do =>
       #   dskey = 'readme'
@@ -727,36 +731,141 @@ remove = ( path ) ->
         path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/package.json'
         phrases.statements.insert_datasource.run { dskey, path }
       #.....................................................................................................
-      echo row for row from phrases.statements.select_from_datasources.iterate()
-      echo()
-      #.....................................................................................................
-      echo row for row from phrases.statements.select_from_mirror.iterate()
-      echo()
+      # echo row for row from phrases.statements.select_from_datasources.iterate()
+      # echo()
+      # #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_mirror.iterate()
+      # echo()
       #.....................................................................................................
       for { dskey, line_nr, line, } from phrases.statements.select_from_mirror.iterate()
-        keywords = ( keyword for keyword in line.split /[-\x20:.;\/]+/ when keyword isnt '' )
-        debug 'Ωbbdbr_118', line_nr, rpr keywords
+        keywords = line.split /(?:\p{Z}+)|((?:\p{L}+)|(?:\p{N}+)|(?:\p{S}+))/v
+        # debug 'Ωbbdbr_120', line_nr, rpr keywords
         for keyword in keywords
-          phrases_w.statements.insert_keyword.run { dskey, line_nr, keyword, }
+          continue unless keyword?
+          continue if keyword is ''
+          phrases.w.statements.insert_keyword.run { dskey, line_nr, keyword, }
+      # #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_keywords.iterate()
+      # echo()
+      #.....................................................................................................
+      ;null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  file_mirror_with_integrated_inserts: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_phrases extends Dbric
+      @db_class: Bsql3
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        #...................................................................................................
+        SQL"""create table datasources (
+            dskey text unique not null primary key,
+            path text not null );"""
+        #...................................................................................................
+        SQL"""create view mirror as select
+            *
+          from
+            datasources as ds,
+            file_lines( ds.path ) as fl
+          order by ds.dskey, fl.line_nr;"""
+        #...................................................................................................
+        SQL"""create table keywords (
+            dskey   text    not null,
+            line_nr integer not null,
+            keyword text    not null,
+          foreign key ( dskey ) references datasources ( dskey ),
+          primary key ( dskey, line_nr, keyword ) );"""
+        ]
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        #...................................................................................................
+        insert_datasource: SQL"""insert into datasources ( dskey, path ) values ( $dskey, $path )
+          on conflict ( dskey ) do update set path = $path;"""
+        #...................................................................................................
+        insert_keyword: SQL"""insert into keywords ( dskey, line_nr, keyword ) values ( $dskey, $line_nr, $keyword )
+          on conflict ( dskey, line_nr, keyword ) do nothing;"""
+        #...................................................................................................
+        select_from_datasources: SQL"""select * from datasources order by dskey;"""
+        #...................................................................................................
+        select_from_keywords: SQL"""select * from keywords order by keyword, dskey, line_nr;"""
+        #...................................................................................................
+        select_from_mirror: SQL"""select * from mirror order by dskey;"""
+        #...................................................................................................
+        populate_keywords: SQL"""
+          insert into keywords ( dskey, line_nr, keyword )
+            select
+              ds.dskey    as dskey,
+              mi.line_nr  as line_nr,
+              sw.keyword  as keyword
+            from datasources        as ds
+            join mirror             as mi using ( dskey ),
+            split_words( mi.line )  as sw
+            where true -- where clause just a syntactic guard as per https://sqlite.org/lang_upsert.html
+            on conflict do nothing;"""
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        #...................................................................................................
+        @create_table_function
+          name:           'split_words'
+          columns:        [ 'keyword', ]
+          parameters:     [ 'line', ]
+          rows: ( line ) ->
+            keywords = line.split /(?:\p{Z}+)|((?:\p{L}+)|(?:\p{N}+)|(?:\p{S}+))/v
+            # debug 'Ωbbdbr_121', line_nr, rpr keywords
+            for keyword in keywords
+              continue unless keyword?
+              continue if keyword is ''
+              yield { keyword, }
+            ;null
+        #...................................................................................................
+        @create_table_function
+          name:         'file_lines'
+          columns:      [ 'line_nr', 'line', ]
+          parameters:   [ 'path', ]
+          rows: ( path ) ->
+            for { lnr: line_nr, line, eol, } from GUY.fs.walk_lines_with_positions path
+              yield { line_nr, line, }
+            ;null
+        #...................................................................................................
+        ;null
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      phrases   = Dbric_phrases.open db_path
+      debug 'Ωbbdbr_122', phrases.teardown()
+      debug 'Ωbbdbr_123', phrases.rebuild()
+      @eq ( Ωbbdbr_124 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
+      @eq ( Ωbbdbr_125 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
+      @eq ( Ωbbdbr_126 = -> phrases.db instanceof Bsql3     ), true
+      # #.....................................................................................................
+      # do =>
+      #   dskey = 'readme'
+      #   path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/README.md'
+      #   phrases.statements.insert_datasource.run { dskey, path }
+      #.....................................................................................................
+      do =>
+        dskey = 'package-json'
+        path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/package.json'
+        phrases.statements.insert_datasource.run { dskey, path }
+      #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_datasources.iterate()
+      # echo()
+      # #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_mirror.iterate()
+      # echo()
+      #.....................................................................................................
+      debug 'Ωbbdbr_127', phrases.statements.populate_keywords.run()
       #.....................................................................................................
       echo row for row from phrases.statements.select_from_keywords.iterate()
       echo()
       #.....................................................................................................
-      # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
-      # rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
-      # @eq ( Ωbbdbr_119 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
-      # @eq ( Ωbbdbr_120 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
-      # @eq ( Ωbbdbr_121 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
-      # @eq ( Ωbbdbr_122 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
-      # @eq ( Ωbbdbr_123 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
-      # @eq ( Ωbbdbr_124 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
-      # @eq ( Ωbbdbr_125 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
-      # @eq ( Ωbbdbr_126 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
-      # @eq ( Ωbbdbr_127 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
-      # @eq ( Ωbbdbr_128 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
-      # @eq ( Ωbbdbr_129 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
-      # @eq ( Ωbbdbr_130 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
-      # @eq ( Ωbbdbr_131 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -767,13 +876,14 @@ remove = ( path ) ->
 if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
-  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
+  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
+  # ( new Test guytest_cfg ).test { tests, }
   # # ( new Test guytest_cfg ).test { sample_db_with_bsql: tests.sample_db_with_bsql, }
   # ( new Test guytest_cfg ).test { udf_functions_with_nsql: tests.udf_functions_with_nsql, }
   # ( new Test guytest_cfg ).test { udf_functions_with_bsql: tests.udf_functions_with_bsql, }
   # ( new Test guytest_cfg ).test { udf_aggregates_with_bsql: tests.udf_aggregates_with_bsql, }
   # ( new Test guytest_cfg ).test { udf_aggregates_with_nsql: tests.udf_aggregates_with_nsql, }
   # ( new Test guytest_cfg ).test { udf_table_function_with_bsql: tests.udf_table_function_with_bsql, }
-  ( new Test guytest_cfg ).test { file_reader_as_table_function: tests.file_reader_as_table_function, }
+  # ( new Test guytest_cfg ).test { file_mirror_as_table_function: tests.file_mirror_as_table_function, }
+  ( new Test guytest_cfg ).test { file_mirror_with_integrated_inserts: tests.file_mirror_with_integrated_inserts, }
