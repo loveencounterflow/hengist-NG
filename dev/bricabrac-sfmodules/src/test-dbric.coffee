@@ -282,7 +282,7 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  sample_db_with_better_sqlite3: ->
+  sample_db_with_bsql: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
@@ -337,7 +337,7 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  udf_functions_with_nodejs_sqlite: ->
+  udf_functions_with_nsql: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
@@ -398,7 +398,7 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  udf_aggregates_with_nodesqlite: ->
+  udf_aggregates_with_nsql: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
@@ -466,7 +466,7 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  udf_functions_with_better_sqlite3: ->
+  udf_functions_with_bsql: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
@@ -528,7 +528,7 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  udf_aggregates_with_better_sqlite3: ->
+  udf_aggregates_with_bsql: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
@@ -589,6 +589,151 @@ remove = ( path ) ->
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  udf_table_function_with_bsql: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_phrases extends Dbric
+      @db_class: Bsql3
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""create table phrases (
+            phrase text unique not null primary key );"""
+        ]
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        insert_phrase: SQL"""insert into phrases ( phrase ) values ( $phrase )
+          on conflict ( phrase ) do nothing;"""
+        select_from_phrases: SQL"""
+          select
+              *
+            from
+              phrases as p,
+              re_matches( p.phrase, $matcher ) as rx
+            order by p.phrase;"""
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        @create_table_function
+          name:         're_matches'
+          columns:      [ 'match', 'capture', ]
+          parameters:   [ 'text', 'pattern', ]
+          rows: ( text, pattern ) ->
+            regex = new RegExp pattern, 'g'
+            for match from text.matchAll regex
+              yield [ match[ 0 ], match[ 1 ], ]
+            return null
+        ;null
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      phrases   = Dbric_phrases.open db_path
+      @eq ( Ωbbdbr_103 = -> phrases.db instanceof Bsql3     ), true
+      for phrase in [ 'eleven', 'five', 'nine', 'one', 'one point five', 'seven', 'three point one' ]
+        phrases.statements.insert_phrase.run { phrase, }
+      #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
+      # echo()
+      #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
+      rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
+      @eq ( Ωbbdbr_104 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
+      @eq ( Ωbbdbr_105 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
+      @eq ( Ωbbdbr_106 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
+      @eq ( Ωbbdbr_107 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
+      @eq ( Ωbbdbr_108 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
+      @eq ( Ωbbdbr_109 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
+      @eq ( Ωbbdbr_110 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
+      @eq ( Ωbbdbr_111 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
+      @eq ( Ωbbdbr_112 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
+      @eq ( Ωbbdbr_113 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
+      @eq ( Ωbbdbr_114 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
+      @eq ( Ωbbdbr_115 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
+      @eq ( Ωbbdbr_116 = -> rows.next().value ), undefined
+      ;null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  file_reader_as_table_function: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_phrases extends Dbric
+      @db_class: Bsql3
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""create table datasources (
+            dskey text unique not null primary key,
+            path text not null );"""
+        SQL"""create view mirror as select
+            *
+          from
+            datasources as ds,
+            file_lines( ds.path ) as fl
+          order by ds.dskey, fl.line_nr;"""
+        ]
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        insert_datasource: SQL"""insert into datasources ( dskey, path ) values ( $dskey, $path )
+          on conflict ( dskey ) do update set path = $path;"""
+        select_from_datasources:  SQL"""select * from datasources order by dskey;"""
+        select_from_mirror:       SQL"""select * from mirror order by dskey;"""
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        @create_table_function
+          name:         'file_lines'
+          columns:      [ 'line_nr', 'line', ]
+          parameters:   [ 'path', ]
+          rows: ( path ) ->
+            for { lnr: line_nr, line, eol, } from GUY.fs.walk_lines_with_positions path
+              yield { line_nr, line, }
+            return null
+        ;null
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      phrases   = Dbric_phrases.open db_path
+      @eq ( Ωbbdbr_103 = -> phrases.db instanceof Bsql3     ), true
+      do =>
+        dskey = 'readme'
+        path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/README.md'
+        phrases.statements.insert_datasource.run { dskey, path }
+      #.....................................................................................................
+      echo row for row from phrases.statements.select_from_datasources.iterate()
+      echo()
+      #.....................................................................................................
+      echo row for row from phrases.statements.select_from_mirror.iterate()
+      echo()
+      #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
+      # echo()
+      #.....................................................................................................
+      # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
+      # rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
+      # @eq ( Ωbbdbr_104 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
+      # @eq ( Ωbbdbr_105 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
+      # @eq ( Ωbbdbr_106 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
+      # @eq ( Ωbbdbr_107 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
+      # @eq ( Ωbbdbr_108 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
+      # @eq ( Ωbbdbr_109 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
+      # @eq ( Ωbbdbr_110 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
+      # @eq ( Ωbbdbr_111 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
+      # @eq ( Ωbbdbr_112 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
+      # @eq ( Ωbbdbr_113 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
+      # @eq ( Ωbbdbr_114 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
+      # @eq ( Ωbbdbr_115 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
+      # @eq ( Ωbbdbr_116 = -> rows.next().value ), undefined
+      ;null
+    #.......................................................................................................
+    return null
+
 
 
 #===========================================================================================================
@@ -598,8 +743,10 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # # ( new Test guytest_cfg ).test { sample_db_with_better_sqlite3: tests.sample_db_with_better_sqlite3, }
-  # ( new Test guytest_cfg ).test { udf_functions_with_nodejs_sqlite: tests.udf_functions_with_nodejs_sqlite, }
-  # ( new Test guytest_cfg ).test { udf_functions_with_better_sqlite3: tests.udf_functions_with_better_sqlite3, }
-  # ( new Test guytest_cfg ).test { udf_aggregates_with_better_sqlite3: tests.udf_aggregates_with_better_sqlite3, }
-  ( new Test guytest_cfg ).test { udf_aggregates_with_nodesqlite: tests.udf_aggregates_with_nodesqlite, }
+  # # ( new Test guytest_cfg ).test { sample_db_with_bsql: tests.sample_db_with_bsql, }
+  # ( new Test guytest_cfg ).test { udf_functions_with_nsql: tests.udf_functions_with_nsql, }
+  # ( new Test guytest_cfg ).test { udf_functions_with_bsql: tests.udf_functions_with_bsql, }
+  # ( new Test guytest_cfg ).test { udf_aggregates_with_bsql: tests.udf_aggregates_with_bsql, }
+  # ( new Test guytest_cfg ).test { udf_aggregates_with_nsql: tests.udf_aggregates_with_nsql, }
+  # ( new Test guytest_cfg ).test { udf_table_function_with_bsql: tests.udf_table_function_with_bsql, }
+  ( new Test guytest_cfg ).test { file_reader_as_table_function: tests.file_reader_as_table_function, }
