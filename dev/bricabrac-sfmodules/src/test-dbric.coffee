@@ -677,11 +677,19 @@ remove = ( path ) ->
             datasources as ds,
             file_lines( ds.path ) as fl
           order by ds.dskey, fl.line_nr;"""
+        SQL"""create table keywords (
+            dskey   text    unique not null,
+            line_nr integer not null,
+            keyword text    not null,
+          foreign key ( dskey ) references datasources ( dskey ),
+          primary key ( dskey, line_nr, keyword ) );"""
         ]
       #-----------------------------------------------------------------------------------------------------
       @statements:
         insert_datasource: SQL"""insert into datasources ( dskey, path ) values ( $dskey, $path )
           on conflict ( dskey ) do update set path = $path;"""
+        insert_keyword: SQL"""insert into keywords ( dskey, line_nr, keyword ) values ( $dskey, $line_nr, $keyword )
+          on conflict ( dskey, line_nr, keyword ) do nothing;"""
         select_from_datasources:  SQL"""select * from datasources order by dskey;"""
         select_from_mirror:       SQL"""select * from mirror order by dskey;"""
       #-----------------------------------------------------------------------------------------------------
@@ -700,10 +708,16 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       phrases   = Dbric_phrases.open db_path
-      @eq ( Ωbbdbr_103 = -> phrases.db instanceof Bsql3     ), true
+      @eq ( Ωbbdbr_117 = -> phrases.db instanceof Bsql3     ), true
+      # #.....................................................................................................
+      # do =>
+      #   dskey = 'readme'
+      #   path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/README.md'
+      #   phrases.statements.insert_datasource.run { dskey, path }
+      #.....................................................................................................
       do =>
-        dskey = 'readme'
-        path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/README.md'
+        dskey = 'package-json'
+        path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/package.json'
         phrases.statements.insert_datasource.run { dskey, path }
       #.....................................................................................................
       echo row for row from phrases.statements.select_from_datasources.iterate()
@@ -712,24 +726,27 @@ remove = ( path ) ->
       echo row for row from phrases.statements.select_from_mirror.iterate()
       echo()
       #.....................................................................................................
+      for { dskey, line_nr, line, } from phrases.statements.select_from_mirror.iterate()
+        debug 'Ωbbdbr_118', line_nr, rpr ( word for word in line.split /[-\x20:.;\/]+/ when word isnt '' )
+        phrases.statements.insert_keyword.run { }
       # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
       # echo()
       #.....................................................................................................
       # echo row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
       # rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
-      # @eq ( Ωbbdbr_104 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
-      # @eq ( Ωbbdbr_105 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
-      # @eq ( Ωbbdbr_106 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
-      # @eq ( Ωbbdbr_107 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
-      # @eq ( Ωbbdbr_108 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
-      # @eq ( Ωbbdbr_109 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
-      # @eq ( Ωbbdbr_110 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
-      # @eq ( Ωbbdbr_111 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
-      # @eq ( Ωbbdbr_112 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
-      # @eq ( Ωbbdbr_113 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
-      # @eq ( Ωbbdbr_114 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
-      # @eq ( Ωbbdbr_115 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
-      # @eq ( Ωbbdbr_116 = -> rows.next().value ), undefined
+      # @eq ( Ωbbdbr_119 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
+      # @eq ( Ωbbdbr_120 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
+      # @eq ( Ωbbdbr_121 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
+      # @eq ( Ωbbdbr_122 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
+      # @eq ( Ωbbdbr_123 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
+      # @eq ( Ωbbdbr_124 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
+      # @eq ( Ωbbdbr_125 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
+      # @eq ( Ωbbdbr_126 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
+      # @eq ( Ωbbdbr_127 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
+      # @eq ( Ωbbdbr_128 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
+      # @eq ( Ωbbdbr_129 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
+      # @eq ( Ωbbdbr_130 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
+      # @eq ( Ωbbdbr_131 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
