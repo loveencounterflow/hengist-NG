@@ -337,91 +337,13 @@ remove = ( path ) ->
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  udfs_with_better_sqlite3: ->
+  udf_functions_with_nodejs_sqlite: ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
     Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
-    templates =
-      create_function_cfg:
-        deterministic:  true
-        varargs:        false
-        directOnly:     false
-      #.....................................................................................................
-      create_aggregate_function_cfg:
-        deterministic:  true
-        varargs:        false
-        directOnly:     false
-        start:          null
-      #.....................................................................................................
-      create_window_function_cfg:
-        deterministic:  true
-        varargs:        false
-        directOnly:     false
-        start:          null
-      #.....................................................................................................
-      create_table_function_cfg:
-        deterministic:  true
-        varargs:        false
-        directOnly:     false
-      #.....................................................................................................
-      create_virtual_table_cfg: {}
-
-    #=======================================================================================================
     class Dbric_squares extends Dbric
-
-      #-----------------------------------------------------------------------------------------------------
-      @db_class: Bsql3
-
-      #-----------------------------------------------------------------------------------------------------
-      create_function:           ( cfg ) ->
-        { name,
-          call,
-          directOnly,
-          deterministic,
-          varargs,        } = { templates.create_function_cfg..., cfg..., }
-        return @db.function name, { deterministic, varargs, directOnly, }, call
-
-      #-----------------------------------------------------------------------------------------------------
-      create_aggregate_function: ( cfg ) ->
-        { name,
-          start,
-          step,
-          result,
-          directOnly,
-          deterministic,
-          varargs,        } = { templates.create_aggregate_function_cfg..., cfg..., }
-        return @db.aggregate name, { start, step, result, deterministic, varargs, directOnly, }
-
-      #-----------------------------------------------------------------------------------------------------
-      create_window_function:    ( cfg ) ->
-        { name,
-          start,
-          step,
-          inverse,
-          result,
-          directOnly,
-          deterministic,
-          varargs,        } = { templates.create_window_function_cfg..., cfg..., }
-        return @db.aggregate name, { start, step, inverse, result, deterministic, varargs, directOnly, }
-
-      #-----------------------------------------------------------------------------------------------------
-      create_table_function:     ( cfg ) ->
-        { name,
-          parameters,
-          columns,
-          rows,
-          directOnly,
-          deterministic,
-          varargs,        } = { templates.create_table_function_cfg..., cfg..., }
-        return @db.table name, { parameters, columns, rows, deterministic, varargs, directOnly, }
-
-      #-----------------------------------------------------------------------------------------------------
-      create_virtual_table:      ( cfg ) ->
-        { name, create,   } = { templates.create_virtual_table_cfg..., cfg..., }
-        return @db.table name, create
-
       #-----------------------------------------------------------------------------------------------------
       @build: [
         SQL"""create table numbers (
@@ -432,7 +354,6 @@ remove = ( path ) ->
           from numbers
           order by n;"""
         ]
-
       #-----------------------------------------------------------------------------------------------------
       @statements:
         insert_number: SQL"""insert into numbers ( n ) values ( $n )
@@ -442,7 +363,6 @@ remove = ( path ) ->
             square
           from squares
           order by n;"""
-
       #-----------------------------------------------------------------------------------------------------
       initialize: ->
         super()
@@ -452,51 +372,220 @@ remove = ( path ) ->
           varargs:        false
           call:           ( n ) -> n ** 2
         ;null
-
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       squares   = Dbric_squares.open db_path
-      @eq ( Ωbbdbr__69 = -> squares.db instanceof Bsql3     ), true
-      debug 'Ωbbdbr__70', squares
+      @eq ( Ωbbdbr__69 = -> squares.db instanceof Bsql3     ), false
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
-      for row from squares.statements.select_from_squares.iterate()
-        debug 'Ωbbdbr__71', row
-      # squares.execute SQL"""
-      #   create view squares as select
-      #       n,
-      #       square( n ) as square
-      #     from numbers
-      #     order by n;"""
-      # result  = squares.all_rows SQL"select * from squares;"
-      # console.table result
-      # matcher = [ 0, 1, 2.25, 4, 5.289999999999999, 9, 9.610000000000001, 16, 25, 36, 49, 64, 81, 100, 121, 144 ]
-      # result  = ( row.square for row in result )
-      # debug '^984^', result
-      # T?.eq result, matcher
-      # #.....................................................................................................
-      # # squares.statements.squares_create_tables.run()
-      # # for row from squares.statements.get_schema.iterate()
-      # #   help 'Ωbbdbr__72', row
-      # squares.statements.squares_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
-      # squares.statements.squares_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
-      # squares.statements.squares_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
-      # squares.statements.squares_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 'iii'   ), }
-      # squares.statements.squares_insert_facet.run { facet_key: 'true',  facet_value: ( JSON.stringify true    ), }
-      # squares.statements.squares_insert_facet.run { facet_key: 'false', facet_value: ( JSON.stringify false   ), }
-      # #.....................................................................................................
-      # cast_row = ( row ) ->
-      #   return row unless row?
-      #   return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
-      # #.....................................................................................................
-      # rows = squares.statements.squares_get_facets.iterate()
-      # @eq ( Ωbbdbr__73 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
-      # @eq ( Ωbbdbr__74 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
-      # @eq ( Ωbbdbr__75 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
-      # @eq ( Ωbbdbr__76 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
-      # @eq ( Ωbbdbr__77 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
-      # @eq ( Ωbbdbr__78 = -> cast_row rows.next().value ), undefined
+      #.....................................................................................................
+      # echo row for row from squares.statements.select_from_squares.iterate()
+      rows = squares.statements.select_from_squares.iterate()
+      @eq ( Ωbbdbr__70 = -> rows.next().value ), { n: 0, square: 0 }
+      @eq ( Ωbbdbr__71 = -> rows.next().value ), { n: 1, square: 1 }
+      @eq ( Ωbbdbr__72 = -> rows.next().value ), { n: 2, square: 4 }
+      @eq ( Ωbbdbr__73 = -> rows.next().value ), { n: 3, square: 9 }
+      @eq ( Ωbbdbr__74 = -> rows.next().value ), { n: 4, square: 16 }
+      @eq ( Ωbbdbr__75 = -> rows.next().value ), { n: 5, square: 25 }
+      @eq ( Ωbbdbr__76 = -> rows.next().value ), { n: 6, square: 36 }
+      @eq ( Ωbbdbr__77 = -> rows.next().value ), { n: 7, square: 49 }
+      @eq ( Ωbbdbr__78 = -> rows.next().value ), { n: 8, square: 64 }
+      @eq ( Ωbbdbr__79 = -> rows.next().value ), { n: 9, square: 81 }
+      @eq ( Ωbbdbr__80 = -> rows.next().value ), null
+      ;null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  udf_aggregates_with_nodesqlite: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_squares extends Dbric
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""create table numbers (
+            n number unique not null primary key );"""
+        SQL"""create view squares as select
+            n,
+            square( n ) as square
+          from numbers
+          order by n;"""
+        ]
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        insert_number: SQL"""insert into numbers ( n ) values ( $n )
+          on conflict ( n ) do nothing;"""
+        select_from_numbers: SQL"""select n from numbers order by n;"""
+        select_from_squares: SQL"""select
+            n,
+            square,
+            product( n )      as p_n,
+            product( square ) as p_square
+          from squares
+          where n between $start and $stop
+          order by n;"""
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        @create_function
+          name:           'square'
+          deterministic:  true
+          varargs:        false
+          call:           ( n ) -> n ** 2
+        @create_aggregate_function
+          name:           'product'
+          start:          -> 1 ### NOTE can use `null` for bSQL, but nSQL needs `1` ###
+          step:           product = ( total, element ) ->
+            debug 'Ωbbdbr__81', { total, element, }
+            return ( total ? 1 ) * element
+        ;null
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      squares   = Dbric_squares.open db_path
+      @eq ( Ωbbdbr__82 = -> squares.db instanceof Bsql3     ), false
+      for n in [ 0 ... 10 ]
+        squares.statements.insert_number.run { n, }
+      #.....................................................................................................
+      echo row for row from squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
+      rows = squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
+      @eq ( Ωbbdbr__83 = -> rows.next().value ), { n: 1, square: 1, p_n: 120, p_square: 14400 }
+      @eq ( Ωbbdbr__84 = -> rows.next().value ), null
+      #.....................................................................................................
+      echo row for row from squares.statements.select_from_squares.iterate()
+      rows = squares.statements.select_from_squares.iterate()
+      @eq ( Ωbbdbr__85 = -> rows.next().value ), { n: null, square: null, p_n: 1, p_square: 1 }
+      @eq ( Ωbbdbr__86 = -> rows.next().value ), null
+      #.....................................................................................................
+      ;null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  udf_functions_with_better_sqlite3: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_squares extends Dbric
+      @db_class: Bsql3
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""create table numbers (
+            n number unique not null primary key );"""
+        SQL"""create view squares as select
+            n,
+            square( n ) as square
+          from numbers
+          order by n;"""
+        ]
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        insert_number: SQL"""insert into numbers ( n ) values ( $n )
+          on conflict ( n ) do nothing;"""
+        select_from_squares: SQL"""select
+            n,
+            square
+          from squares
+          order by n;"""
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        @create_function
+          name:           'square'
+          deterministic:  true
+          varargs:        false
+          call:           ( n ) -> n ** 2
+        ;null
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      squares   = Dbric_squares.open db_path
+      @eq ( Ωbbdbr__87 = -> squares.db instanceof Bsql3     ), true
+      for n in [ 0 ... 10 ]
+        squares.statements.insert_number.run { n, }
+      #.....................................................................................................
+      # echo row for row from squares.statements.select_from_squares.iterate()
+      rows = squares.statements.select_from_squares.iterate()
+      @eq ( Ωbbdbr__88 = -> rows.next().value ), { n: 0, square: 0 }
+      @eq ( Ωbbdbr__89 = -> rows.next().value ), { n: 1, square: 1 }
+      @eq ( Ωbbdbr__90 = -> rows.next().value ), { n: 2, square: 4 }
+      @eq ( Ωbbdbr__91 = -> rows.next().value ), { n: 3, square: 9 }
+      @eq ( Ωbbdbr__92 = -> rows.next().value ), { n: 4, square: 16 }
+      @eq ( Ωbbdbr__93 = -> rows.next().value ), { n: 5, square: 25 }
+      @eq ( Ωbbdbr__94 = -> rows.next().value ), { n: 6, square: 36 }
+      @eq ( Ωbbdbr__95 = -> rows.next().value ), { n: 7, square: 49 }
+      @eq ( Ωbbdbr__96 = -> rows.next().value ), { n: 8, square: 64 }
+      @eq ( Ωbbdbr__97 = -> rows.next().value ), { n: 9, square: 81 }
+      @eq ( Ωbbdbr__98 = -> rows.next().value ), undefined
+      ;null
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  udf_aggregates_with_better_sqlite3: ->
+    { Dbric,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_squares extends Dbric
+      @db_class: Bsql3
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""create table numbers (
+            n number unique not null primary key );"""
+        SQL"""create view squares as select
+            n,
+            square( n ) as square
+          from numbers
+          order by n;"""
+        ]
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        insert_number: SQL"""insert into numbers ( n ) values ( $n )
+          on conflict ( n ) do nothing;"""
+        select_from_squares: SQL"""select
+            n,
+            square,
+            product( n )      as p_n,
+            product( square ) as p_square
+          from squares
+          where n between $start and $stop
+          order by n;"""
+      #-----------------------------------------------------------------------------------------------------
+      initialize: ->
+        super()
+        @create_function
+          name:           'square'
+          deterministic:  true
+          varargs:        false
+          call:           square = ( n ) -> n ** 2
+        @create_aggregate_function
+          name:           'product'
+          start:          -> null
+          step:           product = ( total, element ) ->
+            debug 'Ωbbdbr__99', { total, element, }
+            return ( total ? 1 ) * element
+        ;null
+    #=======================================================================================================
+    do =>
+      db_path   = '/dev/shm/bricabrac.sqlite'
+      squares   = Dbric_squares.open db_path
+      @eq ( Ωbbdbr_100 = -> squares.db instanceof Bsql3     ), true
+      for n in [ 0 ... 10 ]
+        squares.statements.insert_number.run { n, }
+      #.....................................................................................................
+      echo row for row from squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
+      rows = squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
+      @eq ( Ωbbdbr_101 = -> rows.next().value ), { n: 2, square: 4, p_n: 6, p_square: 36 }
+      @eq ( Ωbbdbr_102 = -> rows.next().value ), undefined
+      ;null
     #.......................................................................................................
     return null
 
@@ -506,8 +595,11 @@ remove = ( path ) ->
 if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { sample_db_with_better_sqlite3: tests.sample_db_with_better_sqlite3, }
-  ( new Test guytest_cfg ).test { udfs_with_better_sqlite3: tests.udfs_with_better_sqlite3, }
+  # # ( new Test guytest_cfg ).test { sample_db_with_better_sqlite3: tests.sample_db_with_better_sqlite3, }
+  # ( new Test guytest_cfg ).test { udf_functions_with_nodejs_sqlite: tests.udf_functions_with_nodejs_sqlite, }
+  # ( new Test guytest_cfg ).test { udf_functions_with_better_sqlite3: tests.udf_functions_with_better_sqlite3, }
+  # ( new Test guytest_cfg ).test { udf_aggregates_with_better_sqlite3: tests.udf_aggregates_with_better_sqlite3, }
+  ( new Test guytest_cfg ).test { udf_aggregates_with_nodesqlite: tests.udf_aggregates_with_nodesqlite, }
