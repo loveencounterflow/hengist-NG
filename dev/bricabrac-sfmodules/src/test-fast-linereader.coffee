@@ -39,10 +39,10 @@ PATH                      = require 'node:path'
 # remove = ( path ) ->
 #   try
 #     FS.unlinkSync path
-#     help 'Ωflr___1', "removed #{rpr path}"
+#     help 'Ωflrt___1', "removed #{rpr path}"
 #   catch error
 #     throw error unless error.code is 'ENOENT'
-#     urge 'Ωflr___2', "no such FS object: #{rpr path}"
+#     urge 'Ωflrt___2', "no such FS object: #{rpr path}"
 #   return null
 
 
@@ -54,17 +54,28 @@ PATH                      = require 'node:path'
     { walk_buffers_with_positions,
       walk_lines_with_positions, } = SFMODULES.unstable.require_fast_linereader()
     #.......................................................................................................
-    path    = PATH.resolve __dirname, '../../../assets/bricabrac/fast-linereader/〇一二三四五六七八九.txt'
-    matcher = FS.readFileSync path, { encoding: 'utf-8', }
+    path            = PATH.resolve __dirname, '../../../assets/bricabrac/fast-linereader/〇一二三四五六七八九.txt'
+    text_matcher    = FS.readFileSync path, { encoding: 'utf-8', }
+    pieces          = [ ( text_matcher.split /(\r\n|\r|\n)/ )..., '', ]
+    pieces_matcher  = do =>
+      R   = []
+      lnr = 0
+      for idx in [ 0 ... pieces.length ] by +2
+        lnr++
+        [ line, eol, ] = pieces[ idx .. idx + 1 ]
+        R.push { lnr, line, eol, }
+      return R
     #.......................................................................................................
     for chunk_size in [ 10, 11, 100, ]
       echo '—————————————————————————————————————'
-      result = ''
+      result  = ''
+      idx     = -1
       for d from walk_lines_with_positions path, { chunk_size, }
-        echo 'Ωflr___3', chunk_size, d.lnr, rpr d.line, rpr d.eol, d.buffer_nr
+        idx++
         result += d.line + d.eol
-      @eq ( Ωflr___4 = -> result ), matcher
-    # @throws ( Ωflr___5 = -> esql.unquote_name ''                ), /expected a name/
+        @eq ( Ωflrt___4 = -> d ), pieces_matcher[ idx ]
+      @eq ( Ωflrt___5 = -> result ), text_matcher
+    # @throws ( Ωflrt___6 = -> esql.unquote_name ''                ), /expected a name/
     #.......................................................................................................
     return null
 
