@@ -35,8 +35,11 @@ PATH                      = require 'node:path'
 SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 { Get_random,           } = SFMODULES.unstable.require_get_random()
 { hrtime_as_bigint,
-  timeit,               } = SFMODULES.unstable.require_benchmarking()
+  Benchmarker,          } = SFMODULES.unstable.require_benchmarking()
 { nameit,               } = SFMODULES.require_nameit()
+#-----------------------------------------------------------------------------------------------------------
+benchmarker = new Benchmarker()
+timeit = ( P... ) -> benchmarker.timeit P...
 
 
 #===========================================================================================================
@@ -128,6 +131,13 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
   return R
 
 #===========================================================================================================
+_get_big_file_cfg = ->
+  relpath     = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
+  path        = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
+  line_count  = 13_338_212
+  return { path, line_count, }
+
+#===========================================================================================================
 @benchmarks = benchmarks =
 
   #---------------------------------------------------------------------------------------------------------
@@ -135,47 +145,56 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
 
     #-------------------------------------------------------------------------------------------------------
     demo_fast_readline_async = ->
-      relpath = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
-      { walk_lines_with_positions_async, } = SFMODULES.unstable.require_readline_optimized()
-      path = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
-      count = 0
-      t0 = hrtime_as_bigint()
-      for await line from walk_lines_with_positions_async path
-        count++
-        # return null if count > 100
-        echo 'Ω___3', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
+      { walk_lines_with_positions_async,  } = SFMODULES.unstable.require_readline_optimized()
+      { path,
+        line_count, } = _get_big_file_cfg()
+      count           = 0
+      t0              = hrtime_as_bigint()
+      #.....................................................................................................
+      await timeit { total: line_count, }, demo_fast_readline_async_fn = ({ progress, }) ->
+        for await line from walk_lines_with_positions_async path
+          count++
+          progress()
+        ;null
+      #.....................................................................................................
       t1 = hrtime_as_bigint()
-      echo 'Ω___4', 'demo_fast_readline_async', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+      echo 'Ω___3', 'demo_fast_readline_async', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
 
     #-------------------------------------------------------------------------------------------------------
     demo_fast_readline_sync = ->
-      relpath = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
-      { walk_lines_with_positions, } = SFMODULES.unstable.require_fast_linereader()
-      path = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
-      count = 0
-      t0 = hrtime_as_bigint()
-      for { line, } from walk_lines_with_positions path
-        count++
-        # return null if count > 100
-        echo 'Ω___5', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
+      { walk_lines_with_positions,  } = SFMODULES.unstable.require_fast_linereader()
+      { path,
+        line_count, } = _get_big_file_cfg()
+      count           = 0
+      t0              = hrtime_as_bigint()
+      #.....................................................................................................
+      timeit { total: line_count, }, demo_fast_readline_sync_fn = ({ progress, }) ->
+        for { line, } from walk_lines_with_positions path
+          count++
+          progress()
+        ;null
+      #.....................................................................................................
       t1 = hrtime_as_bigint()
-      echo 'Ω___6', 'demo_fast_readline_sync', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+      echo 'Ω___4', 'demo_fast_readline_sync', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
       return null
 
     #-------------------------------------------------------------------------------------------------------
     demo_guyfs_readline = ->
-      relpath = '../../../../../3rd-party-repos/mmomtchev-readcsv-for-read-file-benchmark'
-      path = PATH.resolve PATH.join __dirname, relpath, 'allCountries.txt'
-      count = 0
-      t0 = hrtime_as_bigint()
-      for { line, } from GUY.fs.walk_lines_with_positions path
-        count++
-        # return null if count > 100
-        echo 'Ω___7', count, ( rpr line[ .. 108 ] ) if ( count %% 1_000_000 ) is 0
+      { path,
+        line_count, } = _get_big_file_cfg()
+      count           = 0
+      t0              = hrtime_as_bigint()
+      #.....................................................................................................
+      timeit { total: line_count, }, demo_guyfs_readline_fn = ({ progress, }) ->
+        for { line, } from GUY.fs.walk_lines_with_positions path
+          count++
+          progress()
+        ;null
+      #.....................................................................................................
       t1 = hrtime_as_bigint()
-      echo 'Ω___8', 'demo_guyfs_readline', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
-      return null
+      echo 'Ω___5', 'demo_guyfs_readline', f"#{( Number t1 - t0 ) / 1_000_000}:>20,.9f;"
+      ;null
 
     #-------------------------------------------------------------------------------------------------------
     demo_read_write_big_map = ( cfg ) ->
@@ -184,7 +203,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
       FS                              = require 'node:fs'
       #.....................................................................................................
       write_file = ->
-        # help "Ω___9 using JSON file at #{cfg.path}"
+        # help "Ω___6 using JSON file at #{cfg.path}"
         map = get_random_twl_map { size: benchmark_cfg.max_count, }
         FS.writeFileSync cfg.path, ''
         #...................................................................................................
@@ -196,7 +215,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
         return null
       #.....................................................................................................
       read_file = ( map = null ) ->
-        # help "Ω__10 using JSON file at #{cfg.path}"
+        # help "Ω___7 using JSON file at #{cfg.path}"
         map  ?= new Map()
         #...................................................................................................
         timeit read_file_sync = ->
@@ -213,8 +232,8 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
       do =>
         d         = read_file()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__11', "read #{count_rpr} entries"
-        # debug 'Ω__12', d
+        info 'Ω___8', "read #{count_rpr} entries"
+        # debug 'Ω___9', d
         return null
       #.....................................................................................................
       return null
@@ -269,18 +288,18 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
           select * from segments;"""
       #.....................................................................................................
       write_db = ->
-        # help "Ω__13 using DB at #{cfg.path}"
+        # help "Ω__10 using DB at #{cfg.path}"
         db              = new SQLITE.DatabaseSync cfg.path
         switch cfg.db_type
           when 'with_checks'  then db.exec statements.create_table_segments_checks
           when 'no_checks'    then db.exec statements.create_table_segments_free
-          else throw new Error "Ω__14 unknown value for cfg.db_type: #{rpr cfg.db_type}"
+          else throw new Error "Ω__11 unknown value for cfg.db_type: #{rpr cfg.db_type}"
         switch cfg.insert_type
           when 'c0r0'         then insert_segment = db.prepare statements.insert_segment_c0r0
           when 'c0r1'         then insert_segment = db.prepare statements.insert_segment_c0r1
           when 'c1r0'         then insert_segment = db.prepare statements.insert_segment_c1r0
           when 'c1r1'         then insert_segment = db.prepare statements.insert_segment_c1r1
-          else throw new Error "Ω__15 unknown value for cfg.insert_type: #{rpr cfg.insert_type}"
+          else throw new Error "Ω__12 unknown value for cfg.insert_type: #{rpr cfg.insert_type}"
         map = get_random_twl_map { size: benchmark_cfg.max_count, }
         #...................................................................................................
         ### TAINT use transaction ###
@@ -289,7 +308,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
           db.exec SQL"begin transaction;"
           for [ segment_text, [ segment_width, segment_length, ], ] from map
             progress()
-            # debug 'Ω__16', { segment_text, segment_width, segment_length, }
+            # debug 'Ω__13', { segment_text, segment_width, segment_length, }
             insert_segment.run { segment_text, segment_width, segment_length, }
           db.exec SQL"commit;"
           return null
@@ -297,7 +316,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
         return null
       #.....................................................................................................
       read_db = ( map = null ) ->
-        # help "Ω__17 using DB at #{cfg.path}"
+        # help "Ω__14 using DB at #{cfg.path}"
         db              = new SQLITE.DatabaseSync cfg.path
         read_segments   = db.prepare statements.read_segments
         map            ?= new Map()
@@ -305,7 +324,7 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
         timeit nameit "read_db_sync_#{cfg.db_type}_#{cfg.insert_type}", ->
           db.exec SQL"begin transaction;"
           for { segment_text, segment_width, segment_length, } from read_segments.iterate()
-            # debug 'Ω__18', segment_text, [ segment_width, segment_length, ]
+            # debug 'Ω__15', segment_text, [ segment_width, segment_length, ]
             map.set segment_text, [ segment_width, segment_length, ]
           db.exec SQL"commit;"
           return null
@@ -319,22 +338,23 @@ get_random_twl_map = ({ size = 10 }={}) -> timeit { total: size, }, get_random_t
       do =>
         d         = read_db()
         count_rpr = ( new Intl.NumberFormat 'en-US' ).format d.size
-        info 'Ω__19', "read #{count_rpr} entries"
-        # debug 'Ω__20', d
+        info 'Ω__16', "read #{count_rpr} entries"
+        # debug 'Ω__17', d
         return null
       #.....................................................................................................
       return null
 
     #-------------------------------------------------------------------------------------------------------
-    # demo_fast_readline_sync()
     # demo_read_write_big_map     { path: benchmark_cfg.paths.jsonl, }
-    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'no_checks',   insert_type: 'c0r0', }
-    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c0r0', }
-    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c0r1', }
-    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c1r0', }
-    demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c1r1', }
-    # await demo_fast_readline_async()
-    # demo_guyfs_readline()
+    # demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'no_checks',   insert_type: 'c0r0', }
+    # demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c0r0', }
+    # demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c0r1', }
+    # demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c1r0', }
+    # demo_read_write_njs_sqlite  { path: benchmark_cfg.paths.db, db_type: 'with_checks', insert_type: 'c1r1', }
+    #.......................................................................................................
+    demo_guyfs_readline()
+    await demo_fast_readline_async()
+    demo_fast_readline_sync()
     #.......................................................................................................
     return null
 
@@ -352,8 +372,8 @@ benchmark_cfg =
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # await ( new Test guytest_cfg ).async_test { benchmarks, }
-  { require_bricabrac_cfg,    } = SFMODULES.unstable.require_get_callsite()
-  debug 'Ω__27', require_bricabrac_cfg().datastore.name
+  await ( new Test guytest_cfg ).async_test { benchmarks, }
+  # { require_bricabrac_cfg,    } = SFMODULES.unstable.require_get_callsite()
+  # debug 'Ω__18', require_bricabrac_cfg().datastore.name
   return null
 
