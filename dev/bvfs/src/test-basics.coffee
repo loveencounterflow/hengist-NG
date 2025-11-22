@@ -39,14 +39,79 @@ get_paths = ->
 #===========================================================================================================
 @tasks =
 
+  #---------------------------------------------------------------------------------------------------------
+  paths: ->
+    SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { Dbric,
+      SQL,
+      internals,              } = SFMODULES.unstable.require_dbric()
+    { ref_path,
+      db_path,
+      mount_path,
+      assets_path,
+      arena_path,             } = get_paths()
+    #.......................................................................................................
+    do =>
+      bvfs          = Dbric.open db_path
+      read_metadata = SQL"""select file_id, path, name, size from bv_paths where type in ( 'file' );"""
+      read_lines    = SQL"""select line, eol from bv_lines where file_id = $file_id order by line_nr;""";
+      for { file_id, path, } from bvfs.walk read_metadata
+        help 'Ωbvfs___1', { file_id, path, }
+        @eq ( Ωbvfs___2 = -> if ( file_id is 1 ) then ( path is '.' ) else ( path[ 0 ] isnt '/' ) ), true
+      ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  filesizes: ->
+    SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { Dbric,
+      SQL,
+      internals,              } = SFMODULES.unstable.require_dbric()
+    { ref_path,
+      db_path,
+      mount_path,
+      assets_path,
+      arena_path,             } = get_paths()
+    _Bsql3                      = require 'better-sqlite3'
+    #=======================================================================================================
+    class Bsql3 extends _Bsql3
+    #=======================================================================================================
+    class Bvfs extends Dbric
+      @db_class: Bsql3
+    #.......................................................................................................
+    do =>
+      bvfs          = Bvfs.open db_path
+      read_metadata = SQL"""select file_id, path, name, size from bv_paths where type in ( 'file' );"""
+      read_lines    = SQL"""select line_nr, line, eol from bv_lines where file_id = $file_id order by line_nr;""";
+      for { file_id, path, size, } from bvfs.walk read_metadata
+        line_count  = 0
+        byte_count  = 0
+        for { line_nr, line, eol, } from bvfs.walk read_lines, { file_id, }
+          info 'Ωbvfs___3', { path, line_nr, line } if line_count < 10
+          line_count++
+          byte_count += Buffer.byteLength ( line + eol ), 'utf-8'
+        help 'Ωbvfs___4', { path, size, byte_count, }
+        @eq ( Ωbvfs___5 = -> byte_count ), size
+      ;null
+    #.......................................................................................................
+    ;null
+
+
+############################################################################################################
+#
+#===========================================================================================================
+@postponed =
 
   #---------------------------------------------------------------------------------------------------------
   basics: ->
     SFMODULES                   = require '../../../apps/bricabrac-sfmodules'
     { type_of,                } = SFMODULES.unstable.require_type_of()
-    { Jetstream,
-      Async_jetstream,
-      internals,              } = SFMODULES.require_jetstream()
+    # { Jetstream,
+    #   Async_jetstream,
+    #   internals,              } = SFMODULES.require_jetstream()
     #.......................................................................................................
     probes_and_matchers = [
       { type: 'folder',  nprm:   509, sprm: 'drwxrwxr-x', }
@@ -69,7 +134,7 @@ get_paths = ->
         oprm = '0o' + ( nprm.toString  8 ).padStart  8, '0'
         xprm = '0x' + ( nprm.toString 16 ).padStart  8, '0'
         bprm = '__' + ( nprm.toString  2 ).padStart 16, '0'
-        debug 'Ωbvfs___1', f"#{nprm}:>10c; #{oprm}:>10c; #{xprm}:>10c; #{bprm}:>20c; #{sprm}:>10c; "
+        debug 'Ωbvfs___6', f"#{nprm}:>10c; #{oprm}:>10c; #{xprm}:>10c; #{bprm}:>20c; #{sprm}:>10c; "
       ;null
     #.......................................................................................................
     ;null
@@ -79,39 +144,39 @@ get_paths = ->
     SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
     UP                        = require 'unix-permissions'
     FS                        = require 'node:fs'
-    debug 'Ωbbbt___2', ( k for k of UP )
-    debug 'Ωbbbt___3', UP.convert.object ( FS.statSync '/etc/passwd' ).mode
-    debug 'Ωbbbt___4', f"#{UP.convert.number 'a-w'}:>#03o;"
-    debug 'Ωbbbt___5', f"#{UP.convert.number 'a+w'}:>#03o;"
-    debug 'Ωbbbt___6', f"#{UP.convert.number 'u+w'}:>#03o;"
-    debug 'Ωbbbt___7', f"#{UP.convert.number 'u+r'}:>#03o;"
-    debug 'Ωbbbt___8', f"#{UP.convert.number 'u-w,g-w,o-w'}:>#03o;"
-    debug 'Ωbbbt___9', f"#{UP.convert.number 'u+w,g+w,o+w'}:>#03o;"
-    debug 'Ωbbbt__10', f"  #{UP.convert.symbolic 'u+w,g+w,o+w'}:>20c;"
-    help 'Ωbbbt__11', f"  #{UP.convert.symbolic 0o775}:>20c;"
-    help 'Ωbbbt__12', f"  #{UP.convert.symbolic 0o664}:>20c;"
-    help 'Ωbbbt__13', f"  #{UP.convert.symbolic 0o555}:>20c;"
-    help 'Ωbbbt__14', f"  #{UP.convert.symbolic 0o444}:>20c;"
-    help 'Ωbbbt__15'
-    help 'Ωbbbt__16', f"  #{UP.convert.symbolic 0o000775}:>20c;"
-    help 'Ωbbbt__17', f"  #{UP.convert.symbolic 0o040555}:>20c;"
-    help 'Ωbbbt__18', f"  #{UP.convert.symbolic 0o100444}:>20c;"
-    help 'Ωbbbt__19'
-    help 'Ωbbbt__20', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
-    help 'Ωbbbt__21', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
-    help 'Ωbbbt__22', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x01b4 }:>20c;" ### 0o664 .rw-rw-r-- file open ###
-    help 'Ωbbbt__23'
-    help 'Ωbbbt__24', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
-    help 'Ωbbbt__25', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
-    help 'Ωbbbt__26', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x0124 }:>20c;" ### 0o444 .r--r--r-- file closed ###
-    # @eq ( Ωbbbt__27 = -> false ), false
+    debug 'Ωbvfs___7', ( k for k of UP )
+    debug 'Ωbvfs___8', UP.convert.object ( FS.statSync '/etc/passwd' ).mode
+    debug 'Ωbvfs___9', f"#{UP.convert.number 'a-w'}:>#03o;"
+    debug 'Ωbvfs__10', f"#{UP.convert.number 'a+w'}:>#03o;"
+    debug 'Ωbvfs__11', f"#{UP.convert.number 'u+w'}:>#03o;"
+    debug 'Ωbvfs__12', f"#{UP.convert.number 'u+r'}:>#03o;"
+    debug 'Ωbvfs__13', f"#{UP.convert.number 'u-w,g-w,o-w'}:>#03o;"
+    debug 'Ωbvfs__14', f"#{UP.convert.number 'u+w,g+w,o+w'}:>#03o;"
+    debug 'Ωbvfs__15', f"  #{UP.convert.symbolic 'u+w,g+w,o+w'}:>20c;"
+    help 'Ωbvfs__16', f"  #{UP.convert.symbolic 0o775}:>20c;"
+    help 'Ωbvfs__17', f"  #{UP.convert.symbolic 0o664}:>20c;"
+    help 'Ωbvfs__18', f"  #{UP.convert.symbolic 0o555}:>20c;"
+    help 'Ωbvfs__19', f"  #{UP.convert.symbolic 0o444}:>20c;"
+    help 'Ωbvfs__20'
+    help 'Ωbvfs__21', f"  #{UP.convert.symbolic 0o000775}:>20c;"
+    help 'Ωbvfs__22', f"  #{UP.convert.symbolic 0o040555}:>20c;"
+    help 'Ωbvfs__23', f"  #{UP.convert.symbolic 0o100444}:>20c;"
+    help 'Ωbvfs__24'
+    help 'Ωbvfs__25', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
+    help 'Ωbvfs__26', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x01fd }:>20c;" ### 0o775 drwxrwxr-x folder open ###
+    help 'Ωbvfs__27', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x01b4 }:>20c;" ### 0o664 .rw-rw-r-- file open ###
+    help 'Ωbvfs__28'
+    help 'Ωbvfs__29', f"  #{UP.convert.symbolic 0o000775 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
+    help 'Ωbvfs__30', f"  #{UP.convert.symbolic 0o040555 & 0xfe00 | 0x016d }:>20c;" ### 0o555 dr-xr-xr-x folder closed ###
+    help 'Ωbvfs__31', f"  #{UP.convert.symbolic 0o100444 & 0xfe00 | 0x0124 }:>20c;" ### 0o444 .r--r--r-- file closed ###
+    # @eq ( Ωbvfs__32 = -> false ), false
     ###
-    help 'Ωbvfsto__28', "drwxrwxr-x", ( 0o775.toString 8 ), ( '0x' + ( 0o775.toString 16 ).padStart 4, '0' )
-    help 'Ωbvfsto__29', ".rw-rw-r--", ( 0o664.toString 8 ), ( '0x' + ( 0o664.toString 16 ).padStart 4, '0' )
-    help 'Ωbvfsto__30', "dr-xr-xr-x", ( 0o555.toString 8 ), ( '0x' + ( 0o555.toString 16 ).padStart 4, '0' )
-    help 'Ωbvfsto__31', ".r--r--r--", ( 0o444.toString 8 ), ( '0x' + ( 0o444.toString 16 ).padStart 4, '0' )
-    help 'Ωbvfsto__32', "??-??-??-?", ( 0b101_101_101.toString 8 ), ( '0x' + ( 0b101_101_101.toString 16 ).padStart 4, '0' )
-    help 'Ωbvfsto__33', "??w??w??-?", ( 0b010_010_000.toString 8 ), ( '0x' + ( 0b010_010_000.toString 16 ).padStart 4, '0' )
+    help 'Ωbvfsto__33', "drwxrwxr-x", ( 0o775.toString 8 ), ( '0x' + ( 0o775.toString 16 ).padStart 4, '0' )
+    help 'Ωbvfsto__34', ".rw-rw-r--", ( 0o664.toString 8 ), ( '0x' + ( 0o664.toString 16 ).padStart 4, '0' )
+    help 'Ωbvfsto__35', "dr-xr-xr-x", ( 0o555.toString 8 ), ( '0x' + ( 0o555.toString 16 ).padStart 4, '0' )
+    help 'Ωbvfsto__36', ".r--r--r--", ( 0o444.toString 8 ), ( '0x' + ( 0o444.toString 16 ).padStart 4, '0' )
+    help 'Ωbvfsto__37', "??-??-??-?", ( 0b101_101_101.toString 8 ), ( '0x' + ( 0b101_101_101.toString 16 ).padStart 4, '0' )
+    help 'Ωbvfsto__38', "??w??w??-?", ( 0b010_010_000.toString 8 ), ( '0x' + ( 0b010_010_000.toString 16 ).padStart 4, '0' )
     ###
     ;null
 
@@ -147,7 +212,7 @@ get_paths = ->
     shell       = ( cmd, P... ) -> ( execaSync cmd, P, shell_cfg ).stdout
     #.......................................................................................................
     db          = Sqlitefs_db.open db_path
-    debug 'Ωbvfs__34', db.statements
+    debug 'Ωbvfs__39', db.statements
     paths       = []
     #.......................................................................................................
     do =>
@@ -159,13 +224,13 @@ get_paths = ->
     mode = 'nothing'
     switch mode
       when 'open' then do =>
-        debug 'Ωbvfs__35', db.execute SQL"""
+        debug 'Ωbvfs__40', db.execute SQL"""
         update metadata set mode = s.open_mode
           from metadata           as m
           join bb_standard_modes  as s on ( m.id = s.file_id );"""
         ;null
       when 'close' then do =>
-        debug 'Ωbvfs__36', db.execute SQL"""
+        debug 'Ωbvfs__41', db.execute SQL"""
         update metadata set mode = s.closed_mode
           from metadata           as m
           join bb_standard_modes  as s on ( m.id = s.file_id );"""
@@ -176,7 +241,7 @@ get_paths = ->
     for d from db.walk_fs_objects()
       full_path = PATH.join mount_path, d.path
       paths.push full_path
-      urge 'Ωbvfs__37', d.mode_o, d.path # { d..., full_path, }
+      urge 'Ωbvfs__42', d.mode_o, d.path # { d..., full_path, }
     #.......................................................................................................
     do =>
       for line in shell 'show-layout', mount_path
@@ -218,41 +283,41 @@ get_paths = ->
       switch ( mounts = match_all_fs_mounts cfg ).length
         when 0 then return false
         when 1 then return true
-      throw new Error "Ωbvfs__38 expected 0 or 1 match, got #{mounts.length}: #{rpr mounts}"
+      throw new Error "Ωbvfs__43 expected 0 or 1 match, got #{mounts.length}: #{rpr mounts}"
     #.......................................................................................................
     do =>
       sh = new Shell()
-      @throws ( Ωbvfs__39 = -> sh._validate_call_arguments null               ), /expected a pod or a text, got a/
-      @throws ( Ωbvfs__40 = -> sh._validate_call_arguments []                 ), /expected a pod or a text, got a/
-      @throws ( Ωbvfs__41 = -> sh._validate_call_arguments {}                 ), /expected a text, got a/
-      @eq     ( Ωbbbt__42 = -> sh._validate_call_arguments 'ls'               ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [] }
-      @eq     ( Ωbbbt__43 = -> sh._validate_call_arguments 'ls', '-AlF'       ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', ] }
-      @eq     ( Ωbbbt__44 = -> sh._validate_call_arguments 'ls', '-AlF', '.'  ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', '.', ] }
+      @throws ( Ωbvfs__44 = -> sh._validate_call_arguments null               ), /expected a pod or a text, got a/
+      @throws ( Ωbvfs__45 = -> sh._validate_call_arguments []                 ), /expected a pod or a text, got a/
+      @throws ( Ωbvfs__46 = -> sh._validate_call_arguments {}                 ), /expected a text, got a/
+      @eq     ( Ωbvfs__47 = -> sh._validate_call_arguments 'ls'               ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [] }
+      @eq     ( Ωbvfs__48 = -> sh._validate_call_arguments 'ls', '-AlF'       ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', ] }
+      @eq     ( Ωbvfs__49 = -> sh._validate_call_arguments 'ls', '-AlF', '.'  ), { cfg: { cwd: ref_path, lines: true, }, cmd: 'ls', parameters: [ '-AlF', '.', ] }
       ;null
     #.......................................................................................................
     do =>
       sh = new Shell shell_cfg
-      debug 'Ωbbbt__45', sh.call 'ls'
-      debug 'Ωbbbt__46', sh.call 'grep', '-Pi', 'sqlitefs', '/etc/mtab'
-      try help 'Ωbbbt__47', sh.call 'grep', '-Pi', 'sqlitefs', '/etc/mtab'         catch e then warn 'Ωbbbt__48', reverse e.message
-      try help 'Ωbbbt__49', sh.call 'grep', '-Pi', 'sqlitefsYYYY', '/etc/mtab'     catch e then warn 'Ωbbbt__50', reverse e.message
-      try help 'Ωbbbt__51', sh.call 'grep', '-Pi', 'sqlitefsYYYY', '/etc/mtabYYYY' catch e then warn 'Ωbbbt__52', reverse e.message
+      debug 'Ωbvfs__50', sh.call 'ls'
+      debug 'Ωbvfs__51', sh.call 'grep', '-Pi', 'sqlitefs', '/etc/mtab'
+      try help 'Ωbvfs__52', sh.call 'grep', '-Pi', 'sqlitefs', '/etc/mtab'         catch e then warn 'Ωbvfs__53', reverse e.message
+      try help 'Ωbvfs__54', sh.call 'grep', '-Pi', 'sqlitefsYYYY', '/etc/mtab'     catch e then warn 'Ωbvfs__55', reverse e.message
+      try help 'Ωbvfs__56', sh.call 'grep', '-Pi', 'sqlitefsYYYY', '/etc/mtabYYYY' catch e then warn 'Ωbvfs__57', reverse e.message
       ;null
       ;null
     #.......................................................................................................
     do =>
       sh = new Shell shell_cfg
-      info 'Ωbbbt__53', match_all_fs_mounts { device: 'sqlitefs', }
-      info 'Ωbbbt__54', match_all_fs_mounts { device: 'sqlitefs', type: 'sqlfs', }
-      info 'Ωbbbt__55', match_all_fs_mounts { device: 'sqlitefs', type: 'fuse', }
+      info 'Ωbvfs__58', match_all_fs_mounts { device: 'sqlitefs', }
+      info 'Ωbvfs__59', match_all_fs_mounts { device: 'sqlitefs', type: 'sqlfs', }
+      info 'Ωbvfs__60', match_all_fs_mounts { device: 'sqlitefs', type: 'fuse', }
       ;null
     #.......................................................................................................
     do =>
       sh = new Shell shell_cfg
-      info 'Ωbbbt__56', is_mounted { device: 'sqlitefs', }
-      info 'Ωbbbt__57', is_mounted { device: 'sqlitefs', type: 'sqlfs', }
-      info 'Ωbbbt__58', is_mounted { device: 'sqlitefs', type: 'fuse', }
-      try info 'Ωbbbt__59', is_mounted {} catch e then warn 'Ωbbbt__60', reverse e.message
+      info 'Ωbvfs__61', is_mounted { device: 'sqlitefs', }
+      info 'Ωbvfs__62', is_mounted { device: 'sqlitefs', type: 'sqlfs', }
+      info 'Ωbvfs__63', is_mounted { device: 'sqlitefs', type: 'fuse', }
+      try info 'Ωbvfs__64', is_mounted {} catch e then warn 'Ωbvfs__65', reverse e.message
       ;null
     #.......................................................................................................
     ###
@@ -293,15 +358,15 @@ get_paths = ->
     await $({verbose: 'full'})"cat package.json"
     await $({verbose: 'full'})"cat .gitignore"
     R = await $( { lines: true, verbose: 'full', } )"cat .gitignore".pipe"sort"
-    debug 'Ωbbbt__61', R.stdout
+    debug 'Ωbvfs__66', R.stdout
     R = await \
       $(      { lines: true, verbose: 'full', } )"cat .gitignore" \
       .pipe(  { lines: true, verbose: 'full', } )"sort"
-    debug 'Ωbbbt__62', ( rpr R.stdout )[ .. 108 ] + '...'
+    debug 'Ωbvfs__67', ( rpr R.stdout )[ .. 108 ] + '...'
     R = await $( { lines: true, verbose: 'full', } )"cat .gitignore".pipe"sort".pipe"head -n2"
-    debug 'Ωbbbt__63', ( rpr R.stdout )[ .. 108 ] + '...'
+    debug 'Ωbvfs__68', ( rpr R.stdout )[ .. 108 ] + '...'
     R = await $( { lines: true, verbose: 'full', } )"mount"
-    debug 'Ωbbbt__64', ( rpr R.stdout )[ .. 108 ] + '...'
+    debug 'Ωbvfs__69', ( rpr R.stdout )[ .. 108 ] + '...'
     #.......................................................................................................
     await do =>
       # fallback  = Symbol 'fallback'
@@ -321,7 +386,7 @@ get_paths = ->
       sh_mount_jet.push ( NN ) ->
         # { stdout, } = await $( { lines: true, verbose: 'none', } )"mount"
         yield from GUY.fs.walk_lines '/etc/mtab'
-        #   debug 'Ωbbbt__65',
+        #   debug 'Ωbvfs__70',
         #    line.split '\x20'
         # for line in stdout
         #   yield line
@@ -334,7 +399,7 @@ get_paths = ->
           type
           options ] = line.split '\x20'
         if [ device, path, type, options, ].some ( e ) -> ( not e? ) or ( e is '' )
-          throw new Error "Ωbvfs__66 unable to parse line #{rpr line}"
+          throw new Error "Ωbvfs__71 unable to parse line #{rpr line}"
         yield freeze { device, path, type, options, }
       #.....................................................................................................
       sh_mount_jet.push ( d ) ->
@@ -350,13 +415,13 @@ get_paths = ->
             re = pattern
           when 'text'
             re = regex"#{pattern}"
-          else throw new Error "Ωbvfs__67 expected a regex or a text, got a #{type}"
+          else throw new Error "Ωbvfs__72 expected a regex or a text, got a #{type}"
         return ( x ) -> re.lastIndex = 0; re.test x
       #.....................................................................................................
       walk_sh_mount_matches = ({ device = null, path = null, glob = null, type = null, }={}) ->
         if glob?
           if path?
-            throw new Error "Ωbvfs__68 expected either glob or path, got both"
+            throw new Error "Ωbvfs__73 expected either glob or path, got both"
           match_glob  = create_glob_matcher glob
         else
           match_glob  = -> true
@@ -377,23 +442,23 @@ get_paths = ->
         return switch count = mounts.length
           when 0 then false
           when 1 then true
-        throw new Error "Ωbvfs__69 expected zero or one results, got #{count}"
+        throw new Error "Ωbvfs__74 expected zero or one results, got #{count}"
       #.....................................................................................................
       # for await d from walk_sh_mount_matches { device: 'sqlitefs', }
       # for await d from walk_sh_mount_matches()
-      #   urge 'Ωbbbt__70', d
+      #   urge 'Ωbvfs__75', d
       result = [ ( d for await d from walk_sh_mount_matches { device: 'tmpfs', } )..., ]
-      @eq ( Ωbvfs__71 = -> result.length > 1 ), true
+      @eq ( Ωbvfs__76 = -> result.length > 1 ), true
       #.....................................................................................................
       error = null
       try await has_mount { device: 'tmpfs', } catch error
-        @eq ( Ωbvfs__72 = -> /expected zero or one results, got \d+/.test error.message ), true
-      @eq ( Ωbvfs__73 = -> error is null ), false
+        @eq ( Ωbvfs__77 = -> /expected zero or one results, got \d+/.test error.message ), true
+      @eq ( Ωbvfs__78 = -> error is null ), false
       #.....................................................................................................
-      @eq ( Ωbbbt__74 = -> has_mount { path: '/dev/shm',       } ), true
-      @eq ( Ωbbbt__75 = -> has_mount { path: /^\/dev\/shm$/v,  } ), true
-      @eq ( Ωbbbt__76 = -> has_mount { glob: '/*/shm',         } ), true
-      @eq ( Ωbbbt__77 = -> has_mount { path: '/no/such/path',  } ), false
+      @eq ( Ωbvfs__79 = -> has_mount { path: '/dev/shm',       } ), true
+      @eq ( Ωbvfs__80 = -> has_mount { path: /^\/dev\/shm$/v,  } ), true
+      @eq ( Ωbvfs__81 = -> has_mount { glob: '/*/shm',         } ), true
+      @eq ( Ωbvfs__82 = -> has_mount { path: '/no/such/path',  } ), false
       ###
       in /etc/mtab:
       (1) /home/flow/jzr/bvfs/mou\134nt instead of /home/flow/jzr/bvfs/mou\012t
@@ -420,21 +485,21 @@ get_paths = ->
 # #===========================================================================================================
 # ensure_empty_dir = ( path ) ->
 #   try await result = $( { reject: false, } )"trash #{path}" catch error
-#     debug 'Ωbbbt__78', rpr error.exitCode
-#     debug 'Ωbbbt__79', rpr error.name
-#     debug 'Ωbbbt__80', rpr error.code
-#     debug 'Ωbbbt__81', rpr error.message
-#     debug 'Ωbbbt__82', rpr error.originalMessage
-#     debug 'Ωbbbt__83', rpr error.cause
+#     debug 'Ωbvfs__83', rpr error.exitCode
+#     debug 'Ωbvfs__84', rpr error.name
+#     debug 'Ωbvfs__85', rpr error.code
+#     debug 'Ωbvfs__86', rpr error.message
+#     debug 'Ωbvfs__87', rpr error.originalMessage
+#     debug 'Ωbvfs__88', rpr error.cause
 #     process.exit 111
 #     throw error
-#   info 'Ωbbbt__84', rpr result
-#   info 'Ωbbbt__85', rpr result?.exitCode
-#   info 'Ωbbbt__86', rpr result?.name
-#   info 'Ωbbbt__87', rpr result?.code
-#   info 'Ωbbbt__88', rpr result?.message
-#   info 'Ωbbbt__89', rpr result?.originalMessage
-#   info 'Ωbbbt__90', rpr result?.cause
+#   info 'Ωbvfs__89', rpr result
+#   info 'Ωbvfs__90', rpr result?.exitCode
+#   info 'Ωbvfs__91', rpr result?.name
+#   info 'Ωbvfs__92', rpr result?.code
+#   info 'Ωbvfs__93', rpr result?.message
+#   info 'Ωbvfs__94', rpr result?.originalMessage
+#   info 'Ωbvfs__95', rpr result?.cause
 #   ;null
 
 #===========================================================================================================
@@ -444,11 +509,11 @@ demo_create_mount_folders_with_strange_names = ->
     assets_path,
     arena_path,
     mount_path, } = get_paths()
-  # debug 'Ωbbbt__91', { assets_path, }
-  # debug 'Ωbbbt__92', { arena_path, }
+  # debug 'Ωbvfs__96', { assets_path, }
+  # debug 'Ωbvfs__97', { arena_path, }
   # await ensure_empty_dir arena_path
   { mkdirp, } = require 'mkdirp'
-  # debug 'Ωbbbt__93', mkdirp
+  # debug 'Ωbvfs__98', mkdirp
   await mkdirp PATH.join arena_path, 'test'
   await mkdirp PATH.join arena_path, 'äöü'
   await mkdirp PATH.join arena_path, 'mou\nt'
@@ -485,8 +550,12 @@ demo_create_mount_folders_with_strange_names = ->
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  await ( new Test guytest_cfg ).async_test @tasks
   # ( new Test guytest_cfg ).test { access_fs_with_db: @tasks.access_fs_with_db, }
   # ( new Test guytest_cfg ).test { scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY: @tasks.scripts_YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY, }
   # await ( new Test guytest_cfg ).async_test { async_shell: @tasks.async_shell, }
-  await demo_create_mount_folders_with_strange_names()
+  # await demo_create_mount_folders_with_strange_names()
+
+  # 'alpha|beta|gamma|delta||zeta|'
+
 
