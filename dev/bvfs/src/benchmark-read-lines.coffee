@@ -106,8 +106,6 @@ timeit = ( P... ) -> benchmarker.timeit P...
       total             = benchmark_cfg.line_count
       count             = 0
       read_lines        = bvfs.prepare SQL"select * from bv_lines where file_id = 8 order by line_nr;"
-      echo d.line for d from read_lines.iterate()
-      process.exit 111
       brand             = 'bvfs_db'
       #.....................................................................................................
       timeit { total, brand, }, read_meanings_txt = ({ progress, }) ->
@@ -119,20 +117,19 @@ timeit = ( P... ) -> benchmarker.timeit P...
       debug 'Ωbrl___5', { count, }
       return null
 
-    # #.......................................................................................................
-    # read_chunks_from_regular_fs()
-    # read_lines_from_regular_fs()
-    # read_lines_from_bvfs_mount()
-    # read_lines_from_bvfs_db()
-    # #.......................................................................................................
-    # regular_fs_lines_per_s = benchmark_cfg.line_count / ( benchmarker.brands.regular_fs.read_meanings_txt[ 0 ] / 1000 )
-    # bvfs_mount_lines_per_s = benchmark_cfg.line_count / ( benchmarker.brands.bvfs_mount.read_meanings_txt[ 0 ] / 1000 )
-    # bvfs_db_lines_per_s    = benchmark_cfg.line_count / ( benchmarker.brands.bvfs_db.read_meanings_txt[ 0 ] / 1000 )
-    # echo 'Ωbrl___6', f"regular_fs_lines: #{regular_fs_lines_per_s}:>20,.0f; Hz"
-    # echo 'Ωbrl___7', f"bvfs_mount_lines: #{bvfs_mount_lines_per_s}:>20,.0f; Hz"
-    # echo 'Ωbrl___8', f"bvfs_db_lines:    #{bvfs_db_lines_per_s   }:>20,.0f; Hz"
-    # #.......................................................................................................
+    #.......................................................................................................
+    read_chunks_from_regular_fs()
+    read_lines_from_regular_fs()
+    read_lines_from_bvfs_mount()
     read_lines_from_bvfs_db()
+    #.......................................................................................................
+    regular_fs_lines_per_s = benchmark_cfg.line_count / ( benchmarker.brands.regular_fs.read_meanings_txt[ 0 ] / 1000 )
+    bvfs_mount_lines_per_s = benchmark_cfg.line_count / ( benchmarker.brands.bvfs_mount.read_meanings_txt[ 0 ] / 1000 )
+    bvfs_db_lines_per_s    = benchmark_cfg.line_count / ( benchmarker.brands.bvfs_db.read_meanings_txt[ 0 ] / 1000 )
+    echo 'Ωbrl___6', f"regular_fs_lines: #{regular_fs_lines_per_s}:>20,.0f; Hz"
+    echo 'Ωbrl___7', f"bvfs_mount_lines: #{bvfs_mount_lines_per_s}:>20,.0f; Hz"
+    echo 'Ωbrl___8', f"bvfs_db_lines:    #{bvfs_db_lines_per_s   }:>20,.0f; Hz"
+    #.......................................................................................................
     return null
 
 

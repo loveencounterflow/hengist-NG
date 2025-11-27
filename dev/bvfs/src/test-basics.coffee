@@ -75,18 +75,32 @@ get_paths = ->
       mount_path,
       assets_path,
       arena_path,             } = get_paths()
-    _Bsql3                      = require 'better-sqlite3'
-    #=======================================================================================================
-    class Bsql3 extends _Bsql3
+    Bsql3                       = require 'better-sqlite3'
     #=======================================================================================================
     class Bvfs extends Dbric
       @db_class: Bsql3
     #.......................................................................................................
     do =>
+      return null
+      #.....................................................................................................
+      # meanings.txt L 11761
       bvfs          = Bvfs.open db_path
       read_metadata = SQL"""select file_id, path, name, size from bv_paths where type in ( 'file' );"""
       read_lines    = SQL"""select line_nr, line, eol from bv_lines where file_id = $file_id order by line_nr;""";
       for { file_id, path, size, } from bvfs.walk read_metadata
+        continue unless path is 'README.md'
+        # continue unless path is 'meanings.txt'
+        for { line_nr, line, eol, } from bvfs.walk read_lines, { file_id, }
+          process.stdout.write ( line + eol )
+      ;null
+    #.......................................................................................................
+    ### TAINT compare line counts with those obtained with `walk_lines_with_positions()` ###
+    do =>
+      bvfs          = Bvfs.open db_path
+      read_metadata = SQL"""select file_id, path, name, size from bv_paths where type in ( 'file' );"""
+      read_lines    = SQL"""select line_nr, line, eol from bv_lines where file_id = $file_id order by line_nr;""";
+      for { file_id, path, size, } from bvfs.walk read_metadata
+        # continue unless path is 'README.md'
         line_count  = 0
         byte_count  = 0
         for { line_nr, line, eol, } from bvfs.walk read_lines, { file_id, }
