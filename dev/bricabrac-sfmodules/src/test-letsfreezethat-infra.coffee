@@ -44,13 +44,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
     @eq ( Ωlftit___4 = -> Object.getPrototypeOf lets Object.create null        ), null
     @throws ( Ωlftit___5 = -> lets null                                        ), /unable to process values of type null/
     @throws ( Ωlftit___6 = -> lets()                                           ), /unable to process values of type undefined/
-    @throws ( Ωlftit___7 = -> lets 'ABC'                                       ), /unable to process values of type text/
-    @throws ( Ωlftit___8 = -> lets new Set 'ABC'                               ), /unable to process values of type set/
+    @throws ( Ωlftit___7 = -> lets 'ABC'                                       ), /unable to process values of type String/
+    @throws ( Ωlftit___8 = -> lets new Set 'ABC'                               ), /unable to process values of type Set/
     #.......................................................................................................
     do =>
       class MyClass
         some_property: 8
-      @throws ( Ωlftit___9 = -> lets new MyClass() ), /unable to process values of type object/
+      @throws ( Ωlftit___9 = -> lets new MyClass() ), /unable to process values of type MyClass/
       ;null
     #.......................................................................................................
     do =>
