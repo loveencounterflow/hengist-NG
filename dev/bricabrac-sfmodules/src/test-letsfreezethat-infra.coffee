@@ -78,10 +78,13 @@ GTNG                      = require '../../../apps/guy-test-NG'
       ;null
     #.......................................................................................................
     do =>
-      probe   = { a: 'A', b: 'B', c: 'C', }
+      fn      = ->
+      probe   = { a: 'A', b: 'B', c: 'C', fn, }
       copy    = { probe..., }
-      matcher = { a: 'A', b: 'B', d: 'D', }
+      matcher = { a: 'A', b: 'B', d: 'D', fn, }
       result  = lets probe, ( d ) -> delete d.c; d.d = 'D'
+      # debug 'Ωlfti___3', { probe, }
+      # debug 'Ωlfti___3', { result, }
       @eq ( Ωlftit__22 = -> probe                                                                 ), copy
       @eq ( Ωlftit__23 = -> result                                                                ), matcher
       @eq ( Ωlftit__24 = -> result is probe                                                       ), false
