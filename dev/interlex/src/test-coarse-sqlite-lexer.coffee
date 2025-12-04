@@ -91,11 +91,12 @@ SQL                       = String.raw
 
           Maybe important: in the case of a `CREATE TRIGGER` statement, the `BEGIN` ... `END` part is
           mandatory, *and* the concluding top-level semicolon *must* be preceded by `END`, only separated by
-          optional comments and whitespace.
-
-          Note: other than that, it *is* possible to have an `end` as an identifier to appear in front of a
-          semicolon, as `delete from end where end = 'x' returning end;` is a valid statement. However, the
-          `RETURNING` clause is not valid in the concluding part of a `CREATE TRIGGER` statement.
+          optional comments and whitespace. Other than that, it *is* possible to have an `end` as an
+          identifier to appear in front of a semicolon, as `delete from end where end = 'x' returning end;`
+          is a valid statement. However, the `RETURNING` clause is not valid in the concluding part of a
+          `CREATE TRIGGER` statement. As such, it *should* be possible to flag the beginning of a `CREATE
+          TRIGGER` statement and then specifically wait for the `END`, `;` sequence; also observe that a
+          `RETURNING` clause is not permitted in the `DELETE FROM` in a trigger.
 
 
         ###
