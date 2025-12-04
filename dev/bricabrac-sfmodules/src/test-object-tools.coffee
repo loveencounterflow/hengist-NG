@@ -55,7 +55,7 @@ SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  module_exports: ->
+  get_prototype_chain: ->
     { type_of,                } = SFMODULES.unstable.require_type_of()
     #.......................................................................................................
     { get_prototype_chain,
