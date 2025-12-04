@@ -53,6 +53,7 @@ SQL                       = String.raw
         brktname    = g.new_level { name: 'brktname', }
         lcomment    = g.new_level { name: 'lcomment', }
         bcomment    = g.new_level { name: 'bcomment', }
+        kw_with_id  = g.new_level { name: 'kw_with_id', }
 
         ### NOTE
 
@@ -85,12 +86,16 @@ SQL                       = String.raw
         `EXCLUSIVE`, `DEFERRED`, `IMMEDIATE`, `TRANSACTION`—in which case `BEGIN` must have been at
         top-level and the following bare semicolon does indeed signal end-of-statement.
 
-        Maybe important: Check for function calls b/c UDFs are another place where arbitrary new names
-        may get introduced.
+          Maybe important: Check for function calls b/c UDFs are another place where arbitrary new names may
+          get introduced.
 
-        Maybe important: in the case of a `CREATE TRIGGER` statement, the `BEGIN` ... `END` part is
-        mandatory, *and* the concluding top-level semicolon *must* be preceded by `END`, only separated
-        by optional comments and whitespace.
+          Maybe important: in the case of a `CREATE TRIGGER` statement, the `BEGIN` ... `END` part is
+          mandatory, *and* the concluding top-level semicolon *must* be preceded by `END`, only separated by
+          optional comments and whitespace.
+
+          Note: other than that, it *is* possible to have an `end` as an identifier to appear in front of a
+          semicolon, as `delete from end where end = 'x' returning end;` is a valid statement. However, the
+          `RETURNING` clause is not valid in the concluding part of a `CREATE TRIGGER` statement.
 
 
         ###
@@ -109,6 +114,7 @@ SQL                       = String.raw
         https://www.sqlite.org/docsrc/file?ci=trunk&name=art%2Fsyntax%2Fcreate-trigger-stmt.pikchr&proof=802024230) ###
         top.new_token         'kw_begin',       {  fit: /\bbegin\b/i, }
         top.new_token         'kw_end',         {  fit: /\bend\b/i, }
+        top.new_token         'kw_returning',   {  fit: /\breturning\b/i, jump: 'kw_with_id!' }
         top.new_token         'word',           {  fit: /[^\s"'\[;]+/, }
         #...................................................................................................
         string.new_token      'text',           {  fit: /[^']+/, }
@@ -122,6 +128,9 @@ SQL                       = String.raw
         #...................................................................................................
         lcomment.new_token    'comment',        {  fit: /.*/, jump: '..' }
         # lcomment.new_token    'eol',            {  fit: /\n|/, jump: '..', }
+        #...................................................................................................
+        ### TAINT this is incorrect, identifiers can start with quote, bracket, contain ws, semicolon ###
+        kw_with_id.new_token    'identifier',   {  fit: /[^;]+/, jump: '..', }
         #...................................................................................................
         bcomment.new_token    'star_slash',     {  fit: '*/', jump: '..', }
         bcomment.new_token    'comment',        {  fit: /\*(?!\/)|[^*]+/, }
@@ -138,6 +147,9 @@ SQL                       = String.raw
             end /*comment */ -- newline!
             ;
           """
+        #...................................................................................................
+        ### Alas, a valid statement (although probably not one that can appear in regular dump file) ###
+        source = SQL"""delete from end where end = 'x' returning end;"""
         #...................................................................................................
         for line in source.split '/n'
           for token from g.scan line
