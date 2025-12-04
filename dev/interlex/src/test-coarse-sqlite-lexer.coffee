@@ -46,20 +46,70 @@ SQL                       = String.raw
       { Grammar } = require '../../../apps/interlex'
       #.....................................................................................................
       do =>
-        g         = new Grammar()
-        first     = g.new_level { name: 'first', }
-        string    = g.new_level { name: 'string', }
-        dqname    = g.new_level { name: 'dqname', }
-        brktname  = g.new_level { name: 'brktname', }
+        g           = new Grammar()
+        top         = g.new_level { name: 'top', }
+        string      = g.new_level { name: 'string', }
+        dqname      = g.new_level { name: 'dqname', }
+        brktname    = g.new_level { name: 'brktname', }
+        lcomment    = g.new_level { name: 'lcomment', }
+        bcomment    = g.new_level { name: 'bcomment', }
+
+        ### NOTE
+
+        The keyword `BEGIN` (`/\bbegin\b/i`) can appear in a `CREATE TRIGGER` statement where it
+        unfortunately may be preceded by an expression and followed by one or more statements each of which
+        must be terminated by a semicolon; the end of the surrounding `CREATE TRIGGER` statement is then
+        signalled by an `END` keyword followed by a semicolon. This seems to be the only place where SQLite
+        allows a 'free' semicolon that does not end a top-level statement.
+
+        The only other place where BEGIN may appear is in a `BEGIN TRANSACTION` statement which has a much
+        simpler structure:
+
+        ```
+              BEGIN ——+——————————————+—— TRANSACTION
+                      |— EXCLUSIVE  —|
+                      |— DEFERRED   —|
+                      |— IMMEDIATE  —|
+        ```
+
+        But it gets worse because SQLite accepts `begin` e.g. as table name; when dumping a DB, it will
+        quote that name *sometimes* but not always:
+
+        ```
+        CREATE TABLE begin ( g bool );
+        INSERT INTO "begin" VALUES(1);
+        ```
+
+        From the looks of it, this *should* work if we set a flag when seeing a `BEGIN`; we then expect
+        whitespace, possibly a newline, comments and more whitespace, then possibly one or more of
+        `EXCLUSIVE`, `DEFERRED`, `IMMEDIATE`, `TRANSACTION`—in which case `BEGIN` must have been at
+        top-level and the following bare semicolon does indeed signal end-of-statement.
+
+        Maybe important: Check for function calls b/c UDFs are another place where arbitrary new names
+        may get introduced.
+
+        Maybe important: in the case of a `CREATE TRIGGER` statement, the `BEGIN` ... `END` part is
+        mandatory, *and* the concluding top-level semicolon *must* be preceded by `END`, only separated
+        by optional comments and whitespace.
+
+
+        ###
         #...................................................................................................
-        first.new_token       'left_paren',     {  fit: '(', }
-        first.new_token       'right_paren',    {  fit: ')', }
-        first.new_token       'semicolon',      {  fit: ';', }
-        first.new_token       'single_quote',   {  fit: "'", jump: 'string!', }
-        first.new_token       'left_bracket',   {  fit: "[", jump: 'brktname!', }
-        first.new_token       'double_quote',   {  fit: '"', jump: 'dqname!', }
-        first.new_token       'ws',             {  fit: /\s+/, }
-        first.new_token       'word',           {  fit: /[^\s"'\[;]+/, }
+        top.new_token       'double_dash',    {  fit: '--', jump: 'lcomment!', }
+        top.new_token       'slash_star',     {  fit: '/*', jump: 'bcomment!', }
+        top.new_token       'left_paren',     {  fit: '(', }
+        top.new_token       'right_paren',    {  fit: ')', }
+        top.new_token       'semicolon',      {  fit: ';', }
+        top.new_token       'single_quote',   {  fit: "'", jump: 'string!', }
+        top.new_token       'left_bracket',   {  fit: "[", jump: 'brktname!', }
+        top.new_token       'double_quote',   {  fit: '"', jump: 'dqname!', }
+        top.new_token       'ws',             {  fit: /\s+/, }
+        ### NOTE all SQL keywords are `/\b[a-z]+/i`, so much more restricted; also, may get a complete list
+        of keywords and the few special characters (`.`, `*`, ...) out of *.pkchr files (see
+        https://www.sqlite.org/docsrc/file?ci=trunk&name=art%2Fsyntax%2Fcreate-trigger-stmt.pikchr&proof=802024230) ###
+        top.new_token         'kw_begin',       {  fit: /\bbegin\b/i, }
+        top.new_token         'kw_end',         {  fit: /\bend\b/i, }
+        top.new_token         'word',           {  fit: /[^\s"'\[;]+/, }
         #...................................................................................................
         string.new_token      'text',           {  fit: /[^']+/, }
         string.new_token      'single_quote',   {  fit: "'", jump: '..', }
@@ -70,23 +120,41 @@ SQL                       = String.raw
         dqname.new_token      'name',           {  fit: /[^"]+/, }
         dqname.new_token      'double_quote',   {  fit: '"', jump: '..', }
         #...................................................................................................
+        lcomment.new_token    'comment',        {  fit: /.*/, jump: '..' }
+        # lcomment.new_token    'eol',            {  fit: /\n|/, jump: '..', }
+        #...................................................................................................
+        bcomment.new_token    'star_slash',     {  fit: '*/', jump: '..', }
+        bcomment.new_token    'comment',        {  fit: /\*(?!\/)|[^*]+/, }
+        #...................................................................................................
         source = SQL"""create table "names" (
             name text unique not null,
-            "comment[" text not null default 'no;comment',
+            "no-comment[" /* bcomment! */ text not null default 'no;comment', -- lcomment brother
             [uuugh....] integer );"""
+        #...................................................................................................
+        source = SQL"""CREATE TRIGGER jzr_mirror_triples_register
+          before insert on jzr_mirror_triples_base
+          for each row begin
+            select trigger_on_before_insert( 'jzr_mirror_triples_base', new.rowid, new.ref, new.s, new.v, new.o );
+            end /*comment */ -- newline!
+            ;
+          """
+        #...................................................................................................
         for line in source.split '/n'
           for token from g.scan line
+            # debug 'Ω___9', token
             continue if token.is_signal
-            continue if token.fqname is 'first.ws'
+            continue if token.fqname is 'top.ws'
+            continue if token.level.name is 'lcomment'
+            continue if token.level.name is 'bcomment'
             tabulate_lexeme token
         return null
       #.....................................................................................................
       return null
 
       #   #...................................................................................................
-      #   first     = g.new_level { name: 'first', }
-      #   first.new_token     { name: 'other',      fit: /[^"]+/,                             }
-      #   first.new_token     { name: 'dq',         fit: /"/,             jump: 'dqstring!',  }
+      #   top     = g.new_level { name: 'top', }
+      #   top.new_token     { name: 'other',      fit: /[^"]+/,                             }
+      #   top.new_token     { name: 'dq',         fit: /"/,             jump: 'dqstring!',  }
       #   #...................................................................................................
       #   dqstring  = g.new_level { name: 'dqstring', }
       #   dqstring.new_token  { name: 'other',      fit: /[^"]+/,                             }
