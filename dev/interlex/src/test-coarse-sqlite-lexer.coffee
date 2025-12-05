@@ -53,7 +53,7 @@ SQL                       = String.raw
         brktname    = g.new_level { name: 'brktname', }
         lcomment    = g.new_level { name: 'lcomment', }
         bcomment    = g.new_level { name: 'bcomment', }
-        kw_with_id  = g.new_level { name: 'kw_with_id', }
+        # kw_with_id  = g.new_level { name: 'WITH_ID', }
 
         ### NOTE
 
@@ -94,28 +94,60 @@ SQL                       = String.raw
           optional comments and whitespace. Other than that, it *is* possible to have an `end` as an
           identifier to appear in front of a semicolon, as `delete from end where end = 'x' returning end;`
           is a valid statement. However, the `RETURNING` clause is not valid in the concluding part of a
-          `CREATE TRIGGER` statement. As such, it *should* be possible to flag the beginning of a `CREATE
-          TRIGGER` statement and then specifically wait for the `END`, `;` sequence; also observe that a
-          `RETURNING` clause is not permitted in the `DELETE FROM` in a trigger.
+          `CREATE TRIGGER` statement.
 
+          As such, it *should* be possible to flag the beginning of a `CREATE TRIGGER` statement and then
+          specifically wait for the `END`, `;` sequence.
+
+        Error-Resilient Strategies (ERS):
+          * on the lexer level:
+            * loop
+              * break if end of source has been reached
+              * loop
+                * lex until a `top.semicolon` is encountered;
+                * try to execute the SQL to this point;
+                * if execution terminates without error, break
+                * throw error unless error is an `incomplete input` error
+                * continue to loop, possibly with a guard to only do this 1 or 2 times
+          * on the lexer's consumer level:
+            * loop
+              * break if end of source has been reached
+              * let current statement parts be an empty list
+              * loop
+                * append next candidate statement to current statement parts
+                * try to execute the concatenated current statement parts
+                * if execution terminates without error, break
+                * throw error unless error is an `incomplete input` error
+                * continue to loop, possibly with a guard to only do this 1 or 2 times
 
         ###
         #...................................................................................................
         top.new_token       'double_dash',    {  fit: '--', jump: 'lcomment!', }
         top.new_token       'slash_star',     {  fit: '/*', jump: 'bcomment!', }
-        top.new_token       'left_paren',     {  fit: '(', }
-        top.new_token       'right_paren',    {  fit: ')', }
+        # top.new_token       'left_paren',     {  fit: '(', }
+        # top.new_token       'right_paren',    {  fit: ')', }
         top.new_token       'semicolon',      {  fit: ';', }
         top.new_token       'single_quote',   {  fit: "'", jump: 'string!', }
         top.new_token       'left_bracket',   {  fit: "[", jump: 'brktname!', }
         top.new_token       'double_quote',   {  fit: '"', jump: 'dqname!', }
         top.new_token       'ws',             {  fit: /\s+/, }
-        ### NOTE all SQL keywords are `/\b[a-z]+/i`, so much more restricted; also, may get a complete list
-        of keywords and the few special characters (`.`, `*`, ...) out of *.pkchr files (see
-        https://www.sqlite.org/docsrc/file?ci=trunk&name=art%2Fsyntax%2Fcreate-trigger-stmt.pikchr&proof=802024230) ###
-        top.new_token         'kw_begin',       {  fit: /\bbegin\b/i, }
-        top.new_token         'kw_end',         {  fit: /\bend\b/i, }
-        top.new_token         'kw_returning',   {  fit: /\breturning\b/i, jump: 'kw_with_id!' }
+        # ### NOTE all SQL keywords are `/\b[a-z]+/i`, so much more restricted; also, may get a complete list
+        # of keywords and the few special characters (`.`, `*`, ...) out of *.pkchr files (see
+        # https://www.sqlite.org/docsrc/file?ci=trunk&name=art%2Fsyntax%2Fcreate-trigger-stmt.pikchr&proof=802024230) ###
+        # #...................................................................................................
+        # top.new_token       'CREATE',         {  fit: /\bCREATE\b/i,        }
+        # top.new_token       'TABLE',          {  fit: /\bTABLE\b/i,         }
+        # top.new_token       'VIEW',           {  fit: /\bVIEW\b/i,          }
+        # top.new_token       'TRIGGER',        {  fit: /\bTRIGGER\b/i,       }
+        # top.new_token       'BEGIN',          {  fit: /\bBEGIN\b/i,         }
+        # top.new_token       'CASE',           {  fit: /\bCASE\b/i,          }
+        # top.new_token       'END',            {  fit: /\bEND\b/i,           }
+        # top.new_token       'EXCLUSIVE',      {  fit: /\bEXCLUSIVE\b/i,     }
+        # top.new_token       'DEFERRED',       {  fit: /\bDEFERRED\b/i,      }
+        # top.new_token       'IMMEDIATE',      {  fit: /\bIMMEDIATE\b/i,     }
+        # top.new_token       'TRANSACTION',    {  fit: /\bTRANSACTION\b/i,   }
+        # #...................................................................................................
+        # # top.new_token         'RETURNING',   {  fit: /\breturning\b/i, jump: 'WITH_ID!' }
         top.new_token         'word',           {  fit: /[^\s"'\[;]+/, }
         #...................................................................................................
         string.new_token      'text',           {  fit: /[^']+/, }
@@ -129,9 +161,9 @@ SQL                       = String.raw
         #...................................................................................................
         lcomment.new_token    'comment',        {  fit: /.*/, jump: '..' }
         # lcomment.new_token    'eol',            {  fit: /\n|/, jump: '..', }
-        #...................................................................................................
-        ### TAINT this is incorrect, identifiers can start with quote, bracket, contain ws, semicolon ###
-        kw_with_id.new_token    'identifier',   {  fit: /[^;]+/, jump: '..', }
+        # #...................................................................................................
+        # ### TAINT this is incorrect, identifiers can start with quote, bracket, contain ws, semicolon ###
+        # kw_with_id.new_token    'identifier',   {  fit: /[^;]+/, jump: '..', }
         #...................................................................................................
         bcomment.new_token    'star_slash',     {  fit: '*/', jump: '..', }
         bcomment.new_token    'comment',        {  fit: /\*(?!\/)|[^*]+/, }
@@ -141,7 +173,14 @@ SQL                       = String.raw
             "no-comment[" /* bcomment! */ text not null default 'no;comment', -- lcomment brother
             [uuugh....] integer );"""
         #...................................................................................................
-        source = SQL"""CREATE TRIGGER jzr_mirror_triples_register
+        ### Alas, a valid statement (although probably not one that can appear in regular dump file) ###
+        source = SQL"""delete from end where end = 'x' returning end;"""
+        #...................................................................................................
+        source = SQL"""begin immediate transaction;"""
+        #...................................................................................................
+        source = SQL"""
+          begin immediate transaction;
+          CREATE TRIGGER jzr_mirror_triples_register
           before insert on jzr_mirror_triples_base
           for each row begin
             select trigger_on_before_insert( 'jzr_mirror_triples_base', new.rowid, new.ref, new.s, new.v, new.o );
@@ -149,17 +188,24 @@ SQL                       = String.raw
             ;
           """
         #...................................................................................................
-        ### Alas, a valid statement (although probably not one that can appear in regular dump file) ###
-        source = SQL"""delete from end where end = 'x' returning end;"""
-        #...................................................................................................
+        statements_list = []
+        statement       = ''
         for line in source.split '/n'
           for token from g.scan line
             # debug 'Ω___9', token
+            statement += token.hit
+            if token.fqname is 'top.semicolon'
+              statements_list.push statement
+              statement = ''
+            #...............................................................................................
             continue if token.is_signal
             continue if token.fqname is 'top.ws'
             continue if token.level.name is 'lcomment'
             continue if token.level.name is 'bcomment'
             tabulate_lexeme token
+        for statement in statements_list
+          echo '—————————————————————————————————'
+          echo ( '\n' + GUY.trm.reverse GUY.trm.white " #{statement} " )
         return null
       #.....................................................................................................
       return null

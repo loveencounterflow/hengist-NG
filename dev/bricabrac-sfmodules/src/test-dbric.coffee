@@ -1068,8 +1068,14 @@ remove = ( path ) ->
       debug 'Ωbbdbr_204', row.name
     # for row from dba.walk SQL".dump"
     #   debug 'Ωbbdbr_205', row
-    debug 'Ωbbdbr_206', dba.db.serialize()
-    debug 'Ωbbdbr_206', dba.db.serialize().toString()
+    # debug 'Ωbbdbr_206', dba.db.serialize()
+    # debug 'Ωbbdbr_207', dba.db.serialize().toString()
+    debug 'Ωbbdbr_208', dba.execute SQL"select 1; select 2;"
+    # error 'incomplete input':
+    debug 'Ωbbdbr_208', dba.execute SQL"""CREATE TRIGGER jzr_mirror_triples_register
+          instead of insert on std_relations
+          for each row begin
+            select trigger_on_before_insert( 'jzr_mirror_triples_base', new.rowid, new.ref, new.s, new.v, new.o );"""
     #.......................................................................................................
     return null
 
