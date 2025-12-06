@@ -30,24 +30,28 @@ GUY                       = require 'guy'
 # { nfa }                   = require '../../../apps/normalize-function-arguments'
 { Test,                 } = require '../../../apps/guy-test-NG'
 SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
-SQL                       = String.raw
 # FS                        = require 'node:fs'
 # PATH                      = require 'node:path'
 
 #===========================================================================================================
 get_various_sources = ->
-  R = {}
+  SQL   = String.raw
+  R     = {}
   #.........................................................................................................
   R.long_source_nl = SQL"""
+
     create table "names" ( /* Nr 1 */
       name text unique not null,
       "no-comment[" /* bcomment! */ text not null default 'no;comment', -- lcomment brother
       [uuugh....] integer );
+
     -- ---X---X---
     -- Alas, a valid statement (although probably not one that can appear in regular dump file) ###
     /* Nr 2 */ delete from end where end = 'x' returning end;
+
     -- ---X---X---
     /* Nr 3 */ begin immediate transaction;
+
     -- ---X---X---
     CREATE TRIGGER jzr_mirror_triples_register  /* Nr 4 */
     before insert on jzr_mirror_triples_base
@@ -69,8 +73,31 @@ get_various_sources = ->
 
 #-----------------------------------------------------------------------------------------------------------
 get_realistic_sources = ->
-  R = {}
-  R.realistic_source_1 = SQL""""""
+  SQL   = String.raw
+  R     = {}
+  R.realistic_source_1 = SQL"""
+    -- ---X---X---
+    select 24 as a;
+
+    -- ---X---X---
+    create table t (
+        rowid text unique not null primary key );
+
+    -- ---X---X---
+    CREATE TRIGGER some_trigger  /* Nr 4 */
+    before insert on t
+    for each row begin
+      select trigger_on_before_insert( 't', new.rowid );
+      end /*comment */ -- newline!
+      /* Nr 5 */ ;
+
+    -- ---X---X---
+    insert into t ( rowid ) values ( 'first' );
+    -- ---X---X---
+    insert into t ( rowid ) values ( 'second' );
+    -- ---X---X---
+    insert into t ( rowid ) values ( 'third' );
+    """
   return R
 
 
@@ -83,20 +110,19 @@ get_realistic_sources = ->
     { Statement_walker,
       Statement_applicator,
       internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
-    { Grammar,                    } = require '../../../apps/interlex'
     jr                              = JSON.stringify
     sources                         = get_various_sources()
     #.......................................................................................................
     do =>
       #.....................................................................................................
-      walker        = new Statement_walker { Grammar, }
+      walker        = new Statement_walker()
       @throws ( Ωtcs___3 = -> walker.scan undefined     ), /expected a text/
       @throws ( Ωtcs___4 = -> walker.scan null          ), /expected a text/
       @throws ( Ωtcs___5 = -> walker.scan Symbol '??'   ), /expected a text/
       ;null
     #.......................................................................................................
     do =>
-      walker        = new Statement_walker { Grammar, }
+      walker        = new Statement_walker()
       @eq ( Ωtcs___6 = -> type_of walker.scan     ), 'function'
       @eq ( Ωtcs___7 = -> type_of walker.scan 'x' ), 'generator'
       #.....................................................................................................
@@ -107,7 +133,7 @@ get_realistic_sources = ->
       ;null
     #.......................................................................................................
     do =>
-      walker    = new Statement_walker { Grammar, }
+      walker    = new Statement_walker()
       segments  = walker.scan sources.source_1
       segment   = segments.next().value
       echo jr segment
@@ -117,7 +143,7 @@ get_realistic_sources = ->
       ;null
     #.......................................................................................................
     do =>
-      walker    = new Statement_walker { Grammar, }
+      walker    = new Statement_walker()
       segments  = walker.scan sources.long_source_nl
       #.....................................................................................................
       segment   = segments.next().value
@@ -144,7 +170,7 @@ get_realistic_sources = ->
       ;null
     #.......................................................................................................
     do =>
-      walker    = new Statement_walker { Grammar, }
+      walker    = new Statement_walker()
       segments  = walker.scan sources.long_source_one_line
       #.....................................................................................................
       segment   = segments.next().value
@@ -172,6 +198,76 @@ get_realistic_sources = ->
     # #.....................................................................................................
     # for token from walker.scan_tokens sources.long_source_one_line
     #   info 'Ωtcs__26', ( rpr token.fqname ), ( rpr token .hit ) unless ( token.fqname is 'top.ws' ) or ( token.is_system )
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  statement_applicator: ->
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    { Statement_walker,
+      Statement_applicator,
+      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Dbric,
+      Dbric_std,
+      SQL,                        } = SFMODULES.unstable.require_dbric()
+    jr                              = JSON.stringify
+    sources                         = get_various_sources()
+    #.......................................................................................................
+    do =>
+      #.....................................................................................................
+      call_results  = []
+      db          = new Dbric_std ':memory:'
+      db.create_function
+        name: 'trigger_on_before_insert'
+        call: ( table_name, rowid ) -> call_results.push { table_name, rowid, }
+      applicator  = new Statement_applicator { db, }
+      sources     = get_realistic_sources()
+      #.....................................................................................................
+      statements = applicator.scan sources.realistic_source_1
+      #.....................................................................................................
+      statement   = statements.next().value
+      echo jr statement
+      @eq ( Ωtcs__27 = -> statement ), "-- ---X---X---\nselect 24 as a;"
+      #.....................................................................................................
+      statement   = statements.next().value
+      echo jr statement
+      @eq ( Ωtcs__28 = -> statement ), "\n\n-- ---X---X---\ncreate table t (\n    rowid text unique not null primary key );"
+      #.....................................................................................................
+      statement   = statements.next().value
+      echo jr statement
+      @eq ( Ωtcs__29 = -> statement ), "\n\n-- ---X---X---\nCREATE TRIGGER some_trigger  /* Nr 4 */\nbefore insert on t\nfor each row begin\n  select trigger_on_before_insert( 't', new.rowid );\n  end /*comment */ -- newline!\n  /* Nr 5 */ ;"
+      #.....................................................................................................
+      statement   = statements.next().value
+      echo jr statement
+      @eq ( Ωtcs__30 = -> statement ), "\n\n-- ---X---X---\ninsert into t ( rowid ) values ( 'first' );"
+      #.....................................................................................................
+      statement   = statements.next().value
+      echo jr statement
+      @eq ( Ωtcs__31 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'second' );"
+      #.....................................................................................................
+      statement   = statements.next().value
+      echo jr statement
+      @eq ( Ωtcs__32 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'third' );"
+      #.....................................................................................................
+      @eq ( Ωtcs__33 = -> statements.next().done ), true
+      ( statement for statement from statements ) ### NOTE ensure that statements are applied in case the above is incomplete ###
+      #.....................................................................................................
+      rows = db.walk SQL"select * from t order by rowid;"
+      #.....................................................................................................
+      row   = rows.next().value
+      echo jr row
+      @eq ( Ωtcs__34 = -> row ), { rowid: 'first', }
+      #.....................................................................................................
+      row   = rows.next().value
+      echo jr row
+      @eq ( Ωtcs__35 = -> row ), { rowid: 'second', }
+      #.....................................................................................................
+      row   = rows.next().value
+      echo jr row
+      @eq ( Ωtcs__36 = -> row ), { rowid: 'third', }
+      #.....................................................................................................
+      @eq ( Ωtcs__37 = -> rows.next().done ), true
+      ;null
     #.......................................................................................................
     return null
 

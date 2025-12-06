@@ -68,6 +68,9 @@ importers:
       hollerith-reference-1201:
         specifier: npm:hollerith@12.0.1
         version: hollerith@12.0.1
+      interlex:
+        specifier: ^0.13.1
+        version: 0.13.1
       intertype:
         specifier: ^203.2.0
         version: 203.2.0
