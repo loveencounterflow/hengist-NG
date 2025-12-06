@@ -34,9 +34,10 @@ SQL                       = String.raw
 # FS                        = require 'node:fs'
 # PATH                      = require 'node:path'
 
-get_sources = ->
+#===========================================================================================================
+get_various_sources = ->
   R = {}
-  #...................................................................................................
+  #.........................................................................................................
   R.long_source_nl = SQL"""
     create table "names" ( /* Nr 1 */
       name text unique not null,
@@ -55,7 +56,7 @@ get_sources = ->
       end /*comment */ -- newline!
       /* Nr 5 */ ;
     """
-  #...................................................................................................
+  #.........................................................................................................
   R[ "source_#{idx + 1}" ]  = source for source, idx in R.long_source_nl.split /-- ---X.*/gm
   get_plain_sources         = -> ( source for key, source of R when /^source_\d+/.test key )
   # get_sources_no_lcomments  = -> ( ( source.replace /(?<=\s)--.*$/g, '' ) for source in get_plain_sources() )
@@ -65,6 +66,13 @@ get_sources = ->
   # R.long_source_nl          = ( get_plain_sources() ).join '\n'
   R.long_source_one_line    = ( ( get_sources_no_lcomments() ).join '' ).replace /\n/g, ''
   return R
+
+#-----------------------------------------------------------------------------------------------------------
+get_realistic_sources = ->
+  R = {}
+  R.realistic_source_1 = SQL""""""
+  return R
+
 
 #===========================================================================================================
 @tests = tests =
@@ -77,7 +85,7 @@ get_sources = ->
       internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
     { Grammar,                    } = require '../../../apps/interlex'
     jr                              = JSON.stringify
-    sources                         = get_sources()
+    sources                         = get_various_sources()
     #.......................................................................................................
     do =>
       #.....................................................................................................
