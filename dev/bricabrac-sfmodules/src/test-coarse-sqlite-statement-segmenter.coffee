@@ -216,57 +216,37 @@ get_realistic_sources = ->
     do =>
       #.....................................................................................................
       call_results  = []
-      db          = new Dbric_std ':memory:'
+      db          = new Dbric ':memory:'
       db.create_function
         name: 'trigger_on_before_insert'
         call: ( table_name, rowid ) -> call_results.push { table_name, rowid, }
       applicator  = new Statement_applicator { db, }
       sources     = get_realistic_sources()
+      show        = ( x ) -> echo jr x; x
       #.....................................................................................................
       statements = applicator.scan sources.realistic_source_1
-      #.....................................................................................................
-      statement   = statements.next().value
-      echo jr statement
-      @eq ( Ωtcs__27 = -> statement ), "-- ---X---X---\nselect 24 as a;"
-      #.....................................................................................................
-      statement   = statements.next().value
-      echo jr statement
-      @eq ( Ωtcs__28 = -> statement ), "\n\n-- ---X---X---\ncreate table t (\n    rowid text unique not null primary key );"
-      #.....................................................................................................
-      statement   = statements.next().value
-      echo jr statement
-      @eq ( Ωtcs__29 = -> statement ), "\n\n-- ---X---X---\nCREATE TRIGGER some_trigger  /* Nr 4 */\nbefore insert on t\nfor each row begin\n  select trigger_on_before_insert( 't', new.rowid );\n  end /*comment */ -- newline!\n  /* Nr 5 */ ;"
-      #.....................................................................................................
-      statement   = statements.next().value
-      echo jr statement
-      @eq ( Ωtcs__30 = -> statement ), "\n\n-- ---X---X---\ninsert into t ( rowid ) values ( 'first' );"
-      #.....................................................................................................
-      statement   = statements.next().value
-      echo jr statement
-      @eq ( Ωtcs__31 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'second' );"
-      #.....................................................................................................
-      statement   = statements.next().value
-      echo jr statement
-      @eq ( Ωtcs__32 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'third' );"
-      #.....................................................................................................
+      statement  = show statements.next().value; @eq ( Ωtcs__27 = -> statement ), "-- ---X---X---\nselect 24 as a;"
+      statement  = show statements.next().value; @eq ( Ωtcs__28 = -> statement ), "\n\n-- ---X---X---\ncreate table t (\n    rowid text unique not null primary key );"
+      statement  = show statements.next().value; @eq ( Ωtcs__29 = -> statement ), "\n\n-- ---X---X---\nCREATE TRIGGER some_trigger  /* Nr 4 */\nbefore insert on t\nfor each row begin\n  select trigger_on_before_insert( 't', new.rowid );\n  end /*comment */ -- newline!\n  /* Nr 5 */ ;"
+      statement  = show statements.next().value; @eq ( Ωtcs__30 = -> statement ), "\n\n-- ---X---X---\ninsert into t ( rowid ) values ( 'first' );"
+      statement  = show statements.next().value; @eq ( Ωtcs__31 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'second' );"
+      statement  = show statements.next().value; @eq ( Ωtcs__32 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'third' );"
       @eq ( Ωtcs__33 = -> statements.next().done ), true
       ( statement for statement from statements ) ### NOTE ensure that statements are applied in case the above is incomplete ###
       #.....................................................................................................
-      rows = db.walk SQL"select * from t order by rowid;"
-      #.....................................................................................................
-      row   = rows.next().value
-      echo jr row
-      @eq ( Ωtcs__34 = -> row ), { rowid: 'first', }
-      #.....................................................................................................
-      row   = rows.next().value
-      echo jr row
-      @eq ( Ωtcs__35 = -> row ), { rowid: 'second', }
-      #.....................................................................................................
-      row   = rows.next().value
-      echo jr row
-      @eq ( Ωtcs__36 = -> row ), { rowid: 'third', }
-      #.....................................................................................................
+      statement = SQL"select * from t order by rowid;"
+      echo jr row for row from db.walk statement
+      rows = db.walk statement
+      @eq ( Ωtcs__34 = -> rows.next().value ), { rowid: 'first', }
+      @eq ( Ωtcs__35 = -> rows.next().value ), { rowid: 'second', }
+      @eq ( Ωtcs__36 = -> rows.next().value ), { rowid: 'third', }
       @eq ( Ωtcs__37 = -> rows.next().done ), true
+      #.....................................................................................................
+      statement = SQL"select name, sql from sqlite_schema where type in ( 'table', 'view' ) order by name, type;"
+      echo jr row for row from db.walk statement
+      rows = db.walk statement
+      @eq ( Ωtcs__38 = -> rows.next().value ), {"name":"t","sql":"CREATE TABLE t (\n    rowid text unique not null primary key )"}
+      @eq ( Ωtcs__53 = -> rows.next().done ), true
       ;null
     #.......................................................................................................
     return null
