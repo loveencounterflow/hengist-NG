@@ -1051,33 +1051,33 @@ remove = ( path ) ->
     #.......................................................................................................
     return null
 
-  #---------------------------------------------------------------------------------------------------------
-  yyy: ->
-    { Dbric,
-      Dbric_std,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
-    { temp,                     } = SFMODULES.unstable.require_temp()
-    Bsql3                         = require 'better-sqlite3'
-    #.......................................................................................................
-    class My_db extends Dbric_std
-      @db_class: Bsql3
-    dba = new My_db()
-    dba.execute SQL"create table t ( d text );"
-    for row from dba.walk SQL"select * from std_relations;"
-      debug 'Ωbbdbr_204', row.name
-    # for row from dba.walk SQL".dump"
-    #   debug 'Ωbbdbr_205', row
-    # debug 'Ωbbdbr_206', dba.db.serialize()
-    # debug 'Ωbbdbr_207', dba.db.serialize().toString()
-    debug 'Ωbbdbr_208', dba.execute SQL"select 1; select 2;"
-    # error 'incomplete input':
-    debug 'Ωbbdbr_208', dba.execute SQL"""CREATE TRIGGER jzr_mirror_triples_register
-          instead of insert on std_relations
-          for each row begin
-            select trigger_on_before_insert( 'jzr_mirror_triples_base', new.rowid, new.ref, new.s, new.v, new.o );"""
-    #.......................................................................................................
-    return null
+  # #---------------------------------------------------------------------------------------------------------
+  # yyy: ->
+  #   { Dbric,
+  #     Dbric_std,
+  #     SQL,
+  #     internals,                } = SFMODULES.unstable.require_dbric()
+  #   { temp,                     } = SFMODULES.unstable.require_temp()
+  #   Bsql3                         = require 'better-sqlite3'
+  #   #.......................................................................................................
+  #   class My_db extends Dbric_std
+  #     @db_class: Bsql3
+  #   dba = new My_db()
+  #   dba.execute SQL"create table t ( d text );"
+  #   for row from dba.walk SQL"select * from std_relations;"
+  #     debug 'Ωbbdbr_204', row.name
+  #   # for row from dba.walk SQL".dump"
+  #   #   debug 'Ωbbdbr_205', row
+  #   # debug 'Ωbbdbr_206', dba.db.serialize()
+  #   # debug 'Ωbbdbr_207', dba.db.serialize().toString()
+  #   debug 'Ωbbdbr_208', dba.execute SQL"select 1; select 2;"
+  #   # error 'incomplete input':
+  #   debug 'Ωbbdbr_208', dba.execute SQL"""CREATE TRIGGER jzr_mirror_triples_register
+  #         instead of insert on std_relations
+  #         for each row begin
+  #           select trigger_on_before_insert( 'jzr_mirror_triples_base', new.rowid, new.ref, new.s, new.v, new.o );"""
+  #   #.......................................................................................................
+  #   return null
 
 
 
@@ -1088,6 +1088,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
+  ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { statement_inheritance: tests.statement_inheritance, }
-  ( new Test guytest_cfg ).test { yyy: tests.yyy, }
+  # ( new Test guytest_cfg ).test { yyy: tests.yyy, }
