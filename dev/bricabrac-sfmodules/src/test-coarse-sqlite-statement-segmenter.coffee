@@ -59,6 +59,9 @@ get_various_sources = ->
       select trigger_on_before_insert( 'jzr_mirror_triples_base', new.rowid, new.ref, new.s, new.v, new.o );
       end /*comment */ -- newline!
       /* Nr 5 */ ;
+
+    -- ---X---X---
+    /* Nr 6 */ select 'a''z;' as "semi"";colon";
     """
     # CREATE TABLE jzr_mirror_lines ( /* Nr 6 */
     #   -- 't:jfm:'
@@ -137,14 +140,14 @@ walk_lines = ( text ) -> yield from text.split '\n'
     #.......................................................................................................
     do =>
       #.....................................................................................................
-      walker        = new Segmenter()
+      walker        = new Segmenter { mode: 'slow', }
       @throws ( Ωtcs___3 = -> walker.scan undefined     ), /expected a text/
       @throws ( Ωtcs___4 = -> walker.scan null          ), /expected a text/
       @throws ( Ωtcs___5 = -> walker.scan Symbol '??'   ), /expected a text/
       ;null
     #.......................................................................................................
     do =>
-      walker        = new Segmenter()
+      walker        = new Segmenter { mode: 'slow', }
       @eq ( Ωtcs___6 = -> type_of walker.scan     ), 'function'
       @eq ( Ωtcs___7 = -> type_of walker.scan 'x' ), 'generator'
       #.....................................................................................................
@@ -155,7 +158,7 @@ walk_lines = ( text ) -> yield from text.split '\n'
       ;null
     #.......................................................................................................
     do =>
-      walker    = new Segmenter()
+      walker    = new Segmenter { mode: 'slow', }
       segments  = walker.scan sources.source_1
       segment   = segments.next().value
       echo jr segment
@@ -165,7 +168,7 @@ walk_lines = ( text ) -> yield from text.split '\n'
       ;null
     #.......................................................................................................
     do =>
-      walker    = new Segmenter()
+      walker    = new Segmenter { mode: 'slow', }
       segments  = walker.scan sources.long_source_nl
       #.....................................................................................................
       segment   = segments.next().value
@@ -188,45 +191,53 @@ walk_lines = ( text ) -> yield from text.split '\n'
       echo jr segment
       @eq ( Ωtcs__18 = -> /// \b Nr \s+ 5     \b ///.test segment ), true
       #.....................................................................................................
-      for segment from segments
-        info 'Ω__19', jr segment
+      segment   = segments.next().value
+      echo jr segment
+      @eq ( Ωtcs__19 = -> /// \b Nr \s+ 6     \b ///.test segment ), true
+      #.....................................................................................................
       @eq ( Ωtcs__20 = -> segments.next().done ), true
+      info 'Ω__21', jr segment for segment from segments
       ;null
     #.......................................................................................................
     do =>
-      walker    = new Segmenter()
+      walker    = new Segmenter { mode: 'slow', }
       segments  = walker.scan sources.long_source_one_line
       #.....................................................................................................
       segment   = segments.next().value
       echo jr segment
-      @eq ( Ωtcs__21 = -> /// \b Nr \s+ 1     \b ///.test segment ), true
+      @eq ( Ωtcs__22 = -> /// \b Nr \s+ 1     \b ///.test segment ), true
       #.....................................................................................................
       segment   = segments.next().value
       echo jr segment
-      @eq ( Ωtcs__22 = -> /// \b Nr \s+ 2     \b ///.test segment ), true
+      @eq ( Ωtcs__23 = -> /// \b Nr \s+ 2     \b ///.test segment ), true
       #.....................................................................................................
       segment   = segments.next().value
       echo jr segment
-      @eq ( Ωtcs__23 = -> /// \b Nr \s+ 3     \b ///.test segment ), true
+      @eq ( Ωtcs__24 = -> /// \b Nr \s+ 3     \b ///.test segment ), true
       #.....................................................................................................
       segment   = segments.next().value
       echo jr segment
-      @eq ( Ωtcs__24 = -> /// \b Nr \s+ 4     \b ///.test segment ), true
+      @eq ( Ωtcs__25 = -> /// \b Nr \s+ 4     \b ///.test segment ), true
       #.....................................................................................................
       segment   = segments.next().value
       echo jr segment
-      @eq ( Ωtcs__25 = -> /// \b Nr \s+ 5     \b ///.test segment ), true
+      @eq ( Ωtcs__26 = -> /// \b Nr \s+ 5     \b ///.test segment ), true
       #.....................................................................................................
-      @eq ( Ωtcs__26 = -> segments.next().done ), true
+      segment   = segments.next().value
+      echo jr segment
+      @eq ( Ωtcs__27 = -> /// \b Nr \s+ 6     \b ///.test segment ), true
+      #.....................................................................................................
+      @eq ( Ωtcs__28 = -> segments.next().done ), true
+      info 'Ω__29', jr segment for segment from segments
       ;null
     # #.....................................................................................................
     # for token from walker.scan_tokens sources.long_source_one_line
-    #   info 'Ωtcs__27', ( rpr token.fqname ), ( rpr token .hit ) unless ( token.fqname is 'top.ws' ) or ( token.is_system )
+    #   info 'Ωtcs__30', ( rpr token.fqname ), ( rpr token .hit ) unless ( token.fqname is 'top.ws' ) or ( token.is_system )
     #.......................................................................................................
     ;null
 
   #---------------------------------------------------------------------------------------------------------
-  segmenter_with_line_input: ->
+  slow_segmenter_with_line_input: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     { Segmenter,
       Undumper,
@@ -235,30 +246,64 @@ walk_lines = ( text ) -> yield from text.split '\n'
     sources                         = get_various_sources()
     #.......................................................................................................
     do =>
-      walker    = new Segmenter()
+      walker    = new Segmenter { mode: 'slow', }
       line_nr   = 0
       segment   = null
       for line from walk_lines sources.source_1
         line_nr++
-        debug 'Ωtcs__28', { line_nr, line, }
+        debug 'Ωtcs__31', { line_nr, line, }
         segments  = walker.scan line
         { value,
           done, } = segments.next()
         continue if done
         if segment?
-          @eq ( Ω__29 = -> false ), "expect one segment, received two segments"
+          @eq ( Ω__32 = -> false ), "expect one segment, received two segments"
         else
           segment = value
-          @eq ( Ωtcs__30 = -> segment ), """\ncreate table "names" ( /* Nr 1 */\n  name text unique not null,\n  "no-comment[" /* bcomment! */ text not null default 'no;comment', -- lcomment brother\n  [uuugh....] integer );"""
-        # @eq ( Ωtcs__31 = -> /// \b Nr \s+ 1     \b ///.test segment ), true
-        # @eq ( Ωtcs__32 = -> /// \b Nr \s+ [^1]+ \b ///.test segment ), false
-        # @eq ( Ωtcs__33 = -> segments.next().done ), true
+          @eq ( Ωtcs__33 = -> segment ), """\ncreate table "names" ( /* Nr 1 */\n  name text unique not null,\n  "no-comment[" /* bcomment! */ text not null default 'no;comment', -- lcomment brother\n  [uuugh....] integer );"""
+        # @eq ( Ωtcs__34 = -> /// \b Nr \s+ 1     \b ///.test segment ), true
+        # @eq ( Ωtcs__35 = -> /// \b Nr \s+ [^1]+ \b ///.test segment ), false
+        # @eq ( Ωtcs__36 = -> segments.next().done ), true
       ;null
     #.......................................................................................................
     ;null
 
   #---------------------------------------------------------------------------------------------------------
-  undumper: ->
+  fast_segmenter_with_line_input: ->
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    { Segmenter,
+      Undumper,
+      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    jr                              = JSON.stringify
+    sources                         = get_realistic_sources()
+    #.......................................................................................................
+    do =>
+      walker    = new Segmenter { mode: 'fast', }
+      line_nr   = 0
+      segment   = null
+      for line from walk_lines sources.realistic_source_1
+        line_nr++
+        segments  = walker.scan line
+        # debug 'Ωtcs__37', { line_nr, line, segments, }
+        for segment from segments
+          info 'Ωtcs__38', rpr segment
+        # { value,
+        #   done, } = segments.next()
+        # continue if done
+        # if segment?
+        #   @eq ( Ω__39 = -> false ), "expect one segment, received two segments"
+        # else
+        #   segment = value
+        #   @eq ( Ωtcs__40 = -> segment ), """\ncreate table "names" ( /* Nr 1 */\n  name text unique not null,\n  "no-comment[" /* bcomment! */ text not null default 'no;comment', -- lcomment brother\n  [uuugh....] integer );"""
+        # # @eq ( Ωtcs__41 = -> /// \b Nr \s+ 1     \b ///.test segment ), true
+        # # @eq ( Ωtcs__42 = -> /// \b Nr \s+ [^1]+ \b ///.test segment ), false
+        # # @eq ( Ωtcs__43 = -> segments.next().done ), true
+      ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  slow_undumper: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
     { Segmenter,
       Undumper,
@@ -276,33 +321,90 @@ walk_lines = ( text ) -> yield from text.split '\n'
       db.create_function
         name: 'trigger_on_before_insert'
         call: ( table_name, rowid ) -> call_results.push { table_name, rowid, }
-      applicator  = new Undumper { db, }
+      undumper    = new Undumper { db, mode: 'slow', }
       sources     = get_realistic_sources()
       show        = ( x ) -> echo jr x; x
       #.....................................................................................................
-      statements = applicator.scan sources.realistic_source_1
-      statement  = show statements.next().value; @eq ( Ωtcs__34 = -> statement ), "-- ---X---X---\nselect 24 as a;"
-      statement  = show statements.next().value; @eq ( Ωtcs__35 = -> statement ), "\n\n-- ---X---X---\ncreate table t (\n    rowid text unique not null primary key );"
-      statement  = show statements.next().value; @eq ( Ωtcs__36 = -> statement ), "\n\n-- ---X---X---\nCREATE TRIGGER some_trigger  /* Nr 4 */\nbefore insert on t\nfor each row begin\n  select trigger_on_before_insert( 't', new.rowid );\n  end /*comment */ -- newline!\n  /* Nr 5 */ ;"
-      statement  = show statements.next().value; @eq ( Ωtcs__37 = -> statement ), "\n\n-- ---X---X---\ninsert into t ( rowid ) values ( 'first' );"
-      statement  = show statements.next().value; @eq ( Ωtcs__38 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'second' );"
-      statement  = show statements.next().value; @eq ( Ωtcs__39 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'third' );"
-      @eq ( Ωtcs__40 = -> statements.next().done ), true
+      statements = undumper.scan sources.realistic_source_1
+      statement  = show statements.next().value; @eq ( Ωtcs__44 = -> statement ), "-- ---X---X---\nselect 24 as a;"
+      statement  = show statements.next().value; @eq ( Ωtcs__45 = -> statement ), "\n\n-- ---X---X---\ncreate table t (\n    rowid text unique not null primary key );"
+      statement  = show statements.next().value; @eq ( Ωtcs__46 = -> statement ), "\n\n-- ---X---X---\nCREATE TRIGGER some_trigger  /* Nr 4 */\nbefore insert on t\nfor each row begin\n  select trigger_on_before_insert( 't', new.rowid );\n\n  end /*comment */ -- newline!\n  /* Nr 5 */ ;"
+      statement  = show statements.next().value; @eq ( Ωtcs__47 = -> statement ), "\n\n-- ---X---X---\ninsert into t ( rowid ) values ( 'first' );"
+      statement  = show statements.next().value; @eq ( Ωtcs__48 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'second' );"
+      statement  = show statements.next().value; @eq ( Ωtcs__49 = -> statement ), "\n-- ---X---X---\ninsert into t ( rowid ) values ( 'third' );"
+      @eq ( Ωtcs__50 = -> statements.next().done ), true
       ( statement for statement from statements ) ### NOTE ensure that statements are applied in case the above is incomplete ###
       #.....................................................................................................
       statement = SQL"select * from t order by rowid;"
       echo jr row for row from db.walk statement
       rows = db.walk statement
-      @eq ( Ωtcs__41 = -> rows.next().value ), { rowid: 'first', }
-      @eq ( Ωtcs__42 = -> rows.next().value ), { rowid: 'second', }
-      @eq ( Ωtcs__43 = -> rows.next().value ), { rowid: 'third', }
-      @eq ( Ωtcs__44 = -> rows.next().done ), true
+      @eq ( Ωtcs__51 = -> rows.next().value ), { rowid: 'first', }
+      @eq ( Ωtcs__52 = -> rows.next().value ), { rowid: 'second', }
+      @eq ( Ωtcs__53 = -> rows.next().value ), { rowid: 'third', }
+      @eq ( Ωtcs__54 = -> rows.next().done ), true
       #.....................................................................................................
       statement = SQL"select name, sql from sqlite_schema where type in ( 'table', 'view' ) order by name, type;"
       echo jr row for row from db.walk statement
       rows = db.walk statement
-      @eq ( Ωtcs__45 = -> rows.next().value ), {"name":"t","sql":"CREATE TABLE t (\n    rowid text unique not null primary key )"}
-      @eq ( Ωtcs__46 = -> rows.next().done ), true
+      @eq ( Ωtcs__55 = -> rows.next().value ), {"name":"t","sql":"CREATE TABLE t (\n    rowid text unique not null primary key )"}
+      @eq ( Ωtcs__56 = -> rows.next().done ), true
+      ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  fast_undumper: ->
+    { type_of,                    } = SFMODULES.unstable.require_type_of()
+    { Segmenter,
+      Undumper,
+      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Dbric,
+      Dbric_std,
+      SQL,                        } = SFMODULES.unstable.require_dbric()
+    jr                              = JSON.stringify
+    sources                         = get_various_sources()
+    #.......................................................................................................
+    do =>
+      #.....................................................................................................
+      call_results  = []
+      db          = new Dbric ':memory:'
+      db.create_function
+        name: 'trigger_on_before_insert'
+        call: ( table_name, rowid ) -> call_results.push { table_name, rowid, }
+      undumper    = new Undumper { db, mode: 'fast', }
+      sources     = get_realistic_sources()
+      show        = ( x ) -> echo jr x; x
+      line_nr     = 0
+      results     = []
+      #.....................................................................................................
+      for line from walk_lines sources.realistic_source_1
+        line_nr++
+        statements =
+        for statement from undumper.scan line
+          results.push statement
+      #.....................................................................................................
+      @eq ( Ωtcs__57 = -> results[ 0 ] ), "-- ---X---X---\nselect 24 as a;"
+      @eq ( Ωtcs__58 = -> results[ 1 ] ), "-- ---X---X---\ncreate table t (\n    rowid text unique not null primary key );"
+      @eq ( Ωtcs__59 = -> results[ 2 ] ), "-- ---X---X---\nCREATE TRIGGER some_trigger  /* Nr 4 */\nbefore insert on t\nfor each row begin\n  select trigger_on_before_insert( 't', new.rowid );\n  end /*comment */ -- newline!\n  /* Nr 5 */ ;"
+      @eq ( Ωtcs__60 = -> results[ 3 ] ), "-- ---X---X---\ninsert into t ( rowid ) values ( 'first' );"
+      @eq ( Ωtcs__61 = -> results[ 4 ] ), "-- ---X---X---\ninsert into t ( rowid ) values ( 'second' );"
+      @eq ( Ωtcs__62 = -> results[ 5 ] ), "-- ---X---X---\ninsert into t ( rowid ) values ( 'third' );"
+      # @eq ( Ωtcs__63 = -> statements.next().done ), true
+      # ( statement for statement from statements ) ### NOTE ensure that statements are applied in case the above is incomplete ###
+      # #.....................................................................................................
+      # statement = SQL"select * from t order by rowid;"
+      # echo jr row for row from db.walk statement
+      # rows = db.walk statement
+      # @eq ( Ωtcs__64 = -> rows.next().value ), { rowid: 'first', }
+      # @eq ( Ωtcs__65 = -> rows.next().value ), { rowid: 'second', }
+      # @eq ( Ωtcs__66 = -> rows.next().value ), { rowid: 'third', }
+      # @eq ( Ωtcs__67 = -> rows.next().done ), true
+      # #.....................................................................................................
+      # statement = SQL"select name, sql from sqlite_schema where type in ( 'table', 'view' ) order by name, type;"
+      # echo jr row for row from db.walk statement
+      # rows = db.walk statement
+      # @eq ( Ωtcs__68 = -> rows.next().value ), {"name":"t","sql":"CREATE TABLE t (\n    rowid text unique not null primary key )"}
+      # @eq ( Ωtcs__69 = -> rows.next().done ), true
       ;null
     #.......................................................................................................
     ;null
@@ -318,4 +420,5 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { segmenter_with_line_input: tests.segmenter_with_line_input, }
+  # ( new Test guytest_cfg ).test { segmenter: tests.segmenter, }
+  ( new Test guytest_cfg ).test { fast_undumper: tests.fast_undumper, }
