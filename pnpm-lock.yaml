@@ -155,6 +155,9 @@ importers:
       varint:
         specifier: ^6.0.0
         version: 6.0.0
+      wanakana:
+        specifier: ^5.3.1
+        version: 5.3.1
       wcstring:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1138,6 +1141,10 @@ packages:
 
   varsize-string@2.2.2:
     resolution: {integrity: sha512-Wuq8/cNzDSWYYQ1KlTk6IyGrRJOMU1YX21RSgEl3psbAGdExTBOIDWd80Z1n74A/24kStNT9QgylJHVjqgRpsQ==}
+
+  wanakana@5.3.1:
+    resolution: {integrity: sha512-OSDqupzTlzl2LGyqTdhcXcl6ezMiFhcUwLBP8YKaBIbMYW1wAwDvupw2T9G9oVaKT9RmaSpyTXjxddFPUcFFIw==}
+    engines: {node: '>=12'}
 
   wcsize@1.0.0:
     resolution: {integrity: sha512-80ziCk3Z+iLfhgAbMBMU+PjoSFi9dg0FIKYd9xRiF15wfwJlzxu1mdIUdIv9iE1gpkX/4hV2QBbkNlydXgEFMA==}
@@ -2310,6 +2317,8 @@ snapshots:
   varint@6.0.0: {}
 
   varsize-string@2.2.2: {}
+
+  wanakana@5.3.1: {}
 
   wcsize@1.0.0: {}
 

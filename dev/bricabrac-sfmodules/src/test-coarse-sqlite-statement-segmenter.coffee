@@ -132,9 +132,8 @@ walk_lines = ( text ) -> yield from text.split '\n'
   #---------------------------------------------------------------------------------------------------------
   segmenter: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
-    { Segmenter,
-      Undumper,
-      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Segmenter,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Undumper,                   } = SFMODULES.require_sqlite_undumper()
     jr                              = JSON.stringify
     sources                         = get_various_sources()
     #.......................................................................................................
@@ -239,9 +238,8 @@ walk_lines = ( text ) -> yield from text.split '\n'
   #---------------------------------------------------------------------------------------------------------
   slow_segmenter_with_line_input: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
-    { Segmenter,
-      Undumper,
-      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Segmenter,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Undumper,                   } = SFMODULES.require_sqlite_undumper()
     jr                              = JSON.stringify
     sources                         = get_various_sources()
     #.......................................................................................................
@@ -271,9 +269,8 @@ walk_lines = ( text ) -> yield from text.split '\n'
   #---------------------------------------------------------------------------------------------------------
   fast_segmenter_with_line_input: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
-    { Segmenter,
-      Undumper,
-      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Segmenter,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Undumper,                   } = SFMODULES.require_sqlite_undumper()
     jr                              = JSON.stringify
     sources                         = get_realistic_sources()
     #.......................................................................................................
@@ -305,9 +302,8 @@ walk_lines = ( text ) -> yield from text.split '\n'
   #---------------------------------------------------------------------------------------------------------
   slow_undumper: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
-    { Segmenter,
-      Undumper,
-      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Segmenter,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Undumper,                   } = SFMODULES.require_sqlite_undumper()
     { Dbric,
       Dbric_std,
       SQL,                        } = SFMODULES.unstable.require_dbric()
@@ -355,9 +351,8 @@ walk_lines = ( text ) -> yield from text.split '\n'
   #---------------------------------------------------------------------------------------------------------
   fast_undumper: ->
     { type_of,                    } = SFMODULES.unstable.require_type_of()
-    { Segmenter,
-      Undumper,
-      internals,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Segmenter,                  } = SFMODULES.require_coarse_sqlite_statement_segmenter()
+    { Undumper,                   } = SFMODULES.require_sqlite_undumper()
     { Dbric,
       Dbric_std,
       SQL,                        } = SFMODULES.unstable.require_dbric()
@@ -420,5 +415,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { segmenter: tests.segmenter, }
-  ( new Test guytest_cfg ).test { fast_undumper: tests.fast_undumper, }
+  # # ( new Test guytest_cfg ).test { segmenter: tests.segmenter, }
+  # ( new Test guytest_cfg ).test { fast_undumper: tests.fast_undumper, }
+

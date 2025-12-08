@@ -62,6 +62,7 @@
     "unique-string": "^3.0.0",
     "unix-permissions": "^6.0.1",
     "varint": "^6.0.0",
+    "wanakana": "^5.3.1",
     "wcstring": "^2.1.1",
     "wcwidth.js": "^2.0.0",
     "zx": "^8.8.5"
