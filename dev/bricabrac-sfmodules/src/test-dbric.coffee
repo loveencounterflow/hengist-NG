@@ -1158,65 +1158,64 @@ remove = ( path ) ->
     cid_of                        = ( chr ) -> chr.codePointAt 0
     first_unicode_cid             = 0x00_0000
     last_unicode_cid              = 0x10_ffff
-    #.......................................................................................................
+    #=======================================================================================================
+    class Unicode_ranges extends Dbric_rng
+      @db_class: Bsql3
+      #-----------------------------------------------------------------------------------------------------
+      @functions:
+        rng_validate_lo:
+          overwrite:      true
+          value: ( lo ) ->
+            return False unless @super.functions.rng_validate_lo.value lo
+            return False unless first_unicode_cid <= lo <= last_unicode_cid
+            return True
+        rng_validate_hi:
+          overwrite:      true
+          value: ( hi ) ->
+            return False unless @super.functions.rng_validate_hi.value hi
+            return False unless first_unicode_cid <= hi <= last_unicode_cid
+            return True
+      #-----------------------------------------------------------------------------------------------------
+      @build: [
+        SQL"""alter table rng_ranges add column is_ascii  boolean  generate always as ( data->>'is_ascii'  ) virtual;"""
+        SQL"""alter table rng_ranges add column ugc       text     generate always as ( data->>'ugc'       ) virtual;"""
+        SQL"""create index rng_ranges_is_ascii_idx  on rng_ranges ( is_ascii );"""
+        SQL"""create index rng_ranges_ugc_idx       on rng_ranges ( ugc      );"""
+        ]
+    #=======================================================================================================
     do =>
-      #=====================================================================================================
-      class Unicode_ranges extends Dbric_rng
-        @db_class: Bsql3
-        #---------------------------------------------------------------------------------------------------
-        @functions:
-          rng_validate_lo:
-            overwrite:      true
-            value: ( lo ) ->
-              return False unless @super.functions.rng_validate_lo.value lo
-              return False unless first_unicode_cid <= lo <= last_unicode_cid
-              return True
-          rng_validate_hi:
-            overwrite:      true
-            value: ( hi ) ->
-              return False unless @super.functions.rng_validate_hi.value hi
-              return False unless first_unicode_cid <= hi <= last_unicode_cid
-              return True
-        #---------------------------------------------------------------------------------------------------
-        @build: [
-          SQL"""alter table rng_ranges add column is_ascii  boolean  generate always as ( data->>'is_ascii'  ) virtual;"""
-          SQL"""alter table rng_ranges add column ugc       text     generate always as ( data->>'ugc'       ) virtual;"""
-          SQL"""create index rng_ranges_is_ascii_idx  on rng_ranges ( is_ascii );"""
-          SQL"""create index rng_ranges_ugc_idx       on rng_ranges ( ugc      );"""
-          ]
-
-      #=====================================================================================================
-      debug 'Ωbbdbr_214', db = new Unicode_ranges ':memory:'
+      db = new Unicode_ranges ':memory:'
       db.rng_add_range { lo: 0, hi: 127, data: { is_ascii: true, }, }
       db.rng_add_range { lo: 0x00bc, hi: 0x00bc, data: { uname: 'VULGAR FRACTION ONE QUARTER', ugc: 'No', is_ascii: false, }, }
       db.rng_add_range { lo: ( cid_of 'A' ), hi: ( cid_of 'Z' ), data: { ugc: 'Lu', }, }
       db.rng_add_range { lo: ( cid_of 'a' ), hi: ( cid_of 'z' ), data: { ugc: 'Ll', }, }
-      @throws ( Ωbbdbr_215 = -> db.rng_add_range { lo:  10, hi:         8, } ), /Ωrng_validate_lohi/
-      @throws ( Ωbbdbr_216 = -> db.rng_add_range { lo: -10, hi:         8, } ), /Ωrng_validate_lo/
-      @throws ( Ωbbdbr_217 = -> db.rng_add_range { lo:  10, hi: 0x20_0000, } ), /Ωrng_validate_hi/
+      @throws ( Ωbbdbr_214 = -> db.rng_add_range { lo:  10, hi:         8, } ), /Ωrng_validate_lohi/
+      @throws ( Ωbbdbr_215 = -> db.rng_add_range { lo: -10, hi:         8, } ), /Ωrng_validate_lo/
+      @throws ( Ωbbdbr_216 = -> db.rng_add_range { lo:  10, hi: 0x20_0000, } ), /Ωrng_validate_hi/
       #.....................................................................................................
-      for row from db.walk db.statements.rng_all_ranges
-        help 'Ωbbdbr_218', row
+      echo row for row from rows = db.walk db.statements.rng_all_ranges
+      rows = db.walk db.statements.rng_all_ranges
+      @eq ( Ωbbdbr_217 = -> rows.next().value ), { lo: 0, hi: 127, data: '{"is_ascii":true}', is_ascii: 1, ugc: null }
+      @eq ( Ωbbdbr_218 = -> rows.next().value ), { lo: 65, hi: 90, data: '{"ugc":"Lu"}', is_ascii: null, ugc: 'Lu' }
+      @eq ( Ωbbdbr_219 = -> rows.next().value ), { lo: 97, hi: 122, data: '{"ugc":"Ll"}', is_ascii: null, ugc: 'Ll' }
+      @eq ( Ωbbdbr_220 = -> rows.next().value ), { lo: 188, hi: 188, data: '{"is_ascii":false,"ugc":"No","uname":"VULGAR FRACTION ONE QUARTER"}', is_ascii: 0, ugc: 'No' }
+      @eq ( Ωbbdbr_221 = -> rows.next().done ), true
       ;null
-    # #.......................................................................................................
-    # do =>
-    #   #=====================================================================================================
-    #   class Unicode_ranges extends Dbric_rng
-    #     @db_class: Bsql3
-
-    #     #===================================================================================================
-    #     @functions:
-
-    #       #-------------------------------------------------------------------------------------------------
-    #       rng_validate_lo:
-    #         deterministic:  true
-    #         value: ( lo ) -> Number.isFinite lo
-
-    #       #-------------------------------------------------------------------------------------------------
-    #       rng_validate_hi:
-    #         deterministic:  true
-    #         value: ( hi ) -> Number.isFinite hi
-    #   debug 'Ωbbdbr_219', new Unicode_ranges ':memory:'
+    #=======================================================================================================
+    do =>
+      db = new Unicode_ranges ':memory:'
+      #.....................................................................................................
+      db.rng_add_range { lo: 0, hi: 127, data: { ugc: 'Cc', }, }
+      db.rng_add_range { lo: ( cid_of 'F' ), data: { ugc: 'Lu', }, }
+      # db.rng_add_range { lo: ( cid_of 'G' ), data: { is_ascii: true, data: { ugc: 'Cc', } }, }
+      echo row for row from rows = db.walk db.statements.rng_all_ranges
+      # rows = db.walk db.statements.rng_all_ranges
+      # @eq ( Ωbbdbr_222 = -> rows.next().value ), { lo:  0, hi:  69, data: '{"ugc":"Cc"}', is_ascii: null, ugc: 'Cc', }
+      # @eq ( Ωbbdbr_223 = -> rows.next().value ), { lo: 70, hi:  70, data: '{"ugc":"Lu"}', is_ascii: null, ugc: 'Lu', }
+      # @eq ( Ωbbdbr_224 = -> rows.next().value ), { lo: 71, hi: 127, data: '{"ugc":"Cc"}', is_ascii: null, ugc: 'Cc', }
+      # @eq ( Ωbbdbr_225 = -> rows.next().done ), true
+      #.....................................................................................................
+      ;null
     #.......................................................................................................
     ;null
 
