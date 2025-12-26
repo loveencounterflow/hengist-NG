@@ -29,6 +29,9 @@ importers:
       d3-format:
         specifier: ^3.1.0
         version: 3.1.0
+      discontinuous-range:
+        specifier: ^1.0.3
+        version: 1.0.3
       execa:
         specifier: ^9.4.0
         version: 9.6.0
@@ -415,6 +418,9 @@ packages:
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
+
+  discontinuous-range@1.0.3:
+    resolution: {integrity: sha512-UrLbxdnU1kD7NgXoUy0+158dKo6hxC7qMCqypacmmVeRuHEphjWqwHiXmFmMt66EFvkkw4H1lSngsBkB6f2j6g==}
 
   dot-prop@9.0.0:
     resolution: {integrity: sha512-1gxPBJpI/pcjQhKgIU91II6Wkay+dLcN3M6rf2uwP8hRur3HtQXjVrdAK3sjC0piaEuxzMwjXChcETiJl47lAQ==}
@@ -1464,6 +1470,8 @@ snapshots:
   deep-extend@0.6.0: {}
 
   detect-libc@2.1.2: {}
+
+  discontinuous-range@1.0.3: {}
 
   dot-prop@9.0.0:
     dependencies:
