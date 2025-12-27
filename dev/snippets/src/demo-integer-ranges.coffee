@@ -50,23 +50,41 @@ demo_intervals_fn = ->
   # debug 'Ωdir___6', ( k for k of IFN ).sort()
   #.........................................................................................................
   class Rangeset
-    constructor: ( data ) ->
+    constructor: ({ data }={}) ->
+      ### TAINT should freeze data ###
       @data   = data
       @ranges = []
       ;undefined
     #-------------------------------------------------------------------------------------------------------
-    add: ( range ) ->
-      unless range instanceof Range
-        range = if range.end? then ( Range.from_startend range ) else new Range range
-      ### TAINT check that rangeset is not yet set ###
-      range.rangeset = @
-      ### TAINT find appropriate index to preserve ordering ###
-      @ranges.push range
+    add: ( ranges... ) ->
+      for element in ranges
+        #...................................................................................................
+        switch true
+          when ( Reflect.has element, 'lo' ) and ( Reflect.has element, 'hi' )
+            range = new Range element
+          when ( Reflect.has element, 'start' ) and ( Reflect.has element, 'end' )
+            range = Range.from_startend element
+          else
+            throw new Error "Ωdir___7 expected an object with lo/hi or start/end properties"
+        #...................................................................................................
+        if ( Reflect.has element, 'data' ) and ( data = element.data )?
+          @data = { @data..., data..., }    ### TAINT should freeze data ###
+        #...................................................................................................
+        range.rangeset = @                ### TAINT check that rangeset is not yet set ###
+        @ranges.push range                ### TAINT find appropriate index to preserve ordering ###
+      #.....................................................................................................
+      return @
     #-------------------------------------------------------------------------------------------------------
     merge: ( merge_fn ) ->
       startends = IFN.merge merge_fn, ( range.as_startend() for range in @ranges )
       data      = if startends.length > 0 then startends[ 0 ].data else @data
       R         = new Rangeset data
+      R.add startend for startend in startends
+      return R
+    #-------------------------------------------------------------------------------------------------------
+    simplify: ->
+      startends = IFN.simplify ( range.as_startend() for range in @ranges )
+      R         = new Rangeset @data
       R.add startend for startend in startends
       return R
   #.........................................................................................................
@@ -81,8 +99,8 @@ demo_intervals_fn = ->
   #.........................................................................................................
   sum_of_data = ( a, b ) =>
     data = [ a.data ? [], b.data ? [], ].flat()
-    # debug 'Ωdir___7', { a, b, }
-    # debug 'Ωdir___8', { a..., data, }
+    # debug 'Ωdir___8', { a, b, }
+    # debug 'Ωdir___9', { a..., data, }
     { a..., data, }
   create_reducer = ( fn ) -> ( ranges ) => ranges.reduce( fn );
   #=========================================================================================================
@@ -96,14 +114,8 @@ demo_intervals_fn = ->
       ]
     merged      = IFN.merge ( create_reducer sum_of_data ), rng_1
     #.........................................................................................................
-    ```
-    //     t.is(res.length, 3);
-    //     t.true(res[0].from === 0 && res[0].to === 4 && res[0].data === 5);
-    //     t.true(res[1].from === 4 && res[1].to === 7 && res[1].data === 15);
-    //     t.true(res[2].from === 7 && res[2].to === 10 && res[2].data === 5);
-    ```
     urge()
-    urge 'Ωdir___9', idx + 1, rng for rng, idx in merged
+    urge 'Ωdir__10', idx + 1, rng for rng, idx in merged
     urge()
     ;null
   #=========================================================================================================
@@ -116,46 +128,61 @@ demo_intervals_fn = ->
     rng_1.add { lo: 0, hi:  99, }
     merged      = rng_1.merge ( create_reducer sum_of_data )
     #.........................................................................................................
-    ```
-    //     t.is(res.length, 3);
-    //     t.true(res[0].from === 0 && res[0].to === 4 && res[0].data === 5);
-    //     t.true(res[1].from === 4 && res[1].to === 7 && res[1].data === 15);
-    //     t.true(res[2].from === 7 && res[2].to === 10 && res[2].data === 5);
-    ```
     urge()
-    urge 'Ωdir__10', idx + 1, rng for rng, idx in merged.ranges
+    urge 'Ωdir__11', idx + 1, rng for rng, idx in merged.ranges
     urge()
     ;null
   #.........................................................................................................
-  a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωdir__11', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωdir__12', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωdir__13', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωdir__14', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωdir__15', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωdir__16', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωdir__12', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωdir__13', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωdir__14', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωdir__15', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωdir__16', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωdir__17', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
   try
-    a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωdir__17', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  catch e then warn 'Ωdir__18', e.message
-  urge()
-  info 'Ωdir__19', IFN.simplify [ { start: 4, end: 20, }, ]
-  info 'Ωdir__20', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
-  info 'Ωdir__21', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
-  info 'Ωdir__22', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
-  info 'Ωdir__23', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
-  info 'Ωdir__24', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
-  info 'Ωdir__25', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
-  info 'Ωdir__26', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
+    a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωdir__18', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  catch e then warn 'Ωdir__19', e.message
+  info()
+  info 'Ωdir__20', IFN.simplify []
+  info 'Ωdir__21', IFN.simplify [ { start: 4, end: 20, }, ]
+  info 'Ωdir__22', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
+  info 'Ωdir__23', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
+  info 'Ωdir__24', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
+  info 'Ωdir__25', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
+  info 'Ωdir__26', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
+  info 'Ωdir__27', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
+  info 'Ωdir__28', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
+  info()
+  info 'Ωdir__29', ( ( new Rangeset() ).add()                                                                        ).simplify()
+  info 'Ωdir__30', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
+  info 'Ωdir__31', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωdir__32', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωdir__33', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωdir__34', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωdir__35', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
+  info 'Ωdir__36', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
+  info 'Ωdir__37', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
+  info()
+  info 'Ωdir__38', ( ( new Rangeset() ).add()                                                                        ).simplify()
+  info 'Ωdir__39', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
+  info 'Ωdir__40', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωdir__41', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωdir__42', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωdir__43', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωdir__44', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
+  info 'Ωdir__45', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
+  info 'Ωdir__46', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
   rng_2 = [
     { start:  3, end: 10, data: 2, }
     { start:  9, end: 13, data: 3, }
     { start: 11, end: 14, data: 5, }
     ]
   merge_data_2 = ( a, b ) ->
-    # debug 'Ωdir__27', { a, b, } #, { a..., b..., }
+    # debug 'Ωdir__47', { a, b, } #, { a..., b..., }
     return { a..., data: a.data * b.data, }
   merged = IFN.merge ( create_reducer merge_data_2 ), rng_2 # [{ start: 3, end: 14 }]
-  info 'Ωdir__28', rng for rng in merged
-  # urge 'Ωdir__29', rng for rng in merged_ft
+  info 'Ωdir__48', rng for rng in merged
+  # urge 'Ωdir__49', rng for rng in merged_ft
   # urge()
   ;null
 
@@ -163,8 +190,8 @@ demo_intervals_fn = ->
 if module is require.main then do =>
   # demo_dicontinouous_range()
   demo_intervals_fn()
-  # debug 'Ωdir__30', '0o' + ( 0o100664 & 0x1ff ).toString 8
-  # debug 'Ωdir__31', '0o' + ( 0o100664 & 0x1ff & 0x0100 ).toString 8
+  # debug 'Ωdir__50', '0o' + ( 0o100664 & 0x1ff ).toString 8
+  # debug 'Ωdir__51', '0o' + ( 0o100664 & 0x1ff & 0x0100 ).toString 8
 
 
 
