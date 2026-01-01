@@ -42,29 +42,29 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   basic_runs: ->
-    { Run,
-      Scatter,                  } = SFMODULES.require_intermission()
+    { Hoard,                    } = SFMODULES.require_intermission()
     #.......................................................................................................
-    @throws ( Ωimt___1 = -> new Run()           ), /expected an integer or a text, got a null/
-    @throws ( Ωimt___2 = -> new Run { hi: 7, }  ), /expected an integer or a text, got a null/
-    # d = new Run();                  @eq ( Ωimt___3 = -> [ d, d.size, ] ), [ { lo: 0, hi: 0, },  1, ]
-    d = new Run 7;                  @eq ( Ωimt___4 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run 7, 7;               @eq ( Ωimt___5 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run 7, 12;              @eq ( Ωimt___6 = -> [ d, d.size, ] ), [ { lo: 7, hi: 12, }, 6, ]
-    d = new Run { lo: 7, };         @eq ( Ωimt___7 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run { lo: 7, hi: 7, };  @eq ( Ωimt___8 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run { lo: 7, hi: 21, }; @eq ( Ωimt___9 = -> [ d, d.size, ] ), [ { lo: 7, hi: 21, }, 15, ]
+    h = new Hoard()
+    @throws ( Ωimt___1 = -> h.create_run()           ), /expected an integer or a text, got a null/
+    @throws ( Ωimt___2 = -> h.create_run { hi: 7, }  ), /expected an integer or a text, got a null/
+    # d = h.create_run();                  @eq ( Ωimt___3 = -> [ d, d.size, ] ), [ { lo: 0, hi: 0, },  1, ]
+    d = h.create_run 7;                  @eq ( Ωimt___4 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = h.create_run 7, 7;               @eq ( Ωimt___5 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = h.create_run 7, 12;              @eq ( Ωimt___6 = -> [ d, d.size, ] ), [ { lo: 7, hi: 12, }, 6, ]
+    d = h.create_run { lo: 7, };         @eq ( Ωimt___7 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = h.create_run { lo: 7, hi: 7, };  @eq ( Ωimt___8 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = h.create_run { lo: 7, hi: 21, }; @eq ( Ωimt___9 = -> [ d, d.size, ] ), [ { lo: 7, hi: 21, }, 15, ]
     #.......................................................................................................
-    @eq ( Ωimt__10 = -> ( new Run 1, 1 ).scatter ), null
+    @eq ( Ωimt__10 = -> ( h.create_run 1, 1 ).scatter ), undefined
     return null
 
   #---------------------------------------------------------------------------------------------------------
   basic_scatters: ->
-    { Run,
-      Scatter,                  } = SFMODULES.require_intermission()
+    { Hoard,                    } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
-      s = new Scatter { data: { a: 1, } }
+      h = new Hoard()
+      s = h.create_scatter { data: { a: 1, } }
       @eq ( Ωimt__11 = -> { s..., } ), { data: { a: 1, }, runs: [], }
       @eq ( Ωimt__12 = -> s.is_normalized   ), true
       #.....................................................................................................
@@ -82,7 +82,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter { data: { a: 2, }, sort: true, }
+      h = new Hoard()
+      s = h.create_scatter { data: { a: 2, }, sort: true, }
       @eq ( Ωimt__23 = -> s.is_normalized   ), true
       # @eq ( Ωimt__24 = -> s.is_sorted       ), false
       s.add { lo: 1, hi: 1, };          @eq ( Ωimt__25 = -> s.runs.length     ), 1; @eq ( Ωimt__26 = -> s.is_normalized ), false
@@ -97,7 +98,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter { data: { a: 3, }, normalize: true, }
+      h = new Hoard()
+      s = h.create_scatter { data: { a: 3, }, normalize: true, }
       @eq ( Ωimt__37 = -> s.is_normalized ), true
       s.add { lo: 1, hi: 1, };          @eq ( Ωimt__38 = -> s.runs.length ), 1; @eq ( Ωimt__39 = -> s.is_normalized ), true
       s.add 1;                          @eq ( Ωimt__40 = -> s.runs.length ), 1; @eq ( Ωimt__41 = -> s.is_normalized ), true
@@ -109,7 +111,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter { data: { a: 4, }, normalize: true, }
+      h = new Hoard()
+      s = h.create_scatter { data: { a: 4, }, normalize: true, }
       @eq ( Ωimt__48 = -> s.is_normalized ), true
       s.add 103;  @eq ( Ωimt__49 = -> s.runs.length ), 1; @eq ( Ωimt__50 = -> s.is_normalized ), true
       s.add 100;  @eq ( Ωimt__51 = -> s.runs.length ), 2; @eq ( Ωimt__52 = -> s.is_normalized ), true
@@ -122,7 +125,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter { normalize: true, }
+      h = new Hoard()
+      s = h.create_scatter { normalize: true, }
       @eq ( Ωimt__59 = -> s.is_normalized ), true
       s.add 103, 109;   @eq ( Ωimt__60 = -> s.runs.length ), 1; @eq ( Ωimt__61 = -> s.is_normalized ), true
       s.add 111, 115;   @eq ( Ωimt__62 = -> s.runs.length ), 2; @eq ( Ωimt__63 = -> s.is_normalized ), true
@@ -134,7 +138,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter { normalize: false, }
+      h = new Hoard()
+      s = h.create_scatter { normalize: false, }
       @eq ( Ωimt__69 = -> s.is_normalized ), true
       s.add 103, 109;   @eq ( Ωimt__70 = -> s.runs.length ), 1; @eq ( Ωimt__71 = -> s.is_normalized ), false
       s.add 111, 115;   @eq ( Ωimt__72 = -> s.runs.length ), 2; @eq ( Ωimt__73 = -> s.is_normalized ), false
@@ -151,53 +156,54 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   containment: ->
-    { Run,
-      Scatter,                  } = SFMODULES.require_intermission()
+    { Hoard,                    } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       s.add 25, 30
       s.add 32, 40
-      @eq ( Ωimt__81 = -> s.has 21       ), false
-      @eq ( Ωimt__82 = -> s.has 22       ), false
-      @eq ( Ωimt__83 = -> s.has 23       ), false
-      @eq ( Ωimt__84 = -> s.has 24       ), false
-      @eq ( Ωimt__85 = -> s.has 25       ), true
-      @eq ( Ωimt__86 = -> s.has 26       ), true
-      @eq ( Ωimt__87 = -> s.has 27       ), true
-      @eq ( Ωimt__88 = -> s.has 28       ), true
-      @eq ( Ωimt__89 = -> s.has 29       ), true
-      @eq ( Ωimt__90 = -> s.has 30       ), true
-      @eq ( Ωimt__91 = -> s.has 31       ), false
-      @eq ( Ωimt__92 = -> s.has 32       ), true
-      @eq ( Ωimt__93 = -> s.has 33       ), true
-      @eq ( Ωimt__94 = -> s.has 34       ), true
-      @eq ( Ωimt__95 = -> s.has 35       ), true
-      @eq ( Ωimt__96 = -> s.has 36       ), true
-      @eq ( Ωimt__97 = -> s.has 37       ), true
-      @eq ( Ωimt__98 = -> s.has 38       ), true
-      @eq ( Ωimt__99 = -> s.has 39       ), true
-      @eq ( Ωimt_100 = -> s.has 40       ), true
-      @eq ( Ωimt_101 = -> s.has 41       ), false
-      @eq ( Ωimt_102 = -> s.has 42       ), false
-      @eq ( Ωimt_103 = -> s.has 43       ), false
+      @eq ( Ωimt__81 = -> s.contains 21       ), false
+      @eq ( Ωimt__82 = -> s.contains 22       ), false
+      @eq ( Ωimt__83 = -> s.contains 23       ), false
+      @eq ( Ωimt__84 = -> s.contains 24       ), false
+      @eq ( Ωimt__85 = -> s.contains 25       ), true
+      @eq ( Ωimt__86 = -> s.contains 26       ), true
+      @eq ( Ωimt__87 = -> s.contains 27       ), true
+      @eq ( Ωimt__88 = -> s.contains 28       ), true
+      @eq ( Ωimt__89 = -> s.contains 29       ), true
+      @eq ( Ωimt__90 = -> s.contains 30       ), true
+      @eq ( Ωimt__91 = -> s.contains 31       ), false
+      @eq ( Ωimt__92 = -> s.contains 32       ), true
+      @eq ( Ωimt__93 = -> s.contains 33       ), true
+      @eq ( Ωimt__94 = -> s.contains 34       ), true
+      @eq ( Ωimt__95 = -> s.contains 35       ), true
+      @eq ( Ωimt__96 = -> s.contains 36       ), true
+      @eq ( Ωimt__97 = -> s.contains 37       ), true
+      @eq ( Ωimt__98 = -> s.contains 38       ), true
+      @eq ( Ωimt__99 = -> s.contains 39       ), true
+      @eq ( Ωimt_100 = -> s.contains 40       ), true
+      @eq ( Ωimt_101 = -> s.contains 41       ), false
+      @eq ( Ωimt_102 = -> s.contains 42       ), false
+      @eq ( Ωimt_103 = -> s.contains 43       ), false
       ;null
     #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
   iteration: ->
-    { Run,
-      Scatter,                  } = SFMODULES.require_intermission()
+    { Hoard,                    } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
-      @eq ( Ωimt_104 = -> [ ( new Run 1         )..., ]       ), [ 1, ]
-      @eq ( Ωimt_105 = -> [ ( new Run 297       )..., ]       ), [ 297, ]
-      @eq ( Ωimt_106 = -> [ ( new Run 297, 308  )..., ]       ), [ 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308 ]
+      h = new Hoard()
+      @eq ( Ωimt_104 = -> [ ( h.create_run 1         )..., ]       ), [ 1, ]
+      @eq ( Ωimt_105 = -> [ ( h.create_run 297       )..., ]       ), [ 297, ]
+      @eq ( Ωimt_106 = -> [ ( h.create_run 297, 308  )..., ]       ), [ 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308 ]
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       @eq ( Ωimt_107 = -> [ s..., ]       ), []
       s.add 1;        @eq ( Ωimt_108 = -> [ s..., ] ), [ 1,                               ]; @eq ( Ωimt_109 = -> s.is_normalized ), true
       s.add 297;      @eq ( Ωimt_110 = -> [ s..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_111 = -> s.is_normalized ), true
@@ -211,7 +217,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       @eq ( Ωimt_122 = -> [ s.walk()..., ]       ), []
       s.add 1;        @eq ( Ωimt_123 = -> [ s.walk()..., ] ), [ 1,                               ]; @eq ( Ωimt_124 = -> s.is_normalized ), true
       s.add 297;      @eq ( Ωimt_125 = -> [ s.walk()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_126 = -> s.is_normalized ), true
@@ -225,7 +232,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       @eq ( Ωimt_137 = -> [ s.walk_raw()..., ]       ), []
       s.add 1;        @eq ( Ωimt_138 = -> [ s.walk_raw()..., ] ), [ 1,                               ]; @eq ( Ωimt_139 = -> s.is_normalized ), false
       s.add 297;      @eq ( Ωimt_140 = -> [ s.walk_raw()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_141 = -> s.is_normalized ), false
@@ -245,18 +253,19 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   using_strings_for_bounds: ->
-    { Run,
-      Scatter,                  } = SFMODULES.require_intermission()
+    { Hoard,                    } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       @throws ( Ωimt_155 = -> s.add 5.8         ), /expected an integer or a text, got a float/
       @throws ( Ωimt_156 = -> s.add -3          ), /-0x3 is not between \+0x0 and \+0x10ffff/
       @throws ( Ωimt_157 = -> s.add 0, -3       ), /-0x3 is not between \+0x0 and \+0x10ffff/
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter { first: -10, last: +10, }
+      h = new Hoard { first: -10, last: +10, }
+      s = h.create_scatter()
       s.add -10; @eq ( Ωimt_158 = -> s.points   ), [ -10, ]
       s.add +10; @eq ( Ωimt_159 = -> s.points   ), [ -10, +10, ]
       @throws ( Ωimt_160 = -> s.add -11         ), /-0xb is not between -0xa and \+0xa/
@@ -264,7 +273,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       s.add 'A';      @eq ( Ωimt_162 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
       s.add 'A', 'Z'; @eq ( Ωimt_163 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90 ]
       s.add 'a', 'z'; @eq ( Ωimt_164 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, \
@@ -275,20 +285,23 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       s.add 'Abc'
       @eq ( Ωimt_168 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       s.add_codepoints_of 'Abc'
       @eq ( Ωimt_169 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
       @eq ( Ωimt_170 = -> s.runs.length ), 3
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       s.add_codepoints_of 'Abc'
       @eq ( Ωimt_171 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
       @eq ( Ωimt_172 = -> s.runs.length ), 3
@@ -299,7 +312,8 @@ PATH                      = require 'node:path'
       ;null
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter()
       s.add_codepoints_of 'aeiouäöü', 'aeiouäöü', 'AEIOUÄÖÜ', 'AEIOUÄÖÜ'
       @eq ( Ωimt_176 = -> ( ( String.fromCodePoint cid ) for cid in s.points ).join '' ), 'AEIOUaeiouÄÖÜäöü'
       @eq ( Ωimt_177 = -> s.runs.length ), 16
@@ -311,111 +325,116 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   data_retrieval: ->
-    { Run,
-      Scatter,                  } = SFMODULES.require_intermission()
+    { Hoard,                    } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
-      s = new Scatter()
+      h = new Hoard()
+      s = h.create_scatter { data: { tags: [ 'vowel', ], }, }
+      s.add_codepoints_of 'aeiouäöü', 'aeiouäöü', 'AEIOUÄÖÜ', 'AEIOUÄÖÜ'
+      @eq ( Ωimt_179 = -> s.contains 'A' ), true
+      @eq ( Ωimt_180 = -> s.data_for 'A' ), { tags: [ 'vowel', ], }
+      @eq ( Ωimt_181 = -> s.contains 'B' ), false
+      @eq ( Ωimt_182 = -> s.data_for 'B' ), { tags: [ 'vowel', ], }
       ;null
     #.......................................................................................................
     return null
 
 
 
-f = ->
-#-----------------------------------------------------------------------------------------------------------
-sum_of_data = ( a, b ) =>
-  data = [ a.data ? [], b.data ? [], ].flat()
-  # debug 'Ωimt_179', { a, b, }
-  # debug 'Ωimt_180', { a..., data, }
-  { a..., data, }
-create_reducer = ( fn ) -> ( ranges ) => ranges.reduce( fn );
+# f = ->
+# #-----------------------------------------------------------------------------------------------------------
+# sum_of_data = ( a, b ) =>
+#   data = [ a.data ? [], b.data ? [], ].flat()
+#   # debug 'Ωimt_183', { a, b, }
+#   # debug 'Ωimt_184', { a..., data, }
+#   { a..., data, }
+# create_reducer = ( fn ) -> ( ranges ) => ranges.reduce( fn );
 
-#===========================================================================================================
-demo_intervals_fn = ->
-  # debug 'Ωimt_181', ( k for k of IFN ).sort()
-  #=========================================================================================================
-  do =>
-    rng_1       = [
-      { start: 1, end:  10, data:   5, }
-      { start: 4, end:   7, data:  10, }
-      { start: 4, end:  12, data:  12, }
-      { start: 0, end: 100, data: 102, }
-      { start: 0, end: 100, data: 101, }
-      ]
-    merged      = IFN.merge ( create_reducer sum_of_data ), rng_1
-    #.........................................................................................................
-    urge()
-    urge 'Ωimt_182', idx + 1, rng for rng, idx in merged
-    urge()
-    ;null
-  #=========================================================================================================
-  do =>
-    rng_1       = new Rangeset 1
-    rng_1.add { lo: 1, hi:   9, }
-    rng_1.add { lo: 4, hi:   6, }
-    rng_1.add { lo: 4, hi:  11, }
-    rng_1.add { lo: 0, hi:  99, }
-    rng_1.add { lo: 0, hi:  99, }
-    merged      = rng_1.merge ( create_reducer sum_of_data )
-    #.........................................................................................................
-    urge()
-    urge 'Ωimt_183', idx + 1, rng for rng, idx in merged.ranges
-    urge()
-    ;null
-  #.........................................................................................................
-  a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_184', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_185', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_186', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_187', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_188', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_189', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  try
-    a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_190', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  catch e then warn 'Ωimt_191', e.message
-  info()
-  info 'Ωimt_192', IFN.simplify []
-  info 'Ωimt_193', IFN.simplify [ { start: 4, end: 20, }, ]
-  info 'Ωimt_194', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_195', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_196', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_197', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_198', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
-  info 'Ωimt_199', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
-  info 'Ωimt_200', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
-  info()
-  info 'Ωimt_201', ( ( new Rangeset() ).add()                                                                        ).simplify()
-  info 'Ωimt_202', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
-  info 'Ωimt_203', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_204', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_205', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_206', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_207', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
-  info 'Ωimt_208', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
-  info 'Ωimt_209', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
-  info()
-  info 'Ωimt_210', ( ( new Rangeset() ).add()                                                                        ).simplify()
-  info 'Ωimt_211', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
-  info 'Ωimt_212', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_213', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_214', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_215', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_216', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
-  info 'Ωimt_217', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
-  info 'Ωimt_218', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
-  rng_2 = [
-    { start:  3, end: 10, data: 2, }
-    { start:  9, end: 13, data: 3, }
-    { start: 11, end: 14, data: 5, }
-    ]
-  merge_data_2 = ( a, b ) ->
-    # debug 'Ωimt_219', { a, b, } #, { a..., b..., }
-    return { a..., data: a.data * b.data, }
-  merged = IFN.merge ( create_reducer merge_data_2 ), rng_2 # [{ start: 3, end: 14 }]
-  info 'Ωimt_220', rng for rng in merged
-  # urge 'Ωimt_221', rng for rng in merged_ft
-  # urge()
-  ;null
+# #===========================================================================================================
+# demo_intervals_fn = ->
+#   # debug 'Ωimt_185', ( k for k of IFN ).sort()
+#   #=========================================================================================================
+#   do =>
+#     rng_1       = [
+#       { start: 1, end:  10, data:   5, }
+#       { start: 4, end:   7, data:  10, }
+#       { start: 4, end:  12, data:  12, }
+#       { start: 0, end: 100, data: 102, }
+#       { start: 0, end: 100, data: 101, }
+#       ]
+#     merged      = IFN.merge ( create_reducer sum_of_data ), rng_1
+#     #.........................................................................................................
+#     urge()
+#     urge 'Ωimt_186', idx + 1, rng for rng, idx in merged
+#     urge()
+#     ;null
+#   #=========================================================================================================
+#   do =>
+#     rng_1       = new Rangeset 1
+#     rng_1.add { lo: 1, hi:   9, }
+#     rng_1.add { lo: 4, hi:   6, }
+#     rng_1.add { lo: 4, hi:  11, }
+#     rng_1.add { lo: 0, hi:  99, }
+#     rng_1.add { lo: 0, hi:  99, }
+#     merged      = rng_1.merge ( create_reducer sum_of_data )
+#     #.........................................................................................................
+#     urge()
+#     urge 'Ωimt_187', idx + 1, rng for rng, idx in merged.ranges
+#     urge()
+#     ;null
+#   #.........................................................................................................
+#   a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_188', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_189', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_190', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_191', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_192', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_193', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   try
+#     a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_194', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   catch e then warn 'Ωimt_195', e.message
+#   info()
+#   info 'Ωimt_196', IFN.simplify []
+#   info 'Ωimt_197', IFN.simplify [ { start: 4, end: 20, }, ]
+#   info 'Ωimt_198', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_199', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_200', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_201', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_202', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
+#   info 'Ωimt_203', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
+#   info 'Ωimt_204', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
+#   info()
+#   info 'Ωimt_205', ( ( new Rangeset() ).add()                                                                        ).simplify()
+#   info 'Ωimt_206', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
+#   info 'Ωimt_207', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_208', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_209', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_210', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_211', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
+#   info 'Ωimt_212', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
+#   info 'Ωimt_213', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
+#   info()
+#   info 'Ωimt_214', ( ( new Rangeset() ).add()                                                                        ).simplify()
+#   info 'Ωimt_215', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
+#   info 'Ωimt_216', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_217', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_218', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_219', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_220', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
+#   info 'Ωimt_221', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
+#   info 'Ωimt_222', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
+#   rng_2 = [
+#     { start:  3, end: 10, data: 2, }
+#     { start:  9, end: 13, data: 3, }
+#     { start: 11, end: 14, data: 5, }
+#     ]
+#   merge_data_2 = ( a, b ) ->
+#     # debug 'Ωimt_223', { a, b, } #, { a..., b..., }
+#     return { a..., data: a.data * b.data, }
+#   merged = IFN.merge ( create_reducer merge_data_2 ), rng_2 # [{ start: 3, end: 14 }]
+#   info 'Ωimt_224', rng for rng in merged
+#   # urge 'Ωimt_225', rng for rng in merged_ft
+#   # urge()
+#   ;null
 
 
 #===========================================================================================================
@@ -423,10 +442,9 @@ if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { basic_runs: tests.basic_runs, }
   # ( new Test guytest_cfg ).test { basic_scatters: tests.basic_scatters, }
-
-
 

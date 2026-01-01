@@ -45,12 +45,13 @@ SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
     #.......................................................................................................
     @eq ( Ωot___1 = -> type_of SFMODULES.unstable.require_clean_assign          ), 'function'
     @eq ( Ωot___2 = -> type_of SFMODULES.unstable.require_pick                  ), 'function'
-    @eq ( Ωot___3 = -> type_of SFMODULES.unstable.require_remap                 ), 'function'
-    @eq ( Ωot___4 = -> type_of SFMODULES.unstable.require_get_prototype_chain   ), 'function'
+    @eq ( Ωot___3 = -> type_of SFMODULES.unstable.require_deploy                ), 'function'
+    @eq ( Ωot___4 = -> type_of SFMODULES.unstable.require_remap                 ), 'function'
+    @eq ( Ωot___5 = -> type_of SFMODULES.unstable.require_get_prototype_chain   ), 'function'
     # { walk_buffers_with_positions,
     #   walk_lines_with_positions, } = SFMODULES.unstable.require_fast_linereader()
     #.......................................................................................................
-    # @throws ( Ωot___5 = -> esql.unquote_name ''                ), /expected a name/
+    # @throws ( Ωot___6 = -> esql.unquote_name ''                ), /expected a name/
     #.......................................................................................................
     return null
 
@@ -70,17 +71,31 @@ SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
     prop_B    = Object.getPrototypeOf B
     null_obj  = Object.create null
     #.......................................................................................................
-    @eq ( Ωot___6 = -> get_prototype_chain null           ), []
-    @eq ( Ωot___7 = -> get_prototype_chain undefined      ), []
-    @eq ( Ωot___8 = -> get_prototype_chain {}             ), [ {}, null_obj, ]
-    @eq ( Ωot___9 = -> get_prototype_chain A              ), [ A, prop_A, null_obj, ]
-    @eq ( Ωot__10 = -> get_prototype_chain B              ), [ B, prop_B, prop_A, null_obj, ]
-    @eq ( Ωot__11 = -> get_prototype_chain new A()        ), [ {}, {}, null_obj, ]
-    @eq ( Ωot__12 = -> get_prototype_chain new B()        ), [ {}, {}, {}, null_obj, ]
+    @eq ( Ωot___7 = -> get_prototype_chain null           ), []
+    @eq ( Ωot___8 = -> get_prototype_chain undefined      ), []
+    @eq ( Ωot___9 = -> get_prototype_chain {}             ), [ {}, null_obj, ]
+    @eq ( Ωot__10 = -> get_prototype_chain A              ), [ A, prop_A, null_obj, ]
+    @eq ( Ωot__11 = -> get_prototype_chain B              ), [ B, prop_B, prop_A, null_obj, ]
+    @eq ( Ωot__12 = -> get_prototype_chain new A()        ), [ {}, {}, null_obj, ]
+    @eq ( Ωot__13 = -> get_prototype_chain new B()        ), [ {}, {}, {}, null_obj, ]
     #.......................................................................................................
-    @eq ( Ωot__13 = -> get_all_in_prototype_chain B,                        'words' ), [ [ 'the', 'British', 'gardener' ], [ 'a', 'French', 'dictionary' ] ]
-    @eq ( Ωot__14 = -> get_all_in_prototype_chain ( new B() ).constructor,  'words' ), [ [ 'the', 'British', 'gardener' ], [ 'a', 'French', 'dictionary' ] ]
-    @eq ( Ωot__15 = -> get_all_in_prototype_chain ( new B() ),              'words' ), []
+    @eq ( Ωot__14 = -> get_all_in_prototype_chain B,                        'words' ), [ [ 'the', 'British', 'gardener' ], [ 'a', 'French', 'dictionary' ] ]
+    @eq ( Ωot__15 = -> get_all_in_prototype_chain ( new B() ).constructor,  'words' ), [ [ 'the', 'British', 'gardener' ], [ 'a', 'French', 'dictionary' ] ]
+    @eq ( Ωot__16 = -> get_all_in_prototype_chain ( new B() ),              'words' ), []
+    #.......................................................................................................
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  deploy: ->
+    { type_of,                } = SFMODULES.unstable.require_type_of()
+    { deploy,                 } = SFMODULES.unstable.require_deploy()
+    #.......................................................................................................
+    @eq ( Ωot__17 = -> type_of deploy                                                       ), 'function'
+    @eq ( Ωot__18 = -> deploy {}                                                            ), []
+    @eq ( Ωot__19 = -> deploy { a1: 'A1', }                                                 ), []
+    @eq ( Ωot__20 = -> deploy { a1: 'A1', a2: 'A2', b1: 'B1', b2: 'B2', }, [ 'a1' ]         ), [ { a1: 'A1', }, ]
+    @eq ( Ωot__21 = -> deploy { a1: 'A1', a2: 'A2', b1: 'B1', b2: 'B2', }, [ 'a1', 'b1', ]  ), [ { a1: 'A1', b1: 'B1', }, ]
+    @eq ( Ωot__22 = -> deploy { a1: 'A1', a2: 'A2', b1: 'B1', b2: 'B2', }, [ 'a1', 'b1', ], [ 'b2', ]  ), [ { a1: 'A1', b1: 'B1', }, { b2: 'B2' }, ]
     #.......................................................................................................
     return null
 
