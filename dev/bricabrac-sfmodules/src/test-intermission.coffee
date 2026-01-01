@@ -45,16 +45,17 @@ PATH                      = require 'node:path'
     { Run,
       Scatter,                  } = SFMODULES.require_intermission()
     #.......................................................................................................
-    d = new Run();                  @eq ( Ωimt___1 = -> [ d, d.size, ] ), [ { lo: 0, hi: 0, },  1, ]
-    d = new Run 7;                  @eq ( Ωimt___2 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run 7, 7;               @eq ( Ωimt___3 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run 7, 12;              @eq ( Ωimt___4 = -> [ d, d.size, ] ), [ { lo: 7, hi: 12, }, 6, ]
-    d = new Run { lo: 7, };         @eq ( Ωimt___5 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run { hi: 7, };         @eq ( Ωimt___6 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run { lo: 7, hi: 7, };  @eq ( Ωimt___7 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
-    d = new Run { lo: 7, hi: 21, }; @eq ( Ωimt___8 = -> [ d, d.size, ] ), [ { lo: 7, hi: 21, }, 15, ]
+    @throws ( Ωimt___1 = -> new Run()           ), /expected an integer or a text, got a null/
+    @throws ( Ωimt___2 = -> new Run { hi: 7, }  ), /expected an integer or a text, got a null/
+    # d = new Run();                  @eq ( Ωimt___3 = -> [ d, d.size, ] ), [ { lo: 0, hi: 0, },  1, ]
+    d = new Run 7;                  @eq ( Ωimt___4 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = new Run 7, 7;               @eq ( Ωimt___5 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = new Run 7, 12;              @eq ( Ωimt___6 = -> [ d, d.size, ] ), [ { lo: 7, hi: 12, }, 6, ]
+    d = new Run { lo: 7, };         @eq ( Ωimt___7 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = new Run { lo: 7, hi: 7, };  @eq ( Ωimt___8 = -> [ d, d.size, ] ), [ { lo: 7, hi: 7, },  1, ]
+    d = new Run { lo: 7, hi: 21, }; @eq ( Ωimt___9 = -> [ d, d.size, ] ), [ { lo: 7, hi: 21, }, 15, ]
     #.......................................................................................................
-    @eq ( Ωimt___9 = -> new Run().scatter ), null
+    @eq ( Ωimt__10 = -> ( new Run 1, 1 ).scatter ), null
     return null
 
   #---------------------------------------------------------------------------------------------------------
@@ -64,83 +65,86 @@ PATH                      = require 'node:path'
     #.......................................................................................................
     do =>
       s = new Scatter { data: { a: 1, } }
-      @eq ( Ωimt__10 = -> s ), { data: { a: 1, }, runs: [], }
-      @eq ( Ωimt__11 = -> s.is_normalized   ), true
+      @eq ( Ωimt__11 = -> { s..., } ), { data: { a: 1, }, runs: [], }
+      @eq ( Ωimt__12 = -> s.is_normalized   ), true
       #.....................................................................................................
-      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__12 = -> s.runs.length     ), 1
-      s.add 1;                          @eq ( Ωimt__13 = -> s.runs.length     ), 2
-      s.add new Run { lo: 1, hi: 1, };  @eq ( Ωimt__14 = -> s.runs.length     ), 3
+      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__13 = -> s.runs.length     ), 1
+      s.add 1;                          @eq ( Ωimt__14 = -> s.runs.length     ), 2
+      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__15 = -> s.runs.length     ), 3
+      # s.add new Run { lo: 1, hi: 1, };  @eq ( Ωimt__16 = -> s.runs.length     ), 3
       #.....................................................................................................
-      @eq ( Ωimt__15 = -> s.is_normalized   ), false
-      # @eq ( Ωimt__16 = -> s.is_sorted       ), false
-      @eq ( Ωimt__17 = -> s.data            ), { a: 1, }
-      @eq ( Ωimt__18 = -> s.runs[ 0 ]       ), { lo: 1, hi: 1, }
-      @eq ( Ωimt__19 = -> s.runs[ 1 ]       ), { lo: 1, hi: 1, }
-      @eq ( Ωimt__20 = -> s.runs[ 2 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__17 = -> s.is_normalized   ), false
+      # @eq ( Ωimt__18 = -> s.is_sorted       ), false
+      @eq ( Ωimt__19 = -> s.data            ), { a: 1, }
+      @eq ( Ωimt__20 = -> s.runs[ 0 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__21 = -> s.runs[ 1 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__22 = -> s.runs[ 2 ]       ), { lo: 1, hi: 1, }
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter { data: { a: 2, }, sort: true, }
-      @eq ( Ωimt__21 = -> s.is_normalized   ), true
-      # @eq ( Ωimt__22 = -> s.is_sorted       ), false
-      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__23 = -> s.runs.length     ), 1; @eq ( Ωimt__24 = -> s.is_normalized ), false
-      s.add 1;                          @eq ( Ωimt__25 = -> s.runs.length     ), 2; @eq ( Ωimt__26 = -> s.is_normalized ), false
-      s.add new Run { lo: 1, hi: 1, };  @eq ( Ωimt__27 = -> s.runs.length     ), 3; @eq ( Ωimt__28 = -> s.is_normalized ), false
+      @eq ( Ωimt__23 = -> s.is_normalized   ), true
+      # @eq ( Ωimt__24 = -> s.is_sorted       ), false
+      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__25 = -> s.runs.length     ), 1; @eq ( Ωimt__26 = -> s.is_normalized ), false
+      s.add 1;                          @eq ( Ωimt__27 = -> s.runs.length     ), 2; @eq ( Ωimt__28 = -> s.is_normalized ), false
+      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__29 = -> s.runs.length     ), 3; @eq ( Ωimt__30 = -> s.is_normalized ), false
+      # s.add new Run { lo: 1, hi: 1, };  @eq ( Ωimt__31 = -> s.runs.length     ), 3; @eq ( Ωimt__32 = -> s.is_normalized ), false
       #.....................................................................................................
-      @eq ( Ωimt__29 = -> s.data            ), { a: 2, }
-      @eq ( Ωimt__30 = -> s.runs[ 0 ]       ), { lo: 1, hi: 1, }
-      @eq ( Ωimt__31 = -> s.runs[ 1 ]       ), { lo: 1, hi: 1, }
-      @eq ( Ωimt__32 = -> s.runs[ 2 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__33 = -> s.data            ), { a: 2, }
+      @eq ( Ωimt__34 = -> s.runs[ 0 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__35 = -> s.runs[ 1 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__36 = -> s.runs[ 2 ]       ), { lo: 1, hi: 1, }
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter { data: { a: 3, }, normalize: true, }
-      @eq ( Ωimt__33 = -> s.is_normalized ), true
-      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__34 = -> s.runs.length ), 1; @eq ( Ωimt__35 = -> s.is_normalized ), true
-      s.add 1;                          @eq ( Ωimt__36 = -> s.runs.length ), 1; @eq ( Ωimt__37 = -> s.is_normalized ), true
-      s.add new Run { lo: 1, hi: 1, };  @eq ( Ωimt__38 = -> s.runs.length ), 1; @eq ( Ωimt__39 = -> s.is_normalized ), true
+      @eq ( Ωimt__37 = -> s.is_normalized ), true
+      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__38 = -> s.runs.length ), 1; @eq ( Ωimt__39 = -> s.is_normalized ), true
+      s.add 1;                          @eq ( Ωimt__40 = -> s.runs.length ), 1; @eq ( Ωimt__41 = -> s.is_normalized ), true
+      s.add { lo: 1, hi: 1, };          @eq ( Ωimt__42 = -> s.runs.length ), 1; @eq ( Ωimt__43 = -> s.is_normalized ), true
+      # s.add new Run { lo: 1, hi: 1, };  @eq ( Ωimt__44 = -> s.runs.length ), 1; @eq ( Ωimt__45 = -> s.is_normalized ), true
       #.....................................................................................................
-      @eq ( Ωimt__40 = -> s.data            ), { a: 3, }
-      @eq ( Ωimt__41 = -> s.runs[ 0 ]       ), { lo: 1, hi: 1, }
+      @eq ( Ωimt__46 = -> s.data            ), { a: 3, }
+      @eq ( Ωimt__47 = -> s.runs[ 0 ]       ), { lo: 1, hi: 1, }
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter { data: { a: 4, }, normalize: true, }
-      @eq ( Ωimt__42 = -> s.is_normalized ), true
-      s.add 103;  @eq ( Ωimt__43 = -> s.runs.length ), 1; @eq ( Ωimt__44 = -> s.is_normalized ), true
-      s.add 100;  @eq ( Ωimt__45 = -> s.runs.length ), 2; @eq ( Ωimt__46 = -> s.is_normalized ), true
-      s.add 101;  @eq ( Ωimt__47 = -> s.runs.length ), 2; @eq ( Ωimt__48 = -> s.is_normalized ), true
+      @eq ( Ωimt__48 = -> s.is_normalized ), true
+      s.add 103;  @eq ( Ωimt__49 = -> s.runs.length ), 1; @eq ( Ωimt__50 = -> s.is_normalized ), true
+      s.add 100;  @eq ( Ωimt__51 = -> s.runs.length ), 2; @eq ( Ωimt__52 = -> s.is_normalized ), true
+      s.add 101;  @eq ( Ωimt__53 = -> s.runs.length ), 2; @eq ( Ωimt__54 = -> s.is_normalized ), true
       #.....................................................................................................
-      debug 'Ωimt__49', run for run in s.runs
-      @eq ( Ωimt__50 = -> s.data            ), { a: 4, }
-      @eq ( Ωimt__51 = -> s.runs[ 0 ]       ), { lo: 100, hi: 101, }
-      @eq ( Ωimt__52 = -> s.runs[ 1 ]       ), { lo: 103, hi: 103, }
+      debug 'Ωimt__55', run for run in s.runs
+      @eq ( Ωimt__56 = -> s.data            ), { a: 4, }
+      @eq ( Ωimt__57 = -> s.runs[ 0 ]       ), { lo: 100, hi: 101, }
+      @eq ( Ωimt__58 = -> s.runs[ 1 ]       ), { lo: 103, hi: 103, }
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter { normalize: true, }
-      @eq ( Ωimt__53 = -> s.is_normalized ), true
-      s.add 103, 109;   @eq ( Ωimt__54 = -> s.runs.length ), 1; @eq ( Ωimt__55 = -> s.is_normalized ), true
-      s.add 111, 115;   @eq ( Ωimt__56 = -> s.runs.length ), 2; @eq ( Ωimt__57 = -> s.is_normalized ), true
-      s.add 110;        @eq ( Ωimt__58 = -> s.runs.length ), 1; @eq ( Ωimt__59 = -> s.is_normalized ), true
-      @eq ( Ωimt__60 = -> { min: s.min, max: s.max, } ), { min: 103, max: 115, }
-      @eq ( Ωimt__61 = -> s.minmax                    ), { min: 103, max: 115, }
+      @eq ( Ωimt__59 = -> s.is_normalized ), true
+      s.add 103, 109;   @eq ( Ωimt__60 = -> s.runs.length ), 1; @eq ( Ωimt__61 = -> s.is_normalized ), true
+      s.add 111, 115;   @eq ( Ωimt__62 = -> s.runs.length ), 2; @eq ( Ωimt__63 = -> s.is_normalized ), true
+      s.add 110;        @eq ( Ωimt__64 = -> s.runs.length ), 1; @eq ( Ωimt__65 = -> s.is_normalized ), true
+      @eq ( Ωimt__66 = -> { min: s.min, max: s.max, } ), { min: 103, max: 115, }
+      @eq ( Ωimt__67 = -> s.minmax                    ), { min: 103, max: 115, }
       #.....................................................................................................
-      @eq ( Ωimt__62 = -> s.runs[ 0 ]       ), { lo: 103, hi: 115, }
+      @eq ( Ωimt__68 = -> s.runs[ 0 ]       ), { lo: 103, hi: 115, }
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter { normalize: false, }
-      @eq ( Ωimt__63 = -> s.is_normalized ), true
-      s.add 103, 109;   @eq ( Ωimt__64 = -> s.runs.length ), 1; @eq ( Ωimt__65 = -> s.is_normalized ), false
-      s.add 111, 115;   @eq ( Ωimt__66 = -> s.runs.length ), 2; @eq ( Ωimt__67 = -> s.is_normalized ), false
-      s.add 110;        @eq ( Ωimt__68 = -> s.runs.length ), 3; @eq ( Ωimt__69 = -> s.is_normalized ), false
-      @eq ( Ωimt__70 = -> { min: s.min, max: s.max, } ), { min: 103, max: 115, }
-      @eq ( Ωimt__71 = -> s.minmax                    ), { min: 103, max: 115, }
+      @eq ( Ωimt__69 = -> s.is_normalized ), true
+      s.add 103, 109;   @eq ( Ωimt__70 = -> s.runs.length ), 1; @eq ( Ωimt__71 = -> s.is_normalized ), false
+      s.add 111, 115;   @eq ( Ωimt__72 = -> s.runs.length ), 2; @eq ( Ωimt__73 = -> s.is_normalized ), false
+      s.add 110;        @eq ( Ωimt__74 = -> s.runs.length ), 3; @eq ( Ωimt__75 = -> s.is_normalized ), false
+      @eq ( Ωimt__76 = -> { min: s.min, max: s.max, } ), { min: 103, max: 115, }
+      @eq ( Ωimt__77 = -> s.minmax                    ), { min: 103, max: 115, }
       #.....................................................................................................
-      @eq ( Ωimt__72 = -> s.runs[ 0 ] ), { lo: 103, hi: 109, }
-      @eq ( Ωimt__73 = -> s.runs[ 1 ] ), { lo: 111, hi: 115, }
-      @eq ( Ωimt__74 = -> s.runs[ 2 ] ), { lo: 110, hi: 110, }
+      @eq ( Ωimt__78 = -> s.runs[ 0 ] ), { lo: 103, hi: 109, }
+      @eq ( Ωimt__79 = -> s.runs[ 1 ] ), { lo: 111, hi: 115, }
+      @eq ( Ωimt__80 = -> s.runs[ 2 ] ), { lo: 110, hi: 110, }
       ;null
     #.......................................................................................................
     return null
@@ -154,29 +158,29 @@ PATH                      = require 'node:path'
       s = new Scatter()
       s.add 25, 30
       s.add 32, 40
-      @eq ( Ωimt__75 = -> s.has 21       ), false
-      @eq ( Ωimt__76 = -> s.has 22       ), false
-      @eq ( Ωimt__77 = -> s.has 23       ), false
-      @eq ( Ωimt__78 = -> s.has 24       ), false
-      @eq ( Ωimt__79 = -> s.has 25       ), true
-      @eq ( Ωimt__80 = -> s.has 26       ), true
-      @eq ( Ωimt__81 = -> s.has 27       ), true
-      @eq ( Ωimt__82 = -> s.has 28       ), true
-      @eq ( Ωimt__83 = -> s.has 29       ), true
-      @eq ( Ωimt__84 = -> s.has 30       ), true
-      @eq ( Ωimt__85 = -> s.has 31       ), false
-      @eq ( Ωimt__86 = -> s.has 32       ), true
-      @eq ( Ωimt__87 = -> s.has 33       ), true
-      @eq ( Ωimt__88 = -> s.has 34       ), true
-      @eq ( Ωimt__89 = -> s.has 35       ), true
-      @eq ( Ωimt__90 = -> s.has 36       ), true
-      @eq ( Ωimt__91 = -> s.has 37       ), true
-      @eq ( Ωimt__92 = -> s.has 38       ), true
-      @eq ( Ωimt__93 = -> s.has 39       ), true
-      @eq ( Ωimt__94 = -> s.has 40       ), true
-      @eq ( Ωimt__95 = -> s.has 41       ), false
-      @eq ( Ωimt__96 = -> s.has 42       ), false
-      @eq ( Ωimt__97 = -> s.has 43       ), false
+      @eq ( Ωimt__81 = -> s.has 21       ), false
+      @eq ( Ωimt__82 = -> s.has 22       ), false
+      @eq ( Ωimt__83 = -> s.has 23       ), false
+      @eq ( Ωimt__84 = -> s.has 24       ), false
+      @eq ( Ωimt__85 = -> s.has 25       ), true
+      @eq ( Ωimt__86 = -> s.has 26       ), true
+      @eq ( Ωimt__87 = -> s.has 27       ), true
+      @eq ( Ωimt__88 = -> s.has 28       ), true
+      @eq ( Ωimt__89 = -> s.has 29       ), true
+      @eq ( Ωimt__90 = -> s.has 30       ), true
+      @eq ( Ωimt__91 = -> s.has 31       ), false
+      @eq ( Ωimt__92 = -> s.has 32       ), true
+      @eq ( Ωimt__93 = -> s.has 33       ), true
+      @eq ( Ωimt__94 = -> s.has 34       ), true
+      @eq ( Ωimt__95 = -> s.has 35       ), true
+      @eq ( Ωimt__96 = -> s.has 36       ), true
+      @eq ( Ωimt__97 = -> s.has 37       ), true
+      @eq ( Ωimt__98 = -> s.has 38       ), true
+      @eq ( Ωimt__99 = -> s.has 39       ), true
+      @eq ( Ωimt_100 = -> s.has 40       ), true
+      @eq ( Ωimt_101 = -> s.has 41       ), false
+      @eq ( Ωimt_102 = -> s.has 42       ), false
+      @eq ( Ωimt_103 = -> s.has 43       ), false
       ;null
     #.......................................................................................................
     return null
@@ -187,54 +191,54 @@ PATH                      = require 'node:path'
       Scatter,                  } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
-      @eq ( Ωimt__98 = -> [ ( new Run 1         )..., ]       ), [ 1, ]
-      @eq ( Ωimt__99 = -> [ ( new Run 297       )..., ]       ), [ 297, ]
-      @eq ( Ωimt_100 = -> [ ( new Run 297, 308  )..., ]       ), [ 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308 ]
+      @eq ( Ωimt_104 = -> [ ( new Run 1         )..., ]       ), [ 1, ]
+      @eq ( Ωimt_105 = -> [ ( new Run 297       )..., ]       ), [ 297, ]
+      @eq ( Ωimt_106 = -> [ ( new Run 297, 308  )..., ]       ), [ 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308 ]
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter()
-      @eq ( Ωimt_101 = -> [ s..., ]       ), []
-      s.add 1;        @eq ( Ωimt_102 = -> [ s..., ] ), [ 1,                               ]; @eq ( Ωimt_103 = -> s.is_normalized ), true
-      s.add 297;      @eq ( Ωimt_104 = -> [ s..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_105 = -> s.is_normalized ), true
-      s.add 299, 302; @eq ( Ωimt_106 = -> [ s..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_107 = -> s.is_normalized ), true
-      s.add 298;      @eq ( Ωimt_108 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_109 = -> s.is_normalized ), true
-      s.add 300, 301; @eq ( Ωimt_110 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_111 = -> s.is_normalized ), true
-      @eq ( Ωimt_112 = -> s.runs.length   ), 2
-      @eq ( Ωimt_113 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
-      @eq ( Ωimt_114 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
-      @eq ( Ωimt_115 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
+      @eq ( Ωimt_107 = -> [ s..., ]       ), []
+      s.add 1;        @eq ( Ωimt_108 = -> [ s..., ] ), [ 1,                               ]; @eq ( Ωimt_109 = -> s.is_normalized ), true
+      s.add 297;      @eq ( Ωimt_110 = -> [ s..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_111 = -> s.is_normalized ), true
+      s.add 299, 302; @eq ( Ωimt_112 = -> [ s..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_113 = -> s.is_normalized ), true
+      s.add 298;      @eq ( Ωimt_114 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_115 = -> s.is_normalized ), true
+      s.add 300, 301; @eq ( Ωimt_116 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_117 = -> s.is_normalized ), true
+      @eq ( Ωimt_118 = -> s.runs.length   ), 2
+      @eq ( Ωimt_119 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
+      @eq ( Ωimt_120 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
+      @eq ( Ωimt_121 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter()
-      @eq ( Ωimt_116 = -> [ s.walk()..., ]       ), []
-      s.add 1;        @eq ( Ωimt_117 = -> [ s.walk()..., ] ), [ 1,                               ]; @eq ( Ωimt_118 = -> s.is_normalized ), true
-      s.add 297;      @eq ( Ωimt_119 = -> [ s.walk()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_120 = -> s.is_normalized ), true
-      s.add 299, 302; @eq ( Ωimt_121 = -> [ s.walk()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_122 = -> s.is_normalized ), true
-      s.add 298;      @eq ( Ωimt_123 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_124 = -> s.is_normalized ), true
-      s.add 300, 301; @eq ( Ωimt_125 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_126 = -> s.is_normalized ), true
-      @eq ( Ωimt_127 = -> s.runs.length   ), 2
-      @eq ( Ωimt_128 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
-      @eq ( Ωimt_129 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
-      @eq ( Ωimt_130 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
+      @eq ( Ωimt_122 = -> [ s.walk()..., ]       ), []
+      s.add 1;        @eq ( Ωimt_123 = -> [ s.walk()..., ] ), [ 1,                               ]; @eq ( Ωimt_124 = -> s.is_normalized ), true
+      s.add 297;      @eq ( Ωimt_125 = -> [ s.walk()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_126 = -> s.is_normalized ), true
+      s.add 299, 302; @eq ( Ωimt_127 = -> [ s.walk()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_128 = -> s.is_normalized ), true
+      s.add 298;      @eq ( Ωimt_129 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_130 = -> s.is_normalized ), true
+      s.add 300, 301; @eq ( Ωimt_131 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_132 = -> s.is_normalized ), true
+      @eq ( Ωimt_133 = -> s.runs.length   ), 2
+      @eq ( Ωimt_134 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
+      @eq ( Ωimt_135 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
+      @eq ( Ωimt_136 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter()
-      @eq ( Ωimt_131 = -> [ s.walk_raw()..., ]       ), []
-      s.add 1;        @eq ( Ωimt_132 = -> [ s.walk_raw()..., ] ), [ 1,                               ]; @eq ( Ωimt_133 = -> s.is_normalized ), false
-      s.add 297;      @eq ( Ωimt_134 = -> [ s.walk_raw()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_135 = -> s.is_normalized ), false
-      s.add 299, 302; @eq ( Ωimt_136 = -> [ s.walk_raw()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_137 = -> s.is_normalized ), false
-      s.add 298;      @eq ( Ωimt_138 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_139 = -> s.is_normalized ), false
-      s.add 300, 301; @eq ( Ωimt_140 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_141 = -> s.is_normalized ), false
-      @eq ( Ωimt_142 = -> s.runs.length   ), 5
-      @eq ( Ωimt_143 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
-      @eq ( Ωimt_144 = -> s.runs[ 1 ]     ), { lo: 297, hi: 297, }
-      @eq ( Ωimt_145 = -> s.runs[ 2 ]     ), { lo: 299, hi: 302, }
-      @eq ( Ωimt_146 = -> s.runs[ 3 ]     ), { lo: 298, hi: 298, }
-      @eq ( Ωimt_147 = -> s.runs[ 4 ]     ), { lo: 300, hi: 301, }
-      @eq ( Ωimt_148 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
+      @eq ( Ωimt_137 = -> [ s.walk_raw()..., ]       ), []
+      s.add 1;        @eq ( Ωimt_138 = -> [ s.walk_raw()..., ] ), [ 1,                               ]; @eq ( Ωimt_139 = -> s.is_normalized ), false
+      s.add 297;      @eq ( Ωimt_140 = -> [ s.walk_raw()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_141 = -> s.is_normalized ), false
+      s.add 299, 302; @eq ( Ωimt_142 = -> [ s.walk_raw()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_143 = -> s.is_normalized ), false
+      s.add 298;      @eq ( Ωimt_144 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_145 = -> s.is_normalized ), false
+      s.add 300, 301; @eq ( Ωimt_146 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_147 = -> s.is_normalized ), false
+      @eq ( Ωimt_148 = -> s.runs.length   ), 5
+      @eq ( Ωimt_149 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
+      @eq ( Ωimt_150 = -> s.runs[ 1 ]     ), { lo: 297, hi: 297, }
+      @eq ( Ωimt_151 = -> s.runs[ 2 ]     ), { lo: 299, hi: 302, }
+      @eq ( Ωimt_152 = -> s.runs[ 3 ]     ), { lo: 298, hi: 298, }
+      @eq ( Ωimt_153 = -> s.runs[ 4 ]     ), { lo: 300, hi: 301, }
+      @eq ( Ωimt_154 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
     return null
@@ -246,31 +250,61 @@ PATH                      = require 'node:path'
     #.......................................................................................................
     do =>
       s = new Scatter()
-      @throws ( Ωimt_149 = -> s.add 5.8 ), /yyy/
-      @throws ( Ωimt_150 = -> s.add -3 ), /yyy/
+      @throws ( Ωimt_155 = -> s.add 5.8         ), /expected an integer or a text, got a float/
+      @throws ( Ωimt_156 = -> s.add -3          ), /-0x3 is not between \+0x0 and \+0x10ffff/
+      @throws ( Ωimt_157 = -> s.add 0, -3       ), /-0x3 is not between \+0x0 and \+0x10ffff/
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter { first: -10, last: +10, }
-      s.add -10; @eq ( Ωimt_151 = -> s.points ), [ -10, ]
-      s.add +10; @eq ( Ωimt_152 = -> s.points ), [ -10, +10, ]
-      @throws ( Ωimt_153 = -> s.add -11 ), /yyy/
-      @throws ( Ωimt_154 = -> s.add +11 ), /yyy/
+      s.add -10; @eq ( Ωimt_158 = -> s.points   ), [ -10, ]
+      s.add +10; @eq ( Ωimt_159 = -> s.points   ), [ -10, +10, ]
+      @throws ( Ωimt_160 = -> s.add -11         ), /-0xb is not between -0xa and \+0xa/
+      @throws ( Ωimt_161 = -> s.add +11         ), /\+0xb is not between -0xa and \+0xa/
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter()
-      s.add 'A'
+      s.add 'A';      @eq ( Ωimt_162 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
+      s.add 'A', 'Z'; @eq ( Ωimt_163 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90 ]
+      s.add 'a', 'z'; @eq ( Ωimt_164 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, \
+                                                          100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, ]
+      @eq ( Ωimt_165 = -> s.min  ), ( 'A'.codePointAt 0 )
+      @eq ( Ωimt_166 = -> s.max  ), ( 'z'.codePointAt 0 )
+      @eq ( Ωimt_167 = -> { min: s.min, max: s.max, }  ), s.minmax
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter()
-      s.add 'A', 'Z'
+      s.add 'Abc'
+      @eq ( Ωimt_168 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
       ;null
     #.......................................................................................................
     do =>
       s = new Scatter()
-      s.add 'A whole lot of points'
+      s.add_codepoints_of 'Abc'
+      @eq ( Ωimt_169 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
+      @eq ( Ωimt_170 = -> s.runs.length ), 3
+      ;null
+    #.......................................................................................................
+    do =>
+      s = new Scatter()
+      s.add_codepoints_of 'Abc'
+      @eq ( Ωimt_171 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
+      @eq ( Ωimt_172 = -> s.runs.length ), 3
+      s.normalize()
+      @eq ( Ωimt_173 = -> s.runs.length ), 2
+      @eq ( Ωimt_174 = -> s.runs[ 0 ] ), { lo: ( 'A'.codePointAt 0 ), hi: ( 'A'.codePointAt 0 ), }
+      @eq ( Ωimt_175 = -> s.runs[ 1 ] ), { lo: ( 'b'.codePointAt 0 ), hi: ( 'c'.codePointAt 0 ), }
+      ;null
+    #.......................................................................................................
+    do =>
+      s = new Scatter()
+      s.add_codepoints_of 'aeiouäöü', 'aeiouäöü', 'AEIOUÄÖÜ', 'AEIOUÄÖÜ'
+      @eq ( Ωimt_176 = -> ( ( String.fromCodePoint cid ) for cid in s.points ).join '' ), 'AEIOUaeiouÄÖÜäöü'
+      @eq ( Ωimt_177 = -> s.runs.length ), 16
+      s.normalize()
+      @eq ( Ωimt_178 = -> s.runs.length ), 16
       ;null
     #.......................................................................................................
     return null
@@ -292,14 +326,14 @@ f = ->
 #-----------------------------------------------------------------------------------------------------------
 sum_of_data = ( a, b ) =>
   data = [ a.data ? [], b.data ? [], ].flat()
-  # debug 'Ωimt_155', { a, b, }
-  # debug 'Ωimt_156', { a..., data, }
+  # debug 'Ωimt_179', { a, b, }
+  # debug 'Ωimt_180', { a..., data, }
   { a..., data, }
 create_reducer = ( fn ) -> ( ranges ) => ranges.reduce( fn );
 
 #===========================================================================================================
 demo_intervals_fn = ->
-  # debug 'Ωimt_157', ( k for k of IFN ).sort()
+  # debug 'Ωimt_181', ( k for k of IFN ).sort()
   #=========================================================================================================
   do =>
     rng_1       = [
@@ -312,7 +346,7 @@ demo_intervals_fn = ->
     merged      = IFN.merge ( create_reducer sum_of_data ), rng_1
     #.........................................................................................................
     urge()
-    urge 'Ωimt_158', idx + 1, rng for rng, idx in merged
+    urge 'Ωimt_182', idx + 1, rng for rng, idx in merged
     urge()
     ;null
   #=========================================================================================================
@@ -326,60 +360,60 @@ demo_intervals_fn = ->
     merged      = rng_1.merge ( create_reducer sum_of_data )
     #.........................................................................................................
     urge()
-    urge 'Ωimt_159', idx + 1, rng for rng, idx in merged.ranges
+    urge 'Ωimt_183', idx + 1, rng for rng, idx in merged.ranges
     urge()
     ;null
   #.........................................................................................................
-  a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_160', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_161', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_162', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_163', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_164', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_165', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_184', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_185', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_186', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_187', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_188', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_189', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
   try
-    a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_166', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-  catch e then warn 'Ωimt_167', e.message
+    a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_190', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+  catch e then warn 'Ωimt_191', e.message
   info()
-  info 'Ωimt_168', IFN.simplify []
-  info 'Ωimt_169', IFN.simplify [ { start: 4, end: 20, }, ]
-  info 'Ωimt_170', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_171', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_172', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_173', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
-  info 'Ωimt_174', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
-  info 'Ωimt_175', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
-  info 'Ωimt_176', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
+  info 'Ωimt_192', IFN.simplify []
+  info 'Ωimt_193', IFN.simplify [ { start: 4, end: 20, }, ]
+  info 'Ωimt_194', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
+  info 'Ωimt_195', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
+  info 'Ωimt_196', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
+  info 'Ωimt_197', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
+  info 'Ωimt_198', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
+  info 'Ωimt_199', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
+  info 'Ωimt_200', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
   info()
-  info 'Ωimt_177', ( ( new Rangeset() ).add()                                                                        ).simplify()
-  info 'Ωimt_178', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
-  info 'Ωimt_179', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_180', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_181', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_182', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
-  info 'Ωimt_183', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
-  info 'Ωimt_184', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
-  info 'Ωimt_185', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
+  info 'Ωimt_201', ( ( new Rangeset() ).add()                                                                        ).simplify()
+  info 'Ωimt_202', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
+  info 'Ωimt_203', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωimt_204', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωimt_205', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωimt_206', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
+  info 'Ωimt_207', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
+  info 'Ωimt_208', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
+  info 'Ωimt_209', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
   info()
-  info 'Ωimt_186', ( ( new Rangeset() ).add()                                                                        ).simplify()
-  info 'Ωimt_187', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
-  info 'Ωimt_188', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_189', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_190', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_191', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
-  info 'Ωimt_192', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
-  info 'Ωimt_193', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
-  info 'Ωimt_194', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
+  info 'Ωimt_210', ( ( new Rangeset() ).add()                                                                        ).simplify()
+  info 'Ωimt_211', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
+  info 'Ωimt_212', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωimt_213', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωimt_214', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωimt_215', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
+  info 'Ωimt_216', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
+  info 'Ωimt_217', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
+  info 'Ωimt_218', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
   rng_2 = [
     { start:  3, end: 10, data: 2, }
     { start:  9, end: 13, data: 3, }
     { start: 11, end: 14, data: 5, }
     ]
   merge_data_2 = ( a, b ) ->
-    # debug 'Ωimt_195', { a, b, } #, { a..., b..., }
+    # debug 'Ωimt_219', { a, b, } #, { a..., b..., }
     return { a..., data: a.data * b.data, }
   merged = IFN.merge ( create_reducer merge_data_2 ), rng_2 # [{ start: 3, end: 14 }]
-  info 'Ωimt_196', rng for rng in merged
-  # urge 'Ωimt_197', rng for rng in merged_ft
+  info 'Ωimt_220', rng for rng in merged
+  # urge 'Ωimt_221', rng for rng in merged_ft
   # urge()
   ;null
 
@@ -391,8 +425,8 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { basic_runs: tests.basic_runs, }
+  ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { basic_scatters: tests.basic_scatters, }
 
 
 
