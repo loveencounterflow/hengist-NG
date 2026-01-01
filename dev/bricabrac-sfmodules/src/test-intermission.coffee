@@ -160,32 +160,82 @@ PATH                      = require 'node:path'
     #.......................................................................................................
     do =>
       h = new Hoard()
+      r = h.create_run { lo: 25, hi: 30, }
+      @eq ( Ωimt__81 = -> r.contains 21                               ), false
+      @eq ( Ωimt__82 = -> r.contains 22                               ), false
+      @eq ( Ωimt__83 = -> r.contains 23                               ), false
+      @eq ( Ωimt__84 = -> r.contains 24                               ), false
+      @eq ( Ωimt__85 = -> r.contains 25                               ), true
+      @eq ( Ωimt__86 = -> r.contains 26                               ), true
+      @eq ( Ωimt__87 = -> r.contains 27                               ), true
+      @eq ( Ωimt__88 = -> r.contains 28                               ), true
+      @eq ( Ωimt__89 = -> r.contains 29                               ), true
+      @eq ( Ωimt__90 = -> r.contains 30                               ), true
+      @eq ( Ωimt__91 = -> r.contains 31                               ), false
+      @eq ( Ωimt__92 = -> r.contains 41                               ), false
+      @eq ( Ωimt__93 = -> r.contains [ 25, ]                          ), true
+      @eq ( Ωimt__94 = -> r.contains [ 30, ]                          ), true
+      @eq ( Ωimt__95 = -> r.contains [ 31, ]                          ), false
+      @eq ( Ωimt__96 = -> r.contains [ 32, ]                          ), false
+      @eq ( Ωimt__97 = -> r.contains [ 25 .. 30 ]                     ), true
+      @eq ( Ωimt__98 = -> r.contains [ 25 .. 31 ]                     ), false
+      @eq ( Ωimt__99 = -> r.contains ( -> yield from [ 25 .. 30 ] )() ), true
+      @eq ( Ωimt_100 = -> r.contains ( -> yield from [ 25 .. 31 ] )() ), false
+      @eq ( Ωimt_101 = -> r.contains ( -> yield from [ 25 .. 32 ] )() ), false
+      ;null
+    #.......................................................................................................
+    do =>
+      h = new Hoard()
       s = h.create_scatter()
       s.add 25, 30
       s.add 32, 40
-      @eq ( Ωimt__81 = -> s.contains 21       ), false
-      @eq ( Ωimt__82 = -> s.contains 22       ), false
-      @eq ( Ωimt__83 = -> s.contains 23       ), false
-      @eq ( Ωimt__84 = -> s.contains 24       ), false
-      @eq ( Ωimt__85 = -> s.contains 25       ), true
-      @eq ( Ωimt__86 = -> s.contains 26       ), true
-      @eq ( Ωimt__87 = -> s.contains 27       ), true
-      @eq ( Ωimt__88 = -> s.contains 28       ), true
-      @eq ( Ωimt__89 = -> s.contains 29       ), true
-      @eq ( Ωimt__90 = -> s.contains 30       ), true
-      @eq ( Ωimt__91 = -> s.contains 31       ), false
-      @eq ( Ωimt__92 = -> s.contains 32       ), true
-      @eq ( Ωimt__93 = -> s.contains 33       ), true
-      @eq ( Ωimt__94 = -> s.contains 34       ), true
-      @eq ( Ωimt__95 = -> s.contains 35       ), true
-      @eq ( Ωimt__96 = -> s.contains 36       ), true
-      @eq ( Ωimt__97 = -> s.contains 37       ), true
-      @eq ( Ωimt__98 = -> s.contains 38       ), true
-      @eq ( Ωimt__99 = -> s.contains 39       ), true
-      @eq ( Ωimt_100 = -> s.contains 40       ), true
-      @eq ( Ωimt_101 = -> s.contains 41       ), false
-      @eq ( Ωimt_102 = -> s.contains 42       ), false
-      @eq ( Ωimt_103 = -> s.contains 43       ), false
+      @eq ( Ωimt_102 = -> s.contains 21                               ), false
+      @eq ( Ωimt_103 = -> s.contains 22                               ), false
+      @eq ( Ωimt_104 = -> s.contains 23                               ), false
+      @eq ( Ωimt_105 = -> s.contains 24                               ), false
+      @eq ( Ωimt_106 = -> s.contains 25                               ), true
+      @eq ( Ωimt_107 = -> s.contains 26                               ), true
+      @eq ( Ωimt_108 = -> s.contains 27                               ), true
+      @eq ( Ωimt_109 = -> s.contains 28                               ), true
+      @eq ( Ωimt_110 = -> s.contains 29                               ), true
+      @eq ( Ωimt_111 = -> s.contains 30                               ), true
+      @eq ( Ωimt_112 = -> s.contains 31                               ), false
+      @eq ( Ωimt_113 = -> s.contains 32                               ), true
+      @eq ( Ωimt_114 = -> s.contains 33                               ), true
+      @eq ( Ωimt_115 = -> s.contains 34                               ), true
+      @eq ( Ωimt_116 = -> s.contains 35                               ), true
+      @eq ( Ωimt_117 = -> s.contains 36                               ), true
+      @eq ( Ωimt_118 = -> s.contains 37                               ), true
+      @eq ( Ωimt_119 = -> s.contains 38                               ), true
+      @eq ( Ωimt_120 = -> s.contains 39                               ), true
+      @eq ( Ωimt_121 = -> s.contains 40                               ), true
+      @eq ( Ωimt_122 = -> s.contains 41                               ), false
+      @eq ( Ωimt_123 = -> s.contains 42                               ), false
+      @eq ( Ωimt_124 = -> s.contains 43                               ), false
+      @eq ( Ωimt_125 = -> s.contains [ 25 .. 30 ]                     ), true
+      @eq ( Ωimt_126 = -> s.contains [ 25 .. 31 ]                     ), false
+      @eq ( Ωimt_127 = -> s.contains [ 30, ]                          ), true
+      @eq ( Ωimt_128 = -> s.contains [ 31, ]                          ), false
+      @eq ( Ωimt_129 = -> s.contains [ 32, ]                          ), true
+      @eq ( Ωimt_130 = -> s.contains ( -> yield from [ 25 .. 30 ] )() ), true
+      @eq ( Ωimt_131 = -> s.contains ( -> yield from [ 25 .. 31 ] )() ), false
+      @eq ( Ωimt_132 = -> s.contains ( -> yield from [ 25 .. 32 ] )() ), false
+      @eq ( Ωimt_133 = -> s.contains ( h.create_run 25              ) ), true
+      @eq ( Ωimt_134 = -> s.contains ( h.create_run 25, 30          ) ), true
+      @eq ( Ωimt_135 = -> s.contains ( h.create_run 25, 32          ) ), false
+      s1 = h.create_scatter()
+      s1.add 26, 27
+      s1.add 37, 40
+      @eq ( Ωimt_136 = -> s1.is_normalized                            ), false
+      @eq ( Ωimt_137 = -> s.contains s1                               ), true
+      @eq ( Ωimt_138 = -> s1.is_normalized                            ), true
+      s1.add 25, 32
+      @eq ( Ωimt_139 = -> s.contains s1                               ), false
+      @eq ( Ωimt_140 = -> s.is_normalized                             ), true
+      s.add 31
+      @eq ( Ωimt_141 = -> s.is_normalized                             ), false
+      @eq ( Ωimt_142 = -> s.contains s1                               ), true
+      @eq ( Ωimt_143 = -> s.is_normalized                             ), true
       ;null
     #.......................................................................................................
     return null
@@ -196,57 +246,57 @@ PATH                      = require 'node:path'
     #.......................................................................................................
     do =>
       h = new Hoard()
-      @eq ( Ωimt_104 = -> [ ( h.create_run 1         )..., ]       ), [ 1, ]
-      @eq ( Ωimt_105 = -> [ ( h.create_run 297       )..., ]       ), [ 297, ]
-      @eq ( Ωimt_106 = -> [ ( h.create_run 297, 308  )..., ]       ), [ 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308 ]
+      @eq ( Ωimt_144 = -> [ ( h.create_run 1         )..., ]       ), [ 1, ]
+      @eq ( Ωimt_145 = -> [ ( h.create_run 297       )..., ]       ), [ 297, ]
+      @eq ( Ωimt_146 = -> [ ( h.create_run 297, 308  )..., ]       ), [ 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308 ]
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
-      @eq ( Ωimt_107 = -> [ s..., ]       ), []
-      s.add 1;        @eq ( Ωimt_108 = -> [ s..., ] ), [ 1,                               ]; @eq ( Ωimt_109 = -> s.is_normalized ), true
-      s.add 297;      @eq ( Ωimt_110 = -> [ s..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_111 = -> s.is_normalized ), true
-      s.add 299, 302; @eq ( Ωimt_112 = -> [ s..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_113 = -> s.is_normalized ), true
-      s.add 298;      @eq ( Ωimt_114 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_115 = -> s.is_normalized ), true
-      s.add 300, 301; @eq ( Ωimt_116 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_117 = -> s.is_normalized ), true
-      @eq ( Ωimt_118 = -> s.runs.length   ), 2
-      @eq ( Ωimt_119 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
-      @eq ( Ωimt_120 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
-      @eq ( Ωimt_121 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
+      @eq ( Ωimt_147 = -> [ s..., ]       ), []
+      s.add 1;        @eq ( Ωimt_148 = -> [ s..., ] ), [ 1,                               ]; @eq ( Ωimt_149 = -> s.is_normalized ), true
+      s.add 297;      @eq ( Ωimt_150 = -> [ s..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_151 = -> s.is_normalized ), true
+      s.add 299, 302; @eq ( Ωimt_152 = -> [ s..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_153 = -> s.is_normalized ), true
+      s.add 298;      @eq ( Ωimt_154 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_155 = -> s.is_normalized ), true
+      s.add 300, 301; @eq ( Ωimt_156 = -> [ s..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_157 = -> s.is_normalized ), true
+      @eq ( Ωimt_158 = -> s.runs.length   ), 2
+      @eq ( Ωimt_159 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
+      @eq ( Ωimt_160 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
+      @eq ( Ωimt_161 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
-      @eq ( Ωimt_122 = -> [ s.walk()..., ]       ), []
-      s.add 1;        @eq ( Ωimt_123 = -> [ s.walk()..., ] ), [ 1,                               ]; @eq ( Ωimt_124 = -> s.is_normalized ), true
-      s.add 297;      @eq ( Ωimt_125 = -> [ s.walk()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_126 = -> s.is_normalized ), true
-      s.add 299, 302; @eq ( Ωimt_127 = -> [ s.walk()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_128 = -> s.is_normalized ), true
-      s.add 298;      @eq ( Ωimt_129 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_130 = -> s.is_normalized ), true
-      s.add 300, 301; @eq ( Ωimt_131 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_132 = -> s.is_normalized ), true
-      @eq ( Ωimt_133 = -> s.runs.length   ), 2
-      @eq ( Ωimt_134 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
-      @eq ( Ωimt_135 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
-      @eq ( Ωimt_136 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
+      @eq ( Ωimt_162 = -> [ s.walk()..., ]       ), []
+      s.add 1;        @eq ( Ωimt_163 = -> [ s.walk()..., ] ), [ 1,                               ]; @eq ( Ωimt_164 = -> s.is_normalized ), true
+      s.add 297;      @eq ( Ωimt_165 = -> [ s.walk()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_166 = -> s.is_normalized ), true
+      s.add 299, 302; @eq ( Ωimt_167 = -> [ s.walk()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_168 = -> s.is_normalized ), true
+      s.add 298;      @eq ( Ωimt_169 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_170 = -> s.is_normalized ), true
+      s.add 300, 301; @eq ( Ωimt_171 = -> [ s.walk()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_172 = -> s.is_normalized ), true
+      @eq ( Ωimt_173 = -> s.runs.length   ), 2
+      @eq ( Ωimt_174 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
+      @eq ( Ωimt_175 = -> s.runs[ 1 ]     ), { lo: 297, hi: 302, }
+      @eq ( Ωimt_176 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
-      @eq ( Ωimt_137 = -> [ s.walk_raw()..., ]       ), []
-      s.add 1;        @eq ( Ωimt_138 = -> [ s.walk_raw()..., ] ), [ 1,                               ]; @eq ( Ωimt_139 = -> s.is_normalized ), false
-      s.add 297;      @eq ( Ωimt_140 = -> [ s.walk_raw()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_141 = -> s.is_normalized ), false
-      s.add 299, 302; @eq ( Ωimt_142 = -> [ s.walk_raw()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_143 = -> s.is_normalized ), false
-      s.add 298;      @eq ( Ωimt_144 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_145 = -> s.is_normalized ), false
-      s.add 300, 301; @eq ( Ωimt_146 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_147 = -> s.is_normalized ), false
-      @eq ( Ωimt_148 = -> s.runs.length   ), 5
-      @eq ( Ωimt_149 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
-      @eq ( Ωimt_150 = -> s.runs[ 1 ]     ), { lo: 297, hi: 297, }
-      @eq ( Ωimt_151 = -> s.runs[ 2 ]     ), { lo: 299, hi: 302, }
-      @eq ( Ωimt_152 = -> s.runs[ 3 ]     ), { lo: 298, hi: 298, }
-      @eq ( Ωimt_153 = -> s.runs[ 4 ]     ), { lo: 300, hi: 301, }
-      @eq ( Ωimt_154 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
+      @eq ( Ωimt_177 = -> [ s.walk_raw()..., ]       ), []
+      s.add 1;        @eq ( Ωimt_178 = -> [ s.walk_raw()..., ] ), [ 1,                               ]; @eq ( Ωimt_179 = -> s.is_normalized ), false
+      s.add 297;      @eq ( Ωimt_180 = -> [ s.walk_raw()..., ] ), [ 1, 297,                          ]; @eq ( Ωimt_181 = -> s.is_normalized ), false
+      s.add 299, 302; @eq ( Ωimt_182 = -> [ s.walk_raw()..., ] ), [ 1, 297,      299, 300, 301, 302, ]; @eq ( Ωimt_183 = -> s.is_normalized ), false
+      s.add 298;      @eq ( Ωimt_184 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_185 = -> s.is_normalized ), false
+      s.add 300, 301; @eq ( Ωimt_186 = -> [ s.walk_raw()..., ] ), [ 1, 297, 298, 299, 300, 301, 302, ]; @eq ( Ωimt_187 = -> s.is_normalized ), false
+      @eq ( Ωimt_188 = -> s.runs.length   ), 5
+      @eq ( Ωimt_189 = -> s.runs[ 0 ]     ), { lo: 1, hi: 1, }
+      @eq ( Ωimt_190 = -> s.runs[ 1 ]     ), { lo: 297, hi: 297, }
+      @eq ( Ωimt_191 = -> s.runs[ 2 ]     ), { lo: 299, hi: 302, }
+      @eq ( Ωimt_192 = -> s.runs[ 3 ]     ), { lo: 298, hi: 298, }
+      @eq ( Ωimt_193 = -> s.runs[ 4 ]     ), { lo: 300, hi: 301, }
+      @eq ( Ωimt_194 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
     return null
@@ -258,67 +308,67 @@ PATH                      = require 'node:path'
     do =>
       h = new Hoard()
       s = h.create_scatter()
-      @throws ( Ωimt_155 = -> s.add 5.8         ), /expected an integer or a text, got a float/
-      @throws ( Ωimt_156 = -> s.add -3          ), /-0x3 is not between \+0x0 and \+0x10ffff/
-      @throws ( Ωimt_157 = -> s.add 0, -3       ), /-0x3 is not between \+0x0 and \+0x10ffff/
+      @throws ( Ωimt_195 = -> s.add 5.8         ), /expected an integer or a text, got a float/
+      @throws ( Ωimt_196 = -> s.add -3          ), /-0x3 is not between \+0x0 and \+0x10ffff/
+      @throws ( Ωimt_197 = -> s.add 0, -3       ), /-0x3 is not between \+0x0 and \+0x10ffff/
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard { first: -10, last: +10, }
       s = h.create_scatter()
-      s.add -10; @eq ( Ωimt_158 = -> s.points   ), [ -10, ]
-      s.add +10; @eq ( Ωimt_159 = -> s.points   ), [ -10, +10, ]
-      @throws ( Ωimt_160 = -> s.add -11         ), /-0xb is not between -0xa and \+0xa/
-      @throws ( Ωimt_161 = -> s.add +11         ), /\+0xb is not between -0xa and \+0xa/
+      s.add -10; @eq ( Ωimt_198 = -> s.points   ), [ -10, ]
+      s.add +10; @eq ( Ωimt_199 = -> s.points   ), [ -10, +10, ]
+      @throws ( Ωimt_200 = -> s.add -11         ), /-0xb is not between -0xa and \+0xa/
+      @throws ( Ωimt_201 = -> s.add +11         ), /\+0xb is not between -0xa and \+0xa/
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
-      s.add 'A';      @eq ( Ωimt_162 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
-      s.add 'A', 'Z'; @eq ( Ωimt_163 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90 ]
-      s.add 'a', 'z'; @eq ( Ωimt_164 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, \
+      s.add 'A';      @eq ( Ωimt_202 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
+      s.add 'A', 'Z'; @eq ( Ωimt_203 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90 ]
+      s.add 'a', 'z'; @eq ( Ωimt_204 = -> s.points   ), [ 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, \
                                                           100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, ]
-      @eq ( Ωimt_165 = -> s.min  ), ( 'A'.codePointAt 0 )
-      @eq ( Ωimt_166 = -> s.max  ), ( 'z'.codePointAt 0 )
-      @eq ( Ωimt_167 = -> { min: s.min, max: s.max, }  ), s.minmax
+      @eq ( Ωimt_205 = -> s.min  ), ( 'A'.codePointAt 0 )
+      @eq ( Ωimt_206 = -> s.max  ), ( 'z'.codePointAt 0 )
+      @eq ( Ωimt_207 = -> { min: s.min, max: s.max, }  ), s.minmax
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
       s.add 'Abc'
-      @eq ( Ωimt_168 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
+      @eq ( Ωimt_208 = -> s.points   ), [ ( 'A'.codePointAt 0 ), ]
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
       s.add_codepoints_of 'Abc'
-      @eq ( Ωimt_169 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
-      @eq ( Ωimt_170 = -> s.runs.length ), 3
+      @eq ( Ωimt_209 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
+      @eq ( Ωimt_210 = -> s.runs.length ), 3
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
       s.add_codepoints_of 'Abc'
-      @eq ( Ωimt_171 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
-      @eq ( Ωimt_172 = -> s.runs.length ), 3
+      @eq ( Ωimt_211 = -> s.points ), [ ( 'A'.codePointAt 0 ), ( 'b'.codePointAt 0 ), ( 'c'.codePointAt 0 ), ]
+      @eq ( Ωimt_212 = -> s.runs.length ), 3
       s.normalize()
-      @eq ( Ωimt_173 = -> s.runs.length ), 2
-      @eq ( Ωimt_174 = -> s.runs[ 0 ] ), { lo: ( 'A'.codePointAt 0 ), hi: ( 'A'.codePointAt 0 ), }
-      @eq ( Ωimt_175 = -> s.runs[ 1 ] ), { lo: ( 'b'.codePointAt 0 ), hi: ( 'c'.codePointAt 0 ), }
+      @eq ( Ωimt_213 = -> s.runs.length ), 2
+      @eq ( Ωimt_214 = -> s.runs[ 0 ] ), { lo: ( 'A'.codePointAt 0 ), hi: ( 'A'.codePointAt 0 ), }
+      @eq ( Ωimt_215 = -> s.runs[ 1 ] ), { lo: ( 'b'.codePointAt 0 ), hi: ( 'c'.codePointAt 0 ), }
       ;null
     #.......................................................................................................
     do =>
       h = new Hoard()
       s = h.create_scatter()
       s.add_codepoints_of 'aeiouäöü', 'aeiouäöü', 'AEIOUÄÖÜ', 'AEIOUÄÖÜ'
-      @eq ( Ωimt_176 = -> ( ( String.fromCodePoint cid ) for cid in s.points ).join '' ), 'AEIOUaeiouÄÖÜäöü'
-      @eq ( Ωimt_177 = -> s.runs.length ), 16
+      @eq ( Ωimt_216 = -> ( ( String.fromCodePoint cid ) for cid in s.points ).join '' ), 'AEIOUaeiouÄÖÜäöü'
+      @eq ( Ωimt_217 = -> s.runs.length ), 16
       s.normalize()
-      @eq ( Ωimt_178 = -> s.runs.length ), 16
+      @eq ( Ωimt_218 = -> s.runs.length ), 16
       ;null
     #.......................................................................................................
     return null
@@ -331,10 +381,10 @@ PATH                      = require 'node:path'
       h = new Hoard()
       s = h.create_scatter { data: { tags: [ 'vowel', ], }, }
       s.add_codepoints_of 'aeiouäöü', 'aeiouäöü', 'AEIOUÄÖÜ', 'AEIOUÄÖÜ'
-      @eq ( Ωimt_179 = -> s.contains 'A' ), true
-      @eq ( Ωimt_180 = -> s.data_for 'A' ), { tags: [ 'vowel', ], }
-      @eq ( Ωimt_181 = -> s.contains 'B' ), false
-      @eq ( Ωimt_182 = -> s.data_for 'B' ), { tags: [ 'vowel', ], }
+      @eq ( Ωimt_219 = -> s.contains 'A' ), true
+      @eq ( Ωimt_220 = -> s.data_for 'A' ), { tags: [ 'vowel', ], }
+      @eq ( Ωimt_221 = -> s.contains 'B' ), false
+      @eq ( Ωimt_222 = -> s.data_for 'B' ), { tags: [ 'vowel', ], }
       ;null
     #.......................................................................................................
     return null
@@ -345,14 +395,14 @@ PATH                      = require 'node:path'
 # #-----------------------------------------------------------------------------------------------------------
 # sum_of_data = ( a, b ) =>
 #   data = [ a.data ? [], b.data ? [], ].flat()
-#   # debug 'Ωimt_183', { a, b, }
-#   # debug 'Ωimt_184', { a..., data, }
+#   # debug 'Ωimt_223', { a, b, }
+#   # debug 'Ωimt_224', { a..., data, }
 #   { a..., data, }
 # create_reducer = ( fn ) -> ( ranges ) => ranges.reduce( fn );
 
 # #===========================================================================================================
 # demo_intervals_fn = ->
-#   # debug 'Ωimt_185', ( k for k of IFN ).sort()
+#   # debug 'Ωimt_225', ( k for k of IFN ).sort()
 #   #=========================================================================================================
 #   do =>
 #     rng_1       = [
@@ -365,7 +415,7 @@ PATH                      = require 'node:path'
 #     merged      = IFN.merge ( create_reducer sum_of_data ), rng_1
 #     #.........................................................................................................
 #     urge()
-#     urge 'Ωimt_186', idx + 1, rng for rng, idx in merged
+#     urge 'Ωimt_226', idx + 1, rng for rng, idx in merged
 #     urge()
 #     ;null
 #   #=========================================================================================================
@@ -379,60 +429,60 @@ PATH                      = require 'node:path'
 #     merged      = rng_1.merge ( create_reducer sum_of_data )
 #     #.........................................................................................................
 #     urge()
-#     urge 'Ωimt_187', idx + 1, rng for rng, idx in merged.ranges
+#     urge 'Ωimt_227', idx + 1, rng for rng, idx in merged.ranges
 #     urge()
 #     ;null
 #   #.........................................................................................................
-#   a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_188', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_189', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_190', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_191', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_192', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_193', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_228', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_229', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_230', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_231', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_232', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_233', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
 #   try
-#     a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_194', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   catch e then warn 'Ωimt_195', e.message
+#     a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_234', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
+#   catch e then warn 'Ωimt_235', e.message
 #   info()
-#   info 'Ωimt_196', IFN.simplify []
-#   info 'Ωimt_197', IFN.simplify [ { start: 4, end: 20, }, ]
-#   info 'Ωimt_198', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_199', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_200', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_201', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_202', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
-#   info 'Ωimt_203', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
-#   info 'Ωimt_204', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
+#   info 'Ωimt_236', IFN.simplify []
+#   info 'Ωimt_237', IFN.simplify [ { start: 4, end: 20, }, ]
+#   info 'Ωimt_238', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_239', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_240', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_241', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
+#   info 'Ωimt_242', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
+#   info 'Ωimt_243', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
+#   info 'Ωimt_244', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
 #   info()
-#   info 'Ωimt_205', ( ( new Rangeset() ).add()                                                                        ).simplify()
-#   info 'Ωimt_206', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
-#   info 'Ωimt_207', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_208', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_209', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_210', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_211', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
-#   info 'Ωimt_212', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
-#   info 'Ωimt_213', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
+#   info 'Ωimt_245', ( ( new Rangeset() ).add()                                                                        ).simplify()
+#   info 'Ωimt_246', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
+#   info 'Ωimt_247', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_248', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_249', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_250', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
+#   info 'Ωimt_251', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
+#   info 'Ωimt_252', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
+#   info 'Ωimt_253', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
 #   info()
-#   info 'Ωimt_214', ( ( new Rangeset() ).add()                                                                        ).simplify()
-#   info 'Ωimt_215', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
-#   info 'Ωimt_216', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_217', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_218', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_219', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_220', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
-#   info 'Ωimt_221', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
-#   info 'Ωimt_222', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
+#   info 'Ωimt_254', ( ( new Rangeset() ).add()                                                                        ).simplify()
+#   info 'Ωimt_255', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
+#   info 'Ωimt_256', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_257', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_258', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_259', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
+#   info 'Ωimt_260', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
+#   info 'Ωimt_261', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
+#   info 'Ωimt_262', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
 #   rng_2 = [
 #     { start:  3, end: 10, data: 2, }
 #     { start:  9, end: 13, data: 3, }
 #     { start: 11, end: 14, data: 5, }
 #     ]
 #   merge_data_2 = ( a, b ) ->
-#     # debug 'Ωimt_223', { a, b, } #, { a..., b..., }
+#     # debug 'Ωimt_263', { a, b, } #, { a..., b..., }
 #     return { a..., data: a.data * b.data, }
 #   merged = IFN.merge ( create_reducer merge_data_2 ), rng_2 # [{ start: 3, end: 14 }]
-#   info 'Ωimt_224', rng for rng in merged
-#   # urge 'Ωimt_225', rng for rng in merged_ft
+#   info 'Ωimt_264', rng for rng in merged
+#   # urge 'Ωimt_265', rng for rng in merged_ft
 #   # urge()
 #   ;null
 
@@ -445,6 +495,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { basic_runs: tests.basic_runs, }
+  ( new Test guytest_cfg ).test { containment: tests.containment, }
   # ( new Test guytest_cfg ).test { basic_scatters: tests.basic_scatters, }
 
