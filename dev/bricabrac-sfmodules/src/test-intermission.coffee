@@ -363,7 +363,8 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   data_retrieval: ->
-    { Hoard,                    } = SFMODULES.require_intermission()
+    { Hoard,
+      summarize_data,  } = SFMODULES.require_intermission()
     #.......................................................................................................
     do =>
       h = new Hoard()
@@ -383,7 +384,7 @@ PATH                      = require 'node:path'
     #.......................................................................................................
     do =>
       class Vu_hoard extends Hoard
-        normalize_data_is_ascii: ( values ) -> values.reduce ( ( acc, cur ) -> acc and cur ? false ), true
+        summarize_data_is_ascii: summarize_data.as_boolean_and
       h = new Vu_hoard()
       sv = h.add_scatter { data: { tags: [ 'vowel', ], is_ascii: true, }, }
       su = h.add_scatter { data: { tags: [ 'umlaut', ], }, }
