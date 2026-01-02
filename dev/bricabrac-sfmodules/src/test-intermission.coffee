@@ -56,7 +56,7 @@ PATH                      = require 'node:path'
     d = h.create_run { lo: 7, hi: 21, }; @eq ( Ωimt___9 = -> [ d, d.size, ] ), [ { lo: 7, hi: 21, }, 15, ]
     #.......................................................................................................
     @eq ( Ωimt__10 = -> ( h.create_run 1, 1 ).scatter ), undefined
-    return null
+    ;null
 
   #---------------------------------------------------------------------------------------------------------
   basic_scatters: ->
@@ -118,7 +118,7 @@ PATH                      = require 'node:path'
       s.add_run 100;  @eq ( Ωimt__51 = -> s.runs.length ), 2; @eq ( Ωimt__52 = -> s.is_normalized ), true
       s.add_run 101;  @eq ( Ωimt__53 = -> s.runs.length ), 2; @eq ( Ωimt__54 = -> s.is_normalized ), true
       #.....................................................................................................
-      debug 'Ωimt__55', run for run in s.runs
+      # debug 'Ωimt__55', run for run in s.runs
       @eq ( Ωimt__56 = -> s.data            ), { a: 4, }
       @eq ( Ωimt__57 = -> s.runs[ 0 ]       ), { lo: 100, hi: 101, }
       @eq ( Ωimt__58 = -> s.runs[ 1 ]       ), { lo: 103, hi: 103, }
@@ -152,7 +152,7 @@ PATH                      = require 'node:path'
       @eq ( Ωimt__80 = -> s.runs[ 2 ] ), { lo: 110, hi: 110, }
       ;null
     #.......................................................................................................
-    return null
+    ;null
 
   #---------------------------------------------------------------------------------------------------------
   containment: ->
@@ -238,7 +238,7 @@ PATH                      = require 'node:path'
       @eq ( Ωimt_143 = -> s.is_normalized                             ), true
       ;null
     #.......................................................................................................
-    return null
+    ;null
 
   #---------------------------------------------------------------------------------------------------------
   iteration: ->
@@ -296,7 +296,7 @@ PATH                      = require 'node:path'
       @eq ( Ωimt_191 = -> s.points        ), [ 1, 297, 298, 299, 300, 301, 302 ]
       ;null
     #.......................................................................................................
-    return null
+    ;null
 
   #---------------------------------------------------------------------------------------------------------
   using_strings_for_bounds: ->
@@ -359,7 +359,7 @@ PATH                      = require 'node:path'
       @eq ( Ωimt_213 = -> s.runs.length ), 16
       ;null
     #.......................................................................................................
-    return null
+    ;null
 
   #---------------------------------------------------------------------------------------------------------
   data_retrieval: ->
@@ -376,10 +376,10 @@ PATH                      = require 'node:path'
       @eq ( Ωimt_215 = -> s_vowels.contains 'A'.codePointAt 0   ), true
       @eq ( Ωimt_216 = -> s_vowels.contains 'B'                 ), false
       @eq ( Ωimt_217 = -> s_vowels.contains 'B'.codePointAt 0   ), false
-      @eq ( Ωimt_218 = -> h.summarize_data_for  'A'       ), { is_ascii: [ true, ], tags: [ 'vowel', ], }
-      @eq ( Ωimt_219 = -> h.summarize_data_for  'ä'       ), { is_ascii: [ true, ], tags: [ 'umlaut', 'vowel', ], }
-      @eq ( Ωimt_220 = -> h.summarize_data_for  'B'       ), null
-      @eq ( Ωimt_221 = -> h.summarize_data_for  'y'       ), null
+      @eq ( Ωimt_218 = -> h.summarize_data_for_point  'A'       ), { is_ascii: [ true, ], tags: [ 'vowel', ], }
+      @eq ( Ωimt_219 = -> h.summarize_data_for_point  'ä'       ), { is_ascii: [ true, ], tags: [ 'umlaut', 'vowel', ], }
+      @eq ( Ωimt_220 = -> h.summarize_data_for_point  'B'       ), null
+      @eq ( Ωimt_221 = -> h.summarize_data_for_point  'y'       ), null
       ;null
     #.......................................................................................................
     do =>
@@ -400,127 +400,86 @@ PATH                      = require 'node:path'
       @eq ( Ωimt_226 = -> s_vowels.contains     'A'.codePointAt 0 ), true
       @eq ( Ωimt_227 = -> s_vowels.contains     'B'               ), false
       @eq ( Ωimt_228 = -> s_vowels.contains     'B'.codePointAt 0 ), false
-      @eq ( Ωimt_229 = -> h.get_data_for        'A'               ), [ { is_ascii: true }, { tags: [ 'vowel' ] } ]
-      @eq ( Ωimt_230 = -> h.get_data_for        'A'.codePointAt 0 ), [ { is_ascii: true }, { tags: [ 'vowel' ] } ]
-      @eq ( Ωimt_231 = -> h.get_data_for        'Q'               ), [ { is_ascii: true }, ]
-      @eq ( Ωimt_232 = -> h.get_data_for        'f'               ), [ { is_ascii: true }, ]
-      @eq ( Ωimt_233 = -> h.get_data_for        'B'               ), [ { is_ascii: true }, ]
-      @eq ( Ωimt_234 = -> h.get_data_for        'B'.codePointAt 0 ), [ { is_ascii: true }, ]
-      @eq ( Ωimt_235 = -> h.get_data_for        'ä'               ), [ { tags: [ 'vowel', ], }, { tags: [ 'umlaut', ], }, ]
-      @eq ( Ωimt_236 = -> h.summarize_data_for  'A'               ), { is_ascii: true, tags: [ 'vowel' ], }
-      @eq ( Ωimt_237 = -> h.summarize_data_for  'A'.codePointAt 0 ), { is_ascii: true, tags: [ 'vowel' ], }
-      @eq ( Ωimt_238 = -> h.summarize_data_for  'Q'               ), { is_ascii: true, }
-      @eq ( Ωimt_239 = -> h.summarize_data_for  'f'               ), { is_ascii: true, }
-      @eq ( Ωimt_240 = -> h.summarize_data_for  'B'               ), { is_ascii: true, }
-      @eq ( Ωimt_241 = -> h.summarize_data_for  'B'.codePointAt 0 ), { is_ascii: true, }
-      @eq ( Ωimt_242 = -> h.summarize_data_for  'ä'               ), { tags: [ 'umlaut', 'vowel', ], }
+      @eq ( Ωimt_229 = -> h.get_data_for_point        'A'               ), [ { is_ascii: true }, { tags: [ 'vowel' ] } ]
+      @eq ( Ωimt_230 = -> h.get_data_for_point        'A'.codePointAt 0 ), [ { is_ascii: true }, { tags: [ 'vowel' ] } ]
+      @eq ( Ωimt_231 = -> h.get_data_for_point        'Q'               ), [ { is_ascii: true }, ]
+      @eq ( Ωimt_232 = -> h.get_data_for_point        'f'               ), [ { is_ascii: true }, ]
+      @eq ( Ωimt_233 = -> h.get_data_for_point        'B'               ), [ { is_ascii: true }, ]
+      @eq ( Ωimt_234 = -> h.get_data_for_point        'B'.codePointAt 0 ), [ { is_ascii: true }, ]
+      @eq ( Ωimt_235 = -> h.get_data_for_point        'ä'               ), [ { tags: [ 'vowel', ], }, { tags: [ 'umlaut', ], }, ]
+      @eq ( Ωimt_236 = -> h.summarize_data_for_point  'A'               ), { is_ascii: true, tags: [ 'vowel' ], }
+      @eq ( Ωimt_237 = -> h.summarize_data_for_point  'A'.codePointAt 0 ), { is_ascii: true, tags: [ 'vowel' ], }
+      @eq ( Ωimt_238 = -> h.summarize_data_for_point  'Q'               ), { is_ascii: true, }
+      @eq ( Ωimt_239 = -> h.summarize_data_for_point  'f'               ), { is_ascii: true, }
+      @eq ( Ωimt_240 = -> h.summarize_data_for_point  'B'               ), { is_ascii: true, }
+      @eq ( Ωimt_241 = -> h.summarize_data_for_point  'B'.codePointAt 0 ), { is_ascii: true, }
+      @eq ( Ωimt_242 = -> h.summarize_data_for_point  'ä'               ), { tags: [ 'umlaut', 'vowel', ], }
       #.....................................................................................................
       s_not_ascii = h.add_scatter { data: { is_ascii: false, }, }
       s_not_ascii.add_run 0x80, 0x10ffff
-      @eq ( Ωimt_243 = -> h.summarize_data_for  'B'               ), { is_ascii: true, }
-      @eq ( Ωimt_244 = -> h.summarize_data_for  'ä'               ), { is_ascii: false, tags: [ 'umlaut', 'vowel', ], }
+      @eq ( Ωimt_243 = -> h.summarize_data_for_point  'B'               ), { is_ascii: true, }
+      @eq ( Ωimt_244 = -> h.summarize_data_for_point  'ä'               ), { is_ascii: false, tags: [ 'umlaut', 'vowel', ], }
       ### TAINT this should probably cause a validation error ###
-      @eq ( Ωimt_245 = -> h.summarize_data_for  'äwhat'           ), null
+      @eq ( Ωimt_245 = -> h.summarize_data_for_point  'äwhat'           ), null
       ;null
     #.......................................................................................................
-    return null
+    ;null
 
+  #---------------------------------------------------------------------------------------------------------
+  validation: ->
+    { Type,
+      Typespace,              } = SFMODULES.unstable.require_nanotypes_v2()
+    #.......................................................................................................
+    class My_typespace extends Typespace
+      #...................................................................................................
+      @integer: ( x ) ->
+        @assign { x, }
+        return true if Number.isSafeInteger x
+        return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
+        return @fail "#{rpr x} is not even a finite number"
+      #...................................................................................................
+      @text: ( x ) ->
+        @assign { x, }
+        return true if ( typeof x ) is 'string'
+        ;false
+      #...................................................................................................
+      @point: ( x ) ->
+        @assign { x, }
+        return true if ( @T.integer.isa x )
+        return @fail "#{rpr x} is not an integer and not a text"          unless ( @T.text.isa x )
+        return @fail "#{rpr x} is a text but not with a single codepoint" unless ( ( Array.from x ).length is 1 )
+        ;true
+        # return true if Number.isSafeInteger x
+        # return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
+        # return @fail "#{rpr x} is not even a finite number"
+    #.....................................................................................................
+    T = new My_typespace()
+    debug 'Ωimt_246', T.integer
+    debug 'Ωimt_247', T.integer.isa
+    #.......................................................................................................
+    @eq ( Ωimt_248 = -> T.integer.isa           5         ), true
+    @eq ( Ωimt_249 = -> T.point.isa             5         ), true
+    @eq ( Ωimt_250 = -> T.point.isa             'a'       ), true
+    #.......................................................................................................
+    @eq ( Ωimt_251 = -> T.integer.isa           55.5      ), false
+    @eq ( Ωimt_252 = -> T.point.isa             55.5      ), false
+    @eq ( Ωimt_253 = -> T.point.isa             'abc'     ), false
+    #.......................................................................................................
+    @eq ( Ωimt_254 = -> T.integer.validate      5         ), 5
+    @eq ( Ωimt_255 = -> T.point.validate        5         ), 5
+    @eq ( Ωimt_256 = -> T.point.validate        'a'       ), 'a'
+    #.......................................................................................................
+    @eq ( Ωimt_257 = -> try T.integer.validate  55.5  catch e then return e.message ), """(integer) not a valid integer: 55.5 – 55.5 is a non-integer number"""
+    @eq ( Ωimt_258 = -> try T.point.validate    55.5  catch e then return e.message ), """(point) not a valid point: 55.5 – 55.5 is not an integer and not a text"""
+    @eq ( Ωimt_259 = -> try T.point.validate    'abc' catch e then return e.message ), """(point) not a valid point: abc – 'abc' is a text but not with a single codepoint"""
+    #.......................................................................................................
+    @throws ( Ωimt_260 = -> T.integer.validate  55.5      ), /not a valid integer/
+    @throws ( Ωimt_261 = -> T.point.validate    55.5      ), /not a valid point/
+    @throws ( Ωimt_262 = -> T.point.validate    'abc'     ), /not a valid point/
+    @throws ( Ωimt_262 = -> T.point.validate    ''        ), /not a valid point/
+    #.......................................................................................................
+    ;null
 
-
-# f = ->
-# #-----------------------------------------------------------------------------------------------------------
-# sum_of_data = ( a, b ) =>
-#   data = [ a.data ? [], b.data ? [], ].flat()
-#   # debug 'Ωimt_246', { a, b, }
-#   # debug 'Ωimt_247', { a..., data, }
-#   { a..., data, }
-# create_reducer = ( fn ) -> ( ranges ) => ranges.reduce( fn );
-
-# #===========================================================================================================
-# demo_intervals_fn = ->
-#   # debug 'Ωimt_248', ( k for k of IFN ).sort()
-#   #=========================================================================================================
-#   do =>
-#     rng_1       = [
-#       { start: 1, end:  10, data:   5, }
-#       { start: 4, end:   7, data:  10, }
-#       { start: 4, end:  12, data:  12, }
-#       { start: 0, end: 100, data: 102, }
-#       { start: 0, end: 100, data: 101, }
-#       ]
-#     merged      = IFN.merge ( create_reducer sum_of_data ), rng_1
-#     #.........................................................................................................
-#     urge()
-#     urge 'Ωimt_249', idx + 1, rng for rng, idx in merged
-#     urge()
-#     ;null
-#   #=========================================================================================================
-#   do =>
-#     rng_1       = new Rangeset 1
-#     rng_1.add { lo: 1, hi:   9, }
-#     rng_1.add { lo: 4, hi:   6, }
-#     rng_1.add { lo: 4, hi:  11, }
-#     rng_1.add { lo: 0, hi:  99, }
-#     rng_1.add { lo: 0, hi:  99, }
-#     merged      = rng_1.merge ( create_reducer sum_of_data )
-#     #.........................................................................................................
-#     urge()
-#     urge 'Ωimt_250', idx + 1, rng for rng, idx in merged.ranges
-#     urge()
-#     ;null
-#   #.........................................................................................................
-#   a = { start: 40, end: 49, }; b = { start: 50, end: 59, }; help 'Ωimt_251', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start: 40, end: 50, }; b = { start: 50, end: 59, }; help 'Ωimt_252', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start: 40, end: 51, }; b = { start: 50, end: 59, }; help 'Ωimt_253', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start: 40, end: 52, }; b = { start: 50, end: 59, }; help 'Ωimt_254', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start:  5, end: 10, }; b = { start: 0, end: 4 }; help 'Ωimt_255', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   a = { start:  5, end: 10, }; b = { start: 7, end: 8 }; help 'Ωimt_256', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   try
-#     a = { start:  5, end: 10, }; b = [ { start: 0, end: 4 }, { start: 7, end: 8 }, ]; help 'Ωimt_257', a, b, { meeting: ( IFN.isMeeting a, b ), overlapping: ( IFN.isOverlapping a, b ), overlapping_s: ( IFN.isOverlappingSimple a, b ), }
-#   catch e then warn 'Ωimt_258', e.message
-#   info()
-#   info 'Ωimt_259', IFN.simplify []
-#   info 'Ωimt_260', IFN.simplify [ { start: 4, end: 20, }, ]
-#   info 'Ωimt_261', IFN.simplify [ { start: 4, end: 18, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_262', IFN.simplify [ { start: 4, end: 19, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_263', IFN.simplify [ { start: 4, end: 20, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_264', IFN.simplify [ { start: 4, end: 21, }, { start: 19, end: 22, }, ]
-#   info 'Ωimt_265', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, ]
-#   info 'Ωimt_266', IFN.simplify [ { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, }, ] # [{ start: 3, end: 14 }]
-#   info 'Ωimt_267', IFN.simplify [ { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, }, ]
-#   info()
-#   info 'Ωimt_268', ( ( new Rangeset() ).add()                                                                        ).simplify()
-#   info 'Ωimt_269', ( ( new Rangeset() ).add { start: 4, end: 20, }                                                   ).simplify()
-#   info 'Ωimt_270', ( ( new Rangeset() ).add { start: 4, end: 18, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_271', ( ( new Rangeset() ).add { start: 4, end: 19, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_272', ( ( new Rangeset() ).add { start: 4, end: 20, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_273', ( ( new Rangeset() ).add { start: 4, end: 21, }, { start: 19, end: 22, }                          ).simplify()
-#   info 'Ωimt_274', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }                          ).simplify()
-#   info 'Ωimt_275', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start:  9, end: 13, }, { start: 11, end: 14, } ).simplify() # [{ start: 3, end: 14 }]
-#   info 'Ωimt_276', ( ( new Rangeset() ).add { start: 3, end:  9, }, { start: 10, end: 13, }, { start: 11, end: 14, } ).simplify()
-#   info()
-#   info 'Ωimt_277', ( ( new Rangeset() ).add()                                                                        ).simplify()
-#   info 'Ωimt_278', ( ( new Rangeset() ).add { lo: 4, hi: 19, }                                                       ).simplify()
-#   info 'Ωimt_279', ( ( new Rangeset() ).add { lo: 4, hi: 17, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_280', ( ( new Rangeset() ).add { lo: 4, hi: 18, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_281', ( ( new Rangeset() ).add { lo: 4, hi: 19, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_282', ( ( new Rangeset() ).add { lo: 4, hi: 20, }, { lo: 19, hi: 21, }                                  ).simplify()
-#   info 'Ωimt_283', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }                                  ).simplify()
-#   info 'Ωimt_284', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo:  9, hi: 12, }, { lo: 11, hi: 13, }             ).simplify() # [{ lo: 3, hi: 13 }]
-#   info 'Ωimt_285', ( ( new Rangeset() ).add { lo: 3, hi:  8, }, { lo: 10, hi: 12, }, { lo: 11, hi: 13, }             ).simplify()
-#   rng_2 = [
-#     { start:  3, end: 10, data: 2, }
-#     { start:  9, end: 13, data: 3, }
-#     { start: 11, end: 14, data: 5, }
-#     ]
-#   merge_data_2 = ( a, b ) ->
-#     # debug 'Ωimt_286', { a, b, } #, { a..., b..., }
-#     return { a..., data: a.data * b.data, }
-#   merged = IFN.merge ( create_reducer merge_data_2 ), rng_2 # [{ start: 3, end: 14 }]
-#   info 'Ωimt_287', rng for rng in merged
-#   # urge 'Ωimt_288', rng for rng in merged_ft
-#   # urge()
-#   ;null
 
 
 #===========================================================================================================
