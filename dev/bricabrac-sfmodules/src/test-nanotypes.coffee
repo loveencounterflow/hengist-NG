@@ -242,10 +242,66 @@ SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
       return null
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  nanotypes_v2_validation: ->
+    { Type,
+      Typespace,              } = SFMODULES.unstable.require_nanotypes_v2()
+    #.......................................................................................................
+    class My_typespace extends Typespace
+      #...................................................................................................
+      @integer: ( x ) ->
+        @assign { x, }
+        return true if Number.isSafeInteger x
+        return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
+        return @fail "#{rpr x} is not even a finite number"
+      #...................................................................................................
+      @text: ( x ) ->
+        @assign { x, }
+        return true if ( typeof x ) is 'string'
+        ;false
+      #...................................................................................................
+      @point: ( x ) ->
+        @assign { x, }
+        return true if ( @T.integer.isa x )
+        return @fail "#{rpr x} is not an integer and not a text"          unless ( @T.text.isa x )
+        return @fail "#{rpr x} is a text but not with a single codepoint" unless ( ( Array.from x ).length is 1 )
+        ;true
+        # return true if Number.isSafeInteger x
+        # return @fail "#{rpr x} is a non-integer number", { fraction: x % 1, } if Number.isFinite x
+        # return @fail "#{rpr x} is not even a finite number"
+    #.....................................................................................................
+    T = new My_typespace()
+    debug 'Ωbbntt__57', T.integer
+    debug 'Ωbbntt__58', T.integer.isa
+    #.......................................................................................................
+    @eq ( Ωbbntt__59 = -> T.integer.isa           5         ), true
+    @eq ( Ωbbntt__60 = -> T.point.isa             5         ), true
+    @eq ( Ωbbntt__61 = -> T.point.isa             'a'       ), true
+    #.......................................................................................................
+    @eq ( Ωbbntt__62 = -> T.integer.isa           55.5      ), false
+    @eq ( Ωbbntt__63 = -> T.point.isa             55.5      ), false
+    @eq ( Ωbbntt__64 = -> T.point.isa             'abc'     ), false
+    #.......................................................................................................
+    @eq ( Ωbbntt__65 = -> T.integer.validate      5         ), 5
+    @eq ( Ωbbntt__66 = -> T.point.validate        5         ), 5
+    @eq ( Ωbbntt__67 = -> T.point.validate        'a'       ), 'a'
+    #.......................................................................................................
+    @eq ( Ωbbntt__68 = -> try T.integer.validate  55.5  catch e then return e.message ), """(integer) not a valid integer: 55.5 – 55.5 is a non-integer number"""
+    @eq ( Ωbbntt__69 = -> try T.point.validate    55.5  catch e then return e.message ), """(point) not a valid point: 55.5 – 55.5 is not an integer and not a text"""
+    @eq ( Ωbbntt__70 = -> try T.point.validate    'abc' catch e then return e.message ), """(point) not a valid point: abc – 'abc' is a text but not with a single codepoint"""
+    #.......................................................................................................
+    @throws ( Ωbbntt__71 = -> T.integer.validate  55.5      ), /not a valid integer/
+    @throws ( Ωbbntt__72 = -> T.point.validate    55.5      ), /not a valid point/
+    @throws ( Ωbbntt__73 = -> T.point.validate    'abc'     ), /not a valid point/
+    @throws ( Ωbbntt__74 = -> T.point.validate    ''        ), /not a valid point/
+    #.......................................................................................................
+    ;null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @tasks
   # ( new Test guytest_cfg ).test { type_data_handling: @tasks.type_data_handling, }
