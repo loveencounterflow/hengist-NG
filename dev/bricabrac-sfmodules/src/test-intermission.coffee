@@ -530,8 +530,10 @@ PATH                      = require 'node:path'
     insert_data.run { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
     insert_data.run { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
     echo { row..., } for row from db.walk SQL"""select * from #{IDN "#{prefix}_hoard_scatters"}"""
-    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( '{"z":1,"a":1}' ) as ndata;"""
-    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( '{"a":1,"z":1}' ) as ndata;"""
+    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
+    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
+    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
+    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
     #.......................................................................................................
     ;null
 
@@ -548,4 +550,5 @@ if module is require.main then await do =>
   ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { dbric_integration: tests.dbric_integration, }
   # ( new Test guytest_cfg ).test { basic_scatters: tests.basic_scatters, }
+  ;null
 
