@@ -1091,27 +1091,27 @@ remove = ( path ) ->
       #.....................................................................................................
       phrases.statements.populate_keywords.run()
       #.....................................................................................................
-      # echo 'Ωbbdbr_216', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
+      # echo 'Ωbbdbr_215', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
       # echo()
       rows = phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
-      @eq ( Ωbbdbr_217 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
-      @eq ( Ωbbdbr_218 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
-      @eq ( Ωbbdbr_219 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_216 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
+      @eq ( Ωbbdbr_217 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
+      @eq ( Ωbbdbr_218 = -> rows.next().value ), undefined
       #.....................................................................................................
-      # echo 'Ωbbdbr_220', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
+      # echo 'Ωbbdbr_219', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
       # echo()
       rows = phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
-      @eq ( Ωbbdbr_221 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
-      @eq ( Ωbbdbr_222 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
-      @eq ( Ωbbdbr_223 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
-      @eq ( Ωbbdbr_224 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
-      @eq ( Ωbbdbr_225 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
-      @eq ( Ωbbdbr_226 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
-      @eq ( Ωbbdbr_227 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
-      @eq ( Ωbbdbr_228 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
-      @eq ( Ωbbdbr_229 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
-      @eq ( Ωbbdbr_230 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
-      @eq ( Ωbbdbr_231 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_220 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
+      @eq ( Ωbbdbr_221 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
+      @eq ( Ωbbdbr_222 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
+      @eq ( Ωbbdbr_223 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
+      @eq ( Ωbbdbr_224 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
+      @eq ( Ωbbdbr_225 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
+      @eq ( Ωbbdbr_226 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
+      @eq ( Ωbbdbr_227 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
+      @eq ( Ωbbdbr_228 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
+      @eq ( Ωbbdbr_229 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
+      @eq ( Ωbbdbr_230 = -> rows.next().value ), undefined
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -1135,48 +1135,149 @@ remove = ( path ) ->
   #     object_output = { a: '\u{00e4}', is_good: true, z: 'Z', }
   #     db.set_variable 'obj', object_input
   #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_232 = -> db.get_variable 'filename'                                          ), __filename
-  #     @eq ( Ωbbdbr_233 = -> db.get_variable 'obj'                                               ), object_output
-  #     @eq ( Ωbbdbr_234 = -> Object.keys db.get_variable 'obj'                                   ), Object.keys object_output
-  #     @eq ( Ωbbdbr_235 = -> db.get_all SQL"""select * from std_sequences;"""                    ), [ { name: 'seq:global:rowid', value: 0, delta: 1 } ]
+  #     @eq ( Ωbbdbr_231 = -> db.get_variable 'filename'                                          ), __filename
+  #     @eq ( Ωbbdbr_232 = -> db.get_variable 'obj'                                               ), object_output
+  #     @eq ( Ωbbdbr_233 = -> Object.keys db.get_variable 'obj'                                   ), Object.keys object_output
+  #     @eq ( Ωbbdbr_234 = -> db.get_all SQL"""select * from std_sequences;"""                    ), [ { name: 'seq:global:rowid', value: 0, delta: 1 } ]
   #     #.....................................................................................................
   #     get_next_rowid    = SQL"""select    std_get_next_in_sequence( 'seq:global:rowid'  ) as rowid from std_sequences;"""
   #     get_current_rowid = SQL"""select std_get_current_in_sequence( 'seq:global:rowid'  ) as rowid from std_sequences;"""
   #     get_next_count    = SQL"""select    std_get_next_in_sequence( 'seq:app:count'     ) as count from std_sequences;"""
   #     get_current_count = SQL"""select std_get_current_in_sequence( 'seq:app:count'     ) as count from std_sequences;"""
-  #     try db.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_236', e.message
-  #     try db.w.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_237', e.message
+  #     try db.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_235', e.message
+  #     try db.w.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_236', e.message
   #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_238 = -> ( db.get_first get_next_rowid ).rowid                                   ), 1
-  #     @eq ( Ωbbdbr_239 = -> ( db.get_first get_next_rowid ).rowid                                   ), 2
-  #     @eq ( Ωbbdbr_240 = -> ( db.get_first get_next_rowid ).rowid                                   ), 3
-  #     @eq ( Ωbbdbr_241 = -> ( db.get_first get_next_rowid ).rowid                                   ), 4
+  #     @eq ( Ωbbdbr_237 = -> ( db.get_first get_next_rowid ).rowid                                   ), 1
+  #     @eq ( Ωbbdbr_238 = -> ( db.get_first get_next_rowid ).rowid                                   ), 2
+  #     @eq ( Ωbbdbr_239 = -> ( db.get_first get_next_rowid ).rowid                                   ), 3
+  #     @eq ( Ωbbdbr_240 = -> ( db.get_first get_next_rowid ).rowid                                   ), 4
   #     #.....................................................................................................
+  #     @eq ( Ωbbdbr_241 = -> ( db.get_first get_current_rowid ).rowid                                ), 4
   #     @eq ( Ωbbdbr_242 = -> ( db.get_first get_current_rowid ).rowid                                ), 4
-  #     @eq ( Ωbbdbr_243 = -> ( db.get_first get_current_rowid ).rowid                                ), 4
   #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_244 = -> ( db.get_first get_next_rowid ).rowid                                   ), 5
-  #     @eq ( Ωbbdbr_245 = -> ( db.get_first get_current_rowid ).rowid                                ), 5
-  #     try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_246', e.message
-  #     try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_247', e.message
+  #     @eq ( Ωbbdbr_243 = -> ( db.get_first get_next_rowid ).rowid                                   ), 5
+  #     @eq ( Ωbbdbr_244 = -> ( db.get_first get_current_rowid ).rowid                                ), 5
+  #     try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_245', e.message
+  #     try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_246', e.message
   #     # #.....................................................................................................
-  #     try db.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_248', e.message
-  #     @eq ( Ωbbdbr_249 = -> db.std_create_sequence 'seq:app:count', { value: 100, delta: +2, }  ), null
-  #     try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_250', e.message
-  #     # try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_251', e.message
-  #     @eq ( Ωbbdbr_252 = -> db.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
-  #     @eq ( Ωbbdbr_253 = -> db.w.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
-  #     # try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_254', e.message
-  #     # try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_255', e.message
-  #     # @eq ( Ωbbdbr_256 = -> db.w.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
-  #     # @eq ( Ωbbdbr_257 = -> ( db.get_first get_current_count ).count                                ), 100
-  #     # @eq ( Ωbbdbr_258 = -> ( db.w.get_first get_current_count ).count                                ), 100
-  #     # @eq ( Ωbbdbr_259 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 102
-  #     # @eq ( Ωbbdbr_260 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 104
-  #     # @eq ( Ωbbdbr_261 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 106
+  #     try db.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_247', e.message
+  #     @eq ( Ωbbdbr_248 = -> db.std_create_sequence 'seq:app:count', { value: 100, delta: +2, }  ), null
+  #     try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_249', e.message
+  #     # try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_250', e.message
+  #     @eq ( Ωbbdbr_251 = -> db.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
+  #     @eq ( Ωbbdbr_252 = -> db.w.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
+  #     # try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_253', e.message
+  #     # try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_254', e.message
+  #     # @eq ( Ωbbdbr_255 = -> db.w.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
+  #     # @eq ( Ωbbdbr_256 = -> ( db.get_first get_current_count ).count                                ), 100
+  #     # @eq ( Ωbbdbr_257 = -> ( db.w.get_first get_current_count ).count                                ), 100
+  #     # @eq ( Ωbbdbr_258 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 102
+  #     # @eq ( Ωbbdbr_259 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 104
+  #     # @eq ( Ωbbdbr_260 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 106
   #     ;null
   #   #.......................................................................................................
   #   ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  dbric_std_variables_and_sequences_2: ->
+    { Dbric_std,
+      True,
+      False,
+      SQL,
+      esql,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    #=======================================================================================================
+    class Dbric_seqs_and_vars extends Dbric_std
+      #-----------------------------------------------------------------------------------------------------
+      acquire_state: ->
+        for row from get_variables.iterate()
+          @state.variables[ row.name ] = JSON.parse row.value
+        for row from get_sequences.iterate()
+          @state.sequences[ row.name ] = row
+        ;null
+      #-----------------------------------------------------------------------------------------------------
+      persist_state: ->
+        for name, value of @state.variables
+          value = JSON.stringify value
+          set_variable.run { name, value, }
+        for name, { value, delta, } of @state.sequences
+          debug 'Ωbbdbr_261', { name, value, }
+          set_sequence.run { name, value, }
+        ;null
+      #-----------------------------------------------------------------------------------------------------
+      with_state: ( fn ) ->
+        @acquire_state()
+        R = fn()
+        @persist_state()
+        return R
+    #-------------------------------------------------------------------------------------------------------
+    db                            = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
+    set_variable    = db.prepare SQL"update std_variables set value = $value where name = $name;"
+    get_variables   = db.prepare SQL"select name, value from std_variables order by name;"
+    set_sequence    = db.prepare SQL"update std_sequences set value = $value where name = $name;"
+    get_sequences   = db.prepare SQL"select name, value from std_sequences order by name;"
+    create_variable = db.prepare SQL"insert into std_variables ( name, value ) values ( $name, $value );"
+    create_sequence = db.prepare SQL"insert into std_sequences ( name, value, delta ) values ( $name, $value, $delta );"
+    # update_sequence = db.prepare SQL"update std_sequences set value = value + delta where name = $name;"
+    #-------------------------------------------------------------------------------------------------------
+    db.create_function
+      name: 'update_sequence'
+      deterministic: false
+      value: ( name ) -> update_sequence.get { name, }
+    #=======================================================================================================
+    show_variables = ( db ) ->
+      urge "Ωbbdbr_262 variables in DB:"
+      for row from db.walk SQL"select * from std_variables;"
+        info '  Ωbbdbr_263', row
+    #-------------------------------------------------------------------------------------------------------
+    show_sequences = ( db ) ->
+      urge "Ωbbdbr_264 sequences in DB:"
+      for row from db.walk SQL"select * from std_sequences;"
+        info '  Ωbbdbr_265', row
+    #=======================================================================================================
+    do =>
+      show_variables db
+      show_sequences db
+      db.with_state ( persist ) ->
+        show_variables db
+        show_sequences db
+        db.state.sequences[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
+        debug 'Ωbbdbr_266', db.state.variables
+        debug 'Ωbbdbr_267', db.state.sequences
+        show_variables db
+        show_sequences db
+        ;null
+      db.with_state ->
+        show_variables db
+        show_sequences db
+        # db.state.sequences[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
+        # debug 'Ωbbdbr_268', db.state.variables
+        # debug 'Ωbbdbr_269', db.state.sequences
+        ;null
+      # help 'Ωbbdbr_270', create_variable.run { name: 'fuzz', value: "120.3", }
+      # help 'Ωbbdbr_271', create_sequence.run { name: 'counter', value: 7, delta: +3, }
+      # show_variables db
+      # show_sequences db
+      # help 'Ωbbdbr_272', update_sequence.get { name: 'counter', }
+      # help 'Ωbbdbr_273', update_sequence.get { name: 'counter', }
+      # help 'Ωbbdbr_274', update_sequence.get { name: 'counter', }
+      # help 'Ωbbdbr_275', update_sequence.get { name: 'counter', }
+      # for row from db.walk SQL"""select
+      #   update_sequence( 'counter' ) as c1,
+      #   update_sequence( 'counter' ) as c2,
+      #   update_sequence( 'counter' ) as c3
+      #   ;"""
+      #   info 'Ωbbdbr_276', row
+      # s = db.prepare SQL"""select
+      #   update_sequence( 'counter' ) as c1,
+      #   update_sequence( 'counter' ) as c2,
+      #   update_sequence( 'counter' ) as c3
+      #   ;"""
+      # s.get()
+      ;null
+    #.......................................................................................................
+    ;null
 
 
 #===========================================================================================================
@@ -1187,7 +1288,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { file_mirror_with_integrated_inserts: tests.file_mirror_with_integrated_inserts, }
+  ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences_2: tests.dbric_std_variables_and_sequences_2, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
   # ( new Test guytest_cfg ).test { dbric_rng: tests.dbric_rng, }
   # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
