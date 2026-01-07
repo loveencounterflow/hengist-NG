@@ -1194,18 +1194,18 @@ remove = ( path ) ->
 
       #-----------------------------------------------------------------------------------------------------
       _std_acquire_state: ( transients = {} ) ->
-        whisper 'Ωbbdbr_261', "_std_acquire_state"
+        # whisper 'Ωbbdbr_261', "_std_acquire_state"
         #...................................................................................................
         @state.std_variables = lets @state.std_variables, ( v ) =>
           for { name, value, delta, } from @statements.get_variables.iterate()
-            whisper 'Ωbbdbr_262', { name, value, delta, }
+            # whisper 'Ωbbdbr_262', { name, value, delta, }
             value     = JSON.parse value
             v[ name ] = { name, value, delta, }
           ;null
         #...................................................................................................
         @state.std_transients = lets @state.std_transients, ( t ) ->
           for name, value of transients
-            whisper 'Ωbbdbr_263', { name, value, }
+            # whisper 'Ωbbdbr_263', { name, value, }
             t[ name ] = { name, value, }
           ;null
         #...................................................................................................
@@ -1213,11 +1213,11 @@ remove = ( path ) ->
 
       #-----------------------------------------------------------------------------------------------------
       _std_persist_state: ->
-        whisper 'Ωbbdbr_264', "_std_persist_state"
+        # whisper 'Ωbbdbr_264', "_std_persist_state"
         #...................................................................................................
         for _, { name, value, delta, } of @state.std_variables
           ### TAINT clear cache in @state.std_variables ? ###
-          whisper 'Ωbbdbr_265', { name, value, delta, }
+          # whisper 'Ωbbdbr_265', { name, value, delta, }
           delta  ?= null
           value   = JSON.stringify value
           @statements.set_variable.run { name, value, delta, }
@@ -1260,8 +1260,8 @@ remove = ( path ) ->
 
       #-----------------------------------------------------------------------------------------------------
       std_get_variable: ( name ) ->
-        unless @state.std_within_variables_context
-          throw new Error "Ωbbdbr_269 illegal to get variable outside of `std_with_variables()` contexts"
+        # unless @state.std_within_variables_context
+        #   throw new Error "Ωbbdbr_269 illegal to get variable outside of `std_with_variables()` contexts"
         if Reflect.has @state.std_transients, name
           return @state.std_transients[ name ].value
         if Reflect.has @state.std_variables, name
@@ -1286,18 +1286,17 @@ remove = ( path ) ->
         trans_names = new Set Object.keys @state.std_transients
         store_names = new Set Object.keys store
         all_names   = [ ( ( cache_names.union store_names ).union trans_names )..., ].sort()
-        table = {}
+        R = {}
         for name in all_names
           s   = store[                  name ] ? {}
           c   = @state.std_variables[   name ] ? {}
           t   = @state.std_transients[  name ] ? {}
-          if @state.std_within_variables_context
-            g   = @std_get_variable name
-          else
-            g   = @std_with_variables => @std_get_variable name
-          table[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, gv: g.value, }
-        console.table table
-        ;null
+          g   = @std_get_variable name
+          # if @state.std_within_variables_context then g = @std_get_variable name
+          # else                                        g = @std_with_variables => @std_get_variable name
+          R[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, gv: g.value, }
+        console.table R
+        return R
 
       #-----------------------------------------------------------------------------------------------------
       @statements:
@@ -1311,35 +1310,37 @@ remove = ( path ) ->
     #=======================================================================================================
     @throws ( Ωbbdbr_273 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
     @throws ( Ωbbdbr_274 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
-    @throws ( Ωbbdbr_275 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    # @throws ( Ωbbdbr_275 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    @throws ( Ωbbdbr_276 = -> db.std_get_variable 'myname'                            ), /unknown variable/
     #=======================================================================================================
     do =>
-      db._show_variables()
+      variables = db._show_variables()
       #.....................................................................................................
       db.std_with_variables =>
-        @throws ( Ωbbdbr_276 = -> db.std_get_variable 'myname' ), /unknown variable/
-        db._show_variables()
+        @throws ( Ωbbdbr_277 = -> db.std_get_variable 'myname' ), /unknown variable/
+        @eq ( Ωbbdbr_278 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ### TAINT use API ###
         db.state.std_variables = lets db.state.std_variables, ( d ) ->
           d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-        db._show_variables()
-        info 'Ωbbdbr_277', db.std_get_next_in_sequence 'seq:app:counter'
-        info 'Ωbbdbr_278', db.std_get_next_in_sequence 'seq:app:counter'
+        @eq ( Ωbbdbr_279 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_280 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
+        @eq ( Ωbbdbr_281 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
         db.std_set_variable 'fuzz', 11.5
         db.std_set_variable 'name', 'Bob'
-        @eq ( Ωbbdbr_279 = -> db.std_get_variable 'name' ), 'Bob'
-        db._show_variables()
+        @eq ( Ωbbdbr_282 = -> db.std_get_variable 'fuzz' ), 11.5
+        @eq ( Ωbbdbr_283 = -> db.std_get_variable 'name' ), 'Bob'
+        @eq ( Ωbbdbr_284 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ;null
       #.....................................................................................................
       db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
-        @eq ( Ωbbdbr_280 = -> db.std_get_variable 'name' ), 'Alice'
-        # debug 'Ωbbdbr_281', { name, job, }
-        db._show_variables()
+        @eq ( Ωbbdbr_285 = -> db.std_get_variable 'name' ), 'Alice'
+        # debug 'Ωbbdbr_286', { name, job, }
+        @eq ( Ωbbdbr_287 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ;null
       #.....................................................................................................
-      db._show_variables()
-      db.std_with_variables ->
-        db._show_variables()
+      @eq ( Ωbbdbr_288 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+      db.std_with_variables =>
+        @eq ( Ωbbdbr_289 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ;null
       ;null
     #.......................................................................................................
