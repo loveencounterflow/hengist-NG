@@ -1271,11 +1271,12 @@ remove = ( path ) ->
 
       #-----------------------------------------------------------------------------------------------------
       std_get_next_in_sequence: ( name ) ->
-        ### TAINT validate is called inside `std_with_variables()` context handler ###
+        unless @state.std_within_variables_context
+          throw new Error "Ωbbdbr_271 illegal to set variable outside of `std_with_variables()` contexts"
         unless ( entry = @state.std_variables[ name ] )?
-          throw new Error "Ωbbdbr_271 unknown variable #{rpr name}"
+          throw new Error "Ωbbdbr_272 unknown variable #{rpr name}"
         unless ( delta = entry.delta )?
-          throw new Error "Ωbbdbr_272 not a sequence name: #{rpr name}"
+          throw new Error "Ωbbdbr_273 not a sequence name: #{rpr name}"
         entry.value += delta
         return entry.value
 
@@ -1299,48 +1300,80 @@ remove = ( path ) ->
         return R
 
       #-----------------------------------------------------------------------------------------------------
+      @functions:
+        std_get_next_in_sequence:
+          deterministic: false
+          value:  ( name ) -> @std_get_next_in_sequence name
+
+      #-----------------------------------------------------------------------------------------------------
       @statements:
-        set_variable:     SQL"
+        set_variable:     SQL"""
           insert into std_variables ( name, value, delta ) values ( $name, $value, $delta )
             on conflict ( name ) do update
-              set value = $value, delta = $delta;"
+              set value = $value, delta = $delta;"""
         get_variables:    SQL"select name, value, delta from std_variables order by name;"
     #-------------------------------------------------------------------------------------------------------
     db              = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
     #=======================================================================================================
-    @throws ( Ωbbdbr_273 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
-    @throws ( Ωbbdbr_274 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
-    # @throws ( Ωbbdbr_275 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
-    @throws ( Ωbbdbr_276 = -> db.std_get_variable 'myname'                            ), /unknown variable/
+    @throws ( Ωbbdbr_274 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
+    @throws ( Ωbbdbr_275 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
+    # @throws ( Ωbbdbr_276 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    @throws ( Ωbbdbr_277 = -> db.std_get_variable 'myname'                            ), /unknown variable/
     #=======================================================================================================
     do =>
       variables = db._show_variables()
       #.....................................................................................................
       db.std_with_variables =>
-        @throws ( Ωbbdbr_277 = -> db.std_get_variable 'myname' ), /unknown variable/
-        @eq ( Ωbbdbr_278 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @throws ( Ωbbdbr_278 = -> db.std_get_variable 'myname' ), /unknown variable/
+        @eq ( Ωbbdbr_279 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ### TAINT use API ###
         db.state.std_variables = lets db.state.std_variables, ( d ) ->
           d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-        @eq ( Ωbbdbr_279 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
-        @eq ( Ωbbdbr_280 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
-        @eq ( Ωbbdbr_281 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
+        @eq ( Ωbbdbr_280 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_281 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
+        @eq ( Ωbbdbr_282 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
         db.std_set_variable 'fuzz', 11.5
         db.std_set_variable 'name', 'Bob'
-        @eq ( Ωbbdbr_282 = -> db.std_get_variable 'fuzz' ), 11.5
-        @eq ( Ωbbdbr_283 = -> db.std_get_variable 'name' ), 'Bob'
-        @eq ( Ωbbdbr_284 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_283 = -> db.std_get_variable 'fuzz' ), 11.5
+        @eq ( Ωbbdbr_284 = -> db.std_get_variable 'name' ), 'Bob'
+        @eq ( Ωbbdbr_285 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ;null
       #.....................................................................................................
       db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
-        @eq ( Ωbbdbr_285 = -> db.std_get_variable 'name' ), 'Alice'
-        # debug 'Ωbbdbr_286', { name, job, }
-        @eq ( Ωbbdbr_287 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_286 = -> db.std_get_variable 'name' ), 'Alice'
+        # debug 'Ωbbdbr_287', { name, job, }
+        @eq ( Ωbbdbr_288 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
         ;null
       #.....................................................................................................
-      @eq ( Ωbbdbr_288 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+      @eq ( Ωbbdbr_289 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
       db.std_with_variables =>
-        @eq ( Ωbbdbr_289 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_290 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        ;null
+      #.....................................................................................................
+      db.std_with_variables =>
+        db.std_set_variable 'seq:letters', 0, 1
+        db.execute SQL"""create table _letters (
+            rowid   text    unique  not null,
+            letter  text    unique  not null,
+          -- primary key ( rowid )
+          constraint "Ωconstraint_291" check ( length( letter ) = 1 )
+          ) strict;"""
+        db.execute SQL"""create view letters as select * from _letters;"""
+        db.execute SQL"""create trigger on_before_insert_letters
+          instead of insert on letters
+            for each row begin
+              insert into _letters ( rowid, letter ) values
+                -- ( 't:letters:R=' || cast( std_get_next_in_sequence( 'seq:letters' ) as integer ), new.letter );
+                ( printf( 't:letters:R=%d', std_get_next_in_sequence( 'seq:letters' ) ), new.letter );
+              end;
+          ;"""
+        db.execute SQL"""insert into letters ( letter ) values ( 'a' ), ( 'z' );"""
+        for row from db.walk SQL"select * from letters;"
+          info 'Ωbbdbr_292', row
+        rows = db.walk SQL"select * from letters order by letter;"
+        @eq ( Ωbbdbr_293 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+        @eq ( Ωbbdbr_294 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+        @eq ( Ωbbdbr_295 = -> rows.next().done ), true
         ;null
       ;null
     #.......................................................................................................
@@ -1355,7 +1388,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences_2: tests.dbric_std_variables_and_sequences_2, }
+  # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences_2: tests.dbric_std_variables_and_sequences_2, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
   # ( new Test guytest_cfg ).test { dbric_rng: tests.dbric_rng, }
   # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
