@@ -1189,92 +1189,103 @@ remove = ( path ) ->
     Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_seqs_and_vars extends Dbric_std
+
       #-----------------------------------------------------------------------------------------------------
       acquire_state: ->
-        for row from get_variables.iterate()
-          @state.variables[ row.name ] = JSON.parse row.value
-        for row from get_sequences.iterate()
-          @state.sequences[ row.name ] = row
+        whisper 'Ωbbdbr_261', "acquire_state"
+        v = @state.variables
+        for { name, value, delta, } from @statements.get_variables.iterate()
+          whisper 'Ωbbdbr_262', { name, value, delta, }
+          value     = JSON.parse value
+          v[ name ] = { name, value, delta, }
         ;null
+
       #-----------------------------------------------------------------------------------------------------
       persist_state: ->
-        for name, value of @state.variables
-          value = JSON.stringify value
-          set_variable.run { name, value, }
-        for name, { value, delta, } of @state.sequences
-          debug 'Ωbbdbr_261', { name, value, }
-          set_sequence.run { name, value, }
+        whisper 'Ωbbdbr_263', "persist_state"
+        for _, { name, value, delta, } of @state.variables
+          whisper 'Ωbbdbr_264', { name, value, delta, }
+          delta  ?= null
+          value   = JSON.stringify value
+          @statements.set_variable.run { name, value, delta, }
         ;null
+
       #-----------------------------------------------------------------------------------------------------
-      with_state: ( fn ) ->
+      with_variables: ( fn ) ->
         @acquire_state()
-        R = fn()
-        @persist_state()
+        try
+          R = fn()
+        finally
+          @persist_state()
         return R
+
+      #-----------------------------------------------------------------------------------------------------
+      std_set_variable: ( name, value, delta ) ->
+        ### TAINT validate is called inside `with_variables()` context handler ###
+        delta ?= null
+        @state.variables[ name ] = { name, value, delta, }
+        ;null
+
+      #-----------------------------------------------------------------------------------------------------
+      std_get_next_in_sequence: ( name ) ->
+        ### TAINT validate is called inside `with_variables()` context handler ###
+        unless ( entry = @state.variables[ name ] )?
+          throw new Error "Ωbbdbr_265 unknown variable #{rpr name}"
+        unless ( delta = entry.delta )?
+          throw new Error "Ωbbdbr_266 not a sequence name: #{rpr name}"
+        entry.value += delta
+        return entry.value
+
+      #-----------------------------------------------------------------------------------------------------
+      _show_variables: ->
+        # urge "Ωbbdbr_267 variables:"
+        store       = Object.fromEntries ( [ name, { value, delta, }, ] for { name, value, delta, } from @statements.get_variables.iterate() )
+        cache_names = new Set Object.keys @state.variables
+        store_names = new Set Object.keys store
+        all_names   = [ ( cache_names.union store_names )..., ].sort()
+        # whisper 'Ωbbdbr_268', "cache_names:", cache_names
+        # whisper 'Ωbbdbr_269', "store_names:", store_names
+        # whisper 'Ωbbdbr_270', "store_names not in cache_names:", cache_names.difference store_names
+        # whisper 'Ωbbdbr_271', "cache_names not in store_names:", store_names.difference cache_names
+        # whisper 'Ωbbdbr_272', "all_names:", all_names
+        table = {}
+        for name in all_names
+          s = store[            name ] ? {}
+          c = @state.variables[ name ] ? {}
+          table[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, }
+        console.table table
+        ;null
+
+      #-----------------------------------------------------------------------------------------------------
+      @statements:
+        create_variable:  SQL"insert into std_variables ( name, value, delta ) values ( $name, $value, $delta );"
+        set_variable:     SQL"
+          insert into std_variables ( name, value, delta ) values ( $name, $value, $delta )
+            on conflict ( name ) do update
+              set value = $value, delta = $delta;"
+        get_variables:    SQL"select name, value, delta from std_variables order by name;"
+        # create_sequence:  SQL"insert into std_variables ( name, value, delta ) values ( $name, $value, $delta  );"
     #-------------------------------------------------------------------------------------------------------
-    db                            = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
-    set_variable    = db.prepare SQL"update std_variables set value = $value where name = $name;"
-    get_variables   = db.prepare SQL"select name, value from std_variables order by name;"
-    set_sequence    = db.prepare SQL"update std_sequences set value = $value where name = $name;"
-    get_sequences   = db.prepare SQL"select name, value from std_sequences order by name;"
-    create_variable = db.prepare SQL"insert into std_variables ( name, value ) values ( $name, $value );"
-    create_sequence = db.prepare SQL"insert into std_sequences ( name, value, delta ) values ( $name, $value, $delta );"
-    # update_sequence = db.prepare SQL"update std_sequences set value = value + delta where name = $name;"
-    #-------------------------------------------------------------------------------------------------------
-    db.create_function
-      name: 'update_sequence'
-      deterministic: false
-      value: ( name ) -> update_sequence.get { name, }
-    #=======================================================================================================
-    show_variables = ( db ) ->
-      urge "Ωbbdbr_262 variables in DB:"
-      for row from db.walk SQL"select * from std_variables;"
-        info '  Ωbbdbr_263', row
-    #-------------------------------------------------------------------------------------------------------
-    show_sequences = ( db ) ->
-      urge "Ωbbdbr_264 sequences in DB:"
-      for row from db.walk SQL"select * from std_sequences;"
-        info '  Ωbbdbr_265', row
+    db              = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
     #=======================================================================================================
     do =>
-      show_variables db
-      show_sequences db
-      db.with_state ( persist ) ->
-        show_variables db
-        show_sequences db
-        db.state.sequences[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-        debug 'Ωbbdbr_266', db.state.variables
-        debug 'Ωbbdbr_267', db.state.sequences
-        show_variables db
-        show_sequences db
+      db._show_variables()
+      #.....................................................................................................
+      db.with_variables ( persist ) ->
+        db._show_variables()
+        ### TAINT use API ###
+        db.state.variables[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
+        db._show_variables()
+        info 'Ωbbdbr_273', db.std_get_next_in_sequence 'seq:app:counter'
+        info 'Ωbbdbr_274', db.std_get_next_in_sequence 'seq:app:counter'
+        db.std_set_variable 'fuzz', 11.5
+        db._show_variables()
         ;null
-      db.with_state ->
-        show_variables db
-        show_sequences db
-        # db.state.sequences[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-        # debug 'Ωbbdbr_268', db.state.variables
-        # debug 'Ωbbdbr_269', db.state.sequences
+      #.....................................................................................................
+      db._show_variables()
+      db.with_variables ->
+        db._show_variables()
         ;null
-      # help 'Ωbbdbr_270', create_variable.run { name: 'fuzz', value: "120.3", }
-      # help 'Ωbbdbr_271', create_sequence.run { name: 'counter', value: 7, delta: +3, }
-      # show_variables db
-      # show_sequences db
-      # help 'Ωbbdbr_272', update_sequence.get { name: 'counter', }
-      # help 'Ωbbdbr_273', update_sequence.get { name: 'counter', }
-      # help 'Ωbbdbr_274', update_sequence.get { name: 'counter', }
-      # help 'Ωbbdbr_275', update_sequence.get { name: 'counter', }
-      # for row from db.walk SQL"""select
-      #   update_sequence( 'counter' ) as c1,
-      #   update_sequence( 'counter' ) as c2,
-      #   update_sequence( 'counter' ) as c3
-      #   ;"""
-      #   info 'Ωbbdbr_276', row
-      # s = db.prepare SQL"""select
-      #   update_sequence( 'counter' ) as c1,
-      #   update_sequence( 'counter' ) as c2,
-      #   update_sequence( 'counter' ) as c3
-      #   ;"""
-      # s.get()
       ;null
     #.......................................................................................................
     ;null
