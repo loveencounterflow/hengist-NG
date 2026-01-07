@@ -1117,67 +1117,6 @@ remove = ( path ) ->
     #.......................................................................................................
     return null
 
-  # #---------------------------------------------------------------------------------------------------------
-  # dbric_std_variables_and_sequences: ->
-  #   { Dbric_std,
-  #     True,
-  #     False,
-  #     SQL,
-  #     esql,
-  #     internals,                } = SFMODULES.unstable.require_dbric()
-  #   Bsql3                         = require 'better-sqlite3'
-  #   jr                            = JSON.stringify
-  #   #=======================================================================================================
-  #   do =>
-  #     db = new Dbric_std ':memory:', { db_class: Bsql3, }
-  #     db.set_variable 'filename', __filename
-  #     object_input  = { z: 'Z', is_good: true, a: 'a\u{0308}', }
-  #     object_output = { a: '\u{00e4}', is_good: true, z: 'Z', }
-  #     db.set_variable 'obj', object_input
-  #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_231 = -> db.get_variable 'filename'                                          ), __filename
-  #     @eq ( Ωbbdbr_232 = -> db.get_variable 'obj'                                               ), object_output
-  #     @eq ( Ωbbdbr_233 = -> Object.keys db.get_variable 'obj'                                   ), Object.keys object_output
-  #     @eq ( Ωbbdbr_234 = -> db.get_all SQL"""select * from std_sequences;"""                    ), [ { name: 'seq:global:rowid', value: 0, delta: 1 } ]
-  #     #.....................................................................................................
-  #     get_next_rowid    = SQL"""select    std_get_next_in_sequence( 'seq:global:rowid'  ) as rowid from std_sequences;"""
-  #     get_current_rowid = SQL"""select std_get_current_in_sequence( 'seq:global:rowid'  ) as rowid from std_sequences;"""
-  #     get_next_count    = SQL"""select    std_get_next_in_sequence( 'seq:app:count'     ) as count from std_sequences;"""
-  #     get_current_count = SQL"""select std_get_current_in_sequence( 'seq:app:count'     ) as count from std_sequences;"""
-  #     try db.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_235', e.message
-  #     try db.w.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_236', e.message
-  #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_237 = -> ( db.get_first get_next_rowid ).rowid                                   ), 1
-  #     @eq ( Ωbbdbr_238 = -> ( db.get_first get_next_rowid ).rowid                                   ), 2
-  #     @eq ( Ωbbdbr_239 = -> ( db.get_first get_next_rowid ).rowid                                   ), 3
-  #     @eq ( Ωbbdbr_240 = -> ( db.get_first get_next_rowid ).rowid                                   ), 4
-  #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_241 = -> ( db.get_first get_current_rowid ).rowid                                ), 4
-  #     @eq ( Ωbbdbr_242 = -> ( db.get_first get_current_rowid ).rowid                                ), 4
-  #     #.....................................................................................................
-  #     @eq ( Ωbbdbr_243 = -> ( db.get_first get_next_rowid ).rowid                                   ), 5
-  #     @eq ( Ωbbdbr_244 = -> ( db.get_first get_current_rowid ).rowid                                ), 5
-  #     try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_245', e.message
-  #     try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_246', e.message
-  #     # #.....................................................................................................
-  #     try db.execute SQL"begin immediate;" catch e then warn 'Ωbbdbr_247', e.message
-  #     @eq ( Ωbbdbr_248 = -> db.std_create_sequence 'seq:app:count', { value: 100, delta: +2, }  ), null
-  #     try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_249', e.message
-  #     # try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_250', e.message
-  #     @eq ( Ωbbdbr_251 = -> db.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
-  #     @eq ( Ωbbdbr_252 = -> db.w.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
-  #     # try db.execute SQL"commit;" catch e then warn 'Ωbbdbr_253', e.message
-  #     # try db.w.execute SQL"commit;" catch e then warn 'Ωbbdbr_254', e.message
-  #     # @eq ( Ωbbdbr_255 = -> db.w.get_all SQL"select * from std_sequences order by name;"          ), [ { name: 'seq:app:count', value: 100, delta: 2 }, { name: 'seq:global:rowid', value: 5, delta: 1 } ]
-  #     # @eq ( Ωbbdbr_256 = -> ( db.get_first get_current_count ).count                                ), 100
-  #     # @eq ( Ωbbdbr_257 = -> ( db.w.get_first get_current_count ).count                                ), 100
-  #     # @eq ( Ωbbdbr_258 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 102
-  #     # @eq ( Ωbbdbr_259 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 104
-  #     # @eq ( Ωbbdbr_260 = -> db.std_get_next_in_sequence 'seq:app:count'                         ), 106
-  #     ;null
-  #   #.......................................................................................................
-  #   ;null
-
   #---------------------------------------------------------------------------------------------------------
   dbric_std_variables_and_sequences_2: ->
     { Dbric_std,
@@ -1194,18 +1133,18 @@ remove = ( path ) ->
 
       #-----------------------------------------------------------------------------------------------------
       _std_acquire_state: ( transients = {} ) ->
-        # whisper 'Ωbbdbr_261', "_std_acquire_state"
+        # whisper 'Ωbbdbr_231', "_std_acquire_state"
         #...................................................................................................
         @state.std_variables = lets @state.std_variables, ( v ) =>
           for { name, value, delta, } from @statements.get_variables.iterate()
-            # whisper 'Ωbbdbr_262', { name, value, delta, }
+            # whisper 'Ωbbdbr_232', { name, value, delta, }
             value     = JSON.parse value
             v[ name ] = { name, value, delta, }
           ;null
         #...................................................................................................
         @state.std_transients = lets @state.std_transients, ( t ) ->
           for name, value of transients
-            # whisper 'Ωbbdbr_263', { name, value, }
+            # whisper 'Ωbbdbr_233', { name, value, }
             t[ name ] = { name, value, }
           ;null
         #...................................................................................................
@@ -1213,11 +1152,11 @@ remove = ( path ) ->
 
       #-----------------------------------------------------------------------------------------------------
       _std_persist_state: ->
-        # whisper 'Ωbbdbr_264', "_std_persist_state"
+        # whisper 'Ωbbdbr_234', "_std_persist_state"
         #...................................................................................................
         for _, { name, value, delta, } of @state.std_variables
           ### TAINT clear cache in @state.std_variables ? ###
-          # whisper 'Ωbbdbr_265', { name, value, delta, }
+          # whisper 'Ωbbdbr_235', { name, value, delta, }
           delta  ?= null
           value   = JSON.stringify value
           @statements.set_variable.run { name, value, delta, }
@@ -1233,10 +1172,10 @@ remove = ( path ) ->
         switch arity = arguments.length
           when 1 then [ transients, fn, ] = [ {}, transients, ]
           when 2 then null
-          else throw new Error "Ωbbdbr_266 expected 1 or 2 arguments, got #{arity}"
+          else throw new Error "Ωbbdbr_236 expected 1 or 2 arguments, got #{arity}"
         #...................................................................................................
         if @state.std_within_variables_context
-          throw new Error "Ωbbdbr_267 illegal to nest `std_with_variables()` contexts"
+          throw new Error "Ωbbdbr_237 illegal to nest `std_with_variables()` contexts"
         @state.std_within_variables_context = true
         #...................................................................................................
         @_std_acquire_state transients
@@ -1250,7 +1189,7 @@ remove = ( path ) ->
       #-----------------------------------------------------------------------------------------------------
       std_set_variable: ( name, value, delta ) ->
         unless @state.std_within_variables_context
-          throw new Error "Ωbbdbr_268 illegal to set variable outside of `std_with_variables()` contexts"
+          throw new Error "Ωbbdbr_238 illegal to set variable outside of `std_with_variables()` contexts"
         if Reflect.has @state.std_transients, name
           @state.std_transients = lets @state.std_transients, ( t ) => t[ name ] = { name, value, }
         else
@@ -1261,22 +1200,22 @@ remove = ( path ) ->
       #-----------------------------------------------------------------------------------------------------
       std_get_variable: ( name ) ->
         # unless @state.std_within_variables_context
-        #   throw new Error "Ωbbdbr_269 illegal to get variable outside of `std_with_variables()` contexts"
+        #   throw new Error "Ωbbdbr_239 illegal to get variable outside of `std_with_variables()` contexts"
         if Reflect.has @state.std_transients, name
           return @state.std_transients[ name ].value
         if Reflect.has @state.std_variables, name
           return @state.std_variables[ name ].value
-        throw new Error "Ωbbdbr_270 unknown variable #{rpr name}"
+        throw new Error "Ωbbdbr_240 unknown variable #{rpr name}"
         ;null
 
       #-----------------------------------------------------------------------------------------------------
       std_get_next_in_sequence: ( name ) ->
         unless @state.std_within_variables_context
-          throw new Error "Ωbbdbr_271 illegal to set variable outside of `std_with_variables()` contexts"
+          throw new Error "Ωbbdbr_241 illegal to set variable outside of `std_with_variables()` contexts"
         unless ( entry = @state.std_variables[ name ] )?
-          throw new Error "Ωbbdbr_272 unknown variable #{rpr name}"
+          throw new Error "Ωbbdbr_242 unknown variable #{rpr name}"
         unless ( delta = entry.delta )?
-          throw new Error "Ωbbdbr_273 not a sequence name: #{rpr name}"
+          throw new Error "Ωbbdbr_243 not a sequence name: #{rpr name}"
         entry.value += delta
         return entry.value
 
@@ -1289,13 +1228,11 @@ remove = ( path ) ->
         all_names   = [ ( ( cache_names.union store_names ).union trans_names )..., ].sort()
         R = {}
         for name in all_names
-          s   = store[                  name ] ? {}
-          c   = @state.std_variables[   name ] ? {}
-          t   = @state.std_transients[  name ] ? {}
-          g   = @std_get_variable name
-          # if @state.std_within_variables_context then g = @std_get_variable name
-          # else                                        g = @std_with_variables => @std_get_variable name
-          R[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, gv: g.value, }
+          s         = store[                  name ] ? {}
+          c         = @state.std_variables[   name ] ? {}
+          t         = @state.std_transients[  name ] ? {}
+          gv        = @std_get_variable name
+          R[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, gv, }
         console.table R
         return R
 
@@ -1315,48 +1252,50 @@ remove = ( path ) ->
     #-------------------------------------------------------------------------------------------------------
     db              = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
     #=======================================================================================================
-    @throws ( Ωbbdbr_274 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
-    @throws ( Ωbbdbr_275 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
-    # @throws ( Ωbbdbr_276 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
-    @throws ( Ωbbdbr_277 = -> db.std_get_variable 'myname'                            ), /unknown variable/
+    @throws ( Ωbbdbr_244 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
+    @throws ( Ωbbdbr_245 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
+    # @throws ( Ωbbdbr_246 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    @throws ( Ωbbdbr_247 = -> db.std_get_variable 'myname'                            ), /unknown variable/
     #=======================================================================================================
     do =>
       variables = db._show_variables()
       #.....................................................................................................
       db.std_with_variables =>
-        @throws ( Ωbbdbr_278 = -> db.std_get_variable 'myname' ), /unknown variable/
-        @eq ( Ωbbdbr_279 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @throws ( Ωbbdbr_248 = -> db.std_get_variable 'myname' ), /unknown variable/
+        @eq ( Ωbbdbr_249 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
         ### TAINT use API ###
         db.state.std_variables = lets db.state.std_variables, ( d ) ->
           d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-        @eq ( Ωbbdbr_280 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
-        @eq ( Ωbbdbr_281 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
-        @eq ( Ωbbdbr_282 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
+        @eq ( Ωbbdbr_250 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+        @eq ( Ωbbdbr_251 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
+        @eq ( Ωbbdbr_252 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
         db.std_set_variable 'fuzz', 11.5
         db.std_set_variable 'name', 'Bob'
-        @eq ( Ωbbdbr_283 = -> db.std_get_variable 'fuzz' ), 11.5
-        @eq ( Ωbbdbr_284 = -> db.std_get_variable 'name' ), 'Bob'
-        @eq ( Ωbbdbr_285 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_253 = -> db.std_get_variable 'fuzz' ), 11.5
+        @eq ( Ωbbdbr_254 = -> db.std_get_variable 'name' ), 'Bob'
+        @eq ( Ωbbdbr_255 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
         ;null
       #.....................................................................................................
       db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
-        @eq ( Ωbbdbr_286 = -> db.std_get_variable 'name' ), 'Alice'
-        # debug 'Ωbbdbr_287', { name, job, }
-        @eq ( Ωbbdbr_288 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_256 = -> db.std_get_variable 'name' ), 'Alice'
+        # debug 'Ωbbdbr_257', { name, job, }
+        @eq ( Ωbbdbr_258 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
         ;null
       #.....................................................................................................
-      @eq ( Ωbbdbr_289 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+      @eq ( Ωbbdbr_259 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       db.std_with_variables =>
-        @eq ( Ωbbdbr_290 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: undefined }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: undefined }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: undefined }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: undefined } }
+        @eq ( Ωbbdbr_260 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
         ;null
       #.....................................................................................................
       db.std_with_variables =>
+        ### Model that shows how to insert sequential RowIDs using a private table, an associated public
+        view, and a `instead of insert` trigger: ###
         db.std_set_variable 'seq:letters', 0, 1
         db.execute SQL"""create table _letters (
             rowid   text    unique  not null,
             letter  text    unique  not null,
           -- primary key ( rowid )
-          constraint "Ωconstraint_291" check ( length( letter ) = 1 )
+          constraint "Ωconstraint_261" check ( length( letter ) = 1 )
           ) strict;"""
         db.execute SQL"""create view letters as select * from _letters;"""
         db.execute SQL"""create trigger on_before_insert_letters
@@ -1369,14 +1308,39 @@ remove = ( path ) ->
           ;"""
         db.execute SQL"""insert into letters ( letter ) values ( 'a' ), ( 'z' );"""
         for row from db.walk SQL"select * from letters;"
-          info 'Ωbbdbr_292', row
+          info 'Ωbbdbr_262', row
         rows = db.walk SQL"select * from letters order by letter;"
-        @eq ( Ωbbdbr_293 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-        @eq ( Ωbbdbr_294 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-        @eq ( Ωbbdbr_295 = -> rows.next().done ), true
+        @eq ( Ωbbdbr_263 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+        @eq ( Ωbbdbr_264 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+        @eq ( Ωbbdbr_265 = -> rows.next().done ), true
+        ;null
+      ;null
+      #.....................................................................................................
+      db.std_with_variables =>
+        ### NOTE Model that shows how to insert rows with sequential RowIDs using a tbale and and `after
+        insert` trigger that updates `rowid`: ###
+        db.std_set_variable 'seq:numbers', 0, 1
+        db.execute SQL"""create table numbers (
+            rowid   text    unique  not null default 'new_rowid',
+            number  text    unique  not null
+          ) strict;"""
+        db.execute SQL"""create trigger on_after_insert_on_numbers
+          after insert on numbers for each row begin
+              update numbers set rowid = printf( 't:numbers:R=%d', std_get_next_in_sequence( 'seq:numbers' ) )
+                where rowid = 'new_rowid';
+              end;
+          ;"""
+        db.execute SQL"""insert into numbers ( number ) values ( 'uno' ), ( 'due' );"""
+        for row from db.walk SQL"select * from numbers;"
+          info 'Ωbbdbr_266', row
+        rows = db.walk SQL"select * from numbers order by rowid;"
+        @eq ( Ωbbdbr_267 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
+        @eq ( Ωbbdbr_268 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
+        @eq ( Ωbbdbr_269 = -> rows.next().done ), true
         ;null
       ;null
     #.......................................................................................................
+    db._show_variables()
     ;null
 
 
