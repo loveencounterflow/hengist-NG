@@ -1186,104 +1186,129 @@ remove = ( path ) ->
       SQL,
       esql,
       internals,                } = SFMODULES.unstable.require_dbric()
+    { lets,
+      freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
     Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_seqs_and_vars extends Dbric_std
 
       #-----------------------------------------------------------------------------------------------------
-      acquire_state: ->
-        whisper 'Ωbbdbr_261', "acquire_state"
-        v = @state.variables
-        for { name, value, delta, } from @statements.get_variables.iterate()
-          whisper 'Ωbbdbr_262', { name, value, delta, }
-          value     = JSON.parse value
-          v[ name ] = { name, value, delta, }
+      _std_acquire_state: ( transients = {} ) ->
+        whisper 'Ωbbdbr_261', "_std_acquire_state"
+        #...................................................................................................
+        @state.std_variables = lets @state.std_variables, ( v ) =>
+          for { name, value, delta, } from @statements.get_variables.iterate()
+            whisper 'Ωbbdbr_262', { name, value, delta, }
+            value     = JSON.parse value
+            v[ name ] = { name, value, delta, }
+          ;null
+        #...................................................................................................
+        @state.std_transients = lets @state.std_transients, ( t ) ->
+          for name, value of transients
+            whisper 'Ωbbdbr_263', { name, value, }
+            t[ name ] = { name, value, }
+          ;null
+        #...................................................................................................
         ;null
 
       #-----------------------------------------------------------------------------------------------------
-      persist_state: ->
-        whisper 'Ωbbdbr_263', "persist_state"
-        for _, { name, value, delta, } of @state.variables
-          whisper 'Ωbbdbr_264', { name, value, delta, }
+      _std_persist_state: ->
+        whisper 'Ωbbdbr_264', "_std_persist_state"
+        #...................................................................................................
+        for _, { name, value, delta, } of @state.std_variables
+          ### TAINT clear cache in @state.std_variables ? ###
+          whisper 'Ωbbdbr_265', { name, value, delta, }
           delta  ?= null
           value   = JSON.stringify value
           @statements.set_variable.run { name, value, delta, }
+        #...................................................................................................
+        @state.std_transients = lets @state.std_transients, ( t ) ->
+          delete t[ name ] for name of t
+          ;null
+        #...................................................................................................
         ;null
 
       #-----------------------------------------------------------------------------------------------------
-      with_variables: ( fn ) ->
-        @acquire_state()
+      std_with_variables: ( transients, fn ) ->
+        switch arity = arguments.length
+          when 1 then [ transients, fn, ] = [ {}, transients, ]
+          when 2 then null
+          else throw new Error "Ωbbdbr_266 expected 1 or 2 arguments, got #{arity}"
+        @_std_acquire_state transients
         try
           R = fn()
         finally
-          @persist_state()
+          @_std_persist_state()
         return R
 
       #-----------------------------------------------------------------------------------------------------
       std_set_variable: ( name, value, delta ) ->
-        ### TAINT validate is called inside `with_variables()` context handler ###
-        delta ?= null
-        @state.variables[ name ] = { name, value, delta, }
+        ### TAINT validate is called inside `std_with_variables()` context handler ###
+        if Reflect.has @state.std_transients, name
+          @state.std_transients = lets @state.std_transients, ( t ) => t[ name ] = value
+        else
+          delta ?= null
+          @state.std_variables = lets @state.std_variables,   ( v ) => v[ name ] = { name, value, delta, }
         ;null
 
       #-----------------------------------------------------------------------------------------------------
       std_get_next_in_sequence: ( name ) ->
-        ### TAINT validate is called inside `with_variables()` context handler ###
-        unless ( entry = @state.variables[ name ] )?
-          throw new Error "Ωbbdbr_265 unknown variable #{rpr name}"
+        ### TAINT validate is called inside `std_with_variables()` context handler ###
+        unless ( entry = @state.std_variables[ name ] )?
+          throw new Error "Ωbbdbr_267 unknown variable #{rpr name}"
         unless ( delta = entry.delta )?
-          throw new Error "Ωbbdbr_266 not a sequence name: #{rpr name}"
+          throw new Error "Ωbbdbr_268 not a sequence name: #{rpr name}"
         entry.value += delta
         return entry.value
 
       #-----------------------------------------------------------------------------------------------------
       _show_variables: ->
-        # urge "Ωbbdbr_267 variables:"
         store       = Object.fromEntries ( [ name, { value, delta, }, ] for { name, value, delta, } from @statements.get_variables.iterate() )
-        cache_names = new Set Object.keys @state.variables
+        cache_names = new Set Object.keys @state.std_variables
+        trans_names = new Set Object.keys @state.std_transients
         store_names = new Set Object.keys store
-        all_names   = [ ( cache_names.union store_names )..., ].sort()
-        # whisper 'Ωbbdbr_268', "cache_names:", cache_names
-        # whisper 'Ωbbdbr_269', "store_names:", store_names
-        # whisper 'Ωbbdbr_270', "store_names not in cache_names:", cache_names.difference store_names
-        # whisper 'Ωbbdbr_271', "cache_names not in store_names:", store_names.difference cache_names
-        # whisper 'Ωbbdbr_272', "all_names:", all_names
+        all_names   = [ ( ( cache_names.union store_names ).union trans_names )..., ].sort()
         table = {}
         for name in all_names
-          s = store[            name ] ? {}
-          c = @state.variables[ name ] ? {}
-          table[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, }
+          s   = store[                  name ] ? {}
+          c   = @state.std_variables[   name ] ? {}
+          t   = @state.std_transients[  name ] ? {}
+          table[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, }
         console.table table
         ;null
 
       #-----------------------------------------------------------------------------------------------------
       @statements:
-        create_variable:  SQL"insert into std_variables ( name, value, delta ) values ( $name, $value, $delta );"
         set_variable:     SQL"
           insert into std_variables ( name, value, delta ) values ( $name, $value, $delta )
             on conflict ( name ) do update
               set value = $value, delta = $delta;"
         get_variables:    SQL"select name, value, delta from std_variables order by name;"
-        # create_sequence:  SQL"insert into std_variables ( name, value, delta ) values ( $name, $value, $delta  );"
     #-------------------------------------------------------------------------------------------------------
     db              = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
     #=======================================================================================================
     do =>
       db._show_variables()
       #.....................................................................................................
-      db.with_variables ( persist ) ->
+      db.std_with_variables ->
         db._show_variables()
         ### TAINT use API ###
-        db.state.variables[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
+        db.state.std_variables = lets db.state.std_variables, ( d ) ->
+          d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
         db._show_variables()
-        info 'Ωbbdbr_273', db.std_get_next_in_sequence 'seq:app:counter'
-        info 'Ωbbdbr_274', db.std_get_next_in_sequence 'seq:app:counter'
+        info 'Ωbbdbr_269', db.std_get_next_in_sequence 'seq:app:counter'
+        info 'Ωbbdbr_270', db.std_get_next_in_sequence 'seq:app:counter'
         db.std_set_variable 'fuzz', 11.5
         db._show_variables()
         ;null
       #.....................................................................................................
+      db.std_with_variables { name: 'Alice', job: 'engineer', }, ->
+        # debug 'Ωbbdbr_271', { name, job, }
+        db._show_variables()
+        ;null
+      #.....................................................................................................
       db._show_variables()
-      db.with_variables ->
+      db.std_with_variables ->
         db._show_variables()
         ;null
       ;null
