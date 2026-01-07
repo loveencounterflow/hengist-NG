@@ -1234,30 +1234,48 @@ remove = ( path ) ->
           when 1 then [ transients, fn, ] = [ {}, transients, ]
           when 2 then null
           else throw new Error "Ωbbdbr_266 expected 1 or 2 arguments, got #{arity}"
+        #...................................................................................................
+        if @state.std_within_variables_context
+          throw new Error "Ωbbdbr_267 illegal to nest `std_with_variables()` contexts"
+        @state.std_within_variables_context = true
+        #...................................................................................................
         @_std_acquire_state transients
         try
           R = fn()
         finally
+          @state.std_within_variables_context = false
           @_std_persist_state()
         return R
 
       #-----------------------------------------------------------------------------------------------------
       std_set_variable: ( name, value, delta ) ->
-        ### TAINT validate is called inside `std_with_variables()` context handler ###
+        unless @state.std_within_variables_context
+          throw new Error "Ωbbdbr_268 illegal to set variable outside of `std_with_variables()` contexts"
         if Reflect.has @state.std_transients, name
-          @state.std_transients = lets @state.std_transients, ( t ) => t[ name ] = value
+          @state.std_transients = lets @state.std_transients, ( t ) => t[ name ] = { name, value, }
         else
           delta ?= null
           @state.std_variables = lets @state.std_variables,   ( v ) => v[ name ] = { name, value, delta, }
         ;null
 
       #-----------------------------------------------------------------------------------------------------
+      std_get_variable: ( name ) ->
+        unless @state.std_within_variables_context
+          throw new Error "Ωbbdbr_269 illegal to get variable outside of `std_with_variables()` contexts"
+        if Reflect.has @state.std_transients, name
+          return @state.std_transients[ name ].value
+        if Reflect.has @state.std_variables, name
+          return @state.std_variables[ name ].value
+        throw new Error "Ωbbdbr_270 unknown variable #{rpr name}"
+        ;null
+
+      #-----------------------------------------------------------------------------------------------------
       std_get_next_in_sequence: ( name ) ->
         ### TAINT validate is called inside `std_with_variables()` context handler ###
         unless ( entry = @state.std_variables[ name ] )?
-          throw new Error "Ωbbdbr_267 unknown variable #{rpr name}"
+          throw new Error "Ωbbdbr_271 unknown variable #{rpr name}"
         unless ( delta = entry.delta )?
-          throw new Error "Ωbbdbr_268 not a sequence name: #{rpr name}"
+          throw new Error "Ωbbdbr_272 not a sequence name: #{rpr name}"
         entry.value += delta
         return entry.value
 
@@ -1273,7 +1291,11 @@ remove = ( path ) ->
           s   = store[                  name ] ? {}
           c   = @state.std_variables[   name ] ? {}
           t   = @state.std_transients[  name ] ? {}
-          table[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, }
+          if @state.std_within_variables_context
+            g   = @std_get_variable name
+          else
+            g   = @std_with_variables => @std_get_variable name
+          table[ name ] = { sv: s.value, sd: s.delta, cv: c.value, cd: c.delta, tv: t.value, gv: g.value, }
         console.table table
         ;null
 
@@ -1287,23 +1309,31 @@ remove = ( path ) ->
     #-------------------------------------------------------------------------------------------------------
     db              = new Dbric_seqs_and_vars ':memory:', { db_class: Bsql3, }
     #=======================================================================================================
+    @throws ( Ωbbdbr_273 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
+    @throws ( Ωbbdbr_274 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
+    @throws ( Ωbbdbr_275 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    #=======================================================================================================
     do =>
       db._show_variables()
       #.....................................................................................................
-      db.std_with_variables ->
+      db.std_with_variables =>
+        @throws ( Ωbbdbr_276 = -> db.std_get_variable 'myname' ), /unknown variable/
         db._show_variables()
         ### TAINT use API ###
         db.state.std_variables = lets db.state.std_variables, ( d ) ->
           d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
         db._show_variables()
-        info 'Ωbbdbr_269', db.std_get_next_in_sequence 'seq:app:counter'
-        info 'Ωbbdbr_270', db.std_get_next_in_sequence 'seq:app:counter'
+        info 'Ωbbdbr_277', db.std_get_next_in_sequence 'seq:app:counter'
+        info 'Ωbbdbr_278', db.std_get_next_in_sequence 'seq:app:counter'
         db.std_set_variable 'fuzz', 11.5
+        db.std_set_variable 'name', 'Bob'
+        @eq ( Ωbbdbr_279 = -> db.std_get_variable 'name' ), 'Bob'
         db._show_variables()
         ;null
       #.....................................................................................................
-      db.std_with_variables { name: 'Alice', job: 'engineer', }, ->
-        # debug 'Ωbbdbr_271', { name, job, }
+      db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
+        @eq ( Ωbbdbr_280 = -> db.std_get_variable 'name' ), 'Alice'
+        # debug 'Ωbbdbr_281', { name, job, }
         db._show_variables()
         ;null
       #.....................................................................................................
