@@ -1131,38 +1131,38 @@ remove = ( path ) ->
     #=======================================================================================================
     db = new Dbric_std ':memory:', { db_class: Bsql3, }
     #=======================================================================================================
-    @throws ( Ωbbdbr_246 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
-    @throws ( Ωbbdbr_247 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
-    # @throws ( Ωbbdbr_248 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
-    @throws ( Ωbbdbr_249 = -> db.std_get_variable 'myname'                            ), /unknown variable/
+    @throws ( Ωbbdbr_231 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
+    @throws ( Ωbbdbr_232 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
+    # @throws ( Ωbbdbr_233 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    @throws ( Ωbbdbr_234 = -> db.std_get_variable 'myname'                            ), /unknown variable/
     #=======================================================================================================
     variables = db._show_variables()
     #.......................................................................................................
     db.std_with_variables =>
-      @throws ( Ωbbdbr_250 = -> db.std_get_variable 'myname' ), /unknown variable/
-      @eq ( Ωbbdbr_251 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @throws ( Ωbbdbr_235 = -> db.std_get_variable 'myname' ), /unknown variable/
+      @eq ( Ωbbdbr_236 = -> db._show_variables() ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ### TAINT use API ###
       db.state.std_variables = lets db.state.std_variables, ( d ) ->
         d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-      @eq ( Ωbbdbr_252 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
-      @eq ( Ωbbdbr_253 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
-      @eq ( Ωbbdbr_254 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
+      @eq ( Ωbbdbr_237 = -> db._show_variables() ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_238 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
+      @eq ( Ωbbdbr_239 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
       db.std_set_variable 'fuzz', 11.5
       db.std_set_variable 'name', 'Bob'
-      @eq ( Ωbbdbr_255 = -> db.std_get_variable 'fuzz' ), 11.5
-      @eq ( Ωbbdbr_256 = -> db.std_get_variable 'name' ), 'Bob'
-      @eq ( Ωbbdbr_257 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_240 = -> db.std_get_variable 'fuzz' ), 11.5
+      @eq ( Ωbbdbr_241 = -> db.std_get_variable 'name' ), 'Bob'
+      @eq ( Ωbbdbr_242 = -> db._show_variables() ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
     db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
-      @eq ( Ωbbdbr_258 = -> db.std_get_variable 'name' ), 'Alice'
-      # debug 'Ωbbdbr_259', { name, job, }
-      @eq ( Ωbbdbr_260 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_243 = -> db.std_get_variable 'name' ), 'Alice'
+      # debug 'Ωbbdbr_244', { name, job, }
+      @eq ( Ωbbdbr_245 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
-    @eq ( Ωbbdbr_261 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+    @eq ( Ωbbdbr_246 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
     db.std_with_variables =>
-      @eq ( Ωbbdbr_262 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_247 = -> db._show_variables() ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
     db.std_with_variables =>
@@ -1173,7 +1173,7 @@ remove = ( path ) ->
           rowid   text    unique  not null,
           letter  text    unique  not null,
         -- primary key ( rowid )
-        constraint "Ωconstraint_263" check ( length( letter ) = 1 )
+        constraint "Ωconstraint_248" check ( length( letter ) = 1 )
         ) strict;"""
       db.execute SQL"""create view letters as select * from _letters;"""
       db.execute SQL"""create trigger on_before_insert_letters
@@ -1186,11 +1186,11 @@ remove = ( path ) ->
         ;"""
       db.execute SQL"""insert into letters ( letter ) values ( 'a' ), ( 'z' );"""
       for row from db.walk SQL"select * from letters;"
-        info 'Ωbbdbr_264', row
+        info 'Ωbbdbr_249', row
       rows = db.walk SQL"select * from letters order by letter;"
-      @eq ( Ωbbdbr_265 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-      @eq ( Ωbbdbr_266 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-      @eq ( Ωbbdbr_267 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_250 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+      @eq ( Ωbbdbr_251 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+      @eq ( Ωbbdbr_252 = -> rows.next().done ), true
       ;null
     ;null
     #.......................................................................................................
@@ -1210,11 +1210,11 @@ remove = ( path ) ->
         ;"""
       db.execute SQL"""insert into numbers ( number ) values ( 'uno' ), ( 'due' );"""
       for row from db.walk SQL"select * from numbers;"
-        info 'Ωbbdbr_268', row
+        info 'Ωbbdbr_253', row
       rows = db.walk SQL"select * from numbers order by rowid;"
-      @eq ( Ωbbdbr_269 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
-      @eq ( Ωbbdbr_270 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
-      @eq ( Ωbbdbr_271 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_254 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
+      @eq ( Ωbbdbr_255 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
+      @eq ( Ωbbdbr_256 = -> rows.next().done ), true
       ;null
     #.......................................................................................................
     do =>
@@ -1222,9 +1222,9 @@ remove = ( path ) ->
       #.......................................................................................................
       ### repeat earlier test to ensure we know what's there: ###
       rows = db.walk SQL"select * from letters order by letter;"
-      @eq ( Ωbbdbr_272 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-      @eq ( Ωbbdbr_273 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-      @eq ( Ωbbdbr_274 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_257 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+      @eq ( Ωbbdbr_258 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+      @eq ( Ωbbdbr_259 = -> rows.next().done ), true
       #.......................................................................................................
       insert_letter = db.prepare SQL"""insert into letters ( letter ) values ( $letter );"""
       #.......................................................................................................
@@ -1242,14 +1242,52 @@ remove = ( path ) ->
       db.std_with_variables { first_letter: 'g', last_letter: 'm' }, =>
         result    = ( row.letter for row from db.walk SQL"select * from run_of_letters order by letter;" ).join ','
         variables = db._show_variables()
-        @eq ( Ωbbdbr_275 = -> result                      ), 'g,h,i,j,k,l,m'
-        @eq ( Ωbbdbr_276 = -> variables.first_letter?.gv  ), 'g'
-        @eq ( Ωbbdbr_277 = -> variables.last_letter?.gv   ), 'm'
+        @eq ( Ωbbdbr_260 = -> result                      ), 'g,h,i,j,k,l,m'
+        @eq ( Ωbbdbr_261 = -> variables.first_letter?.gv  ), 'g'
+        @eq ( Ωbbdbr_262 = -> variables.last_letter?.gv   ), 'm'
         ;null
     #.......................................................................................................
     variables = db._show_variables()
-    @eq ( Ωbbdbr_278 = -> variables.first_letter?.gv  ), undefined
-    @eq ( Ωbbdbr_279 = -> variables.last_letter?.gv   ), undefined
+    @eq ( Ωbbdbr_263 = -> variables.first_letter?.gv  ), undefined
+    @eq ( Ωbbdbr_264 = -> variables.last_letter?.gv   ), undefined
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  dbric_strict_mode: ->
+    { Dbric,
+      True,
+      False,
+      SQL,
+      esql,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    { lets,
+      freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
+    Bsql3                         = require 'better-sqlite3'
+    #.......................................................................................................
+    do =>
+      db = new Dbric ':memory:'
+      ( db.prepare SQL"pragma strict       = on;"    ).run()
+      db.execute SQL"create table t ( f integer );"
+      db.execute SQL"insert into t values ( 1234 );"
+      db.execute SQL"insert into t values ( 12.34 );"
+      db.execute SQL"insert into t values ( 'wat' );"
+      # debug 'Ωbbdbr_265', ( row.f for row from db.walk SQL"select f from t;" )
+      ;null
+    #.......................................................................................................
+    do =>
+      db = new Dbric ':memory:'
+      ( db.prepare SQL"pragma strict       = on;"    ).run()
+      @throws ( Ωbbdbr_266 = -> db.execute SQL"create table t ( f integer, j json ) strict;" ), /unknown datatype for t\.j/
+      db.execute SQL"create table t ( f integer, j blob ) strict;"
+      db.execute SQL"insert into t ( f ) values ( 1234 );"
+      @eq ( Ωbbdbr_267 = -> ( db.get_first SQL"select typeof( 12    ) as type;" ).type ), 'integer'
+      @eq ( Ωbbdbr_268 = -> ( db.get_first SQL"select typeof( 12.34 ) as type;" ).type ), 'real'
+      @eq ( Ωbbdbr_269 = -> ( db.get_first SQL"select typeof( 'wat' ) as type;" ).type ), 'text'
+      @throws ( Ωbbdbr_270 = -> db.execute SQL"insert into t ( f ) values ( 12.34 );" ), /cannot store REAL value in INTEGER column/
+      @throws ( Ωbbdbr_271 = -> db.execute SQL"insert into t ( f ) values ( 'wat' );" ), /cannot store TEXT value in INTEGER column/
+      # debug 'Ωbbdbr_272', ( row.f for row from db.walk SQL"select f from t;" )
+      ;null
+    #.......................................................................................................
     ;null
 
 
