@@ -51,18 +51,18 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_esql: ->
-    { esql,
+    { LIT, IDN, VEC,
+      unquote_name,
       internals,                      } = SFMODULES.unstable.require_dbric()
-    { LIT, IDN, VEC,                  } = esql
     #.......................................................................................................
-    @eq     ( Ωbbdbr___3 = -> internals.type_of esql.unquote_name ), 'function'
-    @eq     ( Ωbbdbr___4 = -> esql.unquote_name 'abc'             ), 'abc'
-    @eq     ( Ωbbdbr___5 = -> esql.unquote_name '"abc"'           ), 'abc'
-    @eq     ( Ωbbdbr___6 = -> esql.unquote_name '"ab""c"'         ), 'ab"c'
-    @throws ( Ωbbdbr___7 = -> esql.unquote_name ''                ), /expected a name/
-    @throws ( Ωbbdbr___8 = -> esql.unquote_name '"'               ), /expected a name/
-    @throws ( Ωbbdbr___9 = -> esql.unquote_name '""'              ), /expected a name/
-    @throws ( Ωbbdbr__10 = -> esql.unquote_name false             ), /expected a text, got a boolean/
+    @eq     ( Ωbbdbr___3 = -> internals.type_of unquote_name      ), 'function'
+    @eq     ( Ωbbdbr___4 = -> unquote_name 'abc'                  ), 'abc'
+    @eq     ( Ωbbdbr___5 = -> unquote_name '"abc"'                ), 'abc'
+    @eq     ( Ωbbdbr___6 = -> unquote_name '"ab""c"'              ), 'ab"c'
+    @throws ( Ωbbdbr___7 = -> unquote_name ''                     ), /expected a name/
+    @throws ( Ωbbdbr___8 = -> unquote_name '"'                    ), /expected a name/
+    @throws ( Ωbbdbr___9 = -> unquote_name '""'                   ), /expected a name/
+    @throws ( Ωbbdbr__10 = -> unquote_name false                  ), /expected a text, got a boolean/
     #.......................................................................................................
     @eq     ( Ωbbdbr__11 = -> IDN 'abc'                           ), '"abc"'
     @eq     ( Ωbbdbr__12 = -> IDN 'A"bc"'                         ), '"A""bc"""'
@@ -1127,7 +1127,6 @@ remove = ( path ) ->
       True,
       False,
       SQL,
-      esql,
       internals,                } = SFMODULES.unstable.require_dbric()
     { lets,
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
@@ -1312,7 +1311,6 @@ remove = ( path ) ->
       True,
       False,
       SQL,
-      esql,
       internals,                } = SFMODULES.unstable.require_dbric()
     { lets,
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
@@ -1344,6 +1342,85 @@ remove = ( path ) ->
     #.......................................................................................................
     ;null
 
+  #---------------------------------------------------------------------------------------------------------
+  dbric_dynamic_build_properties: ->
+    { Dbric,
+      Dbric_std,
+      True,
+      False,
+      IDN,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    Bsql3                         = require 'better-sqlite3'
+    # #.......................................................................................................
+    # do =>
+    #   class Db_1 extends Dbric
+    #     @cfg:
+    #       prefix:   'wrd'
+    #     @db_class:  Bsql3
+    #     @build: [
+    #       SQL"create table words ( t text );"
+    #       SQL"insert into words ( t ) values ( '水 (みず)' );"
+    #       SQL"insert into words ( t ) values ( '食べ物 (たべもの)' );"
+    #       # SQL"insert into words ( t ) values ( '家 (いえ)' );"
+    #       # SQL"insert into words ( t ) values ( '学校 (がっこう)' );"
+    #       # SQL"insert into words ( t ) values ( '仕事 (しごと)' );"
+    #       # SQL"insert into words ( t ) values ( '時間 (じかん)' );"
+    #       ]
+    #   db = new Db_1()
+    #   # debug 'Ωbbdbr_283', rpr db.prefix
+    #   # debug 'Ωbbdbr_284', row for row from db.walk SQL"select * from sqlite_schema;"
+    #   # debug 'Ωbbdbr_285', row for row from db.walk SQL"select * from words;"
+    #   ;null
+    #.......................................................................................................
+    do =>
+      class Db_1 extends Dbric_std
+        @cfg:
+          prefix:   'wrd'
+        @db_class:  Bsql3
+        @build: [
+          -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
+          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
+          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
+          ]
+      db = new Db_1()
+      @eq ( Ωbbdbr_286 = -> db.prefix                           ), 'wrd'
+      @eq ( Ωbbdbr_287 = -> db.cfg.prefix                       ), 'wrd'
+      relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
+      @eq ( Ωbbdbr_288 = -> relation_names.has 'wrd_words'      ), true
+      # info 'Ωbbdbr_289', row for row from db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
+      rows = db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
+      @eq ( Ωbbdbr_290 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_291 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_292 = -> rows.next().done                    ), true
+      ;null
+    #.......................................................................................................
+    do =>
+      class Db_1 extends Dbric_std
+        @cfg:
+          prefix:   'wrd'
+        @db_class:  Bsql3
+        @build: [
+          -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
+          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
+          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
+          ]
+        @statements:
+          select_words: -> SQL"""select * from #{IDN "#{@cfg.prefix}_words"} order by t;"""
+      db = new Db_1()
+      @eq ( Ωbbdbr_293 = -> db.prefix                           ), 'wrd'
+      @eq ( Ωbbdbr_294 = -> db.cfg.prefix                       ), 'wrd'
+      relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
+      @eq ( Ωbbdbr_295 = -> relation_names.has 'wrd_words'      ), true
+      # info 'Ωbbdbr_296', row for row from db.walk db.statements.select_words
+      rows = db.walk db.statements.select_words
+      @eq ( Ωbbdbr_297 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_298 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_299 = -> rows.next().done                    ), true
+      ;null
+    #.......................................................................................................
+    ;null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -1353,7 +1430,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
+  ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
   # ( new Test guytest_cfg ).test { dbric_rng: tests.dbric_rng, }
-  # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
