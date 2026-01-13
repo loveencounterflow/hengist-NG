@@ -104,7 +104,6 @@ remove = ( path ) ->
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
     { temp,                     } = SFMODULES.unstable.require_temp()
-    Bsql3                         = require 'better-sqlite3'
     #.......................................................................................................
     temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
       # folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -140,7 +139,7 @@ remove = ( path ) ->
         return null
       #.....................................................................................................
       do =>
-        db = new Dbric_std db_path, { db_class: Bsql3, }
+        db = new Dbric_std db_path
         @eq   ( Ωbbdbr__31 = -> db.is_ready       ), true
         @eq   ( Ωbbdbr__32 = -> db.cfg.prefix     ), 'std'
         @eq   ( Ωbbdbr__33 = -> db.prefix         ), 'std'
@@ -148,7 +147,7 @@ remove = ( path ) ->
         return null
       #.....................................................................................................
       do =>
-        db = ( new Dbric_std db_path, { db_class: Bsql3, } )
+        db = ( new Dbric_std db_path )
         @eq   ( Ωbbdbr__35 = -> db instanceof Dbric               ), true
         @eq   ( Ωbbdbr__36 = -> db instanceof Dbric_std           ), true
         objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
@@ -160,7 +159,7 @@ remove = ( path ) ->
         return null
       #.....................................................................................................
       do =>
-        db = ( new Dbric_std db_path, { db_class: Bsql3, } )
+        db = ( new Dbric_std db_path )
         @eq   ( Ωbbdbr__42 = -> db instanceof Dbric               ), true
         @eq   ( Ωbbdbr__43 = -> db instanceof Dbric_std           ), true
         objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
@@ -172,7 +171,7 @@ remove = ( path ) ->
         return null
       #.....................................................................................................
       do =>
-        db = ( new Dbric_std db_path, { db_class: Bsql3, } )
+        db = ( new Dbric_std db_path )
         objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
         @eq   ( Ωbbdbr__49 = -> objects.has 'view:std_tables'     ), true
         ( db.prepare SQL"drop view std_tables;" ).run()
@@ -182,7 +181,7 @@ remove = ( path ) ->
         return null
       #.....................................................................................................
       do =>
-        db = ( new Dbric_std db_path, { db_class: Bsql3, } )
+        db = ( new Dbric_std db_path )
         @eq   ( Ωbbdbr__52 = -> db instanceof Dbric               ), true
         @eq   ( Ωbbdbr__53 = -> db instanceof Dbric_std           ), true
         objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
@@ -199,7 +198,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_std_generate_series: ->
-    Bsql3                         = require 'better-sqlite3'
     { Dbric,
       Dbric_std,
       SQL,
@@ -248,7 +246,6 @@ remove = ( path ) ->
     #.......................................................................................................
     do =>
       class Db extends Dbric_std
-        @db_class: Bsql3
       db = new Db ':memory:'
       @eq ( Ωbbdbr__59 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 10, 2 );")...,  ] ), [ 1, 3, 5, 7, 9 ]
       @eq ( Ωbbdbr__60 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 10, 0 );")...,  ] ), [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
@@ -266,7 +263,7 @@ remove = ( path ) ->
       internals,                } = SFMODULES.unstable.require_dbric()
     # { temp,                     } = SFMODULES.unstable.require_temp()
     # { StatementSync,            } = require 'node:sqlite'
-    Bsql3                         = require 'better-sqlite3'
+    Bsql3                         = require '../../../apps/bricabrac-sfmodules/node_modules/better-sqlite3'
     statement_class               = ( ( new Bsql3 ':memory:' ).prepare SQL"select 1 where false;" ).constructor
     #.......................................................................................................
     get_function_names = ( dba ) -> new Set ( name for { name, } from \
@@ -285,7 +282,6 @@ remove = ( path ) ->
       where type is 'trigger' order by name;""" )
     #.......................................................................................................
     class A extends Dbric_std
-      @db_class: Bsql3
       @functions:
         fn_a:
           value: -> return 1
@@ -335,7 +331,7 @@ remove = ( path ) ->
     # return null
     #.......................................................................................................
     do =>
-      dba = new Dbric_std ':memory:', { db_class: Bsql3, }
+      dba = new Dbric_std ':memory:'
       # dba = new A()
       # dba = new B()
       dba.db.function 'zzz_test', { deterministic: true, varargs: false, directOnly: false, }, -> "ZZZ_TEST"
@@ -512,12 +508,12 @@ remove = ( path ) ->
         return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
       #.....................................................................................................
       rows = store.statements.store_get_facets.iterate()
-      @eq ( Ωbbdbr_134 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
-      @eq ( Ωbbdbr_135 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
-      @eq ( Ωbbdbr_136 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
-      @eq ( Ωbbdbr_137 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
-      @eq ( Ωbbdbr_138 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
-      @eq ( Ωbbdbr_139 = -> cast_row rows.next().value ), null ### NOTE different from better-sqlite3 below ###
+      @eq ( Ωbbdbr_134 = -> cast_row rows.next().value  ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      @eq ( Ωbbdbr_135 = -> cast_row rows.next().value  ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr_136 = -> cast_row rows.next().value  ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr_137 = -> cast_row rows.next().value  ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr_138 = -> cast_row rows.next().value  ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr_139 = -> rows.next().done            ), true
     #.......................................................................................................
     return null
 
@@ -526,12 +522,8 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    _Bsql3                        = require 'better-sqlite3'
-    #=======================================================================================================
-    class Bsql3 extends _Bsql3
     #=======================================================================================================
     class Dbric_store extends Dbric
-      @db_class: Bsql3
       @build: [
         SQL"""create table store_facets (
           facet_key             text unique not null primary key,
@@ -547,14 +539,8 @@ remove = ( path ) ->
           select * from store_facets order by facet_key;"""
     #=======================================================================================================
     do =>
-      db_path   = '/dev/shm/bricabrac.sqlite'
+      db_path   = ':memory:'
       store     = new Dbric_store db_path
-      # debug 'Ωbbdbr_140', store
-      @eq ( Ωbbdbr_141 = -> store.db instanceof Bsql3     ), true
-      @eq ( Ωbbdbr_142 = -> store.db instanceof _Bsql3    ), true
-      # store.statements.store_create_tables.run()
-      # for row from store.statements.get_schema.iterate()
-      #   help 'Ωbbdbr_143', row
       store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -567,12 +553,12 @@ remove = ( path ) ->
         return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
       #.....................................................................................................
       rows = store.statements.store_get_facets.iterate()
-      @eq ( Ωbbdbr_144 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
-      @eq ( Ωbbdbr_145 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
-      @eq ( Ωbbdbr_146 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
-      @eq ( Ωbbdbr_147 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
-      @eq ( Ωbbdbr_148 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
-      @eq ( Ωbbdbr_149 = -> cast_row rows.next().value ), undefined
+      @eq ( Ωbbdbr_140 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      @eq ( Ωbbdbr_141 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr_142 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr_143 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr_144 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr_145 = -> cast_row rows.next().value ), undefined
     #.......................................................................................................
     return null
 
@@ -581,7 +567,6 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_squares extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -616,23 +601,22 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       squares   = new Dbric_squares db_path
-      @eq ( Ωbbdbr_150 = -> squares.db instanceof Bsql3     ), false
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_151', row for row from squares.statements.select_from_squares.iterate()
+      # echo 'Ωbbdbr_146', row for row from squares.statements.select_from_squares.iterate()
       rows = squares.statements.select_from_squares.iterate()
-      @eq ( Ωbbdbr_152 = -> rows.next().value ), { n: 0, square: 0 }
-      @eq ( Ωbbdbr_153 = -> rows.next().value ), { n: 1, square: 1 }
-      @eq ( Ωbbdbr_154 = -> rows.next().value ), { n: 2, square: 4 }
-      @eq ( Ωbbdbr_155 = -> rows.next().value ), { n: 3, square: 9 }
-      @eq ( Ωbbdbr_156 = -> rows.next().value ), { n: 4, square: 16 }
-      @eq ( Ωbbdbr_157 = -> rows.next().value ), { n: 5, square: 25 }
-      @eq ( Ωbbdbr_158 = -> rows.next().value ), { n: 6, square: 36 }
-      @eq ( Ωbbdbr_159 = -> rows.next().value ), { n: 7, square: 49 }
-      @eq ( Ωbbdbr_160 = -> rows.next().value ), { n: 8, square: 64 }
-      @eq ( Ωbbdbr_161 = -> rows.next().value ), { n: 9, square: 81 }
-      @eq ( Ωbbdbr_162 = -> rows.next().value ), null
+      @eq ( Ωbbdbr_147 = -> rows.next().value ), { n: 0, square: 0 }
+      @eq ( Ωbbdbr_148 = -> rows.next().value ), { n: 1, square: 1 }
+      @eq ( Ωbbdbr_149 = -> rows.next().value ), { n: 2, square: 4 }
+      @eq ( Ωbbdbr_150 = -> rows.next().value ), { n: 3, square: 9 }
+      @eq ( Ωbbdbr_151 = -> rows.next().value ), { n: 4, square: 16 }
+      @eq ( Ωbbdbr_152 = -> rows.next().value ), { n: 5, square: 25 }
+      @eq ( Ωbbdbr_153 = -> rows.next().value ), { n: 6, square: 36 }
+      @eq ( Ωbbdbr_154 = -> rows.next().value ), { n: 7, square: 49 }
+      @eq ( Ωbbdbr_155 = -> rows.next().value ), { n: 8, square: 64 }
+      @eq ( Ωbbdbr_156 = -> rows.next().value ), { n: 9, square: 81 }
+      @eq ( Ωbbdbr_157 = -> rows.next().done  ), true
       ;null
     #.......................................................................................................
     return null
@@ -642,7 +626,6 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_squares extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -680,26 +663,25 @@ remove = ( path ) ->
           name:           'product'
           start:          -> 1 ### NOTE can use `null` for bSQL, but nSQL needs `1` ###
           step:           product = ( total, element ) ->
-            # debug 'Ωbbdbr_163', { total, element, }
+            # debug 'Ωbbdbr_158', { total, element, }
             return ( total ? 1 ) * element
         ;null
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac-udf_aggregates_with_nsql.sqlite'
       squares   = new Dbric_squares db_path
-      @eq ( Ωbbdbr_164 = -> squares.db instanceof Bsql3     ), false
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_165', row for row from squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
+      # echo 'Ωbbdbr_159', row for row from squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
       rows = squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
-      @eq ( Ωbbdbr_166 = -> rows.next().value ), { n: 1, square: 1, p_n: 120, p_square: 14400 }
-      @eq ( Ωbbdbr_167 = -> rows.next().value ), null
+      @eq ( Ωbbdbr_160 = -> rows.next().value ), { n: 1, square: 1, p_n: 120, p_square: 14400 }
+      @eq ( Ωbbdbr_161 = -> rows.next().done  ), true
       #.....................................................................................................
-      # echo 'Ωbbdbr_168', row for row from squares.statements.select_from_squares.iterate()
-      rows = squares.statements.select_from_squares.iterate()
-      @eq ( Ωbbdbr_169 = -> rows.next().value ), { n: null, square: null, p_n: 1, p_square: 1 }
-      @eq ( Ωbbdbr_170 = -> rows.next().value ), null
+      # echo 'Ωbbdbr_162', row for row from squares.statements.select_from_squares.iterate()
+      @throws ( Ωbbdbr_163 = -> squares.statements.select_from_squares.iterate() ), /missing named parameters/i
+      # @eq ( Ωbbdbr_164 = -> rows.next().value ), { n: null, square: null, p_n: 1, p_square: 1 }
+      # @eq ( Ωbbdbr_165 = -> rows.next().value ), null
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -710,10 +692,8 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_squares extends Dbric
-      @db_class: Bsql3
       #-----------------------------------------------------------------------------------------------------
       @build: [
         SQL"""create table numbers (
@@ -746,23 +726,22 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       squares   = new Dbric_squares db_path
-      @eq ( Ωbbdbr_171 = -> squares.db instanceof Bsql3     ), true
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
       # echo row for row from squares.statements.select_from_squares.iterate()
       rows = squares.statements.select_from_squares.iterate()
-      @eq ( Ωbbdbr_172 = -> rows.next().value ), { n: 0, square: 0 }
-      @eq ( Ωbbdbr_173 = -> rows.next().value ), { n: 1, square: 1 }
-      @eq ( Ωbbdbr_174 = -> rows.next().value ), { n: 2, square: 4 }
-      @eq ( Ωbbdbr_175 = -> rows.next().value ), { n: 3, square: 9 }
-      @eq ( Ωbbdbr_176 = -> rows.next().value ), { n: 4, square: 16 }
-      @eq ( Ωbbdbr_177 = -> rows.next().value ), { n: 5, square: 25 }
-      @eq ( Ωbbdbr_178 = -> rows.next().value ), { n: 6, square: 36 }
-      @eq ( Ωbbdbr_179 = -> rows.next().value ), { n: 7, square: 49 }
-      @eq ( Ωbbdbr_180 = -> rows.next().value ), { n: 8, square: 64 }
-      @eq ( Ωbbdbr_181 = -> rows.next().value ), { n: 9, square: 81 }
-      @eq ( Ωbbdbr_182 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_166 = -> rows.next().value ), { n: 0, square: 0 }
+      @eq ( Ωbbdbr_167 = -> rows.next().value ), { n: 1, square: 1 }
+      @eq ( Ωbbdbr_168 = -> rows.next().value ), { n: 2, square: 4 }
+      @eq ( Ωbbdbr_169 = -> rows.next().value ), { n: 3, square: 9 }
+      @eq ( Ωbbdbr_170 = -> rows.next().value ), { n: 4, square: 16 }
+      @eq ( Ωbbdbr_171 = -> rows.next().value ), { n: 5, square: 25 }
+      @eq ( Ωbbdbr_172 = -> rows.next().value ), { n: 6, square: 36 }
+      @eq ( Ωbbdbr_173 = -> rows.next().value ), { n: 7, square: 49 }
+      @eq ( Ωbbdbr_174 = -> rows.next().value ), { n: 8, square: 64 }
+      @eq ( Ωbbdbr_175 = -> rows.next().value ), { n: 9, square: 81 }
+      @eq ( Ωbbdbr_176 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -772,10 +751,8 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_squares extends Dbric
-      @db_class: Bsql3
       #-----------------------------------------------------------------------------------------------------
       @build: [
         SQL"""create table numbers (
@@ -810,21 +787,20 @@ remove = ( path ) ->
           name:           'product'
           start:          -> null
           step:           product = ( total, element ) ->
-            # debug 'Ωbbdbr_183', { total, element, }
+            # debug 'Ωbbdbr_177', { total, element, }
             return ( total ? 1 ) * element
         ;null
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       squares   = new Dbric_squares db_path
-      @eq ( Ωbbdbr_184 = -> squares.db instanceof Bsql3     ), true
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_185', row for row from squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
+      # echo 'Ωbbdbr_178', row for row from squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
       rows = squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
-      @eq ( Ωbbdbr_186 = -> rows.next().value ), { n: 2, square: 4, p_n: 6, p_square: 36 }
-      @eq ( Ωbbdbr_187 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_179 = -> rows.next().value ), { n: 2, square: 4, p_n: 6, p_square: 36 }
+      @eq ( Ωbbdbr_180 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -834,10 +810,8 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_phrases extends Dbric
-      @db_class: Bsql3
       #-----------------------------------------------------------------------------------------------------
       @build: [
         SQL"""create table phrases (
@@ -871,28 +845,27 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       phrases   = new Dbric_phrases db_path
-      @eq ( Ωbbdbr_188 = -> phrases.db instanceof Bsql3     ), true
       for phrase in [ 'eleven', 'five', 'nine', 'one', 'one point five', 'seven', 'three point one' ]
         phrases.statements.insert_phrase.run { phrase, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_189', row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
+      # echo 'Ωbbdbr_181', row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
       # echo()
       #.....................................................................................................
-      # echo 'Ωbbdbr_190', row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
+      # echo 'Ωbbdbr_182', row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
       rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
-      @eq ( Ωbbdbr_191 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
-      @eq ( Ωbbdbr_192 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
-      @eq ( Ωbbdbr_193 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
-      @eq ( Ωbbdbr_194 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
-      @eq ( Ωbbdbr_195 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
-      @eq ( Ωbbdbr_196 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
-      @eq ( Ωbbdbr_197 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
-      @eq ( Ωbbdbr_198 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
-      @eq ( Ωbbdbr_199 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
-      @eq ( Ωbbdbr_200 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
-      @eq ( Ωbbdbr_201 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
-      @eq ( Ωbbdbr_202 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
-      @eq ( Ωbbdbr_203 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_183 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
+      @eq ( Ωbbdbr_184 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
+      @eq ( Ωbbdbr_185 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
+      @eq ( Ωbbdbr_186 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
+      @eq ( Ωbbdbr_187 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
+      @eq ( Ωbbdbr_188 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
+      @eq ( Ωbbdbr_189 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
+      @eq ( Ωbbdbr_190 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
+      @eq ( Ωbbdbr_191 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
+      @eq ( Ωbbdbr_192 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
+      @eq ( Ωbbdbr_193 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
+      @eq ( Ωbbdbr_194 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
+      @eq ( Ωbbdbr_195 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -902,10 +875,8 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_phrases extends Dbric
-      @db_class: Bsql3
       #-----------------------------------------------------------------------------------------------------
       @build: [
         #...................................................................................................
@@ -957,9 +928,8 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       phrases   = new Dbric_phrases db_path
-      @eq ( Ωbbdbr_204 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
-      @eq ( Ωbbdbr_205 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
-      @eq ( Ωbbdbr_206 = -> phrases.db instanceof Bsql3     ), true
+      @eq ( Ωbbdbr_196 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
+      @eq ( Ωbbdbr_197 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
       # #...................................................................................................
       # do =>
       #   dskey = 'readme'
@@ -971,21 +941,21 @@ remove = ( path ) ->
         path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/package.json'
         phrases.statements.insert_datasource.run { dskey, path }
       #.....................................................................................................
-      # echo 'Ωbbdbr_207', row for row from phrases.statements.select_from_datasources.iterate()
+      # echo 'Ωbbdbr_198', row for row from phrases.statements.select_from_datasources.iterate()
       # echo()
       # #...................................................................................................
-      # echo 'Ωbbdbr_208', row for row from phrases.statements.select_from_mirror.iterate()
+      # echo 'Ωbbdbr_199', row for row from phrases.statements.select_from_mirror.iterate()
       # echo()
       #.....................................................................................................
       for { dskey, line_nr, line, } from phrases.statements.select_from_mirror.iterate()
         keywords = line.split /(?:\p{Z}+)|((?:\p{L}+)|(?:\p{N}+)|(?:\p{S}+))/v
-        # debug 'Ωbbdbr_209', line_nr, rpr keywords
+        # debug 'Ωbbdbr_200', line_nr, rpr keywords
         for keyword in keywords
           continue unless keyword?
           continue if keyword is ''
           phrases.w.statements.insert_keyword.run { dskey, line_nr, keyword, }
       # #...................................................................................................
-      # echo 'Ωbbdbr_210', row for row from phrases.statements.select_from_keywords.iterate()
+      # echo 'Ωbbdbr_201', row for row from phrases.statements.select_from_keywords.iterate()
       # echo()
       #.....................................................................................................
       ;null
@@ -997,10 +967,8 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     #=======================================================================================================
     class Dbric_phrases extends Dbric
-      @db_class: Bsql3
       #-----------------------------------------------------------------------------------------------------
       @build: [
         #...................................................................................................
@@ -1061,7 +1029,7 @@ remove = ( path ) ->
           parameters:     [ 'line', ]
           rows: ( line ) ->
             keywords = line.split /(?:\p{Z}+)|((?:\p{L}+)|(?:\p{N}+)|(?:\p{S}+))/v
-            # debug 'Ωbbdbr_211', line_nr, rpr keywords
+            # debug 'Ωbbdbr_202', line_nr, rpr keywords
             for keyword in keywords
               continue unless keyword?
               continue if keyword is ''
@@ -1082,11 +1050,10 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       phrases   = new Dbric_phrases db_path
-      # debug 'Ωbbdbr_212', phrases.teardown()
-      # debug 'Ωbbdbr_213', phrases.rebuild()
-      @eq ( Ωbbdbr_214 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
-      @eq ( Ωbbdbr_215 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
-      @eq ( Ωbbdbr_216 = -> phrases.db instanceof Bsql3     ), true
+      # debug 'Ωbbdbr_203', phrases.teardown()
+      # debug 'Ωbbdbr_204', phrases.rebuild()
+      @eq ( Ωbbdbr_205 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
+      @eq ( Ωbbdbr_206 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
       #.....................................................................................................
       do =>
         dskey = 'humdum'
@@ -1095,27 +1062,27 @@ remove = ( path ) ->
       #.....................................................................................................
       phrases.statements.populate_keywords.run()
       #.....................................................................................................
-      # echo 'Ωbbdbr_217', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
+      # echo 'Ωbbdbr_207', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
       # echo()
       rows = phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
-      @eq ( Ωbbdbr_218 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
-      @eq ( Ωbbdbr_219 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
-      @eq ( Ωbbdbr_220 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_208 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
+      @eq ( Ωbbdbr_209 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
+      @eq ( Ωbbdbr_210 = -> rows.next().value ), undefined
       #.....................................................................................................
-      # echo 'Ωbbdbr_221', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
+      # echo 'Ωbbdbr_211', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
       # echo()
       rows = phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
-      @eq ( Ωbbdbr_222 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
-      @eq ( Ωbbdbr_223 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
-      @eq ( Ωbbdbr_224 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
-      @eq ( Ωbbdbr_225 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
-      @eq ( Ωbbdbr_226 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
-      @eq ( Ωbbdbr_227 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
-      @eq ( Ωbbdbr_228 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
-      @eq ( Ωbbdbr_229 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
-      @eq ( Ωbbdbr_230 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
-      @eq ( Ωbbdbr_231 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
-      @eq ( Ωbbdbr_232 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_212 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
+      @eq ( Ωbbdbr_213 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
+      @eq ( Ωbbdbr_214 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
+      @eq ( Ωbbdbr_215 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
+      @eq ( Ωbbdbr_216 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
+      @eq ( Ωbbdbr_217 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
+      @eq ( Ωbbdbr_218 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
+      @eq ( Ωbbdbr_219 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
+      @eq ( Ωbbdbr_220 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
+      @eq ( Ωbbdbr_221 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
+      @eq ( Ωbbdbr_222 = -> rows.next().value ), undefined
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -1130,43 +1097,42 @@ remove = ( path ) ->
       internals,                } = SFMODULES.unstable.require_dbric()
     { lets,
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
-    Bsql3                         = require 'better-sqlite3'
     cfg_do_show_variables         = false
     #=======================================================================================================
-    db = new Dbric_std ':memory:', { db_class: Bsql3, }
+    db = new Dbric_std ':memory:'
     #=======================================================================================================
-    @throws ( Ωbbdbr_233 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
-    @throws ( Ωbbdbr_234 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
-    # @throws ( Ωbbdbr_235 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
-    @throws ( Ωbbdbr_236 = -> db.std_get_variable 'myname'                            ), /unknown variable/
+    @throws ( Ωbbdbr_223 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
+    @throws ( Ωbbdbr_224 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
+    # @throws ( Ωbbdbr_225 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    @throws ( Ωbbdbr_226 = -> db.std_get_variable 'myname'                            ), /unknown variable/
     #=======================================================================================================
     variables = (db._show_variables cfg_do_show_variables )
     #.......................................................................................................
     db.std_with_variables =>
-      @throws ( Ωbbdbr_237 = -> db.std_get_variable 'myname' ), /unknown variable/
-      @eq ( Ωbbdbr_238 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @throws ( Ωbbdbr_227 = -> db.std_get_variable 'myname' ), /unknown variable/
+      @eq ( Ωbbdbr_228 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ### TAINT use API ###
       db.state.std_variables = lets db.state.std_variables, ( d ) ->
         d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-      @eq ( Ωbbdbr_239 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
-      @eq ( Ωbbdbr_240 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
-      @eq ( Ωbbdbr_241 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
+      @eq ( Ωbbdbr_229 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_230 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
+      @eq ( Ωbbdbr_231 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
       db.std_set_variable 'fuzz', 11.5
       db.std_set_variable 'name', 'Bob'
-      @eq ( Ωbbdbr_242 = -> db.std_get_variable 'fuzz' ), 11.5
-      @eq ( Ωbbdbr_243 = -> db.std_get_variable 'name' ), 'Bob'
-      @eq ( Ωbbdbr_244 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_232 = -> db.std_get_variable 'fuzz' ), 11.5
+      @eq ( Ωbbdbr_233 = -> db.std_get_variable 'name' ), 'Bob'
+      @eq ( Ωbbdbr_234 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
     db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
-      @eq ( Ωbbdbr_245 = -> db.std_get_variable 'name' ), 'Alice'
-      # debug 'Ωbbdbr_246', { name, job, }
-      @eq ( Ωbbdbr_247 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_235 = -> db.std_get_variable 'name' ), 'Alice'
+      # debug 'Ωbbdbr_236', { name, job, }
+      @eq ( Ωbbdbr_237 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
-    @eq ( Ωbbdbr_248 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+    @eq ( Ωbbdbr_238 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
     db.std_with_variables =>
-      @eq ( Ωbbdbr_249 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_239 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
     db.std_with_variables =>
@@ -1177,7 +1143,7 @@ remove = ( path ) ->
           rowid   text    unique  not null,
           letter  text    unique  not null,
         -- primary key ( rowid )
-        constraint "Ωconstraint_250" check ( length( letter ) = 1 )
+        constraint "Ωconstraint_240" check ( length( letter ) = 1 )
         ) strict;"""
       db.execute SQL"""create view letters as select * from _letters;"""
       db.execute SQL"""create trigger on_before_insert_letters
@@ -1189,11 +1155,11 @@ remove = ( path ) ->
             end;
         ;"""
       db.execute SQL"""insert into letters ( letter ) values ( 'a' ), ( 'z' );"""
-      # info 'Ωbbdbr_251', row for row from db.walk SQL"select * from letters;"
+      # info 'Ωbbdbr_241', row for row from db.walk SQL"select * from letters;"
       rows = db.walk SQL"select * from letters order by letter;"
-      @eq ( Ωbbdbr_252 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-      @eq ( Ωbbdbr_253 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-      @eq ( Ωbbdbr_254 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_242 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+      @eq ( Ωbbdbr_243 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+      @eq ( Ωbbdbr_244 = -> rows.next().done ), true
       ;null
     ;null
     #.......................................................................................................
@@ -1212,11 +1178,11 @@ remove = ( path ) ->
             end;
         ;"""
       db.execute SQL"""insert into numbers ( number ) values ( 'uno' ), ( 'due' );"""
-      # info 'Ωbbdbr_255', row for row from db.walk SQL"select * from numbers;"
+      # info 'Ωbbdbr_245', row for row from db.walk SQL"select * from numbers;"
       rows = db.walk SQL"select * from numbers order by rowid;"
-      @eq ( Ωbbdbr_256 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
-      @eq ( Ωbbdbr_257 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
-      @eq ( Ωbbdbr_258 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_246 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
+      @eq ( Ωbbdbr_247 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
+      @eq ( Ωbbdbr_248 = -> rows.next().done ), true
       ;null
     #.......................................................................................................
     do =>
@@ -1224,9 +1190,9 @@ remove = ( path ) ->
       #.......................................................................................................
       ### repeat earlier test to ensure we know what's there: ###
       rows = db.walk SQL"select * from letters order by letter;"
-      @eq ( Ωbbdbr_259 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-      @eq ( Ωbbdbr_260 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-      @eq ( Ωbbdbr_261 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_249 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+      @eq ( Ωbbdbr_250 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+      @eq ( Ωbbdbr_251 = -> rows.next().done ), true
       #.......................................................................................................
       insert_letter = db.prepare SQL"""insert into letters ( letter ) values ( $letter );"""
       #.......................................................................................................
@@ -1244,9 +1210,9 @@ remove = ( path ) ->
       db.std_with_variables { first_letter: 'g', last_letter: 'm' }, =>
         result    = ( row.letter for row from db.walk SQL"select * from run_of_letters order by letter;" ).join ','
         variables = (db._show_variables cfg_do_show_variables )
-        @eq ( Ωbbdbr_262 = -> result                      ), 'g,h,i,j,k,l,m'
-        @eq ( Ωbbdbr_263 = -> variables.first_letter?.gv  ), 'g'
-        @eq ( Ωbbdbr_264 = -> variables.last_letter?.gv   ), 'm'
+        @eq ( Ωbbdbr_252 = -> result                      ), 'g,h,i,j,k,l,m'
+        @eq ( Ωbbdbr_253 = -> variables.first_letter?.gv  ), 'g'
+        @eq ( Ωbbdbr_254 = -> variables.last_letter?.gv   ), 'm'
         ;null
     #.......................................................................................................
     do =>
@@ -1270,7 +1236,7 @@ remove = ( path ) ->
           en        text          not null,
           de        text          not null,
         primary key ( rowid ),
-        constraint "Ωconstraint_265" check ( rowid regexp 't:wrd:R=\\d+' ) );"""
+        constraint "Ωconstraint_255" check ( rowid regexp 't:wrd:R=\\d+' ) );"""
       ### NOTE part of `Dbric.statements` object: ###
       insert_word_v = db.prepare SQL"""insert into prfx_words ( rowid, en, de ) values (
           printf( 't:wrd:R=%d', std_get_next_in_sequence( 'seq:prfx_words_rowid' ) ),
@@ -1293,16 +1259,16 @@ remove = ( path ) ->
         ;null
     #.......................................................................................................
     variables = (db._show_variables cfg_do_show_variables )
-    @eq ( Ωbbdbr_266 = -> variables[ 'seq:prfx_words_rowid' ]?.gv  ), 700
-    # echo 'Ωbbdbr_267', row for row from db.walk SQL"select * from prfx_words order by de;"
+    @eq ( Ωbbdbr_256 = -> variables[ 'seq:prfx_words_rowid' ]?.gv  ), 700
+    # echo 'Ωbbdbr_257', row for row from db.walk SQL"select * from prfx_words order by de;"
     rows = db.walk SQL"select * from prfx_words order by de;"
-    @eq ( Ωbbdbr_268 = -> rows.next().value ), { rowid: 't:wrd:R=600', en: 'call', de: 'Anruf' }
-    @eq ( Ωbbdbr_269 = -> rows.next().value ), { rowid: 't:wrd:R=700', en: 'book', de: 'Buch' }
-    @eq ( Ωbbdbr_270 = -> rows.next().value ), { rowid: 't:wrd:R=200', en: 'dog', de: 'Hund' }
-    @eq ( Ωbbdbr_271 = -> rows.next().value ), { rowid: 't:wrd:R=300', en: 'cat', de: 'Katze' }
-    @eq ( Ωbbdbr_272 = -> rows.next().value ), { rowid: 't:wrd:R=400', en: 'word', de: 'Wort' }
-    @eq ( Ωbbdbr_273 = -> rows.next().value ), { rowid: 't:wrd:R=500', en: 'call', de: 'rufen' }
-    @eq ( Ωbbdbr_274 = -> rows.next().done ), true
+    @eq ( Ωbbdbr_258 = -> rows.next().value ), { rowid: 't:wrd:R=600', en: 'call', de: 'Anruf' }
+    @eq ( Ωbbdbr_259 = -> rows.next().value ), { rowid: 't:wrd:R=700', en: 'book', de: 'Buch' }
+    @eq ( Ωbbdbr_260 = -> rows.next().value ), { rowid: 't:wrd:R=200', en: 'dog', de: 'Hund' }
+    @eq ( Ωbbdbr_261 = -> rows.next().value ), { rowid: 't:wrd:R=300', en: 'cat', de: 'Katze' }
+    @eq ( Ωbbdbr_262 = -> rows.next().value ), { rowid: 't:wrd:R=400', en: 'word', de: 'Wort' }
+    @eq ( Ωbbdbr_263 = -> rows.next().value ), { rowid: 't:wrd:R=500', en: 'call', de: 'rufen' }
+    @eq ( Ωbbdbr_264 = -> rows.next().done ), true
     ;null
 
   #---------------------------------------------------------------------------------------------------------
@@ -1314,7 +1280,6 @@ remove = ( path ) ->
       internals,                } = SFMODULES.unstable.require_dbric()
     { lets,
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
-    Bsql3                         = require 'better-sqlite3'
     #.......................................................................................................
     do =>
       db = new Dbric ':memory:'
@@ -1323,21 +1288,21 @@ remove = ( path ) ->
       db.execute SQL"insert into t values ( 1234 );"
       db.execute SQL"insert into t values ( 12.34 );"
       db.execute SQL"insert into t values ( 'wat' );"
-      # debug 'Ωbbdbr_275', ( row.f for row from db.walk SQL"select f from t;" )
+      # debug 'Ωbbdbr_265', ( row.f for row from db.walk SQL"select f from t;" )
       ;null
     #.......................................................................................................
     do =>
       db = new Dbric ':memory:'
       ( db.prepare SQL"pragma strict       = on;"    ).run()
-      @throws ( Ωbbdbr_276 = -> db.execute SQL"create table t ( f integer, j json ) strict;" ), /unknown datatype for t\.j/
+      @throws ( Ωbbdbr_266 = -> db.execute SQL"create table t ( f integer, j json ) strict;" ), /unknown datatype for t\.j/
       db.execute SQL"create table t ( f integer, j blob ) strict;"
       db.execute SQL"insert into t ( f ) values ( 1234 );"
-      @eq ( Ωbbdbr_277 = -> ( db.get_first SQL"select typeof( 12    ) as type;" ).type ), 'integer'
-      @eq ( Ωbbdbr_278 = -> ( db.get_first SQL"select typeof( 12.34 ) as type;" ).type ), 'real'
-      @eq ( Ωbbdbr_279 = -> ( db.get_first SQL"select typeof( 'wat' ) as type;" ).type ), 'text'
-      @throws ( Ωbbdbr_280 = -> db.execute SQL"insert into t ( f ) values ( 12.34 );" ), /cannot store REAL value in INTEGER column/
-      @throws ( Ωbbdbr_281 = -> db.execute SQL"insert into t ( f ) values ( 'wat' );" ), /cannot store TEXT value in INTEGER column/
-      # debug 'Ωbbdbr_282', ( row.f for row from db.walk SQL"select f from t;" )
+      @eq ( Ωbbdbr_267 = -> ( db.get_first SQL"select typeof( 12    ) as type;" ).type ), 'integer'
+      @eq ( Ωbbdbr_268 = -> ( db.get_first SQL"select typeof( 12.34 ) as type;" ).type ), 'real'
+      @eq ( Ωbbdbr_269 = -> ( db.get_first SQL"select typeof( 'wat' ) as type;" ).type ), 'text'
+      @throws ( Ωbbdbr_270 = -> db.execute SQL"insert into t ( f ) values ( 12.34 );" ), /cannot store REAL value in INTEGER column/
+      @throws ( Ωbbdbr_271 = -> db.execute SQL"insert into t ( f ) values ( 'wat' );" ), /cannot store TEXT value in INTEGER column/
+      # debug 'Ωbbdbr_272', ( row.f for row from db.walk SQL"select f from t;" )
       ;null
     #.......................................................................................................
     ;null
@@ -1351,13 +1316,11 @@ remove = ( path ) ->
       IDN,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    Bsql3                         = require 'better-sqlite3'
     # #.......................................................................................................
     # do =>
     #   class Db_1 extends Dbric
     #     @cfg:
     #       prefix:   'wrd'
-    #     @db_class:  Bsql3
     #     @build: [
     #       SQL"create table words ( t text );"
     #       SQL"insert into words ( t ) values ( '水 (みず)' );"
@@ -1368,38 +1331,36 @@ remove = ( path ) ->
     #       # SQL"insert into words ( t ) values ( '時間 (じかん)' );"
     #       ]
     #   db = new Db_1()
-    #   # debug 'Ωbbdbr_283', rpr db.prefix
-    #   # debug 'Ωbbdbr_284', row for row from db.walk SQL"select * from sqlite_schema;"
-    #   # debug 'Ωbbdbr_285', row for row from db.walk SQL"select * from words;"
+    #   # debug 'Ωbbdbr_273', rpr db.prefix
+    #   # debug 'Ωbbdbr_274', row for row from db.walk SQL"select * from sqlite_schema;"
+    #   # debug 'Ωbbdbr_275', row for row from db.walk SQL"select * from words;"
     #   ;null
     #.......................................................................................................
     do =>
       class Db_1 extends Dbric_std
         @cfg:
           prefix:   'wrd'
-        @db_class:  Bsql3
         @build: [
           -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
           -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
           -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
           ]
       db = new Db_1()
-      @eq ( Ωbbdbr_286 = -> db.prefix                           ), 'wrd'
-      @eq ( Ωbbdbr_287 = -> db.cfg.prefix                       ), 'wrd'
+      @eq ( Ωbbdbr_276 = -> db.prefix                           ), 'wrd'
+      @eq ( Ωbbdbr_277 = -> db.cfg.prefix                       ), 'wrd'
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
-      @eq ( Ωbbdbr_288 = -> relation_names.has 'wrd_words'      ), true
-      # info 'Ωbbdbr_289', row for row from db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
+      @eq ( Ωbbdbr_278 = -> relation_names.has 'wrd_words'      ), true
+      # info 'Ωbbdbr_279', row for row from db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
       rows = db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
-      @eq ( Ωbbdbr_290 = -> rows.next().value.t                 ), '水 (みず)'
-      @eq ( Ωbbdbr_291 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
-      @eq ( Ωbbdbr_292 = -> rows.next().done                    ), true
+      @eq ( Ωbbdbr_280 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_281 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_282 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     do =>
       class Db_1 extends Dbric_std
         @cfg:
           prefix:   'wrd'
-        @db_class:  Bsql3
         @build: [
           -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
           -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
@@ -1408,19 +1369,48 @@ remove = ( path ) ->
         @statements:
           select_words: -> SQL"""select * from #{IDN "#{@cfg.prefix}_words"} order by t;"""
       db = new Db_1()
-      @eq ( Ωbbdbr_293 = -> db.prefix                           ), 'wrd'
-      @eq ( Ωbbdbr_294 = -> db.cfg.prefix                       ), 'wrd'
+      @eq ( Ωbbdbr_283 = -> db.prefix                           ), 'wrd'
+      @eq ( Ωbbdbr_284 = -> db.cfg.prefix                       ), 'wrd'
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
-      @eq ( Ωbbdbr_295 = -> relation_names.has 'wrd_words'      ), true
-      # info 'Ωbbdbr_296', row for row from db.walk db.statements.select_words
+      @eq ( Ωbbdbr_285 = -> relation_names.has 'wrd_words'      ), true
+      # info 'Ωbbdbr_286', row for row from db.walk db.statements.select_words
       rows = db.walk db.statements.select_words
-      @eq ( Ωbbdbr_297 = -> rows.next().value.t                 ), '水 (みず)'
-      @eq ( Ωbbdbr_298 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
-      @eq ( Ωbbdbr_299 = -> rows.next().done                    ), true
+      @eq ( Ωbbdbr_287 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_288 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_289 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     ;null
 
+  #---------------------------------------------------------------------------------------------------------
+  _dbric_prefixes: ->
+    { Dbric,
+      Dbric_std,
+      SQL,
+      LIT, IDN, VEC,
+      unquote_name,
+      internals,                      } = SFMODULES.unstable.require_dbric()
+    #.......................................................................................................
+    @eq     ( Ωbbdbr_290 = -> Dbric.cfg.prefix                ), '(NOPREFIX)'
+    @eq     ( Ωbbdbr_291 = -> Dbric_std.cfg.prefix            ), 'std'
+    @eq     ( Ωbbdbr_292 = -> ( new Dbric     ).cfg.prefix    ), '(NOPREFIX)'
+    @eq     ( Ωbbdbr_293 = -> ( new Dbric_std ).cfg.prefix    ), 'std'
+    @eq     ( Ωbbdbr_294 = -> ( new Dbric     ).prefix        ), ''
+    @eq     ( Ωbbdbr_295 = -> ( new Dbric_std ).prefix        ), 'std'
+    class Prefix_demo
+      @build: [
+        SQL"create table names ( id integer primary key, name text );"
+        ]
+      @statements:
+        select_names: SQL"select * from names where name is $name;"
+    db = new Prefix_demo()
+    debug 'Ωbbdbr_296', row for row from db.walk db.statements.select_names
+    #.......................................................................................................
+    return null
+
+# SQL"""
+# select * from #{prefix}_frobulate
+# """
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -1430,6 +1420,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
+  ( new Test guytest_cfg ).test { dbric_prefixes: tests._dbric_prefixes, }
+  # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
   # ( new Test guytest_cfg ).test { dbric_rng: tests.dbric_rng, }

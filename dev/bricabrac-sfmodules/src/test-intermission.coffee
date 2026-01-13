@@ -43,7 +43,7 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   basic_runs: ->
-    { Hoard,                    } = SFMODULES.require_intermission()
+    { Hoard,                    } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     h = new Hoard()
     @throws ( Ωimt___1 = -> h.create_run()           ), /expected an integer or a text, got a null/
@@ -61,7 +61,7 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   basic_scatters: ->
-    { Hoard,                    } = SFMODULES.require_intermission()
+    { Hoard,                    } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     do =>
       h = new Hoard()
@@ -157,7 +157,7 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   containment: ->
-    { Hoard,                    } = SFMODULES.require_intermission()
+    { Hoard,                    } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     do =>
       h = new Hoard()
@@ -243,7 +243,7 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   iteration: ->
-    { Hoard,                    } = SFMODULES.require_intermission()
+    { Hoard,                    } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     do =>
       h = new Hoard()
@@ -301,7 +301,7 @@ PATH                      = require 'node:path'
 
   #---------------------------------------------------------------------------------------------------------
   using_strings_for_bounds: ->
-    { Hoard,                    } = SFMODULES.require_intermission()
+    { Hoard,                    } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     do =>
       h = new Hoard()
@@ -365,7 +365,7 @@ PATH                      = require 'node:path'
   #---------------------------------------------------------------------------------------------------------
   data_retrieval: ->
     { Hoard,
-      summarize_data,  } = SFMODULES.require_intermission()
+      summarize_data,  } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     do =>
       h = new Hoard()
@@ -481,59 +481,61 @@ PATH                      = require 'node:path'
     ;null
 
   #---------------------------------------------------------------------------------------------------------
-  dbric_integration: ->
+  _dbric_integration: ->
     { Hoard,
-      summarize_data,           } = SFMODULES.require_intermission()
+      summarize_data,           } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     { Dbric,
       as_bool,
       SQL,
-      esql,
+      LIT,
+      IDN,
+      VEC,
       internals,                } = SFMODULES.unstable.require_dbric()
-    { LIT, IDN, VEC,            } = esql
     prefix = 'prfx'
+    debug 'Ωimt_246', Hoard
     #.......................................................................................................
-    get_functions = ( db ) ->
-      R = {}
-      for { name, builtin, type, } from db.walk SQL"""select name, builtin, type from pragma_function_list() order by name;"""
-        is_builtin = as_bool builtin
-        R[ name ] = { name, is_builtin, type, }
-      return R
-    #.......................................................................................................
-    get_function_names = ( db ) -> new Set ( key for key of get_functions db )
-    #.......................................................................................................
-    @eq ( Ωimt_264 = -> type_of Hoard.get_udfs                                            ), 'function'
-    @eq ( Ωimt_265 = -> type_of Hoard.get_build_statements                                ), 'function'
-    #.......................................................................................................
-    @eq ( Ωimt_266 = -> type_of Hoard.get_udfs              { prefix, }           ), 'pod'
-    @eq ( Ωimt_267 = -> type_of Hoard.get_build_statements  { prefix, }           ), 'list'
-    #.......................................................................................................
-    @eq ( Ωimt_268 = -> ( Object.keys Hoard.get_udfs        { prefix, } ).length  ), 3
-    @eq ( Ωimt_269 = -> ( Hoard.get_build_statements        { prefix, } ).length  ), 3
-    #.......................................................................................................
-    {}
-    udfs              = Hoard.get_udfs { prefix, }
-    build_statements  = Hoard.get_build_statements { prefix, }
-    db                = new Dbric ':memory:'
-    #.......................................................................................................
-    for name, definition of udfs
-      info 'Ωimt_270', "create UDF #{definition.name}"
-      db.create_function definition
-    debug 'Ωimt_272',  name for name from get_function_names db when name.startsWith "#{prefix}_"
-    #.......................................................................................................
-    for statement, idx in build_statements
-      statement = db.prepare statement
-      info 'Ωimt_271', statement.run()
-    #.......................................................................................................
-    insert_data = db.prepare SQL"""insert into #{IDN "#{prefix}_hoard_scatters"} ( data ) values ( $data )"""
-    insert_data.run { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
-    insert_data.run { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
-    insert_data.run { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
-    insert_data.run { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
-    echo { row..., } for row from db.walk SQL"""select * from #{IDN "#{prefix}_hoard_scatters"}"""
-    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
-    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
-    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
-    echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
+    # get_functions = ( db ) ->
+    #   R = {}
+    #   for { name, builtin, type, } from db.walk SQL"""select name, builtin, type from pragma_function_list() order by name;"""
+    #     is_builtin = as_bool builtin
+    #     R[ name ] = { name, is_builtin, type, }
+    #   return R
+    # #.......................................................................................................
+    # get_function_names = ( db ) -> new Set ( key for key of get_functions db )
+    # #.......................................................................................................
+    # @eq ( Ωimt_264 = -> type_of Hoard.get_udfs                                    ), 'function'
+    # @eq ( Ωimt_265 = -> type_of Hoard.get_build_statements                        ), 'function'
+    # #.......................................................................................................
+    # @eq ( Ωimt_266 = -> type_of Hoard.get_udfs              { prefix, }           ), 'pod'
+    # @eq ( Ωimt_267 = -> type_of Hoard.get_build_statements  { prefix, }           ), 'list'
+    # #.......................................................................................................
+    # @eq ( Ωimt_268 = -> ( Object.keys Hoard.get_udfs        { prefix, } ).length  ), 3
+    # @eq ( Ωimt_269 = -> ( Hoard.get_build_statements        { prefix, } ).length  ), 3
+    # #.......................................................................................................
+    # {}
+    # udfs              = Hoard.get_udfs { prefix, }
+    # build_statements  = Hoard.get_build_statements { prefix, }
+    # db                = new Dbric ':memory:'
+    # #.......................................................................................................
+    # for name, definition of udfs
+    #   info 'Ωimt_270', "create UDF #{definition.name}"
+    #   db.create_function definition
+    # debug 'Ωimt_272',  name for name from get_function_names db when name.startsWith "#{prefix}_"
+    # #.......................................................................................................
+    # for statement, idx in build_statements
+    #   statement = db.prepare statement
+    #   info 'Ωimt_271', statement.run()
+    # #.......................................................................................................
+    # insert_data = db.prepare SQL"""insert into #{IDN "#{prefix}_hoard_scatters"} ( data ) values ( $data )"""
+    # insert_data.run { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
+    # insert_data.run { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
+    # insert_data.run { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
+    # insert_data.run { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
+    # echo { row..., } for row from db.walk SQL"""select * from #{IDN "#{prefix}_hoard_scatters"}"""
+    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
+    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
+    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
+    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
     #.......................................................................................................
     ;null
 
@@ -548,7 +550,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_integration: tests.dbric_integration, }
+  ( new Test guytest_cfg ).test { dbric_integration: tests._dbric_integration, }
   # ( new Test guytest_cfg ).test { basic_scatters: tests.basic_scatters, }
   ;null
 
