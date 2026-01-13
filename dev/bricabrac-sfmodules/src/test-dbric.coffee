@@ -1391,20 +1391,29 @@ remove = ( path ) ->
       unquote_name,
       internals,                      } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
-    @eq     ( Ωbbdbr_290 = -> Dbric.cfg.prefix                ), '(NOPREFIX)'
-    @eq     ( Ωbbdbr_291 = -> Dbric_std.cfg.prefix            ), 'std'
-    @eq     ( Ωbbdbr_292 = -> ( new Dbric     ).cfg.prefix    ), '(NOPREFIX)'
-    @eq     ( Ωbbdbr_293 = -> ( new Dbric_std ).cfg.prefix    ), 'std'
-    @eq     ( Ωbbdbr_294 = -> ( new Dbric     ).prefix        ), ''
-    @eq     ( Ωbbdbr_295 = -> ( new Dbric_std ).prefix        ), 'std'
-    class Prefix_demo
-      @build: [
-        SQL"create table names ( id integer primary key, name text );"
-        ]
-      @statements:
-        select_names: SQL"select * from names where name is $name;"
-    db = new Prefix_demo()
-    debug 'Ωbbdbr_296', row for row from db.walk db.statements.select_names
+    @eq     ( Ωbbdbr_290 = -> Object.hasOwn Dbric,      'prefix'                          ), true
+    @eq     ( Ωbbdbr_291 = -> Object.hasOwn Dbric_std,  'prefix'                          ), true
+    @eq     ( Ωbbdbr_292 = -> Dbric.prefix                                                ), null
+    @eq     ( Ωbbdbr_293 = -> Dbric_std.prefix                                            ), 'std'
+    @eq     ( Ωbbdbr_294 = -> ( new Dbric                                   ).cfg.prefix  ), null
+    @eq     ( Ωbbdbr_295 = -> ( new Dbric_std                               ).cfg.prefix  ), null
+    @throws ( Ωbbdbr_296 = -> ( new Dbric                                   ).prefix      ), /no prefix configured for this instance/
+    @eq     ( Ωbbdbr_297 = -> ( new Dbric     ':memory', { prefix: 'lol', } ).prefix      ), 'lol'
+    @eq     ( Ωbbdbr_298 = -> ( new Dbric_std ':memory', { prefix: 'wat', } ).prefix      ), 'wat'
+    @eq     ( Ωbbdbr_299 = -> ( new Dbric_std ':memory'                     ).prefix      ), 'std'
+
+    # @eq     ( Ωbbdbr_300 = -> ( new Dbric     { prefix: 'lol', }  ).prefix      ), 'lol'
+    # @eq     ( Ωbbdbr_301 = -> ( new Dbric_std { prefix: 'wat', }  ).prefix      ), 'wat'
+    # @eq     ( Ωbbdbr_302 = -> ( new Dbric_std                     ).prefix      ), 'std'
+    # class Prefix_demo extends Dbric_std
+    #   @build: [
+    #     SQL"create table names ( id integer primary key, name text );"
+    #     ]
+    #   @statements:
+    #     # select_names: SQL"select * from $names;"
+    #     select_names: SQL"select * from $PREFIX_names where name is $name;"
+    # db = new Prefix_demo()
+    # debug 'Ωbbdbr_303', row for row from db.walk db.statements.select_names, { $name: 'Alice', }
     #.......................................................................................................
     return null
 
@@ -1419,8 +1428,24 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { dbric_prefixes: tests._dbric_prefixes, }
+
+  # class A
+  #   @b: 9
+
+  # debug 'Ωbbdbr_304', Object.hasOwn A, 'b'
+  # debug 'Ωbbdbr_305', A.b
+  # debug 'Ωbbdbr_306', Object.hasOwn A::, 'b'
+  # debug 'Ωbbdbr_307', A::b
+
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
   # ( new Test guytest_cfg ).test { dbric_rng: tests.dbric_rng, }
+  # { internals: { isa_jsid, } } = SFMODULES.unstable.require_show()
+  # for cid in [ 0x0000 .. 0x04ff ]
+  #   chr   = String.fromCodePoint cid
+  #   name  = "a#{chr}"
+  #   continue unless isa_jsid name
+  #   debug 'Ωbbdbr_308', ( cid.toString 16 ), rpr name
+  ;null
