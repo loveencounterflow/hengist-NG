@@ -1391,6 +1391,12 @@ remove = ( path ) ->
       unquote_name,
       internals,                      } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
+    class A extends Dbric_std
+      @default_prefix:  'prfxa'
+    class B extends A
+    class C extends B
+      @prefix:          'prfxc'
+    #.......................................................................................................
     @eq     ( Ωbbdbr_290 = -> Object.hasOwn Dbric,      'prefix'                            ), true
     @eq     ( Ωbbdbr_291 = -> Object.hasOwn Dbric_std,  'prefix'                            ), true
     @eq     ( Ωbbdbr_292 = -> Dbric.prefix                                                  ), null
@@ -1398,13 +1404,22 @@ remove = ( path ) ->
     @eq     ( Ωbbdbr_294 = -> ( new Dbric                                     ).cfg.prefix  ), null
     @eq     ( Ωbbdbr_295 = -> ( new Dbric_std                                 ).cfg.prefix  ), null
     @throws ( Ωbbdbr_296 = -> ( new Dbric                                     ).prefix      ), /no prefix configured for this instance/
-    @eq     ( Ωbbdbr_297 = -> ( new Dbric     ':memory:', { prefix: 'lol', }  ).prefix      ), 'lol'
-    @eq     ( Ωbbdbr_298 = -> ( new Dbric_std ':memory:', { prefix: 'wat', }  ).prefix      ), 'wat'
-    @eq     ( Ωbbdbr_299 = -> ( new Dbric_std ':memory:'                      ).prefix      ), 'std'
+    @eq     ( Ωbbdbr_297 = -> ( new Dbric_std ':memory:'                      ).prefix      ), 'std'
+    @eq     ( Ωbbdbr_298 = -> ( new Dbric     ':memory:', { prefix: 'lol', }  ).prefix      ), 'lol'
+    @eq     ( Ωbbdbr_299 = -> ( new Dbric_std ':memory:', { prefix: 'wat', }  ).prefix      ), 'wat'
+    @eq     ( Ωbbdbr_300 = -> ( new Dbric_std                     ).prefix                  ), 'std'
+    @eq     ( Ωbbdbr_301 = -> ( new Dbric     { prefix: 'lol', }  ).prefix                  ), 'lol'
+    @eq     ( Ωbbdbr_302 = -> ( new Dbric_std { prefix: 'wat', }  ).prefix                  ), 'wat'
+    @eq     ( Ωbbdbr_303 = -> Object.hasOwn A, 'prefix'                                     ), false
+    @eq     ( Ωbbdbr_304 = -> Object.hasOwn B, 'prefix'                                     ), false
+    @eq     ( Ωbbdbr_305 = -> Object.hasOwn C, 'prefix'                                     ), true
+    @eq     ( Ωbbdbr_306 = -> Object.hasOwn A, 'default_prefix'                             ), true
+    @eq     ( Ωbbdbr_307 = -> Object.hasOwn B, 'default_prefix'                             ), false
+    @eq     ( Ωbbdbr_308 = -> Object.hasOwn C, 'default_prefix'                             ), false
+    @eq     ( Ωbbdbr_309 = -> ( new A ).prefix                                              ), 'prfxa'
+    @eq     ( Ωbbdbr_310 = -> ( new B ).prefix                                              ), 'prfxa'
+    @eq     ( Ωbbdbr_311 = -> ( new C ).prefix                                              ), 'prfxc'
 
-    # @eq     ( Ωbbdbr_300 = -> ( new Dbric     { prefix: 'lol', }  ).prefix      ), 'lol'
-    # @eq     ( Ωbbdbr_301 = -> ( new Dbric_std { prefix: 'wat', }  ).prefix      ), 'wat'
-    # @eq     ( Ωbbdbr_302 = -> ( new Dbric_std                     ).prefix      ), 'std'
     # class Prefix_demo extends Dbric_std
     #   @build: [
     #     SQL"create table names ( id integer primary key, name text );"
@@ -1413,7 +1428,7 @@ remove = ( path ) ->
     #     # select_names: SQL"select * from $names;"
     #     select_names: SQL"select * from $PREFIX_names where name is $name;"
     # db = new Prefix_demo()
-    # debug 'Ωbbdbr_303', row for row from db.walk db.statements.select_names, { $name: 'Alice', }
+    # debug 'Ωbbdbr_312', row for row from db.walk db.statements.select_names, { $name: 'Alice', }
     #.......................................................................................................
     return null
 
@@ -1434,10 +1449,10 @@ if module is require.main then await do =>
   # class A
   #   @b: 9
 
-  # debug 'Ωbbdbr_304', Object.hasOwn A, 'b'
-  # debug 'Ωbbdbr_305', A.b
-  # debug 'Ωbbdbr_306', Object.hasOwn A::, 'b'
-  # debug 'Ωbbdbr_307', A::b
+  # debug 'Ωbbdbr_313', Object.hasOwn A, 'b'
+  # debug 'Ωbbdbr_314', A.b
+  # debug 'Ωbbdbr_315', Object.hasOwn A::, 'b'
+  # debug 'Ωbbdbr_316', A::b
 
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
@@ -1447,5 +1462,5 @@ if module is require.main then await do =>
   #   chr   = String.fromCodePoint cid
   #   name  = "a#{chr}"
   #   continue unless isa_jsid name
-  #   debug 'Ωbbdbr_308', ( cid.toString 16 ), rpr name
+  #   debug 'Ωbbdbr_317', ( cid.toString 16 ), rpr name
   ;null
