@@ -1391,16 +1391,16 @@ remove = ( path ) ->
       unquote_name,
       internals,                      } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
-    @eq     ( Ωbbdbr_290 = -> Object.hasOwn Dbric,      'prefix'                          ), true
-    @eq     ( Ωbbdbr_291 = -> Object.hasOwn Dbric_std,  'prefix'                          ), true
-    @eq     ( Ωbbdbr_292 = -> Dbric.prefix                                                ), null
-    @eq     ( Ωbbdbr_293 = -> Dbric_std.prefix                                            ), 'std'
-    @eq     ( Ωbbdbr_294 = -> ( new Dbric                                   ).cfg.prefix  ), null
-    @eq     ( Ωbbdbr_295 = -> ( new Dbric_std                               ).cfg.prefix  ), null
-    @throws ( Ωbbdbr_296 = -> ( new Dbric                                   ).prefix      ), /no prefix configured for this instance/
-    @eq     ( Ωbbdbr_297 = -> ( new Dbric     ':memory', { prefix: 'lol', } ).prefix      ), 'lol'
-    @eq     ( Ωbbdbr_298 = -> ( new Dbric_std ':memory', { prefix: 'wat', } ).prefix      ), 'wat'
-    @eq     ( Ωbbdbr_299 = -> ( new Dbric_std ':memory'                     ).prefix      ), 'std'
+    @eq     ( Ωbbdbr_290 = -> Object.hasOwn Dbric,      'prefix'                            ), true
+    @eq     ( Ωbbdbr_291 = -> Object.hasOwn Dbric_std,  'prefix'                            ), true
+    @eq     ( Ωbbdbr_292 = -> Dbric.prefix                                                  ), null
+    @eq     ( Ωbbdbr_293 = -> Dbric_std.prefix                                              ), 'std'
+    @eq     ( Ωbbdbr_294 = -> ( new Dbric                                     ).cfg.prefix  ), null
+    @eq     ( Ωbbdbr_295 = -> ( new Dbric_std                                 ).cfg.prefix  ), null
+    @throws ( Ωbbdbr_296 = -> ( new Dbric                                     ).prefix      ), /no prefix configured for this instance/
+    @eq     ( Ωbbdbr_297 = -> ( new Dbric     ':memory:', { prefix: 'lol', }  ).prefix      ), 'lol'
+    @eq     ( Ωbbdbr_298 = -> ( new Dbric_std ':memory:', { prefix: 'wat', }  ).prefix      ), 'wat'
+    @eq     ( Ωbbdbr_299 = -> ( new Dbric_std ':memory:'                      ).prefix      ), 'std'
 
     # @eq     ( Ωbbdbr_300 = -> ( new Dbric     { prefix: 'lol', }  ).prefix      ), 'lol'
     # @eq     ( Ωbbdbr_301 = -> ( new Dbric_std { prefix: 'wat', }  ).prefix      ), 'wat'
