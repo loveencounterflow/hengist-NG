@@ -74,29 +74,6 @@ remove = ( path ) ->
     #.......................................................................................................
     return null
 
-  # #---------------------------------------------------------------------------------------------------------
-  # reject_nonconformant_build_statements: ->
-  #   { Dbric,
-  #     SQL,
-  #     internals,                } = SFMODULES.unstable.require_dbric()
-  #   { temp,                     } = SFMODULES.unstable.require_temp()
-  #   #.....................................................................................................
-  #   class Dbric_nonconform extends Dbric
-  #     @build: [
-  #       SQL"""
-  #         create table nonconform_one ( a text primary key );"""
-  #       SQL"""
-  #         -- this comment shouldn't be here
-  #         create view nonconform_two as select * from nonconform_one;"""
-  #       ]
-  #   #.....................................................................................................
-  #   db = null
-  #   @throws ( Ωbbdbr__18 = -> db = new Dbric_nonconform ':memory:' ), /1 out of 2 build statement\(s\) could not be parsed/
-  #   debug 'Ωbbdbr__19', db._get_objects_in_build_statements()
-  #   return null
-  #   #.....................................................................................................
-  #   return null
-
   #---------------------------------------------------------------------------------------------------------
   dbric_std: ->
     { Dbric,
@@ -133,17 +110,11 @@ remove = ( path ) ->
       do =>
         db = new Dbric db_path
         @eq   ( Ωbbdbr__27 = -> db.is_ready       ), true
-        @eq   ( Ωbbdbr__28 = -> db.cfg.prefix     ), '(NOPREFIX)'
-        @eq   ( Ωbbdbr__29 = -> db.prefix         ), ''
-        @eq   ( Ωbbdbr__30 = -> db.prefix_re      ), /|/
         return null
       #.....................................................................................................
       do =>
         db = new Dbric_std db_path
         @eq   ( Ωbbdbr__31 = -> db.is_ready       ), true
-        @eq   ( Ωbbdbr__32 = -> db.cfg.prefix     ), 'std'
-        @eq   ( Ωbbdbr__33 = -> db.prefix         ), 'std'
-        @eq   ( Ωbbdbr__34 = -> db.prefix_re      ), /^_?\x73td_.*$/
         return null
       #.....................................................................................................
       do =>
@@ -453,18 +424,6 @@ remove = ( path ) ->
         is_ready: ->
       @throws ( Ωbbdbr_129 = -> new Dbric_nonconform() ), /not allowed to override property 'is_ready'; use '_get_is_ready instead/
       ;null
-    #-------------------------------------------------------------------------------------------------------
-    do =>
-      class Dbric_nonconform extends Dbric_Z
-        prefix: ->
-      @throws ( Ωbbdbr_130 = -> new Dbric_nonconform() ), /not allowed to override property 'prefix'; use '_get_prefix instead/
-      ;null
-    #-------------------------------------------------------------------------------------------------------
-    do =>
-      class Dbric_nonconform extends Dbric_Z
-        prefix_re: ->
-      @throws ( Ωbbdbr_131 = -> new Dbric_nonconform() ), /not allowed to override property 'prefix_re'; use '_get_prefix_re instead/
-      ;null
     #.......................................................................................................
     ;null
 
@@ -473,7 +432,6 @@ remove = ( path ) ->
     { Dbric,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    # debug 'Ωbbdbr_132', new Dbric '/dev/shm/bricabrac.sqlite'
     #=======================================================================================================
     class Dbric_store extends Dbric
       @build: [
@@ -482,8 +440,6 @@ remove = ( path ) ->
           facet_value           json );"""
         ]
       @statements:
-        # store_create_tables: SQL"""
-        #   """
         store_insert_facet: SQL"""
           insert into store_facets ( facet_key, facet_value ) values ( $facet_key, $facet_value )
             on conflict ( facet_key ) do update set facet_value = excluded.facet_value;"""
@@ -493,9 +449,6 @@ remove = ( path ) ->
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
       store     = new Dbric_store db_path
-      # store.statements.store_create_tables.run()
-      # for row from store.statements.get_schema.iterate()
-      #   help 'Ωbbdbr_133', row
       store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -1316,61 +1269,35 @@ remove = ( path ) ->
       IDN,
       SQL,
       internals,                } = SFMODULES.unstable.require_dbric()
-    # #.......................................................................................................
-    # do =>
-    #   class Db_1 extends Dbric
-    #     @cfg:
-    #       prefix:   'wrd'
-    #     @build: [
-    #       SQL"create table words ( t text );"
-    #       SQL"insert into words ( t ) values ( '水 (みず)' );"
-    #       SQL"insert into words ( t ) values ( '食べ物 (たべもの)' );"
-    #       # SQL"insert into words ( t ) values ( '家 (いえ)' );"
-    #       # SQL"insert into words ( t ) values ( '学校 (がっこう)' );"
-    #       # SQL"insert into words ( t ) values ( '仕事 (しごと)' );"
-    #       # SQL"insert into words ( t ) values ( '時間 (じかん)' );"
-    #       ]
-    #   db = new Db_1()
-    #   # debug 'Ωbbdbr_273', rpr db.prefix
-    #   # debug 'Ωbbdbr_274', row for row from db.walk SQL"select * from sqlite_schema;"
-    #   # debug 'Ωbbdbr_275', row for row from db.walk SQL"select * from words;"
-    #   ;null
     #.......................................................................................................
     do =>
+      prefix = 'wrd'
       class Db_1 extends Dbric_std
-        @cfg:
-          prefix:   'wrd'
         @build: [
-          -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
-          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
-          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
+          -> SQL"""create table #{IDN "#{prefix}_words"} ( t text );"""
+          -> SQL"""insert into #{IDN "#{prefix}_words"} ( t ) values ( '水 (みず)' );"""
+          -> SQL"""insert into #{IDN "#{prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
           ]
       db = new Db_1()
-      @eq ( Ωbbdbr_276 = -> db.prefix                           ), 'wrd'
-      @eq ( Ωbbdbr_277 = -> db.cfg.prefix                       ), 'wrd'
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
       @eq ( Ωbbdbr_278 = -> relation_names.has 'wrd_words'      ), true
-      # info 'Ωbbdbr_279', row for row from db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
-      rows = db.walk SQL"""select * from #{IDN "#{db.cfg.prefix}_words"};"""
+      rows = db.walk SQL"""select * from #{IDN "#{prefix}_words"};"""
       @eq ( Ωbbdbr_280 = -> rows.next().value.t                 ), '水 (みず)'
       @eq ( Ωbbdbr_281 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
       @eq ( Ωbbdbr_282 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     do =>
+      prefix = 'wrd'
       class Db_1 extends Dbric_std
-        @cfg:
-          prefix:   'wrd'
         @build: [
-          -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
-          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
-          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
+          -> SQL"""create table #{IDN "#{prefix}_words"} ( t text );"""
+          -> SQL"""insert into #{IDN "#{prefix}_words"} ( t ) values ( '水 (みず)' );"""
+          -> SQL"""insert into #{IDN "#{prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
           ]
         @statements:
-          select_words: -> SQL"""select * from #{IDN "#{@cfg.prefix}_words"} order by t;"""
+          select_words: -> SQL"""select * from #{IDN "#{prefix}_words"} order by t;"""
       db = new Db_1()
-      @eq ( Ωbbdbr_283 = -> db.prefix                           ), 'wrd'
-      @eq ( Ωbbdbr_284 = -> db.cfg.prefix                       ), 'wrd'
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
       @eq ( Ωbbdbr_285 = -> relation_names.has 'wrd_words'      ), true
       # info 'Ωbbdbr_286', row for row from db.walk db.statements.select_words
@@ -1382,59 +1309,6 @@ remove = ( path ) ->
     #.......................................................................................................
     ;null
 
-  #---------------------------------------------------------------------------------------------------------
-  _dbric_prefixes: ->
-    { Dbric,
-      Dbric_std,
-      SQL,
-      LIT, IDN, VEC,
-      unquote_name,
-      internals,                      } = SFMODULES.unstable.require_dbric()
-    #.......................................................................................................
-    class A extends Dbric_std
-      @default_prefix:  'prfxa'
-    class B extends A
-    class C extends B
-      @prefix:          'prfxc'
-    #.......................................................................................................
-    @eq     ( Ωbbdbr_290 = -> Object.hasOwn Dbric,      'prefix'                            ), true
-    @eq     ( Ωbbdbr_291 = -> Object.hasOwn Dbric_std,  'prefix'                            ), true
-    @eq     ( Ωbbdbr_292 = -> Dbric.prefix                                                  ), null
-    @eq     ( Ωbbdbr_293 = -> Dbric_std.prefix                                              ), 'std'
-    @eq     ( Ωbbdbr_294 = -> ( new Dbric                                     ).cfg.prefix  ), null
-    @eq     ( Ωbbdbr_295 = -> ( new Dbric_std                                 ).cfg.prefix  ), null
-    @throws ( Ωbbdbr_296 = -> ( new Dbric                                     ).prefix      ), /no prefix configured for this instance/
-    @eq     ( Ωbbdbr_297 = -> ( new Dbric_std ':memory:'                      ).prefix      ), 'std'
-    @eq     ( Ωbbdbr_298 = -> ( new Dbric     ':memory:', { prefix: 'lol', }  ).prefix      ), 'lol'
-    @eq     ( Ωbbdbr_299 = -> ( new Dbric_std ':memory:', { prefix: 'wat', }  ).prefix      ), 'wat'
-    @eq     ( Ωbbdbr_300 = -> ( new Dbric_std                     ).prefix                  ), 'std'
-    @eq     ( Ωbbdbr_301 = -> ( new Dbric     { prefix: 'lol', }  ).prefix                  ), 'lol'
-    @eq     ( Ωbbdbr_302 = -> ( new Dbric_std { prefix: 'wat', }  ).prefix                  ), 'wat'
-    @eq     ( Ωbbdbr_303 = -> Object.hasOwn A, 'prefix'                                     ), false
-    @eq     ( Ωbbdbr_304 = -> Object.hasOwn B, 'prefix'                                     ), false
-    @eq     ( Ωbbdbr_305 = -> Object.hasOwn C, 'prefix'                                     ), true
-    @eq     ( Ωbbdbr_306 = -> Object.hasOwn A, 'default_prefix'                             ), true
-    @eq     ( Ωbbdbr_307 = -> Object.hasOwn B, 'default_prefix'                             ), false
-    @eq     ( Ωbbdbr_308 = -> Object.hasOwn C, 'default_prefix'                             ), false
-    @eq     ( Ωbbdbr_309 = -> ( new A ).prefix                                              ), 'prfxa'
-    @eq     ( Ωbbdbr_310 = -> ( new B ).prefix                                              ), 'prfxa'
-    @eq     ( Ωbbdbr_311 = -> ( new C ).prefix                                              ), 'prfxc'
-
-    # class Prefix_demo extends Dbric_std
-    #   @build: [
-    #     SQL"create table names ( id integer primary key, name text );"
-    #     ]
-    #   @statements:
-    #     # select_names: SQL"select * from $names;"
-    #     select_names: SQL"select * from $PREFIX_names where name is $name;"
-    # db = new Prefix_demo()
-    # debug 'Ωbbdbr_312', row for row from db.walk db.statements.select_names, { $name: 'Alice', }
-    #.......................................................................................................
-    return null
-
-# SQL"""
-# select * from #{prefix}_frobulate
-# """
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -1443,24 +1317,6 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_prefixes: tests._dbric_prefixes, }
-
-  # class A
-  #   @b: 9
-
-  # debug 'Ωbbdbr_313', Object.hasOwn A, 'b'
-  # debug 'Ωbbdbr_314', A.b
-  # debug 'Ωbbdbr_315', Object.hasOwn A::, 'b'
-  # debug 'Ωbbdbr_316', A::b
-
-  # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
+  ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
-  # ( new Test guytest_cfg ).test { dbric_rng: tests.dbric_rng, }
-  # { internals: { isa_jsid, } } = SFMODULES.unstable.require_show()
-  # for cid in [ 0x0000 .. 0x04ff ]
-  #   chr   = String.fromCodePoint cid
-  #   name  = "a#{chr}"
-  #   continue unless isa_jsid name
-  #   debug 'Ωbbdbr_317', ( cid.toString 16 ), rpr name
   ;null
