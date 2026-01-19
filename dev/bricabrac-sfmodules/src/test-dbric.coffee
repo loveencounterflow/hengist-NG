@@ -56,12 +56,14 @@ remove = ( path ) ->
       internals,                      } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
     @eq     ( Ωbbdbr___3 = -> internals.type_of unquote_name      ), 'function'
+    @eq     ( Ωbbdbr___4 = -> unquote_name 'x'                    ), 'x'
+    @eq     ( Ωbbdbr___4 = -> unquote_name '"x"'                  ), 'x'
     @eq     ( Ωbbdbr___4 = -> unquote_name 'abc'                  ), 'abc'
     @eq     ( Ωbbdbr___5 = -> unquote_name '"abc"'                ), 'abc'
     @eq     ( Ωbbdbr___6 = -> unquote_name '"ab""c"'              ), 'ab"c'
-    @throws ( Ωbbdbr___7 = -> unquote_name ''                     ), /expected a name/
-    @throws ( Ωbbdbr___8 = -> unquote_name '"'                    ), /expected a name/
-    @throws ( Ωbbdbr___9 = -> unquote_name '""'                   ), /expected a name/
+    @throws ( Ωbbdbr___7 = -> unquote_name ''                     ), /expected a non-empty text, got an empty text/
+    @throws ( Ωbbdbr___8 = -> unquote_name '"'                    ), /expected a quoted non-empty text, got a quote/
+    @eq     ( Ωbbdbr___9 = -> unquote_name '""'                   ), '' ### NOTE SQLite does accept a quoted empty string as name ###
     @throws ( Ωbbdbr__10 = -> unquote_name false                  ), /expected a text, got a boolean/
     #.......................................................................................................
     @eq     ( Ωbbdbr__11 = -> IDN 'abc'                           ), '"abc"'
@@ -1418,6 +1420,8 @@ remove = ( path ) ->
     { get_all_in_prototype_chain,
       get_prototype_chain,      } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
     #.......................................................................................................
+    { createMethodCoverage,     } = require '../../../apps/bricabrac-sfmodules/lib/instrumentation-coverage-observer'
+    #.......................................................................................................
     nbr_number_plugin =
       exports:
         prefix: 'nbr' ### NOTE informative, not enforced ###
@@ -1442,16 +1446,24 @@ remove = ( path ) ->
           # Dbric_std
           ]
         @exports: {}
+        @build: [
+          SQL"create table x ( id integer );"
+          ]
       #=====================================================================================================
-      db = new Db_1()
+      if record_coverage = true
+        tracker = createMethodCoverage()
+        db      = tracker.wrapObject new Db_1(), "Example"
+      else
+        db = new Db_1()
+      #.....................................................................................................
       for { type, value, } in db._get_acquisition_chain()
         switch type
           when 'plugin'
-            info 'Ωbbdbr_311', type, Object.keys value.exports
+            info 'Ωbbdbr_310', type, Object.keys value.exports
           when 'prototype'
             switch true
               when value is db.constructor
-                help 'Ωbbdbr_312', type, rpr value.name
+                help 'Ωbbdbr_311', type, rpr value.name
               # when value in base_prototypes
               #   whisper 'Ωbbdbr_312', type, "(object)"
               else
@@ -1459,6 +1471,12 @@ remove = ( path ) ->
           else
             throw new Error "Ωbbdbr_314 internal error: unknown type #{rpr type}"
         # debug 'Ωbbdbr_315', { type, value, }
+      #.....................................................................................................
+      if record_coverage
+        { used, unused, } = tracker.report().Example
+        help 'Ωbbdbr_316', "used:   ", name for name in used
+        warn 'Ωbbdbr_317', "unused: ", name for name in unused
+      #.....................................................................................................
       ;null
     #.......................................................................................................
     ;null
@@ -1469,11 +1487,12 @@ if module is require.main then await do =>
   # demo_infinite_proxy()
   # demo_colorful_proxy()
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   # ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { dbric_integrate_plugin: tests._dbric_integrate_plugin, }
   ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
+  # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
 
 
 
