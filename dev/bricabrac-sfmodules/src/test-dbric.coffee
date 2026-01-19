@@ -1420,8 +1420,8 @@ remove = ( path ) ->
     { get_all_in_prototype_chain,
       get_prototype_chain,      } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
     #.......................................................................................................
-    { enumerate_prototypes_and_method,
-      wrap_methods_of_prototype, } = require '../../../apps/bricabrac-sfmodules/lib/instrumentation-coverage-observer'
+    { enumerate_prototypes_and_methods,
+      wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/instrumentation-coverage-observer'
     #.......................................................................................................
     nbr_number_plugin =
       exports:
@@ -1451,13 +1451,8 @@ remove = ( path ) ->
           SQL"create table x ( id integer );"
           ]
       #=====================================================================================================
-      db = new Db_1()
-      # debug 'Ωbbdbr_313',  Dbric::prepare
-      # debug 'Ωbbdbr_314',  ( Object.getPrototypeOf Dbric_std:: ).prepare
-      # debug 'Ωbbdbr_315', Object.keys Object.getOwnPropertyDescriptors Object.getPrototypeOf Dbric_std::
-      # debug 'Ωbbdbr_316', Object.keys Object.getOwnPropertyDescriptors Object.getPrototypeOf Object.getPrototypeOf Dbric_std::
-      # debug 'Ωbbdbr_317', Object.keys Object.getOwnPropertyDescriptors Object.getPrototypeOf Object.getPrototypeOf Object.getPrototypeOf Dbric_std::
-      catalog       = enumerate_prototypes_and_methods Dbric_std
+      # db = new Db_1()
+      catalog       = enumerate_prototypes_and_methods Dbric
       known_names   = new Set Object.keys catalog
       unused_names  = new Set known_names
       used_names    = new Set()
@@ -1465,8 +1460,8 @@ remove = ( path ) ->
         info 'Ωbbdbr_318', key
         unused_names.delete key
         used_names.add key
-      wrap_methods Dbric_std, handler
-      db = new Dbric_std()
+      wrap_methods_of_prototypes Dbric, handler
+      db = new Dbric()
       warn 'Ωbbdbr_319', unused_names
       help 'Ωbbdbr_320', used_names
       db._get_acquisition_chain()
