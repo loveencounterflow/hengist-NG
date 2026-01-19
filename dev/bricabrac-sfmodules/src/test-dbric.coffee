@@ -1261,7 +1261,7 @@ remove = ( path ) ->
     ;null
 
   #---------------------------------------------------------------------------------------------------------
-  dbric_dynamic_build_properties: ->
+  _dbric_dynamic_build_properties: ->
     { Dbric,
       Dbric_std,
       True,
@@ -1309,6 +1309,160 @@ remove = ( path ) ->
     #.......................................................................................................
     ;null
 
+  #---------------------------------------------------------------------------------------------------------
+  _dbric_integrate_plugin: ->
+    { Dbric,
+      Dbric_std,
+      True,
+      False,
+      IDN,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    #.......................................................................................................
+    do =>
+      class Db_1 extends Dbric
+        exportable_method_1: ->
+        @build: [
+          -> SQL"""create table wrd_words ( t text );"""
+          -> SQL"""insert into wrd_words ( t ) values ( '水 (みず)' );"""
+          -> SQL"""insert into wrd_words ( t ) values ( '食べ物 (たべもの)' );"""
+          ]
+      class Db_2 extends Db_1
+        exportable_method_2: ->
+      # db = new Db_1()
+      { get_prototype_chain, } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
+      #.....................................................................................................
+      get_all_effective_descriptors_in_prototype_chain = ( x ) ->
+        R = Object.create null
+        return R unless x?
+        for prototype in get_prototype_chain x
+          keys = Object.keys Object.getOwnPropertyDescriptors prototype
+          # if ( Object.hasOwn prototype, 'std_with_variables' ) or ( Object.hasOwn prototype, 'statements' ) or ( Object.hasOwn prototype, 'exportable_method_1' )
+          if ( Object.hasOwn prototype, 'exportable_method_1' )
+            # help 'Ωbbdbr_270', prototype.constructor.name, prototype.std_with_variables
+            # help 'Ωbbdbr_271', prototype.constructor.name, prototype.statements
+            help 'Ωbbdbr_272', prototype.constructor.name, prototype.exportable_method_1
+            # info 'Ωbbdbr_273', prototype.constructor.name, keys
+          else
+            null
+            # whisper 'Ωbbdbr_274', prototype.constructor.name, keys
+        ;null
+      #.....................................................................................................
+      debug()
+      for prototype in get_prototype_chain Db_1
+        break if prototype in [ Dbric, Dbric::, ]
+        debug 'Ωbbdbr_275', prototype
+        debug 'Ωbbdbr_276', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_277', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_278', ' ', prototype.build?.length ? ''
+      #.....................................................................................................
+      debug()
+      for prototype in get_prototype_chain Db_1::
+        break if prototype in [ Dbric, Dbric::, ]
+        debug 'Ωbbdbr_279', prototype
+        debug 'Ωbbdbr_280', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_281', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_282', ' ', prototype.build?.length ? ''
+      #.....................................................................................................
+      debug 'Ωbbdbr_283', '-----------------------------------------'
+      for prototype in get_prototype_chain Db_2
+        break if prototype in [ Dbric, Dbric::, ]
+        debug 'Ωbbdbr_284', prototype
+        debug 'Ωbbdbr_285', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_286', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_287', ' ', prototype.build?.length ? ''
+      #.....................................................................................................
+      debug()
+      for prototype in get_prototype_chain Db_2::
+        break if prototype in [ Dbric, Dbric::, ]
+        debug 'Ωbbdbr_288', prototype
+        debug 'Ωbbdbr_289', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_290', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_291', ' ', prototype.build?.length ? ''
+      # debug 'Ωbbdbr_292'
+      # debug 'Ωbbdbr_293', prototype for prototype in get_prototype_chain db
+      # #.....................................................................................................
+      # urge reverse 'Ωbbdbr_294'; get_all_effective_descriptors_in_prototype_chain Dbric_std
+      # # urge reverse 'Ωbbdbr_295'; get_all_effective_descriptors_in_prototype_chain Dbric_std::
+      # urge reverse 'Ωbbdbr_296'; get_all_effective_descriptors_in_prototype_chain new Dbric_std
+      # urge ( reverse 'Ωbbdbr_297' ), gold "build:                ", Dbric_std.build
+      # urge ( reverse 'Ωbbdbr_298' ), gold "statements:           ", Dbric_std.statements
+      # urge ( reverse 'Ωbbdbr_299' ), gold "functions:            ", Dbric_std.functions
+      # urge ( reverse 'Ωbbdbr_300' ), gold "aggregate_functions:  ", Dbric_std.aggregate_functions
+      # urge ( reverse 'Ωbbdbr_301' ), gold "window_functions:     ", Dbric_std.window_functions
+      # urge ( reverse 'Ωbbdbr_302' ), gold "table_functions:      ", Dbric_std.table_functions
+      # urge ( reverse 'Ωbbdbr_303' ), gold "virtual_tables:       ", Dbric_std.virtual_tables
+      # urge ( reverse 'Ωbbdbr_304' ), gold "exports:              ", Dbric_std.exports
+      # # db.integrate_plugin Dbric_std
+      # # relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
+      # # debug 'Ωbbdbr_305', relation_names
+      # # @eq ( Ωbbdbr_306 = -> relation_names.has 'wrd_words'      ), true
+      # # rows = db.walk SQL"""select * from wrd_words;"""
+      # # @eq ( Ωbbdbr_307 = -> rows.next().value.t                 ), '水 (みず)'
+      # # @eq ( Ωbbdbr_308 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      # # @eq ( Ωbbdbr_309 = -> rows.next().done                    ), true
+      ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  _dbric_plugins_acquisition: ->
+    { Dbric,
+      Dbric_std,
+      True,
+      False,
+      IDN,
+      SQL,
+      internals,                } = SFMODULES.unstable.require_dbric()
+    { type_of,                  } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-rpr-type_of-brics' ).require_type_of()
+    { get_all_in_prototype_chain,
+      get_prototype_chain,      } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
+    #.......................................................................................................
+    nbr_number_plugin =
+      exports:
+        prefix: 'nbr' ### NOTE informative, not enforced ###
+        build: [
+          SQL"create table nbr_numbers ( number integer );"
+          ]
+        statements:
+          nbr_insert_number:          SQL"insert into nbr_numbers value ( $number );"
+          nbr_select_numbers:         SQL"select * from nbr_numbers order by number;"
+          nbr_select_square_numbers:  SQL"select nbr_square( number ) from nbr_numbers order by number;"
+        functions:
+          nbr_square:
+            value: ( number ) -> number ** 2
+    #.......................................................................................................
+    do =>
+      #=====================================================================================================
+      class Db_1 extends Dbric_std
+        @plugins: [
+          'prototypes'
+          nbr_number_plugin
+          'me'
+          # Dbric_std
+          ]
+        @exports: {}
+      #=====================================================================================================
+      db = new Db_1()
+      for { type, value, } in db._get_acquisition_chain()
+        switch type
+          when 'plugin'
+            info 'Ωbbdbr_311', type, Object.keys value.exports
+          when 'prototype'
+            switch true
+              when value is db.constructor
+                help 'Ωbbdbr_312', type, rpr value.name
+              # when value in base_prototypes
+              #   whisper 'Ωbbdbr_312', type, "(object)"
+              else
+                urge 'Ωbbdbr_313', type, rpr value.name, value
+          else
+            throw new Error "Ωbbdbr_314 internal error: unknown type #{rpr type}"
+        # debug 'Ωbbdbr_315', { type, value, }
+      ;null
+    #.......................................................................................................
+    ;null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -1317,6 +1471,11 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { dbric_std_variables_and_sequences: tests.dbric_std_variables_and_sequences, }
+  # ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { dbric_integrate_plugin: tests._dbric_integrate_plugin, }
+  ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
+
+
+
+  #=========================================================================================================
   ;null
