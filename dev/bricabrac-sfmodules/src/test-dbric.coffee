@@ -33,7 +33,17 @@ GTNG                      = require '../../../apps/guy-test-NG'
 SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 FS                        = require 'node:fs'
 PATH                      = require 'node:path'
-
+#===========================================================================================================
+{ Dbric,
+  Dbric_std,
+  IDN,
+  LIT,
+  SQL,
+  VEC,
+  internals,
+  True,
+  False,
+  unquote_name,         } = require '../../../apps/bricabrac-sfmodules/lib/dbric'
 
 #===========================================================================================================
 remove = ( path ) ->
@@ -51,9 +61,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_esql: ->
-    { LIT, IDN, VEC,
-      unquote_name,
-      internals,                      } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
     @eq     ( Ωbbdbr___3 = -> internals.type_of unquote_name      ), 'function'
     @eq     ( Ωbbdbr___4 = -> unquote_name 'x'                    ), 'x'
@@ -78,10 +85,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_std: ->
-    { Dbric,
-      Dbric_std,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     { temp,                     } = SFMODULES.unstable.require_temp()
     #.......................................................................................................
     temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
@@ -171,10 +174,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_std_generate_series: ->
-    { Dbric,
-      Dbric_std,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     { temp,                     } = SFMODULES.unstable.require_temp()
     #.......................................................................................................
     # sqlite> select * from generate_series( 1, 10, 0 );
@@ -230,10 +229,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   statement_inheritance: ->
-    { Dbric,
-      Dbric_std,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     # { temp,                     } = SFMODULES.unstable.require_temp()
     # { StatementSync,            } = require 'node:sqlite'
     Bsql3                         = require '../../../apps/bricabrac-sfmodules/node_modules/better-sqlite3'
@@ -404,9 +399,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   disallow_overwriting_properties_with_functions: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     # debug 'Ωbbdbr_120', new Dbric '/dev/shm/bricabrac.sqlite'
     do =>
       db        = ( new Dbric ':memory:' )
@@ -431,9 +423,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   sample_db: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_store extends Dbric
       @build: [
@@ -474,9 +463,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   sample_db_with_bsql: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_store extends Dbric
       @build: [
@@ -519,9 +505,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   udf_functions_with_nsql: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_squares extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -578,9 +561,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   udf_aggregates_with_nsql: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_squares extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -644,9 +624,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   udf_functions_with_bsql: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_squares extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -703,9 +680,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   udf_aggregates_with_bsql: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_squares extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -762,9 +736,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   udf_table_function_with_bsql: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_phrases extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -827,9 +798,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   file_mirror_as_table_function: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_phrases extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -919,9 +887,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   file_mirror_with_integrated_inserts: ->
-    { Dbric,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #=======================================================================================================
     class Dbric_phrases extends Dbric
       #-----------------------------------------------------------------------------------------------------
@@ -1045,11 +1010,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_std_variables_and_sequences: ->
-    { Dbric_std,
-      True,
-      False,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     { lets,
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
     cfg_do_show_variables         = false
@@ -1228,11 +1188,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_strict_mode: ->
-    { Dbric,
-      True,
-      False,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     { lets,
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
     #.......................................................................................................
@@ -1264,13 +1219,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   _dbric_dynamic_build_properties: ->
-    { Dbric,
-      Dbric_std,
-      True,
-      False,
-      IDN,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
     do =>
       prefix = 'wrd'
@@ -1313,13 +1261,6 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   _dbric_integrate_plugin: ->
-    { Dbric,
-      Dbric_std,
-      True,
-      False,
-      IDN,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     #.......................................................................................................
     do =>
       class Db_1 extends Dbric
@@ -1409,19 +1350,9 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   _dbric_plugins_acquisition: ->
-    { Dbric,
-      Dbric_std,
-      True,
-      False,
-      IDN,
-      SQL,
-      internals,                } = SFMODULES.unstable.require_dbric()
     { type_of,                  } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-rpr-type_of-brics' ).require_type_of()
     { get_all_in_prototype_chain,
       get_prototype_chain,      } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
-    #.......................................................................................................
-    { enumerate_prototypes_and_methods,
-      wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/instrumentation-coverage-observer'
     #.......................................................................................................
     nbr_number_plugin =
       exports:
@@ -1452,43 +1383,28 @@ remove = ( path ) ->
           ]
       #=====================================================================================================
       # db = new Db_1()
-      catalog       = enumerate_prototypes_and_methods Dbric
-      known_names   = new Set Object.keys catalog
-      unused_names  = new Set known_names
-      used_names    = new Set()
-      handler       = ({ key, }) ->
-        info 'Ωbbdbr_318', key
-        unused_names.delete key
-        used_names.add key
-      wrap_methods_of_prototypes Dbric, handler
-      db = new Dbric()
-      warn 'Ωbbdbr_319', unused_names
-      help 'Ωbbdbr_320', used_names
-      db._get_acquisition_chain()
-      warn 'Ωbbdbr_321', unused_names
-      help 'Ωbbdbr_322', used_names
-      return null
+      db = new Dbric_std()
       #.....................................................................................................
       for { type, value, } in db._get_acquisition_chain()
         switch type
           when 'plugin'
-            info 'Ωbbdbr_323', type, Object.keys value.exports
+            info 'Ωbbdbr_312', type, Object.keys value.exports
           when 'prototype'
             switch true
               when value is db.constructor
-                help 'Ωbbdbr_324', type, rpr value.name
+                help 'Ωbbdbr_313', type, rpr value.name
               # when value in base_prototypes
-              #   whisper 'Ωbbdbr_325', type, "(object)"
+              #   whisper 'Ωbbdbr_314', type, "(object)"
               else
-                urge 'Ωbbdbr_326', type, rpr value.name, value
+                urge 'Ωbbdbr_315', type, rpr value.name, value
           else
-            throw new Error "Ωbbdbr_327 internal error: unknown type #{rpr type}"
-        # debug 'Ωbbdbr_328', { type, value, }
+            throw new Error "Ωbbdbr_316 internal error: unknown type #{rpr type}"
+        # debug 'Ωbbdbr_317', { type, value, }
       #.....................................................................................................
       # if record_coverage
       #   { used, unused, } = tracker.report()
-      #   help 'Ωbbdbr_329', "used:   ", name for name in used
-      #   warn 'Ωbbdbr_330', "unused: ", name for name in unused
+      #   help 'Ωbbdbr_318', "used:   ", name for name in used
+      #   warn 'Ωbbdbr_319', "unused: ", name for name in unused
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -1497,17 +1413,43 @@ remove = ( path ) ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  # demo_infinite_proxy()
-  # demo_colorful_proxy()
+  { enumerate_prototypes_and_methods,
+    wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/instrumentation-coverage-observer'
+  #.........................................................................................................
+  catalog             = enumerate_prototypes_and_methods Dbric_std
+  counts              = Object.fromEntries ( [ name, 0, ] for name of catalog )
+  get_unused_names    = ( counts ) -> ( name for name, count of counts when count is    0 )
+  get_used_names      = ( counts ) -> ( name for name, count of counts when count isnt  0 )
+  get_names_by_counts = ( counts ) ->
+    R = {}
+    for name, count of counts
+      ( R[ count ] ?= [] ).push name
+    return R
+  handler = ({ name, }) ->
+    # info 'Ωbbdbr_320', name
+    counts[ name ]++
+    ;null
+  debug 'Ωbbdbr_321', Dbric::prepare
+  debug 'Ωbbdbr_322', Dbric_std::prepare
+  wrap_methods_of_prototypes Dbric_std, handler
+  debug 'Ωbbdbr_323', Dbric::prepare
+  debug 'Ωbbdbr_324', Dbric_std::prepare
+  #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { dbric_integrate_plugin: tests._dbric_integrate_plugin, }
-  ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
+  # ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
   # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
-
-
+  #---------------------------------------------------------------------------------------------------------
+  warn 'Ωbbdbr_325', get_unused_names     counts
+  help 'Ωbbdbr_326', get_used_names       counts
+  urge 'Ωbbdbr_327', count, names for count, names of get_names_by_counts  counts
+  # db._get_acquisition_chain()
+  # warn 'Ωbbdbr_328', get_unused_names     counts
+  # help 'Ωbbdbr_329', get_used_names       counts
+  # urge 'Ωbbdbr_330', count, names for count, names of get_names_by_counts  counts
 
   #=========================================================================================================
   ;null
