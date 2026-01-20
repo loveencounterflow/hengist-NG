@@ -1413,27 +1413,17 @@ remove = ( path ) ->
 
 #===========================================================================================================
 if module is require.main then await do =>
-  { enumerate_prototypes_and_methods,
-    wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
+  { Coverage_analyzer, } = require '../../../apps/bricabrac-sfmodules/lib/coverage-analyzer'
+  ca = new Coverage_analyzer()
+  ca.wrap_class Dbric_std
+  db = new Dbric_std()
+  # debug 'Ωbbdbr_320', ca
+  # warn 'Ωbbdbr_321', ca.unused_names
+  # help 'Ωbbdbr_322', ca.used_names
+  # help 'Ωbbdbr_323', ca.counts
   #.........................................................................................................
-  catalog             = enumerate_prototypes_and_methods Dbric_std
-  counts              = Object.fromEntries ( [ name, 0, ] for name of catalog )
-  get_unused_names    = ( counts ) -> ( name for name, count of counts when count is    0 )
-  get_used_names      = ( counts ) -> ( name for name, count of counts when count isnt  0 )
-  get_names_by_counts = ( counts ) ->
-    R = {}
-    for name, count of counts
-      ( R[ count ] ?= [] ).push name
-    return R
-  handler = ({ name, prototype, method, context, P, callme, }) ->
-    # info 'Ωbbdbr_320', name, prototype, context, P, callme
-    counts[ name ]++
-    return callme()
-  debug 'Ωbbdbr_321', Dbric::prepare
-  debug 'Ωbbdbr_322', Dbric_std::prepare
-  wrap_methods_of_prototypes Dbric_std, handler
-  debug 'Ωbbdbr_323', Dbric::prepare
-  debug 'Ωbbdbr_324', Dbric_std::prepare
+  debug 'Ωbbdbr_324', Dbric::prepare
+  debug 'Ωbbdbr_325', Dbric_std::prepare
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
@@ -1443,13 +1433,10 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
   # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
   #---------------------------------------------------------------------------------------------------------
-  warn 'Ωbbdbr_325', get_unused_names     counts
-  help 'Ωbbdbr_326', get_used_names       counts
-  urge 'Ωbbdbr_327', count, names for count, names of get_names_by_counts  counts
-  # db._get_acquisition_chain()
-  # warn 'Ωbbdbr_328', get_unused_names     counts
-  # help 'Ωbbdbr_329', get_used_names       counts
-  # urge 'Ωbbdbr_330', count, names for count, names of get_names_by_counts  counts
+  db._get_acquisition_chain()
+  warn 'Ωbbdbr_326', ca.unused_names
+  help 'Ωbbdbr_327', ca.used_names
+  urge 'Ωbbdbr_328', count, names for count, names of ca.names_by_counts
 
   #=========================================================================================================
   ;null
