@@ -1273,7 +1273,7 @@ remove = ( path ) ->
       class Db_2 extends Db_1
         exportable_method_2: ->
       # db = new Db_1()
-      { get_prototype_chain, } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
+      { get_prototype_chain, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
       #.....................................................................................................
       get_all_effective_descriptors_in_prototype_chain = ( x ) ->
         R = Object.create null
@@ -1352,7 +1352,7 @@ remove = ( path ) ->
   _dbric_plugins_acquisition: ->
     { type_of,                  } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-rpr-type_of-brics' ).require_type_of()
     { get_all_in_prototype_chain,
-      get_prototype_chain,      } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-object-tools-brics' ).require_get_prototype_chain()
+      get_prototype_chain,      } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
     #.......................................................................................................
     nbr_number_plugin =
       exports:
@@ -1414,7 +1414,7 @@ remove = ( path ) ->
 #===========================================================================================================
 if module is require.main then await do =>
   { enumerate_prototypes_and_methods,
-    wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/instrumentation-coverage-observer'
+    wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
   #.........................................................................................................
   catalog             = enumerate_prototypes_and_methods Dbric_std
   counts              = Object.fromEntries ( [ name, 0, ] for name of catalog )
@@ -1425,10 +1425,10 @@ if module is require.main then await do =>
     for name, count of counts
       ( R[ count ] ?= [] ).push name
     return R
-  handler = ({ name, }) ->
-    # info 'Ωbbdbr_320', name
+  handler = ({ name, prototype, method, context, P, callme, }) ->
+    # info 'Ωbbdbr_320', name, prototype, context, P, callme
     counts[ name ]++
-    ;null
+    return callme()
   debug 'Ωbbdbr_321', Dbric::prepare
   debug 'Ωbbdbr_322', Dbric_std::prepare
   wrap_methods_of_prototypes Dbric_std, handler
