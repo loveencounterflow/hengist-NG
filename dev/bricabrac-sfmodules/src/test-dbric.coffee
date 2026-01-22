@@ -46,6 +46,12 @@ PATH                      = require 'node:path'
   unquote_name,         } = require '../../../apps/bricabrac-sfmodules/lib/dbric'
 
 #===========================================================================================================
+_toggle = 0
+toggle = ( P... ) ->
+  _toggle = ( _toggle + 1 ) % 2
+  return ( if _toggle is 0 then blue else gold ) P...
+
+#===========================================================================================================
 remove = ( path ) ->
   try
     FS.unlinkSync path
@@ -94,78 +100,35 @@ remove = ( path ) ->
       # help 'Ωbbdbr__20', { db_path, }
       #.....................................................................................................
       do =>
-        db = new Dbric db_path
-        @eq   ( Ωbbdbr__21 = -> db.is_ready ), true
-        return null
-      #.....................................................................................................
-      do =>
-        db = ( new Dbric db_path )
-        @eq   ( Ωbbdbr__22 = -> db instanceof Dbric         ), true
-        @eq   ( Ωbbdbr__23 = -> db._get_db_objects()        ), {}
-        @eq   ( Ωbbdbr__24 = -> db.is_ready                 ), true
-        @eq   ( Ωbbdbr__25 = -> db.build()                  ), 0
+        db = new Dbric db_path, { rebuild: true, }
+        @eq   ( Ωbbdbr__21 = -> db instanceof Dbric         ), true
+        @eq   ( Ωbbdbr__22 = -> db._get_db_objects()        ), {}
         return null
     #.......................................................................................................
     temp.with_directory { keep: false, }, ({ path: folder_path, }) =>
       # folder_path = '/tmp/bricbrac-test' # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       db_path = PATH.join folder_path, 'bricabrac.sqlite'
       remove db_path
-      # help 'Ωbbdbr__26', { db_path, }
+      # help 'Ωbbdbr__23', { db_path, }
       #.....................................................................................................
       do =>
-        db = new Dbric db_path
-        @eq   ( Ωbbdbr__27 = -> db.is_ready       ), true
+        db = new Dbric_std db_path, { rebuild: true, }
+        @eq   ( Ωbbdbr__24 = -> db instanceof Dbric               ), true
+        @eq   ( Ωbbdbr__25 = -> db instanceof Dbric_std           ), true
+        objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
+        @eq   ( Ωbbdbr__26 = -> objects.has 'view:std_tables'     ), true
+        @eq   ( Ωbbdbr__27 = -> objects.has 'view:std_views'      ), true
+        @eq   ( Ωbbdbr__28 = -> objects.has 'view:std_relations'  ), true
         return null
       #.....................................................................................................
       do =>
-        db = new Dbric_std db_path
-        @eq   ( Ωbbdbr__28 = -> db.is_ready       ), true
-        return null
-      #.....................................................................................................
-      do =>
-        db = ( new Dbric_std db_path )
+        db = new Dbric_std db_path, { rebuild: false, }
         @eq   ( Ωbbdbr__29 = -> db instanceof Dbric               ), true
         @eq   ( Ωbbdbr__30 = -> db instanceof Dbric_std           ), true
         objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
         @eq   ( Ωbbdbr__31 = -> objects.has 'view:std_tables'     ), true
         @eq   ( Ωbbdbr__32 = -> objects.has 'view:std_views'      ), true
         @eq   ( Ωbbdbr__33 = -> objects.has 'view:std_relations'  ), true
-        @eq   ( Ωbbdbr__34 = -> db.is_ready                       ), true
-        @eq   ( Ωbbdbr__35 = -> db.build()                        ), 0
-        return null
-      #.....................................................................................................
-      do =>
-        db = ( new Dbric_std db_path )
-        @eq   ( Ωbbdbr__36 = -> db instanceof Dbric               ), true
-        @eq   ( Ωbbdbr__37 = -> db instanceof Dbric_std           ), true
-        objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
-        @eq   ( Ωbbdbr__38 = -> objects.has 'view:std_tables'     ), true
-        @eq   ( Ωbbdbr__39 = -> objects.has 'view:std_views'      ), true
-        @eq   ( Ωbbdbr__40 = -> objects.has 'view:std_relations'  ), true
-        @eq   ( Ωbbdbr__41 = -> db.is_ready                       ), true
-        @eq   ( Ωbbdbr__42 = -> db.build()                        ), 0
-        return null
-      #.....................................................................................................
-      do =>
-        db = ( new Dbric_std db_path )
-        objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
-        @eq   ( Ωbbdbr__43 = -> objects.has 'view:std_tables'     ), true
-        ( db.prepare SQL"drop view std_tables;" ).run()
-        objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
-        @eq   ( Ωbbdbr__44 = -> objects.has 'view:std_tables'     ), false
-        @eq   ( Ωbbdbr__45 = -> db.is_ready                       ), false
-        return null
-      #.....................................................................................................
-      do =>
-        db = ( new Dbric_std db_path )
-        @eq   ( Ωbbdbr__46 = -> db instanceof Dbric               ), true
-        @eq   ( Ωbbdbr__47 = -> db instanceof Dbric_std           ), true
-        objects = new Set ( "#{o.type}:#{o.name}" for _, o of db._get_db_objects() )
-        @eq   ( Ωbbdbr__48 = -> objects.has 'view:std_tables'     ), true
-        @eq   ( Ωbbdbr__49 = -> objects.has 'view:std_views'      ), true
-        @eq   ( Ωbbdbr__50 = -> objects.has 'view:std_relations'  ), true
-        @eq   ( Ωbbdbr__51 = -> db.is_ready                       ), true
-        @eq   ( Ωbbdbr__52 = -> db.build()                        ), 0
         return null
       #.....................................................................................................
       return null
@@ -218,11 +181,11 @@ remove = ( path ) ->
     #.......................................................................................................
     do =>
       class Db extends Dbric_std
-      db = new Db ':memory:'
-      @eq ( Ωbbdbr__53 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 10, 2 );")...,  ] ), [ 1, 3, 5, 7, 9 ]
-      @eq ( Ωbbdbr__54 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 10, 0 );")...,  ] ), [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
-      @eq ( Ωbbdbr__55 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 1, 0 );")...,   ] ), [ 1 ]
-      @eq ( Ωbbdbr__56 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 0, 0 );")...,   ] ), []
+      db = new Db ':memory:', { rebuild: true, }
+      @eq ( Ωbbdbr__34 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 10, 2 );")...,  ] ), [ 1, 3, 5, 7, 9 ]
+      @eq ( Ωbbdbr__35 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 10, 0 );")...,  ] ), [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+      @eq ( Ωbbdbr__36 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 1, 0 );")...,   ] ), [ 1 ]
+      @eq ( Ωbbdbr__37 = -> [ ( row.value for row from db.walk SQL"select * from std_generate_series( 1, 0, 0 );")...,   ] ), []
       return null
     #.......................................................................................................
     ;null
@@ -287,19 +250,19 @@ remove = ( path ) ->
         ]
     # #.....................................................................................................
     # b = new B()
-    # debug 'Ωbbdbr__57', b
-    # debug 'Ωbbdbr__58', 'functions: ', get_function_names b
-    # debug 'Ωbbdbr__59', 'functions: ', ( get_function_names b ).has 'fn_a'
-    # debug 'Ωbbdbr__60', 'functions: ', ( get_function_names b ).has 'fn_b'
-    # debug 'Ωbbdbr__61', 'functions: ', ( get_function_names b ).has 'regexp'
-    # debug 'Ωbbdbr__62', 'tables:    ', get_table_names b
-    # debug 'Ωbbdbr__63', 'views:     ', get_view_names b
-    # debug 'Ωbbdbr__64', 'triggers:  ', get_trigger_names b
-    # debug 'Ωbbdbr__65', 'statements:', ( k for k of b.statements )
+    # debug 'Ωbbdbr__38', b
+    # debug 'Ωbbdbr__39', 'functions: ', get_function_names b
+    # debug 'Ωbbdbr__40', 'functions: ', ( get_function_names b ).has 'fn_a'
+    # debug 'Ωbbdbr__41', 'functions: ', ( get_function_names b ).has 'fn_b'
+    # debug 'Ωbbdbr__42', 'functions: ', ( get_function_names b ).has 'regexp'
+    # debug 'Ωbbdbr__43', 'tables:    ', get_table_names b
+    # debug 'Ωbbdbr__44', 'views:     ', get_view_names b
+    # debug 'Ωbbdbr__45', 'triggers:  ', get_trigger_names b
+    # debug 'Ωbbdbr__46', 'statements:', ( k for k of b.statements )
     # return null
     #.......................................................................................................
     do =>
-      dba = new Dbric_std ':memory:'
+      dba = new Dbric_std ':memory:', { rebuild: true, }
       # dba = new A()
       # dba = new B()
       dba.db.function 'zzz_test', { deterministic: true, varargs: false, directOnly: false, }, -> "ZZZ_TEST"
@@ -309,29 +272,29 @@ remove = ( path ) ->
       view_names      = get_view_names dba
       trigger_names   = get_trigger_names dba
       #.....................................................................................................
-      @eq ( Ωbbdbr__66 = -> dba.statements.std_get_schema     instanceof  statement_class ), true
-      @eq ( Ωbbdbr__67 = -> dba.statements.std_get_tables     instanceof  statement_class ), true
-      @eq ( Ωbbdbr__68 = -> dba.statements.std_get_views      instanceof  statement_class ), true
-      @eq ( Ωbbdbr__69 = -> dba.statements.std_get_relations  instanceof  statement_class ), true
-      @eq ( Ωbbdbr__70 = -> dba.statements.select_a           instanceof  statement_class ), false
-      @eq ( Ωbbdbr__71 = -> dba.statements.select_b           instanceof  statement_class ), false
+      @eq ( Ωbbdbr__47 = -> dba.statements.std_get_schema     instanceof  statement_class ), true
+      @eq ( Ωbbdbr__48 = -> dba.statements.std_get_tables     instanceof  statement_class ), true
+      @eq ( Ωbbdbr__49 = -> dba.statements.std_get_views      instanceof  statement_class ), true
+      @eq ( Ωbbdbr__50 = -> dba.statements.std_get_relations  instanceof  statement_class ), true
+      @eq ( Ωbbdbr__51 = -> dba.statements.select_a           instanceof  statement_class ), false
+      @eq ( Ωbbdbr__52 = -> dba.statements.select_b           instanceof  statement_class ), false
       #.....................................................................................................
-      @eq ( Ωbbdbr__72 = -> function_names.has 'zzz_test'                                 ), true
-      @eq ( Ωbbdbr__73 = -> function_names.has 'regexp'                                   ), true
-      @eq ( Ωbbdbr__74 = -> function_names.has 'fn_a'                                     ), false
-      @eq ( Ωbbdbr__75 = -> function_names.has 'fn_b'                                     ), false
+      @eq ( Ωbbdbr__53 = -> function_names.has 'zzz_test'                                 ), true
+      @eq ( Ωbbdbr__54 = -> function_names.has 'regexp'                                   ), true
+      @eq ( Ωbbdbr__55 = -> function_names.has 'fn_a'                                     ), false
+      @eq ( Ωbbdbr__56 = -> function_names.has 'fn_b'                                     ), false
       #.....................................................................................................
-      @eq ( Ωbbdbr__76 = -> table_names.has 'table_a'                                     ), false
-      @eq ( Ωbbdbr__77 = -> table_names.has 'table_b'                                     ), false
-      @eq ( Ωbbdbr__78 = -> view_names.has 'std_tables'                                   ), true
-      @eq ( Ωbbdbr__79 = -> view_names.has 'std_views'                                    ), true
-      @eq ( Ωbbdbr__80 = -> view_names.has 'std_relations'                                ), true
-      @eq ( Ωbbdbr__81 = -> view_names.has 'view_a'                                       ), false
-      @eq ( Ωbbdbr__82 = -> view_names.has 'view_b'                                       ), false
+      @eq ( Ωbbdbr__57 = -> table_names.has 'table_a'                                     ), false
+      @eq ( Ωbbdbr__58 = -> table_names.has 'table_b'                                     ), false
+      @eq ( Ωbbdbr__59 = -> view_names.has 'std_tables'                                   ), true
+      @eq ( Ωbbdbr__60 = -> view_names.has 'std_views'                                    ), true
+      @eq ( Ωbbdbr__61 = -> view_names.has 'std_relations'                                ), true
+      @eq ( Ωbbdbr__62 = -> view_names.has 'view_a'                                       ), false
+      @eq ( Ωbbdbr__63 = -> view_names.has 'view_b'                                       ), false
       ;null
     #.......................................................................................................
     do =>
-      dba = new A()
+      dba = new A { rebuild: true, }
       dba.db.function 'zzz_test', { deterministic: true, varargs: false, directOnly: false, }, -> "ZZZ_TEST"
       #.....................................................................................................
       function_names  = get_function_names dba
@@ -339,29 +302,29 @@ remove = ( path ) ->
       view_names      = get_view_names dba
       trigger_names   = get_trigger_names dba
       #.....................................................................................................
-      @eq ( Ωbbdbr__83 = -> dba.statements.std_get_schema     instanceof  statement_class ), true
-      @eq ( Ωbbdbr__84 = -> dba.statements.std_get_tables     instanceof  statement_class ), true
-      @eq ( Ωbbdbr__85 = -> dba.statements.std_get_views      instanceof  statement_class ), true
-      @eq ( Ωbbdbr__86 = -> dba.statements.std_get_relations  instanceof  statement_class ), true
-      @eq ( Ωbbdbr__87 = -> dba.statements.select_a           instanceof  statement_class ), true
-      @eq ( Ωbbdbr__88 = -> dba.statements.select_b           instanceof  statement_class ), false
+      @eq ( Ωbbdbr__64 = -> dba.statements.std_get_schema     instanceof  statement_class ), true
+      @eq ( Ωbbdbr__65 = -> dba.statements.std_get_tables     instanceof  statement_class ), true
+      @eq ( Ωbbdbr__66 = -> dba.statements.std_get_views      instanceof  statement_class ), true
+      @eq ( Ωbbdbr__67 = -> dba.statements.std_get_relations  instanceof  statement_class ), true
+      @eq ( Ωbbdbr__68 = -> dba.statements.select_a           instanceof  statement_class ), true
+      @eq ( Ωbbdbr__69 = -> dba.statements.select_b           instanceof  statement_class ), false
       #.....................................................................................................
-      @eq ( Ωbbdbr__89 = -> function_names.has 'zzz_test'                                 ), true
-      @eq ( Ωbbdbr__90 = -> function_names.has 'regexp'                                   ), true
-      @eq ( Ωbbdbr__91 = -> function_names.has 'fn_a'                                     ), true
-      @eq ( Ωbbdbr__92 = -> function_names.has 'fn_b'                                     ), false
+      @eq ( Ωbbdbr__70 = -> function_names.has 'zzz_test'                                 ), true
+      @eq ( Ωbbdbr__71 = -> function_names.has 'regexp'                                   ), true
+      @eq ( Ωbbdbr__72 = -> function_names.has 'fn_a'                                     ), true
+      @eq ( Ωbbdbr__73 = -> function_names.has 'fn_b'                                     ), false
       #.....................................................................................................
-      @eq ( Ωbbdbr__93 = -> table_names.has 'table_a'                                     ), true
-      @eq ( Ωbbdbr__94 = -> table_names.has 'table_b'                                     ), false
-      @eq ( Ωbbdbr__95 = -> view_names.has 'std_tables'                                   ), true
-      @eq ( Ωbbdbr__96 = -> view_names.has 'std_views'                                    ), true
-      @eq ( Ωbbdbr__97 = -> view_names.has 'std_relations'                                ), true
-      @eq ( Ωbbdbr__98 = -> view_names.has 'view_a'                                       ), true
-      @eq ( Ωbbdbr__99 = -> view_names.has 'view_b'                                       ), false
+      @eq ( Ωbbdbr__74 = -> table_names.has 'table_a'                                     ), true
+      @eq ( Ωbbdbr__75 = -> table_names.has 'table_b'                                     ), false
+      @eq ( Ωbbdbr__76 = -> view_names.has 'std_tables'                                   ), true
+      @eq ( Ωbbdbr__77 = -> view_names.has 'std_views'                                    ), true
+      @eq ( Ωbbdbr__78 = -> view_names.has 'std_relations'                                ), true
+      @eq ( Ωbbdbr__79 = -> view_names.has 'view_a'                                       ), true
+      @eq ( Ωbbdbr__80 = -> view_names.has 'view_b'                                       ), false
       ;null
     #.......................................................................................................
     do =>
-      dba = new B()
+      dba = new B { rebuild: true, }
       dba.db.function 'zzz_test', { deterministic: true, varargs: false, directOnly: false, }, -> "ZZZ_TEST"
       #.....................................................................................................
       function_names  = get_function_names dba
@@ -369,57 +332,33 @@ remove = ( path ) ->
       view_names      = get_view_names dba
       trigger_names   = get_trigger_names dba
       #.....................................................................................................
-      @eq ( Ωbbdbr_100 = -> dba.statements.std_get_schema     instanceof  statement_class ), true
-      @eq ( Ωbbdbr_101 = -> dba.statements.std_get_tables     instanceof  statement_class ), true
-      @eq ( Ωbbdbr_102 = -> dba.statements.std_get_views      instanceof  statement_class ), true
-      @eq ( Ωbbdbr_103 = -> dba.statements.std_get_relations  instanceof  statement_class ), true
-      @eq ( Ωbbdbr_104 = -> dba.statements.select_a           instanceof  statement_class ), true
-      @eq ( Ωbbdbr_105 = -> dba.statements.select_b           instanceof  statement_class ), true
+      @eq ( Ωbbdbr__81 = -> dba.statements.std_get_schema     instanceof  statement_class ), true
+      @eq ( Ωbbdbr__82 = -> dba.statements.std_get_tables     instanceof  statement_class ), true
+      @eq ( Ωbbdbr__83 = -> dba.statements.std_get_views      instanceof  statement_class ), true
+      @eq ( Ωbbdbr__84 = -> dba.statements.std_get_relations  instanceof  statement_class ), true
+      @eq ( Ωbbdbr__85 = -> dba.statements.select_a           instanceof  statement_class ), true
+      @eq ( Ωbbdbr__86 = -> dba.statements.select_b           instanceof  statement_class ), true
       #.....................................................................................................
-      @eq ( Ωbbdbr_106 = -> function_names.has 'zzz_test'                                 ), true
-      @eq ( Ωbbdbr_107 = -> function_names.has 'regexp'                                   ), true
-      @eq ( Ωbbdbr_108 = -> function_names.has 'fn_a'                                     ), true
-      @eq ( Ωbbdbr_109 = -> function_names.has 'fn_b'                                     ), true
+      @eq ( Ωbbdbr__87 = -> function_names.has 'zzz_test'                                 ), true
+      @eq ( Ωbbdbr__88 = -> function_names.has 'regexp'                                   ), true
+      @eq ( Ωbbdbr__89 = -> function_names.has 'fn_a'                                     ), true
+      @eq ( Ωbbdbr__90 = -> function_names.has 'fn_b'                                     ), true
       #.....................................................................................................
-      @eq ( Ωbbdbr_110 = -> table_names.has 'table_a'                                     ), true
-      @eq ( Ωbbdbr_111 = -> table_names.has 'table_b'                                     ), true
-      @eq ( Ωbbdbr_112 = -> view_names.has 'std_tables'                                   ), true
-      @eq ( Ωbbdbr_113 = -> view_names.has 'std_views'                                    ), true
-      @eq ( Ωbbdbr_114 = -> view_names.has 'std_relations'                                ), true
-      @eq ( Ωbbdbr_115 = -> view_names.has 'view_a'                                       ), true
-      @eq ( Ωbbdbr_116 = -> view_names.has 'view_b'                                       ), true
+      @eq ( Ωbbdbr__91 = -> table_names.has 'table_a'                                     ), true
+      @eq ( Ωbbdbr__92 = -> table_names.has 'table_b'                                     ), true
+      @eq ( Ωbbdbr__93 = -> view_names.has 'std_tables'                                   ), true
+      @eq ( Ωbbdbr__94 = -> view_names.has 'std_views'                                    ), true
+      @eq ( Ωbbdbr__95 = -> view_names.has 'std_relations'                                ), true
+      @eq ( Ωbbdbr__96 = -> view_names.has 'view_a'                                       ), true
+      @eq ( Ωbbdbr__97 = -> view_names.has 'view_b'                                       ), true
       ;null
     #.......................................................................................................
     do =>
-      @throws ( Ωbbdbr_117 = -> new C_duplicate_function()    ), /a UDF or built-in function named 'fn_b' has already been declared/
-      @throws ( Ωbbdbr_118 = -> new C_duplicate_statement()   ), /statement 'select_b' is already declared/
-      @throws ( Ωbbdbr_119 = -> new C_duplicate_table()       ), /table table_b already exists/
+      @throws ( Ωbbdbr__98 = -> new C_duplicate_function  { rebuild: true, } ), /a UDF or built-in function named 'fn_b' has already been declared/
+      @throws ( Ωbbdbr__99 = -> new C_duplicate_statement { rebuild: true, } ), /statement 'select_b' is already declared/
+      @throws ( Ωbbdbr_100 = -> new C_duplicate_table     { rebuild: true, } ), /table table_b already exists/
     #.......................................................................................................
     return null
-
-  #---------------------------------------------------------------------------------------------------------
-  disallow_overwriting_properties_with_functions: ->
-    # debug 'Ωbbdbr_120', new Dbric '/dev/shm/bricabrac.sqlite'
-    do =>
-      db        = ( new Dbric ':memory:' )
-      db_proto  = Object.getPrototypeOf db
-      # debug 'Ωbbdbr_121', Object.getOwnPropertyDescriptor db_proto, 'is_ready'
-      # debug 'Ωbbdbr_122', Object.getOwnPropertyDescriptor db_proto, '_get_is_ready'
-      ;null
-    #-------------------------------------------------------------------------------------------------------
-    ### use derived classes to assert that property descriptors are searched for in the prototype chain: ###
-    class Dbric_A extends Dbric
-    class Dbric_B extends Dbric_A
-    class Dbric_C extends Dbric_B
-    class Dbric_Z extends Dbric_C
-    #-------------------------------------------------------------------------------------------------------
-    do =>
-      class Dbric_nonconform extends Dbric_Z
-        is_ready: ->
-      @throws ( Ωbbdbr_123 = -> new Dbric_nonconform() ), /not allowed to override property 'is_ready'; use '_get_is_ready instead/
-      ;null
-    #.......................................................................................................
-    ;null
 
   #---------------------------------------------------------------------------------------------------------
   sample_db: ->
@@ -439,7 +378,7 @@ remove = ( path ) ->
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
-      store     = new Dbric_store db_path
+      store     = Dbric_store.rebuild db_path
       store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -452,12 +391,12 @@ remove = ( path ) ->
         return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
       #.....................................................................................................
       rows = store.statements.store_get_facets.iterate()
-      @eq ( Ωbbdbr_124 = -> cast_row rows.next().value  ), { facet_key: 'false', facet_value: false, _v: 'false' }
-      @eq ( Ωbbdbr_125 = -> cast_row rows.next().value  ), { facet_key: 'one', facet_value: 1, _v: 1 }
-      @eq ( Ωbbdbr_126 = -> cast_row rows.next().value  ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
-      @eq ( Ωbbdbr_127 = -> cast_row rows.next().value  ), { facet_key: 'true', facet_value: true, _v: 'true' }
-      @eq ( Ωbbdbr_128 = -> cast_row rows.next().value  ), { facet_key: 'two', facet_value: 2, _v: 2 }
-      @eq ( Ωbbdbr_129 = -> rows.next().done            ), true
+      @eq ( Ωbbdbr_105 = -> cast_row rows.next().value  ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      @eq ( Ωbbdbr_106 = -> cast_row rows.next().value  ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr_107 = -> cast_row rows.next().value  ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr_108 = -> cast_row rows.next().value  ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr_109 = -> cast_row rows.next().value  ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr_110 = -> rows.next().done            ), true
     #.......................................................................................................
     return null
 
@@ -480,8 +419,7 @@ remove = ( path ) ->
           select * from store_facets order by facet_key;"""
     #=======================================================================================================
     do =>
-      db_path   = ':memory:'
-      store     = new Dbric_store db_path
+      store     = Dbric_store.rebuild ':memory:'
       store.statements.store_insert_facet.run { facet_key: 'one',   facet_value: ( JSON.stringify 1       ), }
       store.statements.store_insert_facet.run { facet_key: 'two',   facet_value: ( JSON.stringify 2       ), }
       store.statements.store_insert_facet.run { facet_key: 'three', facet_value: ( JSON.stringify 3       ), }
@@ -494,12 +432,12 @@ remove = ( path ) ->
         return { row..., facet_value: ( JSON.parse row.facet_value ), _v: row.facet_value, }
       #.....................................................................................................
       rows = store.statements.store_get_facets.iterate()
-      @eq ( Ωbbdbr_130 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
-      @eq ( Ωbbdbr_131 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
-      @eq ( Ωbbdbr_132 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
-      @eq ( Ωbbdbr_133 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
-      @eq ( Ωbbdbr_134 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
-      @eq ( Ωbbdbr_135 = -> cast_row rows.next().value ), undefined
+      @eq ( Ωbbdbr_111 = -> cast_row rows.next().value ), { facet_key: 'false', facet_value: false, _v: 'false' }
+      @eq ( Ωbbdbr_112 = -> cast_row rows.next().value ), { facet_key: 'one', facet_value: 1, _v: 1 }
+      @eq ( Ωbbdbr_113 = -> cast_row rows.next().value ), { facet_key: 'three', facet_value: 'iii', _v: '"iii"' }
+      @eq ( Ωbbdbr_114 = -> cast_row rows.next().value ), { facet_key: 'true', facet_value: true, _v: 'true' }
+      @eq ( Ωbbdbr_115 = -> cast_row rows.next().value ), { facet_key: 'two', facet_value: 2, _v: 2 }
+      @eq ( Ωbbdbr_116 = -> cast_row rows.next().value ), undefined
     #.......................................................................................................
     return null
 
@@ -527,34 +465,31 @@ remove = ( path ) ->
           from squares
           order by n;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        @create_function
-          name:           'square'
+      @functions:
+        square:
           deterministic:  true
           varargs:        false
           value:           ( n ) -> n ** 2
-        ;null
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
-      squares   = new Dbric_squares db_path
+      squares   = Dbric_squares.rebuild db_path
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_136', row for row from squares.statements.select_from_squares.iterate()
+      # echo 'Ωbbdbr_117', row for row from squares.statements.select_from_squares.iterate()
       rows = squares.statements.select_from_squares.iterate()
-      @eq ( Ωbbdbr_137 = -> rows.next().value ), { n: 0, square: 0 }
-      @eq ( Ωbbdbr_138 = -> rows.next().value ), { n: 1, square: 1 }
-      @eq ( Ωbbdbr_139 = -> rows.next().value ), { n: 2, square: 4 }
-      @eq ( Ωbbdbr_140 = -> rows.next().value ), { n: 3, square: 9 }
-      @eq ( Ωbbdbr_141 = -> rows.next().value ), { n: 4, square: 16 }
-      @eq ( Ωbbdbr_142 = -> rows.next().value ), { n: 5, square: 25 }
-      @eq ( Ωbbdbr_143 = -> rows.next().value ), { n: 6, square: 36 }
-      @eq ( Ωbbdbr_144 = -> rows.next().value ), { n: 7, square: 49 }
-      @eq ( Ωbbdbr_145 = -> rows.next().value ), { n: 8, square: 64 }
-      @eq ( Ωbbdbr_146 = -> rows.next().value ), { n: 9, square: 81 }
-      @eq ( Ωbbdbr_147 = -> rows.next().done  ), true
+      @eq ( Ωbbdbr_118 = -> rows.next().value ), { n: 0, square: 0 }
+      @eq ( Ωbbdbr_119 = -> rows.next().value ), { n: 1, square: 1 }
+      @eq ( Ωbbdbr_120 = -> rows.next().value ), { n: 2, square: 4 }
+      @eq ( Ωbbdbr_121 = -> rows.next().value ), { n: 3, square: 9 }
+      @eq ( Ωbbdbr_122 = -> rows.next().value ), { n: 4, square: 16 }
+      @eq ( Ωbbdbr_123 = -> rows.next().value ), { n: 5, square: 25 }
+      @eq ( Ωbbdbr_124 = -> rows.next().value ), { n: 6, square: 36 }
+      @eq ( Ωbbdbr_125 = -> rows.next().value ), { n: 7, square: 49 }
+      @eq ( Ωbbdbr_126 = -> rows.next().value ), { n: 8, square: 64 }
+      @eq ( Ωbbdbr_127 = -> rows.next().value ), { n: 9, square: 81 }
+      @eq ( Ωbbdbr_128 = -> rows.next().done  ), true
       ;null
     #.......................................................................................................
     return null
@@ -587,36 +522,33 @@ remove = ( path ) ->
           where n between $start and $stop
           order by n;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        @create_function
-          name:           'square'
+      @functions:
+        square:
           deterministic:  true
           varargs:        false
           value:           ( n ) -> n ** 2
-        @create_aggregate_function
-          name:           'product'
+      @aggregate_functions:
+        product:
           start:          -> 1 ### NOTE can use `null` for bSQL, but nSQL needs `1` ###
           step:           product = ( total, element ) ->
-            # debug 'Ωbbdbr_148', { total, element, }
+            # debug 'Ωbbdbr_129', { total, element, }
             return ( total ? 1 ) * element
-        ;null
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac-udf_aggregates_with_nsql.sqlite'
-      squares   = new Dbric_squares db_path
+      squares   = Dbric_squares.rebuild db_path
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_149', row for row from squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
+      # echo 'Ωbbdbr_130', row for row from squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
       rows = squares.statements.select_from_squares.iterate { start: 1, stop: 5, }
-      @eq ( Ωbbdbr_150 = -> rows.next().value ), { n: 1, square: 1, p_n: 120, p_square: 14400 }
-      @eq ( Ωbbdbr_151 = -> rows.next().done  ), true
+      @eq ( Ωbbdbr_131 = -> rows.next().value ), { n: 1, square: 1, p_n: 120, p_square: 14400 }
+      @eq ( Ωbbdbr_132 = -> rows.next().done  ), true
       #.....................................................................................................
-      # echo 'Ωbbdbr_152', row for row from squares.statements.select_from_squares.iterate()
-      @throws ( Ωbbdbr_153 = -> squares.statements.select_from_squares.iterate() ), /missing named parameters/i
-      # @eq ( Ωbbdbr_154 = -> rows.next().value ), { n: null, square: null, p_n: 1, p_square: 1 }
-      # @eq ( Ωbbdbr_155 = -> rows.next().value ), null
+      # echo 'Ωbbdbr_133', row for row from squares.statements.select_from_squares.iterate()
+      @throws ( Ωbbdbr_134 = -> squares.statements.select_from_squares.iterate() ), /missing named parameters/i
+      # @eq ( Ωbbdbr_135 = -> rows.next().value ), { n: null, square: null, p_n: 1, p_square: 1 }
+      # @eq ( Ωbbdbr_136 = -> rows.next().value ), null
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -646,34 +578,31 @@ remove = ( path ) ->
           from squares
           order by n;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        @create_function
-          name:           'square'
+      @functions:
+        square:
           deterministic:  true
           varargs:        false
           value:           ( n ) -> n ** 2
-        ;null
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
-      squares   = new Dbric_squares db_path
+      squares   = Dbric_squares.rebuild db_path
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
       # echo row for row from squares.statements.select_from_squares.iterate()
       rows = squares.statements.select_from_squares.iterate()
-      @eq ( Ωbbdbr_156 = -> rows.next().value ), { n: 0, square: 0 }
-      @eq ( Ωbbdbr_157 = -> rows.next().value ), { n: 1, square: 1 }
-      @eq ( Ωbbdbr_158 = -> rows.next().value ), { n: 2, square: 4 }
-      @eq ( Ωbbdbr_159 = -> rows.next().value ), { n: 3, square: 9 }
-      @eq ( Ωbbdbr_160 = -> rows.next().value ), { n: 4, square: 16 }
-      @eq ( Ωbbdbr_161 = -> rows.next().value ), { n: 5, square: 25 }
-      @eq ( Ωbbdbr_162 = -> rows.next().value ), { n: 6, square: 36 }
-      @eq ( Ωbbdbr_163 = -> rows.next().value ), { n: 7, square: 49 }
-      @eq ( Ωbbdbr_164 = -> rows.next().value ), { n: 8, square: 64 }
-      @eq ( Ωbbdbr_165 = -> rows.next().value ), { n: 9, square: 81 }
-      @eq ( Ωbbdbr_166 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_137 = -> rows.next().value ), { n: 0, square: 0 }
+      @eq ( Ωbbdbr_138 = -> rows.next().value ), { n: 1, square: 1 }
+      @eq ( Ωbbdbr_139 = -> rows.next().value ), { n: 2, square: 4 }
+      @eq ( Ωbbdbr_140 = -> rows.next().value ), { n: 3, square: 9 }
+      @eq ( Ωbbdbr_141 = -> rows.next().value ), { n: 4, square: 16 }
+      @eq ( Ωbbdbr_142 = -> rows.next().value ), { n: 5, square: 25 }
+      @eq ( Ωbbdbr_143 = -> rows.next().value ), { n: 6, square: 36 }
+      @eq ( Ωbbdbr_144 = -> rows.next().value ), { n: 7, square: 49 }
+      @eq ( Ωbbdbr_145 = -> rows.next().value ), { n: 8, square: 64 }
+      @eq ( Ωbbdbr_146 = -> rows.next().value ), { n: 9, square: 81 }
+      @eq ( Ωbbdbr_147 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -705,31 +634,27 @@ remove = ( path ) ->
           where n between $start and $stop
           order by n;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        @create_function
-          name:           'square'
+      @functions:
+        square:
           deterministic:  true
           varargs:        false
           value:           square = ( n ) -> n ** 2
-        @create_aggregate_function
-          name:           'product'
+      @aggregate_functions:
+        product:
           start:          -> null
           step:           product = ( total, element ) ->
-            # debug 'Ωbbdbr_167', { total, element, }
+            # debug 'Ωbbdbr_148', { total, element, }
             return ( total ? 1 ) * element
-        ;null
     #=======================================================================================================
     do =>
-      db_path   = '/dev/shm/bricabrac.sqlite'
-      squares   = new Dbric_squares db_path
+      squares   = Dbric_squares.rebuild()
       for n in [ 0 ... 10 ]
         squares.statements.insert_number.run { n, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_168', row for row from squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
+      # echo 'Ωbbdbr_149', row for row from squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
       rows = squares.statements.select_from_squares.iterate { start: 2, stop: 3, }
-      @eq ( Ωbbdbr_169 = -> rows.next().value ), { n: 2, square: 4, p_n: 6, p_square: 36 }
-      @eq ( Ωbbdbr_170 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_150 = -> rows.next().value ), { n: 2, square: 4, p_n: 6, p_square: 36 }
+      @eq ( Ωbbdbr_151 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -755,10 +680,8 @@ remove = ( path ) ->
               re_matches( p.phrase, $matcher ) as rx
             order by p.phrase;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        @create_table_function
-          name:         're_matches'
+      @table_functions:
+        re_matches:
           columns:      [ 'match', 'capture', ]
           parameters:   [ 'text', 'pattern', ]
           rows: ( text, pattern ) ->
@@ -766,32 +689,30 @@ remove = ( path ) ->
             for match from text.matchAll regex
               yield [ match[ 0 ], match[ 1 ], ]
             return null
-        ;null
     #=======================================================================================================
     do =>
-      db_path   = '/dev/shm/bricabrac.sqlite'
-      phrases   = new Dbric_phrases db_path
+      phrases   = Dbric_phrases.rebuild()
       for phrase in [ 'eleven', 'five', 'nine', 'one', 'one point five', 'seven', 'three point one' ]
         phrases.statements.insert_phrase.run { phrase, }
       #.....................................................................................................
-      # echo 'Ωbbdbr_171', row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
+      # echo 'Ωbbdbr_152', row for row from phrases.statements.select_from_phrases.iterate { matcher: '^.*([aeiou].e).*$', }
       # echo()
       #.....................................................................................................
-      # echo 'Ωbbdbr_172', row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
+      # echo 'Ωbbdbr_153', row for row from phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
       rows = phrases.statements.select_from_phrases.iterate { matcher: '([^aeiou]?[aeiou]+)(?=[mnv])', }
-      @eq ( Ωbbdbr_173 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
-      @eq ( Ωbbdbr_174 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
-      @eq ( Ωbbdbr_175 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
-      @eq ( Ωbbdbr_176 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
-      @eq ( Ωbbdbr_177 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
-      @eq ( Ωbbdbr_178 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
-      @eq ( Ωbbdbr_179 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
-      @eq ( Ωbbdbr_180 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
-      @eq ( Ωbbdbr_181 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
-      @eq ( Ωbbdbr_182 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
-      @eq ( Ωbbdbr_183 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
-      @eq ( Ωbbdbr_184 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
-      @eq ( Ωbbdbr_185 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_154 = -> rows.next().value ), { phrase: 'eleven', match: 'le', capture: 'le' }
+      @eq ( Ωbbdbr_155 = -> rows.next().value ), { phrase: 'eleven', match: 've', capture: 've' }
+      @eq ( Ωbbdbr_156 = -> rows.next().value ), { phrase: 'five', match: 'fi', capture: 'fi' }
+      @eq ( Ωbbdbr_157 = -> rows.next().value ), { phrase: 'nine', match: 'ni', capture: 'ni' }
+      @eq ( Ωbbdbr_158 = -> rows.next().value ), { phrase: 'one', match: 'o', capture: 'o' }
+      @eq ( Ωbbdbr_159 = -> rows.next().value ), { phrase: 'one point five', match: 'o', capture: 'o' }
+      @eq ( Ωbbdbr_160 = -> rows.next().value ), { phrase: 'one point five', match: 'poi', capture: 'poi' }
+      @eq ( Ωbbdbr_161 = -> rows.next().value ), { phrase: 'one point five', match: 'fi', capture: 'fi' }
+      @eq ( Ωbbdbr_162 = -> rows.next().value ), { phrase: 'seven', match: 'se', capture: 'se' }
+      @eq ( Ωbbdbr_163 = -> rows.next().value ), { phrase: 'seven', match: 've', capture: 've' }
+      @eq ( Ωbbdbr_164 = -> rows.next().value ), { phrase: 'three point one', match: 'poi', capture: 'poi' }
+      @eq ( Ωbbdbr_165 = -> rows.next().value ), { phrase: 'three point one', match: ' o', capture: ' o' }
+      @eq ( Ωbbdbr_166 = -> rows.next().value ), undefined
       ;null
     #.......................................................................................................
     return null
@@ -836,23 +757,19 @@ remove = ( path ) ->
         #...................................................................................................
         select_from_mirror: SQL"""select * from mirror order by dskey;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        @create_table_function
-          name:         'file_lines'
+      @table_functions:
+        file_lines:
           columns:      [ 'line_nr', 'line', ]
           parameters:   [ 'path', ]
           rows: ( path ) ->
             for { lnr: line_nr, line, eol, } from GUY.fs.walk_lines_with_positions path
               yield { line_nr, line, }
             return null
-        ;null
     #=======================================================================================================
     do =>
-      db_path   = '/dev/shm/bricabrac.sqlite'
-      phrases   = new Dbric_phrases db_path
-      @eq ( Ωbbdbr_186 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
-      @eq ( Ωbbdbr_187 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
+      phrases   = Dbric_phrases.rebuild()
+      @eq ( Ωbbdbr_167 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
+      @eq ( Ωbbdbr_168 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'memory',  }
       # #...................................................................................................
       # do =>
       #   dskey = 'readme'
@@ -864,21 +781,22 @@ remove = ( path ) ->
         path  = PATH.resolve __dirname, '../../../apps/bricabrac-sfmodules/package.json'
         phrases.statements.insert_datasource.run { dskey, path }
       #.....................................................................................................
-      # echo 'Ωbbdbr_188', row for row from phrases.statements.select_from_datasources.iterate()
+      # echo 'Ωbbdbr_169', row for row from phrases.statements.select_from_datasources.iterate()
       # echo()
       # #...................................................................................................
-      # echo 'Ωbbdbr_189', row for row from phrases.statements.select_from_mirror.iterate()
+      # echo 'Ωbbdbr_170', row for row from phrases.statements.select_from_mirror.iterate()
       # echo()
       #.....................................................................................................
-      for { dskey, line_nr, line, } from phrases.statements.select_from_mirror.iterate()
+      rows = phrases.statements.select_from_mirror.get()
+      for { dskey, line_nr, line, } in phrases
         keywords = line.split /(?:\p{Z}+)|((?:\p{L}+)|(?:\p{N}+)|(?:\p{S}+))/v
-        # debug 'Ωbbdbr_190', line_nr, rpr keywords
+        # debug 'Ωbbdbr_171', line_nr, rpr keywords
         for keyword in keywords
           continue unless keyword?
           continue if keyword is ''
-          phrases.w.statements.insert_keyword.run { dskey, line_nr, keyword, }
+          phrases.statements.insert_keyword.run { dskey, line_nr, keyword, }
       # #...................................................................................................
-      # echo 'Ωbbdbr_191', row for row from phrases.statements.select_from_keywords.iterate()
+      # echo 'Ωbbdbr_172', row for row from phrases.statements.select_from_keywords.iterate()
       # echo()
       #.....................................................................................................
       ;null
@@ -940,40 +858,34 @@ remove = ( path ) ->
             where true -- where clause just a syntactic guard as per https://sqlite.org/lang_upsert.html
             on conflict do nothing;"""
       #-----------------------------------------------------------------------------------------------------
-      initialize: ->
-        super()
-        #...................................................................................................
-        @create_table_function
-          name:           'split_words'
+      @table_functions:
+        split_words:
           columns:        [ 'keyword', ]
           parameters:     [ 'line', ]
           rows: ( line ) ->
             keywords = line.split /(?:\p{Z}+)|((?:\p{L}+)|(?:\p{N}+)|(?:\p{S}+))/v
-            # debug 'Ωbbdbr_192', line_nr, rpr keywords
+            # debug 'Ωbbdbr_173', line_nr, rpr keywords
             for keyword in keywords
               continue unless keyword?
               continue if keyword is ''
               yield { keyword, }
             ;null
         #...................................................................................................
-        @create_table_function
-          name:         'file_lines'
+        file_lines:
           columns:      [ 'line_nr', 'line', ]
           parameters:   [ 'path', ]
           rows: ( path ) ->
             for { lnr: line_nr, line, eol, } from GUY.fs.walk_lines_with_positions path
               yield { line_nr, line, }
             ;null
-        #...................................................................................................
-        ;null
     #=======================================================================================================
     do =>
       db_path   = '/dev/shm/bricabrac.sqlite'
-      phrases   = new Dbric_phrases db_path
-      # debug 'Ωbbdbr_193', phrases.teardown()
-      # debug 'Ωbbdbr_194', phrases.rebuild()
-      @eq ( Ωbbdbr_195 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
-      @eq ( Ωbbdbr_196 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
+      phrases   = Dbric_phrases.rebuild db_path
+      # debug 'Ωbbdbr_174', phrases.teardown()
+      # debug 'Ωbbdbr_175', phrases.rebuild()
+      @eq ( Ωbbdbr_176 = -> ( phrases.prepare SQL"""pragma foreign_keys""" ).get() ), { foreign_keys: 1,      }
+      @eq ( Ωbbdbr_177 = -> ( phrases.prepare SQL"""pragma journal_mode""" ).get() ), { journal_mode: 'wal',  }
       #.....................................................................................................
       do =>
         dskey = 'humdum'
@@ -982,27 +894,27 @@ remove = ( path ) ->
       #.....................................................................................................
       phrases.statements.populate_keywords.run()
       #.....................................................................................................
-      # echo 'Ωbbdbr_197', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
+      # echo 'Ωbbdbr_178', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
       # echo()
       rows = phrases.statements.locations_from_keyword.iterate { keyword: 'thought', }
-      @eq ( Ωbbdbr_198 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
-      @eq ( Ωbbdbr_199 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
-      @eq ( Ωbbdbr_200 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_179 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'thought' }
+      @eq ( Ωbbdbr_180 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'thought' }
+      @eq ( Ωbbdbr_181 = -> rows.next().value ), undefined
       #.....................................................................................................
-      # echo 'Ωbbdbr_201', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
+      # echo 'Ωbbdbr_182', row for row from phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
       # echo()
       rows = phrases.statements.locations_from_keyword.iterate { keyword: 'she', }
-      @eq ( Ωbbdbr_202 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
-      @eq ( Ωbbdbr_203 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
-      @eq ( Ωbbdbr_204 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
-      @eq ( Ωbbdbr_205 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
-      @eq ( Ωbbdbr_206 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
-      @eq ( Ωbbdbr_207 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
-      @eq ( Ωbbdbr_208 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
-      @eq ( Ωbbdbr_209 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
-      @eq ( Ωbbdbr_210 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
-      @eq ( Ωbbdbr_211 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
-      @eq ( Ωbbdbr_212 = -> rows.next().value ), undefined
+      @eq ( Ωbbdbr_183 = -> rows.next().value ), { dskey: 'humdum', line_nr: 2, keyword: 'she' }
+      @eq ( Ωbbdbr_184 = -> rows.next().value ), { dskey: 'humdum', line_nr: 3, keyword: 'she' }
+      @eq ( Ωbbdbr_185 = -> rows.next().value ), { dskey: 'humdum', line_nr: 4, keyword: 'she' }
+      @eq ( Ωbbdbr_186 = -> rows.next().value ), { dskey: 'humdum', line_nr: 5, keyword: 'she' }
+      @eq ( Ωbbdbr_187 = -> rows.next().value ), { dskey: 'humdum', line_nr: 15, keyword: 'she' }
+      @eq ( Ωbbdbr_188 = -> rows.next().value ), { dskey: 'humdum', line_nr: 17, keyword: 'she' }
+      @eq ( Ωbbdbr_189 = -> rows.next().value ), { dskey: 'humdum', line_nr: 18, keyword: 'she' }
+      @eq ( Ωbbdbr_190 = -> rows.next().value ), { dskey: 'humdum', line_nr: 26, keyword: 'she' }
+      @eq ( Ωbbdbr_191 = -> rows.next().value ), { dskey: 'humdum', line_nr: 34, keyword: 'she' }
+      @eq ( Ωbbdbr_192 = -> rows.next().value ), { dskey: 'humdum', line_nr: 36, keyword: 'she' }
+      @eq ( Ωbbdbr_193 = -> rows.next().value ), undefined
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -1014,40 +926,40 @@ remove = ( path ) ->
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
     cfg_do_show_variables         = false
     #=======================================================================================================
-    db = new Dbric_std ':memory:'
+    db = Dbric_std.rebuild ':memory:'
     #=======================================================================================================
-    @throws ( Ωbbdbr_213 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
-    @throws ( Ωbbdbr_214 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
-    # @throws ( Ωbbdbr_215 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
-    @throws ( Ωbbdbr_216 = -> db.std_get_variable 'myname'                            ), /unknown variable/
+    @throws ( Ωbbdbr_194 = -> db.std_with_variables -> db.std_with_variables -> null  ), /illegal to nest `std_with_variables\(\)` contexts/
+    @throws ( Ωbbdbr_195 = -> db.std_set_variable 'myname', 'myvalue'                 ), /illegal to set variable/
+    # @throws ( Ωbbdbr_196 = -> db.std_get_variable 'myname'                            ), /illegal to get variable/
+    @throws ( Ωbbdbr_197 = -> db.std_get_variable 'myname'                            ), /unknown variable/
     #=======================================================================================================
     variables = (db._show_variables cfg_do_show_variables )
     #.......................................................................................................
     db.std_with_variables =>
-      @throws ( Ωbbdbr_217 = -> db.std_get_variable 'myname' ), /unknown variable/
-      @eq ( Ωbbdbr_218 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @throws ( Ωbbdbr_198 = -> db.std_get_variable 'myname' ), /unknown variable/
+      @eq ( Ωbbdbr_199 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ### TAINT use API ###
       db.state.std_variables = lets db.state.std_variables, ( d ) ->
         d[ 'seq:app:counter' ] = { name: 'seq:app:counter', value: 7, delta: +3, }
-      @eq ( Ωbbdbr_219 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
-      @eq ( Ωbbdbr_220 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
-      @eq ( Ωbbdbr_221 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
+      @eq ( Ωbbdbr_200 = -> (db._show_variables cfg_do_show_variables ) ), { 'seq:app:counter': { sv: undefined, sd: undefined, cv: 7, cd: 3, tv: undefined, gv: 7 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_201 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 10
+      @eq ( Ωbbdbr_202 = -> db.std_get_next_in_sequence 'seq:app:counter' ), 13
       db.std_set_variable 'fuzz', 11.5
       db.std_set_variable 'name', 'Bob'
-      @eq ( Ωbbdbr_222 = -> db.std_get_variable 'fuzz' ), 11.5
-      @eq ( Ωbbdbr_223 = -> db.std_get_variable 'name' ), 'Bob'
-      @eq ( Ωbbdbr_224 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_203 = -> db.std_get_variable 'fuzz' ), 11.5
+      @eq ( Ωbbdbr_204 = -> db.std_get_variable 'name' ), 'Bob'
+      @eq ( Ωbbdbr_205 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: undefined, sd: undefined, cv: 11.5, cd: null, tv: undefined, gv: 11.5, }, name: { sv: undefined, sd: undefined, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: undefined, sd: undefined, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
     db.std_with_variables { name: 'Alice', job: 'engineer', }, =>
-      @eq ( Ωbbdbr_225 = -> db.std_get_variable 'name' ), 'Alice'
-      # debug 'Ωbbdbr_226', { name, job, }
-      @eq ( Ωbbdbr_227 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_206 = -> db.std_get_variable 'name' ), 'Alice'
+      # debug 'Ωbbdbr_207', { name, job, }
+      @eq ( Ωbbdbr_208 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, job: { sv: undefined, sd: undefined, cv: undefined, cd: undefined, tv: 'engineer', gv: 'engineer' }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: 'Alice', gv: 'Alice' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
-    @eq ( Ωbbdbr_228 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+    @eq ( Ωbbdbr_209 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
     db.std_with_variables =>
-      @eq ( Ωbbdbr_229 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
+      @eq ( Ωbbdbr_210 = -> (db._show_variables cfg_do_show_variables ) ), { fuzz: { sv: 11.5, sd: null, cv: 11.5, cd: null, tv: undefined, gv: 11.5 }, name: { sv: '"Bob"', sd: null, cv: 'Bob', cd: null, tv: undefined, gv: 'Bob' }, 'seq:app:counter': { sv: 13, sd: 3, cv: 13, cd: 3, tv: undefined, gv: 13 }, 'seq:global:rowid': { sv: 0, sd: 1, cv: 0, cd: 1, tv: undefined, gv: 0 } }
       ;null
     #.......................................................................................................
     db.std_with_variables =>
@@ -1058,7 +970,7 @@ remove = ( path ) ->
           rowid   text    unique  not null,
           letter  text    unique  not null,
         -- primary key ( rowid )
-        constraint "Ωconstraint_230" check ( length( letter ) = 1 )
+        constraint "Ωconstraint_211" check ( length( letter ) = 1 )
         ) strict;"""
       db.execute SQL"""create view letters as select * from _letters;"""
       db.execute SQL"""create trigger on_before_insert_letters
@@ -1070,11 +982,11 @@ remove = ( path ) ->
             end;
         ;"""
       db.execute SQL"""insert into letters ( letter ) values ( 'a' ), ( 'z' );"""
-      # info 'Ωbbdbr_231', row for row from db.walk SQL"select * from letters;"
+      # info 'Ωbbdbr_212', row for row from db.walk SQL"select * from letters;"
       rows = db.walk SQL"select * from letters order by letter;"
-      @eq ( Ωbbdbr_232 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-      @eq ( Ωbbdbr_233 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-      @eq ( Ωbbdbr_234 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_213 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+      @eq ( Ωbbdbr_214 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+      @eq ( Ωbbdbr_215 = -> rows.next().done ), true
       ;null
     ;null
     #.......................................................................................................
@@ -1093,11 +1005,11 @@ remove = ( path ) ->
             end;
         ;"""
       db.execute SQL"""insert into numbers ( number ) values ( 'uno' ), ( 'due' );"""
-      # info 'Ωbbdbr_235', row for row from db.walk SQL"select * from numbers;"
+      # info 'Ωbbdbr_216', row for row from db.walk SQL"select * from numbers;"
       rows = db.walk SQL"select * from numbers order by rowid;"
-      @eq ( Ωbbdbr_236 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
-      @eq ( Ωbbdbr_237 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
-      @eq ( Ωbbdbr_238 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_217 = -> rows.next().value ), { rowid: 't:numbers:R=1', number: 'uno', }
+      @eq ( Ωbbdbr_218 = -> rows.next().value ), { rowid: 't:numbers:R=2', number: 'due', }
+      @eq ( Ωbbdbr_219 = -> rows.next().done ), true
       ;null
     #.......................................................................................................
     do =>
@@ -1105,9 +1017,9 @@ remove = ( path ) ->
       #.......................................................................................................
       ### repeat earlier test to ensure we know what's there: ###
       rows = db.walk SQL"select * from letters order by letter;"
-      @eq ( Ωbbdbr_239 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
-      @eq ( Ωbbdbr_240 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
-      @eq ( Ωbbdbr_241 = -> rows.next().done ), true
+      @eq ( Ωbbdbr_220 = -> rows.next().value ), { rowid: 't:letters:R=1', letter: 'a', }
+      @eq ( Ωbbdbr_221 = -> rows.next().value ), { rowid: 't:letters:R=2', letter: 'z', }
+      @eq ( Ωbbdbr_222 = -> rows.next().done ), true
       #.......................................................................................................
       insert_letter = db.prepare SQL"""insert into letters ( letter ) values ( $letter );"""
       #.......................................................................................................
@@ -1125,9 +1037,9 @@ remove = ( path ) ->
       db.std_with_variables { first_letter: 'g', last_letter: 'm' }, =>
         result    = ( row.letter for row from db.walk SQL"select * from run_of_letters order by letter;" ).join ','
         variables = (db._show_variables cfg_do_show_variables )
-        @eq ( Ωbbdbr_242 = -> result                      ), 'g,h,i,j,k,l,m'
-        @eq ( Ωbbdbr_243 = -> variables.first_letter?.gv  ), 'g'
-        @eq ( Ωbbdbr_244 = -> variables.last_letter?.gv   ), 'm'
+        @eq ( Ωbbdbr_223 = -> result                      ), 'g,h,i,j,k,l,m'
+        @eq ( Ωbbdbr_224 = -> variables.first_letter?.gv  ), 'g'
+        @eq ( Ωbbdbr_225 = -> variables.last_letter?.gv   ), 'm'
         ;null
     #.......................................................................................................
     do =>
@@ -1151,7 +1063,7 @@ remove = ( path ) ->
           en        text          not null,
           de        text          not null,
         primary key ( rowid ),
-        constraint "Ωconstraint_245" check ( rowid regexp 't:wrd:R=\\d+' ) );"""
+        constraint "Ωconstraint_226" check ( rowid regexp 't:wrd:R=\\d+' ) );"""
       ### NOTE part of `Dbric.statements` object: ###
       insert_word_v = db.prepare SQL"""insert into prfx_words ( rowid, en, de ) values (
           printf( 't:wrd:R=%d', std_get_next_in_sequence( 'seq:prfx_words_rowid' ) ),
@@ -1174,16 +1086,16 @@ remove = ( path ) ->
         ;null
     #.......................................................................................................
     variables = (db._show_variables cfg_do_show_variables )
-    @eq ( Ωbbdbr_246 = -> variables[ 'seq:prfx_words_rowid' ]?.gv  ), 700
-    # echo 'Ωbbdbr_247', row for row from db.walk SQL"select * from prfx_words order by de;"
+    @eq ( Ωbbdbr_227 = -> variables[ 'seq:prfx_words_rowid' ]?.gv  ), 700
+    # echo 'Ωbbdbr_228', row for row from db.walk SQL"select * from prfx_words order by de;"
     rows = db.walk SQL"select * from prfx_words order by de;"
-    @eq ( Ωbbdbr_248 = -> rows.next().value ), { rowid: 't:wrd:R=600', en: 'call', de: 'Anruf' }
-    @eq ( Ωbbdbr_249 = -> rows.next().value ), { rowid: 't:wrd:R=700', en: 'book', de: 'Buch' }
-    @eq ( Ωbbdbr_250 = -> rows.next().value ), { rowid: 't:wrd:R=200', en: 'dog', de: 'Hund' }
-    @eq ( Ωbbdbr_251 = -> rows.next().value ), { rowid: 't:wrd:R=300', en: 'cat', de: 'Katze' }
-    @eq ( Ωbbdbr_252 = -> rows.next().value ), { rowid: 't:wrd:R=400', en: 'word', de: 'Wort' }
-    @eq ( Ωbbdbr_253 = -> rows.next().value ), { rowid: 't:wrd:R=500', en: 'call', de: 'rufen' }
-    @eq ( Ωbbdbr_254 = -> rows.next().done ), true
+    @eq ( Ωbbdbr_229 = -> rows.next().value ), { rowid: 't:wrd:R=600', en: 'call', de: 'Anruf' }
+    @eq ( Ωbbdbr_230 = -> rows.next().value ), { rowid: 't:wrd:R=700', en: 'book', de: 'Buch' }
+    @eq ( Ωbbdbr_231 = -> rows.next().value ), { rowid: 't:wrd:R=200', en: 'dog', de: 'Hund' }
+    @eq ( Ωbbdbr_232 = -> rows.next().value ), { rowid: 't:wrd:R=300', en: 'cat', de: 'Katze' }
+    @eq ( Ωbbdbr_233 = -> rows.next().value ), { rowid: 't:wrd:R=400', en: 'word', de: 'Wort' }
+    @eq ( Ωbbdbr_234 = -> rows.next().value ), { rowid: 't:wrd:R=500', en: 'call', de: 'rufen' }
+    @eq ( Ωbbdbr_235 = -> rows.next().done ), true
     ;null
 
   #---------------------------------------------------------------------------------------------------------
@@ -1192,27 +1104,27 @@ remove = ( path ) ->
       freeze,                   } = SFMODULES.require_letsfreezethat_infra().simple
     #.......................................................................................................
     do =>
-      db = new Dbric ':memory:'
+      db = Dbric.rebuild ':memory:'
       ( db.prepare SQL"pragma strict       = on;"    ).run()
       db.execute SQL"create table t ( f integer );"
       db.execute SQL"insert into t values ( 1234 );"
       db.execute SQL"insert into t values ( 12.34 );"
       db.execute SQL"insert into t values ( 'wat' );"
-      # debug 'Ωbbdbr_255', ( row.f for row from db.walk SQL"select f from t;" )
+      # debug 'Ωbbdbr_236', ( row.f for row from db.walk SQL"select f from t;" )
       ;null
     #.......................................................................................................
     do =>
-      db = new Dbric ':memory:'
+      db = Dbric.rebuild ':memory:'
       ( db.prepare SQL"pragma strict       = on;"    ).run()
-      @throws ( Ωbbdbr_256 = -> db.execute SQL"create table t ( f integer, j json ) strict;" ), /unknown datatype for t\.j/
+      @throws ( Ωbbdbr_237 = -> db.execute SQL"create table t ( f integer, j json ) strict;" ), /unknown datatype for t\.j/
       db.execute SQL"create table t ( f integer, j blob ) strict;"
       db.execute SQL"insert into t ( f ) values ( 1234 );"
-      @eq ( Ωbbdbr_257 = -> ( db.get_first SQL"select typeof( 12    ) as type;" ).type ), 'integer'
-      @eq ( Ωbbdbr_258 = -> ( db.get_first SQL"select typeof( 12.34 ) as type;" ).type ), 'real'
-      @eq ( Ωbbdbr_259 = -> ( db.get_first SQL"select typeof( 'wat' ) as type;" ).type ), 'text'
-      @throws ( Ωbbdbr_260 = -> db.execute SQL"insert into t ( f ) values ( 12.34 );" ), /cannot store REAL value in INTEGER column/
-      @throws ( Ωbbdbr_261 = -> db.execute SQL"insert into t ( f ) values ( 'wat' );" ), /cannot store TEXT value in INTEGER column/
-      # debug 'Ωbbdbr_262', ( row.f for row from db.walk SQL"select f from t;" )
+      @eq ( Ωbbdbr_238 = -> ( db.get_first SQL"select typeof( 12    ) as type;" ).type ), 'integer'
+      @eq ( Ωbbdbr_239 = -> ( db.get_first SQL"select typeof( 12.34 ) as type;" ).type ), 'real'
+      @eq ( Ωbbdbr_240 = -> ( db.get_first SQL"select typeof( 'wat' ) as type;" ).type ), 'text'
+      @throws ( Ωbbdbr_241 = -> db.execute SQL"insert into t ( f ) values ( 12.34 );" ), /cannot store REAL value in INTEGER column/
+      @throws ( Ωbbdbr_242 = -> db.execute SQL"insert into t ( f ) values ( 'wat' );" ), /cannot store TEXT value in INTEGER column/
+      # debug 'Ωbbdbr_243', ( row.f for row from db.walk SQL"select f from t;" )
       ;null
     #.......................................................................................................
     ;null
@@ -1230,11 +1142,11 @@ remove = ( path ) ->
           ]
       db = new Db_1()
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
-      @eq ( Ωbbdbr_263 = -> relation_names.has 'wrd_words'      ), true
+      @eq ( Ωbbdbr_244 = -> relation_names.has 'wrd_words'      ), true
       rows = db.walk SQL"""select * from #{IDN "#{prefix}_words"};"""
-      @eq ( Ωbbdbr_264 = -> rows.next().value.t                 ), '水 (みず)'
-      @eq ( Ωbbdbr_265 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
-      @eq ( Ωbbdbr_266 = -> rows.next().done                    ), true
+      @eq ( Ωbbdbr_245 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_246 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_247 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     do =>
@@ -1249,12 +1161,12 @@ remove = ( path ) ->
           select_words: -> SQL"""select * from #{IDN "#{prefix}_words"} order by t;"""
       db = new Db_1()
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
-      @eq ( Ωbbdbr_267 = -> relation_names.has 'wrd_words'      ), true
-      # info 'Ωbbdbr_268', row for row from db.walk db.statements.select_words
+      @eq ( Ωbbdbr_248 = -> relation_names.has 'wrd_words'      ), true
+      # info 'Ωbbdbr_249', row for row from db.walk db.statements.select_words
       rows = db.walk db.statements.select_words
-      @eq ( Ωbbdbr_269 = -> rows.next().value.t                 ), '水 (みず)'
-      @eq ( Ωbbdbr_270 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
-      @eq ( Ωbbdbr_271 = -> rows.next().done                    ), true
+      @eq ( Ωbbdbr_250 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_251 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_252 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     ;null
@@ -1282,68 +1194,68 @@ remove = ( path ) ->
           keys = Object.keys Object.getOwnPropertyDescriptors prototype
           # if ( Object.hasOwn prototype, 'std_with_variables' ) or ( Object.hasOwn prototype, 'statements' ) or ( Object.hasOwn prototype, 'exportable_method_1' )
           if ( Object.hasOwn prototype, 'exportable_method_1' )
-            # help 'Ωbbdbr_272', prototype.constructor.name, prototype.std_with_variables
-            # help 'Ωbbdbr_273', prototype.constructor.name, prototype.statements
-            help 'Ωbbdbr_274', prototype.constructor.name, prototype.exportable_method_1
-            # info 'Ωbbdbr_275', prototype.constructor.name, keys
+            # help 'Ωbbdbr_253', prototype.constructor.name, prototype.std_with_variables
+            # help 'Ωbbdbr_254', prototype.constructor.name, prototype.statements
+            help 'Ωbbdbr_255', prototype.constructor.name, prototype.exportable_method_1
+            # info 'Ωbbdbr_256', prototype.constructor.name, keys
           else
             null
-            # whisper 'Ωbbdbr_276', prototype.constructor.name, keys
+            # whisper 'Ωbbdbr_257', prototype.constructor.name, keys
         ;null
       #.....................................................................................................
       debug()
       for prototype in get_prototype_chain Db_1
         break if prototype in [ Dbric, Dbric::, ]
-        debug 'Ωbbdbr_277', prototype
-        debug 'Ωbbdbr_278', ' ', prototype.exportable_method_1
-        debug 'Ωbbdbr_279', ' ', prototype.exportable_method_2
-        debug 'Ωbbdbr_280', ' ', prototype.build?.length ? ''
+        debug 'Ωbbdbr_258', prototype
+        debug 'Ωbbdbr_259', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_260', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_261', ' ', prototype.build?.length ? ''
       #.....................................................................................................
       debug()
       for prototype in get_prototype_chain Db_1::
         break if prototype in [ Dbric, Dbric::, ]
-        debug 'Ωbbdbr_281', prototype
-        debug 'Ωbbdbr_282', ' ', prototype.exportable_method_1
-        debug 'Ωbbdbr_283', ' ', prototype.exportable_method_2
-        debug 'Ωbbdbr_284', ' ', prototype.build?.length ? ''
+        debug 'Ωbbdbr_262', prototype
+        debug 'Ωbbdbr_263', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_264', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_265', ' ', prototype.build?.length ? ''
       #.....................................................................................................
-      debug 'Ωbbdbr_285', '-----------------------------------------'
+      debug 'Ωbbdbr_266', '-----------------------------------------'
       for prototype in get_prototype_chain Db_2
         break if prototype in [ Dbric, Dbric::, ]
-        debug 'Ωbbdbr_286', prototype
-        debug 'Ωbbdbr_287', ' ', prototype.exportable_method_1
-        debug 'Ωbbdbr_288', ' ', prototype.exportable_method_2
-        debug 'Ωbbdbr_289', ' ', prototype.build?.length ? ''
+        debug 'Ωbbdbr_267', prototype
+        debug 'Ωbbdbr_268', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_269', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_270', ' ', prototype.build?.length ? ''
       #.....................................................................................................
       debug()
       for prototype in get_prototype_chain Db_2::
         break if prototype in [ Dbric, Dbric::, ]
-        debug 'Ωbbdbr_290', prototype
-        debug 'Ωbbdbr_291', ' ', prototype.exportable_method_1
-        debug 'Ωbbdbr_292', ' ', prototype.exportable_method_2
-        debug 'Ωbbdbr_293', ' ', prototype.build?.length ? ''
-      # debug 'Ωbbdbr_294'
-      # debug 'Ωbbdbr_295', prototype for prototype in get_prototype_chain db
+        debug 'Ωbbdbr_271', prototype
+        debug 'Ωbbdbr_272', ' ', prototype.exportable_method_1
+        debug 'Ωbbdbr_273', ' ', prototype.exportable_method_2
+        debug 'Ωbbdbr_274', ' ', prototype.build?.length ? ''
+      # debug 'Ωbbdbr_275'
+      # debug 'Ωbbdbr_276', prototype for prototype in get_prototype_chain db
       # #.....................................................................................................
-      # urge reverse 'Ωbbdbr_296'; get_all_effective_descriptors_in_prototype_chain Dbric_std
-      # # urge reverse 'Ωbbdbr_297'; get_all_effective_descriptors_in_prototype_chain Dbric_std::
-      # urge reverse 'Ωbbdbr_298'; get_all_effective_descriptors_in_prototype_chain new Dbric_std
-      # urge ( reverse 'Ωbbdbr_299' ), gold "build:                ", Dbric_std.build
-      # urge ( reverse 'Ωbbdbr_300' ), gold "statements:           ", Dbric_std.statements
-      # urge ( reverse 'Ωbbdbr_301' ), gold "functions:            ", Dbric_std.functions
-      # urge ( reverse 'Ωbbdbr_302' ), gold "aggregate_functions:  ", Dbric_std.aggregate_functions
-      # urge ( reverse 'Ωbbdbr_303' ), gold "window_functions:     ", Dbric_std.window_functions
-      # urge ( reverse 'Ωbbdbr_304' ), gold "table_functions:      ", Dbric_std.table_functions
-      # urge ( reverse 'Ωbbdbr_305' ), gold "virtual_tables:       ", Dbric_std.virtual_tables
-      # urge ( reverse 'Ωbbdbr_306' ), gold "exports:              ", Dbric_std.exports
+      # urge reverse 'Ωbbdbr_277'; get_all_effective_descriptors_in_prototype_chain Dbric_std
+      # # urge reverse 'Ωbbdbr_278'; get_all_effective_descriptors_in_prototype_chain Dbric_std::
+      # urge reverse 'Ωbbdbr_279'; get_all_effective_descriptors_in_prototype_chain new Dbric_std
+      # urge ( reverse 'Ωbbdbr_280' ), gold "build:                ", Dbric_std.build
+      # urge ( reverse 'Ωbbdbr_281' ), gold "statements:           ", Dbric_std.statements
+      # urge ( reverse 'Ωbbdbr_282' ), gold "functions:            ", Dbric_std.functions
+      # urge ( reverse 'Ωbbdbr_283' ), gold "aggregate_functions:  ", Dbric_std.aggregate_functions
+      # urge ( reverse 'Ωbbdbr_284' ), gold "window_functions:     ", Dbric_std.window_functions
+      # urge ( reverse 'Ωbbdbr_285' ), gold "table_functions:      ", Dbric_std.table_functions
+      # urge ( reverse 'Ωbbdbr_286' ), gold "virtual_tables:       ", Dbric_std.virtual_tables
+      # urge ( reverse 'Ωbbdbr_287' ), gold "exports:              ", Dbric_std.exports
       # # db.integrate_plugin Dbric_std
       # # relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
-      # # debug 'Ωbbdbr_307', relation_names
-      # # @eq ( Ωbbdbr_308 = -> relation_names.has 'wrd_words'      ), true
+      # # debug 'Ωbbdbr_288', relation_names
+      # # @eq ( Ωbbdbr_289 = -> relation_names.has 'wrd_words'      ), true
       # # rows = db.walk SQL"""select * from wrd_words;"""
-      # # @eq ( Ωbbdbr_309 = -> rows.next().value.t                 ), '水 (みず)'
-      # # @eq ( Ωbbdbr_310 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
-      # # @eq ( Ωbbdbr_311 = -> rows.next().done                    ), true
+      # # @eq ( Ωbbdbr_290 = -> rows.next().value.t                 ), '水 (みず)'
+      # # @eq ( Ωbbdbr_291 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      # # @eq ( Ωbbdbr_292 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     ;null
@@ -1355,8 +1267,9 @@ remove = ( path ) ->
       get_prototype_chain,      } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
     #.......................................................................................................
     nbr_number_plugin =
+      name:   'nbr_number_plugin' ### NOTE informative, not enforced ###
+      prefix: 'nbr'               ### NOTE informative, not enforced ###
       exports:
-        prefix: 'nbr' ### NOTE informative, not enforced ###
         build: [
           SQL"create table nbr_numbers ( number integer );"
           ]
@@ -1366,45 +1279,119 @@ remove = ( path ) ->
           nbr_select_square_numbers:  SQL"select nbr_square( number ) from nbr_numbers order by number;"
         functions:
           nbr_square:
-            value: ( number ) -> number ** 2
+            value: ( number ) -> @nbr_get_square number
+        methods:
+          nbr_get_square: ( number ) -> number ** 2
+    other_plugin =
+      prefix: 'other'
+      exports:
+        statements:
+          other_select_wat: SQL"select 1 as wat;"
+    text_plugin =
+      name:   'text-plugin'
+      prefix: 'txt'
+      exports:
+        functions:
+          txt_upper:
+            value:  ( text ) -> text.toUpperCase()
+        statements:
+          txt_select_one: SQL"select 1 as one;"
     #.......................................................................................................
     do =>
       #=====================================================================================================
       class Db_1 extends Dbric_std
+        @prefix:  'db1'
         @plugins: [
+          other_plugin
           'prototypes'
           nbr_number_plugin
           'me'
-          # Dbric_std
+          text_plugin
           ]
         @exports: {}
         @build: [
           SQL"create table x ( id integer );"
           ]
+        @statements:
+          db1_select_x: SQL"select * from x;"
+        @functions:
+          db1_cube:
+            value: ( x ) -> x ** 3
       #=====================================================================================================
-      # db = new Db_1()
-      db = new Dbric_std()
-      #.....................................................................................................
-      for { type, value, } in db._get_acquisition_chain()
-        switch type
-          when 'plugin'
-            info 'Ωbbdbr_312', type, Object.keys value.exports
-          when 'prototype'
-            switch true
-              when value is db.constructor
-                help 'Ωbbdbr_313', type, rpr value.name
-              # when value in base_prototypes
-              #   whisper 'Ωbbdbr_314', type, "(object)"
-              else
-                urge 'Ωbbdbr_315', type, rpr value.name, value
+      db = new Db_1()
+      #=====================================================================================================
+      do =>
+        result  = []
+        for { type, contributor, } in db._get_acquisition_chain()
+          result.push "[#{type}]#{contributor.name ? '(anonymous)'}"
+        @eq ( Ωbbdbr_293 = -> result ), [
+          '[plugin](anonymous)'
+          '[prototype]Dbric_std_base'
+          '[prototype]Dbric_std_variables'
+          '[prototype]Dbric_std'
+          '[plugin]nbr_number_plugin'
+          '[prototype]Db_1'
+          '[plugin]text-plugin' ]
+        for { type, contributor, } in db._get_acquisition_chain()
+          if type is 'plugin'
+            info 'Ωbbdbr_294', "[#{type}]#{contributor.name ? '(anonymous)'}", Object.keys contributor.exports
           else
-            throw new Error "Ωbbdbr_316 internal error: unknown type #{rpr type}"
-        # debug 'Ωbbdbr_317', { type, value, }
-      #.....................................................................................................
-      # if record_coverage
-      #   { used, unused, } = tracker.report()
-      #   help 'Ωbbdbr_318', "used:   ", name for name in used
-      #   warn 'Ωbbdbr_319', "unused: ", name for name in unused
+            ( if ( contributor is db.constructor ) then help else urge ) 'Ωbbdbr_295', "[#{type}]#{contributor.name ? '(anonymous)'}"
+        ;null
+      #=====================================================================================================
+      do =>
+        contributions = db._collect_contributor_properties()
+        @eq ( Ωbbdbr_296 = -> ( Object.keys contributions ).sort() ), [
+          'aggregate_functions'
+          'build'
+          'functions'
+          'methods'
+          'statements'
+          'table_functions'
+          'virtual_tables'
+          'window_functions' ]
+        debug 'Ωbbdbr_297', toggle 'build:               ', Object.keys contributions.build
+        debug 'Ωbbdbr_298', toggle 'aggregate_functions: ', Object.keys contributions.aggregate_functions
+        debug 'Ωbbdbr_299', toggle 'functions:           ', Object.keys contributions.functions
+        debug 'Ωbbdbr_300', toggle 'methods:             ', Object.keys contributions.methods
+        debug 'Ωbbdbr_301', toggle 'statements:          ', Object.keys contributions.statements
+        debug 'Ωbbdbr_302', toggle 'table_functions:     ', Object.keys contributions.table_functions
+        debug 'Ωbbdbr_303', toggle 'virtual_tables:      ', Object.keys contributions.virtual_tables
+        debug 'Ωbbdbr_304', toggle 'window_functions:    ', Object.keys contributions.window_functions
+        @eq ( Ωbbdbr_305 = -> Object.keys contributions.functions ), [
+          'regexp'
+          'std_is_uc_normal'
+          'std_normalize_text'
+          'std_normalize_json_object'
+          'std_get_next_in_sequence'
+          'std_get_variable'
+          'nbr_square'
+          'db1_cube'
+          'txt_upper' ]
+        @eq ( Ωbbdbr_306 = -> Object.keys contributions.statements ), [
+          'other_select_wat'
+          'std_get_schema'
+          'std_get_tables'
+          'std_get_views'
+          'std_get_relations'
+          'std_set_variable'
+          'std_get_variables'
+          'nbr_insert_number'
+          'nbr_select_numbers'
+          'nbr_select_square_numbers'
+          'db1_select_x'
+          'txt_select_one' ]
+        ;null
+      #=====================================================================================================
+      do =>
+        original_statement = db.statements.std_get_views
+        @eq ( Ωbbdbr_307 = -> Reflect.has db.statements, 'std_get_views'          ), true
+        @eq ( Ωbbdbr_308 = -> Reflect.has db.statements, 'nbr_insert_number'      ), false
+        db._apply_contributions()
+        @eq ( Ωbbdbr_309 = -> Reflect.has db.statements, 'std_get_views'          ), true
+        @eq ( Ωbbdbr_310 = -> db.statements.std_get_views is original_statement   ), true
+        @eq ( Ωbbdbr_311 = -> Reflect.has db.statements, 'nbr_insert_number'      ), true
+        ;null
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -1416,27 +1403,27 @@ if module is require.main then await do =>
   { Coverage_analyzer, } = require '../../../apps/bricabrac-sfmodules/lib/coverage-analyzer'
   ca = new Coverage_analyzer()
   ca.wrap_class Dbric_std
-  db = new Dbric_std()
-  # debug 'Ωbbdbr_320', ca
-  # warn 'Ωbbdbr_321', ca.unused_names
-  # help 'Ωbbdbr_322', ca.used_names
-  # help 'Ωbbdbr_323', ca.counts
-  #.........................................................................................................
-  debug 'Ωbbdbr_324', Dbric::prepare
-  debug 'Ωbbdbr_325', Dbric_std::prepare
+  db = new Dbric_std ':memory:', { rebuild: true, }
+  # # debug 'Ωbbdbr_312', ca
+  # # warn 'Ωbbdbr_313', ca.unused_names
+  # # help 'Ωbbdbr_314', ca.used_names
+  # # help 'Ωbbdbr_315', ca.counts
+  # #.........................................................................................................
+  # debug 'Ωbbdbr_316', Dbric::prepare
+  # debug 'Ωbbdbr_317', Dbric_std::prepare
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  # ( new Test guytest_cfg ).test { dbric_integrate_plugin: tests._dbric_integrate_plugin, }
-  # ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
-  # ( new Test guytest_cfg ).test { dbric_esql: tests.dbric_esql, }
-  #---------------------------------------------------------------------------------------------------------
-  db._get_acquisition_chain()
-  warn 'Ωbbdbr_326', ca.unused_names
-  help 'Ωbbdbr_327', ca.used_names
-  urge 'Ωbbdbr_328', count, names for count, names of ca.names_by_counts
+  ( new Test guytest_cfg ).test { dbric_strict_mode: tests.dbric_strict_mode, }
+  # # ( new Test guytest_cfg ).test { dbric_integrate_plugin: tests._dbric_integrate_plugin, }
+  # # ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
+  # #---------------------------------------------------------------------------------------------------------
+  # # db._get_acquisition_chain()
+  # # warn 'Ωbbdbr_318', ca.unused_names
+  # # help 'Ωbbdbr_319', ca.used_names
+  # # urge 'Ωbbdbr_320', count, names for count, names of ca.names_by_counts
 
   #=========================================================================================================
   ;null
