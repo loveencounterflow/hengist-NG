@@ -235,15 +235,18 @@ remove = ( path ) ->
         ]
     #.......................................................................................................
     class C_duplicate_function extends B
+      @overwrite: false
       @functions:
         fn_b:
           value: -> return 1
     #.......................................................................................................
     class C_duplicate_statement extends B
+      @overwrite: false
       @statements:
         select_b: SQL"select fn_b() as one, 2 as two;"
     #.......................................................................................................
     class C_duplicate_table extends B
+      @overwrite: false
       @build: [
         SQL"create table table_b ( d text );"
         SQL"create view view_b as select * from table_b;"
@@ -1134,30 +1137,38 @@ remove = ( path ) ->
     #.......................................................................................................
     do =>
       class Db_1 extends Dbric_std
-        @prefix: prefix = 'wrd'
+        @prefix: 'wrd'
         @build: [
-          -> SQL"""create table #{IDN "#{prefix}_words"} ( t text );"""
-          -> SQL"""insert into #{IDN "#{prefix}_words"} ( t ) values ( '水 (みず)' );"""
-          -> SQL"""insert into #{IDN "#{prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
+          -> SQL"""create table #{IDN "#{@cfg.prefix}_words"} ( t text );"""
+          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '水 (みず)' );"""
+          -> SQL"""insert into #{IDN "#{@cfg.prefix}_words"} ( t ) values ( '食べ物 (たべもの)' );"""
           ]
+        @statements:
+          select_words: -> SQL"""select * from #{IDN "#{@cfg.prefix}_words"}"""
       db = Db_1.rebuild()
       relation_names = new Set ( row.name for row from db.walk SQL"select * from std_relations;" )
       debug 'Ωbbdbr_240', relation_names
-      @eq ( Ωbbdbr_241 = -> relation_names.has 'wrd_words'      ), true
+      debug 'Ωbbdbr_241', db.constructor.prefix
+      debug 'Ωbbdbr_242', db.cfg
+      @eq ( Ωbbdbr_243 = -> relation_names.has 'wrd_words'      ), true
       rows = db.walk SQL"""select * from #{IDN "#{Db_1.prefix}_words"};"""
-      @eq ( Ωbbdbr_242 = -> rows.next().value.t                 ), '水 (みず)'
-      @eq ( Ωbbdbr_243 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
-      @eq ( Ωbbdbr_244 = -> rows.next().done                    ), true
+      @eq ( Ωbbdbr_244 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_245 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_246 = -> rows.next().done                    ), true
+      rows = db.walk db.statements.select_words
+      @eq ( Ωbbdbr_247 = -> rows.next().value.t                 ), '水 (みず)'
+      @eq ( Ωbbdbr_248 = -> rows.next().value.t                 ), '食べ物 (たべもの)'
+      @eq ( Ωbbdbr_249 = -> rows.next().done                    ), true
       ;null
     #.......................................................................................................
     ;null
 
   #---------------------------------------------------------------------------------------------------------
-  _dbric_plugins_acquisition: ->
+  dbric_plugins_acquisition: ->
     { type_of,                  } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-rpr-type_of-brics' ).require_type_of()
     { get_all_in_prototype_chain,
       get_prototype_chain,      } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
-    #.......................................................................................................
+    #-------------------------------------------------------------------------------------------------------
     nbr_number_plugin =
       name:   'nbr_number_plugin' ### NOTE informative, not enforced ###
       prefix: 'nbr'               ### NOTE informative, not enforced ###
@@ -1166,7 +1177,7 @@ remove = ( path ) ->
           SQL"create table nbr_numbers ( number integer );"
           ]
         statements:
-          nbr_insert_number:          SQL"insert into nbr_numbers value ( $number );"
+          nbr_insert_number:          SQL"insert into nbr_numbers values ( $number );"
           nbr_select_numbers:         SQL"select * from nbr_numbers order by number;"
           nbr_select_square_numbers:  SQL"select nbr_square( number ) from nbr_numbers order by number;"
         functions:
@@ -1174,11 +1185,13 @@ remove = ( path ) ->
             value: ( number ) -> @nbr_get_square number
         methods:
           nbr_get_square: ( number ) -> number ** 2
+    #-------------------------------------------------------------------------------------------------------
     other_plugin =
       prefix: 'other'
       exports:
         statements:
           other_select_wat: SQL"select 1 as wat;"
+    #-------------------------------------------------------------------------------------------------------
     text_plugin =
       name:   'text-plugin'
       prefix: 'txt'
@@ -1188,133 +1201,220 @@ remove = ( path ) ->
             value:  ( text ) -> text.toUpperCase()
         statements:
           txt_select_one: SQL"select 1 as one;"
+    #=======================================================================================================
+    class Db_1 extends Dbric_std
+      @prefix:  'db1'
+      @plugins: [
+        other_plugin
+        'prototypes'
+        nbr_number_plugin
+        'me'
+        text_plugin
+        ]
+      @exports: {}
+      @build: [
+        SQL"create table x ( id integer );"
+        ]
+      @statements:
+        db1_select_x: SQL"select * from x;"
+      @functions:
+        db1_cube:
+          value: ( x ) -> x ** 3
+    #=======================================================================================================
+    db = Db_1.rebuild()
+    #=======================================================================================================
+    result  = []
+    for { type, contributor, } in db._get_acquisition_chain()
+      result.push "[#{type}]#{contributor.name ? '(anonymous)'}"
     #.......................................................................................................
-    do =>
-      #=====================================================================================================
-      class Db_1 extends Dbric_std
-        @prefix:  'db1'
-        @plugins: [
-          other_plugin
-          'prototypes'
-          nbr_number_plugin
-          'me'
-          text_plugin
-          ]
-        @exports: {}
-        @build: [
-          SQL"create table x ( id integer );"
-          ]
-        @statements:
-          db1_select_x: SQL"select * from x;"
-        @functions:
-          db1_cube:
-            value: ( x ) -> x ** 3
-      #=====================================================================================================
-      db = Db_1.rebuild()
-      #=====================================================================================================
-      do =>
-        result  = []
-        for { type, contributor, } in db._get_acquisition_chain()
-          result.push "[#{type}]#{contributor.name ? '(anonymous)'}"
-        @eq ( Ωbbdbr_245 = -> result ), [
-          '[plugin](anonymous)'
-          '[prototype]Dbric_std_base'
-          '[prototype]Dbric_std_variables'
-          '[prototype]Dbric_std'
-          '[plugin]nbr_number_plugin'
-          '[prototype]Db_1'
-          '[plugin]text-plugin' ]
-        for { type, contributor, } in db._get_acquisition_chain()
-          if type is 'plugin'
-            info 'Ωbbdbr_246', "[#{type}]#{contributor.name ? '(anonymous)'}", Object.keys contributor.exports
-          else
-            ( if ( contributor is db.constructor ) then help else urge ) 'Ωbbdbr_247', "[#{type}]#{contributor.name ? '(anonymous)'}"
-        ;null
-      #=====================================================================================================
-      do =>
-        contributions = db._collect_contributor_properties()
-        @eq ( Ωbbdbr_248 = -> ( Object.keys contributions ).sort() ), [
-          'aggregate_functions'
-          'build'
-          'functions'
-          'methods'
-          'statements'
-          'table_functions'
-          'virtual_tables'
-          'window_functions' ]
-        debug 'Ωbbdbr_249', toggle 'build:               ', Object.keys contributions.build
-        debug 'Ωbbdbr_250', toggle 'aggregate_functions: ', Object.keys contributions.aggregate_functions
-        debug 'Ωbbdbr_251', toggle 'functions:           ', Object.keys contributions.functions
-        debug 'Ωbbdbr_252', toggle 'methods:             ', Object.keys contributions.methods
-        debug 'Ωbbdbr_253', toggle 'statements:          ', Object.keys contributions.statements
-        debug 'Ωbbdbr_254', toggle 'table_functions:     ', Object.keys contributions.table_functions
-        debug 'Ωbbdbr_255', toggle 'virtual_tables:      ', Object.keys contributions.virtual_tables
-        debug 'Ωbbdbr_256', toggle 'window_functions:    ', Object.keys contributions.window_functions
-        @eq ( Ωbbdbr_257 = -> Object.keys contributions.functions ), [
-          'regexp'
-          'std_is_uc_normal'
-          'std_normalize_text'
-          'std_normalize_json_object'
-          'std_get_next_in_sequence'
-          'std_get_variable'
-          'nbr_square'
-          'db1_cube'
-          'txt_upper' ]
-        @eq ( Ωbbdbr_258 = -> Object.keys contributions.statements ), [
-          'other_select_wat'
-          'std_get_schema'
-          'std_get_tables'
-          'std_get_views'
-          'std_get_relations'
-          'std_get_functions'
-          'std_set_variable'
-          'std_get_variables'
-          'nbr_insert_number'
-          'nbr_select_numbers'
-          'nbr_select_square_numbers'
-          'db1_select_x'
-          'txt_select_one' ]
-        ;null
-      #=====================================================================================================
-      function_names = new Set ( r.name for r from db.walk SQL"select name from std_functions;" )
-      @eq ( Ωbbdbr_259 = -> Reflect.has db.statements,  'std_get_views'       ), true
-      @eq ( Ωbbdbr_260 = -> Reflect.has db.statements,  'nbr_insert_number'   ), true
-      @eq ( Ωbbdbr_261 = -> type_of db.nbr_get_square                         ), 'function'
-      @eq ( Ωbbdbr_262 = -> db.nbr_get_square 10                              ), 100
-      @eq ( Ωbbdbr_263 = -> function_names.has 'nbr_square'                   ), true
-      @eq ( Ωbbdbr_264 = -> db.get_first SQL"select nbr_square( 11 ) as s;"   ), { s: 121, }
-      #.....................................................................................................
-      ;null
+    @eq ( Ωbbdbr_250 = -> result ), [
+      '[plugin](anonymous)'
+      '[prototype]Dbric_std_base'
+      '[prototype]Dbric_std_variables'
+      '[prototype]Dbric_std'
+      '[plugin]nbr_number_plugin'
+      '[prototype]Db_1'
+      '[plugin]text-plugin' ]
+    for { type, contributor, } in db._get_acquisition_chain()
+      if type is 'plugin'
+        info 'Ωbbdbr_251', "[#{type}]#{contributor.name ? '(anonymous)'}", Object.keys contributor.exports
+      else
+        ( if ( contributor is db.constructor ) then help else urge ) 'Ωbbdbr_252', "[#{type}]#{contributor.name ? '(anonymous)'}"
+    #=======================================================================================================
+    contributions = db._collect_contributor_properties()
+    @eq ( Ωbbdbr_253 = -> ( Object.keys contributions ).sort() ), [
+      'aggregate_functions'
+      'build'
+      'functions'
+      'methods'
+      'statements'
+      'table_functions'
+      'virtual_tables'
+      'window_functions' ]
+    debug 'Ωbbdbr_254', toggle 'build:               ', Object.keys contributions.build
+    debug 'Ωbbdbr_255', toggle 'aggregate_functions: ', Object.keys contributions.aggregate_functions
+    debug 'Ωbbdbr_256', toggle 'functions:           ', Object.keys contributions.functions
+    debug 'Ωbbdbr_257', toggle 'methods:             ', Object.keys contributions.methods
+    debug 'Ωbbdbr_258', toggle 'statements:          ', Object.keys contributions.statements
+    debug 'Ωbbdbr_259', toggle 'table_functions:     ', Object.keys contributions.table_functions
+    debug 'Ωbbdbr_260', toggle 'virtual_tables:      ', Object.keys contributions.virtual_tables
+    debug 'Ωbbdbr_261', toggle 'window_functions:    ', Object.keys contributions.window_functions
+    #-------------------------------------------------------------------------------------------------------
+    @eq ( Ωbbdbr_262 = -> Object.keys contributions.functions ), [
+      'regexp'
+      'std_is_uc_normal'
+      'std_normalize_text'
+      'std_normalize_json_object'
+      'std_get_next_in_sequence'
+      'std_get_variable'
+      'nbr_square'
+      'db1_cube'
+      'txt_upper' ]
+    #-------------------------------------------------------------------------------------------------------
+    @eq ( Ωbbdbr_263 = -> Object.keys contributions.statements ), [
+      'other_select_wat'
+      'std_get_schema'
+      'std_get_tables'
+      'std_get_views'
+      'std_get_relations'
+      'std_get_functions'
+      'std_set_variable'
+      'std_get_variables'
+      'nbr_insert_number'
+      'nbr_select_numbers'
+      'nbr_select_square_numbers'
+      'db1_select_x'
+      'txt_select_one' ]
+    #=======================================================================================================
+    function_names  = new Set ( r.name for r from db.walk SQL"select name from std_functions;" )
+    table_names     = new Set ( r.name for r from db.walk SQL"select name from std_tables;" )
+    @eq ( Ωbbdbr_264 = -> Reflect.has db.statements,  'std_get_views'       ), true
+    @eq ( Ωbbdbr_265 = -> Reflect.has db.statements,  'nbr_insert_number'   ), true
+    @eq ( Ωbbdbr_266 = -> type_of db.nbr_get_square                         ), 'function'
+    @eq ( Ωbbdbr_267 = -> db.nbr_get_square 10                              ), 100
+    @eq ( Ωbbdbr_268 = -> function_names.has 'nbr_square'                   ), true
+    @eq ( Ωbbdbr_269 = -> db.get_first SQL"select nbr_square( 11 ) as s;"   ), { s: 121, }
+    @eq ( Ωbbdbr_270 = -> table_names.has 'nbr_numbers'                     ), true
+    @eq ( Ωbbdbr_271 = -> table_names.has 'x'                               ), true
     #.......................................................................................................
     ;null
 
+  #---------------------------------------------------------------------------------------------------------
+  dbric_hoard_plugin_model: ->
+    #.......................................................................................................
+    hoard_plugin =
+      name:     'hoard'
+      prefix:   'hrd'
+      exports:
+        #---------------------------------------------------------------------------------------------------
+        build: ->
+          #.................................................................................................
+          ### TAINT stopgap solution ###
+          cfg =
+            runs_rowid_regexp:        '0x00_0000'
+            first_point:              0x00_0000
+            last_point:               0x10_ffff
+          #.................................................................................................
+          R = []
+          #-------------------------------------------------------------------------------------------------
+          R.push SQL"""
+            create table hrd_hoard_scatters (
+                rowid     text    unique  not null,
+                is_hit    boolean         not null default false,
+                data      json            not null default 'null'
+                );"""
+
+          #-------------------------------------------------------------------------------------------------
+          R.push SQL"""
+            create table hrd_hoard_runs (
+                rowid     text    unique  not null,
+                lo        integer         not null,
+                hi        integer         not null,
+                scatter   text            not null,
+              -- primary key ( rowid ),
+              foreign key ( scatter ) references hrd_hoard_scatters ( rowid ),
+              constraint "Ωconstraint_273" check ( rowid regexp #{LIT cfg.runs_rowid_regexp } ),
+              constraint "Ωconstraint_274" check ( lo between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
+              constraint "Ωconstraint_275" check ( hi between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
+              constraint "Ωconstraint_276" check ( lo <= hi )
+              -- constraint "Ωconstraint_277" check ( rowid regexp '^.*$' )
+              );"""
+          #-------------------------------------------------------------------------------------------------------
+          return R
+        statements:
+          hrd_yyy: SQL"select 1 as n;"
+    #.......................................................................................................
+    class Hoard_user extends Dbric_std
+      @prefix:  'jzr'
+      @plugins: [
+        'prototypes'
+        hoard_plugin
+        'me'
+        ]
+    #.......................................................................................................
+    hrd = new Hoard_user { rebuild: true, }
+    # debug 'Ωbbdbr_278', row.name for row from hrd.walk hrd.statements.std_get_relations
+    names = new Set ( row.name for row from hrd.walk hrd.statements.std_get_relations )
+    @eq ( Ωbbdbr_279 = -> names.has 'hrd_hoard_runs'      ), true
+    @eq ( Ωbbdbr_280 = -> names.has 'hrd_hoard_scatters'  ), true
+    @eq ( Ωbbdbr_281 = -> names.has 'std_functions'       ), true
+    @eq ( Ωbbdbr_282 = -> names.has 'std_relations'       ), true
+    @eq ( Ωbbdbr_283 = -> names.has 'std_tables'          ), true
+    @eq ( Ωbbdbr_284 = -> names.has 'std_variables'       ), true
+    @eq ( Ωbbdbr_285 = -> names.has 'std_views'           ), true
+    # @eq ( Ωbbdbr_286 = -> hrd.get_all hrd.statements.hrd_yyy ), [ { n: 1, }, ]
+    #.......................................................................................................
+    ;null
+
+#===========================================================================================================
+demo_using_methods_holder_to_enable_ersatz_super = ->
+  #---------------------------------------------------------------------------------------------------------
+  class A
+    f: ( message ) -> help 'Ωbbdbr_287', rpr message
+  #---------------------------------------------------------------------------------------------------------
+  class B extends A
+    _super: ( name, P... ) -> super[ name ] P...
+  #---------------------------------------------------------------------------------------------------------
+  ### NOTE akin to the `methods` property of plugin objects ###
+  methods = {
+    f: ( message ) -> @_super 'f', message; return 8
+    }
+  #---------------------------------------------------------------------------------------------------------
+  ### NOTE we form a synthetic class to act as a 'holder' for our methods: ###
+  class Methods_holder extends B
+  instance = new Methods_holder()
+  instance.f = methods.f
+  #---------------------------------------------------------------------------------------------------------
+  ### NOTE using the Ersatz Super: ###
+  result = instance.f "my message" # prints `my message`
+  info 'Ωbbdbr_288', { result, } # prints `{ result: 8, }`
+  #---------------------------------------------------------------------------------------------------------
+  ;null
 
 #===========================================================================================================
 if module is require.main then await do =>
-  { Coverage_analyzer, } = require '../../../apps/bricabrac-sfmodules/lib/coverage-analyzer'
-  ca = new Coverage_analyzer()
-  ca.wrap_class Dbric_std
-  db = new Dbric_std ':memory:', { rebuild: true, }
-  # # debug 'Ωbbdbr_265', ca
-  # # warn 'Ωbbdbr_266', ca.unused_names
-  # # help 'Ωbbdbr_267', ca.used_names
-  # # help 'Ωbbdbr_268', ca.counts
-  # #.........................................................................................................
-  # debug 'Ωbbdbr_269', Dbric::prepare
-  # debug 'Ωbbdbr_270', Dbric_std::prepare
+  do_coverage = true
+  do_coverage = false
+  if do_coverage
+    { Coverage_analyzer,          } = require '../../../apps/bricabrac-sfmodules/lib/coverage-analyzer'
+    ca = new Coverage_analyzer()
+    ca.wrap_class Dbric_std
+  { wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
+  # wrap_methods_of_prototypes Dbric_std, ({ fqname, callme, P, }) ->
+  #   debug 'Ωbbdbr_289', fqname #, P
+  #   return callme()
+  # db = new Dbric_std ':memory:', { rebuild: true, }
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_plugins_acquisition: tests._dbric_plugins_acquisition, }
+  ( new Test guytest_cfg ).test { dbric_hoard_plugin_model: tests.dbric_hoard_plugin_model, }
+  # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
-  # db._get_acquisition_chain()
-  # db._collect_contributor_properties()
-  # db._apply_contributions()
-  warn 'Ωbbdbr_271', reverse name for name in ca.unused_names if ca.unused_names.length > 0
-  # help 'Ωbbdbr_272', ca.used_names
-  # urge 'Ωbbdbr_273', count, names for count, names of ca.names_by_counts
-
+  if do_coverage
+    warn 'Ωbbdbr_290', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωbbdbr_291', ca.used_names
+    # urge 'Ωbbdbr_292', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
