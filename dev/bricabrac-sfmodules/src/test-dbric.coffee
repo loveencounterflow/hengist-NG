@@ -40,6 +40,8 @@ PATH                      = require 'node:path'
   LIT,
   SQL,
   VEC,
+  from_bool,
+  as_bool,
   internals,
   True,
   False,
@@ -1301,6 +1303,8 @@ remove = ( path ) ->
 
   #---------------------------------------------------------------------------------------------------------
   dbric_hoard_plugin_model: ->
+    { Hoard,
+      summarize_data,  } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
     #.......................................................................................................
     hoard_plugin =
       name:     'hoard'
@@ -1311,7 +1315,7 @@ remove = ( path ) ->
           #.................................................................................................
           ### TAINT stopgap solution ###
           cfg =
-            runs_rowid_regexp:        '0x00_0000'
+            runs_rowid_regexp:        '.+'
             first_point:              0x00_0000
             last_point:               0x10_ffff
           #.................................................................................................
@@ -1333,36 +1337,75 @@ remove = ( path ) ->
                 scatter   text            not null,
               -- primary key ( rowid ),
               foreign key ( scatter ) references hrd_hoard_scatters ( rowid ),
-              constraint "Ωconstraint_273" check ( rowid regexp #{LIT cfg.runs_rowid_regexp } ),
-              constraint "Ωconstraint_274" check ( lo between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
-              constraint "Ωconstraint_275" check ( hi between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
-              constraint "Ωconstraint_276" check ( lo <= hi )
-              -- constraint "Ωconstraint_277" check ( rowid regexp '^.*$' )
+              constraint "Ωconstraint_272" check ( rowid regexp #{LIT cfg.runs_rowid_regexp } ),
+              constraint "Ωconstraint_273" check ( lo between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
+              constraint "Ωconstraint_274" check ( hi between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
+              constraint "Ωconstraint_275" check ( lo <= hi )
+              -- constraint "Ωconstraint_276" check ( rowid regexp '^.*$' )
               );"""
           #-------------------------------------------------------------------------------------------------------
           return R
         statements:
           hrd_yyy: SQL"select 1 as n;"
-    #.......................................................................................................
+          hrd_insert_scatter: SQL"""insert into hrd_hoard_scatters ( rowid, is_hit, data )
+            values ( $rowid, $is_hit, $data );"""
+          hrd_insert_run: SQL"""insert into hrd_hoard_runs ( rowid, lo, hi, scatter )
+            values ( $rowid, $lo, $hi, $scatter );"""
+
+    #=======================================================================================================
     class Hoard_user extends Dbric_std
       @prefix:  'jzr'
       @plugins: [
-        'prototypes'
+        # 'prototypes'
         hoard_plugin
-        'me'
+        # 'me'
         ]
     #.......................................................................................................
-    hrd = new Hoard_user { rebuild: true, }
-    # debug 'Ωbbdbr_278', row.name for row from hrd.walk hrd.statements.std_get_relations
-    names = new Set ( row.name for row from hrd.walk hrd.statements.std_get_relations )
-    @eq ( Ωbbdbr_279 = -> names.has 'hrd_hoard_runs'      ), true
-    @eq ( Ωbbdbr_280 = -> names.has 'hrd_hoard_scatters'  ), true
-    @eq ( Ωbbdbr_281 = -> names.has 'std_functions'       ), true
-    @eq ( Ωbbdbr_282 = -> names.has 'std_relations'       ), true
-    @eq ( Ωbbdbr_283 = -> names.has 'std_tables'          ), true
-    @eq ( Ωbbdbr_284 = -> names.has 'std_variables'       ), true
-    @eq ( Ωbbdbr_285 = -> names.has 'std_views'           ), true
-    # @eq ( Ωbbdbr_286 = -> hrd.get_all hrd.statements.hrd_yyy ), [ { n: 1, }, ]
+    u = new Hoard_user { rebuild: true, }
+    # debug 'Ωbbdbr_277', row.name for row from u.walk u.statements.std_get_relations
+    names = new Set ( row.name for row from u.walk u.statements.std_get_relations )
+    @eq ( Ωbbdbr_278 = -> names.has 'hrd_hoard_runs'      ), true
+    @eq ( Ωbbdbr_279 = -> names.has 'hrd_hoard_scatters'  ), true
+    @eq ( Ωbbdbr_280 = -> names.has 'std_functions'       ), true
+    @eq ( Ωbbdbr_281 = -> names.has 'std_relations'       ), true
+    @eq ( Ωbbdbr_282 = -> names.has 'std_tables'          ), true
+    @eq ( Ωbbdbr_283 = -> names.has 'std_variables'       ), true
+    @eq ( Ωbbdbr_284 = -> names.has 'std_views'           ), true
+    @eq ( Ωbbdbr_285 = -> u.get_all u.statements.hrd_yyy ), [ { n: 1, }, ]
+    #.......................................................................................................
+    class Hoard_extras extends Hoard
+
+      #-----------------------------------------------------------------------------------------------------
+      constructor: ( db ) ->
+        super()
+        @db = db
+        ;undefined
+
+      #-----------------------------------------------------------------------------------------------------
+      save: ->
+        for scatter, s_idx in @scatters
+          s_nr        = s_idx + 1
+          s_rowid     = "scatter,R=#{s_nr}" ### TAINT should be done by Hoard::create_scatter() ###
+          is_hit      = from_bool true
+          data        = 'null'
+          @db.statements.hrd_insert_scatter.run { rowid: s_rowid, is_hit, data, }
+          for run, r_idx in scatter.runs
+            r_nr        = r_idx + 1
+            r_rowid     = "run,R=#{r_nr}" ### TAINT should be done by Scatter::create_run() ###
+            { lo, hi, } = run
+            debug 'Ωbbdbr_286', { rowid: r_rowid, lo, hi, scatter: s_rowid, }
+            @db.statements.hrd_insert_run.run { rowid: r_rowid, lo, hi, scatter: s_rowid, }
+        ;null
+
+    #.......................................................................................................
+    h = new Hoard_extras u
+    s = h.add_scatter()
+    @eq ( Ωbbdbr_287 = -> s.rowid ), 't:hrd:scatters,R=1'
+    r = s.add_run 25, 30
+    @eq ( Ωbbdbr_288 = -> r.rowid ), 't:hrd:runs,R=1'
+    # debug 'Ωbbdbr_289', s
+    # debug 'Ωbbdbr_290', h.scatters
+    h.save()
     #.......................................................................................................
     ;null
 
@@ -1370,7 +1413,7 @@ remove = ( path ) ->
 demo_using_methods_holder_to_enable_ersatz_super = ->
   #---------------------------------------------------------------------------------------------------------
   class A
-    f: ( message ) -> help 'Ωbbdbr_287', rpr message
+    f: ( message ) -> help 'Ωbbdbr_291', rpr message
   #---------------------------------------------------------------------------------------------------------
   class B extends A
     _super: ( name, P... ) -> super[ name ] P...
@@ -1387,7 +1430,7 @@ demo_using_methods_holder_to_enable_ersatz_super = ->
   #---------------------------------------------------------------------------------------------------------
   ### NOTE using the Ersatz Super: ###
   result = instance.f "my message" # prints `my message`
-  info 'Ωbbdbr_288', { result, } # prints `{ result: 8, }`
+  info 'Ωbbdbr_292', { result, } # prints `{ result: 8, }`
   #---------------------------------------------------------------------------------------------------------
   ;null
 
@@ -1401,20 +1444,20 @@ if module is require.main then await do =>
     ca.wrap_class Dbric_std
   { wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
   # wrap_methods_of_prototypes Dbric_std, ({ fqname, callme, P, }) ->
-  #   debug 'Ωbbdbr_289', fqname #, P
+  #   debug 'Ωbbdbr_293', fqname #, P
   #   return callme()
   # db = new Dbric_std ':memory:', { rebuild: true, }
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { dbric_hoard_plugin_model: tests.dbric_hoard_plugin_model, }
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωbbdbr_290', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωbbdbr_291', ca.used_names
-    # urge 'Ωbbdbr_292', count, names for count, names of ca.names_by_counts
+    warn 'Ωbbdbr_294', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωbbdbr_295', ca.used_names
+    # urge 'Ωbbdbr_296', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
