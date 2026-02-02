@@ -1385,7 +1385,7 @@ remove = ( path ) ->
       save: ->
         for scatter, s_idx in @scatters
           is_hit      = from_bool true
-          data        = JSON.stringify scatter.data ? null
+          data        = JSON.stringify scatter.data
           @db.statements.hrd_insert_scatter.run { scatter..., is_hit, data, }
           for run, r_idx in scatter.runs
             @db.statements.hrd_insert_run.run { run..., }
@@ -1403,6 +1403,8 @@ remove = ( path ) ->
     # debug 'Ωbbdbr_291', s
     # debug 'Ωbbdbr_292', h.scatters
     h.save()
+    echo row for row from rows = u.walk SQL"select * from hrd_hoard_scatters order by rowid;"
+    echo row for row from rows = u.walk SQL"select * from hrd_hoard_runs order by rowid;"
     #.......................................................................................................
     ;null
 
