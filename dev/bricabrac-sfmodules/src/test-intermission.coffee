@@ -448,65 +448,6 @@ PATH                      = require 'node:path'
     #.......................................................................................................
     ;null
 
-  #---------------------------------------------------------------------------------------------------------
-  _dbric_integration: ->
-    { Hoard,
-      summarize_data,           } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
-    { Dbric,
-      as_bool,
-      SQL,
-      LIT,
-      IDN,
-      VEC,
-      internals,                } = SFMODULES.unstable.require_dbric()
-    prefix = 'prfx'
-    debug 'Ωimt_273', Hoard
-    #.......................................................................................................
-    # get_functions = ( db ) ->
-    #   R = {}
-    #   for { name, builtin, type, } from db.walk SQL"""select name, builtin, type from pragma_function_list() order by name;"""
-    #     is_builtin = as_bool builtin
-    #     R[ name ] = { name, is_builtin, type, }
-    #   return R
-    # #.......................................................................................................
-    # get_function_names = ( db ) -> new Set ( key for key of get_functions db )
-    # #.......................................................................................................
-    # @eq ( Ωimt_274 = -> type_of Hoard.get_udfs                                    ), 'function'
-    # @eq ( Ωimt_275 = -> type_of Hoard.get_build_statements                        ), 'function'
-    # #.......................................................................................................
-    # @eq ( Ωimt_276 = -> type_of Hoard.get_udfs              { prefix, }           ), 'pod'
-    # @eq ( Ωimt_277 = -> type_of Hoard.get_build_statements  { prefix, }           ), 'list'
-    # #.......................................................................................................
-    # @eq ( Ωimt_278 = -> ( Object.keys Hoard.get_udfs        { prefix, } ).length  ), 3
-    # @eq ( Ωimt_279 = -> ( Hoard.get_build_statements        { prefix, } ).length  ), 3
-    # #.......................................................................................................
-    # {}
-    # udfs              = Hoard.get_udfs { prefix, }
-    # build_statements  = Hoard.get_build_statements { prefix, }
-    # db                = new Dbric ':memory:'
-    # #.......................................................................................................
-    # for name, definition of udfs
-    #   info 'Ωimt_280', "create UDF #{definition.name}"
-    #   db.create_function definition
-    # debug 'Ωimt_281',  name for name from get_function_names db when name.startsWith "#{prefix}_"
-    # #.......................................................................................................
-    # for statement, idx in build_statements
-    #   statement = db.prepare statement
-    #   info 'Ωimt_282', statement.run()
-    # #.......................................................................................................
-    # insert_data = db.prepare SQL"""insert into #{IDN "#{prefix}_hoard_scatters"} ( data ) values ( $data )"""
-    # insert_data.run { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
-    # insert_data.run { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
-    # insert_data.run { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
-    # insert_data.run { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
-    # echo { row..., } for row from db.walk SQL"""select * from #{IDN "#{prefix}_hoard_scatters"}"""
-    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
-    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
-    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
-    # echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
-    #.......................................................................................................
-    ;null
-
 
 
 

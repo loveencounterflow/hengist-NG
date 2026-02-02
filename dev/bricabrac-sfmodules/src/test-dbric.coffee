@@ -1384,36 +1384,92 @@ remove = ( path ) ->
       #-----------------------------------------------------------------------------------------------------
       save: ->
         for scatter, s_idx in @scatters
-          s_nr        = s_idx + 1
-          s_rowid     = "scatter,R=#{s_nr}" ### TAINT should be done by Hoard::create_scatter() ###
           is_hit      = from_bool true
-          data        = 'null'
-          @db.statements.hrd_insert_scatter.run { rowid: s_rowid, is_hit, data, }
+          data        = JSON.stringify scatter.data ? null
+          @db.statements.hrd_insert_scatter.run { scatter..., is_hit, data, }
           for run, r_idx in scatter.runs
-            r_nr        = r_idx + 1
-            r_rowid     = "run,R=#{r_nr}" ### TAINT should be done by Scatter::create_run() ###
-            { lo, hi, } = run
-            debug 'Ωbbdbr_286', { rowid: r_rowid, lo, hi, scatter: s_rowid, }
-            @db.statements.hrd_insert_run.run { rowid: r_rowid, lo, hi, scatter: s_rowid, }
+            @db.statements.hrd_insert_run.run { run..., }
         ;null
 
     #.......................................................................................................
     h = new Hoard_extras u
     s = h.add_scatter()
-    @eq ( Ωbbdbr_287 = -> s.rowid ), 't:hrd:scatters,R=1'
-    r = s.add_run 25, 30
-    @eq ( Ωbbdbr_288 = -> r.rowid ), 't:hrd:runs,R=1'
-    # debug 'Ωbbdbr_289', s
-    # debug 'Ωbbdbr_290', h.scatters
+    @eq ( Ωbbdbr_288 = -> s.rowid ), 't:hrd:scatters,R=1'
+    s.add_run 25, 30
+    s.normalize()
+    r = s.runs.at -1
+    @eq ( Ωbbdbr_289 = -> r.rowid   ), 't:hrd:runs,R=1'
+    @eq ( Ωbbdbr_290 = -> r.scatter ), 't:hrd:scatters,R=1'
+    # debug 'Ωbbdbr_291', s
+    # debug 'Ωbbdbr_292', h.scatters
     h.save()
     #.......................................................................................................
     ;null
+
+  # #---------------------------------------------------------------------------------------------------------
+  # _dbric_integration: ->
+  #   { Hoard,
+  #     summarize_data,           } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
+  #   { Dbric,
+  #     as_bool,
+  #     SQL,
+  #     LIT,
+  #     IDN,
+  #     VEC,
+  #     internals,                } = SFMODULES.unstable.require_dbric()
+  #   prefix = 'prfx'
+  #   debug 'Ωimt_293', Hoard
+  #   #.......................................................................................................
+  #   get_functions = ( db ) ->
+  #     R = {}
+  #     for { name, builtin, type, } from db.walk SQL"""select name, builtin, type from pragma_function_list() order by name;"""
+  #       is_builtin = as_bool builtin
+  #       R[ name ] = { name, is_builtin, type, }
+  #     return R
+  #   #.......................................................................................................
+  #   get_function_names = ( db ) -> new Set ( key for key of get_functions db )
+  #   #.......................................................................................................
+  #   @eq ( Ωimt_294 = -> type_of Hoard.get_udfs                                    ), 'function'
+  #   @eq ( Ωimt_295 = -> type_of Hoard.get_build_statements                        ), 'function'
+  #   #.......................................................................................................
+  #   @eq ( Ωimt_296 = -> type_of Hoard.get_udfs              { prefix, }           ), 'pod'
+  #   @eq ( Ωimt_297 = -> type_of Hoard.get_build_statements  { prefix, }           ), 'list'
+  #   #.......................................................................................................
+  #   @eq ( Ωimt_298 = -> ( Object.keys Hoard.get_udfs        { prefix, } ).length  ), 3
+  #   @eq ( Ωimt_299 = -> ( Hoard.get_build_statements        { prefix, } ).length  ), 3
+  #   #.......................................................................................................
+  #   {}
+  #   udfs              = Hoard.get_udfs { prefix, }
+  #   build_statements  = Hoard.get_build_statements { prefix, }
+  #   db                = new Dbric ':memory:'
+  #   #.......................................................................................................
+  #   for name, definition of udfs
+  #     info 'Ωimt_300', "create UDF #{definition.name}"
+  #     db.create_function definition
+  #   debug 'Ωimt_301',  name for name from get_function_names db when name.startsWith "#{prefix}_"
+  #   #.......................................................................................................
+  #   for statement, idx in build_statements
+  #     statement = db.prepare statement
+  #     info 'Ωimt_302', statement.run()
+  #   #.......................................................................................................
+  #   insert_data = db.prepare SQL"""insert into #{IDN "#{prefix}_hoard_scatters"} ( data ) values ( $data )"""
+  #   insert_data.run { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
+  #   insert_data.run { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
+  #   insert_data.run { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
+  #   insert_data.run { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
+  #   echo { row..., } for row from db.walk SQL"""select * from #{IDN "#{prefix}_hoard_scatters"}"""
+  #   echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
+  #   echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { zeta: false, letter: 'A', arc: true, } ), }
+  #   echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'B', arc: true, zeta: false, } ), }
+  #   echo { row..., } for row from db.walk SQL"""select #{IDN "#{prefix}_normalize_data"}( $data ) as ndata;""", { data: ( JSON.stringify { letter: 'C', arc: true, zeta: false, } ), }
+  #   #.......................................................................................................
+  #   ;null
 
 #===========================================================================================================
 demo_using_methods_holder_to_enable_ersatz_super = ->
   #---------------------------------------------------------------------------------------------------------
   class A
-    f: ( message ) -> help 'Ωbbdbr_291', rpr message
+    f: ( message ) -> help 'Ωbbdbr_303', rpr message
   #---------------------------------------------------------------------------------------------------------
   class B extends A
     _super: ( name, P... ) -> super[ name ] P...
@@ -1430,7 +1486,7 @@ demo_using_methods_holder_to_enable_ersatz_super = ->
   #---------------------------------------------------------------------------------------------------------
   ### NOTE using the Ersatz Super: ###
   result = instance.f "my message" # prints `my message`
-  info 'Ωbbdbr_292', { result, } # prints `{ result: 8, }`
+  info 'Ωbbdbr_304', { result, } # prints `{ result: 8, }`
   #---------------------------------------------------------------------------------------------------------
   ;null
 
@@ -1444,20 +1500,20 @@ if module is require.main then await do =>
     ca.wrap_class Dbric_std
   { wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
   # wrap_methods_of_prototypes Dbric_std, ({ fqname, callme, P, }) ->
-  #   debug 'Ωbbdbr_293', fqname #, P
+  #   debug 'Ωbbdbr_305', fqname #, P
   #   return callme()
   # db = new Dbric_std ':memory:', { rebuild: true, }
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   ( new Test guytest_cfg ).test { dbric_hoard_plugin_model: tests.dbric_hoard_plugin_model, }
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωbbdbr_294', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωbbdbr_295', ca.used_names
-    # urge 'Ωbbdbr_296', count, names for count, names of ca.names_by_counts
+    warn 'Ωbbdbr_306', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωbbdbr_307', ca.used_names
+    # urge 'Ωbbdbr_308', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
