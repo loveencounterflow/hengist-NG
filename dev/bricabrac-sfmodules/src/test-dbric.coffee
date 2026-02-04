@@ -1378,30 +1378,39 @@ remove = ( path ) ->
       #-----------------------------------------------------------------------------------------------------
       constructor: ( db ) ->
         super()
-        @db = db
+        @db         = db
         ;undefined
 
       #-----------------------------------------------------------------------------------------------------
       save: ->
-        for scatter, s_idx in @scatters
+        for scatter in @scatters
+          scatter.normalize()
           is_hit      = from_bool true
           data        = JSON.stringify scatter.data
           @db.statements.hrd_insert_scatter.run { scatter..., is_hit, data, }
-          for run, r_idx in scatter.runs
+          for run in scatter.runs
             @db.statements.hrd_insert_run.run { run..., }
         ;null
 
     #.......................................................................................................
     h = new Hoard_extras u
-    s = h.add_scatter()
-    @eq ( Ωbbdbr_288 = -> s.rowid ), 't:hrd:scatters,R=1'
-    s.add_run 25, 30
-    s.normalize()
-    r = s.runs.at -1
-    @eq ( Ωbbdbr_289 = -> r.rowid   ), 't:hrd:runs,R=1'
-    @eq ( Ωbbdbr_290 = -> r.scatter ), 't:hrd:scatters,R=1'
-    # debug 'Ωbbdbr_291', s
-    # debug 'Ωbbdbr_292', h.scatters
+    ascii = h.add_scatter { is_ascii_alphanum: true, }
+    @eq ( Ωbbdbr_286 = -> ascii.rowid ), 't:hrd:scatters,R=1'
+    ascii.add_run 'a', 'z'
+    ascii.add_run 'A', 'Z'
+    ascii.add_run '0', '9'
+    ascii.normalize()
+    echo run for run from runs = ( -> yield from ascii.runs )()
+    runs = ( -> yield from ascii.runs )()
+    @eq ( Ωbbdbr_287 = -> ascii.rowid                     ), 't:hrd:scatters,R=1'
+    @eq ( Ωbbdbr_288 = -> runs.next().value               ), { lo: 48, hi: 57, rowid: 't:hrd:runs,R=1', scatter: 't:hrd:scatters,R=1' }
+    @eq ( Ωbbdbr_289 = -> runs.next().value               ), { lo: 65, hi: 90, rowid: 't:hrd:runs,R=2', scatter: 't:hrd:scatters,R=1' }
+    @eq ( Ωbbdbr_290 = -> runs.next().value               ), { lo: 97, hi: 122, rowid: 't:hrd:runs,R=3', scatter: 't:hrd:scatters,R=1' }
+    @eq ( Ωbbdbr_291 = -> runs.next().done                ), true
+    @eq ( Ωbbdbr_292 = -> h.summarize_data_for_point '&'  ), null
+    @eq ( Ωbbdbr_293 = -> h.summarize_data_for_point 'a'  ), { is_ascii_alphanum: [ true ] }
+    # debug 'Ωbbdbr_294', ascii
+    # debug 'Ωbbdbr_295', h.scatters
     h.save()
     echo row for row from rows = u.walk SQL"select * from hrd_hoard_scatters order by rowid;"
     echo row for row from rows = u.walk SQL"select * from hrd_hoard_runs order by rowid;"
@@ -1420,7 +1429,7 @@ remove = ( path ) ->
   #     VEC,
   #     internals,                } = SFMODULES.unstable.require_dbric()
   #   prefix = 'prfx'
-  #   debug 'Ωimt_293', Hoard
+  #   debug 'Ωimt_296', Hoard
   #   #.......................................................................................................
   #   get_functions = ( db ) ->
   #     R = {}
@@ -1431,14 +1440,14 @@ remove = ( path ) ->
   #   #.......................................................................................................
   #   get_function_names = ( db ) -> new Set ( key for key of get_functions db )
   #   #.......................................................................................................
-  #   @eq ( Ωimt_294 = -> type_of Hoard.get_udfs                                    ), 'function'
-  #   @eq ( Ωimt_295 = -> type_of Hoard.get_build_statements                        ), 'function'
+  #   @eq ( Ωimt_297 = -> type_of Hoard.get_udfs                                    ), 'function'
+  #   @eq ( Ωimt_298 = -> type_of Hoard.get_build_statements                        ), 'function'
   #   #.......................................................................................................
-  #   @eq ( Ωimt_296 = -> type_of Hoard.get_udfs              { prefix, }           ), 'pod'
-  #   @eq ( Ωimt_297 = -> type_of Hoard.get_build_statements  { prefix, }           ), 'list'
+  #   @eq ( Ωimt_299 = -> type_of Hoard.get_udfs              { prefix, }           ), 'pod'
+  #   @eq ( Ωimt_300 = -> type_of Hoard.get_build_statements  { prefix, }           ), 'list'
   #   #.......................................................................................................
-  #   @eq ( Ωimt_298 = -> ( Object.keys Hoard.get_udfs        { prefix, } ).length  ), 3
-  #   @eq ( Ωimt_299 = -> ( Hoard.get_build_statements        { prefix, } ).length  ), 3
+  #   @eq ( Ωimt_301 = -> ( Object.keys Hoard.get_udfs        { prefix, } ).length  ), 3
+  #   @eq ( Ωimt_302 = -> ( Hoard.get_build_statements        { prefix, } ).length  ), 3
   #   #.......................................................................................................
   #   {}
   #   udfs              = Hoard.get_udfs { prefix, }
@@ -1446,13 +1455,13 @@ remove = ( path ) ->
   #   db                = new Dbric ':memory:'
   #   #.......................................................................................................
   #   for name, definition of udfs
-  #     info 'Ωimt_300', "create UDF #{definition.name}"
+  #     info 'Ωimt_303', "create UDF #{definition.name}"
   #     db.create_function definition
-  #   debug 'Ωimt_301',  name for name from get_function_names db when name.startsWith "#{prefix}_"
+  #   debug 'Ωimt_304',  name for name from get_function_names db when name.startsWith "#{prefix}_"
   #   #.......................................................................................................
   #   for statement, idx in build_statements
   #     statement = db.prepare statement
-  #     info 'Ωimt_302', statement.run()
+  #     info 'Ωimt_305', statement.run()
   #   #.......................................................................................................
   #   insert_data = db.prepare SQL"""insert into #{IDN "#{prefix}_hoard_scatters"} ( data ) values ( $data )"""
   #   insert_data.run { data: ( JSON.stringify { letter: 'A', arc: true, zeta: false, } ), }
@@ -1471,7 +1480,7 @@ remove = ( path ) ->
 demo_using_methods_holder_to_enable_ersatz_super = ->
   #---------------------------------------------------------------------------------------------------------
   class A
-    f: ( message ) -> help 'Ωbbdbr_303', rpr message
+    f: ( message ) -> help 'Ωbbdbr_306', rpr message
   #---------------------------------------------------------------------------------------------------------
   class B extends A
     _super: ( name, P... ) -> super[ name ] P...
@@ -1488,7 +1497,7 @@ demo_using_methods_holder_to_enable_ersatz_super = ->
   #---------------------------------------------------------------------------------------------------------
   ### NOTE using the Ersatz Super: ###
   result = instance.f "my message" # prints `my message`
-  info 'Ωbbdbr_304', { result, } # prints `{ result: 8, }`
+  info 'Ωbbdbr_307', { result, } # prints `{ result: 8, }`
   #---------------------------------------------------------------------------------------------------------
   ;null
 
@@ -1502,7 +1511,7 @@ if module is require.main then await do =>
     ca.wrap_class Dbric_std
   { wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
   # wrap_methods_of_prototypes Dbric_std, ({ fqname, callme, P, }) ->
-  #   debug 'Ωbbdbr_305', fqname #, P
+  #   debug 'Ωbbdbr_308', fqname #, P
   #   return callme()
   # db = new Dbric_std ':memory:', { rebuild: true, }
   #---------------------------------------------------------------------------------------------------------
@@ -1514,8 +1523,8 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωbbdbr_306', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωbbdbr_307', ca.used_names
-    # urge 'Ωbbdbr_308', count, names for count, names of ca.names_by_counts
+    warn 'Ωbbdbr_309', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωbbdbr_310', ca.used_names
+    # urge 'Ωbbdbr_311', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
