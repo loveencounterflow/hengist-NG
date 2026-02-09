@@ -1391,16 +1391,16 @@ remove = ( path ) ->
         scatters = {}
         for row from @db.walk SQL"select * from hrd_hoard_scatters order by rowid;"
           ### TAINT use `Scatter._from_db_row()` ###
-          scatter = new Scatter @, ( JSON.parse row.data ), { rowid: row.rowid, is_normalized: true, }
+          scatter                       = new Scatter @, ( JSON.parse row.data ), { rowid: row.rowid, is_normalized: true, }
+          scatters[ scatter.rowid ]     = scatter
           @scatters.push scatter
-          scatters[ scatter.rowid ] = scatter
         for row from @db.walk SQL"select * from hrd_hoard_runs order by rowid;"
           ### TAINT use `Run._from_db_row()` ###
-          run               = new Run { lo: row.lo, hi: row.hi, }
-          run.rowid         = row.rowid
-          @state.run_rowid  = Math.max @state.run_rowid, Number run.rowid.replace /^.*=/, ''
-          run.scatter       = row.scatter
-          scatters[ run.scatter ].runs = lets scatters[ run.scatter ].runs, ( runs ) -> runs.push run
+          run                           = new Run { lo: row.lo, hi: row.hi, }
+          run.rowid                     = row.rowid
+          @state.run_rowid              = Math.max @state.run_rowid, Number run.rowid.replace /^.*=/, ''
+          run.scatter                   = row.scatter
+          scatters[ run.scatter ].runs  = lets scatters[ run.scatter ].runs, ( runs ) -> runs.push run
         ;null
 
       #-----------------------------------------------------------------------------------------------------
