@@ -231,11 +231,6 @@ if module is require.main then await do =>
     { Coverage_analyzer,          } = require '../../../apps/bricabrac-sfmodules/lib/coverage-analyzer'
     ca = new Coverage_analyzer()
     ca.wrap_class Dbric_std
-  { wrap_methods_of_prototypes, } = require '../../../apps/bricabrac-sfmodules/lib/prototype-tools'
-  # wrap_methods_of_prototypes Dbric_std, ({ fqname, callme, P, }) ->
-  #   debug 'Ωdbrh__39', fqname #, P
-  #   return callme()
-  # db = new Dbric_std ':memory:', { rebuild: true, }
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
