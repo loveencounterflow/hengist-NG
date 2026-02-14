@@ -46,178 +46,93 @@ PATH                      = require 'node:path'
   True,
   False,
   unquote_name,         } = require '../../../apps/bricabrac-sfmodules/lib/dbric'
-{ Hoard,
-  Scatter,
-  Run,
-  summarize_data,
-  internals,            } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
-{ lets,                 } = internals
+# { lets,                 } = internals
+{ dbric_plugin: \
+    dbric_hoard_plugin, } = require '../../../apps/bricabrac-sfmodules/lib/intermission2'
 
 
-#===========================================================================================================
-hoard_plugin =
-  name:     'hoard'
-  prefix:   'hrd'
-  exports:
-    #---------------------------------------------------------------------------------------------------
-    build: ->
-      #.................................................................................................
-      ### TAINT stopgap solution ###
-      cfg =
-        runs_rowid_regexp:        '.+'
-        first_point:              0x00_0000
-        last_point:               0x10_ffff
-      #.................................................................................................
-      R = []
-      #-------------------------------------------------------------------------------------------------
-      R.push SQL"""
-        create table hrd_hoard_scatters (
-            rowid     text    unique  not null,
-            is_hit    boolean         not null default false,
-            data      json            not null default 'null'
-            );"""
-
-      #-------------------------------------------------------------------------------------------------
-      R.push SQL"""
-        create table hrd_hoard_runs (
-            rowid     text    unique  not null,
-            lo        integer         not null,
-            hi        integer         not null,
-            scatter   text            not null,
-          -- primary key ( rowid ),
-          foreign key ( scatter ) references hrd_hoard_scatters ( rowid ),
-          constraint "Ωconstraint___1" check ( rowid regexp #{LIT cfg.runs_rowid_regexp } ),
-          constraint "Ωconstraint___2" check ( lo between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
-          constraint "Ωconstraint___3" check ( hi between #{LIT cfg.first_point} and #{LIT cfg.last_point} ),
-          constraint "Ωconstraint___4" check ( lo <= hi )
-          -- constraint "Ωconstraint___5" check ( rowid regexp '^.*$' )
-          );"""
-      #-------------------------------------------------------------------------------------------------------
-      return R
-    statements:
-      hrd_yyy: SQL"select 1 as n;"
-      hrd_insert_scatter: SQL"""insert into hrd_hoard_scatters ( rowid, is_hit, data )
-        values ( $rowid, $is_hit, $data );"""
-      hrd_insert_run: SQL"""insert into hrd_hoard_runs ( rowid, lo, hi, scatter )
-        values ( $rowid, $lo, $hi, $scatter );"""
-
-#=======================================================================================================
-class Hoard_user extends Dbric_std
-  @prefix:  'jzr'
-  @plugins: [
-    # 'prototypes'
-    hoard_plugin
-    # 'me'
-    ]
-
-#=======================================================================================================
-class Hoard_extras extends Hoard
-
-  #-----------------------------------------------------------------------------------------------------
-  constructor: ( db ) ->
-    super()
-    @db = db
-    @restore()
-    ;undefined
-
-  #-----------------------------------------------------------------------------------------------------
-  restore: ->
-    scatters = {}
-    for row from @db.walk SQL"select * from hrd_hoard_scatters order by rowid;"
-      ### TAINT use `Scatter._from_db_row()` ###
-      scatter                       = new Scatter @, ( JSON.parse row.data ), { rowid: row.rowid, is_normalized: true, }
-      scatters[ scatter.rowid ]     = scatter
-      @scatters.push scatter
-    for row from @db.walk SQL"select * from hrd_hoard_runs order by rowid;"
-      ### TAINT use `Run._from_db_row()` ###
-      run                           = new Run { lo: row.lo, hi: row.hi, }
-      run.rowid                     = row.rowid
-      @state.run_rowid              = Math.max @state.run_rowid, Number run.rowid.replace /^.*=/, ''
-      run.scatter                   = row.scatter
-      scatters[ run.scatter ].runs  = lets scatters[ run.scatter ].runs, ( runs ) -> runs.push run
-    ;null
-
-  #-----------------------------------------------------------------------------------------------------
-  save: ->
-    for scatter in @scatters
-      scatter.normalize()
-      is_hit      = from_bool true
-      data        = JSON.stringify scatter.data
-      @db.statements.hrd_insert_scatter.run { scatter..., is_hit, data, }
-      for run in scatter.runs
-        @db.statements.hrd_insert_run.run { run..., }
-    ;null
 
 
 #===========================================================================================================
 @tests = tests =
 
   #---------------------------------------------------------------------------------------------------------
-  dbric_hoard_plugin_model: ->
+  dbric_hoard_plugin: ->
     #.......................................................................................................
-    u = new Hoard_user { rebuild: true, }
-    # debug 'Ωdbrh___6', row.name for row from u.walk u.statements.std_get_relations
-    names = new Set ( row.name for row from u.walk u.statements.std_get_relations )
-    @eq ( Ωdbrh___7 = -> names.has 'hrd_hoard_runs'      ), true
-    @eq ( Ωdbrh___8 = -> names.has 'hrd_hoard_scatters'  ), true
-    @eq ( Ωdbrh___9 = -> names.has 'std_functions'       ), true
-    @eq ( Ωdbrh__10 = -> names.has 'std_relations'       ), true
-    @eq ( Ωdbrh__11 = -> names.has 'std_tables'          ), true
-    @eq ( Ωdbrh__12 = -> names.has 'std_variables'       ), true
-    @eq ( Ωdbrh__13 = -> names.has 'std_views'           ), true
-    @eq ( Ωdbrh__14 = -> u.get_all u.statements.hrd_yyy ), [ { n: 1, }, ]
+    class Hoard extends Dbric_std
+      @plugins: [
+        dbric_hoard_plugin
+        ]
+    #.......................................................................................................
+    h = Hoard.rebuild()
+    @eq ( Ωdbrh___1 = -> 'std_get_tables'             in Object.keys h.statements ), true
+    @eq ( Ωdbrh___2 = -> 'hrd_find_runs'              in Object.keys h.statements ), true
+    @eq ( Ωdbrh___3 = -> 'hrd_insert_run'             in Object.keys h.statements ), true
+    @eq ( Ωdbrh___4 = -> 'hrd_find_overlaps'          in Object.keys h.statements ), true
+    @eq ( Ωdbrh___5 = -> 'hrd_find_overlaps_for_key'  in Object.keys h.statements ), true
+    @eq ( Ωdbrh___6 = -> 'hrd_find_conflicts'         in Object.keys h.statements ), true
+    #.......................................................................................................
+    h.statements.hrd_insert_run.run { lo: -Infinity, hi:        -1, key: '$x', value: "negative CIDs",   }
+    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x0000, key: '$x', value: "zero bytes",      }
+    h.statements.hrd_insert_run.run { lo:    0xd800, hi:    0xdbff, key: '$x', value: "high surrogates", }
+    h.statements.hrd_insert_run.run { lo:    0xdc00, hi:    0xdfff, key: '$x', value: "low surrogates",  }
+    h.statements.hrd_insert_run.run { lo:    0xfdd0, hi:    0xfdef, key: '$x', value: "noncharacters",   }
+    h.statements.hrd_insert_run.run { lo:    0xfffe, hi:    0xffff, key: '$x', value: "noncharacters",   }
+    h.statements.hrd_insert_run.run { lo:  0x110000, hi: +Infinity, key: '$x', value: "excessive CIDs",  }
+    h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: "bar",      }
+    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: "bar",      }
     #.......................................................................................................
     do =>
-      h_1 = new Hoard_extras u
-      ascii = h_1.add_scatter { is_ascii_alphanum: true, }
-      @eq ( Ωdbrh__15 = -> ascii.rowid ), 't:hrd:scatters,R=1'
-      ascii.add_run 'a', 'z'
-      ascii.add_run 'A', 'Z'
-      ascii.add_run '0', '9'
-      ascii.normalize()
-      echo run for run from runs = ( -> yield from ascii.runs )()
-      @eq ( Ωdbrh__16 = -> h_1.state.run_rowid             ), 3
-      #.....................................................................................................
-      runs = ( -> yield from ascii.runs )()
-      @eq ( Ωdbrh__17 = -> ascii.rowid                     ), 't:hrd:scatters,R=1'
-      @eq ( Ωdbrh__18 = -> runs.next().value               ), { lo: 48, hi: 57, rowid: 't:hrd:runs,R=1', scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__19 = -> runs.next().value               ), { lo: 65, hi: 90, rowid: 't:hrd:runs,R=2', scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__20 = -> runs.next().value               ), { lo: 97, hi: 122, rowid: 't:hrd:runs,R=3', scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__21 = -> runs.next().done                ), true
-      @eq ( Ωdbrh__22 = -> h_1.summarize_data_for_point '&'  ), null
-      @eq ( Ωdbrh__23 = -> h_1.summarize_data_for_point 'a'  ), { is_ascii_alphanum: [ true ] }
-      #.....................................................................................................
-      h_1.save()
-      #.....................................................................................................
-      echo row for row from rows = u.walk SQL"select * from hrd_hoard_scatters order by rowid;"
-      rows = u.walk SQL"select * from hrd_hoard_scatters order by rowid;"
-      @eq ( Ωdbrh__24 = -> rows.next().value ), { rowid: 't:hrd:scatters,R=1', is_hit: 1, data: '{"is_ascii_alphanum":true}' }
-      @eq ( Ωdbrh__25 = -> rows.next().done  ), true
-      #.....................................................................................................
-      echo row for row from rows = u.walk SQL"select * from hrd_hoard_runs order by rowid;"
-      rows = u.walk SQL"select * from hrd_hoard_runs order by rowid;"
-      @eq ( Ωdbrh__26 = -> rows.next().value ), { rowid: 't:hrd:runs,R=1', lo: 48, hi: 57, scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__27 = -> rows.next().value ), { rowid: 't:hrd:runs,R=2', lo: 65, hi: 90, scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__28 = -> rows.next().value ), { rowid: 't:hrd:runs,R=3', lo: 97, hi: 122, scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__29 = -> rows.next().done  ), true
+      # echo row for row from rows = h.walk h.statements.hrd_find_runs
+      rows = h.walk h.statements.hrd_find_runs
+      @eq ( Ωdbrh___7 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' }
+      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: 'bar' }
+      @eq ( Ωdbrh___9 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' }
+      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: 'bar' }
+      @eq ( Ωdbrh__11 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' }
+      @eq ( Ωdbrh__12 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' }
+      @eq ( Ωdbrh__13 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__14 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__15 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' }
+      @eq ( Ωdbrh__16 = -> rows.next().done   ), true
       ;null
     #.......................................................................................................
     do =>
-      h_2 = new Hoard_extras u
-      ascii = ( h_2.scatters.at -1 ) ? {}
-      @eq ( Ωdbrh__30 = -> ascii.rowid ), 't:hrd:scatters,R=1'
-      @eq ( Ωdbrh__31 = -> h_2.state.run_rowid               ), 3
-      echo run for run from runs = ( -> yield from ascii.runs ? [] )()
+      find_overlaps = h.statements.hrd_find_overlaps
+      # debug 'Ωdbrh__17', row for row from rows = h.walk find_overlaps, { lo: -0x1, hi: 0x0b, }
+      # debug 'Ωdbrh__18', row for row from rows = h.walk find_overlaps, { lo: -0x1, hi: 0x0b, }
       #.....................................................................................................
-      runs = ( -> yield from ascii.runs ? [] )()
-      @eq ( Ωdbrh__32 = -> ascii.rowid                       ), 't:hrd:scatters,R=1'
-      @eq ( Ωdbrh__33 = -> runs.next().value                 ), { lo: 48, hi: 57, rowid: 't:hrd:runs,R=1', scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__34 = -> runs.next().value                 ), { lo: 65, hi: 90, rowid: 't:hrd:runs,R=2', scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__35 = -> runs.next().value                 ), { lo: 97, hi: 122, rowid: 't:hrd:runs,R=3', scatter: 't:hrd:scatters,R=1' }
-      @eq ( Ωdbrh__36 = -> runs.next().done                  ), true
-      @eq ( Ωdbrh__37 = -> h_2.summarize_data_for_point '&'  ), null
-      @eq ( Ωdbrh__38 = -> h_2.summarize_data_for_point 'a'  ), { is_ascii_alphanum: [ true ] }
+      lo      = -0x0001
+      hi      = +0x000b
+      seen    = new Set()
+      matcher = []
+      for n in [ lo .. hi ]
+        for { rowid, } from h.walk find_overlaps, { lo: n, hi: n, }
+          matcher.push rowid unless seen.has rowid
+          seen.add rowid
+      @eq ( Ωdbrh__19 = -> matcher.length ), 4
       #.....................................................................................................
+      result = [ ( rowid for { rowid, } from h.walk find_overlaps, { lo, hi, } )..., ]
+      @eq ( Ωdbrh__20 = -> result ), matcher
+      ;null
+    #.......................................................................................................
+    do =>
+      find_overlaps   = h.statements.hrd_find_overlaps
+      find_conflicts  = h.statements.hrd_find_conflicts
+      #.....................................................................................................
+      @eq ( Ωdbrh__21 = -> [ ( row for row from h.walk find_conflicts )..., ] ), []
+      h.statements.hrd_insert_run.run { lo: -0x000a, hi: +0x0003, key: 'foo', value: "fuz",      }
+      #.....................................................................................................
+      seen    = new Set()
+      matcher = [
+        { key: 'foo', value_a: 'bar', value_b: 'fuz' },
+        { key: 'foo', value_a: 'bar', value_b: 'fuz' }, ]
+      # #.....................................................................................................
+      result = []
+      for row from h.walk find_conflicts
+        result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
+      # echo row for row from result
+      @eq ( Ωdbrh__22 = -> result ), matcher
       ;null
     #.......................................................................................................
     ;null
@@ -230,19 +145,19 @@ if module is require.main then await do =>
   if do_coverage
     { Coverage_analyzer,          } = require '../../../apps/bricabrac-sfmodules/lib/coverage-analyzer'
     ca = new Coverage_analyzer()
-    ca.wrap_class Dbric_std
+    # ca.wrap_class Dbric_std
   #---------------------------------------------------------------------------------------------------------
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test { tests, }
   # ( new Test guytest_cfg ).test { dbric_hoard_plugin_model: tests.dbric_hoard_plugin_model, }
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωdbrh__40', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωdbrh__41', ca.used_names
-    # urge 'Ωdbrh__42', count, names for count, names of ca.names_by_counts
+    warn 'Ωdbrh__23', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωdbrh__24', ca.used_names
+    # urge 'Ωdbrh__25', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
 
