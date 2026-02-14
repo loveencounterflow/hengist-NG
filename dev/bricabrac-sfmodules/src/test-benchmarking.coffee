@@ -139,8 +139,8 @@ SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
 if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: true, }
-  # ( new Test guytest_cfg ).async_test @tasks
-  ( new Test guytest_cfg ).test { fetch_example_com: @tasks.fetch_example_com, }
+  ( new Test guytest_cfg ).async_test @tasks
+  # ( new Test guytest_cfg ).test { fetch_example_com: @tasks.fetch_example_com, }
 
   # nodexh ~/hengist-NG/dev/snippets/lib/benchmark-unicode-character-width.js
   # nodexh ~/hengist-NG/dev/snippets/lib/demo-build-unicode-ranges.js

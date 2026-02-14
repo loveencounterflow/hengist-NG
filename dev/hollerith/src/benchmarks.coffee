@@ -41,8 +41,8 @@ class Benchmarks
     @benchmarker = new Benchmarker()
     @_run 'hollerith-reference-1201'
     @_run '../../../apps/hollerith'
-    help 'Ωhllt___2', @benchmarke.rget_averages_by_brands()
-    help 'Ωhllt___3', @benchmarke.rget_averages_by_tasks()
+    help 'Ωhllt___2', @benchmarker.get_averages_by_brands()
+    help 'Ωhllt___3', @benchmarker.get_averages_by_tasks()
     return null
 
   #---------------------------------------------------------------------------------------------------------

@@ -32,6 +32,9 @@ importers:
       big-varint:
         specifier: ^0.2.1
         version: 0.2.1
+      canonicalize:
+        specifier: ^2.1.0
+        version: 2.1.0
       d3-format:
         specifier: ^3.1.0
         version: 3.1.0
@@ -56,6 +59,9 @@ importers:
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
+      fast-json-stable-stringify:
+        specifier: ^2.1.0
+        version: 2.1.0
       find-cache-directory:
         specifier: ^6.0.0
         version: 6.0.0
@@ -418,6 +424,10 @@ packages:
     resolution: {integrity: sha512-8WB3Jcas3swSvjIeA2yvCJ+Miyz5l1ZmB6HFb9R1317dt9LCQoswg/BGrmAmkWVEszSrrg4RwmO46qIm2OEnSA==}
     engines: {node: '>=16'}
 
+  canonicalize@2.1.0:
+    resolution: {integrity: sha512-F705O3xrsUtgt98j7leetNhTWPe+5S72rlL5O4jA1pKqBVQ/dT1O1D6PFxmSXvc0SUOinWS57DKx0I3CHrXJHQ==}
+    hasBin: true
+
   chalk-string@4.0.0:
     resolution: {integrity: sha512-/EAe8GJnW2MKxrjiIoAxySKETk+loIfk0Qy/ov614CMqipR5i5tw0NIgM+vy0TiGizq3wgd3lK0S4/oF9Zrpig==}
     engines: {node: '>=18.18.0'}
@@ -561,6 +571,9 @@ packages:
   fast-glob@3.3.3:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
     engines: {node: '>=8.6.0'}
+
+  fast-json-stable-stringify@2.1.0:
+    resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
 
   fast-uri@3.1.0:
     resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
@@ -1568,6 +1581,8 @@ snapshots:
 
   camelcase@8.0.0: {}
 
+  canonicalize@2.1.0: {}
+
   chalk-string@4.0.0:
     dependencies:
       colors-option: 6.0.1
@@ -1729,6 +1744,8 @@ snapshots:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.8
+
+  fast-json-stable-stringify@2.1.0: {}
 
   fast-uri@3.1.0: {}
 
