@@ -52,12 +52,22 @@ PATH                      = require 'node:path'
 
 
 
+#===========================================================================================================
+insert_unicode_exclusions = ( h ) ->
+  h.statements.hrd_insert_run.run { lo: -Infinity, hi:        -1, key: '$x', value: "negative CIDs",   }
+  h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x0000, key: '$x', value: "zero bytes",      }
+  h.statements.hrd_insert_run.run { lo:    0xd800, hi:    0xdbff, key: '$x', value: "high surrogates", }
+  h.statements.hrd_insert_run.run { lo:    0xdc00, hi:    0xdfff, key: '$x', value: "low surrogates",  }
+  h.statements.hrd_insert_run.run { lo:    0xfdd0, hi:    0xfdef, key: '$x', value: "noncharacters",   }
+  h.statements.hrd_insert_run.run { lo:    0xfffe, hi:    0xffff, key: '$x', value: "noncharacters",   }
+  h.statements.hrd_insert_run.run { lo:  0x110000, hi: +Infinity, key: '$x', value: "excessive CIDs",  }
+  ;null
 
 #===========================================================================================================
 @tests = tests =
 
   #---------------------------------------------------------------------------------------------------------
-  dbric_hoard_plugin: ->
+  dbric_hoard_plugin_basics: ->
     #.......................................................................................................
     class Hoard extends Dbric_std
       @plugins: [
@@ -72,23 +82,17 @@ PATH                      = require 'node:path'
     @eq ( Ωdbrh___5 = -> 'hrd_find_overlaps_for_key'  in Object.keys h.statements ), true
     @eq ( Ωdbrh___6 = -> 'hrd_find_conflicts'         in Object.keys h.statements ), true
     #.......................................................................................................
-    h.statements.hrd_insert_run.run { lo: -Infinity, hi:        -1, key: '$x', value: "negative CIDs",   }
-    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x0000, key: '$x', value: "zero bytes",      }
-    h.statements.hrd_insert_run.run { lo:    0xd800, hi:    0xdbff, key: '$x', value: "high surrogates", }
-    h.statements.hrd_insert_run.run { lo:    0xdc00, hi:    0xdfff, key: '$x', value: "low surrogates",  }
-    h.statements.hrd_insert_run.run { lo:    0xfdd0, hi:    0xfdef, key: '$x', value: "noncharacters",   }
-    h.statements.hrd_insert_run.run { lo:    0xfffe, hi:    0xffff, key: '$x', value: "noncharacters",   }
-    h.statements.hrd_insert_run.run { lo:  0x110000, hi: +Infinity, key: '$x', value: "excessive CIDs",  }
-    h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: "bar",      }
-    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: "bar",      }
+    insert_unicode_exclusions h
+    h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
+    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: '"bar"',      }
     #.......................................................................................................
     do =>
       # echo row for row from rows = h.walk h.statements.hrd_find_runs
       rows = h.walk h.statements.hrd_find_runs
       @eq ( Ωdbrh___7 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' }
-      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: 'bar' }
+      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }
       @eq ( Ωdbrh___9 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' }
-      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: 'bar' }
+      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' }
       @eq ( Ωdbrh__11 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' }
       @eq ( Ωdbrh__12 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' }
       @eq ( Ωdbrh__13 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }
@@ -121,18 +125,73 @@ PATH                      = require 'node:path'
       find_conflicts  = h.statements.hrd_find_conflicts
       #.....................................................................................................
       @eq ( Ωdbrh__21 = -> [ ( row for row from h.walk find_conflicts )..., ] ), []
-      h.statements.hrd_insert_run.run { lo: -0x000a, hi: +0x0003, key: 'foo', value: "fuz",      }
+      @eq ( Ωdbrh__22 = -> [ ( h.hrd_find_conflicts() )..., ]                 ), []
+      @eq ( Ωdbrh__23 = -> h.hrd_validate()                                   ), null
+      h.statements.hrd_insert_run.run { lo: -0x000a, hi: +0x0003, key: 'foo', value: '"fuz"',      }
       #.....................................................................................................
       seen    = new Set()
       matcher = [
-        { key: 'foo', value_a: 'bar', value_b: 'fuz' },
-        { key: 'foo', value_a: 'bar', value_b: 'fuz' }, ]
-      # #.....................................................................................................
+        { key: 'foo', value_a: '"bar"', value_b: '"fuz"' },
+        { key: 'foo', value_a: '"bar"', value_b: '"fuz"' }, ]
+      #.....................................................................................................
       result = []
       for row from h.walk find_conflicts
         result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
       # echo row for row from result
-      @eq ( Ωdbrh__22 = -> result ), matcher
+      @eq ( Ωdbrh__24 = -> result ), matcher
+      #.....................................................................................................
+      result = []
+      for row from h.hrd_find_conflicts()
+        result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
+      # echo row for row from result
+      @eq ( Ωdbrh__25 = -> result ), matcher
+      #.....................................................................................................
+      @throws ( Ωdbrh__26 = -> h.hrd_validate() ), /found conflicts/
+      try h.hrd_validate() catch e then warn 'Ωdbrh__27', e.message
+      ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  dbric_hoard_plugin_groups_and_normalization: ->
+    #.......................................................................................................
+    class Hoard extends Dbric_std
+      @plugins: [
+        dbric_hoard_plugin
+        ]
+    #.......................................................................................................
+    h = Hoard.rebuild()
+    insert_unicode_exclusions h
+    h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
+    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: '"bar"',      }
+    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'nice', value: 'true',      }
+    #.......................................................................................................
+    do =>
+      echo row for row from rows = h.hrd_find_groups()
+      rows = h.hrd_find_groups()
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs' }
+      @eq ( Ωdbrh__29 = -> rows.next().value  ), { key: '$x', value: 'high surrogates' }
+      @eq ( Ωdbrh__30 = -> rows.next().value  ), { key: '$x', value: 'low surrogates' }
+      @eq ( Ωdbrh__31 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs' }
+      @eq ( Ωdbrh__32 = -> rows.next().value  ), { key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__33 = -> rows.next().value  ), { key: '$x', value: 'zero bytes' }
+      @eq ( Ωdbrh__34 = -> rows.next().value  ), { key: 'foo', value: '"bar"' }
+      @eq ( Ωdbrh__35 = -> rows.next().value  ), { key: 'nice', value: 'true' }
+      @eq ( Ωdbrh__36 = -> rows.next().done   ), true
+      ;null
+    #.......................................................................................................
+    do =>
+      echo row for row from rows = h.hrd_find_runs_by_group()
+      rows = h.hrd_find_runs_by_group()
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', runs: [ { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', runs: [ { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', runs: [ { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', runs: [ { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', runs: [ { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }, { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', runs: [ { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: 'foo', value: '"bar"', runs: [ { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }, { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' } ] }
+      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: 'nice', value: 'true', runs: [ { rowid: 't:hrd:runs:V=+000000,+00000a,nice', lo: 0, hi: 10, key: 'nice', value: 'true' } ] }
+      @eq ( Ωdbrh__36 = -> rows.next().done   ), true
       ;null
     #.......................................................................................................
     ;null
@@ -155,9 +214,9 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωdbrh__23', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωdbrh__24', ca.used_names
-    # urge 'Ωdbrh__25', count, names for count, names of ca.names_by_counts
+    warn 'Ωdbrh__37', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωdbrh__38', ca.used_names
+    # urge 'Ωdbrh__39', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
 
