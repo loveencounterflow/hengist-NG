@@ -50,7 +50,8 @@ PATH                      = require 'node:path'
 { dbric_plugin: \
     dbric_hoard_plugin, } = require '../../../apps/bricabrac-sfmodules/lib/intermission2'
 
-
+#===========================================================================================================
+cid_of = ( x ) -> x.codePointAt 0
 
 #===========================================================================================================
 insert_unicode_exclusions = ( h ) ->
@@ -206,8 +207,8 @@ insert_unicode_exclusions = ( h ) ->
       ;null
     #.......................................................................................................
     do =>
-      echo row for row from rows = h.hrd_find_groups_plus()
-      # rows = h.hrd_find_groups_plus()
+      echo row for row from rows = h.hrd_find_groups()
+      # rows = h.hrd_find_groups()
     #.......................................................................................................
     ;null
 
@@ -265,9 +266,28 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh__74 = -> rows.next().value  ), { key: 'b', value: '"B"' }
       @eq ( Ωdbrh__75 = -> rows.next().done   ), true
       #.....................................................................................................
-      debug 'Ωdbrh__76', row for row from rows = h.hrd_find_groups_plus()
+      debug 'Ωdbrh__76', row for row from rows = h.hrd_find_groups()
       #.....................................................................................................
       ;null
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  dbric_hoard_plugin_normalization_and_conflict_detection: ->
+    #.......................................................................................................
+    class Hoard extends Dbric_std
+      @plugins: [
+        dbric_hoard_plugin
+        ]
+    #.......................................................................................................
+    do =>
+      h = Hoard.rebuild()
+      h.hrd_punch ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
+      h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
+      h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
+      h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
+      h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
+      h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
     #.......................................................................................................
     ;null
 
