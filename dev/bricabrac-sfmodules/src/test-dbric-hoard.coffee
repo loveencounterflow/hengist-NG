@@ -180,14 +180,14 @@ insert_unicode_exclusions = ( h ) ->
     do =>
       # echo row for row from rows = h.hrd_find_group_facets()
       rows = h.hrd_find_group_facets()
-      @eq ( Ωdbrh__37 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs' }
-      @eq ( Ωdbrh__38 = -> rows.next().value  ), { key: '$x', value: 'high surrogates' }
-      @eq ( Ωdbrh__39 = -> rows.next().value  ), { key: '$x', value: 'low surrogates' }
-      @eq ( Ωdbrh__40 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs' }
-      @eq ( Ωdbrh__41 = -> rows.next().value  ), { key: '$x', value: 'noncharacters' }
-      @eq ( Ωdbrh__42 = -> rows.next().value  ), { key: '$x', value: 'zero bytes' }
-      @eq ( Ωdbrh__43 = -> rows.next().value  ), { key: 'foo', value: '"bar"' }
-      @eq ( Ωdbrh__44 = -> rows.next().value  ), { key: 'nice', value: 'true' }
+      @eq ( Ωdbrh__37 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  runs: 1, }
+      @eq ( Ωdbrh__38 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', runs: 1, }
+      @eq ( Ωdbrh__39 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  runs: 1, }
+      @eq ( Ωdbrh__40 = -> rows.next().value  ), { key: '$x',   value: 'negative CIDs',   runs: 1, }
+      @eq ( Ωdbrh__41 = -> rows.next().value  ), { key: '$x',   value: 'noncharacters',   runs: 2, }
+      @eq ( Ωdbrh__42 = -> rows.next().value  ), { key: '$x',   value: 'zero bytes',      runs: 1, }
+      @eq ( Ωdbrh__43 = -> rows.next().value  ), { key: 'foo',  value: '"bar"',           runs: 2, }
+      @eq ( Ωdbrh__44 = -> rows.next().value  ), { key: 'nice', value: 'true',            runs: 1, }
       @eq ( Ωdbrh__45 = -> rows.next().done   ), true
       ;null
     #.......................................................................................................
