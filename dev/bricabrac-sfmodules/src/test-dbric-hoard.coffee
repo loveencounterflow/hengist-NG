@@ -283,11 +283,19 @@ insert_unicode_exclusions = ( h ) ->
     do =>
       h = Hoard.rebuild()
       h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
-      h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
-      # h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
+      urge(); urge 'Ωdbrh__77', row for row from h.hrd_find_runs()
+      # h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
+      # urge(); urge 'Ωdbrh__78', row for row from h.hrd_find_runs()
+      h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
+      urge(); urge 'Ωdbrh__79', row for row from h.hrd_find_runs()
       # h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
       # h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
       # h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
+      # urge 'Ωdbrh__80', row for row from h.hrd_find_groups()
+      help 'Ωdbrh__55', row for row from h.hrd_find_group_facets()
+      echo row for row from h.hrd_find_groups()
+      # # @eq ( Ωdbrh__81 = -> rows.next().value  ), { key: 'a', value: '"A"' }
+      # echo row for row from h.hrd_find_runs()
     #.......................................................................................................
     ;null
 
@@ -309,9 +317,9 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωdbrh__77', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωdbrh__78', ca.used_names
-    # urge 'Ωdbrh__79', count, names for count, names of ca.names_by_counts
+    warn 'Ωdbrh__82', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωdbrh__83', ca.used_names
+    # urge 'Ωdbrh__84', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
 
