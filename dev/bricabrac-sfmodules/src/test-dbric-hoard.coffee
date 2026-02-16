@@ -282,12 +282,12 @@ insert_unicode_exclusions = ( h ) ->
     #.......................................................................................................
     do =>
       h = Hoard.rebuild()
-      h.hrd_punch ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
+      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
       h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
-      h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
-      h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
-      h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
-      h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
+      # h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
+      # h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
+      # h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
+      # h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
     #.......................................................................................................
     ;null
 
