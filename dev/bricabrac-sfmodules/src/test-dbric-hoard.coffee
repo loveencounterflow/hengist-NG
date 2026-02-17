@@ -49,6 +49,8 @@ PATH                      = require 'node:path'
 # { lets,                 } = internals
 { dbric_plugin: \
     dbric_hoard_plugin, } = require '../../../apps/bricabrac-sfmodules/lib/intermission2'
+{ type_of,              } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-rpr-type_of-brics' ).require_type_of()
+
 
 #===========================================================================================================
 cid_of = ( x ) -> x.codePointAt 0
@@ -284,18 +286,32 @@ insert_unicode_exclusions = ( h ) ->
       h = Hoard.rebuild()
       h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
       urge(); urge 'Ωdbrh__77', row for row from h.hrd_find_runs()
-      # h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
-      # urge(); urge 'Ωdbrh__78', row for row from h.hrd_find_runs()
+      h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
+      urge(); urge 'Ωdbrh__78', row for row from h.hrd_find_runs()
       h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
       urge(); urge 'Ωdbrh__79', row for row from h.hrd_find_runs()
-      # h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
-      # h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
-      # h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
-      # urge 'Ωdbrh__80', row for row from h.hrd_find_groups()
-      help 'Ωdbrh__55', row for row from h.hrd_find_group_facets()
+      h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
+      urge(); urge 'Ωdbrh__80', row for row from h.hrd_find_runs()
+      h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
+      urge(); urge 'Ωdbrh__81', row for row from h.hrd_find_runs()
+      h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
+      # urge 'Ωdbrh__82', row for row from h.hrd_find_groups()
+      # help 'Ωdbrh__83', row for row from h.hrd_find_group_facets()
       echo row for row from h.hrd_find_groups()
-      # # @eq ( Ωdbrh__81 = -> rows.next().value  ), { key: 'a', value: '"A"' }
+      # # @eq ( Ωdbrh__84 = -> rows.next().value  ), { key: 'a', value: '"A"' }
       # echo row for row from h.hrd_find_runs()
+      chr_string = ''
+      for cid in [ ( cid_of 'A' ) .. ( cid_of 'Z' ) ]
+        rows        = [ ( h.hrd_find_overlaps cid )..., ]
+        is_vowel    = rows[ 0 ].value
+        color       = if is_vowel then white else blue
+        chr         = String.fromCodePoint cid
+        chr_string += color chr
+        @eq ( Ωdbrh__85 = -> rows.length              ), 1
+        @eq ( Ωdbrh__86 = -> rows[ 0 ].key            ), 'vowel'
+        @eq ( Ωdbrh__87 = -> type_of is_vowel         ), 'boolean'
+      debug 'Ωdbrh__88', chr_string
+      ;null
     #.......................................................................................................
     ;null
 
@@ -317,9 +333,9 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωdbrh__82', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωdbrh__83', ca.used_names
-    # urge 'Ωdbrh__84', count, names for count, names of ca.names_by_counts
+    warn 'Ωdbrh__89', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωdbrh__90', ca.used_names
+    # urge 'Ωdbrh__91', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
 
