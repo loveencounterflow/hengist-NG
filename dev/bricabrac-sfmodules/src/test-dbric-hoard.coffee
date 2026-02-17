@@ -393,10 +393,19 @@ insert_unicode_exclusions = ( h ) ->
       #.....................................................................................................
       h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
       h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
+      h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), 'vowel', false
+      # h.hrd_add_run ( cid_of 'A' ), null, 'vowel', true
+      h.hrd_punch ( cid_of 'A' ), null, 'vowel', true
+      # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
+      # h.hrd_add_run ( cid_of 'E' ), null, 'vowel', true
+      # h.hrd_add_run ( cid_of 'I' ), null, 'vowel', true
       h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      h.hrd_punch ( cid_of 'E' ), null, 'vowel', true
-      h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      # h.tbl_echo_as_text SQL"select * from hrd_groups;"
+      h.tbl_echo_as_text SQL"select * from hrd_conflicts;"
+      h.tbl_echo_as_text SQL"select * from hrd_conflicts_2;"
+      h.tbl_echo_as_text SQL"select * from hrd_conflicts_2 where key = 'vowel' and value != 'true';"
+      h.tbl_echo_as_text SQL"select * from _hrd_group_has_conflict;"
+      h.tbl_echo_as_text SQL"select * from _hrd_key_group_has_conflict_2;"
+      # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
     #.......................................................................................................
     ;null
 
