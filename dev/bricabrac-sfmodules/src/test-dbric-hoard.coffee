@@ -82,7 +82,7 @@ insert_unicode_exclusions = ( h ) ->
     @eq ( Ωdbrh___3 = -> 'hrd_insert_run'             in Object.keys h.statements ), true
     @eq ( Ωdbrh___4 = -> 'hrd_find_overlaps'          in Object.keys h.statements ), true
     @eq ( Ωdbrh___5 = -> 'hrd_find_overlaps_for_key'  in Object.keys h.statements ), true
-    @eq ( Ωdbrh___6 = -> 'hrd_find_conflicts'         in Object.keys h.statements ), true
+    @eq ( Ωdbrh___6 = -> 'hrd_find_runs_with_conflicts_1'         in Object.keys h.statements ), true
     #.......................................................................................................
     insert_unicode_exclusions h
     h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
@@ -124,11 +124,11 @@ insert_unicode_exclusions = ( h ) ->
     #.......................................................................................................
     do =>
       find_overlaps   = h.statements.hrd_find_overlaps
-      find_conflicts  = h.statements.hrd_find_conflicts
+      find_conflicts  = h.statements.hrd_find_runs_with_conflicts_1
       #.....................................................................................................
       @eq ( Ωdbrh__21 = -> [ ( row for row from h.walk find_conflicts )..., ] ), []
-      @eq ( Ωdbrh__22 = -> [ ( h.hrd_find_conflicts() )..., ]                 ), []
-      @eq ( Ωdbrh__23 = -> h.hrd_validate()                                   ), null
+      @eq ( Ωdbrh__22 = -> [ ( h.hrd_find_runs_with_conflicts_1() )..., ]                 ), []
+      @eq ( Ωdbrh__23 = -> h.hrd_validate_1()                                   ), null
       h.statements.hrd_insert_run.run { lo: -0x000a, hi: +0x0003, key: 'foo', value: '"fuz"',      }
       #.....................................................................................................
       seen    = new Set()
@@ -143,15 +143,15 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh__24 = -> result ), matcher
       #.....................................................................................................
       result = []
-      for row from h.hrd_find_conflicts()
+      for row from h.hrd_find_runs_with_conflicts_1()
         result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
       # echo row for row from result
       @eq ( Ωdbrh__25 = -> result ), matcher
       #.....................................................................................................
-      @throws ( Ωdbrh__26 = -> h.hrd_validate() ), /found conflicts/
-      try h.hrd_validate() catch e then warn 'Ωdbrh__27', e.message
-      # echo row for row from h.walk SQL"select * from _hrd_group_has_conflict;"
-      rows = h.walk SQL"select * from _hrd_group_has_conflict;"
+      @throws ( Ωdbrh__26 = -> h.hrd_validate_1() ), /found conflicts/
+      try h.hrd_validate_1() catch e then warn 'Ωdbrh__27', e.message
+      # echo row for row from h.walk SQL"select * from _hrd_facet_group_has_conflict_1;"
+      rows = h.walk SQL"select * from _hrd_facet_group_has_conflict_1;"
       @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', has_conflict: 0 }
       @eq ( Ωdbrh__29 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', has_conflict: 0 }
       @eq ( Ωdbrh__30 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', has_conflict: 0 }
@@ -164,8 +164,8 @@ insert_unicode_exclusions = ( h ) ->
       ;null
     #.......................................................................................................
     do =>
-      echo row for row from rows = h.hrd_find_conflicts()
-      # rows = h.hrd_conflicts()
+      echo row for row from rows = h.hrd_find_runs_with_conflicts_1()
+      # rows = h.hrd_runs_with_conflict_1()
     #.......................................................................................................
     ;null
 
@@ -184,8 +184,8 @@ insert_unicode_exclusions = ( h ) ->
     h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'nice', value: 'true',      }
     #.......................................................................................................
     do =>
-      # echo row for row from rows = h.hrd_find_group_facets()
-      rows = h.hrd_find_group_facets()
+      # echo row for row from rows = h.walk h.statements._hrd_facet_groups
+      rows = h.walk h.statements._hrd_facet_groups
       @eq ( Ωdbrh__37 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  runs: 1, }
       @eq ( Ωdbrh__38 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', runs: 1, }
       @eq ( Ωdbrh__39 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  runs: 1, }
@@ -196,24 +196,24 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh__44 = -> rows.next().value  ), { key: 'nice', value: 'true',            runs: 1, }
       @eq ( Ωdbrh__45 = -> rows.next().done   ), true
       ;null
+    # #.......................................................................................................
+    # do =>
+    #   # echo row for row from rows = h.hrd_find_runs_by_group()
+    #   rows = h.hrd_find_runs_by_group()
+    #   @eq ( Ωdbrh__46 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', runs: [ { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' } ] }
+    #   @eq ( Ωdbrh__47 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', runs: [ { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' } ] }
+    #   @eq ( Ωdbrh__48 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', runs: [ { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' } ] }
+    #   @eq ( Ωdbrh__49 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', runs: [ { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' } ] }
+    #   @eq ( Ωdbrh__50 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', runs: [ { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }, { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' } ] }
+    #   @eq ( Ωdbrh__51 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', runs: [ { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' } ] }
+    #   @eq ( Ωdbrh__52 = -> rows.next().value  ), { key: 'foo', value: '"bar"', runs: [ { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }, { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' } ] }
+    #   @eq ( Ωdbrh__53 = -> rows.next().value  ), { key: 'nice', value: 'true', runs: [ { rowid: 't:hrd:runs:V=+000000,+00000a,nice', lo: 0, hi: 10, key: 'nice', value: 'true' } ] }
+    #   @eq ( Ωdbrh__54 = -> rows.next().done   ), true
+    #   ;null
     #.......................................................................................................
     do =>
-      # echo row for row from rows = h.hrd_find_runs_by_group()
-      rows = h.hrd_find_runs_by_group()
-      @eq ( Ωdbrh__46 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', runs: [ { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' } ] }
-      @eq ( Ωdbrh__47 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', runs: [ { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' } ] }
-      @eq ( Ωdbrh__48 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', runs: [ { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' } ] }
-      @eq ( Ωdbrh__49 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', runs: [ { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' } ] }
-      @eq ( Ωdbrh__50 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', runs: [ { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }, { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' } ] }
-      @eq ( Ωdbrh__51 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', runs: [ { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' } ] }
-      @eq ( Ωdbrh__52 = -> rows.next().value  ), { key: 'foo', value: '"bar"', runs: [ { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }, { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' } ] }
-      @eq ( Ωdbrh__53 = -> rows.next().value  ), { key: 'nice', value: 'true', runs: [ { rowid: 't:hrd:runs:V=+000000,+00000a,nice', lo: 0, hi: 10, key: 'nice', value: 'true' } ] }
-      @eq ( Ωdbrh__54 = -> rows.next().done   ), true
-      ;null
-    #.......................................................................................................
-    do =>
-      # echo row for row from rows = h.hrd_find_groups()
-      rows = h.hrd_find_groups()
+      # echo row for row from rows = h.hrd_find_facet_groups()
+      rows = h.hrd_find_facet_groups()
       @eq ( Ωdbrh__55 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  first: 1114112,   last: Infinity, runs: 1, has_conflict: false, is_normal: true, }
       @eq ( Ωdbrh__56 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', first: 55296,     last: 56319,    runs: 1, has_conflict: false, is_normal: true, }
       @eq ( Ωdbrh__57 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  first: 56320,     last: 57343,    runs: 1, has_conflict: false, is_normal: true, }
@@ -281,7 +281,7 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh__83 = -> rows.next().value  ), { key: 'b', value: '"B"' }
       @eq ( Ωdbrh__84 = -> rows.next().done   ), true
       #.....................................................................................................
-      debug 'Ωdbrh__85', row for row from rows = h.hrd_find_groups()
+      debug 'Ωdbrh__85', row for row from rows = h.hrd_find_facet_groups()
       #.....................................................................................................
       ;null
     #.......................................................................................................
@@ -304,14 +304,14 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh__87 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+00005a,vowel', lo: 65, hi: 90, key: 'vowel', value: 'false' }
       @eq ( Ωdbrh__88 = -> rows.next().done   ), true
       #.....................................................................................................
-      h.hrd_punch { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
+      h.hrd_punch_1 { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
       # echo(); echo row for row from h.hrd_find_runs()
       rows = h.hrd_find_runs()
       @eq ( Ωdbrh__89 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
       @eq ( Ωdbrh__90 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+00005a,vowel', lo: 66, hi: 90, key: 'vowel', value: 'false' }
       @eq ( Ωdbrh__91 = -> rows.next().done   ), true
       #.....................................................................................................
-      h.hrd_punch ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
+      h.hrd_punch_1 ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
       # echo(); echo row for row from h.hrd_find_runs()
       rows = h.hrd_find_runs()
       @eq ( Ωdbrh__92 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
@@ -320,7 +320,7 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh__95 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+00005a,vowel', lo: 70, hi: 90, key: 'vowel', value: 'false' }
       @eq ( Ωdbrh__96 = -> rows.next().done   ), true
       #.....................................................................................................
-      h.hrd_punch ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
+      h.hrd_punch_1 ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
       # echo(); echo row for row from h.hrd_find_runs()
       rows = h.hrd_find_runs()
       @eq ( Ωdbrh__97 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
@@ -331,7 +331,7 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh_102 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00005a,vowel', lo: 74, hi: 90, key: 'vowel', value: 'false' }
       @eq ( Ωdbrh_103 = -> rows.next().done   ), true
       #.....................................................................................................
-      h.hrd_punch ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
+      h.hrd_punch_1 ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
       # echo(); echo row for row from h.hrd_find_runs()
       rows = h.hrd_find_runs()
       @eq ( Ωdbrh_104 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
@@ -344,7 +344,7 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh_111 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000050,+00005a,vowel', lo: 80, hi: 90, key: 'vowel', value: 'false' }
       @eq ( Ωdbrh_112 = -> rows.next().done   ), true
       #.....................................................................................................
-      h.hrd_punch ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
+      h.hrd_punch_1 ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
       # echo(); echo row for row from h.hrd_find_runs()
       rows = h.hrd_find_runs()
       @eq ( Ωdbrh_113 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
@@ -359,8 +359,8 @@ insert_unicode_exclusions = ( h ) ->
       @eq ( Ωdbrh_122 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000056,+00005a,vowel', lo: 86, hi: 90, key: 'vowel', value: 'false' }
       @eq ( Ωdbrh_123 = -> rows.next().done   ), true
       #.....................................................................................................
-      echo row for row from h.hrd_find_groups()
-      rows = h.hrd_find_groups()
+      echo row for row from h.hrd_find_facet_groups()
+      rows = h.hrd_find_facet_groups()
       @eq ( Ωdbrh_124 = -> rows.next().value  ), { key: 'vowel', value: 'false',  first: 66, last: 90, runs: 5, has_conflict: true, is_normal: false, }
       @eq ( Ωdbrh_125 = -> rows.next().value  ), { key: 'vowel', value: 'true',   first: 65, last: 85, runs: 5, has_conflict: true, is_normal: false, }
       @eq ( Ωdbrh_126 = -> rows.next().done   ), true
@@ -389,22 +389,24 @@ insert_unicode_exclusions = ( h ) ->
         ]
     #.......................................................................................................
     do =>
-      h = Hoard.rebuild()
+      h   = Hoard.rebuild()
+      key = 'vowel'
       #.....................................................................................................
       h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
-      h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), 'vowel', false
-      # h.hrd_add_run ( cid_of 'A' ), null, 'vowel', true
-      h.hrd_punch ( cid_of 'A' ), null, 'vowel', true
+      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), key, false
+      h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), key, false
+      # h.hrd_add_run ( cid_of 'A' ), null, key, true
+      h.hrd_punch_1 ( cid_of 'A' ), null, key, true
       # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      # h.hrd_add_run ( cid_of 'E' ), null, 'vowel', true
-      # h.hrd_add_run ( cid_of 'I' ), null, 'vowel', true
+      # h.hrd_add_run ( cid_of 'E' ), null, key, true
+      # h.hrd_add_run ( cid_of 'I' ), null, key, true
       h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      h.tbl_echo_as_text SQL"select * from hrd_conflicts;"
+      h.tbl_echo_as_text SQL"select * from hrd_runs_with_conflict_1;"
       h.tbl_echo_as_text SQL"select * from hrd_conflicts_2;"
-      h.tbl_echo_as_text SQL"select * from hrd_conflicts_2 where key = 'vowel' and value != 'true';"
-      h.tbl_echo_as_text SQL"select * from _hrd_group_has_conflict;"
+      h.tbl_echo_as_text SQL"select * from hrd_conflicts_2 where key = $key and value != 'true';", { key, }
+      h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_1;"
       h.tbl_echo_as_text SQL"select * from _hrd_key_group_has_conflict_2;"
+      h.tbl_echo_as_text h.hrd_find_facet_groups()
       # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
     #.......................................................................................................
     ;null
