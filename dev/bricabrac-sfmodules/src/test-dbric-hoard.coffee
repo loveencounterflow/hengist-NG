@@ -54,28 +54,6 @@ PATH                      = require 'node:path'
 #===========================================================================================================
 cid_of = ( x ) -> x.codePointAt 0
 
-#===========================================================================================================
-show_colorized_chr_string = ( hoard, lo, hi, colors_by_facets ) ->
-  fallback_color  = GUY.trm.grey
-  warn_color      = GUY.trm.red
-  chr_string      = ''
-  #.........................................................................................................
-  for cid in [ lo .. hi ]
-    chr         = String.fromCodePoint cid
-    rows        = [ ( hoard.hrd_find_overlaps cid )..., ]
-    #.......................................................................................................
-    if rows.length is 1
-      facet = "#{rows[ 0 ].key}:#{rows[ 0 ].value_json}"
-      color = colors_by_facets[ facet ] ? fallback_color
-    else
-      if rows.length is 0
-        urge "Ωdbrh___1 #{rpr chr}: found no facets"
-      else
-        urge "Ωdbrh___2 #{rpr chr}: found facets:", ( "#{r.key}:#{r.value_json}" for r in rows ).join ';'
-      color = warn_color
-    chr_string += color chr
-  #.........................................................................................................
-  debug 'Ωdbrh___3', chr_string
 
 
 #===========================================================================================================
@@ -412,8 +390,43 @@ insert_unicode_exclusions = ( h ) ->
         dbric_hoard_plugin
         ]
     #.......................................................................................................
+    class Hoard_v extends Hoard
+      visualize: ({ lo, hi, }) ->
+        key_from_row    = ( row ) -> "#{row.key}:#{row.value_json}"
+        keys_from_rows  = ( rows ) -> new Set [ ( new Set ( ( key_from_row row ) for row from rows ) )..., ].sort()
+        colors          =
+          fallback:   ( P... ) -> GUY.trm.grey  P...
+          warn:       ( P... ) -> GUY.trm.red   P...
+          in:         ( P... ) -> GUY.trm.gold  P...
+          out:        ( P... ) -> GUY.trm.blue  P...
+        all_keys  = keys_from_rows @hrd_find_overlaps lo, hi
+        families  = Object.fromEntries ( [ k, '', ] for k from all_keys )
+        #.........................................................................................................
+        for cid in [ lo .. hi ]
+          local_keys  = keys_from_rows @hrd_find_overlaps cid
+          chr         = String.fromCodePoint cid
+          for global_key from all_keys
+            color                   = if ( local_keys.has global_key ) then colors.in else colors.out
+            families[ global_key ] += color chr
+        R = ''
+        for key, line of families
+          echo f"#{key}:<15c;", line
+        #   #.......................................................................................................
+        #   if rows.length is 0
+        #     facet = '-:-'
+        #     color = colors_by_facets[ facet ] ? fallback_color
+        #     ( families[ key ] ?= '' ) += ( color chr )
+        #   else
+        #     for row in rows
+        #       facet = "#{row.key}:#{row.value_json}"
+        #       color = warn_color
+        #   chr_string += color chr
+        # #.........................................................................................................
+        # debug 'Ωdbrh___3', chr_string
+        ;null
+    #.......................................................................................................
     do =>
-      h                 = Hoard.rebuild()
+      h                 = Hoard_v.rebuild()
       key               = 'vowel'
       colors_by_facets  =
         'vowel:true':     GUY.trm.gold
@@ -438,11 +451,11 @@ insert_unicode_exclusions = ( h ) ->
       # h.tbl_echo_as_text SQL"select * from _hrd_clan_has_conflict_2;"
       h.tbl_echo_as_text h.hrd_find_families
       # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
-      show_colorized_chr_string h, ( cid_of 'A' ), ( cid_of 'z' ), colors_by_facets
+      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       ;null
     # #.......................................................................................................
     # do =>
-    #   h   = Hoard.rebuild()
+    #   h   = Hoard_v.rebuild()
     #   key = 'vowel'
     #   #.....................................................................................................
     #   h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
