@@ -402,8 +402,14 @@ insert_unicode_exclusions = ( h ) ->
           in:         ( P... ) -> GUY.trm.gold  P...
           out:        ( P... ) -> GUY.trm.blue  P...
           run:        ( P... ) -> GUY.trm.grey  P...
-        #.........................................................................................................
+        #...................................................................................................
+        { row_count, } = @get_first SQL"select count(*) as row_count from hrd_runs;"
+        echo()
+        echo GUY.trm.white GUY.trm.reverse GUY.trm.bold " hoard with #{row_count} runs "
+        #...................................................................................................
         for global_facet from global_facets
+          gfph      = ' '.repeat global_facet.length
+          #.................................................................................................
           statement = SQL"""
             select * from hrd_runs
               where true
@@ -411,15 +417,17 @@ insert_unicode_exclusions = ( h ) ->
                 and ( lo <= $hi )
                 and ( hi >= $lo )
               -- order by hi - lo asc, lo desc, key, value
-              order by _inord
+              order by _inord desc
               ;"""
-          gfph      = ' '.repeat global_facet.length
+          #.................................................................................................
+          points = ''
           for cid in [ lo .. hi ]
             local_keys  = facets_from_rows @hrd_find_overlaps cid
             chr         = String.fromCodePoint cid
             color       = if ( local_keys.has global_facet ) then colors.in else colors.out
             points     += color chr
           echo f"#{global_facet}:<15c; #{' '}:>6c; #{points}"
+          #.................................................................................................
           for row from @walk statement, { global_facet, lo, hi, }
             id          = row.rowid.replace /^.*?=(\d+)/, '[$1]'
             first       = ( Math.max row.lo, lo ) - lo
@@ -428,19 +436,7 @@ insert_unicode_exclusions = ( h ) ->
             mid         = GUY.trm.gold '█'.repeat last - first + 1
             right       = GUY.trm.grey '│'.repeat ( global_width - last )
             echo colors.run f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
-          points = ''
-        #   #.......................................................................................................
-        #   if rows.length is 0
-        #     facet = '-:-'
-        #     color = colors_by_facets[ facet ] ? fallback_color
-        #     ( families[ key ] ?= '' ) += ( color chr )
-        #   else
-        #     for row in rows
-        #       facet = "#{row.key}:#{row.value_json}"
-        #       color = warn_color
-        #   chr_string += color chr
-        # #.........................................................................................................
-        # debug 'Ωdbrh___3', chr_string
+          #.................................................................................................
         ;null
     #.......................................................................................................
     do =>
