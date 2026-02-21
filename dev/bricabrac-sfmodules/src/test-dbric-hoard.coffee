@@ -404,7 +404,13 @@ insert_unicode_exclusions = ( h ) ->
           run:        ( P... ) -> GUY.trm.grey  P...
         #.........................................................................................................
         for global_facet from global_facets
-          statement = SQL"""select * from hrd_runs where facet = $global_facet and lo <= $hi and hi >= $lo"""
+          statement = SQL"""
+            select * from hrd_runs
+              where true
+                and ( facet = $global_facet )
+                and ( lo <= $hi )
+                and ( hi >= $lo )
+              order by hi - lo asc, lo desc;"""
           gfph      = ' '.repeat global_facet.length
           for cid in [ lo .. hi ]
             local_keys  = facets_from_rows @hrd_find_overlaps cid
