@@ -392,25 +392,35 @@ insert_unicode_exclusions = ( h ) ->
     #.......................................................................................................
     class Hoard_v extends Hoard
       visualize: ({ lo, hi, }) ->
-        key_from_row    = ( row ) -> "#{row.key}:#{row.value_json}"
-        keys_from_rows  = ( rows ) -> new Set [ ( new Set ( ( key_from_row row ) for row from rows ) )..., ].sort()
-        colors          =
+        facet_from_row    = ( row ) -> "#{row.key}:#{row.value_json}"
+        facets_from_rows  = ( rows ) -> new Set [ ( new Set ( ( facet_from_row row ) for row from rows ) )..., ].sort()
+        global_facets     = facets_from_rows @hrd_find_overlaps lo, hi
+        global_width      = hi - lo
+        colors            =
           fallback:   ( P... ) -> GUY.trm.grey  P...
           warn:       ( P... ) -> GUY.trm.red   P...
           in:         ( P... ) -> GUY.trm.gold  P...
           out:        ( P... ) -> GUY.trm.blue  P...
-        all_keys  = keys_from_rows @hrd_find_overlaps lo, hi
-        families  = Object.fromEntries ( [ k, '', ] for k from all_keys )
+          run:        ( P... ) -> GUY.trm.white P...
         #.........................................................................................................
-        for cid in [ lo .. hi ]
-          local_keys  = keys_from_rows @hrd_find_overlaps cid
-          chr         = String.fromCodePoint cid
-          for global_key from all_keys
-            color                   = if ( local_keys.has global_key ) then colors.in else colors.out
-            families[ global_key ] += color chr
-        R = ''
-        for key, line of families
-          echo f"#{key}:<15c;", line
+        for global_facet from global_facets
+          statement = SQL"""select * from hrd_runs where facet = $global_facet and lo <= $hi and hi >= $lo"""
+          gfph      = ' '.repeat global_facet.length
+          for cid in [ lo .. hi ]
+            local_keys  = facets_from_rows @hrd_find_overlaps cid
+            chr         = String.fromCodePoint cid
+            color       = if ( local_keys.has global_facet ) then colors.in else colors.out
+            points     += color chr
+          echo f"#{global_facet}:<15c; #{' '}:>6c; #{points}"
+          for row from @walk statement, { global_facet, lo, hi, }
+            id          = row.rowid.replace /^.*?=(\d+)/, '[$1]'
+            first       = ( Math.max row.lo, lo ) - lo
+            last        = ( Math.min row.hi, hi ) - lo
+            left        = '.'.repeat first
+            mid         = '—'.repeat last - first + 1
+            right       = '.'.repeat global_width - last
+            echo f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
+          points = ''
         #   #.......................................................................................................
         #   if rows.length is 0
         #     facet = '-:-'
