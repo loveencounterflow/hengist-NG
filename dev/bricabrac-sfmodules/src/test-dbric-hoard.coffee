@@ -410,7 +410,9 @@ insert_unicode_exclusions = ( h ) ->
                 and ( facet = $global_facet )
                 and ( lo <= $hi )
                 and ( hi >= $lo )
-              order by hi - lo asc, lo desc;"""
+              -- order by hi - lo asc, lo desc, key, value
+              order by _inord
+              ;"""
           gfph      = ' '.repeat global_facet.length
           for cid in [ lo .. hi ]
             local_keys  = facets_from_rows @hrd_find_overlaps cid
@@ -467,6 +469,10 @@ insert_unicode_exclusions = ( h ) ->
       # h.tbl_echo_as_text SQL"select * from _hrd_clan_has_conflict_2;"
       h.tbl_echo_as_text h.hrd_find_families
       # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
+      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      h.hrd_punch_1 ( cid_of 'U' ), null, key, true
+      h.hrd_punch_1 ( cid_of 'a' ), null, key, true
+      h.hrd_punch_1 ( cid_of 'u' ), null, key, true
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       ;null
     # #.......................................................................................................
