@@ -401,7 +401,7 @@ insert_unicode_exclusions = ( h ) ->
           warn:       ( P... ) -> GUY.trm.red   P...
           in:         ( P... ) -> GUY.trm.gold  P...
           out:        ( P... ) -> GUY.trm.blue  P...
-          run:        ( P... ) -> GUY.trm.white P...
+          run:        ( P... ) -> GUY.trm.grey  P...
         #.........................................................................................................
         for global_facet from global_facets
           statement = SQL"""select * from hrd_runs where facet = $global_facet and lo <= $hi and hi >= $lo"""
@@ -416,10 +416,10 @@ insert_unicode_exclusions = ( h ) ->
             id          = row.rowid.replace /^.*?=(\d+)/, '[$1]'
             first       = ( Math.max row.lo, lo ) - lo
             last        = ( Math.min row.hi, hi ) - lo
-            left        = '.'.repeat first
-            mid         = '—'.repeat last - first + 1
-            right       = '.'.repeat global_width - last
-            echo f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
+            left        = GUY.trm.grey '│'.repeat first
+            mid         = GUY.trm.gold '█'.repeat last - first + 1
+            right       = GUY.trm.grey '│'.repeat ( global_width - last )
+            echo colors.run f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
           points = ''
         #   #.......................................................................................................
         #   if rows.length is 0
