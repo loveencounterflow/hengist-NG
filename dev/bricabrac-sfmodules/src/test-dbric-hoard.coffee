@@ -433,7 +433,8 @@ insert_unicode_exclusions = ( h ) ->
             first       = ( Math.max row.lo, lo ) - lo
             last        = ( Math.min row.hi, hi ) - lo
             left        = GUY.trm.grey '│'.repeat first
-            mid         = GUY.trm.gold '█'.repeat last - first + 1
+            mid         = GUY.trm.gold '♦'.repeat last - first + 1
+            # mid         = GUY.trm.gold '█'.repeat last - first + 1
             right       = GUY.trm.grey '│'.repeat ( global_width - last )
             echo colors.run f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
           #.................................................................................................
@@ -468,8 +469,14 @@ insert_unicode_exclusions = ( h ) ->
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       h.hrd_punch_1 ( cid_of 'U' ), null, key, true
       h.hrd_punch_1 ( cid_of 'a' ), null, key, true
+      h.hrd_punch_1 ( cid_of 'b' ), null, key, false
+      h.hrd_punch_1 ( cid_of 'c' ), null, key, false
+      h.hrd_punch_1 ( cid_of 'd' ), null, key, false
       h.hrd_punch_1 ( cid_of 'u' ), null, key, true
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      h.hrd_punch_1 ( cid_of 'c' ), ( cid_of 'x' ), key, true
+      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      echo row for row from h.walk SQL"select * from hrd_normalization where is_normal = false;"
       ;null
     # #.......................................................................................................
     # do =>
