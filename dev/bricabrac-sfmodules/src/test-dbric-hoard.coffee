@@ -417,7 +417,7 @@ insert_unicode_exclusions = ( h ) ->
                 and ( lo <= $hi )
                 and ( hi >= $lo )
               -- order by hi - lo asc, lo desc, key, value
-              order by _inord desc
+              order by inorn desc
               ;"""
           #.................................................................................................
           points = ''
@@ -433,7 +433,8 @@ insert_unicode_exclusions = ( h ) ->
             first       = ( Math.max row.lo, lo ) - lo
             last        = ( Math.min row.hi, hi ) - lo
             left        = GUY.trm.grey '│'.repeat first
-            mid         = GUY.trm.gold '♦'.repeat last - first + 1
+            mid         = GUY.trm.gold '🮊'.repeat last - first + 1
+            # mid         = GUY.trm.gold '♦'.repeat last - first + 1
             # mid         = GUY.trm.gold '█'.repeat last - first + 1
             right       = GUY.trm.grey '│'.repeat ( global_width - last )
             echo colors.run f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
