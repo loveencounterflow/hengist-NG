@@ -58,13 +58,13 @@ cid_of = ( x ) -> x.codePointAt 0
 
 #===========================================================================================================
 insert_unicode_exclusions = ( h ) ->
-  h.statements.hrd_insert_run.run { lo: -Infinity, hi:        -1, key: '$x', value: "negative CIDs",   }
-  h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x0000, key: '$x', value: "zero bytes",      }
-  h.statements.hrd_insert_run.run { lo:    0xd800, hi:    0xdbff, key: '$x', value: "high surrogates", }
-  h.statements.hrd_insert_run.run { lo:    0xdc00, hi:    0xdfff, key: '$x', value: "low surrogates",  }
-  h.statements.hrd_insert_run.run { lo:    0xfdd0, hi:    0xfdef, key: '$x', value: "noncharacters",   }
-  h.statements.hrd_insert_run.run { lo:    0xfffe, hi:    0xffff, key: '$x', value: "noncharacters",   }
-  h.statements.hrd_insert_run.run { lo:  0x110000, hi: +Infinity, key: '$x', value: "excessive CIDs",  }
+  h.statements._hrd_insert_run.run { lo: -Infinity, hi:        -1, key: '$x', value: "negative CIDs",   }
+  h.statements._hrd_insert_run.run { lo:    0x0000, hi:    0x0000, key: '$x', value: "zero bytes",      }
+  h.statements._hrd_insert_run.run { lo:    0xd800, hi:    0xdbff, key: '$x', value: "high surrogates", }
+  h.statements._hrd_insert_run.run { lo:    0xdc00, hi:    0xdfff, key: '$x', value: "low surrogates",  }
+  h.statements._hrd_insert_run.run { lo:    0xfdd0, hi:    0xfdef, key: '$x', value: "noncharacters",   }
+  h.statements._hrd_insert_run.run { lo:    0xfffe, hi:    0xffff, key: '$x', value: "noncharacters",   }
+  h.statements._hrd_insert_run.run { lo:  0x110000, hi: +Infinity, key: '$x', value: "excessive CIDs",  }
   ;null
 
 #===========================================================================================================
@@ -79,308 +79,306 @@ insert_unicode_exclusions = ( h ) ->
         ]
     #.......................................................................................................
     h = Hoard.rebuild()
-    @eq ( Ωdbrh___1 = -> 'std_get_tables'             in Object.keys h.statements ), true
-    @eq ( Ωdbrh___2 = -> 'hrd_find_runs'              in Object.keys h.statements ), true
-    @eq ( Ωdbrh___3 = -> 'hrd_insert_run'             in Object.keys h.statements ), true
-    @eq ( Ωdbrh___4 = -> 'hrd_find_overlaps'          in Object.keys h.statements ), true
-    @eq ( Ωdbrh___5 = -> 'hrd_find_overlaps_for_key'  in Object.keys h.statements ), true
-    @eq ( Ωdbrh___6 = -> 'hrd_find_runs_with_conflicts_1'         in Object.keys h.statements ), true
+    @eq ( Ωdbrh___1 = -> 'std_get_tables'         in Object.keys h.statements ), true
+    @eq ( Ωdbrh___2 = -> 'hrd_find_runs'          in Object.keys h.statements ), true
+    @eq ( Ωdbrh___3 = -> '_hrd_insert_run'        in Object.keys h.statements ), true
+    @eq ( Ωdbrh___4 = -> 'hrd_find_covering_runs' in Object.keys h.statements ), true
     #.......................................................................................................
     insert_unicode_exclusions h
-    h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
-    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: '"bar"',      }
+    h.statements._hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
+    h.statements._hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: '"bar"',      }
     #.......................................................................................................
     do =>
-      # echo row for row from rows = h.walk h.statements.hrd_find_runs
+      echo row for row from rows = h.walk h.statements.hrd_find_runs
       rows = h.walk h.statements.hrd_find_runs
-      @eq ( Ωdbrh___7 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' }
-      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }
-      @eq ( Ωdbrh___9 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' }
-      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' }
-      @eq ( Ωdbrh__11 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' }
-      @eq ( Ωdbrh__12 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' }
-      @eq ( Ωdbrh__13 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }
-      @eq ( Ωdbrh__14 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' }
-      @eq ( Ωdbrh__15 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' }
+      @eq ( Ωdbrh___7 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=1', inorn: 1, lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' }
+      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=8', inorn: 8, lo: -10, hi: 0, key: 'foo', value: '"bar"' }
+      @eq ( Ωdbrh___9 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=2', inorn: 2, lo: 0, hi: 0, key: '$x', value: 'zero bytes' }
+      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=9', inorn: 9, lo: 0, hi: 10, key: 'foo', value: '"bar"' }
+      @eq ( Ωdbrh__11 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=3', inorn: 3, lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' }
+      @eq ( Ωdbrh__12 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=4', inorn: 4, lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' }
+      @eq ( Ωdbrh__13 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=5', inorn: 5, lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__14 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=6', inorn: 6, lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__15 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=7', inorn: 7, lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' }
       @eq ( Ωdbrh__16 = -> rows.next().done   ), true
-      ;null
-    #.......................................................................................................
-    do =>
-      find_overlaps = h.statements.hrd_find_overlaps
-      # debug 'Ωdbrh__17', row for row from rows = h.walk find_overlaps, { lo: -0x1, hi: 0x0b, }
-      # debug 'Ωdbrh__18', row for row from rows = h.walk find_overlaps, { lo: -0x1, hi: 0x0b, }
-      #.....................................................................................................
-      lo      = -0x0001
-      hi      = +0x000b
-      seen    = new Set()
-      matcher = []
-      for n in [ lo .. hi ]
-        for { rowid, } from h.walk find_overlaps, { lo: n, hi: n, }
-          matcher.push rowid unless seen.has rowid
-          seen.add rowid
-      @eq ( Ωdbrh__19 = -> matcher.length ), 4
-      #.....................................................................................................
-      result = [ ( rowid for { rowid, } from h.walk find_overlaps, { lo, hi, } )..., ]
-      @eq ( Ωdbrh__20 = -> result ), matcher
-      ;null
-    #.......................................................................................................
-    do =>
-      find_overlaps   = h.statements.hrd_find_overlaps
-      find_conflicts  = h.statements.hrd_find_runs_with_conflicts_1
-      #.....................................................................................................
-      @eq ( Ωdbrh__21 = -> [ ( row for row from h.walk find_conflicts )..., ] ), []
-      @eq ( Ωdbrh__22 = -> [ ( h.hrd_find_runs_with_conflicts_1() )..., ]                 ), []
-      @eq ( Ωdbrh__23 = -> h.hrd_validate_1()                                   ), null
-      h.statements.hrd_insert_run.run { lo: -0x000a, hi: +0x0003, key: 'foo', value: '"fuz"',      }
-      #.....................................................................................................
-      seen    = new Set()
-      matcher = [
-        { key: 'foo', value_a: '"bar"', value_b: '"fuz"' },
-        { key: 'foo', value_a: '"bar"', value_b: '"fuz"' }, ]
-      #.....................................................................................................
-      result = []
-      for row from h.walk find_conflicts
-        result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
-      # echo row for row from result
-      @eq ( Ωdbrh__24 = -> result ), matcher
-      #.....................................................................................................
-      result = []
-      for row from h.hrd_find_runs_with_conflicts_1()
-        result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
-      # echo row for row from result
-      @eq ( Ωdbrh__25 = -> result ), matcher
-      #.....................................................................................................
-      @throws ( Ωdbrh__26 = -> h.hrd_validate_1() ), /found conflicts/
-      try h.hrd_validate_1() catch e then warn 'Ωdbrh__27', e.message
-      # echo row for row from h.walk SQL"select * from _hrd_family_has_conflict_1;"
-      rows = h.walk SQL"select * from _hrd_family_has_conflict_1;"
-      @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', has_conflict: 0 }
-      @eq ( Ωdbrh__29 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', has_conflict: 0 }
-      @eq ( Ωdbrh__30 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', has_conflict: 0 }
-      @eq ( Ωdbrh__31 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', has_conflict: 0 }
-      @eq ( Ωdbrh__32 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', has_conflict: 0 }
-      @eq ( Ωdbrh__33 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', has_conflict: 0 }
-      @eq ( Ωdbrh__34 = -> rows.next().value  ), { key: 'foo', value: '"bar"', has_conflict: 1 }
-      @eq ( Ωdbrh__35 = -> rows.next().value  ), { key: 'foo', value: '"fuz"', has_conflict: 1 }
-      @eq ( Ωdbrh__36 = -> rows.next().done   ), true
-      ;null
-    #.......................................................................................................
-    do =>
-      echo row for row from rows = h.hrd_find_runs_with_conflicts_1()
-      # rows = h.hrd_family_conflicts_1()
-    #.......................................................................................................
-    ;null
-
-  #---------------------------------------------------------------------------------------------------------
-  dbric_hoard_plugin_groups: ->
-    #.......................................................................................................
-    class Hoard extends Dbric_std
-      @plugins: [
-        dbric_hoard_plugin
-        ]
-    #.......................................................................................................
-    h = Hoard.rebuild()
-    insert_unicode_exclusions h
-    h.statements.hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
-    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: '"bar"',      }
-    h.statements.hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'nice', value: 'true',      }
-    #.......................................................................................................
-    do =>
-      # echo row for row from rows = h.walk h.statements._hrd_facet_groups
-      rows = h.walk h.statements._hrd_facet_groups
-      @eq ( Ωdbrh__37 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  runs: 1, }
-      @eq ( Ωdbrh__38 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', runs: 1, }
-      @eq ( Ωdbrh__39 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  runs: 1, }
-      @eq ( Ωdbrh__40 = -> rows.next().value  ), { key: '$x',   value: 'negative CIDs',   runs: 1, }
-      @eq ( Ωdbrh__41 = -> rows.next().value  ), { key: '$x',   value: 'noncharacters',   runs: 2, }
-      @eq ( Ωdbrh__42 = -> rows.next().value  ), { key: '$x',   value: 'zero bytes',      runs: 1, }
-      @eq ( Ωdbrh__43 = -> rows.next().value  ), { key: 'foo',  value: '"bar"',           runs: 2, }
-      @eq ( Ωdbrh__44 = -> rows.next().value  ), { key: 'nice', value: 'true',            runs: 1, }
-      @eq ( Ωdbrh__45 = -> rows.next().done   ), true
       ;null
     # #.......................................................................................................
     # do =>
-    #   # echo row for row from rows = h.hrd_find_runs_by_group()
-    #   rows = h.hrd_find_runs_by_group()
-    #   @eq ( Ωdbrh__46 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', runs: [ { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' } ] }
-    #   @eq ( Ωdbrh__47 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', runs: [ { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' } ] }
-    #   @eq ( Ωdbrh__48 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', runs: [ { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' } ] }
-    #   @eq ( Ωdbrh__49 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', runs: [ { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' } ] }
-    #   @eq ( Ωdbrh__50 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', runs: [ { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }, { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' } ] }
-    #   @eq ( Ωdbrh__51 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', runs: [ { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' } ] }
-    #   @eq ( Ωdbrh__52 = -> rows.next().value  ), { key: 'foo', value: '"bar"', runs: [ { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }, { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' } ] }
-    #   @eq ( Ωdbrh__53 = -> rows.next().value  ), { key: 'nice', value: 'true', runs: [ { rowid: 't:hrd:runs:V=+000000,+00000a,nice', lo: 0, hi: 10, key: 'nice', value: 'true' } ] }
-    #   @eq ( Ωdbrh__54 = -> rows.next().done   ), true
+    #   find_overlaps = h.statements.hrd_find_covering_runs
+    #   # debug 'Ωdbrh__17', row for row from rows = h.walk find_overlaps, { lo: -0x1, hi: 0x0b, }
+    #   # debug 'Ωdbrh__18', row for row from rows = h.walk find_overlaps, { lo: -0x1, hi: 0x0b, }
+    #   #.....................................................................................................
+    #   lo      = -0x0001
+    #   hi      = +0x000b
+    #   seen    = new Set()
+    #   matcher = []
+    #   for n in [ lo .. hi ]
+    #     for { rowid, } from h.walk find_overlaps, { lo: n, hi: n, }
+    #       matcher.push rowid unless seen.has rowid
+    #       seen.add rowid
+    #   @eq ( Ωdbrh__19 = -> matcher.length ), 4
+    #   #.....................................................................................................
+    #   result = [ ( rowid for { rowid, } from h.walk find_overlaps, { lo, hi, } )..., ]
+    #   @eq ( Ωdbrh__20 = -> result ), matcher
     #   ;null
-    #.......................................................................................................
-    do =>
-      # echo row for row from rows = h.hrd_find_families()
-      rows = h.hrd_find_families()
-      @eq ( Ωdbrh__55 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  first: 1114112,   last: Infinity, runs: 1, has_conflict: false, is_normal: true, }
-      @eq ( Ωdbrh__56 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', first: 55296,     last: 56319,    runs: 1, has_conflict: false, is_normal: true, }
-      @eq ( Ωdbrh__57 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  first: 56320,     last: 57343,    runs: 1, has_conflict: false, is_normal: true, }
-      @eq ( Ωdbrh__58 = -> rows.next().value  ), { key: '$x',   value: 'negative CIDs',   first: -Infinity, last: -1,       runs: 1, has_conflict: false, is_normal: true, }
-      @eq ( Ωdbrh__59 = -> rows.next().value  ), { key: '$x',   value: 'noncharacters',   first: 64976,     last: 65535,    runs: 2, has_conflict: false, is_normal: true, }
-      @eq ( Ωdbrh__60 = -> rows.next().value  ), { key: '$x',   value: 'zero bytes',      first: 0,         last: 0,        runs: 1, has_conflict: false, is_normal: true, }
-      @eq ( Ωdbrh__61 = -> rows.next().value  ), { key: 'foo',  value: '"bar"',           first: -10,       last: 10,       runs: 2, has_conflict: true,  is_normal: false, }
-      @eq ( Ωdbrh__62 = -> rows.next().value  ), { key: 'nice', value: 'true',            first: 0,         last: 10,       runs: 1, has_conflict: true,  is_normal: false, }
-      @eq ( Ωdbrh__63 = -> rows.next().done   ), true
+    # #.......................................................................................................
+    # do =>
+    #   find_overlaps   = h.statements.hrd_find_covering_runs
+    #   find_conflicts  = h.statements.hrd_find_runs_with_conflicts_1
+    #   #.....................................................................................................
+    #   @eq ( Ωdbrh__21 = -> [ ( row for row from h.walk find_conflicts )..., ] ), []
+    #   @eq ( Ωdbrh__22 = -> [ ( h.hrd_find_runs_with_conflicts_1() )..., ]                 ), []
+    #   @eq ( Ωdbrh__23 = -> h.hrd_validate_1()                                   ), null
+    #   h.statements._hrd_insert_run.run { lo: -0x000a, hi: +0x0003, key: 'foo', value: '"fuz"',      }
+    #   #.....................................................................................................
+    #   seen    = new Set()
+    #   matcher = [
+    #     { key: 'foo', value_a: '"bar"', value_b: '"fuz"' },
+    #     { key: 'foo', value_a: '"bar"', value_b: '"fuz"' }, ]
+    #   #.....................................................................................................
+    #   result = []
+    #   for row from h.walk find_conflicts
+    #     result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
+    #   # echo row for row from result
+    #   @eq ( Ωdbrh__24 = -> result ), matcher
+    #   #.....................................................................................................
+    #   result = []
+    #   for row from h.hrd_find_runs_with_conflicts_1()
+    #     result.push { key: row.key_a, value_a: row.value_a, value_b: row.value_b, }
+    #   # echo row for row from result
+    #   @eq ( Ωdbrh__25 = -> result ), matcher
+    #   #.....................................................................................................
+    #   @throws ( Ωdbrh__26 = -> h.hrd_validate_1() ), /found conflicts/
+    #   try h.hrd_validate_1() catch e then warn 'Ωdbrh__27', e.message
+    #   # echo row for row from h.walk SQL"select * from _hrd_family_has_conflict_1;"
+    #   rows = h.walk SQL"select * from _hrd_family_has_conflict_1;"
+    #   @eq ( Ωdbrh__28 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', has_conflict: 0 }
+    #   @eq ( Ωdbrh__29 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', has_conflict: 0 }
+    #   @eq ( Ωdbrh__30 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', has_conflict: 0 }
+    #   @eq ( Ωdbrh__31 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', has_conflict: 0 }
+    #   @eq ( Ωdbrh__32 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', has_conflict: 0 }
+    #   @eq ( Ωdbrh__33 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', has_conflict: 0 }
+    #   @eq ( Ωdbrh__34 = -> rows.next().value  ), { key: 'foo', value: '"bar"', has_conflict: 1 }
+    #   @eq ( Ωdbrh__35 = -> rows.next().value  ), { key: 'foo', value: '"fuz"', has_conflict: 1 }
+    #   @eq ( Ωdbrh__36 = -> rows.next().done   ), true
       ;null
+    # #.......................................................................................................
+    # do =>
+    #   echo row for row from rows = h.hrd_find_runs_with_conflicts_1()
+    #   # rows = h.hrd_family_conflicts_1()
     #.......................................................................................................
     ;null
 
-  #---------------------------------------------------------------------------------------------------------
-  dbric_hoard_plugin_normalization: ->
-    #.......................................................................................................
-    class Hoard extends Dbric_std
-      @plugins: [
-        dbric_hoard_plugin
-        ]
-    #.......................................................................................................
-    do =>
-      h = Hoard.rebuild()
-      #.....................................................................................................
-      debug 'Ωdbrh__64', row for row from rows = h.walk SQL"select * from hrd_normalization;"
-      rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      @eq ( Ωdbrh__65 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.statements.hrd_insert_run.run { lo: 0x0010, hi: 0x0015, key: 'a', value: '"A"', }
-      h.statements.hrd_insert_run.run { lo: 0x0020, hi: 0x0025, key: 'a', value: '"A"', }
-      #.....................................................................................................
-      # debug 'Ωdbrh__66', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      @eq ( Ωdbrh__67 = -> rows.next().value  ), { d: 'a,"A",1' }
-      @eq ( Ωdbrh__68 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.statements.hrd_insert_run.run { lo: 0x0016, hi: 0x0016, key: 'a', value: '"A"', }
-      #.....................................................................................................
-      # debug 'Ωdbrh__69', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      @eq ( Ωdbrh__70 = -> rows.next().value  ), { d: 'a,"A",0' }
-      @eq ( Ωdbrh__71 = -> rows.next().done   ), true
-      #.....................................................................................................
-      rows = h.hrd_find_nonnormal_families()
-      @eq ( Ωdbrh__72 = -> rows.next().value  ), { key: 'a', value: '"A"' }
-      @eq ( Ωdbrh__73 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.statements.hrd_insert_run.run { lo: 0x0010, hi: 0x0015, key: 'b', value: '"B"', }
-      h.statements.hrd_insert_run.run { lo: 0x0020, hi: 0x0025, key: 'b', value: '"B"', }
-      # debug 'Ωdbrh__74', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      @eq ( Ωdbrh__75 = -> rows.next().value  ), { d: 'a,"A",0' }
-      @eq ( Ωdbrh__76 = -> rows.next().value  ), { d: 'b,"B",1' }
-      @eq ( Ωdbrh__77 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.statements.hrd_insert_run.run { lo: 0x0012, hi: 0x0017, key: 'b', value: '"B"', }
-      # debug 'Ωdbrh__78', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
-      @eq ( Ωdbrh__79 = -> rows.next().value  ), { d: 'a,"A",0' }
-      @eq ( Ωdbrh__80 = -> rows.next().value  ), { d: 'b,"B",0' }
-      @eq ( Ωdbrh__81 = -> rows.next().done   ), true
-      #.....................................................................................................
-      rows = h.hrd_find_nonnormal_families()
-      @eq ( Ωdbrh__82 = -> rows.next().value  ), { key: 'a', value: '"A"' }
-      @eq ( Ωdbrh__83 = -> rows.next().value  ), { key: 'b', value: '"B"' }
-      @eq ( Ωdbrh__84 = -> rows.next().done   ), true
-      #.....................................................................................................
-      debug 'Ωdbrh__85', row for row from rows = h.hrd_find_families()
-      #.....................................................................................................
-      ;null
-    #.......................................................................................................
-    ;null
+  # #---------------------------------------------------------------------------------------------------------
+  # dbric_hoard_plugin_groups: ->
+  #   #.......................................................................................................
+  #   class Hoard extends Dbric_std
+  #     @plugins: [
+  #       dbric_hoard_plugin
+  #       ]
+  #   #.......................................................................................................
+  #   h = Hoard.rebuild()
+  #   insert_unicode_exclusions h
+  #   h.statements._hrd_insert_run.run { lo:   -0x000a, hi:    0x0000, key: 'foo', value: '"bar"',      }
+  #   h.statements._hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'foo', value: '"bar"',      }
+  #   h.statements._hrd_insert_run.run { lo:    0x0000, hi:    0x000a, key: 'nice', value: 'true',      }
+  #   #.......................................................................................................
+  #   do =>
+  #     # echo row for row from rows = h.walk h.statements._hrd_facet_groups
+  #     rows = h.walk h.statements._hrd_facet_groups
+  #     @eq ( Ωdbrh__37 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  runs: 1, }
+  #     @eq ( Ωdbrh__38 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', runs: 1, }
+  #     @eq ( Ωdbrh__39 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  runs: 1, }
+  #     @eq ( Ωdbrh__40 = -> rows.next().value  ), { key: '$x',   value: 'negative CIDs',   runs: 1, }
+  #     @eq ( Ωdbrh__41 = -> rows.next().value  ), { key: '$x',   value: 'noncharacters',   runs: 2, }
+  #     @eq ( Ωdbrh__42 = -> rows.next().value  ), { key: '$x',   value: 'zero bytes',      runs: 1, }
+  #     @eq ( Ωdbrh__43 = -> rows.next().value  ), { key: 'foo',  value: '"bar"',           runs: 2, }
+  #     @eq ( Ωdbrh__44 = -> rows.next().value  ), { key: 'nice', value: 'true',            runs: 1, }
+  #     @eq ( Ωdbrh__45 = -> rows.next().done   ), true
+  #     ;null
+  #   # #.......................................................................................................
+  #   # do =>
+  #   #   # echo row for row from rows = h.hrd_find_runs_by_group()
+  #   #   rows = h.hrd_find_runs_by_group()
+  #   #   @eq ( Ωdbrh__46 = -> rows.next().value  ), { key: '$x', value: 'excessive CIDs', runs: [ { rowid: 't:hrd:runs:V=+110000,+Infinity,$x', lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' } ] }
+  #   #   @eq ( Ωdbrh__47 = -> rows.next().value  ), { key: '$x', value: 'high surrogates', runs: [ { rowid: 't:hrd:runs:V=+00d800,+00dbff,$x', lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' } ] }
+  #   #   @eq ( Ωdbrh__48 = -> rows.next().value  ), { key: '$x', value: 'low surrogates', runs: [ { rowid: 't:hrd:runs:V=+00dc00,+00dfff,$x', lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' } ] }
+  #   #   @eq ( Ωdbrh__49 = -> rows.next().value  ), { key: '$x', value: 'negative CIDs', runs: [ { rowid: 't:hrd:runs:V=-Infinity,-000001,$x', lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' } ] }
+  #   #   @eq ( Ωdbrh__50 = -> rows.next().value  ), { key: '$x', value: 'noncharacters', runs: [ { rowid: 't:hrd:runs:V=+00fdd0,+00fdef,$x', lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }, { rowid: 't:hrd:runs:V=+00fffe,+00ffff,$x', lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' } ] }
+  #   #   @eq ( Ωdbrh__51 = -> rows.next().value  ), { key: '$x', value: 'zero bytes', runs: [ { rowid: 't:hrd:runs:V=+000000,+000000,$x', lo: 0, hi: 0, key: '$x', value: 'zero bytes' } ] }
+  #   #   @eq ( Ωdbrh__52 = -> rows.next().value  ), { key: 'foo', value: '"bar"', runs: [ { rowid: 't:hrd:runs:V=-00000a,+000000,foo', lo: -10, hi: 0, key: 'foo', value: '"bar"' }, { rowid: 't:hrd:runs:V=+000000,+00000a,foo', lo: 0, hi: 10, key: 'foo', value: '"bar"' } ] }
+  #   #   @eq ( Ωdbrh__53 = -> rows.next().value  ), { key: 'nice', value: 'true', runs: [ { rowid: 't:hrd:runs:V=+000000,+00000a,nice', lo: 0, hi: 10, key: 'nice', value: 'true' } ] }
+  #   #   @eq ( Ωdbrh__54 = -> rows.next().done   ), true
+  #   #   ;null
+  #   #.......................................................................................................
+  #   do =>
+  #     # echo row for row from rows = h.hrd_find_families()
+  #     rows = h.hrd_find_families()
+  #     @eq ( Ωdbrh__55 = -> rows.next().value  ), { key: '$x',   value: 'excessive CIDs',  first: 1114112,   last: Infinity, runs: 1, has_conflict: false, is_normal: true, }
+  #     @eq ( Ωdbrh__56 = -> rows.next().value  ), { key: '$x',   value: 'high surrogates', first: 55296,     last: 56319,    runs: 1, has_conflict: false, is_normal: true, }
+  #     @eq ( Ωdbrh__57 = -> rows.next().value  ), { key: '$x',   value: 'low surrogates',  first: 56320,     last: 57343,    runs: 1, has_conflict: false, is_normal: true, }
+  #     @eq ( Ωdbrh__58 = -> rows.next().value  ), { key: '$x',   value: 'negative CIDs',   first: -Infinity, last: -1,       runs: 1, has_conflict: false, is_normal: true, }
+  #     @eq ( Ωdbrh__59 = -> rows.next().value  ), { key: '$x',   value: 'noncharacters',   first: 64976,     last: 65535,    runs: 2, has_conflict: false, is_normal: true, }
+  #     @eq ( Ωdbrh__60 = -> rows.next().value  ), { key: '$x',   value: 'zero bytes',      first: 0,         last: 0,        runs: 1, has_conflict: false, is_normal: true, }
+  #     @eq ( Ωdbrh__61 = -> rows.next().value  ), { key: 'foo',  value: '"bar"',           first: -10,       last: 10,       runs: 2, has_conflict: true,  is_normal: false, }
+  #     @eq ( Ωdbrh__62 = -> rows.next().value  ), { key: 'nice', value: 'true',            first: 0,         last: 10,       runs: 1, has_conflict: true,  is_normal: false, }
+  #     @eq ( Ωdbrh__63 = -> rows.next().done   ), true
+  #     ;null
+  #   #.......................................................................................................
+  #   ;null
 
-  #---------------------------------------------------------------------------------------------------------
-  dbric_hoard_plugin_normalization_and_conflict_detection: ->
-    #.......................................................................................................
-    class Hoard extends Dbric_std
-      @plugins: [
-        dbric_hoard_plugin
-        ]
-    #.......................................................................................................
-    do =>
-      h = Hoard.rebuild()
-      #.....................................................................................................
-      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
-      # echo(); echo row for row from h.hrd_find_runs()
-      rows = h.hrd_find_runs()
-      @eq ( Ωdbrh__86 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+00005a,vowel', lo: 65, hi: 90, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh__87 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.hrd_punch_1 { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
-      # echo(); echo row for row from h.hrd_find_runs()
-      rows = h.hrd_find_runs()
-      @eq ( Ωdbrh__88 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh__89 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+00005a,vowel', lo: 66, hi: 90, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh__90 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.hrd_punch_1 ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
-      # echo(); echo row for row from h.hrd_find_runs()
-      rows = h.hrd_find_runs()
-      @eq ( Ωdbrh__91 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh__92 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh__93 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh__94 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+00005a,vowel', lo: 70, hi: 90, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh__95 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.hrd_punch_1 ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
-      # echo(); echo row for row from h.hrd_find_runs()
-      rows = h.hrd_find_runs()
-      @eq ( Ωdbrh__96 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh__97 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh__98 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh__99 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+000048,vowel', lo: 70, hi: 72, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_100 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000049,+000049,vowel', lo: 73, hi: 73, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_101 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00005a,vowel', lo: 74, hi: 90, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_102 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.hrd_punch_1 ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
-      # echo(); echo row for row from h.hrd_find_runs()
-      rows = h.hrd_find_runs()
-      @eq ( Ωdbrh_103 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_104 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_105 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_106 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+000048,vowel', lo: 70, hi: 72, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_107 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000049,+000049,vowel', lo: 73, hi: 73, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_108 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00004e,vowel', lo: 74, hi: 78, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_109 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004f,+00004f,vowel', lo: 79, hi: 79, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_110 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000050,+00005a,vowel', lo: 80, hi: 90, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_111 = -> rows.next().done   ), true
-      #.....................................................................................................
-      h.hrd_punch_1 ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
-      # echo(); echo row for row from h.hrd_find_runs()
-      rows = h.hrd_find_runs()
-      @eq ( Ωdbrh_112 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_113 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_114 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_115 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+000048,vowel', lo: 70, hi: 72, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_116 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000049,+000049,vowel', lo: 73, hi: 73, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_117 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00004e,vowel', lo: 74, hi: 78, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_118 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004f,+00004f,vowel', lo: 79, hi: 79, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_119 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000050,+000054,vowel', lo: 80, hi: 84, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_120 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000055,+000055,vowel', lo: 85, hi: 85, key: 'vowel', value: 'true' }
-      @eq ( Ωdbrh_121 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000056,+00005a,vowel', lo: 86, hi: 90, key: 'vowel', value: 'false' }
-      @eq ( Ωdbrh_122 = -> rows.next().done   ), true
-      #.....................................................................................................
-      echo row for row from h.hrd_find_families()
-      rows = h.hrd_find_families()
-      @eq ( Ωdbrh_123 = -> rows.next().value  ), { key: 'vowel', value: 'false',  first: 66, last: 90, runs: 5, has_conflict: true, is_normal: false, }
-      @eq ( Ωdbrh_124 = -> rows.next().value  ), { key: 'vowel', value: 'true',   first: 65, last: 85, runs: 5, has_conflict: true, is_normal: false, }
-      @eq ( Ωdbrh_125 = -> rows.next().done   ), true
-      #.....................................................................................................
-      chr_string = ''
-      for cid in [ ( cid_of 'A' ) .. ( cid_of 'Z' ) ]
-        rows        = [ ( h.hrd_find_overlaps cid )..., ]
-        is_vowel    = rows[ 0 ].value
-        color       = if is_vowel then white else blue
-        chr         = String.fromCodePoint cid
-        chr_string += color chr
-        @eq ( Ωdbrh_126 = -> rows.length              ), 1
-        @eq ( Ωdbrh_127 = -> rows[ 0 ].key            ), 'vowel'
-        @eq ( Ωdbrh_128 = -> type_of is_vowel         ), 'boolean'
-      debug 'Ωdbrh_129', chr_string
-      ;null
-    #.......................................................................................................
-    ;null
+  # #---------------------------------------------------------------------------------------------------------
+  # dbric_hoard_plugin_normalization: ->
+  #   #.......................................................................................................
+  #   class Hoard extends Dbric_std
+  #     @plugins: [
+  #       dbric_hoard_plugin
+  #       ]
+  #   #.......................................................................................................
+  #   do =>
+  #     h = Hoard.rebuild()
+  #     #.....................................................................................................
+  #     debug 'Ωdbrh__64', row for row from rows = h.walk SQL"select * from hrd_normalization;"
+  #     rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     @eq ( Ωdbrh__65 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.statements._hrd_insert_run.run { lo: 0x0010, hi: 0x0015, key: 'a', value: '"A"', }
+  #     h.statements._hrd_insert_run.run { lo: 0x0020, hi: 0x0025, key: 'a', value: '"A"', }
+  #     #.....................................................................................................
+  #     # debug 'Ωdbrh__66', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     @eq ( Ωdbrh__67 = -> rows.next().value  ), { d: 'a,"A",1' }
+  #     @eq ( Ωdbrh__68 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.statements._hrd_insert_run.run { lo: 0x0016, hi: 0x0016, key: 'a', value: '"A"', }
+  #     #.....................................................................................................
+  #     # debug 'Ωdbrh__69', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     @eq ( Ωdbrh__70 = -> rows.next().value  ), { d: 'a,"A",0' }
+  #     @eq ( Ωdbrh__71 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     rows = h.hrd_find_nonnormal_families()
+  #     @eq ( Ωdbrh__72 = -> rows.next().value  ), { key: 'a', value: '"A"' }
+  #     @eq ( Ωdbrh__73 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.statements._hrd_insert_run.run { lo: 0x0010, hi: 0x0015, key: 'b', value: '"B"', }
+  #     h.statements._hrd_insert_run.run { lo: 0x0020, hi: 0x0025, key: 'b', value: '"B"', }
+  #     # debug 'Ωdbrh__74', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     @eq ( Ωdbrh__75 = -> rows.next().value  ), { d: 'a,"A",0' }
+  #     @eq ( Ωdbrh__76 = -> rows.next().value  ), { d: 'b,"B",1' }
+  #     @eq ( Ωdbrh__77 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.statements._hrd_insert_run.run { lo: 0x0012, hi: 0x0017, key: 'b', value: '"B"', }
+  #     # debug 'Ωdbrh__78', row for row from rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     rows = h.walk SQL"select printf( '%s,%s,%d', key, value, is_normal ) as d from hrd_normalization;"
+  #     @eq ( Ωdbrh__79 = -> rows.next().value  ), { d: 'a,"A",0' }
+  #     @eq ( Ωdbrh__80 = -> rows.next().value  ), { d: 'b,"B",0' }
+  #     @eq ( Ωdbrh__81 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     rows = h.hrd_find_nonnormal_families()
+  #     @eq ( Ωdbrh__82 = -> rows.next().value  ), { key: 'a', value: '"A"' }
+  #     @eq ( Ωdbrh__83 = -> rows.next().value  ), { key: 'b', value: '"B"' }
+  #     @eq ( Ωdbrh__84 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     debug 'Ωdbrh__85', row for row from rows = h.hrd_find_families()
+  #     #.....................................................................................................
+  #     ;null
+  #   #.......................................................................................................
+  #   ;null
+
+  # #---------------------------------------------------------------------------------------------------------
+  # dbric_hoard_plugin_normalization_and_conflict_detection: ->
+  #   #.......................................................................................................
+  #   class Hoard extends Dbric_std
+  #     @plugins: [
+  #       dbric_hoard_plugin
+  #       ]
+  #   #.......................................................................................................
+  #   do =>
+  #     h = Hoard.rebuild()
+  #     #.....................................................................................................
+  #     h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
+  #     # echo(); echo row for row from h.hrd_find_runs()
+  #     rows = h.hrd_find_runs()
+  #     @eq ( Ωdbrh__86 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+00005a,vowel', lo: 65, hi: 90, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh__87 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.hrd_punch_1 { lo: ( cid_of 'A' ), hi: ( cid_of 'A' ), key: 'vowel', value: true, }
+  #     # echo(); echo row for row from h.hrd_find_runs()
+  #     rows = h.hrd_find_runs()
+  #     @eq ( Ωdbrh__88 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh__89 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+00005a,vowel', lo: 66, hi: 90, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh__90 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.hrd_punch_1 ( cid_of 'E' ), ( cid_of 'E' ), 'vowel', true
+  #     # echo(); echo row for row from h.hrd_find_runs()
+  #     rows = h.hrd_find_runs()
+  #     @eq ( Ωdbrh__91 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh__92 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh__93 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh__94 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+00005a,vowel', lo: 70, hi: 90, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh__95 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.hrd_punch_1 ( cid_of 'I' ), ( cid_of 'I' ), 'vowel', true
+  #     # echo(); echo row for row from h.hrd_find_runs()
+  #     rows = h.hrd_find_runs()
+  #     @eq ( Ωdbrh__96 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh__97 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh__98 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh__99 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+000048,vowel', lo: 70, hi: 72, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_100 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000049,+000049,vowel', lo: 73, hi: 73, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_101 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00005a,vowel', lo: 74, hi: 90, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_102 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.hrd_punch_1 ( cid_of 'O' ), ( cid_of 'O' ), 'vowel', true
+  #     # echo(); echo row for row from h.hrd_find_runs()
+  #     rows = h.hrd_find_runs()
+  #     @eq ( Ωdbrh_103 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_104 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_105 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_106 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+000048,vowel', lo: 70, hi: 72, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_107 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000049,+000049,vowel', lo: 73, hi: 73, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_108 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00004e,vowel', lo: 74, hi: 78, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_109 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004f,+00004f,vowel', lo: 79, hi: 79, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_110 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000050,+00005a,vowel', lo: 80, hi: 90, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_111 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     h.hrd_punch_1 ( cid_of 'U' ), ( cid_of 'U' ), 'vowel', true
+  #     # echo(); echo row for row from h.hrd_find_runs()
+  #     rows = h.hrd_find_runs()
+  #     @eq ( Ωdbrh_112 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000041,+000041,vowel', lo: 65, hi: 65, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_113 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000042,+000044,vowel', lo: 66, hi: 68, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_114 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000045,+000045,vowel', lo: 69, hi: 69, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_115 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000046,+000048,vowel', lo: 70, hi: 72, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_116 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000049,+000049,vowel', lo: 73, hi: 73, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_117 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004a,+00004e,vowel', lo: 74, hi: 78, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_118 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+00004f,+00004f,vowel', lo: 79, hi: 79, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_119 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000050,+000054,vowel', lo: 80, hi: 84, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_120 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000055,+000055,vowel', lo: 85, hi: 85, key: 'vowel', value: 'true' }
+  #     @eq ( Ωdbrh_121 = -> rows.next().value  ), { rowid: 't:hrd:runs:V=+000056,+00005a,vowel', lo: 86, hi: 90, key: 'vowel', value: 'false' }
+  #     @eq ( Ωdbrh_122 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     echo row for row from h.hrd_find_families()
+  #     rows = h.hrd_find_families()
+  #     @eq ( Ωdbrh_123 = -> rows.next().value  ), { key: 'vowel', value: 'false',  first: 66, last: 90, runs: 5, has_conflict: true, is_normal: false, }
+  #     @eq ( Ωdbrh_124 = -> rows.next().value  ), { key: 'vowel', value: 'true',   first: 65, last: 85, runs: 5, has_conflict: true, is_normal: false, }
+  #     @eq ( Ωdbrh_125 = -> rows.next().done   ), true
+  #     #.....................................................................................................
+  #     chr_string = ''
+  #     for cid in [ ( cid_of 'A' ) .. ( cid_of 'Z' ) ]
+  #       rows        = [ ( h.hrd_find_covering_runs cid )..., ]
+  #       is_vowel    = rows[ 0 ].value
+  #       color       = if is_vowel then white else blue
+  #       chr         = String.fromCodePoint cid
+  #       chr_string += color chr
+  #       @eq ( Ωdbrh_126 = -> rows.length              ), 1
+  #       @eq ( Ωdbrh_127 = -> rows[ 0 ].key            ), 'vowel'
+  #       @eq ( Ωdbrh_128 = -> type_of is_vowel         ), 'boolean'
+  #     debug 'Ωdbrh_129', chr_string
+  #     ;null
+  #   #.......................................................................................................
+  #   ;null
 
   #---------------------------------------------------------------------------------------------------------
   dbric_hoard_plugin_normalization_and_conflict_detection_2: ->
@@ -394,7 +392,7 @@ insert_unicode_exclusions = ( h ) ->
       visualize: ({ lo, hi, }) ->
         facet_from_row    = ( row ) -> "#{row.key}:#{row.value_json}"
         facets_from_rows  = ( rows ) -> new Set [ ( new Set ( ( facet_from_row row ) for row from rows ) )..., ].sort()
-        global_facets     = facets_from_rows @hrd_find_overlaps lo, hi
+        global_facets     = facets_from_rows @hrd_find_covering_runs lo, hi
         global_width      = hi - lo
         colors            =
           fallback:   ( P... ) -> GUY.trm.grey  P...
@@ -422,7 +420,7 @@ insert_unicode_exclusions = ( h ) ->
           #.................................................................................................
           points = ''
           for cid in [ lo .. hi ]
-            local_keys  = facets_from_rows @hrd_find_overlaps cid
+            local_keys  = facets_from_rows @hrd_find_covering_runs cid
             chr         = String.fromCodePoint cid
             color       = if ( local_keys.has global_facet ) then colors.in else colors.out
             points     += color chr
@@ -439,8 +437,7 @@ insert_unicode_exclusions = ( h ) ->
             # mid         = GUY.trm.gold '█'.repeat last - first + 1
             right       = GUY.trm.grey GUY.trm.reverse '🮊'.repeat ( global_width - last + 1 )
             echo colors.run f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
-          #.................................................................................................
-        echo row for row from @walk SQL"select * from hrd_normalization where is_normal = false;"
+        #...................................................................................................
         ;null
     #.......................................................................................................
     do =>
@@ -454,33 +451,31 @@ insert_unicode_exclusions = ( h ) ->
       h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), key, false
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       # h.hrd_add_run ( cid_of 'A' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'A' ), null, key, true
+      h.hrd_add_run ( cid_of 'A' ), null, key, true
       # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      h.hrd_punch_1 ( cid_of 'E' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'I' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'O' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'U' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'N' ), ( cid_of 'Z' ), 'upper', true
+      h.hrd_add_run ( cid_of 'E' ), null, key, true
+      h.hrd_add_run ( cid_of 'I' ), null, key, true
+      h.hrd_add_run ( cid_of 'O' ), null, key, true
+      h.hrd_add_run ( cid_of 'U' ), null, key, true
+      h.hrd_add_run ( cid_of 'N' ), ( cid_of 'Z' ), 'upper', true
       h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_1;"
-      h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2;"
-      h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2 where key = $key and value != 'true';", { key, }
+      # h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_1;"
+      # h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2;"
+      # h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2 where key = $key and value != 'true';", { key, }
       # h.tbl_echo_as_text SQL"select * from _hrd_family_has_conflict_1;"
       # h.tbl_echo_as_text SQL"select * from _hrd_clan_has_conflict_2;"
-      h.tbl_echo_as_text h.hrd_find_families
+      # h.tbl_echo_as_text h.hrd_find_families
       # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_punch_1 ( cid_of 'U' ), null, key, true
+      h.hrd_add_run ( cid_of 'U' ), null, key, true
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_punch_1 ( cid_of 'a' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'd' ), null, key, false
-      h.hrd_punch_1 ( cid_of 'u' ), null, key, true
-      h.hrd_punch_1 ( cid_of 'c' ), ( cid_of 'x' ), key, true
+      h.hrd_add_run ( cid_of 'a' ), null, key, true
+      h.hrd_add_run ( cid_of 'd' ), null, key, false
+      h.hrd_add_run ( cid_of 'u' ), null, key, true
+      h.hrd_add_run ( cid_of 'c' ), ( cid_of 'x' ), key, true
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_normalize()
-      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_punch_1 ( cid_of 'b' ), null, key, false
-      h.hrd_punch_1 ( cid_of 'c' ), null, key, false
+      h.hrd_add_run ( cid_of 'b' ), null, key, false
+      h.hrd_add_run ( cid_of 'c' ), null, key, false
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       # for point in [ ( cid_of 'A' ) .. ( cid_of 'z' ) ]
       h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'even', true
@@ -496,30 +491,8 @@ insert_unicode_exclusions = ( h ) ->
           ### TAINT complain if key taken ###
           R[ key ] = value
         debug 'Ωdbrh_130', chr, R
-      # h.hrd_normalize()
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       ;null
-    # #.......................................................................................................
-    # do =>
-    #   h   = Hoard_v.rebuild()
-    #   key = 'vowel'
-    #   #.....................................................................................................
-    #   h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-    #   h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), key, false
-    #   h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), key, false
-    #   # h.hrd_add_run ( cid_of 'A' ), null, key, true
-    #   h.hrd_punch_1 ( cid_of 'A' ), null, key, true
-    #   # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-    #   # h.hrd_add_run ( cid_of 'E' ), null, key, true
-    #   # h.hrd_add_run ( cid_of 'I' ), null, key, true
-    #   h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-    #   h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_1;"
-    #   h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2;"
-    #   h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2 where key = $key and value != 'true';", { key, }
-    #   # h.tbl_echo_as_text SQL"select * from _hrd_family_has_conflict_1;"
-    #   # h.tbl_echo_as_text SQL"select * from _hrd_clan_has_conflict_2;"
-    #   h.tbl_echo_as_text h.hrd_find_families
-    #   # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
     #.......................................................................................................
     ;null
 
@@ -536,8 +509,8 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: true, report_checks: true, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
-  # ( new Test guytest_cfg ).test { tests, }
-  ( new Test guytest_cfg ).test { dbric_hoard_plugin_normalization_and_conflict_detection_2: tests.dbric_hoard_plugin_normalization_and_conflict_detection_2, }
+  ( new Test guytest_cfg ).test { tests, }
+  # ( new Test guytest_cfg ).test { dbric_hoard_plugin_normalization_and_conflict_detection_2: tests.dbric_hoard_plugin_normalization_and_conflict_detection_2, }
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
