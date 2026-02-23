@@ -174,48 +174,48 @@ insert_unicode_exclusions = ( h ) ->
       #.....................................................................................................
       h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), key, false
       h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), key, false
-      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       # h.hrd_add_run ( cid_of 'A' ), null, key, true
-      h.hrd_add_run ( cid_of 'A' ), null, key, true
-      # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      h.hrd_add_run ( cid_of 'E' ), null, key, true
-      h.hrd_add_run ( cid_of 'I' ), null, key, true
-      h.hrd_add_run ( cid_of 'O' ), null, key, true
-      h.hrd_add_run ( cid_of 'U' ), null, key, true
+      # h.hrd_add_run ( cid_of 'A' ), null, key, true
+      # h.hrd_add_run ( cid_of 'E' ), null, key, true
+      # h.hrd_add_run ( cid_of 'I' ), null, key, true
+      # h.hrd_add_run ( cid_of 'O' ), null, key, true
+      # h.hrd_add_run ( cid_of 'U' ), null, key, true
       h.hrd_add_run ( cid_of 'N' ), ( cid_of 'Z' ), 'upper', true
-      h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
-      # h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_1;"
-      # h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2;"
-      # h.tbl_echo_as_text SQL"select * from hrd_family_conflicts_2 where key = $key and value != 'true';", { key, }
-      # h.tbl_echo_as_text SQL"select * from _hrd_family_has_conflict_1;"
-      # h.tbl_echo_as_text SQL"select * from _hrd_clan_has_conflict_2;"
-      # h.tbl_echo_as_text h.hrd_find_families
-      # h.tbl_echo_as_text SQL"select * from _hrd_facet_group_has_conflict_2;"
+      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'D' ), 'vgroup', 'A'
+      h.hrd_add_run ( cid_of 'I' ), ( cid_of 'N' ), 'vgroup', 'I'
+      # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
+      # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      # h.hrd_add_run ( cid_of 'U' ), null, key, true
+      # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      # h.hrd_add_run ( cid_of 'a' ), null, key, true
+      # h.hrd_add_run ( cid_of 'd' ), null, key, false
+      # h.hrd_add_run ( cid_of 'u' ), null, key, true
+      # h.hrd_add_run ( cid_of 'c' ), ( cid_of 'x' ), key, true
+      # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      # h.hrd_add_run ( cid_of 'b' ), null, key, false
+      # h.hrd_add_run ( cid_of 'c' ), null, key, false
+      # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+      # # for point in [ ( cid_of 'A' ) .. ( cid_of 'z' ) ]
+      # h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'even', true
+      # h.hrd_add_run ( cid_of 'A' ), null, 'even', false
+      # h.hrd_add_run ( cid_of 'C' ), null, 'even', false
+      # h.hrd_add_run ( cid_of 'E' ), null, 'even', false
+      # h.hrd_add_run ( cid_of 'G' ), null, 'even', false
+      #.....................................................................................................
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_add_run ( cid_of 'U' ), null, key, true
-      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_add_run ( cid_of 'a' ), null, key, true
-      h.hrd_add_run ( cid_of 'd' ), null, key, false
-      h.hrd_add_run ( cid_of 'u' ), null, key, true
-      h.hrd_add_run ( cid_of 'c' ), ( cid_of 'x' ), key, true
-      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.hrd_add_run ( cid_of 'b' ), null, key, false
-      h.hrd_add_run ( cid_of 'c' ), null, key, false
-      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      # for point in [ ( cid_of 'A' ) .. ( cid_of 'z' ) ]
-      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'even', true
-      h.hrd_add_run ( cid_of 'A' ), null, 'even', false
-      h.hrd_add_run ( cid_of 'C' ), null, 'even', false
-      h.hrd_add_run ( cid_of 'E' ), null, 'even', false
-      h.hrd_add_run ( cid_of 'G' ), null, 'even', false
-      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      for cid in [ ( cid_of 'A' ) .. ( cid_of 'Z' ) ]
-        chr = String.fromCodePoint cid
-        R   = {}
-        for { key, value, } from h.hrd_find_topruns_for_point cid
-          ### TAINT complain if key taken ###
-          R[ key ] = value
-        debug 'Ωdbrh_130', chr, R
+      h.tbl_echo_as_text SQL"select * from hrd_global_bounds;"
+      # h.tbl_echo_as_text SQL"select * from hrd_breakpoints;"
+      h.tbl_echo_as_text SQL"select * from hrd_inspection_points;"
+      for { bound, point, } from h.walk SQL"select * from hrd_breakpoints;"
+        chr         = String.fromCodePoint point
+        description = h.hrd_describe_point point
+        debug 'Ωdbrh_131', chr, bound, description
+      for { point, } from h.walk SQL"select * from hrd_inspection_points;"
+        chr         = String.fromCodePoint point
+        description = h.hrd_describe_point point
+        urge 'Ωdbrh_131', chr, description
+      # h.tbl_echo_as_text SQL"select * from hrd_breakpoint_facets_1;"
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       ;null
     #.......................................................................................................
