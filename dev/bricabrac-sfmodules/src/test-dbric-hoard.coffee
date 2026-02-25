@@ -91,16 +91,16 @@ insert_unicode_exclusions = ( h ) ->
     do =>
       echo row for row from rows = h.walk h.statements.hrd_find_runs
       rows = h.walk h.statements.hrd_find_runs
-      @eq ( Ωdbrh___7 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=1', inorn: 1, lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' }
-      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=8', inorn: 8, lo: -10, hi: 0, key: 'foo', value: '"bar"' }
-      @eq ( Ωdbrh___9 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=2', inorn: 2, lo: 0, hi: 0, key: '$x', value: 'zero bytes' }
-      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=9', inorn: 9, lo: 0, hi: 10, key: 'foo', value: '"bar"' }
-      @eq ( Ωdbrh__11 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=3', inorn: 3, lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' }
-      @eq ( Ωdbrh__12 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=4', inorn: 4, lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' }
-      @eq ( Ωdbrh__13 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=5', inorn: 5, lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }
-      @eq ( Ωdbrh__14 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=6', inorn: 6, lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' }
-      @eq ( Ωdbrh__15 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=7', inorn: 7, lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' }
-      @eq ( Ωdbrh__16 = -> rows.next().done   ), true
+      @eq ( Ωdbrh___5 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=1', inorn: 1, lo: -Infinity, hi: -1, key: '$x', value: 'negative CIDs' }
+      @eq ( Ωdbrh___6 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=8', inorn: 8, lo: -10, hi: 0, key: 'foo', value: '"bar"' }
+      @eq ( Ωdbrh___7 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=2', inorn: 2, lo: 0, hi: 0, key: '$x', value: 'zero bytes' }
+      @eq ( Ωdbrh___8 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=9', inorn: 9, lo: 0, hi: 10, key: 'foo', value: '"bar"' }
+      @eq ( Ωdbrh___9 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=3', inorn: 3, lo: 55296, hi: 56319, key: '$x', value: 'high surrogates' }
+      @eq ( Ωdbrh__10 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=4', inorn: 4, lo: 56320, hi: 57343, key: '$x', value: 'low surrogates' }
+      @eq ( Ωdbrh__11 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=5', inorn: 5, lo: 64976, hi: 65007, key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__12 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=6', inorn: 6, lo: 65534, hi: 65535, key: '$x', value: 'noncharacters' }
+      @eq ( Ωdbrh__13 = -> rows.next().value  ), { rowid: 't:hrd:runs:R=7', inorn: 7, lo: 1114112, hi: Infinity, key: '$x', value: 'excessive CIDs' }
+      @eq ( Ωdbrh__14 = -> rows.next().done   ), true
       ;null
     #.......................................................................................................
     ;null
@@ -178,7 +178,7 @@ insert_unicode_exclusions = ( h ) ->
       # h.hrd_add_run ( cid_of 'A' ), null, key, true
       # h.hrd_add_run ( cid_of 'A' ), null, key, true
       # h.hrd_add_run ( cid_of 'E' ), null, key, true
-      # h.hrd_add_run ( cid_of 'I' ), null, key, true
+      h.hrd_add_run ( cid_of 'I' ), null, 'vowel', true
       # h.hrd_add_run ( cid_of 'O' ), null, key, true
       # h.hrd_add_run ( cid_of 'U' ), null, key, true
       h.hrd_add_run ( cid_of 'N' ), ( cid_of 'Z' ), 'upper', true
@@ -204,17 +204,38 @@ insert_unicode_exclusions = ( h ) ->
       # h.hrd_add_run ( cid_of 'G' ), null, 'even', false
       #.....................................................................................................
       h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      h.tbl_echo_as_text SQL"select * from hrd_global_bounds;"
-      # h.tbl_echo_as_text SQL"select * from hrd_breakpoints;"
-      h.tbl_echo_as_text SQL"select * from hrd_inspection_points;"
-      for { bound, point, } from h.walk SQL"select * from hrd_breakpoints;"
-        chr         = String.fromCodePoint point
-        description = h.hrd_describe_point point
-        debug 'Ωdbrh_131', chr, bound, description
-      for { point, } from h.walk SQL"select * from hrd_inspection_points;"
-        chr         = String.fromCodePoint point
-        description = h.hrd_describe_point point
-        urge 'Ωdbrh_131', chr, description
+      #.....................................................................................................
+      { min, max, }     = h.hrd_get_min_max()
+      keyvalue_by_facet = h._hrd_get_keyvalue_by_facet()
+      facets_by_point   = h._hrd_map_facets_of_inspection_points()
+      facets            = Object.keys h._hrd_get_families() ### TAINT use _get_facets ###
+      state             = Object.fromEntries ( [ facet, false, ] for facet in facets )
+      # debug 'Ωdbrh__16', facets
+      # debug 'Ωdbrh__16', state
+      # debug 'Ωdbrh__16', keyvalue_by_facet
+      for facet in facets
+        { key, value, } = keyvalue_by_facet[ facet ]
+        debug()
+        debug 'Ωdbrh__16', reverse facet
+        for [ point, point_facets, ] from facets_by_point
+          chr         = String.fromCodePoint point
+          has_facet   = point_facets.has facet
+          current     = state[ facet ] ? false
+          whisper 'Ωdbrh__16', ( if has_facet then white else grey ) ( rpr chr ), facet
+          # if has_facet isnt current
+          #   state[ facet ] = has_facet
+          #   if current
+          #     warn 'Ωdbrh__17', ( rpr chr ), facet, ')'
+          #   else
+          #     help 'Ωdbrh__16', ( rpr chr ), '(', facet # unless point is min
+          # else
+          #   null
+            # whisper 'Ωdbrh__16', ( rpr chr ), '=', facet, current, '='
+          # debug 'Ωdbrh__18', chr, facet, has_facet
+      #   debug 'Ωdbrh__19', facet
+      #   for { point, } from h.walk SQL"select * from hrd_inspection_points;"
+          # facets      = h._hrd_facets_from_point point
+          # urge 'Ωdbrh__20', chr, ( rpr facet ), facets
       # h.tbl_echo_as_text SQL"select * from hrd_breakpoint_facets_1;"
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       ;null
@@ -239,9 +260,9 @@ if module is require.main then await do =>
   # ( new Test guytest_cfg ).test { dbric_dynamic_build_properties: tests.dbric_dynamic_build_properties, }
   #---------------------------------------------------------------------------------------------------------
   if do_coverage
-    warn 'Ωdbrh_131', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
-    # help 'Ωdbrh_132', ca.used_names
-    # urge 'Ωdbrh_133', count, names for count, names of ca.names_by_counts
+    warn 'Ωdbrh__21', "not covered:", reverse name for name in ca.unused_names if ca.unused_names.length > 0
+    # help 'Ωdbrh__22', ca.used_names
+    # urge 'Ωdbrh__23', count, names for count, names of ca.names_by_counts
   #=========================================================================================================
   ;null
 
