@@ -163,38 +163,47 @@ insert_unicode_exclusions = ( h ) ->
             right       = GUY.trm.grey GUY.trm.reverse '🮊'.repeat ( global_width - last + 1 )
             echo colors.run f"#{gfph}:<15c; #{id}:>6c; #{left}#{mid}#{right}"
         #...................................................................................................
+        prv_point = 0
+        line      = ''
+        for { point, } from @walk SQL"select * from hrd_inspection_points;"
+          point  -= lo
+          delta   = Math.max 0, point - prv_point - 1
+          line   += ' '.repeat delta
+          line   += GUY.trm.gold '▲'
+          prv_point = point
+        echo colors.run f"#{gfph}:<15c; #{''}:>6c; #{line}"
+        #...................................................................................................
         ;null
     #.......................................................................................................
     do =>
       h                 = Hoard_v.rebuild()
-      key               = 'vowel'
       colors_by_facets  =
         'vowel:true':     GUY.trm.gold
         'vowel:false':    GUY.trm.blue
       #.....................................................................................................
-      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), key, false
-      h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), key, false
+      h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'vowel', false
+      h.hrd_add_run ( cid_of 'a' ), ( cid_of 'z' ), 'vowel', false
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      # h.hrd_add_run ( cid_of 'A' ), null, key, true
-      # h.hrd_add_run ( cid_of 'A' ), null, key, true
-      # h.hrd_add_run ( cid_of 'E' ), null, key, true
+      h.hrd_add_run ( cid_of 'A' ), null, 'vowel', true
+      h.hrd_add_run ( cid_of 'A' ), null, 'vowel', true
+      h.hrd_add_run ( cid_of 'E' ), null, 'vowel', true
       h.hrd_add_run ( cid_of 'I' ), null, 'vowel', true
-      # h.hrd_add_run ( cid_of 'O' ), null, key, true
-      # h.hrd_add_run ( cid_of 'U' ), null, key, true
+      h.hrd_add_run ( cid_of 'O' ), null, 'vowel', true
+      h.hrd_add_run ( cid_of 'U' ), null, 'vowel', true
       h.hrd_add_run ( cid_of 'N' ), ( cid_of 'Z' ), 'upper', true
       h.hrd_add_run ( cid_of 'A' ), ( cid_of 'D' ), 'vgroup', 'A'
       h.hrd_add_run ( cid_of 'I' ), ( cid_of 'N' ), 'vgroup', 'I'
       # h.tbl_echo_as_text SQL"select * from hrd_runs order by lo;"
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      # h.hrd_add_run ( cid_of 'U' ), null, key, true
+      # h.hrd_add_run ( cid_of 'U' ), null, 'vowel', true
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      # h.hrd_add_run ( cid_of 'a' ), null, key, true
-      # h.hrd_add_run ( cid_of 'd' ), null, key, false
-      # h.hrd_add_run ( cid_of 'u' ), null, key, true
-      # h.hrd_add_run ( cid_of 'c' ), ( cid_of 'x' ), key, true
+      # h.hrd_add_run ( cid_of 'a' ), null, 'vowel', true
+      # h.hrd_add_run ( cid_of 'd' ), null, 'vowel', false
+      # h.hrd_add_run ( cid_of 'u' ), null, 'vowel', true
+      # h.hrd_add_run ( cid_of 'c' ), ( cid_of 'x' ), 'vowel', true
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
-      # h.hrd_add_run ( cid_of 'b' ), null, key, false
-      # h.hrd_add_run ( cid_of 'c' ), null, key, false
+      # h.hrd_add_run ( cid_of 'b' ), null, 'vowel', false
+      # h.hrd_add_run ( cid_of 'c' ), null, 'vowel', false
       # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       # # for point in [ ( cid_of 'A' ) .. ( cid_of 'z' ) ]
       # h.hrd_add_run ( cid_of 'A' ), ( cid_of 'Z' ), 'even', true
@@ -209,35 +218,35 @@ insert_unicode_exclusions = ( h ) ->
       keyvalue_by_facet = h._hrd_get_keyvalue_by_facet()
       facets_by_point   = h._hrd_map_facets_of_inspection_points()
       facets            = Object.keys h._hrd_get_families() ### TAINT use _get_facets ###
-      state             = Object.fromEntries ( [ facet, false, ] for facet in facets )
-      # debug 'Ωdbrh__16', facets
-      # debug 'Ωdbrh__16', state
-      # debug 'Ωdbrh__16', keyvalue_by_facet
+      lopoints          = Object.fromEntries ( [ facet, null, ] for facet in facets )
+      new_runs          = []
       for facet in facets
         { key, value, } = keyvalue_by_facet[ facet ]
-        debug()
-        debug 'Ωdbrh__16', reverse facet
+        # debug()
+        # debug 'Ωdbrh__16', reverse facet
         for [ point, point_facets, ] from facets_by_point
           chr         = String.fromCodePoint point
           has_facet   = point_facets.has facet
-          current     = state[ facet ] ? false
-          whisper 'Ωdbrh__16', ( if has_facet then white else grey ) ( rpr chr ), facet
-          # if has_facet isnt current
-          #   state[ facet ] = has_facet
-          #   if current
-          #     warn 'Ωdbrh__17', ( rpr chr ), facet, ')'
-          #   else
-          #     help 'Ωdbrh__16', ( rpr chr ), '(', facet # unless point is min
-          # else
-          #   null
-            # whisper 'Ωdbrh__16', ( rpr chr ), '=', facet, current, '='
-          # debug 'Ωdbrh__18', chr, facet, has_facet
-      #   debug 'Ωdbrh__19', facet
-      #   for { point, } from h.walk SQL"select * from hrd_inspection_points;"
-          # facets      = h._hrd_facets_from_point point
-          # urge 'Ωdbrh__20', chr, ( rpr facet ), facets
-      # h.tbl_echo_as_text SQL"select * from hrd_breakpoint_facets_1;"
-      # h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
+          if has_facet
+            if not lopoints[ facet ]?
+              lopoints[ facet ] = point
+          else
+            if lopoints[ facet ]?
+              lo                = lopoints[ facet ]
+              hi                = point - 1
+              new_runs.push { facet, key, value, lo, hi, }
+              lopoints[ facet ] = null
+              # lo_chr  = String.fromCodePoint lo
+              # hi_chr  = String.fromCodePoint hi
+              # debug 'Ωdbrh__16', ( rpr chr ), point, ( rpr lo_chr ), ( rpr hi_chr ), lo, hi
+      for facet, lo of lopoints when lo?
+        { key, value, } = keyvalue_by_facet[ facet ]
+        new_runs.push { facet, key, value, lo, hi: max, }
+      h.hrd_delete_runs()
+      for { facet, key, value, lo, hi, } from new_runs
+        h.hrd_add_run lo, hi, key, value
+      # h.tbl_echo_as_text SQL"select * from hrd_topruns;"
+      h.visualize { lo: ( cid_of 'A' ), hi: ( cid_of 'z' ), }
       ;null
     #.......................................................................................................
     ;null
