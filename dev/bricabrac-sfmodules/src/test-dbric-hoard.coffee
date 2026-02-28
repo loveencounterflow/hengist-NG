@@ -48,7 +48,7 @@ PATH                      = require 'node:path'
   unquote_name,         } = require '../../../apps/bricabrac-sfmodules/lib/dbric'
 # { lets,                 } = internals
 { Hoard,
-  dbric_hoard_plugin,   } = require '../../../apps/bricabrac-sfmodules/lib/intermission2'
+  dbric_hoard_plugin,   } = require '../../../apps/bricabrac-sfmodules/lib/intermission'
 { type_of,              } = ( require '../../../apps/bricabrac-sfmodules/lib/unstable-rpr-type_of-brics' ).require_type_of()
 
 #===========================================================================================================
