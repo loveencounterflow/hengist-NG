@@ -465,6 +465,69 @@ GTNG                      = require '../../../apps/guy-test-NG'
     #.......................................................................................................
     return null
 
+  #---------------------------------------------------------------------------------------------------------
+  extra_cfg_arguments: ->
+    # NFA = require '../../../apps/normalize-function-arguments'
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      internals } = NFA
+    #.......................................................................................................
+    f = nfa { template: { a: 20, }, }, ( a, cfg ) -> cfg
+    @eq ( Ωnfat_130 = -> f()                ), { a: 20, }
+    @eq ( Ωnfat_131 = -> f { b: 30, }       ), { a: 20, b: 30, }
+    @eq ( Ωnfat_132 = -> f 10, { b: 30, }   ), { a: 10, b: 30, }
+    #.......................................................................................................
+    ;null
+
+  #---------------------------------------------------------------------------------------------------------
+  inlining_nfa: ->
+    # NFA = require '../../../apps/normalize-function-arguments'
+    NFA = require '../../../apps/normalize-function-arguments'
+    { nfa
+      internals } = NFA
+    #.......................................................................................................
+    do =>
+      f_prime = nfa { template: { a: 20, }, }, ( a, cfg ) -> cfg
+      f = ( P... ) -> f_prime P...
+      @eq ( Ωnfat_133 = -> f()                ), { a: 20, }
+      @eq ( Ωnfat_134 = -> f { b: 30, }       ), { a: 20, b: 30, }
+      @eq ( Ωnfat_135 = -> f 10, { b: 30, }   ), { a: 10, b: 30, }
+      ;null
+    #.......................................................................................................
+    do =>
+      C_constructor_prime = nfa { template: { a: 20, }, }, ( a, cfg ) ->
+        cfg.me = @
+        return cfg
+      class B
+        constructor: ( P... ) ->
+          @parameters = P
+          ;undefined
+      class C extends B
+        constructor: ( P... ) ->
+          super P...
+          @cfg = C_constructor_prime.call @, P...
+          ;undefined
+      #.....................................................................................................
+      do =>
+        c = new C()
+        @eq ( Ωnfat_136 = -> c.cfg.me           ), c
+        @eq ( Ωnfat_137 = -> c.cfg.a            ), 20
+        @eq ( Ωnfat_138 = -> c.cfg.b            ), undefined
+        ;null
+      #.....................................................................................................
+      do =>
+        c = new C 10, { b: 80, }
+        @eq ( Ωnfat_139 = -> c.cfg.me           ), c
+        @eq ( Ωnfat_140 = -> c.parameters[ 0 ]  ), 10
+        @eq ( Ωnfat_141 = -> c.parameters[ 1 ]  ), { b: 80, }
+        @eq ( Ωnfat_142 = -> c.cfg.a            ), 10
+        @eq ( Ωnfat_143 = -> c.cfg.b            ), 80
+        ;null
+      #.....................................................................................................
+      ;null
+    #.......................................................................................................
+    ;null
+
 
 #===========================================================================================================
 if module is require.main then await do =>
@@ -474,10 +537,10 @@ if module is require.main then await do =>
   # await ( new Test guytest_cfg ).async_test { unknown_bug: @nfa_tasks.unknown_bug }
 
   # f = -> await 994
-  # debug 'Ωnfat_130', f()
-  # debug 'Ωnfat_131', await f()
+  # debug 'Ωnfat_144', f()
+  # debug 'Ωnfat_145', await f()
   # g = -> f.call @
-  # debug 'Ωnfat_132', g()
-  # debug 'Ωnfat_133', await g()
+  # debug 'Ωnfat_146', g()
+  # debug 'Ωnfat_147', await g()
 
 
