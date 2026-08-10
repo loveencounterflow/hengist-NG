@@ -25,7 +25,10 @@ GTNG                      = require '../../../apps/guy-test-NG'
 { Test                  } = GTNG
 { f }                     = require '../../../apps/effstring'
 SFMODULES                 = require '../../../apps/bricabrac-sfmodules'
-
+PATH                      = require 'node:path'
+{ run_shell_command     } = require '../../../apps/bricabrac-sfmodules/lib/cli-run-shell-command'
+path_to_jsonick           = PATH.resolve PATH.join __dirname, '../../../apps/jsonick'
+sh                        = ( command_line ) -> ( run_shell_command path_to_jsonick, command_line ).trim()
 
 
 #===========================================================================================================
@@ -43,6 +46,7 @@ abbreviate_argvnfo = ( argvnfo, includes = '' ) ->
   R.o = argvnfo.o                                                             if includes.has 'o'
   R.t = argvnfo.t                                                             if includes.has 't'
   return R
+
 
 #===========================================================================================================
 @jsonick =
@@ -106,12 +110,40 @@ abbreviate_argvnfo = ( argvnfo, includes = '' ) ->
       unless matcher?
         echo()
         continue
-      # debug 'Ωjsonick___2', parse_argv argv
+      # debug 'Ωjsonick___1', parse_argv argv
       # echo [ [ argv, includes, ], ( abbreviate_argvnfo ( parse_argv argv ), includes ), ]
-      @eq ( Ωjst___1 = -> abbreviate_argvnfo ( parse_argv argv ), includes ), matcher
+      @eq ( Ωjst___2 = -> abbreviate_argvnfo ( parse_argv argv ), includes ), matcher
     #.......................................................................................................
     ;null
 
+
+  #---------------------------------------------------------------------------------------------------------
+  command_lines:
+
+    #-------------------------------------------------------------------------------------------------------
+    other: ->
+      debug 'Ωjst___3', rpr path_to_jsonick
+      debug 'Ωjst___4', run_shell_command     path_to_jsonick, "ls -AlF"
+      # debug 'Ωjst___5', rpr run_shell_command path_to_jsonick, "./cli-arguments-as-list first try!"
+      # debug 'Ωjst___6', rpr run_shell_command path_to_jsonick, """echo 'x' | nodexh ~/jzr/jsonick/analyze-cli-arguments-phase-1 %:d.color=yellow :d.color=yellow"""
+      # debug 'Ωjst___7', rpr run_shell_command path_to_jsonick, """echo 'x' | nodexh ~/jzr/jsonick/analyze-cli-arguments-phase-1 %:d.color=yellow :d.color=yellow | ./beautify"""
+      #.....................................................................................................
+      ;null
+
+    #-------------------------------------------------------------------------------------------------------
+    beautify: ->
+      @eq ( Ωjst___8 = -> sh """echo '{}' | ./beautify"""                                                   ), '{}'
+      @eq ( Ωjst___9 = -> sh """echo '[]' | ./beautify"""                                                   ), '[]'
+      @eq ( Ωjst__10 = -> sh """echo 'abc' | ./beautify"""                                                  ), 'abc'
+      @eq ( Ωjst__11 = -> sh """echo '{"attr1":"value1"}' | ./beautify"""                                   ), "{ attr1: 'value1' }"
+      @eq ( Ωjst__12 = -> sh """echo '{"attr1":"value1","attr2":"value2","attr3":"value3"}' | ./beautify""" ), "{ attr1: 'value1', attr2: 'value2', attr3: 'value3' }"
+      @eq ( Ωjst__13 = -> sh """echo '["quite","a","few","words","in","this"]' | ./beautify"""              ), "[ 'quite', 'a', 'few', 'words', 'in', 'this' ]"
+      @eq ( Ωjst__14 = -> sh """./beautify '{}'"""                                                          ), '{}'
+      @eq ( Ωjst__15 = -> sh """./beautify '[]'"""                                                          ), '[]'
+      @eq ( Ωjst__16 = -> sh """echo 'abc' | ./beautify '{}'"""                                             ), '{}'
+      @eq ( Ωjst__17 = -> sh """echo 'abc' | ./beautify '[]'"""                                             ), '[]'
+      #.....................................................................................................
+      ;null
 
 
 #===========================================================================================================
@@ -119,8 +151,8 @@ if module is require.main then await do =>
   { show_requires, } = require '../../snippets/lib/demo-show-requires.js'
   show_requires '../../../apps/jsonick'
   #---------------------------------------------------------------------------------------------------------
-  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
+  guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @jsonick
 
 
