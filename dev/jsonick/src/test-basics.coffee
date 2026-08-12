@@ -56,54 +56,77 @@ abbreviate_argvnfo = ( argvnfo, includes = '' ) ->
   basics: ->
     { parse_argv,  } = require '../../../apps/jsonick/lib/analyze-cli-arguments-phase-1'
     probes_and_matchers = [
-      [ [ [ 'x'                ], 'cde' ], { c: [                 ], d: [ 'x'               ], e: [                  ] } ]
-      [ [ [ '{}'               ], 'cde' ], { c: [                 ], d: [ {}                ], e: [                  ] } ]
-      [ [ [ '+name'            ], 'cde' ], { c: [ { name: true }  ], d: [                   ], e: [                  ] } ]
-      [ [ [ '-name'            ], 'cde' ], { c: [ { name: false } ], d: [                   ], e: [                  ] } ]
-      [ [ [ '+d.name'          ], 'cde' ], { c: [                 ], d: [ { name: true }    ], e: [                  ] } ]
-      [ [ [ '-d.name'          ], 'cde' ], { c: [                 ], d: [ { name: false }   ], e: [                  ] } ]
-      [ [ [ '%+name'           ], 'cde' ], { c: [                 ], d: [ '+name'           ], e: [                  ] } ]
-      [ [ [ '%-name'           ], 'cde' ], { c: [                 ], d: [ '-name'           ], e: [                  ] } ]
-      [ [ [ ':name'            ], 'cde' ], { c: [                 ], d: [                   ], e: [ ':name'          ] } ]
-      [ [ [ '%:name'           ], 'cde' ], { c: [                 ], d: [ ':name'           ], e: [                  ] } ]
-      [ [ [ ':name='           ], 'cde' ], { c: [ { name: '' }    ], d: [                   ], e: [                  ] } ]
-      [ [ [ ':name=wat'        ], 'cde' ], { c: [ { name: 'wat' } ], d: [                   ], e: [                  ] } ]
-      [ [ [ ':d.name=wat'      ], 'cde' ], { c: [                 ], d: [ { name: 'wat' }   ], e: [                  ] } ]
-      [ [ [ '--', ':name=wat'  ], 'cde' ], { c: [                 ], d: [ ':name=wat'       ], e: [                  ] } ]
-      [ [ [ '123', ':name=wat' ], 'cde' ], { c: [ { name: 'wat' } ], d: [ '123'             ], e: [                  ] } ]
-      [ [ [ '{"name":"value"}' ], 'cde' ], { c: [                 ], d: [ { name: 'value' } ], e: [                  ] } ]
-      [ [ [ '{"name":value}'   ], 'cde' ], { c: [                 ], d: [                   ], e: [ '{"name":value}' ] } ]
-      [ [ [ '{"name":"value"'  ], 'cde' ], { c: [                 ], d: [                   ], e: [ '{"name":"value"' ] } ]
-      [ [ [ '%{"name":value}'  ], 'cde' ], { c: [                 ], d: [ '{"name":value}'  ], e: [                  ] } ]
-      [ [ [ '%%'               ], 'cde' ], { c: [                 ], d: [ '%'               ], e: [                  ] } ]
-      [ [ [ '[]'               ], 'cde' ], { c: [                 ], d: [ []                ], e: [                  ] } ]
-      [ [ [ '%[]'              ], 'cde' ], { c: [                 ], d: [ '[]'              ], e: [                  ] } ]
-      [ [ [ '[3,"word"]'       ], 'cde' ], { c: [                 ], d: [ [3,'word']        ], e: [                  ] } ]
+      [ [ [ 'x'                    ], 'cde' ], { c: [                                            ], d: [ { t: 'bar', v: 'x', x: 0, }                                    ], e: [                     ] } ]
+      [ [ [ '{}'                   ], 'cde' ], { c: [                                            ], d: [ { t: 'obj', v: '{}', x: 0, }                                   ], e: [                     ] } ]
+      [ [ [ '+name'                ], 'cde' ], { c: [ { t: 'bol', n: 'name', v: true, x: 0, }    ], d: [                                                                ], e: [                     ] } ]
+      [ [ [ '-name'                ], 'cde' ], { c: [ { t: 'bol', n: 'name', v: false, x: 0, }   ], d: [                                                                ], e: [                     ] } ]
+      [ [ [ '+d.name'              ], 'cde' ], { c: [                                            ], d: [ { t: 'bol', n: 'name', v: true, x: 0, }                        ], e: [                     ] } ]
+      [ [ [ '-d.name'              ], 'cde' ], { c: [                                            ], d: [ { t: 'bol', n: 'name', v: false, x: 0, }                       ], e: [                     ] } ]
+      [ [ [ '%+name'               ], 'cde' ], { c: [                                            ], d: [ { t: 'esc', v: '+name', x: 0, }                                ], e: [                     ] } ]
+      [ [ [ '%-name'               ], 'cde' ], { c: [                                            ], d: [ { t: 'esc', v: '-name', x: 0, }                                ], e: [                     ] } ]
+      [ [ [ ':name'                ], 'cde' ], { c: [                                            ], d: [                                                                ], e: [ { t: 'fac', x: 0, } ] } ]
+      [ [ [ '%:name'               ], 'cde' ], { c: [                                            ], d: [ { t: 'esc', v: ':name', x: 0, }                                ], e: [                     ] } ]
+      [ [ [ ':name='               ], 'cde' ], { c: [ { t: 'fac', n: 'name', v: '', x: 0, }      ], d: [                                                                ], e: [                     ] } ]
+      [ [ [ ':name=wat'            ], 'cde' ], { c: [ { t: 'fac', n: 'name', v: 'wat', x: 0, }   ], d: [                                                                ], e: [                     ] } ]
+      [ [ [ ':d.name=wat'          ], 'cde' ], { c: [                                            ], d: [ { t: 'fac', n: 'name', v: 'wat', x: 0, }                       ], e: [                     ] } ]
+      [ [ [ '--', ':name=wat'      ], 'cde' ], { c: [                                            ], d: [ { t: 'pfn', v: ':name=wat', x: 1, }                            ], e: [                     ] } ]
+      [ [ [ '123', ':name=wat'     ], 'cde' ], { c: [ { t: 'fac', n: 'name', v: 'wat', x: 1, }   ], d: [ { t: 'num', v: '123', x: 0, }                                  ], e: [                     ] } ]
+      [ [ [ '{"name":"value"}'     ], 'cde' ], { c: [                                            ], d: [ { t: 'obj', v: '{"name":"value"}', x: 0, }                     ], e: [                     ] } ]
+      [ [ [ '{"name":value}'       ], 'cde' ], { c: [                                            ], d: [ { t: 'obj', v: '{"name":value}', x: 0, }                       ], e: [                     ] } ]
+      [ [ [ '{"name":"value"'      ], 'cde' ], { c: [                                            ], d: [ { t: 'obj', v: '{"name":"value"', x: 0, }                      ], e: [                     ] } ]
+      [ [ [ '%{"name":value}'      ], 'cde' ], { c: [                                            ], d: [ { t: 'esc', v: '{"name":value}', x: 0, }                       ], e: [                     ] } ]
+      [ [ [ '%%'                   ], 'cde' ], { c: [                                            ], d: [ { t: 'esc', v: '%', x: 0, }                                    ], e: [                     ] } ]
+      [ [ [ '[]'                   ], 'cde' ], { c: [                                            ], d: [ { t: 'lst', v: '[]', x: 0, }                                   ], e: [                     ] } ]
+      [ [ [ '%[]'                  ], 'cde' ], { c: [                                            ], d: [ { t: 'esc', v: '[]', x: 0, }                                   ], e: [                     ] } ]
+      [ [ [ '[3,"word"]'           ], 'cde' ], { c: [                                            ], d: [ { t: 'lst', v: '[3,"word"]', x: 0, }                           ], e: [                     ] } ]
+      [ [ [ '3', '"word"'          ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '3', x: 0, }, { t: 'bar', v: '"word"', x: 1, }  ], e: [                     ] } ]
+      [ [ [ '+3'                   ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '+3', x: 0, }                                   ], e: [                     ] } ]
+      [ [ [ '-3'                   ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '-3', x: 0, }                                   ], e: [                     ] } ]
+      [ [ [ '-0.4'                 ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '-0.4', x: 0, }                                 ], e: [                     ] } ]
+      [ [ [ '-.4'                  ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '-.4', x: 0, }                                  ], e: [                     ] } ]
+      [ [ [ '+0.4'                 ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '+0.4', x: 0, }                                 ], e: [                     ] } ]
+      [ [ [ '+.4'                  ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '+.4', x: 0, }                                  ], e: [                     ] } ]
+      [ [ [ '.9'                   ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '.9', x: 0, }                                   ], e: [                     ] } ]
+      [ [ [ '{}', '--', '{}'       ], 'cde' ], { c: [                                            ], d: [ { t: 'obj', v: '{}', x: 0, }, { t: 'pfn', v: '{}', x: 2, }     ], e: [                     ] } ]
+      [ [ [ '345', '--', '678'     ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '345', x: 0, }, { t: 'pfn', v: '678', x: 2, }   ], e: [                     ] } ]
+      [ [ [ '-345', '--', '-678'   ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '-345', x: 0, }, { t: 'pfn', v: '-678', x: 2, } ], e: [                     ] } ]
+      [ [ [ '+345', '--', '+678'   ], 'cde' ], { c: [                                            ], d: [ { t: 'num', v: '+345', x: 0, }, { t: 'pfn', v: '+678', x: 2, } ], e: [                     ] } ]
+      # [ [ [ ':dork', '--', ':dork'   ], 'cde' ], { c: [                                            ], d: [ { t: 'fac', v: '+678', x: 2, } ], e: [ { t: 'fac',  x: 0, }                     ] } ]
       #.....................................................................................................
       [[]]
-      [ [ [ 'x'                ], 'at' ], { a: [ 'x'                ], t: { c: [           ], d: [ 'word'      ], e: [         ] } } ]
-      [ [ [ '{}'               ], 'at' ], { a: [ '{}'               ], t: { c: [           ], d: [ 'objectlit' ], e: [         ] } } ]
-      [ [ [ '+name'            ], 'at' ], { a: [ '+name'            ], t: { c: [ 'boolean' ], d: [             ], e: [         ] } } ]
-      [ [ [ '-name'            ], 'at' ], { a: [ '-name'            ], t: { c: [ 'boolean' ], d: [             ], e: [         ] } } ]
-      [ [ [ '+d.name'          ], 'at' ], { a: [ '+d.name'          ], t: { c: [           ], d: [ 'boolean'   ], e: [         ] } } ]
-      [ [ [ '-d.name'          ], 'at' ], { a: [ '-d.name'          ], t: { c: [           ], d: [ 'boolean'   ], e: [         ] } } ]
-      [ [ [ '%+name'           ], 'at' ], { a: [ '%+name'           ], t: { c: [           ], d: [ 'escaped'   ], e: [         ] } } ]
-      [ [ [ '%-name'           ], 'at' ], { a: [ '%-name'           ], t: { c: [           ], d: [ 'escaped'   ], e: [         ] } } ]
-      [ [ [ ':name'            ], 'at' ], { a: [ ':name'            ], t: { c: [           ], d: [             ], e: [ 'other' ] } } ]
-      [ [ [ '%:name'           ], 'at' ], { a: [ '%:name'           ], t: { c: [           ], d: [ 'escaped'   ], e: [         ] } } ]
-      [ [ [ ':name='           ], 'at' ], { a: [ ':name='           ], t: { c: [ 'facet'   ], d: [             ], e: [         ] } } ]
-      [ [ [ ':name=wat'        ], 'at' ], { a: [ ':name=wat'        ], t: { c: [ 'facet'   ], d: [             ], e: [         ] } } ]
-      [ [ [ ':d.name=wat'      ], 'at' ], { a: [ ':d.name=wat'      ], t: { c: [           ], d: [ 'facet'     ], e: [         ] } } ]
-      [ [ [ '--', ':name=wat'  ], 'at' ], { a: [ '--', ':name=wat'  ], t: { c: [           ], d: [             ], e: [         ] } } ]
-      [ [ [ '123', ':name=wat' ], 'at' ], { a: [ '123', ':name=wat' ], t: { c: [ 'facet'   ], d: [ 'word'      ], e: [         ] } } ]
-      [ [ [ '{"name":"value"}' ], 'at' ], { a: [ '{"name":"value"}' ], t: { c: [           ], d: [ 'objectlit' ], e: [         ] } } ]
-      [ [ [ '{"name":value}'   ], 'at' ], { a: [ '{"name":value}'   ], t: { c: [           ], d: [             ], e: [ 'eobjectlit'        ] } } ]
-      [ [ [ '{"name":"value"'  ], 'at' ], { a: [ '{"name":"value"'  ], t: { c: [           ], d: [             ], e: [ 'eobjectlit'        ] } } ]
-      [ [ [ '%{"name":value}'  ], 'at' ], { a: [ '%{"name":value}'  ], t: { c: [           ], d: [ 'escaped'   ], e: [         ] } } ]
-      [ [ [ '%%'               ], 'at' ], { a: [ '%%'               ], t: { c: [           ], d: [ 'escaped'   ], e: [         ] } } ]
-      [ [ [ '[ ]'              ], 'at' ], { a: [ '[ ]'              ], t: { c: [           ], d: [ 'listlit'   ], e: [         ] } } ]
-      [ [ [ '%[ ]'             ], 'at' ], { a: [ '%[ ]'             ], t: { c: [           ], d: [ 'escaped'   ], e: [         ] } } ]
-      [ [ [ '[3,"word"]'       ], 'at' ], { a: [ '[3,"word"]'       ], t: { c: [           ], d: [ 'listlit'   ], e: [         ] } } ]
+      [ [ [ 'x'                ], 'a' ], { a: [ 'x'                ], }, ]
+      [ [ [ '{}'               ], 'a' ], { a: [ '{}'               ], }, ]
+      [ [ [ '+name'            ], 'a' ], { a: [ '+name'            ], }, ]
+      [ [ [ '-name'            ], 'a' ], { a: [ '-name'            ], }, ]
+      [ [ [ '+d.name'          ], 'a' ], { a: [ '+d.name'          ], }, ]
+      [ [ [ '-d.name'          ], 'a' ], { a: [ '-d.name'          ], }, ]
+      [ [ [ '%+name'           ], 'a' ], { a: [ '%+name'           ], }, ]
+      [ [ [ '%-name'           ], 'a' ], { a: [ '%-name'           ], }, ]
+      [ [ [ ':name'            ], 'a' ], { a: [ ':name'            ], }, ]
+      [ [ [ '%:name'           ], 'a' ], { a: [ '%:name'           ], }, ]
+      [ [ [ ':name='           ], 'a' ], { a: [ ':name='           ], }, ]
+      [ [ [ ':name=wat'        ], 'a' ], { a: [ ':name=wat'        ], }, ]
+      [ [ [ ':d.name=wat'      ], 'a' ], { a: [ ':d.name=wat'      ], }, ]
+      [ [ [ '--', ':name=wat'  ], 'a' ], { a: [ '--', ':name=wat'  ], }, ]
+      [ [ [ '123', ':name=wat' ], 'a' ], { a: [ '123', ':name=wat' ], }, ]
+      [ [ [ '{"name":"value"}' ], 'a' ], { a: [ '{"name":"value"}' ], }, ]
+      [ [ [ '{"name":value}'   ], 'a' ], { a: [ '{"name":value}'   ], }, ]
+      [ [ [ '{"name":"value"'  ], 'a' ], { a: [ '{"name":"value"'  ], }, ]
+      [ [ [ '%{"name":value}'  ], 'a' ], { a: [ '%{"name":value}'  ], }, ]
+      [ [ [ '%%'               ], 'a' ], { a: [ '%%'               ], }, ]
+      [ [ [ '[ ]'              ], 'a' ], { a: [ '[ ]'              ], }, ]
+      [ [ [ '%[ ]'             ], 'a' ], { a: [ '%[ ]'             ], }, ]
+      [ [ [ '[3,"word"]'       ], 'a' ], { a: [ '[3,"word"]'       ], }, ]
+      [ [ [ '3', '"word"'      ], 'a' ], { a: [ '3', '"word"'      ], }, ]
+      [ [ [ '+3'               ], 'a' ], { a: [ '+3'               ], }, ]
+      [ [ [ '-3'               ], 'a' ], { a: [ '-3'               ], }, ]
+      [ [ [ '-0.4'             ], 'a' ], { a: [ '-0.4'             ], }, ]
+      [ [ [ '-.4'              ], 'a' ], { a: [ '-.4'              ], }, ]
+      [ [ [ '+0.4'             ], 'a' ], { a: [ '+0.4'             ], }, ]
+      [ [ [ '+.4'              ], 'a' ], { a: [ '+.4'              ], }, ]
+      [ [ [ '.9'               ], 'a' ], { a: [ '.9'               ], }, ]
+      [ [ [ '{}', '--', '{}'   ], 'a' ], { a: [ '{}', '--', '{}',  ], }, ]
+      [ [ [ ':dork', '--', ':dork'   ], 'a' ], { a: [ ':dork', '--', ':dork',  ], }, ]
       ]
     #.......................................................................................................
     for [ [ argv, includes, ], matcher, ] in probes_and_matchers
@@ -111,7 +134,7 @@ abbreviate_argvnfo = ( argvnfo, includes = '' ) ->
         echo()
         continue
       # debug 'Ωjsonick___1', parse_argv argv
-      # echo [ [ argv, includes, ], ( abbreviate_argvnfo ( parse_argv argv ), includes ), ]
+      echo [ [ argv, includes, ], ( abbreviate_argvnfo ( parse_argv argv ), includes ), ]
       @eq ( Ωjst___2 = -> abbreviate_argvnfo ( parse_argv argv ), includes ), matcher
     #.......................................................................................................
     ;null
@@ -121,27 +144,35 @@ abbreviate_argvnfo = ( argvnfo, includes = '' ) ->
   command_lines:
 
     #-------------------------------------------------------------------------------------------------------
-    other: ->
-      debug 'Ωjst___3', rpr path_to_jsonick
-      debug 'Ωjst___4', run_shell_command     path_to_jsonick, "ls -AlF"
-      # debug 'Ωjst___5', rpr run_shell_command path_to_jsonick, "./cli-arguments-as-list first try!"
-      # debug 'Ωjst___6', rpr run_shell_command path_to_jsonick, """echo 'x' | nodexh ~/jzr/jsonick/analyze-cli-arguments-phase-1 %:d.color=yellow :d.color=yellow"""
-      # debug 'Ωjst___7', rpr run_shell_command path_to_jsonick, """echo 'x' | nodexh ~/jzr/jsonick/analyze-cli-arguments-phase-1 %:d.color=yellow :d.color=yellow | ./beautify"""
+    beautify: ->
+      @eq ( Ωjst___3 = -> sh """echo '{}' | ./beautify"""                                                   ), '{}'
+      @eq ( Ωjst___4 = -> sh """echo '[]' | ./beautify"""                                                   ), '[]'
+      @eq ( Ωjst___5 = -> sh """echo 'abc' | ./beautify"""                                                  ), 'abc'
+      @eq ( Ωjst___6 = -> sh """echo '{"attr1":"value1"}' | ./beautify"""                                   ), "{ attr1: 'value1' }"
+      @eq ( Ωjst___7 = -> sh """echo '{"attr1":"value1","attr2":"value2","attr3":"value3"}' | ./beautify""" ), "{ attr1: 'value1', attr2: 'value2', attr3: 'value3' }"
+      @eq ( Ωjst___8 = -> sh """echo '["quite","a","few","words","in","this"]' | ./beautify"""              ), "[ 'quite', 'a', 'few', 'words', 'in', 'this' ]"
+      @eq ( Ωjst___9 = -> sh """./beautify '{}'"""                                                          ), '{}'
+      @eq ( Ωjst__10 = -> sh """./beautify '[]'"""                                                          ), '[]'
+      @eq ( Ωjst__11 = -> sh """echo 'abc' | ./beautify '{}'"""                                             ), '{}'
+      @eq ( Ωjst__12 = -> sh """echo 'abc' | ./beautify '[]'"""                                             ), '[]'
       #.....................................................................................................
       ;null
 
     #-------------------------------------------------------------------------------------------------------
-    beautify: ->
-      @eq ( Ωjst___8 = -> sh """echo '{}' | ./beautify"""                                                   ), '{}'
-      @eq ( Ωjst___9 = -> sh """echo '[]' | ./beautify"""                                                   ), '[]'
-      @eq ( Ωjst__10 = -> sh """echo 'abc' | ./beautify"""                                                  ), 'abc'
-      @eq ( Ωjst__11 = -> sh """echo '{"attr1":"value1"}' | ./beautify"""                                   ), "{ attr1: 'value1' }"
-      @eq ( Ωjst__12 = -> sh """echo '{"attr1":"value1","attr2":"value2","attr3":"value3"}' | ./beautify""" ), "{ attr1: 'value1', attr2: 'value2', attr3: 'value3' }"
-      @eq ( Ωjst__13 = -> sh """echo '["quite","a","few","words","in","this"]' | ./beautify"""              ), "[ 'quite', 'a', 'few', 'words', 'in', 'this' ]"
-      @eq ( Ωjst__14 = -> sh """./beautify '{}'"""                                                          ), '{}'
-      @eq ( Ωjst__15 = -> sh """./beautify '[]'"""                                                          ), '[]'
-      @eq ( Ωjst__16 = -> sh """echo 'abc' | ./beautify '{}'"""                                             ), '{}'
-      @eq ( Ωjst__17 = -> sh """echo 'abc' | ./beautify '[]'"""                                             ), '[]'
+    cli_arguments_as_list: ->
+      @eq ( Ωjst__13 = -> sh """./cli-arguments-as-list"""                          ), '[]'
+      @eq ( Ωjst__14 = -> sh """./cli-arguments-as-list a b c"""                    ), '["a","b","c"]'
+      @eq ( Ωjst__15 = -> sh """./cli-arguments-as-list a b c | ./beautify"""       ), "[ 'a', 'b', 'c' ]"
+      @eq ( Ωjst__16 = -> sh """./cli-arguments-as-list a b 'c'"""                  ), '["a","b","c"]'
+      #.....................................................................................................
+      ;null
+
+    #-------------------------------------------------------------------------------------------------------
+    analyze_cli_arguments_phase_1: ->
+      @eq ( Ωjst__17 = -> sh """./analyze-cli-arguments-phase-1 first try!"""                             ), '{"a":["first","try!"],"c":[],"d":[{"t":"bar","v":"first","x":0},{"t":"bar","v":"try!","x":1}],"e":[],"i":"socket","o":"socket"}'
+      @eq ( Ωjst__18 = -> sh """./analyze-cli-arguments-phase-1 +blah -blub +d.wat"""                     ), '{"a":["+blah","-blub","+d.wat"],"c":[{"t":"bol","n":"blah","v":true,"x":0},{"t":"bol","n":"blub","v":false,"x":1}],"d":[{"t":"bol","n":"wat","v":true,"x":2}],"e":[],"i":"socket","o":"socket"}'
+      @eq ( Ωjst__18 = -> sh """./analyze-cli-arguments-phase-1 +verbose -verbose -- wat | ./beautify"""  ), "{\n  a: [ '+verbose', '-verbose', '--', 'wat' ],\n  c: [\n    { t: 'bol', n: 'verbose', v: true, x: 0 },\n    { t: 'bol', n: 'verbose', v: false, x: 1 }\n  ],\n  d: [ { t: 'pfn', v: 'wat', x: 3 } ],\n  e: [],\n  i: 'socket',\n  o: 'pipe'\n}"
+      echo sh """./analyze-cli-arguments-phase-1 +verbose -verbose -- wat | ./beautify"""
       #.....................................................................................................
       ;null
 
@@ -154,5 +185,7 @@ if module is require.main then await do =>
   guytest_cfg = { throw_on_error: false,  show_passes: false, report_checks: false, }
   guytest_cfg = { throw_on_error: true,   show_passes: false, report_checks: false, }
   ( new Test guytest_cfg ).test @jsonick
-
+  # { parse_argv,  } = require '../../../apps/jsonick/lib/analyze-cli-arguments-phase-1'
+  # debug 'Ωjsonick___2', parse_argv [ 'def', ]
+  ;null
 
