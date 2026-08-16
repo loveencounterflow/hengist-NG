@@ -33,301 +33,156 @@ SQL                       = String.raw
 #   type_of               } = require '../../../apps/cleartype'
 
 
-```
-'use strict';
+get_scanner = ->
+  ###
+  Coarse JSON lexer
+  This is deliberately NOT a JSON validator.
+  It recognizes enough structure to determine the extent of a
+  JSON-like value:
+   "..."       string
+   {...}       compound
+   [...]       compound
+   anything    atom
+  Strings are handled in their own lexer level so that escaped
+  quotes do not terminate the string.
+  Arrays and objects share one compound level. Nested delimiters
+  are counted by the caller rather than by recursive lexer levels;
+  InterLex deliberately does not support recursive level jumps.
+  ###
+  { Grammar } = require 'interlex'
+  g_cfg       =
+    strategy:       'first'
+    emit_signals:   false
+    reset_stack:    true
+    reset_errors:   true
+  grammar     = new Grammar g_cfg
+  gnd         = grammar.new_level { name: 'gnd' }
+  #=========================================================================================================
+  gnd.new_token 'string_start', /"/,  {     jump: 'string', }
+  gnd.new_token 'object_start', /\{/, {     jump: 'compound', }
+  gnd.new_token 'array_start',  /\[/, {     jump: 'compound', }
 
-const { Grammar } = require('interlex');
+  # A coarse "JSON primitive".
+  #
+  # We intentionally don't distinguish number / true / false / null,
+  # and we don't fully validate their syntax.
+  #
+  # A chunk ends at whitespace or at a character that has structural
+  # significance for JSON.
+  gnd.new_token 'atom',       /[^\s\{\}\[\]",:]+/
+  gnd.new_token 'whitespace', /\s+/
 
+  # These are irrelevant for finding the extent of a compound value,
+  # but they allow InterLex to continue scanning after the value.
+  gnd.new_token 'punctuation', /[,:\]\}]/
+  #=========================================================================================================
+  # string level
+  #---------------------------------------------------------------------------------------------------------
+  string = grammar.new_level({ name: 'string' });
+  # Backslash + following character is always one lexical unit here.
+  # We do not validate whether the escape is one of JSON's legal
+  # escapes. That's intentional.
+  string.new_token 'escape', /\\[\s\S]/
+  # Any run of ordinary string characters.
+  # In particular, neither '"' nor '\' belongs to this token.
+  string.new_token 'text', /[^"\\]+/, { merge: true, }
+  # The first unescaped '"' ends the string and returns to the
+  # previous level.
+  string.new_token 'end', /"/, { jump: '..', }
+  #=========================================================================================================
+  # compound level
+  #---------------------------------------------------------------------------------------------------------
+  # This level is intentionally recursive only in the *data* sense,
+  # not through InterLex level jumps.
+  #
+  # Every opening brace/bracket contributes +1 nesting depth.
+  # Every closing brace/bracket contributes -1.
+  #
+  # We deliberately do not distinguish { from [ and } from ] here;
+  # doing so would turn this into syntax validation, which we don't
+  # want at this stage.
+  compound = grammar.new_level { name: 'compound' }
+  compound.new_token 'open',          /[\{\[]/
+  compound.new_token 'close',         /[\}\]]/
+  # A quote starts a genuine string level even while we're inside
+  # a compound value.
+  compound.new_token 'string_start',  /"/, { jump: 'string', }
+  compound.new_token 'atom',          /[^\s\{\}\[\]",:]+/
+  compound.new_token 'whitespace',    /\s+/
+  compound.new_token 'punctuation',   /[,:\]]/
+  #=========================================================================================================
+  # scanner
+  #---------------------------------------------------------------------------------------------------------
 
-/*
- * Coarse JSON lexer
- *
- * This is deliberately NOT a JSON validator.
- *
- * It recognizes enough structure to determine the extent of a
- * JSON-like value:
- *
- *   "..."       string
- *   {...}       compound
- *   [...]       compound
- *   anything    atom
- *
- * Strings are handled in their own lexer level so that escaped
- * quotes do not terminate the string.
- *
- * Arrays and objects share one compound level. Nested delimiters
- * are counted by the caller rather than by recursive lexer levels;
- * InterLex deliberately does not support recursive level jumps.
- */
+  scanJsonValue = ( source, start = 0 ) ->
+    if typeof source isnt 'string'
+      throw new TypeError 'source must be a string'
 
-const grammar = new Grammar({
-  strategy: 'first',
-  emit_signals: false,
-  reset_stack: true,
-  reset_errors: true,
-});
-
-
-// ─────────────────────────────────────────────────────────────
-// ground level
-// ─────────────────────────────────────────────────────────────
-
-const ground = grammar.new_level({ name: 'ground' });
-
-ground.new_token({
-  name: 'string_start',
-  fit: /"/,
-  jump: 'string',
-});
-
-ground.new_token({
-  name: 'object_start',
-  fit: /\{/,
-  jump: 'compound',
-});
-
-ground.new_token({
-  name: 'array_start',
-  fit: /\[/,
-  jump: 'compound',
-});
-
-
-// A coarse "JSON primitive".
-//
-// We intentionally don't distinguish number / true / false / null,
-// and we don't fully validate their syntax.
-//
-// A chunk ends at whitespace or at a character that has structural
-// significance for JSON.
-ground.new_token({
-  name: 'atom',
-  fit: /[^\s\{\}\[\]",:]+/,
-});
-
-ground.new_token({
-  name: 'whitespace',
-  fit: /\s+/,
-});
-
-
-// These are irrelevant for finding the extent of a compound value,
-// but they allow InterLex to continue scanning after the value.
-ground.new_token({
-  name: 'punctuation',
-  fit: /[,:\]\}]/,
-});
-
-
-// ─────────────────────────────────────────────────────────────
-// string level
-// ─────────────────────────────────────────────────────────────
-
-const string = grammar.new_level({ name: 'string' });
-
-
-// Backslash + following character is always one lexical unit here.
-//
-// We do not validate whether the escape is one of JSON's legal
-// escapes. That's intentional.
-string.new_token({
-  name: 'escape',
-  fit: /\\[\s\S]/,
-});
-
-
-// Any run of ordinary string characters.
-//
-// In particular, neither '"' nor '\' belongs to this token.
-string.new_token({
-  name: 'text',
-  fit: /[^"\\]+/,
-  merge: true,
-});
-
-
-// The first unescaped '"' ends the string and returns to the
-// previous level.
-string.new_token({
-  name: 'end',
-  fit: /"/,
-  jump: '..',
-});
-
-
-// ─────────────────────────────────────────────────────────────
-// compound level
-// ─────────────────────────────────────────────────────────────
-//
-// This level is intentionally recursive only in the *data* sense,
-// not through InterLex level jumps.
-//
-// Every opening brace/bracket contributes +1 nesting depth.
-// Every closing brace/bracket contributes -1.
-//
-// We deliberately do not distinguish { from [ and } from ] here;
-// doing so would turn this into syntax validation, which we don't
-// want at this stage.
-
-const compound = grammar.new_level({ name: 'compound' });
-
-compound.new_token({
-  name: 'open',
-  fit: /[\{\[]/,
-});
-
-compound.new_token({
-  name: 'close',
-  fit: /[\}\]]/,
-});
-
-
-// A quote starts a genuine string level even while we're inside
-// a compound value.
-compound.new_token({
-  name: 'string_start',
-  fit: /"/,
-  jump: 'string',
-});
-
-compound.new_token({
-  name: 'atom',
-  fit: /[^\s\{\}\[\]",:]+/,
-});
-
-compound.new_token({
-  name: 'whitespace',
-  fit: /\s+/,
-});
-
-compound.new_token({
-  name: 'punctuation',
-  fit: /[,:\]]/,
-});
-
-
-// ─────────────────────────────────────────────────────────────
-// scanner
-// ─────────────────────────────────────────────────────────────
-
-function scanJsonValue(source, start = 0) {
-  if (typeof source !== 'string') {
-    throw new TypeError('source must be a string');
-  }
-
-  if (!Number.isInteger(start) || start < 0 || start >= source.length) {
-    throw new RangeError(`invalid start position: ${start}`);
-  }
-
-  const input = source.slice(start);
-
-  let first = true;
-  let kind = null;
-  let depth = 0;
-
-  for (const lexeme of grammar.scan(input)) {
-
-    // ---------------------------------------------------------
-    // First lexeme determines the kind of value.
-    // ---------------------------------------------------------
-
-    if (first) {
-      first = false;
-
-      switch (lexeme.name) {
-        case 'string_start':
-          kind = 'string';
-          break;
-
-        case 'object_start':
-        case 'array_start':
-          kind = 'compound';
-          depth = 1;
-          break;
-
-        case 'atom':
-          return {
-            start,
-            end: start + lexeme.stop,
-            length: lexeme.length,
-            kind: 'primitive',
-          };
-
-        default:
-          throw new SyntaxError(
-            `expected JSON value at ${start}, found ${lexeme.name}`
-          );
-      }
-
-      continue;
-    }
-
-
-    // ---------------------------------------------------------
-    // String: the closing quote is the first `end` token in the
-    // string level.
-    // ---------------------------------------------------------
-
-    if (kind === 'string') {
-      if (
-        lexeme.level.name === 'string' &&
-        lexeme.name === 'end'
-      ) {
-        return {
-          start,
-          end: start + lexeme.stop,
-          length: lexeme.stop,
-          kind: 'string',
-        };
-      }
-
-      continue;
-    }
-
-
-    // ---------------------------------------------------------
-    // Compound: count opening / closing delimiters.
-    //
-    // We deliberately don't check whether `]` closes `[` or `}`
-    // closes `{`. That's validation, and this scanner doesn't do
-    // validation.
-    // ---------------------------------------------------------
-
-    if (kind === 'compound') {
-      if (lexeme.level.name !== 'compound') {
+    if ( not Number.isInteger start ) or ( start < 0 ) or ( start >= source.length )
+      throw new RangeError "invalid start position: #{rpr start}"
+    input = source.slice(start);
+    is_first = true;
+    kind = null;
+    depth = 0;
+    #.......................................................................................................
+    for lexeme from grammar.scan input
+      #.....................................................................................................
+      # First lexeme determines the kind of value.
+      if is_first
+        is_first = false
+        switch lexeme.name
+          when 'string_start'
+            kind = 'string';
+          when 'object_start',  'array_start'
+            kind = 'compound';
+            depth = 1;
+          when 'atom'
+            return {
+              start,
+              end: start + lexeme.stop,
+              length: lexeme.length,
+              kind: 'primitive',
+            };
+          else
+            throw new SyntaxError "expected JSON value at ${start}, found ${lexeme.name}"
         continue;
-      }
-
-      if (lexeme.name === 'open') {
-        depth++;
-        continue;
-      }
-
-      if (lexeme.name === 'close') {
-        depth--;
-
-        if (depth === 0) {
+      #.....................................................................................................
+      # String: the closing quote is the first `end` token in the
+      # string level.
+      # ---------------------------------------------------------
+      if kind is 'string'
+        if ( lexeme.level.name is 'string' ) and ( lexeme.name is 'end' )
           return {
             start,
             end: start + lexeme.stop,
             length: lexeme.stop,
-            kind: 'compound',
+            kind: 'string',
           };
-        }
-      }
-    }
-  }
-
-  throw new SyntaxError(
-    `unterminated JSON-like value starting at ${start}`
-  );
-}
-
-
-module.exports = {
-  scanJsonValue,
-};
-```
+        continue;
+      #.....................................................................................................
+      # Compound: count opening / closing delimiters.
+      #
+      # We deliberately don't check whether `]` closes `[` or `}`
+      # closes `{`. That's validation, and this scanner doesn't do
+      # validation.
+      # ---------------------------------------------------------
+      if kind is 'compound'
+        if lexeme.level.name isnt 'compound'
+          continue
+        if lexeme.name is 'open'
+          depth++;
+          continue;
+        if lexeme.name is 'close'
+          depth--;
+          if depth is 0
+            return {
+              start,
+              end: start + lexeme.stop,
+              length: lexeme.stop,
+              kind: 'compound',
+            }
+    throw new SyntaxError "unterminated JSON-like value starting at ${start}"
+  return scanJsonValue
 
 #===========================================================================================================
 @cjlx =
@@ -346,6 +201,7 @@ module.exports = {
       [ [ 'abc[whatever,+,-]xyz', 3                           ], [ 3, 17, '[whatever,+,-]'                           ] ]
       [ [ 'abc{a::whatever,verbose:+,colors:-}xyz', 3         ], [ 3, 35, '{a::whatever,verbose:+,colors:-}'         ] ]
       ]
+    scanJsonValue = get_scanner()
     for [ [ text, start, ], matcher ] in probes_and_matchers
       { start, end, } = scanJsonValue text, start
       part            = text[ start ... end ]
